@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE entity PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://terraswarm.org/accessors/Accessor_1.dtd">
+<!-- Accessor for a JSON formatted service providing X,Y, Z accelerometer data. -->
+<class name="Accelerometer" extends="org.terraswarm.kernel.JavaScript">
+  <version>0.1</version>
+  <author>Edward A. Lee</author>
+  <input
+    name="sensorID"
+    value="&quot;accelerometer1&quot;"
+    description="The identifier for the sensor"/>
+  <input
+    name="URL"
+    value="&quot;http://husk.eecs.berkeley.edu:8080/&quot;"
+    description="The URL for the sensor."/>
+  <output
+    name="x"
+    type="number"
+    description="The x-axis acceleration (a double)"/>
+  <output
+    name="y"
+    type="number"
+    description="The y-axis acceleration (a double)"/>
+  <output
+    name="z"
+    type="number"
+    description="The z-axis acceleration (a double)"/>
+  <documentation type="text/html">
+    <![CDATA[
+    This accessor reads data from a three-axis accelerometer via a RESTful interface.
+    The accessor constructs a URL from the <i>URL</i> and <i>sensorID</i> parameters
+    as follows:
+    <pre>
+       [<i>URL</i>]get?sid=[<i>sensorID</i>]
+    </pre>
+    where [<i>URL</i>] is the value of the <i>URL</i> parameter and
+    where [<i>sensorID</i>] is the value of the <i>sensorID</i> parameter.
+    The result is expected to be JSON-formatted data that is an array with one element,
+    where the one element is a record with three fields, <i>x</i>, <i>y</i>, and <i>z</i>,
+    each with a number for a value.  This accessor converts the numbers into double
+    tokens and sends them to the output ports.
+	]]>
+  </documentation>
+  <script type="text/javascript">
+    // <![CDATA[
+
+function fire() {
+   var url = get(URL) + "get?sid=" + get(sensorID);
+   var result = readURL(url);
+   var parsed;
+   try {
+      parsed = JSON.parse(result);
+   } catch (e) {
+      // What to do here?
+      error("Unexpected result from server: " + result);
+   }
+   try {
+      // Result is expected to be an array of length one.
+      send(parseFloat(parsed[0].x), x);
+      send(parseFloat(parsed[0].y), y);
+      send(parseFloat(parsed[0].z), z);
+   } catch (e) {
+      error("Unexpected format for accelerometer data: " + result);
+   }
+}
+
+	// ]]>
+  </script>
+</class>

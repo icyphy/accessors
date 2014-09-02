@@ -1,0 +1,43 @@
+<!-- TerraSwarm Level 1 Accessors DTD Version 0.1, http://terraswarm.org -->
+<!-- $Id: MoML_1.dtd 57539 2010-04-02 00:57:06Z cxh $ -->
+
+<!ELEMENT class (input | output | property | script | documentation | version | author)*>
+<!ATTLIST class
+	name CDATA #REQUIRED
+    extends CDATA #IMPLIED
+>
+
+<!ELEMENT author (#PCDATA)>
+<!ATTLIST author
+	type CDATA #IMPLIED
+>
+
+<!ELEMENT documentation (#PCDATA)>
+<!ATTLIST documentation
+	type CDATA #IMPLIED
+>
+
+<!ELEMENT input EMPTY>
+<!ATTLIST input
+	name CDATA #REQUIRED
+    type CDATA #IMPLIED
+    value CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT output EMPTY>
+<!ATTLIST output
+	name CDATA #REQUIRED
+    type CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT script (#PCDATA)>
+<!ATTLIST script
+	type CDATA #IMPLIED
+>
+
+<!ELEMENT version (#PCDATA)>
+<!ATTLIST version
+	type CDATA #IMPLIED
+>
