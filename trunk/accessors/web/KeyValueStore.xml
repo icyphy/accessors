@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE entity PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://terraswarm.org/accessors/Accessor_1.dtd">
+<class name="KeyValueStore" extends="org.terraswarm.kernel.JavaScript">
+  <version>0.1</version>
+  <author>Edward A. Lee</author>
+  <input
+    name="storeLocation"
+    value="http://localhost:8077/keyvalue"
+    type="string"/>
+  <input
+    name="key"
+    type="string"
+    description="Key to be updated or retrieved."/>
+  <input
+    name="remove"
+    type="boolean"
+    value="false"
+    description="If true, then remove the key from the store; otherwise, retrieve the value for the key."/>
+  <input
+    name="value"
+    type="string"
+    description="Value to store in the key-value store, or empty to not store anything."/>    
+  <output
+    name="result"
+    type="string"
+    description="Value retrieved from or written to the key-value store."/>    
+  <documentation type="text/html">
+    <![CDATA[
+This accessor reads or writes data to a key-value store web service.
+The key and the value are both encoded using the JavaScript encodeURIComponent() function,
+and on retrieval, decoded using decodeURIComponent().
+If <i>remove</i> is true and the <i>key</i> is non-empty, then upon firing, this actor
+will remove the specified key from the store, producing on its output the previous
+value (if any).
+<p>
+This accessor assumes that the protocol implemented at that location matches
+the specification below for the default location:
+<ul>
+<li>To store a value with key MY_ID and value MY_VALUE, use
+<pre>
+   http://ptango.eecs.berkeley.edu:8077/keyvalue/set?id=MY_ID&value=MY_VALUE
+</pre>
+</li>
+<li>To retrieve the value, use
+<pre>
+   http://ptango.eecs.berkeley.edu:8077/keyvalue/get?id=MY_ID
+</pre>
+</li>
+<li>To remove a value, use
+<pre>
+   http://ptango.eecs.berkeley.edu:8077/keyvalue/delete?id=MY_ID
+</pre>
+</li>
+<li>To list all keys (a JSON array of strings), use
+<pre>
+   http://ptango.eecs.berkeley.edu:8077/keyvalue/list
+</pre>
+</li>
+<p>
+A Ptolemy II model that provides such a key-value store service is provided
+at <a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStore.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStore.xml</a>.
+A demo client that uses this accessor is provided at
+<a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml</a>.
+</ul>
+	]]>
+  </documentation>
+  <script type="text/javascript">
+    // <![CDATA[
+function fire() {
+    var store = get(storeLocation);
+    var theKey = get(key);
+    var toRemove = get(remove);
+    var theValue = get(value);
+    var url = store + '/get?id=' + theKey;
+    var produce;
+    if (toRemove) {
+        if (theKey != "") {
+    		produce = readURL(url);
+    		url = store + '/delete?id=' + theKey;
+    		readURL(url);
+    		if (produce != "") {
+    			send(produce, result);
+    		}
+    	}
+    } else {
+    	// toRemove == false. If there is a value, use it to set.
+    	if (theValue != "") {
+    		// FIXME: Escape theValue to make a valid URL.
+    	    url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
+			readURL(url);
+			send(theValue, result);
+		} else {
+			var valueFromStore = decodeURIComponent(readURL(url));
+    		send(valueFromStore, result);
+		}
+    }
+}
+	// ]]>
+  </script>
+</class>
