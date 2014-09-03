@@ -8,52 +8,55 @@
   <body>
     <h1>Terraswarm Accessors</h1>
     <p>Accessors, described in a draft paper, <a href="http://www.terraswarm.org/pubs/332.html">A Vision of Swarmlets</a>,
-    are actors that provide access to a remote service, sensor, or actuator. An accessor is instantiated by a
-    <b>swarmlet host</b>, which is a program or browser script. The host uses the accessor as if it were a local
-    source and/or sink for data and/or commands.
-    <p>
-    <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (Development Version) is currently
-    the most complete prototype of an accessor host. In Ptolemy II, accessors listed here can be
-    instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
-    a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
-    To view the accessor script, double click on the accessor instance, select Preferences, and enable "expert mode."
-    <p>
-    <h2>Example accessors</h2>
-<ul>
-	<li><a href="/accessors/Accelerometer.xml">Accelerometer</a></li>
-	<li><a href="/accessors/KeyValueStore.xml">KeyValueStore</a></li>
-	<li><a href="/accessors/Hue.xml">Hue</a></li>
-	<li><a href="/accessors/SensorTag.xml">SensorTag</a></li>
-	<li><a href="/accessors/StockTick.xml">StockTick</a></li>
-	<li><a href="/accessors/WiiMote.xml">WiiMote</a></li>
-</ul>
-<h1>Demos</h1>
-To run the following models, save them to some directory, and open them with a current version of Ptolemy II
-(version 10.0 or later).
-<ul>
-<li><b>StockTick</b>:
-The
-<a href="/accessors/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
-accesses and displays the stock prices of the publicly-held sponsors of the TerraSwarm project.
-</li>
-<li><b>KeyValueStore</b>:
-Two Ptolemy II models are provided to demonstrate the KeyValueStore accessor.
-<a href="/accessors/demo/KeyValueStore/KeyValueStore.xml">KeyValueStore.xml</a> provides a server.
-Run this model to create a key-value storage service on your local host.
-<a href="/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
-client that uses this server. More interesting clients will be distributed across several machines.
-<br>
-You <i>may</i> find our server running and accessible.  See <a href="http://ptango.eecs.berkeley.edu:8077/keyvalue/help">http://ptango.eecs.berkeley.edu:8077/keyvalue/help</a>.
-</li>
-</ul>
+      are actors that provide access to a remote service, sensor, or actuator. An accessor is instantiated by a
+      <b>swarmlet host</b>, which is a program or browser script. The host uses the accessor as if it were a local
+      source and/or sink for data and/or commands.</p>
 
-<h1>Additional Information</h1>
-<p>
-<ul>
-<li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition for level one accessors.
-<li> To report issues with accessors or this page, contact Edward A. Lee.
-</ul>
-To edit accessors, add your own accessors or demos, or to edit this page <a href="http://www.terraswarm.org/accessors/svn.html">use Subversion</a>.
-</p>
+    <p>
+      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (Development Version) is currently
+      the most complete prototype of an accessor host. In Ptolemy II, accessors listed here can be
+      instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
+      a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
+      To view the accessor script, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
+
+    <h2>Example accessors</h2>
+    <ul>
+      <li><a href="/accessors/Accelerometer.xml">Accelerometer</a></li>
+      <li><a href="/accessors/KeyValueStore.xml">KeyValueStore</a></li>
+      <li><a href="/accessors/Hue.xml">Hue</a></li>
+      <li><a href="/accessors/SensorTag.xml">SensorTag</a></li>
+      <li><a href="/accessors/StockTick.xml">StockTick</a></li>
+      <li><a href="/accessors/WiiMote.xml">WiiMote</a></li>
+    </ul>
+
+    <h1>Demos</h1>
+    <p>To run the following models, save them to some directory, and open them with a current version of Ptolemy II
+      (version 10.0 or later).</p>
+    <ul>
+      <li><b>StockTick</b>:
+	The
+	<a href="/accessors/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
+	accesses and displays the stock prices of the publicly-held sponsors of the TerraSwarm project.
+      </li>
+      <li><b>KeyValueStore</b>:
+	Two Ptolemy II models are provided to demonstrate the KeyValueStore accessor.
+	<a href="/accessors/demo/KeyValueStore/KeyValueStore.xml">KeyValueStore.xml</a> provides a server.
+	Run this model to create a key-value storage service on your local host.
+	<a href="/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
+	client that uses this server. More interesting clients will be distributed across several machines.
+	<br/>
+	You <i>may</i> find our server running and accessible.  See <a href="http://ptango.eecs.berkeley.edu:8077/keyvalue/help">http://ptango.eecs.berkeley.edu:8077/keyvalue/help</a>.
+      </li>
+    </ul>
+
+    <h1>Additional Information</h1>
+    <ul>
+      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition for level one accessors.</li>
+      <li> To report issues with accessors or this page, contact Edward A. Lee.</li>
+      <li> <a href="/accessors/wiki">The Accessors Wiki</a></li>
+    </ul>
+
+    <p>To edit accessors, add your own accessors or demos, or to edit this page <a href="http://www.terraswarm.org/accessors/svn.html">use Subversion</a>.</p>
+
   </body>
 </html>
