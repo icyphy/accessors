@@ -15,6 +15,8 @@
         </property>
     </property>
     <property name="WebServer" class="org.ptolemy.ptango.lib.WebServer">
+        <property name="preferredPort" class="ptolemy.data.expr.Parameter" value="8077">
+        </property>
         <property name="applicationPath" class="ptolemy.data.expr.StringParameter" value="/keyvalue">
         </property>
         <property name="resourceLocation" class="ptolemy.data.expr.FileParameter" value="">
@@ -24,13 +26,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="[805.0, 320.0]">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 22, 1440, 874}, maximized=true}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 22, 1280, 774}, maximized=true}">
     </property>
-    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1206, 764]">
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1046, 664]">
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.025060407317915">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{579.3802532327582, 636.216796875}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{501.33607219827525, 587.4391837284484}">
     </property>
     <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
         <property name="text" class="ptolemy.kernel.util.StringAttribute" value="This model launches a web server and provides a service&#10;available at http://localhost:8077/keyvalue that stores key-value pairs.&#10;&#10;To get a help screen (HTML):&#10;   http://localhost:8077/keyvalue/help&#10;To store a value, use&#10;   http://localhost:8077/keyvalue/set?id=MY_ID&amp;value=MY_VALUE&#10;To retrieve the value, use&#10;   http://localhost:8077/keyvalue/get?id=MY_ID&#10;To remove a value, use&#10;   http://localhost:8077/keyvalue/delete?id=MY_ID&#10;To list all keys (a JSON array of strings), use&#10;   http://localhost:8077/keyvalue/list&#10;&#10;You may also store a value by sending a UDP (datagram) packet to&#10;localhost:8076. If the packet is formatted as above,&#10;set?id=MY_ID&amp;value=MY_VALUE, then it will store the value indexed by the&#10;specified ID. Otherwise, the packet will be stored as a string indexed by the&#10;IP address of the sender. You can retrieve the string using &quot;get&quot; as above,&#10;where MY_ID is replaced with the IP address.">
@@ -652,8 +654,6 @@
                 </property>
                 <port name="result" class="ptolemy.actor.TypedIOPort">
                     <property name="input"/>
-                    <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                    </property>
                 </port>
             </entity>
             <relation name="relation" class="ptolemy.actor.TypedIORelation">
