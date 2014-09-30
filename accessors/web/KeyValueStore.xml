@@ -26,47 +26,58 @@
     name="result"
     type="string"
     description="Value retrieved from or written to the key-value store."/>    
+  <output
+    name="error"
+    type="string"
+    description="Error accessing the key-value store or producing the output."/>    
   <documentation type="text/html">
     <![CDATA[
 This accessor reads or writes data to a key-value store web service.
-The key and the value are both encoded using the JavaScript encodeURIComponent() function,
-and on retrieval, decoded using decodeURIComponent().
+A URL for the service is specified by the <i>storeLocation</i> parameter.
+A Ptolemy II model that provides such a key-value store service can be found
+at <a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml</a>.
+A demo client that uses this accessor is provided at
+<a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml</a>.
+<p>
+The key and the value are both text items provided as inputs.
 If <i>remove</i> is true and the <i>key</i> is non-empty, then upon firing, this actor
 will remove the specified key from the store, producing on its output the previous
-value (if any).
+value (if any). If <i>remove</i> is false, then this actor will either set or
+retrieve a value in the key-value store, depending on whether the
+and the <i>value</i> input is non-empty. If the <i>value</i> is non-empty, then this
+actor sets the value. If it is empty, then this actor retrieves the value.
+<p>
+If an error occurs accessing the key-value store (e.g., no store is found at the specified
+URL, or no value is found with the specified key),
+then an error message is produced on the <i>error</i> output.
 <p>
 This accessor assumes that the protocol implemented at that location matches
 the specification below for the default location:
 <ul>
 <li>To store a value with key MY_ID and value MY_VALUE, use
 <pre>
-   http://ptango.eecs.berkeley.edu:8077/keyvalue/set?id=MY_ID&value=MY_VALUE
+   http://localhost:8077/keyvalue/set?id=MY_ID&value=MY_VALUE
 </pre>
 </li>
 <li>To retrieve the value, use
 <pre>
-   http://ptango.eecs.berkeley.edu:8077/keyvalue/get?id=MY_ID
+   http://localhost:8077/keyvalue/get?id=MY_ID
 </pre>
 </li>
 <li>To remove a value, use
 <pre>
-   http://ptango.eecs.berkeley.edu:8077/keyvalue/delete?id=MY_ID
-</pre>
-</li>
-<li>To list all keys (a JSON array of strings), use
-<pre>
-   http://ptango.eecs.berkeley.edu:8077/keyvalue/list
+   http://localhost:8077/keyvalue/delete?id=MY_ID
 </pre>
 </li>
 <p>
-A Ptolemy II model that provides such a key-value store service is provided
-at <a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStore.xml">
-http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStore.xml</a>.
-A demo client that uses this accessor is provided at
-<a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">
-http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml</a>.
 </ul>
-	]]>
+The key and value are both
+encoded using the JavaScript encodeURIComponent() function,
+and on retrieval, decoded using decodeURIComponent(),
+and hence can include any text characters.
+    ]]>
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
@@ -77,28 +88,32 @@ function fire() {
     var theValue = get(value);
     var url = store + '/get?id=' + theKey;
     var produce;
-    if (toRemove) {
-        if (theKey != "") {
-    		produce = readURL(url);
-    		url = store + '/delete?id=' + theKey;
-    		readURL(url);
-    		if (produce != "") {
-    			send(produce, result);
-    		}
-    	}
-    } else {
-    	// toRemove == false. If there is a value, use it to set.
-    	if (theValue != "") {
-    		// FIXME: Escape theValue to make a valid URL.
-    	    url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
-			readURL(url);
-			send(theValue, result);
-		} else {
-			var valueFromStore = decodeURIComponent(readURL(url));
-    		send(valueFromStore, result);
-		}
+    try {
+        if (toRemove) {
+            if (theKey != "") {
+                produce = readURL(url);
+                url = store + '/delete?id=' + theKey;
+                readURL(url);
+                if (produce != "") {
+                    send(produce, result);
+                }
+            }
+        } else {
+            // toRemove == false. If there is a value, use it to set.
+            if (theValue != "") {
+                // FIXME: Escape theValue to make a valid URL.
+                url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
+                readURL(url);
+                send(theValue, result);
+            } else {
+                var valueFromStore = decodeURIComponent(readURL(url));
+                send(valueFromStore, result);
+            }
+        }
+    } catch (exception) {
+        send(exception.toString(), error);
     }
 }
-	// ]]>
+    // ]]>
   </script>
 </class>
