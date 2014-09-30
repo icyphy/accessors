@@ -20,7 +20,7 @@
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.8563620230700976">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{439.25990550397887, 373.76562499999994}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{439.2599055039789, 373.76562499999994}">
     </property>
     <property name="enableBackwardTypeInference" class="ptolemy.data.expr.Parameter" value="true">
     </property>
