@@ -3,13 +3,18 @@
 <!DOCTYPE entity PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
     "http://terraswarm.org/accessors/Accessor_1.dtd">
 <class name="Hue" extends="org.terraswarm.kernel.JavaScript">
-  <version>0.1</version>
+  <version>0.2</version>
   <author>Edward A. Lee</author>
   <input
-    name="bridgeID"
+    name="bridgeIPAddress"
     value="1"
-    type="number"
-    description="The bridge identifier (an integer beginning with 1)."/>
+    type="string"
+    description="The bridge IP address (and port, if needed)."/>
+  <input
+    name="userName"
+    type="string"
+    value="ptolemyuser"
+    description="The user name for logging on to the Hue Bridge."/>
   <input
     name="lightID"
     type="number"
@@ -44,17 +49,31 @@
     <![CDATA[
     This accessor controls a Philips Hue lightbulb.
     <p>
-    Upon initialization, it retrieves the URL of the bridge
-    from a key-value store service (the location of which is currently hardwired into
-    the script). It then attempts to access the bridge as a user "ptolemyuser".
-    If there is no such user, it registers such a user and requests that the
-    link button on the bridge be pushed to authorize registration of this user.
-    It then verifies that the specified light is accessible, and if not, provides
-    a list of available lights.
-    <p>
     When this accessor fires, it sets the parameters of the specified
     light according to the input values.
-	]]>
+    </p><p>
+    Logging on: This script attempts to access the bridge as a user with
+    name given by <i>userName</i>, which defaults to "ptolemyuser".
+    If there is no such user on the bridge, the script registers such a user and requests
+    (via an alert dialog) that the
+    link button on the bridge be pushed to authorize registration of this user.
+    </p><p>
+    Verifying the light: The final initialization step is to verify
+    that the specified light is accessible. If it is not, this accessor throws
+    an error, where the error message provides a list of available lights.
+    </p><p>
+    Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
+    The bridge acquires its address via DHCP, so the address will typically change
+    each time the bridge is rebooted. Moreover, the address will likely not be
+    accessible except on the local network.  The bridge responds to UPnP packets
+    (universal plug-and-play), so it is possible to use software such as
+    <a href="http://4thline.org/projects/cling/">Cling</a> to discover the bridge.
+    Ideally, UPnP discover would be provided via an accessor. In this case, a
+    swarmlet could be created that runs periodically on a local network and publishes
+    the URL of any discovered bridges to a key-value store. Then the KeyValueStore
+    accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
+    </p>
+   ]]>
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
@@ -68,16 +87,11 @@ var url;
 // alert("Connecting to: " + bridge);
 
 function initialize() {
-   // Find the IP address for the bridge.
-   // This accessor assumes that the IP addres of the Hue Bridge is stored on the
-   // ptango keyvalue service, indexed by HueBridgeX, where X is the bridgeID of this accessor.
-   bridge = readURL("http://ptango.eecs.berkeley.edu:8077/keyvalue/get?id=HueBridge"
-      + get(bridgeID)).trim();
-   if (! bridge.match("/$")) {
-      bridge = bridge + "/";
+   ipAddress = get(bridgeIPAddress);
+   if (ipAddress == null || ipAddress.trim() == "") {
+      error("No IP Address is given for the Hue Bridge.");
    }
-   // Build up the URL we want one piece at a time, to make sure each piece works.
-   url = bridge;
+   url = "http://" + ipAddress + "/";
 
    // First make sure the bridge is actually there and responding.
    try {
@@ -130,7 +144,11 @@ function initialize() {
                other = other + ", " + id;
             }
          }
-         other = other + ".";
+         if (other == "") {
+            other = ". No lights are reachable.";
+         } else {
+            other = other + ".";
+         }
       } catch (e) {
          // Ignore and don't give further info about reachable lights.
       }
@@ -176,6 +194,6 @@ function limit(value, low, high) {
       return value.toFixed(0);
    }
 }
-  	// ]]>
+     // ]]>
   </script>
 </class>
