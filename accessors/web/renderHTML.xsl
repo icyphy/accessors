@@ -10,11 +10,36 @@
     <head>
     <meta http-equiv="content-type" content="text/html"/>
     <script>
-function get(input) {
-    alert("Invoked get().");
-}
+// Define a variable for each input and output of the accessor.
+// The value of the variable is simply the name of the input or output as a string.
+      <xsl:for-each select="input">
+        var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
+      </xsl:for-each>
+      <xsl:for-each select="output">
+        var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
+      </xsl:for-each>
+// Default method definitions
 function initialize() {
-    alert("Invoked initialize().");
+    alert("No initialize() method.");
+}
+function fire() {
+    alert("No fire() method.");
+}
+function wrapup() {
+    alert("No wrapup() method.");
+}
+// Method for retrieving inputs.
+function get(input) {
+    return document.getElementById(input).value;
+}
+// Method for setting outputs.
+function send(value, output) {
+    document.getElementById(output).innerHTML = value;
+}
+// Method for reading a URL.
+function readURL(url) {
+    var http = new XMLHttpRequest();
+    return JSON.stringify({query: {results: {quote: {BidRealtime: 42}}}});
 }
       <xsl:value-of select="script" disable-output-escaping="no"/>
     </script>
@@ -43,6 +68,9 @@ function initialize() {
               <td><xsl:value-of select="@type"/></td>
               <xsl:variable name="value" select="@value"/>
               <td><input>
+                <xsl:attribute name="id">
+                  <xsl:value-of select="@name"/>
+                </xsl:attribute>
                 <xsl:attribute name="name">
                   <xsl:value-of select="@name"/>
                 </xsl:attribute>
@@ -73,7 +101,7 @@ function initialize() {
             <tr>
               <td><xsl:value-of select="@name"/></td>
               <td><div style="color:#aaaaaa">
-                <xsl:attribute name="name">
+                <xsl:attribute name="id">
                   <xsl:value-of select="@name"/>
                 </xsl:attribute>
               output goes here
