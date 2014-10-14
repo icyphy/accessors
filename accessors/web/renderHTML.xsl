@@ -13,6 +13,9 @@
 function get(input) {
     alert("Invoked get().");
 }
+function initialize() {
+    alert("Invoked initialize().");
+}
       <xsl:value-of select="script" disable-output-escaping="no"/>
     </script>
     </head>
