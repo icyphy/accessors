@@ -7,7 +7,7 @@
   <author>Edward A. Lee</author>
   <input
     name="bridgeIPAddress"
-    value="1"
+    value=""
     type="string"
     description="The bridge IP address (and port, if needed)."/>
   <input
@@ -41,7 +41,7 @@
     value="false"
     description="Whether the light is on (true) or off (false)."/>
   <input
-    name="transitiontime"
+    name="transitionTime"
     type="number"
     value="4"
     description="The transition time, in multiples of 100ms (an integer between 0 and 65535)."/>
