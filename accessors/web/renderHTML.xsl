@@ -10,37 +10,17 @@
     <head>
     <meta http-equiv="content-type" content="text/html"/>
     <script>
-// Define a variable for each input and output of the accessor.
-// The value of the variable is simply the name of the input or output as a string.
+      // Define a variable for each input and output of the accessor.
+      // The value of the variable is simply the name of the input or output as a string.
       <xsl:for-each select="input">
         var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
       </xsl:for-each>
       <xsl:for-each select="output">
         var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
       </xsl:for-each>
-// Default method definitions
-function initialize() {
-    alert("No initialize() method.");
-}
-function fire() {
-    alert("No fire() method.");
-}
-function wrapup() {
-    alert("No wrapup() method.");
-}
-// Method for retrieving inputs.
-function get(input) {
-    return document.getElementById(input).value;
-}
-// Method for setting outputs.
-function send(value, output) {
-    document.getElementById(output).innerHTML = value;
-}
-// Method for reading a URL.
-function readURL(url) {
-    var http = new XMLHttpRequest();
-    return JSON.stringify({query: {results: {quote: {BidRealtime: 42}}}});
-}
+    </script>
+    <script src="browserHost.js"/>
+    <script>
       <xsl:value-of select="script" disable-output-escaping="no"/>
     </script>
     </head>
@@ -69,7 +49,7 @@ function readURL(url) {
               <xsl:variable name="value" select="@value"/>
               <td><input>
                 <xsl:attribute name="id">
-                  <xsl:value-of select="@name"/>
+                  <xsl:value-of select="@name"/><xsl:text>Input</xsl:text>
                 </xsl:attribute>
                 <xsl:attribute name="name">
                   <xsl:value-of select="@name"/>
@@ -117,9 +97,9 @@ function readURL(url) {
       </xsl:choose>
       <h2>Actions</h2>
       <p>
-      <input id="initialize" type="button" value="initialize" onclick="initialize();" />
-      <input id="fire" type="button" value="fire" onclick="fire();" />
-      <input id="wrapup" type="button" value="wrapup" onclick="wrapup();" />
+      <input id="initializeButton" type="button" value="initialize" onclick="initializeWrapper();" />
+      <input id="fireButton" type="button" value="fire" onclick="fireWrapper();" />
+      <input id="wrapupButton" type="button" value="wrapup" onclick="wrapupWrapper();" />
       </p>
       <h2>Notes and Limitations</h2>
       <p>
