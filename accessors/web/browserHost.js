@@ -47,12 +47,11 @@ function readURL(url) {
     request.send(null);
     // readyState === 4 is the same as readyState === request.DONE.
     if (request.readyState === request.DONE) {
-        // FIXME: Want lessthanorequal, but doesn't parse.
-        // if (request.status != 200) {
+        if (request.status <= 400) {
             return request.responseText;
-        // } else {
-            // throw "readURL failed with code " + request.status + " at URL: " + url;
-        // }
+        } else {
+            throw "readURL failed with code " + request.status + " at URL: " + url;
+        }
     } else {
         throw "readURL did not complete: " + url;
     }
