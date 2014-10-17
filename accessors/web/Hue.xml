@@ -166,7 +166,7 @@ function fire() {
          + '"bri":' + limit(get(brightness), 0, 255) + ','
          + '"hue":' + limit(get(hue), 0, 65280) + ','
          + '"sat":' + limit(get(saturation), 0, 255) + ','
-         + '"transitiontime":' + limit(get(transitiontime), 0, 65535)
+         + '"transitiontime":' + limit(get(transitionTime), 0, 65535)
          + '}';
    var response = httpRequest(url, "PUT", null, command, timeout);
    if (response instanceof Array && response.length > 0 && response[0].error) {
