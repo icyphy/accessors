@@ -18,9 +18,7 @@
       <xsl:for-each select="output">
         var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
       </xsl:for-each>
-    </script>
-    <script src="browserHost.js"/>
-    <script>
+      <xsl:copy-of select="unparsed-text('browserHost.js', 'UTF-8')"/>
       <xsl:value-of select="script" disable-output-escaping="no"/>
     </script>
     </head>
