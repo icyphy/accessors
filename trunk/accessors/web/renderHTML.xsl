@@ -11,6 +11,7 @@
     <head>
     <meta http-equiv="content-type" content="text/html"/>
     <script>
+// Create a closure to contain the context in which to invoke the accessor methods.
       // Define a variable for each input and output of the accessor.
       // The value of the variable is simply the name of the input or output as a string.
       <xsl:for-each select="input">
@@ -19,7 +20,7 @@
       <xsl:for-each select="output">
         var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
       </xsl:for-each>
-      <xsl:text disable-output-escaping="yes">
+      <xsl:text>
 // JavaScript functions for a browser host.
 // Sadly, XSL does not support reading these from a separate file.
 // Default method definitions.
