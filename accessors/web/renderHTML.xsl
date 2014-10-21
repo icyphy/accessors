@@ -12,6 +12,7 @@
     <meta http-equiv="content-type" content="text/html"/>
     <script>
 // Create a closure to contain the context in which to invoke the accessor methods.
+function <xsl:value-of select="@name"/>Closure() {
       // Define a variable for each input and output of the accessor.
       // The value of the variable is simply the name of the input or output as a string.
       <xsl:for-each select="input">
@@ -27,32 +28,34 @@
 function initialize() {
     throw "No initialize() method defined.";
 }
-function initializeWrapper() {
+function fire() {
+    throw "No fire() method defined.";
+}
+function wrapup() {
+    throw "No wrapup() method defined.";
+}
+return {
+initialize: function() {
     try {
         initialize();
     } catch (e) {
         alert(e);
     }
-}
-function fire() {
-    throw "No fire() method defined.";
-}
-function fireWrapper() {
+},
+fire: function() {
     try {
         fire();
     } catch (e) {
         alert(e);
     }
-}
-function wrapup() {
-    throw "No wrapup() method defined.";
-}
-function wrapupWrapper() {
+},
+wrapup: function() {
     try {
         wrapup();
     } catch (e) {
         alert(e);
     }
+}
 }
 // Method for retrieving inputs.
 function get(input) {
@@ -81,7 +84,11 @@ function readURL(url) {
     }
 }
       </xsl:text>
+      // Accessor can override the above methods.
       <xsl:value-of select="script" disable-output-escaping="no"/>
+};
+// Create a top-level variable whose name matches the accessor instance name.
+var <xsl:value-of select="@name"/> = <xsl:value-of select="@name"/>Closure();
     </script>
     </head>
 	<body>
@@ -157,9 +164,21 @@ function readURL(url) {
       </xsl:choose>
       <h2>Actions</h2>
       <p>
-      <input id="initializeButton" type="button" value="initialize" onclick="initializeWrapper();" />
-      <input id="fireButton" type="button" value="fire" onclick="fireWrapper();" />
-      <input id="wrapupButton" type="button" value="wrapup" onclick="wrapupWrapper();" />
+      <input id="initializeButton" type="button" value="initialize">
+        <xsl:attribute name="onclick">
+          <xsl:value-of select="@name"/>.initialize();
+        </xsl:attribute>
+      </input>
+      <input id="fireButton" type="button" value="fire">
+        <xsl:attribute name="onclick">
+          <xsl:value-of select="@name"/>.fire();
+        </xsl:attribute>
+      </input>
+      <input id="wrapupButton" type="button" value="wrapup">
+        <xsl:attribute name="onclick">
+          <xsl:value-of select="@name"/>.wrapup();
+        </xsl:attribute>
+      </input>
       </p>
       <h2>Notes and Limitations</h2>
       <p>
