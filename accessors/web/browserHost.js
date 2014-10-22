@@ -1,34 +1,16 @@
-// JavaScript functions for a browser host.
-// Default method definitions
+// JavaScript functions for a browser swarmlet host.
+// Author: Edward A. Lee
+//
+// Default method definitions.
+// These may be shadowed by methods provided by the accessor.
 function initialize() {
     throw "No initialize() method defined.";
-}
-function initializeWrapper() {
-    try {
-        initialize();
-    } catch (e) {
-        alert(e);
-    }
 }
 function fire() {
     throw "No fire() method defined.";
 }
-function fireWrapper() {
-    try {
-        fire();
-    } catch (e) {
-        alert(e);
-    }
-}
 function wrapup() {
     throw "No wrapup() method defined.";
-}
-function wrapupWrapper() {
-    try {
-        wrapup();
-    } catch (e) {
-        alert(e);
-    }
 }
 // Method for retrieving inputs.
 function get(input) {
