@@ -22,8 +22,6 @@ function <xsl:value-of select="@name"/>Closure() {
       <xsl:for-each select="output">
         var <xsl:value-of select="@name"/> = '<xsl:value-of select="@name"/>';
       </xsl:for-each>
-      <xsl:text>
-      </xsl:text>
       // Accessor can override the above methods.
       <xsl:value-of select="script" disable-output-escaping="no"/>
       // Return a data structure with methods
@@ -44,7 +42,7 @@ function <xsl:value-of select="@name"/>Closure() {
         },
         wrapup: function() {
           try {
-            initialize();
+            wrapup();
           } catch (e) {
             alert(e);
           }
