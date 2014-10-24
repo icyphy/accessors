@@ -159,7 +159,7 @@ function initialize() {
 
 function fire() {
    var command = '{"on":false,';
-   if (get(on)) {
+   if (get(on) === "true") {
       command = '{"on":true,';
    }
    command = command 
@@ -191,7 +191,12 @@ function limit(value, low, high) {
    } else if (value > high) {
       return high;
    } else {
-      return value.toFixed(0);
+      // Want to do value.toFixed(0), but apparently
+      // value doesn't have a toFixed() method in browsers.
+      if (value.toFixed) {
+        return value.toFixed(0);
+      }
+      return value;
    }
 }
      // ]]>
