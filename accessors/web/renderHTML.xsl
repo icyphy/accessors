@@ -1,5 +1,5 @@
 <!-- XSL transformer to convert level one accessors into HTML for display in a browser -->
-<!-- Author: Edward A. Lee. -->
+<!-- Author: Edward A. Lee and Patricia Derler -->
 <xsl:stylesheet
   version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
