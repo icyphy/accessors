@@ -98,7 +98,7 @@ function initialize() {
       httpRequest(url, "GET", null, "", timeout);
    } catch ( ex) {
       // FIXME: We should do a UPnP discovery here and find a bridge.
-      alert("No Hue bridge responding at " + url + "\n" + ex);
+      error("No Hue bridge responding at " + url + "\n" + ex);
    }
    // Next, make sure that "ptolemyuser" is an authorized user.
    url = url + "api/ptolemyuser/";
@@ -168,9 +168,13 @@ function fire() {
          + '"sat":' + limit(get(saturation), 0, 255) + ','
          + '"transitiontime":' + limit(get(transitionTime), 0, 65535)
          + '}';
-   var response = httpRequest(url, "PUT", null, command, timeout);
-   if (response instanceof Array && response.length > 0 && response[0].error) {
-       alert(response[0].error.description);
+   try {
+      var response = httpRequest(url, "PUT", null, command, timeout);
+      if (response instanceof Array && response.length > 0 && response[0].error) {
+         error("Server responds with error: " + response[0].error.description);
+      }
+   } catch(e) {
+      error("Error accessing network: " + e);
    }
 }
 
@@ -184,19 +188,19 @@ function wrapup() {
 }
 
 // Utility function to limit the range of a number
-// and to force it to be an integer.
+// and to force it to be an integer. If the value argument
+// is a string, then it will be converted to a Number.
 function limit(value, low, high) {
-   if (value < low) {
+   var parsed = parseInt(value);
+   if (!parsed) {
+      error("Expected a number between " + low + " and " + high + ", but got " + value);
+   }
+   if (parsed < low) {
       return low;
-   } else if (value > high) {
+   } else if (parsed > high) {
       return high;
    } else {
-      // Want to do value.toFixed(0), but apparently
-      // value doesn't have a toFixed() method in browsers.
-      if (value.toFixed) {
-        return value.toFixed(0);
-      }
-      return value;
+      return parsed;
    }
 }
      // ]]>
