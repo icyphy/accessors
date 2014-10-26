@@ -5,7 +5,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
   <!-- set output mode as html -->
-  <xsl:output method="html" media-type="text/html" charset="utf-8" indent="no" omit-xml-declaration="yes"/>
+  <xsl:output method="html" media-type="text/html" indent="no" omit-xml-declaration="yes"/>
   <xsl:template match="/class">
     <html>
     <head>
