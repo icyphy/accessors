@@ -7,14 +7,18 @@
   </head>
   <body>
     <h1>Terraswarm Accessors</h1>
-    <p>Accessors, described in a draft paper, <a href="http://www.terraswarm.org/pubs/332.html">A Vision of Swarmlets</a>,
-      are actors that provide access to a remote service, sensor, or actuator. An accessor is instantiated by a
-      <b>swarmlet host</b>, which is a program or browser script. The host uses the accessor as if it were a local
-      source and/or sink for data and/or commands.</p>
+    <p>Accessors, described in a draft paper, <a href="http://www.terraswarm.org/pubs/332.html">A Vision of Swarmlets</a>, 
+      are actors that provide access to a remote service, sensor, or actuator. An accessor is instantiated by an
+      <b>accessor host</b>, which is a program or browser script. The host uses the accessor as if it were a local
+      source and/or sink for data and/or commands.
+      An accessor host is to the Internet of Things what a browser is to the Internet.
+      It renders a remote service by locally executing a proxy for that service.
+    </p>
 
     <p>
-      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (Development Version) is currently
-      the most complete prototype of an accessor host. In Ptolemy II, accessors listed here can be
+      The TerraSwarm project has developed a "version 0" accessor design and a suite of accessor hosts that should be viewed as concept demonstrations. We are further developing the design.
+      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (the Development Version) is currently
+      the most complete prototype of an accessor host. In Ptolemy II, the accessors listed here can be
       instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
       a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
       To view the accessor script, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
@@ -60,8 +64,7 @@
 
     <h1>Additional Information</h1>
     <ul>
-      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition for level one accessors.</li>
-      <li> To report issues with accessors or this page, contact Edward A. Lee.</li>
+      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition that gives the interface specification for accessors.</li>
       <li> <a href="/accessors/wiki">The Accessors Wiki</a></li>
     </ul>
 
