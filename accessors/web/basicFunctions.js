@@ -5,7 +5,7 @@
 // Copyright: http://terraswarm.org/accessors/copyright.txt
 //
 // Set debug to true to see console outputs.
-var debug = true;
+var debug = false;
 //
 ////////////////////
 // Pop up a dialog with the specified message.
@@ -24,7 +24,17 @@ function error(message) {
 ////////////////////
 // Method for performing a synchronous HTTP request.
 function httpRequest(url, method, properties, body, timeout) {
-	if (debug) console.log("httpRequest(" + arguments + ")");
+	if (debug) {
+	    console.log("httpRequest("
+	        + (function(obj) {
+	            result=[];
+	            for(p in obj) {
+	                result.push(JSON.stringify(obj[p]));
+	            };
+	            return result;
+	        })(arguments)
+	        + ")");
+	}
     var request = new XMLHttpRequest();
     // The third argument specifies a synchronous read.
     request.open(method, url, false);
@@ -51,7 +61,7 @@ function print(message) {
 ////////////////////
 // Method for synchronously reading a URL.
 function readURL(url) {
-	if (debug) console.log("readURL(" + uri + ")");
+	if (debug) console.log("readURL(" + url + ")");
     var request = new XMLHttpRequest();
     // The third argument specifies a synchronous read.
     request.open("GET", url, false);
