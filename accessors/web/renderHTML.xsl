@@ -10,6 +10,7 @@
     <html>
     <head>
     <meta http-equiv="content-type" content="text/html"/>
+    <script src="basicFunctions.js"/>
     <script src="browserHost.js"/>
     <script>
 // Create a closure to contain the context in which to invoke the accessor methods.
