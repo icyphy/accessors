@@ -55,7 +55,7 @@ This accessor, when fired, reads the current weather data from
                 + "&lon=" + lon;
         var record = readURL(url);
         var json = JSON.parse(record);
-        var temperature = (parseFloat(json.main.temp) - 273.15);
+        var temp = (parseFloat(json.main.temp) - 273.15);
         var humidity = parseFloat(json.main.humidity);
         var pres = parseFloat(json.main.pressure);
         var ws = parseFloat(json.wind.speed);
@@ -66,7 +66,7 @@ This accessor, when fired, reads the current weather data from
         send(ws, windSpeed);
         send(json.name, name);
         send(pres, pressure);
-        send(temperature, temperature);
+        send(temp, temperature);
         send(humidity, relativeHumidity);
 	}
 	// ]]>
