@@ -2,32 +2,22 @@
 <!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
 <entity name="StockTick" class="ptolemy.actor.TypedCompositeActor">
-    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="10.0.devel">
-    </property>
-    <property name="SDF Director" class="ptolemy.domains.sdf.kernel.SDFDirector">
-        <property name="iterations" class="ptolemy.data.expr.Parameter" value="UNBOUNDED">
-        </property>
-        <property name="period" class="ptolemy.data.expr.Parameter" value="5.0">
-        </property>
-        <property name="synchronizeToRealTime" class="ptolemy.data.expr.Parameter" value="true">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{55.0, 15.0}">
-        </property>
+    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.0.devel">
     </property>
     <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={2, 22, 1213, 634}, maximized=false}">
     </property>
     <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[979, 524]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.5883160829937155">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.40089347933054">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{304.0400390625, 148.7011154379515}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{263.2293713092804, 167.8879418442001}">
     </property>
     <property name="enableBackwardTypeInference" class="ptolemy.data.expr.Parameter" value="true">
     </property>
     <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
         <property name="text" class="ptolemy.kernel.util.StringAttribute" value="This model uses a StockTick accessor to read the stock values&#10;of the publicly-held sponsors of the TerraSwarm project.">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{-5.0, 50.0}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-75.0, 50.0]">
         </property>
     </property>
     <property name="stocks" class="ptolemy.data.expr.Parameter" value="{&quot;AMAT&quot;,&quot;IBM&quot;, &quot;INTC&quot;, &quot;MU&quot;, &quot;RTN&quot;, &quot;TXN&quot;, &quot;UTX&quot;}">
@@ -46,50 +36,17 @@
         </property>
         <property name="_editorFactory" class="ptolemy.vergil.toolbox.VisibleParameterEditorFactory">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{140.0, -5.0}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[195.0, 20.0]">
         </property>
     </property>
-    <entity name="StockTick" class="org.terraswarm.kernel.AccessorOne">
-        <property name="script" class="ptolemy.kernel.util.StringAttribute" value="&#10;    // &#10;	function fire() {&#10;	  var stock = get(symbol);&#10;	  var url = &quot;http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22&quot;&#10;		+ stock&#10;		+ &quot;%22)%0A%09%09&amp;env=http%3A%2F%2Fdatatables.org%2Falltables.env&amp;format=json&quot;;&#10;	  var record = readURL(url);&#10;	  var json = JSON.parse(record);&#10;	  var tick = parseFloat(json.query.results.quote.BidRealtime);&#10;	  send(tick, price);&#10;	}&#10;	// &#10;  ">
-            <property name="style" class="ptolemy.actor.gui.style.HiddenStyle">
-            </property>
+    <property name="DE Director" class="ptolemy.domains.de.kernel.DEDirector">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-15.0, 25.0]">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{300.0, 155.0}">
+    </property>
+    <property name="SynchronizeToRealTime" class="ptolemy.actor.lib.SynchronizeToRealTime">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 20.0]">
         </property>
-        <property name="symbol" class="ptolemy.actor.parameters.PortParameter" value="&quot;UTX&quot;">
-        </property>
-        <port name="symbol" class="ptolemy.actor.parameters.ParameterPort">
-            <property name="input"/>
-            <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
-            </property>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-        <port name="price" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="_type" class="ptolemy.actor.TypeAttribute" value="double">
-            </property>
-        </port>
-    </entity>
-    <entity name="ArrayToSequence" class="ptolemy.domains.sdf.lib.ArrayToSequence">
-        <property name="arrayLength" class="ptolemy.data.expr.Parameter" value="stocks.length()">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{140.0, 155.0}">
-        </property>
-    </entity>
-    <entity name="Const" class="ptolemy.actor.lib.Const">
-        <property name="value" class="ptolemy.data.expr.Parameter" value="stocks">
-        </property>
-        <doc>Create a constant sequence.</doc>
-        <property name="_icon" class="ptolemy.vergil.icon.BoxedValueIcon">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="value">
-            </property>
-            <property name="displayWidth" class="ptolemy.data.expr.Parameter" value="60">
-            </property>
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{60.0, 155.0}">
-        </property>
-    </entity>
+    </property>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={950, 612, 139, 176}, maximized=false}">
         </property>
@@ -126,10 +83,76 @@
             </property>
         </port>
     </entity>
-    <relation name="relation" class="ptolemy.actor.TypedIORelation">
-        <property name="_layoutHint" class="ptolemy.vergil.basic.layout.kieler.LayoutHint" value="{ { head={id=&quot;ArrayToSequence.input&quot;,x=140.0,y=155.0}, tail={id=&quot;Const.output&quot;,x=60.0,y=155.0}, points={} } }">
+    <entity name="StockTick" class="org.terraswarm.accessor.jjs.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;	function fire() {&#10;	  var stock = get(symbol);&#10;	  var url = &quot;http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22&quot;&#10;		+ stock&#10;		+ &quot;%22)%0A%09%09&amp;env=http%3A%2F%2Fdatatables.org%2Falltables.env&amp;format=json&quot;;&#10;	  var record = readURL(url);&#10;	  var json = JSON.parse(record);&#10;	  var tick = parseFloat(json.query.results.quote.BidRealtime);&#10;	  send(tick, price);&#10;	}&#10;	// &#10;  ">
         </property>
-    </relation>
+        <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/StockTick.xml">
+        </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&#10;    &#10;This accessor, when fired, reads the most recent bid price for the specified stock symbol from a Yahoo server.&#10;	&#10;  ">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="0.1">
+            </property>
+            <property name="symbol (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The stock symbol.">
+            </property>
+            <property name="price (port)" class="ptolemy.kernel.util.StringAttribute" value="The most recent stock price (bid).">
+            </property>
+        </property>
+        <property name="symbol" class="ptolemy.actor.parameters.PortParameter" value="&quot;UTX&quot;">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{300.0, 155.0}">
+        </property>
+        <port name="symbol" class="ptolemy.actor.parameters.ParameterPort">
+            <property name="input"/>
+            <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
+            </property>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="price" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="_type" class="ptolemy.actor.TypeAttribute" value="double">
+            </property>
+        </port>
+    </entity>
+    <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={369, 614, 499, 208}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{385, 220}">
+        </property>
+    </entity>
+    <entity name="DiscreteClock" class="ptolemy.actor.lib.DiscreteClock">
+        <property name="period" class="ptolemy.actor.parameters.PortParameter" value="5.0">
+        </property>
+        <property name="values" class="ptolemy.data.expr.Parameter" value="{true}">
+        </property>
+        <doc>Create periodic timed events.</doc>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-30.0, 155.0]">
+        </property>
+    </entity>
+    <entity name="Const" class="ptolemy.actor.lib.Const">
+        <property name="value" class="ptolemy.data.expr.Parameter" value="stocks">
+        </property>
+        <doc>Create a constant sequence.</doc>
+        <property name="_icon" class="ptolemy.vergil.icon.BoxedValueIcon">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="value">
+            </property>
+            <property name="displayWidth" class="ptolemy.data.expr.Parameter" value="60">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[60.0, 155.0]">
+        </property>
+    </entity>
+    <entity name="ArrayToSequence" class="ptolemy.domains.sdf.lib.ArrayToSequence">
+        <property name="enforceArrayLength" class="ptolemy.data.expr.Parameter" value="false">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[155.0, 155.0]">
+        </property>
+    </entity>
     <relation name="relation2" class="ptolemy.actor.TypedIORelation">
         <property name="_layoutHint" class="ptolemy.vergil.basic.layout.kieler.LayoutHint" value="{ { head={id=&quot;Expression.output&quot;,x=465.0,y=145.0}, tail={id=&quot;Display.input&quot;,x=585.0,y=145.0}, points={} } }">
         </property>
@@ -142,17 +165,25 @@
         <property name="_layoutHint" class="ptolemy.vergil.basic.layout.kieler.LayoutHint" value="{ { head={id=&quot;relation3.vertex1&quot;,x=235.0,y=155.0}, tail={id=&quot;StockTick.symbol&quot;,x=300.0,y=155.0}, points={} },{ head={id=&quot;Expression.symbol&quot;,x=465.0,y=145.0}, tail={id=&quot;relation3.vertex1&quot;,x=235.0,y=155.0}, points={355.0,135.0,355.0,105.0,235.0,105.0} },{ head={id=&quot;ArrayToSequence.output&quot;,x=140.0,y=155.0}, tail={id=&quot;relation3.vertex1&quot;,x=235.0,y=155.0}, points={} } }">
         </property>
     </relation>
-    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
-        <property name="_layoutHint" class="ptolemy.vergil.basic.layout.kieler.LayoutHint" value="{ { head={id=&quot;Expression.price&quot;,x=465.0,y=145.0}, tail={id=&quot;StockTick.price&quot;,x=300.0,y=155.0}, points={} } }">
-        </property>
+    <relation name="relation5" class="ptolemy.actor.TypedIORelation">
     </relation>
-    <link port="StockTick.symbol" relation="relation3"/>
-    <link port="StockTick.price" relation="relation4"/>
-    <link port="ArrayToSequence.input" relation="relation"/>
-    <link port="ArrayToSequence.output" relation="relation3"/>
-    <link port="Const.output" relation="relation"/>
+    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation7" class="ptolemy.actor.TypedIORelation">
+    </relation>
     <link port="Display.input" relation="relation2"/>
     <link port="Expression.output" relation="relation2"/>
     <link port="Expression.symbol" relation="relation3"/>
-    <link port="Expression.price" relation="relation4"/>
+    <link port="Expression.price" relation="relation5"/>
+    <link port="StockTick.error" relation="relation4"/>
+    <link port="StockTick.symbol" relation="relation3"/>
+    <link port="StockTick.price" relation="relation5"/>
+    <link port="Display2.input" relation="relation4"/>
+    <link port="DiscreteClock.output" relation="relation7"/>
+    <link port="Const.output" relation="relation6"/>
+    <link port="Const.trigger" relation="relation7"/>
+    <link port="ArrayToSequence.input" relation="relation6"/>
+    <link port="ArrayToSequence.output" relation="relation3"/>
 </entity>
