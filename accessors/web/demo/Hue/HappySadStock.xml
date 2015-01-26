@@ -2,7 +2,7 @@
 <!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
 <entity name="HappySadStock" class="ptolemy.actor.TypedCompositeActor">
-    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="10.0.devel">
+    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.0.devel">
     </property>
     <property name="SDF Director" class="ptolemy.domains.sdf.kernel.SDFDirector">
         <property name="iterations" class="ptolemy.data.expr.Parameter" value="UNBOUNDED">
@@ -166,21 +166,44 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="[55.0, 250.0]">
         </property>
     </entity>
-    <entity name="Const2" class="ptolemy.actor.lib.Const">
-        <property name="value" class="ptolemy.data.expr.Parameter" value="true">
+    <entity name="StockTick2" class="org.terraswarm.accessor.jjs.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;	function fire() {&#10;	  var stock = get(symbol);&#10;	  var url = &quot;http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22&quot;&#10;		+ stock&#10;		+ &quot;%22)%0A%09%09&amp;env=http%3A%2F%2Fdatatables.org%2Falltables.env&amp;format=json&quot;;&#10;	  var record = readURL(url);&#10;	  var json = JSON.parse(record);&#10;	  var tick = parseFloat(json.query.results.quote.BidRealtime);&#10;	  send(tick, price);&#10;	}&#10;	// &#10;  ">
         </property>
-        <doc>Create a constant sequence.</doc>
-        <property name="_icon" class="ptolemy.vergil.icon.BoxedValueIcon">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="value">
+        <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/StockTick.xml">
+        </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&#10;    &#10;This accessor, when fired, reads the most recent bid price for the specified stock symbol from a Yahoo server.&#10;	&#10;  ">
             </property>
-            <property name="displayWidth" class="ptolemy.data.expr.Parameter" value="60">
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="0.1">
+            </property>
+            <property name="error (port)" class="ptolemy.kernel.util.StringAttribute" value="The error message if an error occurs. If this port is not connected and an error occurs, then an exception is thrown instead.">
+            </property>
+            <property name="symbol (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The stock symbol.">
+            </property>
+            <property name="price (port)" class="ptolemy.kernel.util.StringAttribute" value="The most recent stock price (bid).">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[381.0, 305.0]">
+        <property name="symbol" class="ptolemy.actor.parameters.PortParameter" value="&quot;YHOO&quot;">
         </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 110.0]">
+        </property>
+        <port name="symbol" class="ptolemy.actor.parameters.ParameterPort">
+            <property name="input"/>
+            <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
+            </property>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="price" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="_type" class="ptolemy.actor.TypeAttribute" value="double">
+            </property>
+        </port>
     </entity>
-    <entity name="Hue" class="org.terraswarm.kernel.AccessorOne">
-        <property name="script" class="ptolemy.kernel.util.StringAttribute" value="&#10;    // &#10;&#10;// State variables.&#10;var timeout = 3000;&#10;var bridge;&#10;var url;&#10;&#10;// Uncormment the following to see the URL being used for the bridge.&#10;// alert(&quot;Connecting to: &quot; + bridge);&#10;&#10;function initialize() {&#10;   ipAddress = get(bridgeIPAddress);&#10;   if (ipAddress == null || ipAddress.trim() == &quot;&quot;) {&#10;      error(&quot;No IP Address is given for the Hue Bridge.&quot;);&#10;   }&#10;   url = &quot;http://&quot; + ipAddress + &quot;/&quot;;&#10;&#10;   // First make sure the bridge is actually there and responding.&#10;   try {&#10;      httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout);&#10;   } catch ( ex) {&#10;      // FIXME: We should do a UPnP discovery here and find a bridge.&#10;      alert(&quot;No Hue bridge responding at &quot; + url + &quot;\n&quot; + ex);&#10;   }&#10;   // Next, make sure that &quot;ptolemyuser&quot; is an authorized user.&#10;   url = url + &quot;api/ptolemyuser/&quot;;&#10;   var lights = JSON.parse(httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout));&#10;   if (lights instanceof Array &amp;&amp; lights.length &gt; 0 &amp;&amp; lights[0].error) {&#10;      var description = lights[0].error.description;&#10;      if (description.match(&quot;unauthorized user&quot;)) {&#10;         // ptolemyuser is not an authorized user.  Add this user.&#10;         httpRequest(bridge + &quot;api&quot;, &quot;POST&quot;, null, '{&quot;devicetype&quot;:&quot;ptolemyuser&quot;, &quot;username&quot;:&quot;ptolemyuser&quot;}', timeout);&#10;         alert(&quot;Push the link button on the Hue bridge to establish a connection.&quot;);&#10;         httpRequest(bridge + &quot;api&quot;, &quot;POST&quot;, null, '{&quot;devicetype&quot;:&quot;ptolemyuser&quot;, &quot;username&quot;:&quot;ptolemyuser&quot;}', timeout);&#10;         // Check to see whether it succeeded.&#10;         lights = JSON.parse(httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout));&#10;         if (lights instanceof Array &amp;&amp; lights.length &gt; 0 &amp;&amp; lights[0].error) {&#10;             var description = lights[0].error.description;&#10;             if (description.match(&quot;unauthorized user&quot;)) {&#10;                error(&quot;Failed to create user.&quot;);&#10;             }&#10;         }&#10;      }&#10;   }&#10;   // Next, make sure the specified light is reachable.&#10;   var reachable;&#10;   try {&#10;      reachable = lights.lights[get(lightID)].state.reachable;&#10;   } catch (e) {&#10;      error(&quot;Failed to access the state of light &quot;&#10;         + get(lightID) + &quot; at URL &quot; + url + &quot;\n&quot; + e);&#10;   }&#10;&#10;   if (! reachable) {&#10;      // Light is not reachable.&#10;      // Find the lights that are reachable.&#10;      var other = &quot;&quot;;&#10;      try {&#10;         for (id in lights.lights) {&#10;            if (! lights.lights[id].state.reachable) {&#10;               continue;&#10;            }&#10;            if (other == &quot;&quot;) {&#10;               other = &quot; Lights that are reachable are: &quot; + id;&#10;            } else {&#10;               other = other + &quot;, &quot; + id;&#10;            }&#10;         }&#10;         if (other == &quot;&quot;) {&#10;            other = &quot;. No lights are reachable.&quot;;&#10;         } else {&#10;            other = other + &quot;.&quot;;&#10;         }&#10;      } catch (e) {&#10;         // Ignore and don't give further info about reachable lights.&#10;      }&#10;      error(&quot;Light &quot; + get(lightID) + &quot; is not reachable at &quot; + url + other);&#10;   }&#10;   url = url + &quot;lights/&quot; + get(lightID) + &quot;/state&quot;;&#10;}&#10;&#10;function fire() {&#10;   var command = '{&quot;on&quot;:false,';&#10;   if (get(on)) {&#10;      command = '{&quot;on&quot;:true,';&#10;   }&#10;   command = command &#10;         + '&quot;bri&quot;:' + limit(get(brightness), 0, 255) + ','&#10;         + '&quot;hue&quot;:' + limit(get(hue), 0, 65280) + ','&#10;         + '&quot;sat&quot;:' + limit(get(saturation), 0, 255) + ','&#10;         + '&quot;transitiontime&quot;:' + limit(get(transitiontime), 0, 65535)&#10;         + '}';&#10;   var response = httpRequest(url, &quot;PUT&quot;, null, command, timeout);&#10;   if (response instanceof Array &amp;&amp; response.length &gt; 0 &amp;&amp; response[0].error) {&#10;       alert(response[0].error.description);&#10;   }&#10;}&#10;&#10;// Turn the light off on wrapup.&#10;function wrapup() {&#10;   var command = '{&quot;on&quot;:false}';&#10;   var response = httpRequest(url, &quot;PUT&quot;, null, command, timeout);&#10;   if (response instanceof Array &amp;&amp; response.length &gt; 0 &amp;&amp; response[0].error) {&#10;       alert(response[0].error.description);&#10;   }&#10;}&#10;&#10;// Utility function to limit the range of a number&#10;// and to force it to be an integer.&#10;function limit(value, low, high) {&#10;   if (value &lt; low) {&#10;      return low;&#10;   } else if (value &gt; high) {&#10;      return high;&#10;   } else {&#10;      return value.toFixed(0);&#10;   }&#10;}&#10;     // &#10;  ">
+    <entity name="Hue2" class="org.terraswarm.accessor.jjs.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;&#10;// State variables.&#10;var timeout = 3000;&#10;var bridge;&#10;var url;&#10;&#10;// Uncormment the following to see the URL being used for the bridge.&#10;// alert(&quot;Connecting to: &quot; + bridge);&#10;&#10;function initialize() {&#10;   ipAddress = get(bridgeIPAddress);&#10;   if (ipAddress == null || ipAddress.trim() == &quot;&quot;) {&#10;      error(&quot;No IP Address is given for the Hue Bridge.&quot;);&#10;   }&#10;   url = &quot;http://&quot; + ipAddress + &quot;/&quot;;&#10;&#10;   // First make sure the bridge is actually there and responding.&#10;   try {&#10;      httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout);&#10;   } catch ( ex) {&#10;      // FIXME: We should do a UPnP discovery here and find a bridge.&#10;      error(&quot;No Hue bridge responding at &quot; + url + &quot;\n&quot; + ex);&#10;   }&#10;   // Next, make sure that &quot;ptolemyuser&quot; is an authorized user.&#10;   url = url + &quot;api/ptolemyuser/&quot;;&#10;   var lights = JSON.parse(httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout));&#10;   if (lights instanceof Array &amp;&amp; lights.length &gt; 0 &amp;&amp; lights[0].error) {&#10;      var description = lights[0].error.description;&#10;      if (description.match(&quot;unauthorized user&quot;)) {&#10;         // ptolemyuser is not an authorized user.  Add this user.&#10;         httpRequest(bridge + &quot;api&quot;, &quot;POST&quot;, null, '{&quot;devicetype&quot;:&quot;ptolemyuser&quot;, &quot;username&quot;:&quot;ptolemyuser&quot;}', timeout);&#10;         alert(&quot;Push the link button on the Hue bridge to establish a connection.&quot;);&#10;         httpRequest(bridge + &quot;api&quot;, &quot;POST&quot;, null, '{&quot;devicetype&quot;:&quot;ptolemyuser&quot;, &quot;username&quot;:&quot;ptolemyuser&quot;}', timeout);&#10;         // Check to see whether it succeeded.&#10;         lights = JSON.parse(httpRequest(url, &quot;GET&quot;, null, &quot;&quot;, timeout));&#10;         if (lights instanceof Array &amp;&amp; lights.length &gt; 0 &amp;&amp; lights[0].error) {&#10;             var description = lights[0].error.description;&#10;             if (description.match(&quot;unauthorized user&quot;)) {&#10;                error(&quot;Failed to create user.&quot;);&#10;             }&#10;         }&#10;      }&#10;   }&#10;   // Next, make sure the specified light is reachable.&#10;   var reachable;&#10;   try {&#10;      reachable = lights.lights[get(lightID)].state.reachable;&#10;   } catch (e) {&#10;      error(&quot;Failed to access the state of light &quot;&#10;         + get(lightID) + &quot; at URL &quot; + url + &quot;\n&quot; + e);&#10;   }&#10;&#10;   if (! reachable) {&#10;      // Light is not reachable.&#10;      // Find the lights that are reachable.&#10;      var other = &quot;&quot;;&#10;      try {&#10;         for (id in lights.lights) {&#10;            if (! lights.lights[id].state.reachable) {&#10;               continue;&#10;            }&#10;            if (other == &quot;&quot;) {&#10;               other = &quot; Lights that are reachable are: &quot; + id;&#10;            } else {&#10;               other = other + &quot;, &quot; + id;&#10;            }&#10;         }&#10;         if (other == &quot;&quot;) {&#10;            other = &quot;. No lights are reachable.&quot;;&#10;         } else {&#10;            other = other + &quot;.&quot;;&#10;         }&#10;      } catch (e) {&#10;         // Ignore and don't give further info about reachable lights.&#10;      }&#10;      error(&quot;Light &quot; + get(lightID) + &quot; is not reachable at &quot; + url + other);&#10;   }&#10;   url = url + &quot;lights/&quot; + get(lightID) + &quot;/state&quot;;&#10;}&#10;&#10;function fire() {&#10;   var command = '{&quot;on&quot;:false,';&#10;   if (get(on) === &quot;true&quot;) {&#10;      command = '{&quot;on&quot;:true,';&#10;   }&#10;   command = command &#10;         + '&quot;bri&quot;:' + limit(get(brightness), 0, 255) + ','&#10;         + '&quot;hue&quot;:' + limit(get(hue), 0, 65280) + ','&#10;         + '&quot;sat&quot;:' + limit(get(saturation), 0, 255) + ','&#10;         + '&quot;transitiontime&quot;:' + limit(get(transitionTime), 0, 65535)&#10;         + '}';&#10;   try {&#10;      var response = httpRequest(url, &quot;PUT&quot;, null, command, timeout);&#10;      if (response instanceof Array &amp;&amp; response.length &gt; 0 &amp;&amp; response[0].error) {&#10;         error(&quot;Server responds with error: &quot; + response[0].error.description);&#10;      }&#10;   } catch(e) {&#10;      error(&quot;Error accessing network: &quot; + e);&#10;   }&#10;}&#10;&#10;// Turn the light off on wrapup.&#10;function wrapup() {&#10;   var command = '{&quot;on&quot;:false}';&#10;   var response = httpRequest(url, &quot;PUT&quot;, null, command, timeout);&#10;   if (response instanceof Array &amp;&amp; response.length &gt; 0 &amp;&amp; response[0].error) {&#10;       alert(response[0].error.description);&#10;   }&#10;}&#10;&#10;// Utility function to limit the range of a number&#10;// and to force it to be an integer. If the value argument&#10;// is a string, then it will be converted to a Number.&#10;function limit(value, low, high) {&#10;   var parsed = parseInt(value);&#10;   if (!parsed) {&#10;      error(&quot;Expected a number between &quot; + low + &quot; and &quot; + high + &quot;, but got &quot; + value);&#10;   }&#10;   if (parsed &lt; low) {&#10;      return low;&#10;   } else if (parsed &gt; high) {&#10;      return high;&#10;   } else {&#10;      return parsed;&#10;   }&#10;}&#10;     // &#10;  ">
         </property>
         <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/Hue.xml">
         </property>
@@ -190,6 +213,8 @@
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
             </property>
             <property name="version" class="ptolemy.kernel.util.StringAttribute" value="0.2">
+            </property>
+            <property name="error (port)" class="ptolemy.kernel.util.StringAttribute" value="The error message if an error occurs. If this port is not connected and an error occurs, then an exception is thrown instead.">
             </property>
             <property name="bridgeIPAddress (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The bridge IP address (and port, if needed).">
             </property>
@@ -205,7 +230,7 @@
             </property>
             <property name="on (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="Whether the light is on (true) or off (false).">
             </property>
-            <property name="transitiontime (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The transition time, in multiples of 100ms (an integer between 0 and 65535).">
+            <property name="transitionTime (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The transition time, in multiples of 100ms (an integer between 0 and 65535).">
             </property>
         </property>
         <property name="bridgeIPAddress" class="ptolemy.actor.parameters.PortParameter" value="bridgeIPAddress">
@@ -216,13 +241,13 @@
         </property>
         <property name="brightness" class="ptolemy.actor.parameters.PortParameter" value="255">
         </property>
-        <property name="hue" class="ptolemy.actor.parameters.PortParameter" value="46920">
+        <property name="hue" class="ptolemy.actor.parameters.PortParameter" value="65280">
         </property>
         <property name="saturation" class="ptolemy.actor.parameters.PortParameter" value="255">
         </property>
         <property name="on" class="ptolemy.actor.parameters.PortParameter" value="true">
         </property>
-        <property name="transitiontime" class="ptolemy.actor.parameters.PortParameter" value="4">
+        <property name="transitionTime" class="ptolemy.actor.parameters.PortParameter" value="4">
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[555.0, 230.0]">
         </property>
@@ -275,45 +300,11 @@
             <property name="defaultValue" class="ptolemy.data.expr.Parameter">
             </property>
         </port>
-        <port name="transitiontime" class="ptolemy.actor.parameters.ParameterPort">
+        <port name="transitionTime" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
             <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
             </property>
             <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-    </entity>
-    <entity name="StockTick" class="org.terraswarm.kernel.AccessorOne">
-        <property name="script" class="ptolemy.kernel.util.StringAttribute" value="&#10;    // &#10;	function fire() {&#10;	  var stock = get(symbol);&#10;	  var url = &quot;http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22&quot;&#10;		+ stock&#10;		+ &quot;%22)%0A%09%09&amp;env=http%3A%2F%2Fdatatables.org%2Falltables.env&amp;format=json&quot;;&#10;	  var record = readURL(url);&#10;	  var json = JSON.parse(record);&#10;	  var tick = parseFloat(json.query.results.quote.BidRealtime);&#10;	  send(tick, price);&#10;	}&#10;	// &#10;  ">
-        </property>
-        <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/StockTick.xml">
-        </property>
-        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&#10;    &#10;This accessor, when fired, reads the most recent bid price for the specified stock symbol from a Yahoo server.&#10;	&#10;  ">
-            </property>
-            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
-            </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="0.1">
-            </property>
-            <property name="symbol (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The stock symbol.">
-            </property>
-            <property name="price (port)" class="ptolemy.kernel.util.StringAttribute" value="The most recent stock price (bid).">
-            </property>
-        </property>
-        <property name="symbol" class="ptolemy.actor.parameters.PortParameter" value="&quot;AMAT&quot;">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[280.0, 110.0]">
-        </property>
-        <port name="symbol" class="ptolemy.actor.parameters.ParameterPort">
-            <property name="input"/>
-            <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
-            </property>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-        <port name="price" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="_type" class="ptolemy.actor.TypeAttribute" value="double">
             </property>
         </port>
     </entity>
@@ -333,29 +324,25 @@
         <vertex name="vertex1" value="[175.0, 170.0]">
         </vertex>
     </relation>
-    <relation name="relation9" class="ptolemy.actor.TypedIORelation">
-    </relation>
-    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+    <relation name="relation8" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation3" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation5" class="ptolemy.actor.TypedIORelation">
     </relation>
     <link port="ArrayToSequence.input" relation="relation"/>
-    <link port="ArrayToSequence.output" relation="relation3"/>
+    <link port="ArrayToSequence.output" relation="relation8"/>
     <link port="Const.output" relation="relation"/>
-    <link port="Expression.output" relation="relation9"/>
+    <link port="Expression.output" relation="relation5"/>
     <link port="Expression.currentAverage" relation="relation7"/>
     <link port="Expression.previousAverage" relation="relation2"/>
     <link port="ArrayAverage.input" relation="relation4"/>
     <link port="ArrayAverage.output" relation="relation7"/>
-    <link port="SequenceToArray.input" relation="relation5"/>
+    <link port="SequenceToArray.input" relation="relation3"/>
     <link port="SequenceToArray.output" relation="relation4"/>
     <link port="SampleDelay2.input" relation="relation7"/>
     <link port="SampleDelay2.output" relation="relation2"/>
-    <link port="Const2.output" relation="relation6"/>
-    <link port="Hue.hue" relation="relation9"/>
-    <link port="Hue.on" relation="relation6"/>
-    <link port="StockTick.symbol" relation="relation3"/>
-    <link port="StockTick.price" relation="relation5"/>
+    <link port="StockTick2.symbol" relation="relation8"/>
+    <link port="StockTick2.price" relation="relation3"/>
+    <link port="Hue2.hue" relation="relation5"/>
 </entity>
