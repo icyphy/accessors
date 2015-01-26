@@ -4,5 +4,6 @@
     "Hue.xml",
     "SensorTag.xml",
     "StockTick.xml",
+    "Weather.xml",
     "WiiMote.xml"
 ]
