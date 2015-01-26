@@ -12,7 +12,7 @@
     description="The longitude of a location (default is Berkeley)."/>
   <input
     name="latitude"
-    value="37.88"
+    value="37.85"
     type="number"
     description="The latitude of a location (default is Berkeley)."/>
   <output
@@ -26,7 +26,7 @@
   <output
     name="name"
     type="string"
-    description="Name of the location (city name)."/>       
+    description="Name of the location (nearest city name)."/>       
   <output
     name="pressure"
     type="number"
