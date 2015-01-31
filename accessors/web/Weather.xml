@@ -34,11 +34,11 @@
   <output
     name="windSpeed"
     type="number"
-    description="Wind speed (units? Probably kilometers/hour)."/>       
+    description="Wind speed (meters per second)."/>       
   <output
     name="windDirection"
     type="number"
-    description="Wind direction (in degrees, relative to north?)."/>       
+    description="Wind source direction (in degrees, relative to north)."/>       
   <documentation type="text/html">
     <![CDATA[
 This accessor, when fired, reads the current weather data from
