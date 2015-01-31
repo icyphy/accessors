@@ -24,7 +24,7 @@
     name="message"
     type="string"
     description="The message from the bus, as a JSON-encoded string."/>
-  <requires name="vertx"/>
+  <requires name="vertxEventBus"/>
   <documentation type="text/html">
     <![CDATA[
 FIXME: More.
@@ -32,7 +32,7 @@ FIXME: More.
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
-var Vertx = require('vertx');
+var Vertx = require(‘vertxEventBus’);
 var eb = null;
 
 function onOpen() {
