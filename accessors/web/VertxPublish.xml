@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
 <!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
     "http://www.terraswarm.org/accessors/Accessor_1.dtd">
-<class name="VertxSubscribe" extends="org.terraswarm.JSAccessor">
+<class name="VertxPublish" extends="org.terraswarm.JSAccessor">
   <version>0.1</version>
   <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
   <input
@@ -20,10 +20,10 @@
     value=""
     type="string"
     description="The event bus address, or the name of the events to which to subscribe."/>
-  <output
+  <input
     name="message"
     type="string"
-    description="The message from the bus, as a JSON-encoded string."/>
+    description="The message to the bus, as a JSON-encoded string."/>       
   <requires name="vertx"/>
   <documentation type="text/html">
     <![CDATA[
@@ -34,12 +34,11 @@ FIXME: More.
     // <![CDATA[
 var Vertx = require('vertx');
 var eb = null;
+var pendingOutputs = [];
+var opened = false;
 
 function onOpen() {
-  eb.registerAddressListener(get(address), 
-        function onReceived(msg) {
-            send(msg, message);
-        });
+  opened = true;
 }
 
 exports.initialize = function() {
@@ -47,6 +46,19 @@ exports.initialize = function() {
         eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});
         eb.on('open', onOpen);
     }
+}
+
+exports.fire = function() {
+  var msg = get(message);
+  if (!opened) {
+    pendingOutputs.push(msg);
+  } else {
+    for (var i = 0; i < pendingOutputs.length; i++) {
+      eb.publish(get(address), pendingOutputs[i]);
+    }
+    pendingOutputs = [];
+    eb.publish(get(address), msg);
+  }
 }
 
 exports.wrapup = function() {

@@ -4,6 +4,7 @@
     "Hue.xml",
     "SensorTag.xml",
     "StockTick.xml",
+    "VertxPublish.xml",
     "VertxSubscribe.xml",
     "Weather.xml",
     "WiiMote.xml"
