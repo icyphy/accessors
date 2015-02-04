@@ -32,7 +32,7 @@ FIXME: More.
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
-var Vertx = require(‘vertxEventBus’);
+var Vertx = require('vertxEventBus');
 var eb = null;
 
 function onOpen() {
