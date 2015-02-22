@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/Accessor_1.dtd">
+<class name="GeographicLocationByIP" extends="org.terraswarm.JSAccessor">
+  <version>0.1</version>
+  <author>Matt Weber</author>
+  <input
+    name="trigger"
+    description="The trigger port. The type of this port is undeclared, meaning that it will resolve to any data type."
+    />
+  <output
+    name="geoCoordinates"
+    type="{latitude=double, longitude=double}"
+    description="Lattitude and longitude determined from this host's ip address."/>       
+  <documentation type="text/html">
+    <![CDATA[
+This accessor, when fired, reads the geographic location of this host's ip address from freegeoip.net .
+	]]>
+  </documentation>
+  <script type="text/javascript">
+    // <![CDATA[
+	function fire() {
+	  var url = "http://freegeoip.net/json/";
+	  var record = readURL(url);
+	  var json = JSON.parse(record);
+	  var receivedLatitude = parseFloat(json.latitude);
+	  var receivedLongitude = parseFloat(json.longitude);
+	  send({latitude:receivedLatitude, longitude:receivedLongitude}, geoCoordinates);
+	}
+	// ]]>
+  </script>
+</class>
