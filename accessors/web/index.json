@@ -1,6 +1,7 @@
 [
-	"Accelerometer.xml",
-	"KeyValueStore.xml",
+    "Accelerometer.xml",
+    "GeographicLocationByIP.xml",
+    "KeyValueStore.xml",
     "Hue.xml",
     "SensorTag.xml",
     "StockTick.xml",
