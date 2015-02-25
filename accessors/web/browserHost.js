@@ -24,5 +24,5 @@ function get(input) {
 ////////////////////
 // Method for setting outputs.
 function send(value, output) {
-    document.getElementById(output).innerHTML = value;
+    document.getElementById(output).innerHTML = JSON.stringify(value);
 }
