@@ -1,5 +1,6 @@
 [
     "Accelerometer.xml",
+    "Browser.xml",
     "GeographicLocationByIP.xml",
     "KeyValueStore.xml",
     "Hue.xml",

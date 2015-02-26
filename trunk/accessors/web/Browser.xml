@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/Accessor_1.dtd">
+<class name="Browser" extends="org.terraswarm.JSAccessor">
+  <version>0.1</version>
+  <author>Christopher Brooks, Edward A. Lee, Marten Lohstroh</author>
+  <requires name="browser"/>
+  <input
+    name="html"
+    value=""
+    type="string"
+    description="An HTML document to render in the browser."/>
+  <documentation type="text/html">
+    <![CDATA[
+FIXME.
+	]]>
+  </documentation>
+  <script type="text/javascript">
+    // <![CDATA[
+    var browser = require('browser');
+	function fire() {
+	  var toDisplay = get(html);
+	  browser.display(toDisplay);
+	}
+	// ]]>
+  </script>
+</class>
