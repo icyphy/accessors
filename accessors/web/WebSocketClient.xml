@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/Accessor_1.dtd">
+<class name="WebSocketClient" extends="org.terraswarm.JSAccessor">
+  <version>0.1</version>
+  <author>Hokeun Kim</author>
+  <input
+    name="url"
+    value="ws://localhost:8080"
+    type="string"
+    description="The url of the web socket server."/>
+  <input
+    name="data"
+    value="Hello, server!"
+    type="string"
+    description="The data to be sent to the web socket server during the next firing."/>
+  <input
+    name="enable"
+    value="true"
+    type="boolean"
+    description="When this is set true, this accessor sends the data on firing."/>
+  <output
+    name="message"
+    type="string"
+    description="The message received from the web socket server"/>   
+  <output
+    name="error"
+    type="string"
+    description="The error string of the connection."/>     
+  <output
+    name="status"
+    type="number"
+    description="The status code of the connection. 1: connection established, 0: connection closed by the server, -1: an error occurred."/>   
+  <documentation type="text/html">
+    <![CDATA[
+This accessor, when initialized, connects to the web socket server,
+when fired, sends the data on the data port,
+when wraped up, closes the ongoing connection.
+This accessor generates output on the message port when a message is received from the server.
+  ]]>
+  </documentation>
+  <script type="text/javascript">
+    // <![CDATA[
+  var WebSocket = require('webSocket');
+  var opened = false;
+  function onOpen() {
+    print('client: connection to a server established');
+    opened = true;
+    send(1, status);
+  }
+  function onClose() {
+    print('client: connection is closed');
+    openend = false;
+    send(0, status);
+  }
+  function onError() {
+    print('client: an error occurred.');
+    openend = false;
+    send(-1, status);
+  }
+  function onMessage(received, flags) {
+    print('client: onMessage');
+    if (flags.binary) {
+      received = WebSocket.binToStr(received);
+    }
+    send(received, message);
+  }
+  var ws = null;
+  function initialize() {
+    if (ws == null) {
+      print('client: connecting to a server');
+      ws = new WebSocket.Socket(get(url));
+      ws.on('open', onOpen);
+      ws.on('message', onMessage);
+      ws.on('close', onClose);
+      ws.on('error', onError);
+    }
+  }
+  function wrapup() {
+    if (ws != null) {
+      print('client: closing the socket');
+      ws.close();
+    }
+    opened = false;
+  }
+  function fire() {
+    if (opened && get(enable)) {
+      ws.send(get(data));
+    }
+  }
+  // ]]>
+  </script>
+</class>

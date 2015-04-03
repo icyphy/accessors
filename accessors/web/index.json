@@ -9,5 +9,6 @@
     "VertxPublish.xml",
     "VertxSubscribe.xml",
     "Weather.xml",
+    "WebSocketClient.xml",
     "WiiMote.xml"
 ]
