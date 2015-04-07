@@ -31,7 +31,8 @@
   <output
     name="status"
     type="number"
-    description="The status code of the connection. 1: connection established, 0: connection closed by the server, -1: an error occurred."/>   
+    description="The status code of the connection. 1: connection established, 0: connection closed, -1: an error occurred."/>
+  <requires name="webSocket"/>   
   <documentation type="text/html">
     <![CDATA[
 This accessor, when initialized, connects to the web socket server,
@@ -44,10 +45,21 @@ This accessor generates output on the message port when a message is received fr
     // <![CDATA[
   var WebSocket = require('webSocket');
   var opened = false;
+  var queue = [];
+  function sendDataInQueue() {
+    if (opened) {
+      var queueLength = queue.length;
+      for (var i = 0; i < queueLength; i++) {
+        ws.send(queue[i]);
+      }
+      queue = [];
+    }
+  }
   function onOpen() {
     print('client: connection to a server established');
     opened = true;
     send(1, status);
+    sendDataInQueue();
   }
   function onClose() {
     print('client: connection is closed');
@@ -79,15 +91,16 @@ This accessor generates output on the message port when a message is received fr
   }
   function wrapup() {
     if (ws != null) {
-      print('client: closing the socket');
       ws.close();
+      print('client: closing the socket');
     }
     opened = false;
   }
   function fire() {
-    if (opened && get(enable)) {
-      ws.send(get(data));
+    if (get(enable)) {
+      queue.push(get(data));
     }
+    sendDataInQueue();
   }
   // ]]>
   </script>
