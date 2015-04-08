@@ -45,15 +45,19 @@ This accessor generates output on the message port when a message is received fr
     // <![CDATA[
   var WebSocket = require('webSocket');
   var opened = false;
-  var queue = [];
+  var dataQueue = [];
+  var dataQueueIsLocked = false;
   function sendDataInQueue() {
+    while (dataQueueIsLocked);
+    dataQueueIsLocked = true;
     if (opened) {
-      var queueLength = queue.length;
+      var queueLength = dataQueue.length;
       for (var i = 0; i < queueLength; i++) {
-        ws.send(queue[i]);
+        ws.send(dataQueue[i]);
       }
-      queue = [];
+      dataQueue = [];
     }
+    dataQueueIsLocked = false;
   }
   function onOpen() {
     print('client: connection to a server established');
@@ -61,8 +65,8 @@ This accessor generates output on the message port when a message is received fr
     send(1, status);
     sendDataInQueue();
   }
-  function onClose() {
-    print('client: connection is closed');
+  function onClose(message) {
+    print('client: connection is closed. ' + message);
     openend = false;
     send(0, status);
   }
@@ -79,7 +83,13 @@ This accessor generates output on the message port when a message is received fr
     send(received, message);
   }
   var ws = null;
+  var inputQueue = [];
+  function inputHandler() {
+    inputQueue.push(get(data));
+  }
   function initialize() {
+    inputQueue = [];
+    addInputHandler(data, inputHandler);
     if (ws == null) {
       print('client: connecting to a server');
       ws = new WebSocket.Socket(get(url));
@@ -98,7 +108,11 @@ This accessor generates output on the message port when a message is received fr
   }
   function fire() {
     if (get(enable)) {
-      queue.push(get(data));
+      var queueLength = inputQueue.length;
+      for (var i = 0; i < queueLength; i++) {
+        dataQueue.push(inputQueue[i]);
+      }
+      inputQueue = [];
     }
     sendDataInQueue();
   }
