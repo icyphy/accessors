@@ -67,12 +67,12 @@ This accessor generates output on the message port when a message is received fr
   }
   function onClose(message) {
     print('client: connection is closed. ' + message);
-    openend = false;
+    opened = false;
     send(0, status);
   }
   function onError() {
     print('client: an error occurred.');
-    openend = false;
+    opened = false;
     send(-1, status);
   }
   function onMessage(received, flags) {
