@@ -19,7 +19,7 @@
     name="address"
     value=""
     type="string"
-    description="The event bus address, or the name of the events to which to subscribe."/>
+    description="The event bus address, which is the name of the event stream."/>
   <input
     name="message"
     type="string"
