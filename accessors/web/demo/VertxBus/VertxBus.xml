@@ -4,13 +4,13 @@
 <entity name="VertxBus" class="ptolemy.actor.TypedCompositeActor">
     <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.0.devel">
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={160, 66, 1222, 716}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={84, 86, 1216, 615}, maximized=false}">
     </property>
-    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[988, 606]">
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[988, 498]">
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.0">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{484.0, 293.0}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{484.0, 239.0}">
     </property>
     <property name="enableBackwardTypeInference" class="ptolemy.data.expr.Parameter" value="false">
     </property>
@@ -22,18 +22,24 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="{65, 25}">
         </property>
     </property>
+    <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
+        <property name="text" class="ptolemy.kernel.util.StringAttribute" value="This model demonstrates publish/subscribe for a Vert.x event bus.&#10;VertxStartServer starts the server in initialize()&#10;VertxPublish and VertxSubscribe connect to the server in initialize() &#10;then send/receive messages.&#10;&#10;If unable to connect, the publish/subscribe accessors will retry for a certain number of times.&#10;To test retry, please customize the time delays in the server and client accessors.&#10;If connection fails, the publish/subscribe accessors print an error message to stdout.&#10;">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[155.0, 10.0]">
+        </property>
+    </property>
     <entity name="DiscreteClock" class="ptolemy.actor.lib.DiscreteClock">
         <doc>Create periodic timed events.</doc>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{75, 140}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[60.0, 245.0]">
         </property>
     </entity>
     <entity name="VertxPublish" class="org.terraswarm.accessor.jjs.JSAccessor">
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;var Vertx = require('vertxEventBus');&#10;var eb = null;&#10;var pendingOutputs = [];&#10;var opened = false;&#10;&#10;function onOpen() {&#10;  opened = true;&#10;}&#10;&#10;exports.initialize = function() {&#10;    if (eb == null) {        &#10;        eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});&#10;        eb.on('open', onOpen);&#10;    }&#10;}&#10;&#10;exports.fire = function() {&#10;  var msg = get(message);&#10;  if (!opened) {&#10;    print('Queuing for later output: ' + message);&#10;    pendingOutputs.push(msg);&#10;  } else {&#10;    for (var i = 0; i &lt; pendingOutputs.length; i++) {&#10;      print('Sending to event bus: ' + pendingOutputs[i]);&#10;      eb.publish(get(address), pendingOutputs[i]);&#10;    }&#10;    pendingOutputs = [];&#10;    eb.publish(get(address), msg);&#10;  }&#10;}&#10;&#10;exports.wrapup = function() {&#10;    eb.close();&#10;}&#10;	// &#10;  ">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;var Vertx = require('vertxEventBus');&#10;var eb = null;&#10;var pendingOutputs = [];&#10;var opened = false;&#10;var connectTries = 0;&#10;var maxTries = 5;&#10;var retryDelay = 2000;  // 2 seconds&#10;&#10;function onOpen() {&#10;  opened = true;&#10;}&#10;&#10;exports.initialize = function() {&#10;    if (eb == null) {    &#10;        connectTries = 1;    &#10;        eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});&#10;        eb.on('open', onOpen);&#10;        eb.on('error', function(kind) {&#10;           // Upon connection error, try to connect again after 1 second, up to 3 times&#10;            if (kind != null &amp;&amp; kind == 'connect') {&#10;               if (connectTries &lt; maxTries) {&#10;                  setTimeout(function () {&#10;                     connectTries++;&#10;                     eb.connect();&#10;                  }, retryDelay);&#10;               } else {&#10;               // TODO:  How should the accessor signal an error?&#10;               // Create a &quot;status&quot; output port?  Throw an exception?  Call wrapup()?&#10;               print(&quot;Publisher cannot connect to the event bus.&quot;);&#10;               }&#10;            }&#10;        });&#10;    }&#10;}&#10;&#10;exports.fire = function() {&#10;  var msg = get(message);&#10;  if (!opened) {&#10;    print('Queuing for later output: ' + msg);&#10;    pendingOutputs.push(msg);&#10;  } else {&#10;    for (var i = 0; i &lt; pendingOutputs.length; i++) {&#10;      print('Sending to event bus: ' + pendingOutputs[i]);&#10;      eb.publish(get(address), pendingOutputs[i]);&#10;    }&#10;    pendingOutputs = [];&#10;    eb.publish(get(address), msg);&#10;  }&#10;}&#10;&#10;exports.wrapup = function() {&#10;    if (opened) { &#10;       eb.close(); &#10;    }&#10;    opened = false;&#10;    eb = null;&#10;}&#10;	// &#10;  ">
         </property>
         <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/VertxPublish.xml">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&#10;    &#10;FIXME: More.&#10;	&#10;  ">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="This accessor publishes messages to a Vert.x event bus.  ">
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Patricia Derler, Edward A. Lee, Ben Zhang">
             </property>
@@ -49,6 +55,8 @@
             </property>
             <property name="message (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="The message to the bus, as a JSON-encoded string.">
             </property>
+            <property name="status (port-parameter)" class="ptolemy.kernel.util.StringAttribute" value="Status for debugging..">
+            </property>
         </property>
         <property name="busHost" class="ptolemy.actor.parameters.PortParameter" value="&quot;localhost&quot;">
         </property>
@@ -56,7 +64,7 @@
         </property>
         <property name="address" class="ptolemy.actor.parameters.PortParameter" value="&quot;foo&quot;">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{265.0, 120.0}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[260.0, 215.0]">
         </property>
         <property name="_expertMode" class="ptolemy.kernel.util.SingletonAttribute">
         </property>
@@ -86,19 +94,26 @@
             <property name="_type" class="ptolemy.actor.TypeAttribute" value="string">
             </property>
         </port>
+        <port name="status" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
+            </property>
+            <property name="_type" class="ptolemy.actor.TypeAttribute" value="string">
+            </property>
+        </port>
     </entity>
     <entity name="Ramp" class="ptolemy.actor.lib.Ramp">
         <doc>Create a sequence of tokens with increasing value</doc>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{165, 155}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[160.0, 255.0]">
         </property>
     </entity>
     <entity name="VertxSubscribe" class="org.terraswarm.accessor.jjs.JSAccessor">
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;var Vertx = require('vertxEventBus');&#10;var eb = null;&#10;&#10;function onOpen() {&#10;  eb.registerAddressListener(get(address), &#10;        function onReceived(msg) {&#10;            send(msg, message);&#10;        });&#10;}&#10;&#10;exports.initialize = function() {&#10;    if (eb == null) {        &#10;        eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});&#10;        eb.on('open', onOpen);&#10;    }&#10;}&#10;&#10;exports.wrapup = function() {&#10;    eb.close();&#10;}&#10;	// &#10;  ">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;    // &#10;var Vertx = require('vertxEventBus');&#10;var eb = null;&#10;var connectTries = 0;&#10;var maxTries = 5;&#10;var retryDelay = 2000;  // 2 seconds&#10;var opened = false;&#10;&#10;function onOpen() {&#10;  opened = true;&#10;  eb.registerAddressListener(get(address), &#10;        function onReceived(msg) {&#10;            send(msg, message);&#10;        });&#10;}&#10;&#10;exports.initialize = function() {&#10;    if (eb == null) { &#10;        connectTries = 1;       &#10;        eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});&#10;        eb.on('open', onOpen);&#10;        eb.on('error', function(kind) {&#10;           // Upon connection error, try to connect again after 1 second, up to 3 times&#10;           if (kind != null &amp;&amp; kind == 'connect') {&#10;              if (connectTries &lt; maxTries) {&#10;                 setTimeout(function() {&#10;                    connectTries++;&#10;                   eb.connect();&#10;                 }, retryDelay);&#10;              } else {&#10;                 // TODO:  How should the accessor signal an error?&#10;                 // Create a &quot;status&quot; output port?  Throw an exception?  Call wrapup()?&#10;                 print(&quot;Subscriber cannot connect to the event bus.&quot;);&#10;              }&#10;           }&#10;        });&#10;    }&#10;}&#10;&#10;exports.wrapup = function() {&#10;    if (opened) {&#10;       eb.close();&#10;    }&#10;    eb = null;&#10;}&#10;	// &#10;  ">
         </property>
         <property name="accessorSource" class="ptolemy.kernel.util.StringAttribute" value="http://www.terraswarm.org/accessors/VertxSubscribe.xml">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&#10;    &#10;FIXME: More.&#10;	&#10;  ">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="This accessor subscribes to a Vert.x event bus.  ">
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Patricia Derler, Edward A. Lee, Ben Zhang">
             </property>
@@ -121,7 +136,9 @@
         </property>
         <property name="address" class="ptolemy.actor.parameters.PortParameter" value="&quot;foo&quot;">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[215.0, 265.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[260.0, 320.0]">
+        </property>
+        <property name="_expertMode" class="ptolemy.kernel.util.SingletonAttribute">
         </property>
         <port name="busHost" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
@@ -151,15 +168,15 @@
         </port>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={790, 136, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={790, 136, 515, 224}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[365.0, 265.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[410.0, 320.0]">
         </property>
     </entity>
-    <entity name="JavaScript" class="ptolemy.actor.lib.jjs.JavaScript">
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Start a Vert.x bus server in initialize(), and take it down in wrapup().&#10;var vertx = require('vertxEventBus');&#10;var httpServer;&#10;&#10;function initialize() {&#10;     httpServer = new vertx.VertxBusServer({port:8080});&#10;}&#10;&#10;function wrapup() {&#10;    if (httpServer) {&#10;         httpServer.closeServer();&#10;         httpServer = null;&#10;    }&#10;} &#10;&#10;">
+    <entity name="VertxStartServer" class="ptolemy.actor.lib.jjs.JavaScript">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Start a Vert.x bus server in initialize(), and take it down in wrapup().&#10;var vertx = require('vertxEventBus');&#10;var httpServer;&#10;&#10;function initialize() {&#10;     // To test delayed startup, use the following:&#10;     var delay = 1500;  // 1.5 seconds&#10;     setTimeout(function() {&#10;        httpServer = new vertx.VertxBusServer({port:8080});&#10;        print(&quot;Started server&quot;);&#10;     }, delay);&#10;&#10;     // For immediate startup, comment out the above, and uncomment this line:&#10;     // httpServer = new vertx.VertxBusServer({port:8080});&#10;}&#10;&#10;function wrapup() {&#10;    if (httpServer != null) {&#10;         httpServer.closeServer();&#10;         httpServer = null;&#10;    }&#10;} &#10;&#10;">
             <property name="style" class="ptolemy.actor.gui.style.TextStyle">
                 <property name="height" class="ptolemy.data.expr.Parameter" value="16">
                 </property>
@@ -167,7 +184,7 @@
                 </property>
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[375.0, 60.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[410.0, 215.0]">
         </property>
     </entity>
     <relation name="relation" class="ptolemy.actor.TypedIORelation">

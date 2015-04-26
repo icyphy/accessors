@@ -27,15 +27,21 @@
   <requires name="vertxEventBus"/>
   <documentation type="text/html">
     <![CDATA[
-FIXME: More.
+    This actor subscribes to a Vert.x event bus.
 	]]>
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
+
 var Vertx = require('vertxEventBus');
 var eb = null;
+var connectTries = 0;
+var maxTries = 5;
+var retryDelay = 2000;  // 2 seconds
+var opened = false;
 
 function onOpen() {
+  opened = true;
   eb.registerAddressListener(get(address), 
         function onReceived(msg) {
             send(msg, message);
@@ -43,15 +49,35 @@ function onOpen() {
 }
 
 exports.initialize = function() {
-    if (eb == null) {        
+    if (eb == null) { 
+        connectTries = 1;       
         eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});
         eb.on('open', onOpen);
+        eb.on('error', function(kind) {
+           // Upon connection error, try to connect again after 1 second, up to 3 times
+           if (kind != null && kind == 'connect') {
+              if (connectTries < maxTries) {
+                 setTimeout(function() {
+                    connectTries++;
+                   eb.connect();
+                 }, retryDelay);
+              } else {
+                 // TODO:  How should the accessor signal an error?
+                 // Create a "status" output port?  Throw an exception?  Call wrapup()?
+                 print("Subscriber cannot connect to the event bus.");
+              }
+           }
+        });
     }
 }
 
 exports.wrapup = function() {
-    eb.close();
+    if (opened) {
+       eb.close();
+    }
+    eb = null;
 }
-	// ]]>
+	// 
+   ]]>
   </script>
 </class>
