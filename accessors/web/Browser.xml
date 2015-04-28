@@ -8,7 +8,6 @@
   <requires name="browser"/>
   <input
     name="html"
-    value=""
     type="string"
     description="An HTML document to render in the browser."/>
   <documentation type="text/html">
@@ -19,10 +18,11 @@ FIXME.
   <script type="text/javascript">
     // <![CDATA[
     var browser = require('browser');
-	function fire() {
+	function display() {
 	  var toDisplay = get(html);
 	  browser.display(toDisplay);
 	}
+	addInputHandler(display, html);
 	// ]]>
   </script>
 </class>
