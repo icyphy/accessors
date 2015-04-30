@@ -23,15 +23,11 @@
   <output
     name="message"
     type="string"
-    description="The message received from the web socket server"/>   
+    description="The message received from the web socket server"/>
   <output
     name="error"
     type="string"
-    description="The error string of the connection."/>     
-  <output
-    name="status"
-    type="number"
-    description="The status code of the connection. 1: connection established, 0: connection closed, -1: an error occurred."/>
+    description="The error string of the connection."/>
   <requires name="webSocket"/>   
   <documentation type="text/html">
     <![CDATA[
@@ -60,23 +56,22 @@ This accessor generates output on the message port when a message is received fr
     dataQueueIsLocked = false;
   }
   function onOpen() {
-    print('client: connection to a server established');
+    console.log('Status: Connection established');
     opened = true;
-    send(1, status);
     sendDataInQueue();
   }
   function onClose(message) {
-    print('client: connection is closed. ' + message);
+    if (!message) {
+      message = '';
+    }
+    console.log('Status: Connection closed. ' + message);
     opened = false;
-    send(0, status);
   }
   function onError() {
-    print('client: an error occurred.');
+    console.log('Status: Connection error occurred.');
     opened = false;
-    send(-1, status);
   }
   function onMessage(received, flags) {
-    print('client: onMessage');
     if (flags.binary) {
       received = WebSocket.binToStr(received);
     }
@@ -91,7 +86,6 @@ This accessor generates output on the message port when a message is received fr
     inputQueue = [];
     addInputHandler(inputHandler, data);
     if (ws == null) {
-      print('client: connecting to a server');
       ws = new WebSocket.Socket(get(url));
       ws.on('open', onOpen);
       ws.on('message', onMessage);
@@ -102,7 +96,6 @@ This accessor generates output on the message port when a message is received fr
   function wrapup() {
     if (ws != null) {
       ws.close();
-      print('client: closing the socket');
     }
     opened = false;
   }
