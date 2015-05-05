@@ -7,14 +7,14 @@
   <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
   <input
     name="busHost"
-    value="localhost"
+    value=""
     type="string"
-    description="The IP address or DNS name of the host for the Vert.x bus server."/>
+    description="The name of the network interface to use for the Vert.x event bus. A blank string is interpreted as 'localhost'."/>
   <input
     name="busHostPort"
-    value="8080"
+    value="0"
     type="string"
-    description="The port for the host for the Vert.x bus."/>
+    description="The port for the Vert.x event bus. A value of 0 indicates a default port of 25500."/>
   <input
     name="address"
     value=""
@@ -22,73 +22,43 @@
     description="The event bus address, which is the name of the event stream."/>
   <input
     name="message"
-    type="string"
-    description="The message to the bus, as a JSON-encoded string."/>       
-  <requires name="vertxEventBus"/>
+    description="The message to the bus."/>       
+  <requires name="eventbus"/>
   <documentation type="text/html">
     <![CDATA[
-    This accessor publishes to a Vert.x event bus.
+    This accessor publishes to a Vert.x event bus. The input can be any data type
+    supported by accessors that has a string representation in JSON syntax. The
+    published even will be a string in JSON format.
+    <p>
+    The busHost is the name of the network interface through which to connect to the Vert.x event bus cluster.
+    The busHostPort is the port to use for this.
+    These two inputs are examined only at initialization time.
 	]]>
   </documentation>
   <script type="text/javascript">
     // <![CDATA[
-var Vertx = require('vertxEventBus');
-var eb = null;
-var pendingOutputs = [];
-var opened = false;
-var connectTries = 0;
-var maxTries = 5;
-var retryDelay = 2000;  // 2 seconds
-
-function onOpen() {
-  opened = true;
-}
+    
+var eventbus = require('eventbus');
+var bus;
 
 exports.initialize = function() {
-    if (eb == null) {    
-        connectTries = 1;    
-        eb = new Vertx.VertxBus({host: get(busHost), port: get(busHostPort)});
-        eb.on('open', onOpen);
-        eb.on('error', function(kind) {
-           // Upon connection error, try to connect again after 1 second, up to 3 times
-            if (kind != null && kind == 'connect') {
-               if (connectTries < maxTries) {
-                  setTimeout(function () {
-                     connectTries++;
-                     eb.connect();
-                  }, retryDelay);
-               } else {
-               // TODO:  How should the accessor signal an error?
-               // Create a "status" output port?  Throw an exception?  Call wrapup()?
-               print("Publisher cannot connect to the event bus.");
-               }
-            }
-        });
-    }
+  var port = get(busHostPort);
+  var host = get(busHost);
+  bus = new eventbus.VertxBus({'port':port, 'host':host});
 }
 
-exports.fire = function() {
+addInputHandler(function() {
+  var topic = get(address);
   var msg = get(message);
-  if (!opened) {
-    print('Queuing for later output: ' + msg);
-    pendingOutputs.push(msg);
-  } else {
-    for (var i = 0; i < pendingOutputs.length; i++) {
-      print('Sending to event bus: ' + pendingOutputs[i]);
-      eb.publish(get(address), pendingOutputs[i]);
-    }
-    pendingOutputs = [];
-    eb.publish(get(address), msg);
+  if (msg) {
+    bus.publish(topic, JSON.stringify(msg));
   }
-}
+}, message);
 
 exports.wrapup = function() {
-    if (opened) { 
-       eb.close(); 
-    }
-    opened = false;
-    eb = null;
+  bus.unsubscribe();
 }
+
 	//  ]]>
   </script>
 </class>
