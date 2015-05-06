@@ -5,30 +5,36 @@
 <class name="VertxSubscribe" extends="org.terraswarm.JSAccessor">
   <version>0.1</version>
   <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
+  <requires name="eventbus"/>
+  <input
+    name="address"
+    value="topic"
+    type="string"
+    description="The event bus address, or the name of the events to which to subscribe. This defaults to 'topic'."/>
+  <output
+    name="message"
+    description="The message from the bus."/>
+  <input
+    name="reply"
+    value=""
+    type="string"
+    description="The reply to send back to the sender for point-to-point messages, or the empty string to send no reply."/>
   <input
     name="busHost"
-    value="0"
-    type="int"
+    value=""
+    type="string"
     description="The name of the network interface to use for the Vert.x event bus. A blank string is interpreted as 'localhost'."/>
   <input
     name="busHostPort"
     value="0"
-    type="string"
+    type="int"
     description="The port for the Vert.x event bus. A value of 0 indicates a default port of 25500."/>
-  <input
-    name="address"
-    value=""
-    type="string"
-    description="The event bus address, or the name of the events to which to subscribe."/>
-  <output
-    name="message"
-    description="The message from the bus."/>
-  <requires name="eventbus"/>
   <documentation type="text/html">
     <![CDATA[
-    This actor subscribes to a Vert.x event bus.
-    It attempts to parse the message as a JSON string, but if that fails,
-    it just attempts to produce the output as is.
+    This actor subscribes to a Vert.x event bus on a specified channel.
+    The output data type is undeclared, because it depends on what is published
+    on the event bus. This implementation assumes that what is published on the event
+    bus is a string in JSON format.
     The busHost is the name of the network interface through which to connect to the Vert.x event bus cluster.
     The busHostPort is the port to use for this.
     These two inputs are examined only at initialization time.
@@ -51,6 +57,10 @@ exports.initialize = function() {
     currentAddress = get(address);
     bus.subscribe(currentAddress);
     bus.on(get(address), onReceived);
+    var replyText = get(reply);
+    if (replyText) {
+        bus.setReply(replyText);
+    }
 }
 
 addInputHandler(function() {
@@ -61,8 +71,17 @@ addInputHandler(function() {
     }
 }, address);
 
+addInputHandler(function() {
+    var replyText = get(reply);
+    if (replyText) {
+        bus.setReply(replyText);
+    } else {
+        bus.setReply(null);
+    }
+}, reply);
+
 exports.wrapup = function() {
-    bus.removeAllListeners();
+    bus.unsubscribe();
 }
   	// ]]>
   </script>
