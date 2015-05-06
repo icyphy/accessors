@@ -5,6 +5,20 @@
 <class name="VertxPublish" extends="org.terraswarm.JSAccessor">
   <version>0.1</version>
   <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
+  <requires name="eventbus"/>
+  <input
+    name="address"
+    value="topic"
+    type="string"
+    description="The event bus address, which is the name of the event stream. This defaults to 'topic'."/>
+  <input
+    name="message"
+    description="The message to the bus."/>       
+  <input
+    name="broadcast"
+    value="true"
+    type="boolean"
+    description="True to broadcast the message to all subscribers. False to send to exactly one subscriber, in a roughly round-robin fashion."/>
   <input
     name="busHost"
     value=""
@@ -13,17 +27,12 @@
   <input
     name="busHostPort"
     value="0"
+    type="int"
+    description="The port for the Vert.x event bus. A value of 0 indicates to just find an available port."/>
+  <output
+    name="reply"
     type="string"
-    description="The port for the Vert.x event bus. A value of 0 indicates a default port of 25500."/>
-  <input
-    name="address"
-    value=""
-    type="string"
-    description="The event bus address, which is the name of the event stream."/>
-  <input
-    name="message"
-    description="The message to the bus."/>       
-  <requires name="eventbus"/>
+    description="The reply, if any, received after a point-to-point send (where broadcast == false)."/>
   <documentation type="text/html">
     <![CDATA[
     This accessor publishes to a Vert.x event bus. The input can be any data type
@@ -47,11 +56,20 @@ exports.initialize = function() {
   bus = new eventbus.VertxBus({'port':port, 'host':host});
 }
 
+var replyHandler = function(message) {
+   send(message, reply);
+}
+
 addInputHandler(function() {
   var topic = get(address);
   var msg = get(message);
+  var all = get(broadcast);
   if (msg) {
-    bus.publish(topic, JSON.stringify(msg));
+    if (all) {
+      bus.publish(topic, JSON.stringify(msg));
+    } else {
+      bus.send(topic, JSON.stringify(msg), replyHandler);
+    }
   }
 }, message);
 
