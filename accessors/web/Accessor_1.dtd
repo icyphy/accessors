@@ -1,16 +1,20 @@
 <!-- TerraSwarm Level 1 Accessors DTD Version 0.1, http://terraswarm.org -->
 <!-- $Id: MoML_1.dtd 57539 2010-04-02 00:57:06Z cxh $ -->
 
-<!ELEMENT class (input | output | property | script | documentation | version | author)*>
+<!ELEMENT class (author | description | input | output | require | script | version)*>
 <!ATTLIST class
 	name CDATA #REQUIRED
     extends CDATA #IMPLIED
+    implements CDATA #IMPLIED
+>
+
+<!ELEMENT interface (author | description | input | output | require | version)*>
+<!ATTLIST class
+	name CDATA #REQUIRED
+    implements CDATA #IMPLIED
 >
 
 <!ELEMENT author (#PCDATA)>
-<!ATTLIST author
-	type CDATA #IMPLIED
->
 
 <!ELEMENT description (#PCDATA)>
 <!ATTLIST description
@@ -32,12 +36,11 @@
     description CDATA #IMPLIED
 >
 
-<!ELEMENT script (#PCDATA)>
-<!ATTLIST script
-	type CDATA #IMPLIED
+<!ELEMENT require (#PCDATA)>
+<!ATTLIST require
+	name CDATA #IMPLIED
 >
 
+<!ELEMENT script (#PCDATA)>
+
 <!ELEMENT version (#PCDATA)>
-<!ATTLIST version
-	type CDATA #IMPLIED
->
