@@ -68,9 +68,9 @@ addInputHandler(function() {
   var all = get(broadcast);
   if (msg) {
     if (all) {
-      bus.publish(topic, JSON.stringify(msg));
+      bus.publish(topic, msg);
     } else {
-      bus.send(topic, JSON.stringify(msg), replyHandler);
+      bus.send(topic, msg, replyHandler);
     }
   }
 }, message);
