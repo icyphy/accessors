@@ -60,7 +60,7 @@
     </p><p>
     Verifying the light: The final initialization step is to verify
     that the specified light is accessible. If it is not, this accessor throws
-    an error, where the error message provides a list of available lights.
+    an exception, where the error message provides a list of available lights.
     </p><p>
     Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
     The bridge acquires its address via DHCP, so the address will typically change
@@ -89,7 +89,7 @@ var url;
 function initialize() {
    ipAddress = get('bridgeIPAddress');
    if (ipAddress == null || ipAddress.trim() == "") {
-      error("No IP Address is given for the Hue Bridge.");
+      throw "No IP Address is given for the Hue Bridge.";
    }
    url = "http://" + ipAddress + "/";
 
@@ -98,7 +98,7 @@ function initialize() {
       httpRequest(url, "GET", null, "", timeout);
    } catch ( ex) {
       // FIXME: We should do a UPnP discovery here and find a bridge.
-      error("No Hue bridge responding at " + url + "\n" + ex);
+      throw "No Hue bridge responding at " + url + "\n" + ex;
    }
    // Next, make sure that "ptolemyuser" is an authorized user.
    url = url + "api/ptolemyuser/";
@@ -115,7 +115,7 @@ function initialize() {
          if (lights instanceof Array && lights.length > 0 && lights[0].error) {
              var description = lights[0].error.description;
              if (description.match("unauthorized user")) {
-                error("Failed to create user.");
+                throw "Failed to create user.";
              }
          }
       }
@@ -125,8 +125,8 @@ function initialize() {
    try {
       reachable = lights.lights[get('lightID')].state.reachable;
    } catch (e) {
-      error("Failed to access the state of light "
-         + get('lightID') + " at URL " + url + "\n" + e);
+      throw "Failed to access the state of light "
+         + get('lightID') + " at URL " + url + "\n" + e;
    }
 
    if (! reachable) {
@@ -152,7 +152,7 @@ function initialize() {
       } catch (e) {
          // Ignore and don't give further info about reachable lights.
       }
-      error("Light " + get('lightID') + " is not reachable at " + url + other);
+      throw "Light " + get('lightID') + " is not reachable at " + url + other;
    }
    url = url + "lights/" + get('lightID') + "/state";
 }
@@ -171,10 +171,10 @@ function fire() {
    try {
       var response = httpRequest(url, "PUT", null, command, timeout);
       if (response instanceof Array && response.length > 0 && response[0].error) {
-         error("Server responds with error: " + response[0].error.description);
+         throw "Server responds with error: " + response[0].error.description;
       }
    } catch(e) {
-      error("Error accessing network: " + e);
+      throw "Error accessing network: " + e;
    }
 }
 
@@ -193,7 +193,7 @@ function wrapup() {
 function limit(value, low, high) {
    var parsed = parseInt(value);
    if (!parsed) {
-      error("Expected a number between " + low + " and " + high + ", but got " + value);
+      throw "Expected a number between " + low + " and " + high + ", but got " + value;
    }
    if (parsed < low) {
       return low;
