@@ -16,7 +16,7 @@
   <output
     name="value"
     type="string"/>    
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor reads data from a key-value store location, looking for all keys at that
 location that start with "sensortag". If the <i>id</i> is <i>n</i>, then
@@ -25,13 +25,13 @@ It then outputs whatever is stored associated with that key.
 <p>
 The server side is responsible for getting data from a SensorTag into the key-value store.
 	]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
-    var storeLocation = get(store);
+    var storeLocation = get('store');
     var url;
     var list = JSON.parse(readURL(storeLocation + "/list"));
-    var id = get(id);
+    var id = get('id');
     var count = 0;
     for (var i = 0; i < list.length; i++) {
       if (list[i].match('^sensortag')) {
@@ -44,7 +44,7 @@ The server side is responsible for getting data from a SensorTag into the key-va
     }
 	function fire() {
 	  var reading = readURL(url);
-	  send(reading, value);
+	  send(reading, 'value');
 	}
 	// ]]>
   </script>

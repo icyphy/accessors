@@ -29,14 +29,14 @@
     type="string"
     description="The error string of the connection."/>
   <requires name="webSocket"/>   
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor, when initialized, connects to the web socket server,
 when fired, sends the data on the data port,
 and when wrapped up, closes the connection.
 This accessor generates output on the message port when a message is received from the server.
   ]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
   var WebSocket = require('webSocket');
