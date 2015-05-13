@@ -26,7 +26,7 @@
     name="z"
     type="number"
     description="The z-axis acceleration (a double)"/>
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
     This accessor reads data from a three-axis accelerometer via a RESTful interface.
     The accessor constructs a URL from the <i>URL</i> and <i>sensorID</i> parameters
@@ -41,12 +41,12 @@
     each with a number for a value.  This accessor converts the numbers into double
     tokens and sends them to the output ports.
 	]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
 
 function fire() {
-   var url = get(URL) + "get?sid=" + get(sensorID);
+   var url = get('URL') + "get?sid=" + get(sensorID);
    var result = readURL(url);
    var parsed;
    try {
@@ -57,9 +57,9 @@ function fire() {
    }
    try {
       // Result is expected to be an array of length one.
-      send(parseFloat(parsed[0].x), x);
-      send(parseFloat(parsed[0].y), y);
-      send(parseFloat(parsed[0].z), z);
+      send(parseFloat(parsed[0].x), 'x');
+      send(parseFloat(parsed[0].y), 'y');
+      send(parseFloat(parsed[0].z), 'z');
    } catch (e) {
       error("Unexpected format for accelerometer data: " + result);
    }

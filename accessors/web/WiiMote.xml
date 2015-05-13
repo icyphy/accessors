@@ -22,7 +22,7 @@
     name="z"
     type="number"
     description="The z axis acceleration."/>
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor gets accelerometer data from a Nintendo WiiMote.
 The accessor runs out of the box, but the server side requires some setup to publish
@@ -31,7 +31,7 @@ There is a Ptolemy II model that will do this publishing, but
 it is not checked in to Ptolemy II SVN repository, because it includes GPLd
 code for the Bluetooth interface.
 	]]>
-  </documentation>	  
+  </description>	  
   <script type="text/javascript">
     // <![CDATA[
 
@@ -55,9 +55,9 @@ function fire() {
       // What to do here?
       error("Unexpected result from WiiMote server: " + result);
    }
-   send(parsed.x, x);
-   send(parsed.y, y);
-   send(parsed.z, z);
+   send(parsed.x, 'x');
+   send(parsed.y, 'y');
+   send(parsed.z, 'z');
 }
 
 	// ]]>

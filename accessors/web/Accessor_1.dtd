@@ -12,8 +12,8 @@
 	type CDATA #IMPLIED
 >
 
-<!ELEMENT documentation (#PCDATA)>
-<!ATTLIST documentation
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description
 	type CDATA #IMPLIED
 >
 

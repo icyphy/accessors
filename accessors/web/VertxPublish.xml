@@ -34,7 +34,7 @@
     name="reply"
     type="JSON"
     description="The reply, if any, received after a point-to-point send (where broadcast == false)."/>
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor publishes to a Vert.x event bus, which is a peer-to-peer publish-and-subscribe system. The published data will be sent to any subscriber that subscribes to the same address and runs in the same Vertx cluster (see the VertxSubscribe accessor). The Vertx cluster normally includes all machines that hear multicast packets sent by the machine hosting this accessor.
 <p>
@@ -45,7 +45,7 @@ If the broadcast input is set to false, then instead of broadcasting the message
 The busHost input specifies the name of the network interface through which to connect to the Vert.x event bus cluster, and busHostPort specifies the port to use for this. Normally, you can leave these at their default values unless you need to need to use a network interface that is not 'localhost' or you need to use a particular port. These two inputs are examined only at initialization time, so changing them during execution of a swarmlet will have no effect.
 </p>
 	]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
     

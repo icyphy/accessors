@@ -45,7 +45,7 @@
     type="number"
     value="4"
     description="The transition time, in multiples of 100ms (an integer between 0 and 65535)."/>
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
     This accessor controls a Philips Hue lightbulb.
     <p>
@@ -74,7 +74,7 @@
     accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
     </p>
    ]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
 
@@ -87,7 +87,7 @@ var url;
 // alert("Connecting to: " + bridge);
 
 function initialize() {
-   ipAddress = get(bridgeIPAddress);
+   ipAddress = get('bridgeIPAddress');
    if (ipAddress == null || ipAddress.trim() == "") {
       error("No IP Address is given for the Hue Bridge.");
    }
@@ -123,10 +123,10 @@ function initialize() {
    // Next, make sure the specified light is reachable.
    var reachable;
    try {
-      reachable = lights.lights[get(lightID)].state.reachable;
+      reachable = lights.lights[get('lightID')].state.reachable;
    } catch (e) {
       error("Failed to access the state of light "
-         + get(lightID) + " at URL " + url + "\n" + e);
+         + get('lightID') + " at URL " + url + "\n" + e);
    }
 
    if (! reachable) {
@@ -152,21 +152,21 @@ function initialize() {
       } catch (e) {
          // Ignore and don't give further info about reachable lights.
       }
-      error("Light " + get(lightID) + " is not reachable at " + url + other);
+      error("Light " + get('lightID') + " is not reachable at " + url + other);
    }
-   url = url + "lights/" + get(lightID) + "/state";
+   url = url + "lights/" + get('lightID') + "/state";
 }
 
 function fire() {
    var command = '{"on":false,';
-   if (get(on) === "true") {
+   if (get('on') === "true") {
       command = '{"on":true,';
    }
    command = command 
-         + '"bri":' + limit(get(brightness), 0, 255) + ','
-         + '"hue":' + limit(get(hue), 0, 65280) + ','
-         + '"sat":' + limit(get(saturation), 0, 255) + ','
-         + '"transitiontime":' + limit(get(transitionTime), 0, 65535)
+         + '"bri":' + limit(get('brightness'), 0, 255) + ','
+         + '"hue":' + limit(get('hue'), 0, 65280) + ','
+         + '"sat":' + limit(get('saturation'), 0, 255) + ','
+         + '"transitiontime":' + limit(get('transitionTime'), 0, 65535)
          + '}';
    try {
       var response = httpRequest(url, "PUT", null, command, timeout);

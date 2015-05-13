@@ -39,12 +39,12 @@
     name="windDirection"
     type="number"
     description="Wind source direction (in degrees, relative to north)."/>       
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor, when fired, reads the current weather data from
 <a href="http://openweathermap.org">openweathermap.org</a>.
 	]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
 	function fire() {
