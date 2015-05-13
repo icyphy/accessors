@@ -28,7 +28,7 @@
     name="error"
     type="string"
     description="The error string of the connection."/>
-  <requires name="webSocket"/>   
+  <require name="webSocket"/>   
   <description type="text/html">
     <![CDATA[
 This accessor, when initialized, connects to the web socket server,
