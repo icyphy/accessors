@@ -10,19 +10,19 @@
     name="html"
     type="string"
     description="An HTML document to render in the browser."/>
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
-FIXME.
+FIXME: Fill in a description here.
 	]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
     var browser = require('browser');
 	function display() {
-	  var toDisplay = get(html);
+	  var toDisplay = get('html');
 	  browser.display(toDisplay);
 	}
-	addInputHandler(display, html);
+	addInputHandler(display, 'html');
 	// ]]>
   </script>
 </class>

@@ -26,11 +26,7 @@
     name="result"
     type="string"
     description="Value retrieved from or written to the key-value store."/>    
-  <output
-    name="error"
-    type="string"
-    description="Error accessing the key-value store or producing the output."/>    
-  <documentation type="text/html">
+  <description type="text/html">
     <![CDATA[
 This accessor reads or writes data to a key-value store web service.
 A URL for the service is specified by the <i>storeLocation</i> parameter.
@@ -51,7 +47,7 @@ actor sets the value. If it is empty, then this actor retrieves the value.
 <p>
 If an error occurs accessing the key-value store (e.g., no store is found at the specified
 URL, or no value is found with the specified key),
-then an error message is produced on the <i>error</i> output.
+then an exception is thrown.
 <p>
 This accessor assumes that the protocol implemented at that location matches
 the specification below for the default location:
@@ -78,40 +74,36 @@ encoded using the JavaScript encodeURIComponent() function,
 and on retrieval, decoded using decodeURIComponent(),
 and hence can include any text characters.
     ]]>
-  </documentation>
+  </description>
   <script type="text/javascript">
     // <![CDATA[
 function fire() {
-    var store = get(storeLocation);
-    var theKey = get(key);
-    var toRemove = get(remove);
-    var theValue = get(value);
+    var store = get('storeLocation');
+    var theKey = get('key');
+    var toRemove = get('remove');
+    var theValue = get('value');
     var url = store + '/get?id=' + theKey;
     var produce;
-    try {
-        if (toRemove) {
-            if (theKey != "") {
-                produce = readURL(url);
-                url = store + '/delete?id=' + theKey;
-                readURL(url);
-                if (produce != "") {
-                    send(produce, result);
-                }
-            }
-        } else {
-            // toRemove == false. If there is a value, use it to set.
-            if (theValue != "") {
-                // FIXME: Escape theValue to make a valid URL.
-                url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
-                readURL(url);
-                send(theValue, result);
-            } else {
-                var valueFromStore = decodeURIComponent(readURL(url));
-                send(valueFromStore, result);
-            }
+    if (toRemove) {
+       if (theKey != "") {
+           produce = readURL(url);
+           url = store + '/delete?id=' + theKey;
+           readURL(url);
+           if (produce != "") {
+               send(produce, 'result');
+           }
         }
-    } catch (exception) {
-        send(exception.toString(), error);
+    } else {
+        // toRemove == false. If there is a value, use it to set.
+        if (theValue != "") {
+            // FIXME: Escape theValue to make a valid URL.
+            url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
+            readURL(url);
+            send(theValue, 'result');
+        } else {
+            var valueFromStore = decodeURIComponent(readURL(url));
+            send(valueFromStore, 'result');
+        }
     }
 }
     // ]]>
