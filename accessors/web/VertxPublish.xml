@@ -5,7 +5,7 @@
 <class name="VertxPublish" extends="org.terraswarm.JSAccessor">
   <version>0.1</version>
   <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
-  <requires name="eventbus"/>
+  <require name="eventbus"/>
   <input
     name="address"
     value="topic"

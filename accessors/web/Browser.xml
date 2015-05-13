@@ -5,7 +5,7 @@
 <class name="Browser" extends="org.terraswarm.JSAccessor">
   <version>0.1</version>
   <author>Christopher Brooks, Edward A. Lee, Marten Lohstroh</author>
-  <requires name="browser"/>
+  <require name="browser"/>
   <input
     name="html"
     type="string"
