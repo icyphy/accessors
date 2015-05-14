@@ -3,7 +3,7 @@
 <!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
     "http://www.terraswarm.org/accessors/Accessor_1.dtd">
 <class name="WebSocketClient" extends="org.terraswarm.JSAccessor">
-  <version>0.1</version>
+  <version>0.1 $Date$</version>
   <author>Hokeun Kim</author>
   <input
     name="url"
