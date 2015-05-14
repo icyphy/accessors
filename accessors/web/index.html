@@ -7,23 +7,30 @@
   </head>
   <body>
     <h1>Terraswarm Accessors</h1>
-    <p>Accessors, described in a draft paper, <a href="http://www.terraswarm.org/pubs/332.html">A Vision of Swarmlets</a>, 
-      are actors that provide access to a remote service, sensor, or actuator. An accessor is instantiated by an
-      <b>accessor host</b>, which is a program or browser script. The host uses the accessor as if it were a local
+    <p>Accessors, described in the paper, <a href="http://www.terraswarm.org/pubs/332.html">A Vision of Swarmlets</a>, 
+      are actors that provide access to a (typically remote) service, sensor, or actuator. An accessor is instantiated by an
+      <b>accessor host</b> or <b>swarmlet host</b>, which is a program or browser script. The host uses the accessor as if it were a local
       source and/or sink for data and/or commands.
       An accessor host is to the Internet of Things what a browser is to the Internet.
       It renders a remote service by locally executing a proxy for that service.
     </p>
 <p><font color="red">The <a href="http://www.terraswarm.org/accessors/wiki/">wiki page</a> for this workgroup is the place to go to participate in the design of the accessor mechanism.</font></p>
     <p>
-      The TerraSwarm project has developed a "version 0" accessor design and a suite of accessor hosts that should be viewed as concept demonstrations. We are further developing the design.
-      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (the Development Version) is currently
+      The TerraSwarm project has developed a "version 0.1" accessor design and a suite of accessor hosts that should be viewed as concept demonstrations. We are further developing the design.
+      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (the Development Version in the SVN repository) is currently
       the most complete prototype of an accessor host. In Ptolemy II, the accessors listed here can be
       instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
       a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
-      To view the accessor script, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
+      To view the accessor script from within Ptolemy II, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
+    <p>
+    There are two distinct syntaxes for accessors, a JavaScript syntax and an XML syntax.  The XML syntax is intended as an intermediate form and is designed to be able to accomodate evolution to other languages besides JavaScript. 
+    <h2>Example JavaScript Accessors</h2>
+    <ul>
+      <li><a href="/accessors/StockTick.js">StockTick</a></li>
+    </ul>
 
-    <h2>Example accessors</h2>
+    <h2>Example XML Accessors</h2>
+    The following example accessors are defined in an XML file. If you open the XML file in a browser, a browser host instantiates the accessor and provides a form entry for testing it. Not all of these accessors work in the browser host, however, because some require packages that are not provided by the browser host. All of these work in the Ptolemy II host, and some of them in the Node.js host.
     <ul>
       <li><a href="/accessors/Accelerometer.xml">Accelerometer</a> (see <a href="Accelerometer.html">source</a> file)</li>
       <li><a href="/accessors/GeographicLocationByIP.xml">GeographicLocationByIP</a> (see <a href="GeographicLocationByIP.html">source</a> file)</li>
@@ -40,7 +47,7 @@
 
     <h1>Demos</h1>
     <p>To run the following models, save them to some directory, and open them with a current version of Ptolemy II
-      (version 10.0 or later).</p>
+      (SVN Development Version).</p>
     <ul>
       <li><b>StockTick</b>:
 	The
@@ -69,7 +76,7 @@
 
     <h1>Additional Information</h1>
     <ul>
-      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition that gives the interface specification for accessors.</li>
+      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition that gives the interface specification for XML accessors.</li>
       <li> <a href="/accessors/wiki">The Accessors Wiki</a></li>
     </ul>
 

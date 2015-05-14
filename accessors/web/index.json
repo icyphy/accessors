@@ -6,6 +6,7 @@
     "Hue.xml",
     "SensorTag.xml",
     "StockTick.xml",
+    "StockTick.js",
     "VertxPublish.xml",
     "VertxSubscribe.xml",
     "Weather.xml",
