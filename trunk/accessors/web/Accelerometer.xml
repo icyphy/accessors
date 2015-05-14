@@ -4,7 +4,7 @@
     "http://www.terraswarm.org/accessors/Accessor_1.dtd">
 <!-- Accessor for a JSON formatted service providing X,Y, Z accelerometer data. -->
 <class name="Accelerometer" extends="org.terraswarm.JSAccessor">
-  <version>0.1 $Date$</version>
+  <version>0.1 $LastChangedDate$</version>
   <author>Edward A. Lee</author>
   <input
     name="sensorID"
