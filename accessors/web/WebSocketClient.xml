@@ -13,7 +13,7 @@
   <input
     name="data"
     value="Hello, server!"
-    type="string"
+    type="JSON"
     description="The data to be sent to the web socket server during the next firing."/>
   <input
     name="enable"
@@ -22,7 +22,7 @@
     description="When this is set true, this accessor sends the data on firing."/>
   <output
     name="message"
-    type="string"
+    type="JSON"
     description="The message received from the web socket server"/>
   <output
     name="error"
