@@ -61,7 +61,7 @@ a string in UTF-8 that encodes a JSON object.
   }
   
   function onError(message) {
-    console.log('Status: Connection error occurred: ' + message);
+    console.error(message);
     throw(message);
   }
   
