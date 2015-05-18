@@ -6,109 +6,84 @@
   <version>0.1 $Date$</version>
   <author>Hokeun Kim</author>
   <input
-    name="url"
-    value="ws://localhost:8080"
+    name="server"
+    value="localhost"
     type="string"
-    description="The url of the web socket server."/>
+    description="The IP address or domain name of the server."/>
   <input
-    name="data"
-    value="Hello, server!"
-    type="JSON"
-    description="The data to be sent to the web socket server during the next firing."/>
+    name="port"
+    value="8080"
+    type="number"
+    description="The port that the web socket server listens to."/>
   <input
-    name="enable"
-    value="true"
-    type="boolean"
-    description="When this is set true, this accessor sends the data on firing."/>
-  <output
-    name="message"
+    name="toSend"
+    value=""
     type="JSON"
-    description="The message received from the web socket server"/>
+    description="The data to be sent to the web socket server."/>
   <output
-    name="error"
-    type="string"
-    description="The error string of the connection."/>
+    name="received"
+    type="JSON"
+    description="The message received from the web socket server."/>
   <require name="webSocket"/>   
   <description type="text/html">
     <![CDATA[
-This accessor, when initialized, connects to the web socket server,
-when fired, sends the data on the data port,
-and when wrapped up, closes the connection.
-This accessor generates output on the message port when a message is received from the server.
+This accessor sends and/or receives messages from a web socket
+at the specified host and port. In initialize(), it connects to the web socket server.
+Whenever an input is received on the 'toSend' input, the message is sent to
+the socket.
+Whenever a message is received from the socket, that message is
+produced on the 'received' output.
+When wrapup() is invoked, this accessor closes the connection.
+The data can be any type that has a JSON representation.
+For incomming messages, this accessor assumes that the message is
+a string in UTF-8 that encodes a JSON object.
   ]]>
   </description>
   <script type="text/javascript">
     // <![CDATA[
   var WebSocket = require('webSocket');
-  var opened = false;
-  var dataQueue = [];
-  var dataQueueIsLocked = false;
-  function sendDataInQueue() {
-    while (dataQueueIsLocked);
-    dataQueueIsLocked = true;
-    if (opened) {
-      var queueLength = dataQueue.length;
-      for (var i = 0; i < queueLength; i++) {
-        ws.send(dataQueue[i]);
-      }
-      dataQueue = [];
-    }
-    dataQueueIsLocked = false;
+  var client = null;
+
+  exports.initialize = function() {
+    client = new WebSocket.Client(get('server'), get('port'));
+    client.on('open', onOpen);
+    client.on('message', onMessage);
+    client.on('close', onClose);
+    client.on('error', onError);
   }
+
   function onOpen() {
     console.log('Status: Connection established');
-    opened = true;
-    sendDataInQueue();
   }
+  
   function onClose(message) {
-    if (!message) {
-      message = '';
-    }
-    console.log('Status: Connection closed. ' + message);
-    opened = false;
+    console.log('Status: Connection closed: ' + message);
   }
-  function onError() {
-    console.log('Status: Connection error occurred.');
-    opened = false;
+  
+  function onError(message) {
+    console.log('Status: Connection error occurred: ' + message);
+    throw(message);
   }
-  function onMessage(received, flags) {
-    if (flags.binary) {
-      received = WebSocket.binToStr(received);
-    }
-    send(received, message);
+  
+  function onMessage(message) {
+    console.log('Received from web socket: ' + message);
+    send(message, 'received');
   }
-  var ws = null;
-  var inputQueue = [];
+  
   function inputHandler() {
-    inputQueue.push(get(data));
-  }
-  function initialize() {
-    inputQueue = [];
-    addInputHandler(inputHandler, data);
-    if (ws == null) {
-      ws = new WebSocket.Socket(get(url));
-      ws.on('open', onOpen);
-      ws.on('message', onMessage);
-      ws.on('close', onClose);
-      ws.on('error', onError);
+    var data = get('toSend');
+    if (data) {
+      console.log("Sending to socket: " + data);
+      client.send(data);
     }
   }
+  addInputHandler(inputHandler, 'toSend');
+
   function wrapup() {
-    if (ws != null) {
-      ws.close();
+    if (client != null) {
+      client.close();
     }
-    opened = false;
   }
-  function fire() {
-    if (get(enable)) {
-      var queueLength = inputQueue.length;
-      for (var i = 0; i < queueLength; i++) {
-        dataQueue.push(inputQueue[i]);
-      }
-      inputQueue = [];
-    }
-    sendDataInQueue();
-  }
-  // ]]>
+    // ]]>
   </script>
 </class>
