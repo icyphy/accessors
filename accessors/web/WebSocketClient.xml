@@ -45,7 +45,7 @@ a string in UTF-8 that encodes a JSON object.
   var client = null;
 
   exports.initialize = function() {
-    client = new WebSocket.Client(get('server'), get('port'));
+    client = new WebSocket.Client({'host':get('server'), 'port':get('port')});
     client.on('open', onOpen);
     client.on('message', onMessage);
     client.on('close', onClose);
