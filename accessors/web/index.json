@@ -1,5 +1,6 @@
 [
     "Accelerometer.xml",
+    "AudioPlayer.js",
     "Browser.xml",
     "GeographicLocationByIP.xml",
     "KeyValueStore.xml",
