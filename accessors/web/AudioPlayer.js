@@ -14,12 +14,15 @@ var player = null;
 var audio = require("audio");
 
 exports.initialize = function() {
-    var sinusoid = new Array(128);
+    // Create an empty array.
+    var sinusoid = [];
     // As a test, produce about 2 seconds of sound in 128-sample chunks.
     var n = 0;
     player = new audio.Player();
     for (var j = 0; j < 128; j++) {
         for (var i = 0; i < 128; i++) {
+            // Note that in JavaScript, arrays don't have fixed size.
+            // They grow as needed.
             sinusoid[i] = Math.sin(2 * Math.PI * 440 * n++/ 8000);
         }
         player.play(sinusoid);
