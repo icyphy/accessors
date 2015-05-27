@@ -43,8 +43,12 @@ function getPrice() {
     });
 }
 
-// Invoke the getPrice function each time a 'symbol' input arrives.
-var handle = addInputHandler(getPrice, 'symbol');
+var handle = null;
+
+exports.initialize = function() {
+    // Invoke the getPrice function each time a 'symbol' input arrives.
+    handle = addInputHandler(getPrice, 'symbol');
+}
 
 exports.wrapup = function() {
     // Failing to do this will likely trigger an exception when the model stops running,
