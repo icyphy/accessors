@@ -8,6 +8,7 @@
     "SensorTag.xml",
     "StockTick.xml",
     "StockTick.js",
+    "UDPSocket.js",
     "VertxPublish.xml",
     "VertxSubscribe.xml",
     "Weather.xml",
