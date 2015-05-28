@@ -8,7 +8,7 @@ exports.setup = function() {
     accessor.author('Hokeun Kim');
     accessor.version('0.1 $Date$');
     accessor.input('port', {
-        'value':'22000',
+        'value': 22000,
         'type':'number',
         'description':'The port number.'
     });
@@ -33,6 +33,7 @@ var socket = null;
 exports.initialize = function() {
     // Invoke the getPrice function each time a 'symbol' input arrives.
     socket = UDPSocket.createSocket();
+    socket.on('message', onMessage);
     var port = get('port');
     socket.bind(port);
 }
