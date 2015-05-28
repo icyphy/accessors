@@ -8,7 +8,7 @@ exports.setup = function() {
     accessor.author('Hokeun Kim');
     accessor.version('0.1 $Date$');
     accessor.input('port', {
-        'value': 22000,
+        'value': 8084,
         'type':'number',
         'description':'The port number.'
     });
@@ -31,7 +31,6 @@ function onMessage(message) {
 var socket = null;
 
 exports.initialize = function() {
-    // Invoke the getPrice function each time a 'symbol' input arrives.
     socket = UDPSocket.createSocket();
     socket.on('message', onMessage);
     var port = get('port');
@@ -39,8 +38,5 @@ exports.initialize = function() {
 }
 
 exports.wrapup = function() {
-    // Failing to do this will likely trigger an exception when the model stops running,
-    // because the getPrice() function will attempt to send an output after the model
-    // has stopped.
     socket.close();
 }
