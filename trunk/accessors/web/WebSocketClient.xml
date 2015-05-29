@@ -44,12 +44,14 @@ a string in UTF-8 that encodes a JSON object.
   var WebSocket = require('webSocket');
   var client = null;
 
+  var handle;
   exports.initialize = function() {
     client = new WebSocket.Client({'host':get('server'), 'port':get('port')});
     client.on('open', onOpen);
     client.on('message', onMessage);
     client.on('close', onClose);
     client.on('error', onError);
+    handle = addInputHandler(inputHandler, 'toSend');
   }
 
   function onOpen() {
@@ -77,11 +79,13 @@ a string in UTF-8 that encodes a JSON object.
       client.send(data);
     }
   }
-  addInputHandler(inputHandler, 'toSend');
 
   function wrapup() {
-    if (client != null) {
+    if (client) {
       client.close();
+    }
+    if (handle !== null) {
+        removeInputHandler(handle, 'toSend');
     }
   }
     // ]]>
