@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- $Id: build.xml.in 72375 2015-05-19 23:58:23Z cxh $ -->
+
+<project basedir="." default="build" name="accessors" 
+         >
+  <!-- We can refer to any environment variable FOO as ${env.FOO} -->
+  <property environment="env" />
+
+  <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
+  <property name="jsdoc.home" value="vendors/jsdoc" />
+
+  <target name="build"
+          depends="jsdoc"
+          description="Build accessors.  Right now, only jsdoc is run.">
+  </target>
+
+  <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
+    <available property="vendors.jsdoc.exists" file="${jsdoc.home}/jsdoc"/>
+  </target>
+
+  <target name="jsdoc"
+          depends="vendors-jsdoc"
+          description="Run jsdoc to generate documentation for JavaScript files."
+          >
+    <echo>Invoke jsdoc to generate documentation for .js files.
+    The output appears in doc/jsdoc/index.html
+    </echo>
+    <exec executable="${jsdoc.home}/jsdoc">
+      <arg value="--verbose" />
+      <arg value="-c" />
+      <arg value="jsdoc.json" />
+      <arg value="-d" />
+      <arg value="doc/jsdoc" />
+      <arg value="." />
+    </exec>
+  </target>
+
+  <target name="vendors-jsdoc"
+	  depends="-check-vendors-jsdoc"
+	  description="Check out jsdoc using git to create vendors/jsdoc."
+	  unless="${vendors.jsdoc.exists}">
+      <mkdir dir="${basedir}/vendors"/>
+      <exec dir="${basedir}/vendors"
+            executable="git">
+        <arg value="clone"/>
+        <arg value="https://github.com/jsdoc3/jsdoc.git"/>
+      </exec>
+  </target>
+</project>
