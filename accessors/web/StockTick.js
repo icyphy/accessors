@@ -1,30 +1,39 @@
-// Accessor that retrieves a stock price from a Yahoo server.
-
-// This accessor requires the optional 'httpClient' module, which may or may
-// not be provided by an accessor host. Most hosts will provide this module.
+/** Retrieve a stock price from a Yahoo server.
+ *  This accessor reacts to a *symbol* input by issuing a query to a web server
+ *  for the most recent trade prices of the common stock whose symbol is given
+ *  by the input. When the server replies, this accessor produces the most
+ *  recent trade price on the *price* output.
+ *
+ *  The request to the web server is asynchronous. This means that the outputs
+ *  may not be produced in the same order as the inputs.
+ *  FIXME: This is seriously problematic. Probably should change this to use
+ *  a blocking call by default.
+ *
+ *  This accessor requires the optional 'httpClient' module, which may or may
+ *  not be provided by an accessor host. Most hosts will provide this module.
+ *
+ *  @accessor StockTick
+ *  @author Edward A. Lee (eal@eecs.berkeley.edu)
+ *  @version 0.1 $Date$
+ *  @input {string} symbol The stock symbol. Default value is 'YHOO'.
+ *  @output {number} price The most recent trade price for the stock.
+ */
 var http = require('httpClient');
 
-// Set up the accessor. In an XML specification, this information would
-// be provided in XML syntax.
+/** Set up the accessor by defining the inputs and outputs.
+ */
 exports.setup = function() {
-    accessor.author('Edward A. Lee');
-    accessor.version('0.1 $Date$');
     accessor.input('symbol', {
         'value':'YHOO',
         'type':'string',
-        'description':'The stock symbol.'
     });
     accessor.output('price', {
         'type':'number',
-        'description':'The most recent stock price (bid).'
     });
-    accessor.description(
-        'This accessor, when fired, reads the most recent trade price for the specified stock symbol from a Yahoo server.',
-        'text/html'
-    );
 };
 
-// Define the functionality.
+/** Function that retrieves the stock price.
+ */
 function getPrice() {
     // Read the current value of the 'symbol' input.
     var stock = get('symbol');
@@ -45,11 +54,13 @@ function getPrice() {
 
 var handle = null;
 
+/** Initialize the accessor by attaching an input handler to the *symbol* input. */
 exports.initialize = function() {
     // Invoke the getPrice function each time a 'symbol' input arrives.
     handle = addInputHandler(getPrice, 'symbol');
 }
 
+/** Remove the input handler. */
 exports.wrapup = function() {
     // Failing to do this will likely trigger an exception when the model stops running,
     // because the getPrice() function will attempt to send an output after the model
