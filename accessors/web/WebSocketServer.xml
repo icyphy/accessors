@@ -70,12 +70,12 @@ a string in UTF-8 that encodes a JSON object.
   function onConnection(socket) {
     var id = socketID++;
     console.log('Server: new socket established with ID: ' + id);
-    send({'socketID':id, 'status':'open'}, 'connection');
+    send('connection', {'socketID':id, 'status':'open'});
     socket.on('message', function(message) {
-      send({'socketID':id, 'message':message}, 'received');
+      send('received', {'socketID':id, 'message':message});
     });
     // For each new connection, add an input handler.
-    handlers.push(addInputHandler(function() {
+    handlers.push(addInputHandler('toSend', function() {
       var data = get('toSend');
       if (data) {
         if (data.socketID && data.message) {
@@ -91,10 +91,10 @@ a string in UTF-8 that encodes a JSON object.
           socket.send(data);
         }
       }
-    }, 'toSend'));
+    }));
     
     socket.on('close', function(message) {
-      send({'socketID':id, 'status':'closed'}, 'connection');
+      send('connection', {'socketID':id, 'status':'closed'});
     });
   }
   

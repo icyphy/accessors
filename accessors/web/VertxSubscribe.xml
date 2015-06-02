@@ -49,41 +49,44 @@ var bus;
 var currentAddress;
 
 var onReceived = function(msg) {
-    send(msg, message);
+    send('message', msg);
 }
+
+var addressHandle, replyHandle;
 
 exports.initialize = function() {
-    var port = get(busHostPort);
-    var host = get(busHost);
+    var port = get('busHostPort');
+    var host = get('busHost');
     bus = new eventbus.VertxBus({'port':port, 'host':host});
-    currentAddress = get(address);
+    currentAddress = get('address');
     bus.subscribe(currentAddress);
-    bus.on(get(address), onReceived);
-    var replyText = get(reply);
+    bus.on(get('address'), onReceived);
+    var replyText = get('reply');
     if (replyText) {
         bus.setReply(replyText);
     }
+    addressHandle = addInputHandler('address', function() {
+        var topic = get('address');
+        if (topic != currentAddress) {
+            bus.unsubscribe(currentAddress);
+            bus.subscribe(topic);
+        }
+    });
+
+    replyHandle = addInputHandler('reply', function() {
+        var replyText = get('reply');
+        if (replyText) {
+            bus.setReply(replyText);
+        } else {
+            bus.setReply(null);
+        }
+    });
 }
-
-addInputHandler(function() {
-    var topic = get(address);
-    if (topic != currentAddress) {
-        bus.unsubscribe(currentAddress);
-        bus.subscribe(topic);
-    }
-}, address);
-
-addInputHandler(function() {
-    var replyText = get(reply);
-    if (replyText) {
-        bus.setReply(replyText);
-    } else {
-        bus.setReply(null);
-    }
-}, reply);
 
 exports.wrapup = function() {
     bus.unsubscribe();
+    removeInputHandler('address', addressHandle);
+    removeInputHandler('reply', replyHandle);
 }
   	// ]]>
   </script>

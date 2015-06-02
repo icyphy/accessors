@@ -48,8 +48,8 @@ This accessor, when fired, reads the current weather data from
   <script type="text/javascript">
     // <![CDATA[
 	function fire() {
-        var lat = get(latitude);
-        var lon = get(longitude);
+        var lat = get('latitude');
+        var lon = get('longitude');
         var url = "http://api.openweathermap.org/data/2.5/weather?lat="
                 + lat
                 + "&lon=" + lon;
@@ -62,12 +62,12 @@ This accessor, when fired, reads the current weather data from
         var wd = parseFloat(json.wind.deg);
         
         // Send outputs
-        send(wd, windDirection);
-        send(ws, windSpeed);
-        send(json.name, name);
-        send(pres, pressure);
-        send(temp, temperature);
-        send(humidity, relativeHumidity);
+        send('windDirection', wd);
+        send('windSpeed', ws);
+        send('name', json.name);
+        send('pressure', pres);
+        send('temperature', temp);
+        send('relativeHumidity', humidity);
 	}
 	// ]]>
   </script>

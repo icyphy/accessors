@@ -40,7 +40,7 @@ function getPrice() {
         // Extract the last trade price from the JSON record.
         var price = parseFloat(json.query.results.quote.LastTradePriceOnly);
         // Send the price to the 'price' output.
-        send(price, 'price');
+        send('price', price);
     });
 }
 
@@ -48,7 +48,7 @@ var handle = null;
 
 exports.initialize = function() {
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    handle = addInputHandler(getPrice, 'symbol');
+    handle = addInputHandler('symbol', getPrice);
 }
 
 exports.wrapup = function() {

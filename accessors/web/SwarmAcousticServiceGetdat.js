@@ -68,5 +68,5 @@ var sasGetdat = function(){
 
 	var data = httpRequest('http://'+remoteAddr+'/gridfs/'+db+'/'+col+'?'+queryString, 'GET', 
 									{'keepAlive': 'true', 'trustAll': 'true'}, null, 10000);
-	send(data, 'data');
+	send('data', data);
 };
