@@ -59,6 +59,7 @@ exports.wrapup = function() {
     removeInputHandler(handle, 'input');
 };
 
+/** Make http request */
 var sasInfer = function (){
 	var mInput = get('input');
 	var db=mInput.db, col=mInput.col, user=mInput.user, pwd=mInput.pwd, smallEvents=mInput.smallEvents, classname=mInput.classname; // only score and filename fields are needed
