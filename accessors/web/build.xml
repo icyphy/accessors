@@ -31,6 +31,8 @@
       <arg value="jsdoc.json" />
       <arg value="-d" />
       <arg value="doc/jsdoc" />
+      <arg value="-R" />
+      <arg value="README.md" />
       <arg value="." />
     </exec>
   </target>
