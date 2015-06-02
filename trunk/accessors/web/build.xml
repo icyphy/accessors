@@ -37,6 +37,23 @@
     </exec>
   </target>
 
+    <target name="ptdoc"
+          depends="vendors-jsdoc"
+          description="Run jsdoc to generate documentation for JavaScript files."
+          >
+    <echo>Invoke jsdoc to generate documentation for .js files.
+    The output appears in doc/jsdoc/index.html
+    </echo>
+    <exec executable="${jsdoc.home}/jsdoc">
+      <arg value="--verbose" />
+      <arg value="-c" />
+      <arg value="jsdoc.json" />
+      <arg value="-t" />
+      <arg value="jsdoc/templates/ptdoc" />
+      <arg value="." />
+    </exec>
+  </target>
+
   <target name="vendors-jsdoc"
 	  depends="-check-vendors-jsdoc"
 	  description="Check out jsdoc using git to create vendors/jsdoc."
