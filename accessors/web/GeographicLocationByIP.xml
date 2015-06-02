@@ -28,7 +28,7 @@ This accessor, when fired, reads the geographic location of this host's ip addre
 	  var json = JSON.parse(record);
 	  var receivedLatitude = parseFloat(json.latitude);
 	  var receivedLongitude = parseFloat(json.longitude);
-	  send({latitude:receivedLatitude, longitude:receivedLongitude}, 'geoCoordinates');
+	  send('geoCoordinates', {latitude:receivedLatitude, longitude:receivedLongitude});
 	}
 	// ]]>
   </script>

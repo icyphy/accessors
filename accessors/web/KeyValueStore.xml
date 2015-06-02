@@ -90,7 +90,7 @@ function fire() {
            url = store + '/delete?id=' + theKey;
            readURL(url);
            if (produce != "") {
-               send(produce, 'result');
+               send('result', produce);
            }
         }
     } else {
@@ -99,10 +99,10 @@ function fire() {
             // FIXME: Escape theValue to make a valid URL.
             url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
             readURL(url);
-            send(theValue, 'result');
+            send('result', theValue);
         } else {
             var valueFromStore = decodeURIComponent(readURL(url));
-            send(valueFromStore, 'result');
+            send('result', valueFromStore);
         }
     }
 }

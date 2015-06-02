@@ -44,7 +44,7 @@ The server side is responsible for getting data from a SensorTag into the key-va
     }
 	function fire() {
 	  var reading = readURL(url);
-	  send(reading, 'value');
+	  send('value', reading);
 	}
 	// ]]>
   </script>
