@@ -47,7 +47,7 @@ exports.setup = function() {
 // Define the functionality.
 function onMessage(message) {
     console.log('Received a UDP packet: ' + message);
-    send(message, 'received');
+    send('received', message);
 }
 
 var socket = null;

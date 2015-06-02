@@ -46,7 +46,7 @@
     // <![CDATA[
 
 function fire() {
-   var url = get('URL') + "get?sid=" + get(sensorID);
+   var url = get('URL') + "get?sid=" + get('sensorID');
    var result = readURL(url);
    var parsed;
    try {
@@ -57,9 +57,9 @@ function fire() {
    }
    try {
       // Result is expected to be an array of length one.
-      send(parseFloat(parsed[0].x), 'x');
-      send(parseFloat(parsed[0].y), 'y');
-      send(parseFloat(parsed[0].z), 'z');
+      send('x', parseFloat(parsed[0].x));
+      send('y', parseFloat(parsed[0].y));
+      send('z', parseFloat(parsed[0].z));
    } catch (e) {
       error("Unexpected format for accelerometer data: " + result);
    }

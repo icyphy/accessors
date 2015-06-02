@@ -55,9 +55,9 @@ function fire() {
       // What to do here?
       error("Unexpected result from WiiMote server: " + result);
    }
-   send(parsed.x, 'x');
-   send(parsed.y, 'y');
-   send(parsed.z, 'z');
+   send('x', parsed.x);
+   send('y', parsed.y);
+   send('z', parsed.z);
 }
 
 	// ]]>

@@ -69,5 +69,5 @@ var sasInfer = function (){
 
 	var new_events = httpRequest('http://'+remoteAddr+'/infer?'+queryString, 'POST', 
 									{'keepAlive': 'true', 'trustAll': 'true'}, JSON.stringify(smallEvents), 10001);
-	send(new_events, 'events');
+	send('events', new_events);
 };

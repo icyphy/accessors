@@ -22,7 +22,7 @@ FIXME: Fill in a description here.
 	  var toDisplay = get('html');
 	  browser.display(toDisplay);
 	}
-	addInputHandler(display, 'html');
+	addInputHandler('html', display);
 	// ]]>
   </script>
 </class>

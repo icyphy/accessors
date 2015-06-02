@@ -46,6 +46,6 @@ function get(input) {
 }
 ////////////////////
 // Method for setting outputs.
-function send(value, output) {
+function send(output, value) {
     document.getElementById(output).innerHTML = JSON.stringify(value);
 }

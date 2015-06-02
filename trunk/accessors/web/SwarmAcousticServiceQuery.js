@@ -128,10 +128,10 @@ var sasQuery = function (){
 	};
 	http.request(options, function(data){
 		var events = JSON.parse(data);
-		send(events, 'events');
+		send('events', events);
 	}).write(postDat, 'UTF-8').end();
 	*/
 	var events = httpRequest('http://'+remoteAddr+'/query?'+queryString, 'POST', 
 									{'keepAlive': 'true', 'trustAll': 'true'}, postDat, 10000);
-	send(events, 'events');
+	send('events', events);
 };

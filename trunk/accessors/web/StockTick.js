@@ -71,7 +71,7 @@ function getPrice() {
         // Extract the last trade price from the JSON record.
         var price = parseFloat(json.query.results.quote.LastTradePriceOnly);
         // Send the price to the 'price' output.
-        send(price, 'price');
+        send('price', price);
     });
 }
 

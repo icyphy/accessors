@@ -51,32 +51,34 @@ The busHost input specifies the name of the network interface through which to c
     
 var eventbus = require('eventbus');
 var bus;
+var handle;
 
 exports.initialize = function() {
-  var port = get(busHostPort);
-  var host = get(busHost);
-  bus = new eventbus.VertxBus({'port':port, 'host':host});
+    var port = get('busHostPort');
+    var host = get('busHost');
+    bus = new eventbus.VertxBus({'port':port, 'host':host});
+    
+    handle = addInputHandler('message', function() {
+        var topic = get('address');
+        var msg = get('message');
+        var all = get('broadcast');
+        if (msg) {
+            if (all) {
+                bus.publish(topic, msg);
+            } else {
+                bus.send(topic, msg, replyHandler);
+            }
+        }
+    });
 }
 
 var replyHandler = function(message) {
-   send(message, reply);
+   send('reply', message);
 }
-
-addInputHandler(function() {
-  var topic = get(address);
-  var msg = get(message);
-  var all = get(broadcast);
-  if (msg) {
-    if (all) {
-      bus.publish(topic, msg);
-    } else {
-      bus.send(topic, msg, replyHandler);
-    }
-  }
-}, message);
 
 exports.wrapup = function() {
   bus.unsubscribe();
+  removeInputHandler(handle, 'message');
 }
 
 	//  ]]>
