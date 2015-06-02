@@ -13,6 +13,7 @@
  *  not be provided by an accessor host. Most hosts will provide this module.
  *
  *  @accessor StockTick
+ *  @module StockTick
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @version 0.1 $Date$
  *  @input {string} symbol The stock symbol. Default value is 'YHOO'.
