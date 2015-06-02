@@ -58,6 +58,7 @@ exports.wrapup = function() {
     removeInputHandler(handle, 'input');
 };
 
+/** Make http request */
 var sasGetdat = function(){
 	var mInput = get('input');
 	var db=mInput.db, col=mInput.col, user=mInput.user, pwd=mInput.pwd, filename=mInput.filename;
