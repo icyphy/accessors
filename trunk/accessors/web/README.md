@@ -10,14 +10,17 @@ source and/or sink for data and/or commands.
 An accessor host is to the Internet of Things what a browser is to the Internet.
 It renders a remote service by locally executing a proxy for that service.
 
-doc/jsdoc
----------
+How to update the jsdoc output
+------------------------------
+
 The doc/jsdoc/ directory contains html created by jsdoc.
 
 To update the docs by hand, run
   ant jsdoc
 
 An automated build on terra.eecs.berkeley.edu updates the docs as necessary.
+
+See [https://www.terraswarm.org/accessors/wiki/Main/JSDoc](https://www.terraswarm.org/accessors/wiki/Main/JSDoc).
 
 This file may be found at accessors/web/README.md
 
