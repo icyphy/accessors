@@ -80,7 +80,7 @@ var handle = null;
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
 exports.initialize = function() {
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    handle = addInputHandler(getPrice, 'symbol');
+    handle = addInputHandler('symbol', getPrice);
 }
 
 /** Remove the input handler. */

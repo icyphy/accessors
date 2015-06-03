@@ -50,7 +50,7 @@ exports.setup = function() {
 /** Initialize the accessor by attaching an input handler to the input. */
 exports.initialize = function() {
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    handle = addInputHandler(sasQuery, 'input');
+    handle = addInputHandler('input', sasQuery);
 };
 
 /** Remove the input handler. */
