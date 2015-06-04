@@ -10,6 +10,15 @@ source and/or sink for data and/or commands.
 An accessor host is to the Internet of Things what a browser is to the Internet.
 It renders a remote service by locally executing a proxy for that service.
 
+How to update index.json
+------------------------
+index.json lists all of the accessors, which are all the files [A-Z]*.js [A-Z]*.xml.
+
+To update index.json, run
+
+./updateIndex
+
+
 How to update the jsdoc output
 ------------------------------
 
