@@ -3,10 +3,12 @@
 
 ls -1 [A-Z]*.js [A-Z]*.xml | sort | \
    awk 'BEGIN {print "[" }
-   {for (i = 1; i <=NF; i++) {
-       print "    \"" $i "\""
+   {
+       if (NR > 1) {
+           printf(",\n")
        }
+       printf("    \"%s\"", $1);
    }
-   END {print "]"}' > index.json
+   END {printf("\n]\n")}' > index.json
    
    

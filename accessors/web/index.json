@@ -1,23 +1,23 @@
 [
-    "Accelerometer.xml"
-    "AudioPlayer.js"
-    "Browser.xml"
-    "Exec.js"
-    "GeographicLocationByIP.xml"
-    "Hue.xml"
-    "KeyValueStore.xml"
-    "RangeSensor.js"
-    "SensorTag.xml"
-    "StockTick.js"
-    "StockTick.xml"
-    "SwarmAcousticServiceGetdat.js"
-    "SwarmAcousticServiceInfer.js"
-    "SwarmAcousticServiceQuery.js"
-    "UDPSocket.js"
-    "VertxPublish.xml"
-    "VertxSubscribe.xml"
-    "Weather.xml"
-    "WebSocketClient.xml"
-    "WebSocketServer.xml"
+    "Accelerometer.xml",
+    "AudioPlayer.js",
+    "Browser.xml",
+    "Exec.js",
+    "GeographicLocationByIP.xml",
+    "Hue.xml",
+    "KeyValueStore.xml",
+    "RangeSensor.js",
+    "SensorTag.xml",
+    "StockTick.js",
+    "StockTick.xml",
+    "SwarmAcousticServiceGetdat.js",
+    "SwarmAcousticServiceInfer.js",
+    "SwarmAcousticServiceQuery.js",
+    "UDPSocket.js",
+    "VertxPublish.xml",
+    "VertxSubscribe.xml",
+    "Weather.xml",
+    "WebSocketClient.xml",
+    "WebSocketServer.xml",
     "WiiMote.xml"
 ]
