@@ -1,4 +1,4 @@
-<class name="ScarabWayptSubscriber" extends="org.terraswarm.JSAccessor">
+<class name="ScarabPoseSubscriber" extends="org.terraswarm.JSAccessor">
   <version>0.1 $Date: 2015-06-03 09:13:24 -0700 (Wed, 3 June 2015) $</version>
   <author>Marcus Pan</author>
   <input
