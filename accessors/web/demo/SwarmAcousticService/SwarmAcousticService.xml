@@ -10,13 +10,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="[395.0, -135.0]">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={-9, -9, 1938, 1050}, maximized=true}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 22, 1440, 874}, maximized=true}">
     </property>
-    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1708, 920]">
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1206, 764]">
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.0236220472440944">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{981.4076923076924, 263.49999999999994}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{736.1999999999999, 187.2999999999999}">
     </property>
     <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
         <property name="text" class="ptolemy.kernel.util.StringAttribute" value="Swarm acoustic service (sas) demo using accessors. The service &#10;receives sensor data from an Android app that can be downloaded at &#10;https://play.google.com/store/apps/details?id=com.longle1.spectrogram.&#10;&#10;Author: Long Le&#10;University of Illinois at Urbana-Champaign">
@@ -167,7 +167,7 @@
         </property>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={271, 586, 366, 292}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={271, 586, 348, 263}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[348, 219]">
         </property>
@@ -444,7 +444,7 @@
         </port>
     </entity>
     <entity name="Display3" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={959, 699, 365, 259}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={959, 641, 347, 230}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[347, 186]">
         </property>
