@@ -60,7 +60,7 @@ This accessor publishes data to a ROS topic. It assumes there is a ROS system ru
   function onOpen() {
     console.log('Status: Connected to '
     + server + ' on port ' + port);
-    addInputHandler(publish, 'toPublish');
+    addInputHandler('toPublish', publish);
   }
   
   function onClose(message) {
