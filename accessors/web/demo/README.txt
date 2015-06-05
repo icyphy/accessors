@@ -1,6 +1,6 @@
 $Id$
 
-Demos should be in $PTII/org/terraswarm/accessors/demo.
+Demos should be in $PTII/org/terraswarm/accessor/demo.
 
 See
 
