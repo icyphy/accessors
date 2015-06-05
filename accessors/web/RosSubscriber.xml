@@ -1,0 +1,85 @@
+<class name="RosSubscriber" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date: 2015-06-04 09:13:24 -0700 (Wed, 4 June 2015) $</version>
+  <author>Marcus Pan</author>
+  <input
+    name="server"
+    value="localhost"
+    type="string"
+    description="The IP address or domain name of the server."/>
+  <input
+    name="port"
+    value="9090"
+    type="number"
+    description="The port that the web socket server listens to."/>
+  <input
+    name="topic"
+    value="/pose"
+    type="string"
+    description="The topic to subscribe to."/>
+  <output
+    name="received"
+    type="JSON"
+    description="The message received from the web socket server."/>
+  <require name="webSocket"/>   
+  <description type="text/html">
+    <![CDATA[
+This accessor connects to a rosbridge server, that is running on a ROS sytem, and subscribes to a ROS topic in that system. 
+Whenever a message is received from the socket, that message is produced on the 'received' output.
+  ]]>
+  </description>
+  <script type="text/javascript">
+    // <![CDATA[
+  var WebSocket = require('webSocket');
+  var client = null;
+  var server = get('server');
+  var port = get('port');
+
+  exports.initialize = function() {
+    client = new WebSocket.Client({'host':server, 'port':port});
+    client.on('open', onOpen);
+    client.on('message', onMessage);
+    client.on('close', onClose);
+    client.on('error', onError);
+    console.log('initialized');
+
+  }
+
+  function subscribe(topic) {
+    var data = 
+      { 
+        'op' : 'subscribe',
+        'topic': topic
+      };  
+    client.send(data);
+  }
+
+  function onOpen() {
+    console.log('Status: Connection established with ' + server + 
+    ' on port ' + port);
+    subscribe(get('topic'));
+  }
+  
+  function onClose(message) {
+    console.log('Status: Connection closed: ' + message);
+  }
+  
+  function onError(message) {
+    console.error(message);
+    throw(message);
+  }
+  
+  function onMessage(message) {
+    var msg_string = JSON.stringify(message);
+    console.log('Received: ' + msg_string);
+    send('received', message);
+  } 
+
+  function wrapup() {
+    if (client != null) {
+      client.close();
+    }
+  }
+    // ]]>
+  </script>
+</class>
+
