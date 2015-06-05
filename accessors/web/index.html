@@ -48,28 +48,32 @@
     </ul>
 
     <h1>Demos</h1>
+
+    <!-- See https://www.terraswarm.org/accessors/wiki/Main/AccessorDemoPolicy -->
+
     <p>To run the following models, save them to some directory, and open them with a current version of Ptolemy II
-      (SVN Development Version).</p>
+      (<a href="https://chess.eecs.berkeley.edu/ptexternal">SVN Development Version</a>).
+      <i>These models are also available in the ptII svn repo as <code>$PTII/src/ptII/org/terraswarm/accessor/demo</code></i></p>
     <ul>
       <li><b>StockTick</b>:
 	The
-	<a href="/accessors/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
 	accesses and displays the stock prices of the publicly-held sponsors of the TerraSwarm project.
       </li>
       <li><b>Hue</b>:
 	The
-	<a href="/accessors/demo/Hue/HueToggle.xml">HueToggle.xml</a> Ptolemy II model
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HueToggle/HueToggle.xml">HueToggle.xml</a> Ptolemy II model
 	randomly toggles the color of a Philips Hue lightbulb. 
 	The
-	<a href="/accessors/demo/Hue/HappySadStock.xml">HappySadStock.xml</a> model
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HappySadStock/HappySadStock.xml">HappySadStock.xml</a> model
 	uses the StockTick accessor to control the color of a Hue lightbulb based on stock prices. 
 	You will need to know the IP address of a local Hue Bridge.
       </li>
       <li><b>KeyValueStore</b>:
 	Two Ptolemy II models are provided to demonstrate the KeyValueStore accessor.
-	<a href="/accessors/demo/KeyValueStore/KeyValueStore.xml">KeyValueStore.xml</a> provides a server.
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreServer.xml">KeyValueStoreServer.xml</a> provides a server.
 	Run this model to create a key-value storage service on your local host.
-	<a href="/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
 	client that uses this server. More interesting clients will be distributed across several machines.
 	<br/>
 	You <i>may</i> find our server running and accessible.  See <a href="http://ptango.eecs.berkeley.edu:8077/keyvalue/help">http://ptango.eecs.berkeley.edu:8077/keyvalue/help</a>.
