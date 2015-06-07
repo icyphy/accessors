@@ -37,11 +37,10 @@ var handle = null;
  */
 exports.setup = function() {
     accessor.input('input', {
-        'description':'key-value input'
+				'type':'JSON'
     });
 		accessor.output('events', {
-				'type': 'string',
-        'description':'acoustic events.'
+				'type': 'string'
     });
 };
 
