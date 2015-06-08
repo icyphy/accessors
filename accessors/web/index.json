@@ -1,6 +1,7 @@
 [
     "Accelerometer.xml",
     "AudioPlayer.js",
+    "AudioCapture.js",
     "Browser.xml",
     "Exec.js",
     "FFT.js",
