@@ -31,6 +31,6 @@ An automated build on terra.eecs.berkeley.edu updates the docs as necessary.
 
 See [https://www.terraswarm.org/accessors/wiki/Main/JSDoc](https://www.terraswarm.org/accessors/wiki/Main/JSDoc).
 
-This file may be found at accessors/web/README.md
+This file may be found at accessors/web/README.md and is included in the JSDoc output automatically because accessors/web/build.xml is invoked with -R README.md
 
 $Id$
