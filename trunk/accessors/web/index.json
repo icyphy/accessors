@@ -3,6 +3,7 @@
     "AudioPlayer.js",
     "Browser.xml",
     "Exec.js",
+    "fft.js",
     "GeographicLocationByIP.xml",
     "Hue.xml",
     "KeyValueStore.xml",
