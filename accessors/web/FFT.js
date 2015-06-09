@@ -25,7 +25,7 @@
  *  @accessor FFT
  *  @module dsp
  *  @author Ilge Akkaya 
- *  @version 0.1 $ID$
+ *  @version 0.1 $Id$
  *  @input {[number]} signalIn Input signal array
  *  @output {[{'real':'number', 'imag': 'number'}]} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
  */
@@ -33,7 +33,7 @@ exports.setup = function() {
     accessor.author('FIXME');
     accessor.input('signalIn');
     accessor.output('fftOutput',{'type':'JSON'});
-    accessor.version('0.1 $Date$');
+    accessor.version('$Id$');
     // FIXME: Define your inputs and outputs here.
 };
  
