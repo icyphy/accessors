@@ -25,14 +25,16 @@
     <echo>Invoke jsdoc to generate documentation for .js files.
     The output appears in doc/jsdoc/index.html
     </echo>
-    <exec executable="${jsdoc.home}/jsdoc">
-      <arg value="--verbose" />
-      <arg value="-c" />
-      <arg value="jsdoc.json" />
-      <arg value="-d" />
+    <exec executable="${jsdoc.home}/jsdoc"
+          timeout="10000"
+          >
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--destination" />
       <arg value="doc/jsdoc" />
-      <arg value="-R" />
+      <arg value="--readme" />
       <arg value="README.md" />
+      <arg value="--verbose" />
       <arg value="." />
     </exec>
   </target>
