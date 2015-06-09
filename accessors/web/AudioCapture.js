@@ -36,7 +36,7 @@ exports.setup = function() {
     accessor.author('ilgea'); 
     accessor.input('trigger');
     accessor.output('signal',{'type':'number'});  
-    accessor.version('$Id');
+    accessor.version('$Id$');
 };
 
 var recorder = null; 
