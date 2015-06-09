@@ -28,15 +28,15 @@
  *  @accessor AudioCapture
  *  @module AudioCapture
  *  @author  
- *  @version 0.1 $ID$
+ *  @version 0.1 $Id$
  *  @input trigger Input that triggers recording.
  *  @output {number} signal A sequence of numbers representing the captured audio signal.
  */
 exports.setup = function() {
     accessor.author('ilgea'); 
     accessor.input('trigger');
-    accessor.output('signal',{'type':'number'});
-    accessor.version('0.1 $ID$'); 
+    accessor.output('signal',{'type':'number'});  
+    accessor.version('$Id');
 };
 
 var recorder = null; 
