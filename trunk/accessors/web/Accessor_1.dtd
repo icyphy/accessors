@@ -42,5 +42,8 @@
 >
 
 <!ELEMENT script (#PCDATA)>
+<!ATTLIST script
+          type CDATA #IMPLIED
+>
 
 <!ELEMENT version (#PCDATA)>
