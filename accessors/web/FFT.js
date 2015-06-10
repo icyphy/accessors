@@ -23,11 +23,11 @@
 /** This accessor returns an array of FFT coefficients, corresponding to the input signal.
  *
  *  @accessor FFT
- *  @module dsp
+ *  @module FFT
  *  @author Ilge Akkaya 
  *  @version 0.1 $Id$
- *  @input {[number]} signalIn Input signal array
- *  @output {[{'real':'number', 'imag': 'number'}]} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
+ *  @input {array<number>} signalIn Input signal array
+ *  @output {array<{'real':'number', 'imag': 'number'}>} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
  */
 exports.setup = function() {
     accessor.author('FIXME');
