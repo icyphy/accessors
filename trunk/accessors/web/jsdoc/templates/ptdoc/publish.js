@@ -21,40 +21,74 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /**
-    @overview Build xml suitable for the Ptolemy II doc system.
-    @author Christopher Brooks
-    @version $Id$
-    @example
-        jsdoc StockTick.js -t templates/ptdoc
+ * @overview Build xml suitable for the Ptolemy II doc system.
+ *
+ * The .js files are read and PtDoc.xml files are created.
+ *
+ * The ../plugins/accessorJSDocTags.js plugin is used to create the
+ * inputs, outputs and parameters arrays.
+ * 
+ * The ../../jsdoc.json file is what adds the plugin, it contains something like:
+ *
+ * "plugins": ["jsdoc/plugins/accessorJSDocTags"]
+ *
+ * For more information, see
+ * https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#ModifyJSDocsTemplateFiles
+ *
+ *   @author Christopher Brooks
+ *   @version $Id$
+ *   @example
+ *       jsdoc StockTick.js -t templates/ptdoc
  */
 'use strict';
 
 var fs = require('fs');
 var util = require('util');
 
-/** Escape html characters for use in XML.
- *  @param {string} bad Bad data
- *  @return text suitable for use in XML.
+/** Parse the input, output, or parameter accessor xml and generate MoML.
+ *  @param {String} propertyName Either 'input', 'output', or 'parameter'.
+ *  @param elements Array of elements consisting of name, type and description fields.
+ *  The type field is expected to be an object.
+ *  @return MoML representation of the accessor xml.
  */
-function xmlEscape(bad) {
-    if (bad === undefined) {
-        return bad;
-    }
-    return bad.replace(/[\n<>&'"]/g,
-                          function (c) {
-                              switch (c) {
-                              case '\n': return '&#10;';
-                              case '<': return '&lt;';
-                              case '>': return '&gt;';
-                              case '&': return '&amp;';
-                              case '\'': return '&apos;';
-                              case '"': return '&quot;';
-                              }
-                          });
+function accessorPropertiesToMoML(propertyName, elements) {
+    var moml = '';
+    var _debugging = false;
+    elements
+        .forEach(function (element, index) {
+            var name = element.name;
+            var type = element.type;
+            var description = element.description;
+            if (type !== undefined) {
+                type = type.toSource();
+            }
+            if (_debugging) {
+                console.error(propertyName + " name: " + name);
+                console.error(propertyName + " type: " + type);
+                console.error(propertyName + " description: " + description);
+            }
+            
+            // What we want:
+            // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" value="The most recent trade price for the stock.">
+
+            moml += '    <property name="' + xmlEscape(name)
+                + ' (' + propertyName + ", "
+                + xmlEscape(type)
+                + ')" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(description) + '">\n'
+                + '    </property>\n'
+        });
+    return moml;
 }
 
-/** Process the JavaScript and generate ptdoc-compatible xml
- *  on stdout.
+/** Process the JavaScript and generate ptdoc-compatible xml files.
+ *  
+ *  This is the main entry point for JSDoc.  See
+ *  https://github.com/jsdoc3/jsdoc/blob/master/templates/README.md
+ *
+ *  The file names will be the basename of the .js file with PtDoc.xml
+ *  appended.  So, if the input is Foo.js, then the output will be
+ *  FooPtDoc.xml.
+ *
  *  @param {TAFFY} data
  *  @param {object} opts
  */
@@ -68,83 +102,105 @@ exports.publish = function(data, opts) {
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
-    //    console.log("ptdoc/public.js: docs: " + docs.toSource());
+    //    console.error("ptdoc/public.js: docs: " + docs.toSource());
     docs
-    .forEach(function (element, index) {
+        .forEach(function (element, index) {
 
-        if (element.meta !== undefined) {
-            if (element.meta.filename != fileName) {
-                if (fileName != '') {
-                    var docFileName = fileName.substr(0, fileName.length - 3) + "Doc.xml";
-                    console.log("Writing: " + docFileName);
-                    fs.writeFileSync(docFileName, moml, 'utf8');
-                    moml = '';
-                }
-                fileName = element.meta.filename;
-            }
-        }
-
-        if (_debugging) {
+            // If the filename changes, then write out the moml.
             if (element.meta !== undefined) {
-                console.log("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
-            }
-            console.log("ptdoc/public.js: element.kind: " + element.kind);
-            //console.log("ptdoc/public.js: element:" + element.toSource());
-            //console.log(element);
-        }
-
-        if (element.kind === 'module') {
-            moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
-
-            if (element.description !== undefined) {
-                    moml += '    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n'
-                    + '    </property>\n';
-            }
-            if (element.author !== undefined) {
-                var author = element.author.toSource();
-                // String off [" "]
-                var shortAuthor = author.substring(2, author.length - 2);
-                moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n'
-                    + '    </property>\n';
-            }
-            if (element.version !== undefined) {
-                    moml += '    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.version) + '">\n'
-                    + '    </property>\n';
+                if (element.meta.filename != fileName) {
+                    if (fileName != '') {
+                        writePtDoc(fileName, moml);
+                        moml = '';
+                    }
+                    fileName = element.meta.filename;
+                }
             }
 
             if (_debugging) {
-                //console.error("ptdoc/public.js: element.tags:" + element.tags);
+                if (element.meta !== undefined) {
+                    console.error("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
+                }
+                console.error("ptdoc/public.js: element.kind: " + element.kind);
+                console.error("ptdoc/public.js: element:" + element.toSource());
+                //console.error(element);
             }
 
-            if (element.tags !== undefined) {
-                element.tags
-                .forEach(function (element, index) {
-                    if (_debugging) {
-                        //console.error("ptdoc/public.js: element.tags:");
-                        //console.error(element);                
-                    }
+            if (element.kind === 'module') {
+                moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
-                    if (element.title === 'input' || element.title === 'output') {
-                        // What we want:
-                        // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" value="The most recent trade price for the stock.">
-                        var index = element.text.indexOf('}');
-                        var texts = element.text.split(" ");
-                        var value = "";
-                        for ( var i = 2; i < texts.length; i++) {
-                            if (i > 2) {
-                                value += ' ';
-                            }
-                            value += texts[i];
-                        }
-                        moml += '    <property name="' + xmlEscape(texts[1]) + ' (' + xmlEscape(element.title) + ', ' + xmlEscape(element.text.substr(1, index-1)) + ')" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(value) + '">\n'
-                            + '    </property>\n'
-                    }
-                });
+                // Alphabetical by tag.
+                
+                if (element.author !== undefined) {
+                    var author = element.author.toSource();
+                    // Strip off [" "]
+                    var shortAuthor = author.substring(2, author.length - 2);
+                    moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n'
+                        + '    </property>\n';
+                }
+
+                if (element.description !== undefined) {
+                    moml += '    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n'
+                        + '    </property>\n';
+                }
+
+                // See ../plugins/accessorJSDocTags.js for how we create
+                // the inputs, outputs and parameters arrays.
+                // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#ModifyJSDocsTemplateFiles
+                if (element.inputs !== undefined) {
+                    moml += accessorPropertiesToMoML("input", element.inputs);
+                }
+
+                if (element.outputs !== undefined) {
+                    moml += accessorPropertiesToMoML("outputs", element.outputs);
+                }
+
+                if (element.parameters !== undefined) {
+                    moml += accessorPropertiesToMoML("parameter", element.parameters);
+                }
+
+                if (element.version !== undefined) {
+                    moml += '    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="'
+                        + xmlEscape(element.version) + '">\n'
+                        + '    </property>\n';
+                }
+
+                moml += '</property>'
             }
-            moml += '</property>'
-        }
-    });
-    var docFileName = fileName.substr(0, fileName.length - 3) + "Doc.xml";
-    console.log("Writing Last File: " + docFileName);
-    fs.writeFileSync(docFileName, moml, 'utf8');
+        });
+    writePtDoc(fileName, moml);
+}
+
+/** Write moml to a PtDoc file.
+ *  @param {string} jsFileName The name of the Javascript file, for
+ *  example "Foo.js", which means that the file "FooPtDoc.xml" will be
+ *  generated.
+ *  @param {string} moml  The moml to be written.
+ */
+function writePtDoc(jsFileName, moml) {
+    var ptDocFileName = jsFileName.substr(0, jsFileName.length - 3) + "PtDoc.xml";
+    fs.writeFileSync(ptDocFileName, moml, 'utf8');
+    console.log("Writing: " + ptDocFileName);
+}
+
+
+/** Escape html characters for use in XML.
+ *  @param {string} bad Bad data
+ *  @return text suitable for use in XML.
+ */
+function xmlEscape(bad) {
+    if (bad === undefined) {
+        return bad;
+    }
+    return bad.replace(/[\n<>&'"]/g,
+                       function (c) {
+                           switch (c) {
+                           case '\n': return '&#10;';
+                           case '<': return '&lt;';
+                           case '>': return '&gt;';
+                           case '&': return '&amp;';
+                           case '\'': return '&apos;';
+                           case '"': return '&quot;';
+                           }
+                       });
 }
