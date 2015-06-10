@@ -10,8 +10,8 @@
   <property name="jsdoc.home" value="vendors/jsdoc" />
 
   <target name="build"
-          depends="jsdoc"
-          description="Build accessors.  Right now, only jsdoc is run.">
+          depends="jsdoc, ptdoc"
+          description="Generate html and Ptdoc documentation.">
   </target>
 
   <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
@@ -41,10 +41,13 @@
 
     <target name="ptdoc"
           depends="vendors-jsdoc"
-          description="Run jsdoc to generate documentation for JavaScript files."
+          description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
           >
-    <echo>Invoke jsdoc to generate documentation for .js files.
-    The output appears in doc/jsdoc/index.html
+    <echo>Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
+    See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
+    See jsdoc/jsdoc.json
+    See jsdoc/plugins/accessorJSDocTags.js
+    See jsdoc/templates/ptdoc/publish.js
     </echo>
     <exec executable="${jsdoc.home}/jsdoc">
       <arg value="--verbose" />
