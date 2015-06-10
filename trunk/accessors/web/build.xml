@@ -48,9 +48,9 @@
     </echo>
     <exec executable="${jsdoc.home}/jsdoc">
       <arg value="--verbose" />
-      <arg value="-c" />
-      <arg value="jsdoc.json" />
-      <arg value="-t" />
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--template" />
       <arg value="jsdoc/templates/ptdoc" />
       <arg value="." />
     </exec>

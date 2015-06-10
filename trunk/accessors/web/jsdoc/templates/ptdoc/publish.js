@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -29,14 +29,21 @@
  */
 'use strict';
 
+var fs = require('fs');
+var util = require('util');
+
 /** Escape html characters for use in XML.
  *  @param {string} bad Bad data
  *  @return text suitable for use in XML.
  */
 function xmlEscape(bad) {
-    return bad.replace(/[<>&'"]/g,
+    if (bad === undefined) {
+        return bad;
+    }
+    return bad.replace(/[\n<>&'"]/g,
                           function (c) {
                               switch (c) {
+                              case '\n': return '&#10;';
                               case '<': return '&lt;';
                               case '>': return '&gt;';
                               case '&': return '&amp;';
@@ -54,37 +61,67 @@ function xmlEscape(bad) {
 exports.publish = function(data, opts) {
     var root = {},
         docs;
+    var fileName = '';
+    var moml = '';
 
     var _debugging = false;
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
+    //    console.log("ptdoc/public.js: docs: " + docs.toSource());
     docs
     .forEach(function (element, index) {
 
+        if (element.meta !== undefined) {
+            if (element.meta.filename != fileName) {
+                if (fileName != '') {
+                    var docFileName = fileName.substr(0, fileName.length - 3) + "Doc.xml";
+                    console.log("Writing: " + docFileName);
+                    fs.writeFileSync(docFileName, moml, 'utf8');
+                    moml = '';
+                }
+                fileName = element.meta.filename;
+            }
+        }
+
         if (_debugging) {
-            console.log("ptdoc/public.js: element.kind:");
-            console.log(element.kind);
-            console.log("ptdoc/public.js: element:");
-            console.log(element);
+            if (element.meta !== undefined) {
+                console.log("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
+            }
+            console.log("ptdoc/public.js: element.kind: " + element.kind);
+            //console.log("ptdoc/public.js: element:" + element.toSource());
+            //console.log(element);
         }
 
         if (element.kind === 'module') {
-            console.log('<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">');
-            // Retrieve a stock price... (HTML created from Markdown, escaped to embed here)
-            console.log('    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">');
-            console.log('    </property>');
-            console.log('    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(JSON.stringify(element.author)) + '">')
-            console.log('    </property>');
+            moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
-            console.log('    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.version) + '">');
-            console.log('    </property>');
+            if (element.description !== undefined) {
+                    moml += '    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n'
+                    + '    </property>\n';
+            }
+            if (element.author !== undefined) {
+                var author = element.author.toSource();
+                // String off [" "]
+                var shortAuthor = author.substring(2, author.length - 2);
+                moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n'
+                    + '    </property>\n';
+            }
+            if (element.version !== undefined) {
+                    moml += '    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.version) + '">\n'
+                    + '    </property>\n';
+            }
 
-            element.tags
+            if (_debugging) {
+                //console.error("ptdoc/public.js: element.tags:" + element.tags);
+            }
+
+            if (element.tags !== undefined) {
+                element.tags
                 .forEach(function (element, index) {
                     if (_debugging) {
-                        console.log("ptdoc/public.js: element.tags:");
-                        console.log(element);                
+                        //console.error("ptdoc/public.js: element.tags:");
+                        //console.error(element);                
                     }
 
                     if (element.title === 'input' || element.title === 'output') {
@@ -99,11 +136,15 @@ exports.publish = function(data, opts) {
                             }
                             value += texts[i];
                         }
-                        console.log('    <property name="' + xmlEscape(texts[1]) + ' (' + xmlEscape(element.title) + ', ' + xmlEscape(element.text.substr(1, index-1)) + ')" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(value) + '">');
-                        console.log('    </property>');
+                        moml += '    <property name="' + xmlEscape(texts[1]) + ' (' + xmlEscape(element.title) + ', ' + xmlEscape(element.text.substr(1, index-1)) + ')" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(value) + '">\n'
+                            + '    </property>\n'
                     }
                 });
-            console.log('</property>');
+            }
+            moml += '</property>'
         }
     });
+    var docFileName = fileName.substr(0, fileName.length - 3) + "Doc.xml";
+    console.log("Writing Last File: " + docFileName);
+    fs.writeFileSync(docFileName, moml, 'utf8');
 }
