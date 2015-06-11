@@ -27,6 +27,8 @@
  * JavaScript functions for a browser swarmlet host.
  * This file includes default accessor functions (initialize, fire, wrapup)
  * and functions for reading inputs and sending outputs.
+ * 
+ * @module browserHost
  * @author Edward A. Lee and Chris Shaver
  * @version $Id$
  */
