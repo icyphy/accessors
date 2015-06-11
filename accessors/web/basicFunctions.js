@@ -28,6 +28,7 @@
  * @author Edward A. Lee and Chris Shaver
  * @version $Id$
  */
+/*global XMLHttpRequest*/
 'use strict';
 
 // Set debug to true to see console outputs.
@@ -65,10 +66,12 @@ function httpRequest(url, method, properties, body, timeout) {
                     + (function (obj) {
                 var result = [], p;
                 for (p in obj) {
-                    result.push(JSON.stringify(obj[p]));
-                } ;
+                    if (obj.hasOwnProperty(p)) {
+                        result.push(JSON.stringify(obj[p]));
+                    }
+                }
                 return result;
-             })(arguments)
+            }(arguments))
             + ")");
     }
     var request = new XMLHttpRequest();
@@ -80,12 +83,10 @@ function httpRequest(url, method, properties, body, timeout) {
     if (request.readyState === request.DONE) {
         if (request.status <= 400) {
             return request.responseText;
-        } else {
-            throw "httpRequest failed with code " + request.status + " at URL: " + url;
         }
-    } else {
-        throw "httpRequest did not complete: " + url;
+        throw "httpRequest failed with code " + request.status + " at URL: " + url;
     }
+    throw "httpRequest did not complete: " + url;
 }
 
 
@@ -115,12 +116,11 @@ function readURL(url) {
     if (request.readyState === request.DONE) {
         if (request.status <= 400) {
             return request.responseText;
-        } else {
-            throw "readURL failed with code " + request.status + " at URL: " + url;
         }
-    } else {
-        throw "readURL did not complete: " + url;
+        throw "readURL failed with code " + request.status + " at URL: " + url;
+
     }
+    throw "readURL did not complete: " + url;
 }
 
 // Set a timeout to call the specified function after the specified time.
