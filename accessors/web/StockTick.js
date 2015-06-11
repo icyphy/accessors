@@ -37,7 +37,7 @@
  *  @accessor StockTick
  *  @module StockTick
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
- *  @version 0.1 $Date$
+ *  @version $Id$
  *  @input {string} symbol The stock symbol. Default value is 'YHOO'.
  *  @output {number} price The most recent trade price for the stock.
  */
