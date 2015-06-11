@@ -22,8 +22,6 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
-////////////////////
-// Default method definitions.
 
 /**
  * JavaScript functions for a browser swarmlet host.
@@ -32,6 +30,8 @@
  * @author Edward A. Lee and Chris Shaver
  * @version $Id$
  */
+/*jslint browser:true */
+'use strict';
 
 /** Initialize the accessor.
  * This implementation throws an exception.
