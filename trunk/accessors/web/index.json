@@ -1,7 +1,7 @@
 [
     "Accelerometer.xml",
-    "AudioPlayer.js",
     "AudioCapture.js",
+    "AudioPlayer.js",
     "Browser.xml",
     "Exec.js",
     "FFT.js",
@@ -9,10 +9,9 @@
     "Hue.xml",
     "KeyValueStore.xml",
     "RangeSensor.js",
-    "RosPublisher.xml",
-    "RosSubscriber.xml",
-    "ScarabPoseSubscriber.xml",
-    "ScarabWayptPublisher.xml",
+    "RosPublisher.js",
+    "RosSubscriber.js",
+    "ScarabGoalPublisher.js",
     "SensorTag.xml",
     "StockTick.js",
     "StockTick.xml",
@@ -23,7 +22,7 @@
     "VertxPublish.xml",
     "VertxSubscribe.xml",
     "Weather.xml",
-    "WebSocketClient.xml",
-    "WebSocketServer.xml",
+    "WebSocketClient.js",
+    "WebSocketServer.js",
     "WiiMote.xml"
 ]
