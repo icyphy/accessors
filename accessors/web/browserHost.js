@@ -1,9 +1,4 @@
 // JavaScript functions for a browser swarmlet host.
-// This file includes default accessor functions (initialize, fire, wrapup)
-// and functions for reading inputs and sending outputs.
-// Author: Edward A. Lee and Chris Shaver
-// This copyright file is at http://terraswarm.org/accessors/copyright.txt
-// and applies to any source files that refer to it.
 
 // Copyright (c) 2014-2015 The Regents of the University of California.
 // All rights reserved.
@@ -29,23 +24,52 @@
 //
 ////////////////////
 // Default method definitions.
-// These may be shadowed by methods provided by the accessor.
+
+/**
+ * JavaScript functions for a browser swarmlet host.
+ * This file includes default accessor functions (initialize, fire, wrapup)
+ * and functions for reading inputs and sending outputs.
+ * @author Edward A. Lee and Chris Shaver
+ * @version $Id$
+ */
+
+/** Initialize the accessor.
+ * This implementation throws an exception.
+ * The accessor may shadow this method.
+ */
 function initialize() {
     throw "No initialize() method defined.";
 }
+
+/** Fire the accessor.
+ * This implementation throws an exception.
+ * The accessor may shadow this method.
+ */
 function fire() {
     throw "No fire() method defined.";
 }
+
+/** Wrapup the accessor.
+ * This implementation throws an exception.
+ * The accessor may shadow this method.
+ */
 function wrapup() {
     throw "No wrapup() method defined.";
 }
-////////////////////
-// Method for retrieving inputs.
+
+/** Retrieve an input.
+ *  @param {string} input
+ *  @return The elemeny in the document with the 
+ *  Id input + "Input".
+ */
 function get(input) {
     return document.getElementById(input + "Input").value;
 }
-////////////////////
-// Method for setting outputs.
+
+/** Set an output.
+ *  @param output
+ *  @param value.
+ */
 function send(output, value) {
     document.getElementById(output).innerHTML = JSON.stringify(value);
 }
