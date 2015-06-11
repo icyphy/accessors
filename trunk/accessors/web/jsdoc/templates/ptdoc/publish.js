@@ -48,11 +48,12 @@ var fs = require('fs');
 var util = require('util');
 
 /** Parse the input, output, or parameter accessor xml and generate MoML.
+ *  @param {String} propertyName Either 'port' or 'parameter'
  *  @param elements Array of elements consisting of name, type and description fields.
  *  The type field is expected to be an object.
  *  @return MoML representation of the accessor xml.
  */
-function accessorPropertiesToMoML(elements) {
+function accessorPropertiesToMoML(propertyName, elements) {
     var moml = '', _debugging = false;
     elements
         .forEach(function (element) {
@@ -68,9 +69,9 @@ function accessorPropertiesToMoML(elements) {
             // What we want:
             // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" value="The most recent trade price for the stock.">
 
-            moml += '    <property name="' + xmlEscape(name)
+            moml += '    <property name="' + xmlEscape(name) + " (" + propertyName + ")"
                 + '" class="ptolemy.kernel.util.StringAttribute" value="'
-                + ' (' + xmlEscape(type) + ") "
+                + xmlEscape(type) + " "
                 + xmlEscape(description) + '">\n'
                 + '    </property>\n';
         });
@@ -137,15 +138,15 @@ exports.publish = function (data) {
                 // the inputs, outputs and parameters arrays.
                 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#ModifyJSDocsTemplateFiles
                 if (element.inputs !== undefined) {
-                    moml += accessorPropertiesToMoML(element.inputs);
+                    moml += accessorPropertiesToMoML('port', element.inputs);
                 }
 
                 if (element.outputs !== undefined) {
-                    moml += accessorPropertiesToMoML(element.outputs);
+                    moml += accessorPropertiesToMoML('port', element.outputs);
                 }
 
                 if (element.parameters !== undefined) {
-                    moml += accessorPropertiesToMoML(element.parameters);
+                    moml += accessorPropertiesToMoML('parameter', element.parameters);
                 }
 
                 if (element.version !== undefined) {
