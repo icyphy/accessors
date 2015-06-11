@@ -40,6 +40,8 @@
  *   @example
  *       jsdoc StockTick.js -t templates/ptdoc
  */
+/*global writePtDoc, xmlEscape */
+/*jslint nomen: true */
 'use strict';
 
 var fs = require('fs');
@@ -52,13 +54,10 @@ var util = require('util');
  *  @return MoML representation of the accessor xml.
  */
 function accessorPropertiesToMoML(propertyName, elements) {
-    var moml = '';
-    var _debugging = false;
+    var moml = '', _debugging = false;
     elements
-        .forEach(function (element, index) {
-            var name = element.name;
-            var type = element.type;
-            var description = element.description;
+        .forEach(function (element) {
+            var name = element.name, type = element.type, description = element.description;
             if (type !== undefined) {
                 type = type.toSource();
             }
@@ -67,7 +66,6 @@ function accessorPropertiesToMoML(propertyName, elements) {
                 console.error(propertyName + " type: " + type);
                 console.error(propertyName + " description: " + description);
             }
-            
             // What we want:
             // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" value="The most recent trade price for the stock.">
 
@@ -75,7 +73,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
                 + ' (' + propertyName + ", "
                 + xmlEscape(type)
                 + ')" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(description) + '">\n'
-                + '    </property>\n'
+                + '    </property>\n';
         });
     return moml;
 }
@@ -90,26 +88,20 @@ function accessorPropertiesToMoML(propertyName, elements) {
  *  FooPtDoc.xml.
  *
  *  @param {TAFFY} data
- *  @param {object} opts
  */
-exports.publish = function(data, opts) {
-    var root = {},
-        docs;
-    var fileName = '';
-    var moml = '';
-
-    var _debugging = false;
+exports.publish = function (data) {
+    var docs, fileName = '', moml = '', _debugging = false;
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
     //    console.error("ptdoc/public.js: docs: " + docs.toSource());
     docs
-        .forEach(function (element, index) {
+        .forEach(function (element) {
 
             // If the filename changes, then write out the moml.
             if (element.meta !== undefined) {
-                if (element.meta.filename != fileName) {
-                    if (fileName != '') {
+                if (element.meta.filename !== fileName) {
+                    if (fileName !== '') {
                         writePtDoc(fileName, moml);
                         moml = '';
                     }
@@ -130,11 +122,9 @@ exports.publish = function(data, opts) {
                 moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
                 // Alphabetical by tag.
-                
                 if (element.author !== undefined) {
-                    var author = element.author.toSource();
                     // Strip off [" "]
-                    var shortAuthor = author.substring(2, author.length - 2);
+                    var author = element.author.toSource(), shortAuthor = author.substring(2, author.length - 2);
                     moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n'
                         + '    </property>\n';
                 }
@@ -165,11 +155,11 @@ exports.publish = function(data, opts) {
                         + '    </property>\n';
                 }
 
-                moml += '</property>'
+                moml += '</property>';
             }
         });
     writePtDoc(fileName, moml);
-}
+};
 
 /** Write moml to a PtDoc file.
  *  @param {string} jsFileName The name of the Javascript file, for
@@ -193,14 +183,20 @@ function xmlEscape(bad) {
         return bad;
     }
     return bad.replace(/[\n<>&'"]/g,
-                       function (c) {
-                           switch (c) {
-                           case '\n': return '&#10;';
-                           case '<': return '&lt;';
-                           case '>': return '&gt;';
-                           case '&': return '&amp;';
-                           case '\'': return '&apos;';
-                           case '"': return '&quot;';
-                           }
-                       });
+         function (c) {
+            switch (c) {
+            case '\n':
+                return '&#10;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '&':
+                return '&amp;';
+            case '\'':
+                return '&apos;';
+            case '"':
+                return '&quot;';
+            }
+        });
 }
