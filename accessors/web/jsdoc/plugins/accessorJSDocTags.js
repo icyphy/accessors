@@ -33,6 +33,20 @@ exports.defineTags = function(dictionary) {
     dictionary.defineTag("accessor", {
         mustHaveValue: true,
         onTagged: function(doclet, tag) {
+            // Start of section copied from module: section of
+            // jsdoc/lib/jsdoc/tag/dictionary/definitions.js
+            setDocletKindToTitle(doclet, tag);
+            setDocletNameToValue(doclet, tag);
+            if (!doclet.name) {
+                setDocletNameToFilename(doclet, tag);
+            }
+            // Not sure if we need this:
+            // in case the user wrote something like `/** @accessor  accessor:foo */`:
+            //doclet.name = stripModuleNamespace(doclet.name);
+
+            setDocletTypeToValueType(doclet, tag);
+            // end of copied section.
+            
             doclet.accessor = tag.name;
         }
     });
