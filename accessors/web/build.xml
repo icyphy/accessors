@@ -18,6 +18,14 @@
     <available property="vendors.jsdoc.exists" file="${jsdoc.home}/jsdoc"/>
   </target>
 
+  <target name="cleanAll" 
+	  description="Remove the reports/ and doc/jsdoc directories.">
+    <delete quiet="true" verbose="no" includeemptydirs="true">
+      <fileset dir="${basedir}" includes="reports/**" defaultexcludes="false"/>
+      <fileset dir="${basedir}" includes="doc/jsdoc/**" defaultexcludes="false"/>
+    </delete>
+  </target>
+
   <target name="jsdoc"
           depends="vendors-jsdoc"
           description="Run jsdoc to generate documentation for JavaScript files."
