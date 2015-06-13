@@ -21,6 +21,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
+// Portions of this file are based on
+// jsdoc/lib/jsdoc/tag/dictionary/definitions.js, which is Apache
+// License-2.0
+
 /** JavaScript definition of accessor-specific JSDoc tags.
  *
  * See <a href="http://usejsdoc.org/about-plugins.html">http://usejsdoc.org/about-plugins.html</a>.
@@ -29,23 +33,75 @@
  * @version $Id$
  * @since Ptolemy II 11.0
  */
+
+//Start of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
+function filepathMinusPrefix(filepath) {
+    var sourcePaths = getSourcePaths();
+    var commonPrefix = path.commonPrefix(sourcePaths);
+    var result = '';
+
+    if (filepath) {
+        filepath = path.normalize(filepath);
+        // always use forward slashes in the result
+        result = (filepath + path.sep).replace(commonPrefix, '')
+            .replace(/\\/g, '/');
+    }
+
+    if (result.length > 0 && result[result.length - 1] !== '/') {
+        result += '/';
+    }
+
+    return result;
+}
+//end of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
+
 exports.defineTags = function(dictionary) {
     dictionary.defineTag("accessor", {
         mustHaveValue: true,
         onTagged: function(doclet, tag) {
-            // Start of section copied from module: section of
-            // jsdoc/lib/jsdoc/tag/dictionary/definitions.js
-            setDocletKindToTitle(doclet, tag);
-            setDocletNameToValue(doclet, tag);
+            //console.log("accessorJSDocTags.js: accessor: " + doclet + " " + tag);
+
+            // Start of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
+
+            // setDocletKindToTitle is not declared here, so we do what it says:
+            //setDocletKindToTitle(doclet, tag);
+            doclet.addTag( 'kind', tag.title );
+
+            // setDocletNameToValue(doclet, tag);
+            if (tag.value && tag.value.description) { // as in a long tag
+                doclet.addTag('name', tag.value.description);
+            }
+            else if (tag.text) { // or a short tag
+                doclet.addTag('name', tag.text);
+            }
+
             if (!doclet.name) {
-                setDocletNameToFilename(doclet, tag);
+                // setDocletNameToFilename(doclet, tag);
+                var name = '';
+
+                if (doclet.meta.path) {
+                    name = filepathMinusPrefix(doclet.meta.path);
+                }
+                name += doclet.meta.filename.replace(/\.js$/i, '');
+                
+                doclet.name = name;
             }
             // Not sure if we need this:
             // in case the user wrote something like `/** @accessor  accessor:foo */`:
             //doclet.name = stripModuleNamespace(doclet.name);
 
-            setDocletTypeToValueType(doclet, tag);
-            // end of copied section.
+            // setDocletTypeToValueType(doclet, tag);
+            if (tag.value && tag.value.type) {
+                // Add the type names and other type properties (such as `optional`).
+                // Don't overwrite existing properties.
+                Object.keys(tag.value).forEach(function(prop) {
+                    if ( !hasOwnProp.call(doclet, prop) ) {
+                        doclet[prop] = tag.value[prop];
+                    }
+                });
+            }
+
+            // End of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
             
             doclet.accessor = tag.name;
         }
