@@ -73,4 +73,13 @@
         <arg value="https://github.com/terraswarm/jsdoc.git"/>
       </exec>
   </target>
+
+    <target name="vendors-jsdoc-pull"
+	  depends="vendors-jsdoc"
+	  description="Do a git pull in vendors/jsdoc">
+      <exec dir="${basedir}/vendors/jsdoc"
+            executable="git">
+        <arg value="pull"/>
+      </exec>
+  </target>
 </project>
