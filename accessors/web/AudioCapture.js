@@ -26,7 +26,6 @@
  *  not be provided by an accessor host. 
  *
  *  @accessor AudioCapture
- *  @module AudioCapture
  *  @author  Ilge Akkya
  *  @version 0.1 $Id$
  *  @input trigger Input that triggers recording.

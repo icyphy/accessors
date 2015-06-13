@@ -6,7 +6,6 @@
  * FIXME: Provide a selection of shells (e.g., bash, awk, etc)
  *
  *  @accessor Exec
- *  @module Exec
  *  @author Armin Wasicek (arminw@berkeley.edu)
  *  @stdin The stdin of the executing process. A token received on this
  *        port is interpreted as a line entered in stdin of the process.

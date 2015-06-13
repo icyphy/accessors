@@ -1,4 +1,5 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.  // All rights reserved.
+// Copyright (c) 2015 The Regents of the University of California.
+// All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
 // license or royalty fees, to use, copy, modify, and distribute this
@@ -34,7 +35,6 @@
  *  The header information is added by rosbridge. <br>
  *
  *  @accessor ScarabGoalPublisher
- *  @module ScarabGoalPublisher
  *  @input {string} server The IP address or domain name of the rosbridge server.
  *  @input {number} port The port of the rosbridge server.
  *  @input {JSON} toSend The pose data to be sent to the rosbridge server.
@@ -43,7 +43,7 @@
  *  @author Marcus Pan 
  *  @version $Id$ 
  *
-*/
+ */
 
 var wsClient = require('webSocketClient');
 
