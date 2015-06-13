@@ -1,4 +1,5 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.  // All rights reserved.
+// Copyright (c) 2015 The Regents of the University of California.
+// All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
 // license or royalty fees, to use, copy, modify, and distribute this
@@ -26,7 +27,6 @@
  *  This input is usually prefixed with a '/' eg: '/noise'.<br> 
  *
  *  @accessor RosSubscriber
- *  @module RosSubscriber
  *  @input {string} server The IP address or domain name of server.
  *  @input {number} port The port that the web socket listens to.
  *  @input {string} topic The ROS topic to subscribe to.
@@ -35,7 +35,7 @@
  *  @author Marcus Pan 
  *  @version $Id$ 
  *
-*/
+ */
 
 var wsClient = require('webSocketClient');
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- $Id: build.xml.in 72375 2015-05-19 23:58:23Z cxh $ -->
+<!-- $Id$ -->
 
 <project basedir="." default="build" name="accessors" 
          >
@@ -63,11 +63,14 @@
 	  depends="-check-vendors-jsdoc"
 	  description="Check out jsdoc using git to create vendors/jsdoc."
 	  unless="${vendors.jsdoc.exists}">
+    <echo> Clone the git repo.  We use an accessor-specific fork of https://github.com/terraswarm/jsdoc.git,
+    made on 12-Jun-2015 so that we can support @accessor, @input, @output, @parameter.
+    </echo>
       <mkdir dir="${basedir}/vendors"/>
       <exec dir="${basedir}/vendors"
             executable="git">
         <arg value="clone"/>
-        <arg value="https://github.com/jsdoc3/jsdoc.git"/>
+        <arg value="https://github.com/terraswarm/jsdoc.git"/>
       </exec>
   </target>
 </project>
