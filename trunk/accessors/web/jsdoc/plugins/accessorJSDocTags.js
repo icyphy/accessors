@@ -58,6 +58,7 @@ function filepathMinusPrefix(filepath) {
 exports.defineTags = function(dictionary) {
     dictionary.defineTag("accessor", {
         mustHaveValue: true,
+        isNamespace: true, // Needed to get "accessor-" into the file name.
         onTagged: function(doclet, tag) {
             //console.log("accessorJSDocTags.js: accessor: " + doclet + " " + tag);
 
