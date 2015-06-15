@@ -21,48 +21,48 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor sends and/or receives messages from a web socket at
- *  the specified host and port. In <code>initialize()</code>, it
- *  connects to the web socket server.
+ *  the specified host and port. In `initialize()`, it
+ *  begins connecting to the web socket server.
+ *  Once the connection is established, a `true` boolean is sent to
+ *  the `connected` output.
+ *  `'ready'` is set to `true`. If a connection
+ *  was not established during `initiazlize()`, this
+ *  accessor will not try to connect again.
  *
- *  <p>Once the connection is established, the output
- *  <code>'ready'</code> is set to <code>true</code>. If a connection
- *  was not established during <code>initiazlize()</code>, this
- *  accessor will not try to connect again.</p>
+ *  Whenever an input is received on the `'toSend'`
+ *  input, the message is sent to the socket.
  *
- *  <p>Whenever an input is received on the <code>'toSend'</code>
- *  input, the message is sent to the socket.</p>
+ *  Whenever a message is received from the socket, that message is
+ *  produced on the `'received'` output.
  *
- *  <p>Whenever a message is received from the socket, that message is
- *  produced on the <code>'received'</code> output.<p/>
+ *  When `wrapup()` is invoked, this accessor closes the
+ *  connection.
  *
- *  <p>When <code>wrapup()</code> is invoked, this accessor closes the
- *  connection.</p>
- *
- *  <p>The data can be any type that has a JSON representation.
+ *  The data can be any type that has a JSON representation.
  *  For incomming messages, this accessor assumes that the message is
  *  a string in UTF-8 that encodes a JSON object.<br/>
  *  A copy of this accessor is also in the modules directory, which other accessors can use as 
  *  a generic implementation of a web socket. This accessor-module exports a sendToWebSocket(data) function 
- *  which other accessors can use, for example:</p>
+ *  which other accessors can use, for example:
  *  <pre>var wsClient = require('webSocketClient');
  *       wsClient.sendToWebSocket(JSONDataToSend);
  *  </pre> 
  *
- *  <p>This accessor-module also exports its inputHandler function on
- *  'toSend' which other accessors can override, for example:</p>n
+ *  This accessor-module also exports its inputHandler function on
+ *  'toSend' which other accessors can override, for example:n
  *  <pre> var wsClient = require('webSocketClient');
  *       wsClient.toSendInputHandler = function() {...}
  *  </pre>
- *  <p>See <code>RosPublisher.js</code> for an example.</p>
- *  <p>This accessor requires the 'webSocket' module.</p>
+ *  See `RosPublisher.js` for an example.
+ *  This accessor requires the 'webSocket' module.
  *
  *  @accessor WebSocketClient
- *  @input {string} server The IP address or domain name of server.
- *  @input {number} port The port that the web socket listens to.
- *  @input {JSON} toSend The data to be sent to the web socket server.
- *  @output {boolean} connected The status of the web socket connection.
+ *  @parameter {string} server The IP address or domain name of server.
+ *  @parameter {int} port The port that the web socket listens to.
+ *  @input {JSON} toSend The data to be sent over the socket.
+ *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output {JSON} received The data received from the web socket server.
- *  @author Hokeun Kim, Marcus Pan 
+ *  @author Hokeun Kim, Marcus Pan, Edward A. Lee
  *  @version $Id$
  */
 
@@ -71,17 +71,15 @@ var client = null;
 var handle;
 var wrappedUp = false;
 
-/** Sets up accessor by defining inputs and output. */
+/** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function() {
-  accessor.input('server', {
+  accessor.parameter('server', {
     type: 'string',
     value: 'localhost',
-    description: 'The IP address or domain name of the server.'
   });
-  accessor.input('port', {
-    type: 'number',
+  accessor.parameter('port', {
+    type: 'int',
     value: 8080,
-    description: 'The port that the web socket server listens to.'
   });
   accessor.input('toSend', {
     type: 'JSON', 
@@ -89,20 +87,21 @@ exports.setup = function() {
   });
   accessor.output('connected', {
     type: 'boolean',
-    description: "outputs 'true' once connection is established"
   });
-  accessor.output('received', {
-    description: 'The data received from the web socket server, in JSON format.'
-  });
+  accessor.output('received');
 }
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function() {
-  client = new WebSocket.Client({'host':get('server'), 'port':get('port')});
+  client = new WebSocket.Client(
+    {'host':getParameter('server'), 'port':getParameter('port')}
+  );
   client.on('open', onOpen);
   client.on('message', onMessage);
   client.on('close', onClose);
-  client.on('error', onError);
+  client.on('error', function(message) {
+      error(message);
+  });
   handle = addInputHandler('toSend', exports.toSendInputHandler);
   console.log('initialize() complete');
 } 
@@ -135,15 +134,7 @@ function onClose(message) {
   
   if (!wrappedUp) {
     send('connected', false);
-  } else {
-    console.log("Accessor has wrapped up, so did not send 'false' to connected");
   }
-}
-  
-/** Throws error received from web socket connection error. */
-function onError(message) {
-  console.error(message);
-  throw(message);
 }
   
 /** Outputs message received from web socket. */
