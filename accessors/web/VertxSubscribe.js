@@ -47,7 +47,6 @@
  *  so changing them during execution of a swarmlet will have no effect.
  *
  *  @accessor VertxSubscribe
- *  @module VertxSubscribe
  *  @author Patricia Derler, Edward A. Lee, Ben Zhang
  *  @version $Id$
  *  @input {string} address The event bus address, which is the name of the event stream
