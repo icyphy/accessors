@@ -29,6 +29,12 @@
  *
  * See <a href="http://usejsdoc.org/about-plugins.html">http://usejsdoc.org/about-plugins.html</a>.
  *
+ * For about how to use this, see <a href="https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#JSDocCustomTagPlugin">https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#JSDocCustomTagPlugin</a>
+ * 
+ * This plugin uses a fork of JSDoc, see https://github.com/terraswarm/jsdoc
+ *
+ * Running "cd accessors/web; ant jsdoc" will clone the above repo for you.
+ *
  * @author Christopher Brooks
  * @version $Id$
  * @since Ptolemy II 11.0
