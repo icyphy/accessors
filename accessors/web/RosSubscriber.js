@@ -27,9 +27,9 @@
  *  This input is usually prefixed with a '/' eg: '/noise'.<br> 
  *
  *  @accessor RosSubscriber
- *  @input {string} server The IP address or domain name of server.
- *  @input {number} port The port that the web socket listens to.
- *  @input {string} topic The ROS topic to subscribe to.
+ *  @parameter {string} server The IP address or domain name of server.
+ *  @parameter {number} port The port that the web socket listens to.
+ *  @parameter {string} topic The ROS topic to subscribe to.
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
  *  @author Marcus Pan 
@@ -43,10 +43,9 @@ var wsClient = require('webSocketClient');
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
 exports.setup = function() {
   wsClient.setup();
-  accessor.input('topic', {
+  accessor.parameter('topic', {
     type: "string",
     value: "",
-    description: "the ROS topic to subscribe to."
   });
 }
 
@@ -61,7 +60,7 @@ exports.initialize = function() {
   wsClient.initialize();
   wsClient.sendToWebSocket({
       "op": "subscribe",
-      "topic": get('topic')
+      "topic": getParameter('topic')
   });
 }
 
