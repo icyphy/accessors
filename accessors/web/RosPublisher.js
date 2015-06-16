@@ -34,9 +34,9 @@
  *  <pre> { "data": "hello world" } </pre>
  *
  *  @accessor RosPublisher
- *  @input {string} server The IP address or domain name of server.
- *  @input {number} port The port that the web socket listens to.
- *  @input {string} topic The ROS topic to publish to.
+ *  @parameter {string} server The IP address or domain name of server.
+ *  @parameter {number} port The port that the web socket listens to.
+ *  @parameter {string} topic The ROS topic to publish to.
  *  @input {JSON} toSend The data to be published to the topic.
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
@@ -50,10 +50,9 @@ var wsClient = require('webSocketClient');
  *  Adds a 'topic' input which is a pre-defined ROS topic to publish to.*/ 
 exports.setup = function() {
   wsClient.setup();
-  accessor.input('topic', {
+  accessor.parameter('topic', {
     type: "string",
-    value: "",
-    description: "the pre-defined ROS topic to publish to"
+    value: ""
   });
 }
 
@@ -64,7 +63,7 @@ exports.initialize = function() {
   wsClient.toSendInputHandler = function() {
     var data = {
       "op": "publish",
-      "topic": get('topic'),
+      "topic": getParameter('topic'),
       "msg": get('toSend') 
     }
     wsClient.sendToWebSocket(data);
