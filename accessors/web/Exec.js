@@ -7,11 +7,12 @@
  *
  *  @accessor Exec
  *  @author Armin Wasicek (arminw@berkeley.edu)
- *  @stdin The stdin of the executing process. A token received on this
+ *  @input {string} stdin The stdin of the executing process. A token received on this
  *        port is interpreted as a line entered in stdin of the process.
- *  @stdout The stdout of the executing process. Each line read from the 
+ *  @output {string} stdout The stdout of the executing process. Each line read from the 
  *        executing process is sent out as a token from this port.
- *  @command The command to be executed.
+ *  @parameter {string} command The command to be executed.
+ *  @version $Id$
  */
 
 // This accessor requires the 'shell' module, which may or may
