@@ -35,8 +35,8 @@
  *  The header information is added by rosbridge. <br>
  *
  *  @accessor ScarabGoalPublisher
- *  @input {string} server The IP address or domain name of the rosbridge server.
- *  @input {number} port The port of the rosbridge server.
+ *  @parameter {string} server The IP address or domain name of the rosbridge server.
+ *  @parameter {number} port The port of the rosbridge server.
  *  @input {JSON} toSend The pose data to be sent to the rosbridge server.
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
