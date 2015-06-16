@@ -24,17 +24,29 @@ exports.setup = function() {
     accessor.author('Ilge Akkya, Contributor: Christopher Brooks');
     accessor.version('$Id$');
     accessor.input('currentPosition', {
-        'type':'number',
+        'type':'JSON',
     });
     accessor.output('rangeMeasurement', {
         'type':'number',
     });
+    accessor.parameter('currentPosition', {
+        'type':'number',
+    });
+    accessor.parameter('noiseSigma', {
+        'type':'number',
+    });
+    accessor.parameter('intruderKey', {
+        'type':'string',
+    });
+    accessor.parameter('storeLocation', {
+        'type':'string',
+    });
 };
 
-export.fire = function () {
-    var sigma = get(noiseSigma);
-    var store = get(storeLocation);
-    var intruder = get(intruderKey);
+exports.fire = function () {
+    var sigma = get('noiseSigma');
+    var store = get('storeLocation');
+    var intruder = get('intruderKey');
     var url = store + '/get?id=' + intruder;
     var intruderPosition = JSON.parse(readURL(url));
 
