@@ -94,18 +94,14 @@ exports.setup = function() {
     type: 'int',
     value: 100,
   });
-=======
   accessor.parameter('reconnect', {
     type: 'boolean',
-    value: true,
-    description: "The option of whether or not to reconnect if connection is dropped." 
+    value: true
   });
   accessor.parameter('reconnectIntervalMilliSeconds', {
     type: 'int',
-    value: 2000,
-    description: "The number of milliseconds to wait before trying to reconnect from the time the connection was closed."
+    value: 2000
   });
->>>>>>> .r184
   accessor.input('toSend', {
     type: 'JSON', 
     description: 'The data to be send to the web socket server, in JSON format.'
