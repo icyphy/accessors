@@ -61,8 +61,7 @@
  *  @parameter {int} port The port that the web socket listens to. Defaults to 8080.
  *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
  *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
- *  @parameter {boolean} reconnect The option of whether or not to reconnect when disconnected. 
- *  @parameter {int} reconnectIntervalMilliSeconds The millisecond delay before reconnecting if reconnect is true. 
+ *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected. 
  *  @input {JSON} toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output {JSON} received The data received from the web socket server.
@@ -73,7 +72,6 @@
 var WebSocket = require('webSocket');
 var client = null;
 var inputHandle = null;
-var initHandle = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function() {
@@ -93,13 +91,9 @@ exports.setup = function() {
     type: 'int',
     value: 100,
   });
-  accessor.parameter('reconnect', {
+  accessor.parameter('reconnectOnClose', {
     type: 'boolean',
-    value: true
-  });
-  accessor.parameter('reconnectIntervalMilliSeconds', {
-    type: 'int',
-    value: 2000
+    value: true,
   });
   accessor.input('toSend', {
     type: 'JSON', 
@@ -148,9 +142,6 @@ exports.sendToWebSocket = function(data) {
 function onOpen() {
   console.log('Status: Connection established');
   send('connected', true);
-  if (initHandle != null) {
-    clearTimeout(initHandle);
-  }
 }
   
 /** Executes once web socket closes.<br>
@@ -159,9 +150,8 @@ function onOpen() {
  */
 function onClose(message) {
   console.log('Status: Connection closed: ' + message);
-  if (getParameter('reconnect')) {
-    initHandle = setTimeout(exports.initialize, 
-      getParameter('reconnectIntervalMilliSeconds'));
+  if (getParameter('reconnectOnClose')) {
+    exports.initialize();
   }
 }
   
@@ -174,9 +164,6 @@ function onMessage(message) {
 exports.wrapup = function() {
   if (inputHandle != null) {
     removeInputHandler(inputHandle, 'toSend');
-  }
-  if (initHandle != null) {
-    clearTimeout(initHandle);
   }
   if (client) {
     client.removeAllListeners('open');
