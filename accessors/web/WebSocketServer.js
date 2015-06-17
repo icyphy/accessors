@@ -102,6 +102,7 @@ function onListening() {
 }
 
 var handlers = [];
+var sockets = [];
 
 /** Executes when a connection has been establised.<br>
  *  Attaches an inputHandler to the socket.<br>
@@ -113,7 +114,8 @@ function onConnection(socket) {
     socket.on('message', function(message) {
         send('received', {'socketID':id, 'message':message});
     });
-    // For each new connection, add an input handler.
+    // For each new connection, store the socket and add an input handler.
+    sockets.push(socket);
     handlers.push(addInputHandler('toSend', function() {
         var data = get('toSend');
         if (data) {
@@ -138,10 +140,12 @@ function onConnection(socket) {
 }
 
 /** Removes all inputHandlers from sockets.<br>
+ * Unregisters event listeners from sockets.<br>
  * Closes server. */
 function wrapup() {
-    for (var handler in handlers) {
-        removeInputHandler(handler, 'toSend');
+    for (var i = 0; i < sockets.length; i++) {
+        removeInputHandler(handlers[i], 'toSend');
+        sockets[i].removeAllListeners();
     }
     if (server != null) {
         server.removeAllListeners();
