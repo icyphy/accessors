@@ -25,6 +25,7 @@
  * @author: Ilge Akkya, Contributor: Christopher Brooks
  * @version $Id$
  *
+ * @accessor RangeSensor
  * @input {JSON} currentPosition The current position of the robot
  * that is searching, typically { "x": 0, "y": 0}.
  *
