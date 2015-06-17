@@ -85,7 +85,6 @@ exports.setup = function() {
     type: 'int',
     value: 8080,
   });
-<<<<<<< .mine
   accessor.parameter('numberOfRetries', {
     type: 'int',
     value: 5,
