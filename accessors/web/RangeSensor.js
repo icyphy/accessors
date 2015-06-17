@@ -20,29 +20,50 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
+/** Return the range to an intruder
+ *
+ * @author: Ilge Akkya, Contributor: Christopher Brooks
+ * @version $Id$
+ *
+ * @input {JSON} currentPosition The current position of the robot
+ * that is searching, typically { "x": 0, "y": 0}.
+ *
+ * @output {number} rangeMeasurement The range to the intruder.
+ * @parameter {number} noiseSigma A measurement of how noisy the signal is (?).  Default is 2.0.
+ * @parameter {string} intruderKey The key of the intruder in the key/value store.
+ *
+ * @parameter storeLocation The URL of the key/value store.  The type
+ * of this parameter is general so that in Ptolemy the value can be a
+ * Ptolemy parameter so that multiple instances of the actor can be
+ * easily configured.
+ */
 exports.setup = function() {
-    accessor.author('Ilge Akkya, Contributor: Christopher Brooks');
-    accessor.version('$Id$');
+
     accessor.input('currentPosition', {
         'type':'JSON',
+	    'value': { "x": 0, "y": 0},
     });
     accessor.output('rangeMeasurement', {
         'type':'number',
     });
-    accessor.parameter('currentPosition', {
-        'type':'number',
-    });
     accessor.parameter('noiseSigma', {
         'type':'number',
+        'value': 2.0,
     });
     accessor.parameter('intruderKey', {
         'type':'string',
+        'value':'intruder',
     });
     accessor.parameter('storeLocation', {
-        'type':'string',
     });
 };
 
+/** Get the range to the intruder
+ *
+ *  The intruder position is obtained by getting the JSON from the URL
+ *  named by storeLocation + "/get?id=" + intruder
+ *  The range is then adjusted by a noise sample.
+ */
 exports.fire = function () {
     var sigma = get('noiseSigma');
     var store = get('storeLocation');
