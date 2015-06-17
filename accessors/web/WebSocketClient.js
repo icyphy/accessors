@@ -57,8 +57,10 @@
  *  This accessor requires the 'webSocket' module.
  *
  *  @accessor WebSocketClient
- *  @parameter {string} server The IP address or domain name of server.
- *  @parameter {int} port The port that the web socket listens to.
+ *  @parameter {string} server The IP address or domain name of server. Defaults to 'localhost'.
+ *  @parameter {int} port The port that the web socket listens to. Defaults to 8080.
+ *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
+ *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
  *  @parameter {boolean} reconnect The option of whether or not to reconnect when disconnected. 
  *  @parameter {int} reconnectIntervalMilliSeconds The millisecond delay before reconnecting if reconnect is true. 
  *  @input {JSON} toSend The data to be sent over the socket.
@@ -83,6 +85,16 @@ exports.setup = function() {
     type: 'int',
     value: 8080,
   });
+<<<<<<< .mine
+  accessor.parameter('numberOfRetries', {
+    type: 'int',
+    value: 5,
+  });
+  accessor.parameter('timeBetweenRetries', {
+    type: 'int',
+    value: 100,
+  });
+=======
   accessor.parameter('reconnect', {
     type: 'boolean',
     value: true,
@@ -93,6 +105,7 @@ exports.setup = function() {
     value: 2000,
     description: "The number of milliseconds to wait before trying to reconnect from the time the connection was closed."
   });
+>>>>>>> .r184
   accessor.input('toSend', {
     type: 'JSON', 
     description: 'The data to be send to the web socket server, in JSON format.'
@@ -105,9 +118,12 @@ exports.setup = function() {
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function() {
-  client = new WebSocket.Client(
-    {'host':getParameter('server'), 'port':getParameter('port')}
-  );
+  client = new WebSocket.Client({
+    'host':getParameter('server'),
+    'port':getParameter('port'),
+    'numberOfRetries':getParameter('numberOfRetries'),
+    'timeBetweenRetries':getParameter('timeBetweenRetries')
+  });
   client.on('open', onOpen);
   client.on('message', onMessage);
   client.on('close', onClose);
