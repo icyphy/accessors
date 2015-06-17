@@ -6,7 +6,7 @@
     "Exec.js",
     "FFT.js",
     "GeographicLocationByIP.xml",
-    "Hue.xml",
+    "Hue.js",
     "KeyValueStore.xml",
     "RangeSensor.js",
     "RosPublisher.js",
