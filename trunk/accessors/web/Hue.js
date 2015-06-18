@@ -48,7 +48,7 @@
  *  accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
  *  </p>
  *  @accessor Hue
- *  @parameter {string} bridgeIPAddress The bridge IP address (and port, if needed).
+ *  @input {string} bridgeIPAddress The bridge IP address (and port, if needed).
  *  @input {string} userName The user name for logging on to the Hue Bridge.
  *  @input {int} lightID The light identifier (an integer beginning with 1).
  *  @input {number} brightness The brightness (an integer between 0 and 255).
@@ -72,9 +72,10 @@ var url;
 
 /** Define inputs and outputs. */
 function setup() {
-  accessor.parameter('bridgeIPAddress', {
+  accessor.input('bridgeIPAddress', {
     type: "string",
-    value: "192.168.1.50:80" 
+    value: "",
+    description: "The bridge IP address (and port, if needed)." 
     });
   accessor.input('userName', {
     type: "string",
@@ -116,7 +117,7 @@ function setup() {
  *  Register user if not registered */
 function initialize() {
    console.log('initializing');
-   ipAddress = getParameter('bridgeIPAddress');
+   ipAddress = get('bridgeIPAddress');
    if (ipAddress == null || ipAddress.trim() == "") {
       throw "No IP Address is given for the Hue Bridge.";
    }
