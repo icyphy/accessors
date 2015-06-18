@@ -48,12 +48,14 @@
  *  accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
  *  </p>
  *  @accessor Hue
- *  @input {string} server The IP address or domain name of server.
- *  @input {number} port The port that the web socket listens to.
- *  @input {string} topic The ROS topic to publish to.
- *  @input {JSON} toSend The data to be published to the topic.
- *  @output {boolean} connected The status of the web socket connection.
- *  @output {JSON} received The data received from the web socket server.
+ *  @parameter {string} bridgeIPAddress The bridge IP address (and port, if needed).
+ *  @input {string} userName The user name for logging on to the Hue Bridge.
+ *  @input {int} lightID The light identifier (an integer beginning with 1).
+ *  @input {number} brightness The brightness (an integer between 0 and 255).
+ *  @input {number} hue The hue (an integer between 0 and 62580).
+ *  @input {number} saturation The saturation (an integer between 0 and 255).
+ *  @output {boolean} on Whether the light is on (true) or off (false).
+ *  @input {int} transitionTime The transition time, in multiples of 100ms.
  *  @author Edward A. Lee 
  *  @version $Id$ 
  *
@@ -70,10 +72,9 @@ var url;
 
 /** Define inputs and outputs. */
 function setup() {
-  accessor.input('bridgeIPAddress', {
+  accessor.parameter('bridgeIPAddress', {
     type: "string",
-    value: "", 
-    description: "The bridge IP address (and port, if needed)."
+    value: "192.168.1.50:80" 
     });
   accessor.input('userName', {
     type: "string",
@@ -81,33 +82,33 @@ function setup() {
     description: "The user name for logging on to the Hue Bridge."
     });
   accessor.input('lightID', {
-    type: "number",
-    value: "1", 
+    type: "int",
+    value: 1, 
     description: "The light identifier (an integer beginning with 1)."
     });
   accessor.input('brightness', {
     type: "number",
-    value: "255", 
+    value: 255, 
     description: "The brightness (an integer between 0 and 255)."
     });
   accessor.input('hue', {
     type: "number",
-    value: "65280", 
+    value: 65280, 
     description: "The hue (an integer between 0 and 62580)."
     });
   accessor.input('saturation', {
     type: "number",
-    value: "255", 
+    value: 255, 
     description: "The saturation (an integer between 0 and 255)."
     });
   accessor.input('on', {
     type: "boolean",
-    value: "false", 
+    value: false, 
     description: "Whether the light is on (true) or off (false)."
     });
   accessor.input('transitionTime', {
-    type: "number",
-    value: "4", 
+    type: "int",
+    value: 4, 
     description: "The transition time, in multiples of 100ms."
     });
 }
@@ -115,7 +116,7 @@ function setup() {
  *  Register user if not registered */
 function initialize() {
    console.log('initializing');
-   ipAddress = get('bridgeIPAddress');
+   ipAddress = getParameter('bridgeIPAddress');
    if (ipAddress == null || ipAddress.trim() == "") {
       throw "No IP Address is given for the Hue Bridge.";
    }
