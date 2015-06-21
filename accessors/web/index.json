@@ -3,6 +3,8 @@
     "AudioCapture.js",
     "AudioPlayer.js",
     "Browser.xml",
+    "Discovery.js",
+    "Discovery.xml",
     "Exec.js",
     "FFT.js",
     "GeographicLocationByIP.xml",
