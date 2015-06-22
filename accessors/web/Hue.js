@@ -19,11 +19,9 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor publishes to a pre-defined ROS topic.<br>
- *
- *  This accessor controls a Philips Hue lightbulb.
+/** This accessor controls a Philips Hue lightbulb.
  *  <p>
- *  When this accessor fires, it sets the parameters of the specified
+ *  It sets the parameters of the specified
  *  light according to the input values.
  *  </p><p>
  *  Logging on: This script attempts to access the bridge as a user with
@@ -31,9 +29,10 @@
  *  If there is no such user on the bridge, the script registers such a user and requests
  *  (via an alert dialog) that the
  *  link button on the bridge be pushed to authorize registration of this user.
+ *  The user is given 20s to do this before an exception is thrown
  *  </p><p>
- *  Verifying the light: The final initialization step is to verify
- *  that the specified light is accessible. If it is not, this accessor throws
+ *  Verifying the light: The final initialization step is to get a list of accessible lights. 
+ *  If the input light is not accessible, this accessor throws
  *  an exception, where the error message provides a list of available lights.
  *  </p><p>
  *  Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
@@ -49,14 +48,14 @@
  *  </p>
  *  @accessor Hue
  *  @input {string} bridgeIPAddress The bridge IP address (and port, if needed).
- *  @input {string} userName The user name for logging on to the Hue Bridge.
+ *  @parameter {string} userName The user name for logging on to the Hue Bridge. This must be at least 11 characters, or the Hue regards it as invalid.
  *  @input {int} lightID The light identifier (an integer beginning with 1).
  *  @input {number} brightness The brightness (an integer between 0 and 255).
  *  @input {number} hue The hue (an integer between 0 and 62580).
  *  @input {number} saturation The saturation (an integer between 0 and 255).
  *  @output {boolean} on Whether the light is on (true) or off (false).
  *  @input {int} transitionTime The transition time, in multiples of 100ms.
- *  @author Edward A. Lee 
+ *  @author Edward A. Lee, Marcus Pan 
  *  @version $Id$ 
  *
 */
@@ -64,8 +63,16 @@
 
 // State variables.
 var timeout = 3000;
-var bridge;
-var url;
+var url = "";
+var userName = "";
+var reachableLights = [];
+var changedLights = [];
+var strReachableLights = "";
+var handleRegisterUser;
+var registerInterval = 2000;
+var registerTimeout = 20000;
+var registerAttempts = 0;
+var handlers = [];
 
 // Uncomment the following to see the URL being used for the bridge.
 // alert("Connecting to: " + bridge);
@@ -77,7 +84,7 @@ function setup() {
     value: "",
     description: "The bridge IP address (and port, if needed)." 
     });
-  accessor.input('userName', {
+  accessor.parameter('userName', {
     type: "string",
     value: "ptolemyuser", 
     description: "The user name for logging on to the Hue Bridge."
@@ -114,13 +121,20 @@ function setup() {
     });
 }
 /** Initialize connection. 
- *  Register user if not registered */
+ *  Register user if not registered 
+ *  Input handlers are not added here in case we need to wait for user to regiter */
 function initialize() {
-   console.log('initializing');
-   ipAddress = get('bridgeIPAddress');
+   var ipAddress = get('bridgeIPAddress');
+   userName = getParameter('userName');
+
+   if (userName.length < 11) {
+      throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
+   }
+
    if (ipAddress == null || ipAddress.trim() == "") {
       throw "No IP Address is given for the Hue Bridge.";
    }
+
    url = "http://" + ipAddress + "/";
 
    // First make sure the bridge is actually there and responding.
@@ -130,67 +144,127 @@ function initialize() {
       // FIXME: We should do a UPnP discovery here and find a bridge.
       throw "No Hue bridge responding at " + url + "\n" + ex;
    }
-   // Next, make sure that "ptolemyuser" is an authorized user.
-   url = url + "api/ptolemyuser/";
-   var lights = JSON.parse(httpRequest(url, "GET", null, "", timeout));
-   if (lights instanceof Array && lights.length > 0 && lights[0].error) {
+   url = url + "api/";
+
+   // Next, make sure that input username is an authorized user. If not, register the user.
+   var lights = JSON.parse(httpRequest(url + userName + "/", "GET", null, "", timeout));
+
+   if (isNonEmptyArray(lights) && lights[0].error) {
       var description = lights[0].error.description;
+
       if (description.match("unauthorized user")) {
-         // ptolemyuser is not an authorized user.  Add this user.
-         httpRequest(bridge + "api", "POST", null, '{"devicetype":"ptolemyuser", "username":"ptolemyuser"}', timeout);
-         alert("Push the link button on the Hue bridge to establish a connection.");
-         httpRequest(bridge + "api", "POST", null, '{"devicetype":"ptolemyuser", "username":"ptolemyuser"}', timeout);
-         // Check to see whether it succeeded.
-         lights = JSON.parse(httpRequest(url, "GET", null, "", timeout));
-         if (lights instanceof Array && lights.length > 0 && lights[0].error) {
-             var description = lights[0].error.description;
-             if (description.match("unauthorized user")) {
-                throw "Failed to create user.";
-             }
+         // Add this user.
+         alert(userName + " is not a registered user.\n" + 
+            " Push the link button on the Hue bridge to register."); 
+         registerUser();
+      }
+
+      else {
+         throw description;
+      }
+      
+   } else if (lights.lights) {
+      //proceed to next stage of initialization
+      getReachableLights();
+
+   } else {
+      throw "Unknown error. Could not authorize user.";
+   }
+}
+
+/** Register a new user. 
+  * This function repeats at registerInterval until registration is successful, or until registerTimeout. 
+  * It does so because it needs to wait until the user clicks
+  * the button on the Hue bridge. */
+function registerUser() {
+   var registerData = '{"devicetype":"' + userName + '", "username":"' + userName + '"}';
+   var response = JSON.parse(httpRequest(url, "POST", null, registerData, timeout));
+   console.log(response);
+   if (isNonEmptyArray(response) && response[0].error) {
+      var description = response[0].error.description;
+
+      if (description.match("link button not pressed")) {
+         //repeat registration attempt unless registerTimeout has been reached
+         console.log('link button');
+         registerAttempts++;
+         if ((registerAttempts * registerInterval) > registerTimeout) {
+            throw "Failed to create user after " + registerTimeout/1000 + 
+               "s.";
+         }
+         handleRegisterUser = setTimeout(registerUser, registerInterval);
+         return;
+      }
+
+      else {
+         throw description;
+      }
+
+   } else if (isNonEmptyArray(response) && response[0].success) {
+      //registration is successful - proceed to next stage of initialization
+      if (handleRegisterUser != null) {
+         clearTimeout(handleRegisterUser);
+      }
+      getReachableLights();
+
+   } else {
+      throw "Error registering new user";
+   }
+}
+
+/** This function is only called after user has been registered. 
+  * Get reachable lights. 
+  * Add input handlers */
+function getReachableLights() {
+   url = url + userName + "/" + "lights/";
+   var lights = JSON.parse(httpRequest(url, "GET", null, "", timeout));
+
+   try {
+      for (var id in lights) {
+         if (lights[id].state.reachable) {
+            reachableLights.push(id);
+           //record string of reachable lights 
+            if (strReachableLights.length == 0) {
+               strReachableLights += id;
+            }
+            else {
+               strReachableLights += ", " + id;
+            }
          }
       }
-   }
-   // Next, make sure the specified light is reachable.
-   var reachable;
-   try {
-      reachable = lights.lights[get('lightID')].state.reachable;
    } catch (e) {
       throw "Failed to access the state of light "
-         + get('lightID') + " at URL " + url + "\n" + e;
+         " at URL " + url + "\n" + e;
+   }
+   if (strReachableLights.length == 0) {
+      strReachableLights = "No lights are reachable";
+   }
+   strReachableLights += ".";
+   console.log('reachable lights: ' + strReachableLights);
+
+   handlers.push(addInputHandler('brightness', inputHandler));
+   handlers.push(addInputHandler('hue', inputHandler));
+   handlers.push(addInputHandler('saturation', inputHandler));
+   handlers.push(addInputHandler('on', inputHandler));
+   handlers.push(addInputHandler('transitionTime', inputHandler));
+   handlers.push(addInputHandler('lightID', inputHandler));
+}
+
+/** Get light settings from inputs and PUT */
+function inputHandler() {
+   //check if light is reachable
+   var lightID = get('lightID').toString();
+   if (reachableLights.indexOf(lightID) == -1) {
+      throw "Light " + lightID + " is not reachable at " + 
+         url + ".\n Reachable lights are " + strReachableLights;
+   }
+   //keep track of changed lights to turn off during wrap up
+   if (changedLights.indexOf(lightID) == -1) {
+      changedLights.push(lightID);
    }
 
-   if (! reachable) {
-      // Light is not reachable.
-      // Find the lights that are reachable.
-      var other = "";
-      try {
-         for (id in lights.lights) {
-            if (! lights.lights[id].state.reachable) {
-               continue;
-            }
-            if (other == "") {
-               other = " Lights that are reachable are: " + id;
-            } else {
-               other = other + ", " + id;
-            }
-         }
-         if (other == "") {
-            other = ". No lights are reachable.";
-         } else {
-            other = other + ".";
-         }
-      } catch (e) {
-         // Ignore and don't give further info about reachable lights.
-      }
-      throw "Light " + get('lightID') + " is not reachable at " + url + other;
-   }
-   url = url + "lights/" + get('lightID') + "/state";
-}
-/** Get light settings from inputs and PUT */
-function fire() {
+   //get inputs and send command to light
    var command = '{"on":false,';
    if (get('on') == true) {
-      console.log('true');
       command = '{"on":true,';
    }
    command = command 
@@ -200,9 +274,10 @@ function fire() {
          + '"transitiontime":' + limit(get('transitionTime'), 0, 65535)
          + '}';
    try {
-      var response = httpRequest(url, "PUT", null, command, timeout);
+      var response = httpRequest(url + lightID + "/state/", "PUT", 
+            null, command, timeout);
       console.log(response);
-      if (response instanceof Array && response.length > 0 && response[0].error) {
+      if (isNonEmptyArray(response) && response[0].error) {
          throw "Server responds with error: " + response[0].error.description;
       }
    } catch(e) {
@@ -210,13 +285,30 @@ function fire() {
    }
 }
 
-/** Turn the light off on wrapup. */
+/** Turn off changed lights on wrapup. */
 function wrapup() {
-   var command = '{"on":false}';
-   var response = httpRequest(url, "PUT", null, command, timeout);
-   if (response instanceof Array && response.length > 0 && response[0].error) {
-       alert(response[0].error.description);
+   for (var i = 0; i < handlers.length; i++) {
+      removeInputHandler(handlers[i]);
    }
+
+   var errorLights = [];
+   for (var i = 0; i < changedLights.length; i++) {
+      var response = httpRequest(url + changedLights[i] + "/state/", "PUT", 
+            null, '{"on":false}', timeout);
+      console.log(response);
+      if (isNonEmptyArray(response) && response[0].error) {
+         errorLights.push(lightID); 
+      }
+   }
+
+   if (errorLights.length != 0) {
+      throw "Error turning of lights " + errorLights.toString();
+   }
+}
+
+/** utility function to check that an object is a nonempty array */
+function isNonEmptyArray(obj) {
+   return (obj instanceof Array && obj.length > 0);
 }
 
 /** Utility function to limit the range of a number
