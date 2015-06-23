@@ -27,15 +27,13 @@
  *
  *  @accessor AudioCapture
  *  @author  Ilge Akkya
- *  @version 0.1 $Id$
+ *  @version $Id$
  *  @input trigger Input that triggers recording.
  *  @output {number} signal A sequence of numbers representing the captured audio signal.
  */
 exports.setup = function() {
-    accessor.author('ilgea'); 
-    accessor.input('trigger');
-    accessor.output('signal',{'type':'number'});  
-    accessor.version('$Id$');
+    input('trigger');
+    output('signal',{'type':'number'});  
 };
 
 var recorder = null; 

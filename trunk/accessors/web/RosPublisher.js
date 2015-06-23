@@ -50,7 +50,7 @@ var wsClient = require('webSocketClient');
  *  Adds a 'topic' input which is a pre-defined ROS topic to publish to.*/ 
 exports.setup = function() {
   wsClient.setup();
-  accessor.parameter('topic', {
+  parameter('topic', {
     type: "string",
     value: ""
   });

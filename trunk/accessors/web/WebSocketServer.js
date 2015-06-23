@@ -48,9 +48,9 @@
  *  @parameter {string} hostInterface The IP address or domain name of the
  *    network interface to listen to.
  *  @parameter {number} port The port to listen to for connections.
- *  @input {JSON} toSend The data to be sent to open sockets.
- *  @output {JSON} connection The status of connected web socket clients.
- *  @output {JSON} received The data received from the web socket client.
+ *  @input {JSON} toSend The data to be sent to open sockets. If this is a JSON object with 'socketID' field and a 'message' field, then send the value of the message field to the socket identified by the socketID field. If the input has any other form, then the message is broadcast to all open socket connections.
+ *  @output {JSON} connection An output produced when a connection opens or closes. The output is a JSON object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'.
+ *  @output {JSON} received A message received a client in the form of a JSON object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
  *  @author Hokeun Kim, Edward Lee 
  *  @version $Id$ 
  */
@@ -62,26 +62,22 @@ var running = false;
 
 /** Sets up the accessor by defining inputs and outputs. */
 exports.setup = function() {
-    accessor.author('Hokeun Kim, Edward Lee');
-    accessor.parameter('hostInterface', {
+    parameter('hostInterface', {
         value: "localhost", 
         type: "string" 
     });
-    accessor.parameter('port', {
+    parameter('port', {
         value: 8080, 
         type: "int" 
     });
-    accessor.input('toSend', {
-        type: "JSON", 
-        description: "The data to be sent on one or more open sockets. If this is a JSON object with 'socketID' field and a 'message' field, then send the value of the message field to the socket identified by the socketID field. If the input has any other form, then the message is broadcast to all open socket connections."
+    input('toSend', {
+        type: "JSON"
     });
-    accessor.output('received', {
-        type: "JSON", 
-        description: "A message received a client in the form of a JSON object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client."
+    output('received', {
+        type: "JSON"
     });
-    accessor.output('connection', {
-        type: "JSON",
-        description: "An output produced when a connection opens or closes. The output is a JSON object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'."
+    output('connection', {
+        type: "JSON"
     });
 }
 

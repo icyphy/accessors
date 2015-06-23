@@ -26,19 +26,15 @@ var sh = null;
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    accessor.author('Armin Wasicek');
-	accessor.input('stdin', {
-		'type': 'string',
-		'description': 'some input'
+	input('stdin', {
+		'type': 'string'
 	});
-	accessor.output('stdout', {
-		'type': 'string',
-		'description': 'some output'
+	output('stdout', {
+		'type': 'string'
 	});
-    accessor.input('command', {
+    input('command', {
         'value': 'ls',
-        'type':'string',
-        'description':'The command to be executed.'
+        'type':'string'
     });
 }
 
