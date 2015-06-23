@@ -34,8 +34,8 @@
  *  @input {integer} L input the number (1) when Up arrow is pressed.
  *  @input {integer} D input the number (1) when Up arrow is pressed.
  *  @input {integer} R input the number (1) when Up arrow is pressed.
- *  @input {JSON} pose Current pose of the Scarab formatted as the ROS datatype geometry_msgs/Pose   
- *  @output {JSON} newGoal waypoint formatted according to the ROS datatype geometry_msgs/Pose.
+ *  @input {JSON} pose Current pose of the Scarab formatted as the ROS datatype geometry_msgs/Pose. 
+ *  @output {JSON} newGoal Waypoint formatted according to the ROS datatype geometry_msgs/Pose.
  *  @author Marcus Pan 
  *  @version $Id$ 
  */
@@ -54,34 +54,28 @@ var handleU, handleR, handleL, handleD;
 
 /** Define inputs and outputs */
 exports.setup = function() {
-  accessor.input('U', {
+  input('U', {
     type: "int",
-    value: 0,
-    description: "input (1) when Up arrow has been pressed."
+    value: 0
   });
-  accessor.input('L', {
+  input('L', {
     type: "int",
-    value: 0,
-    description: "input (1) when Left arrow has been pressed."
+    value: 0
   });
-  accessor.input('R', {
+  input('R', {
     type: "int",
-    value: 0,
-    description: "input (1) when Right arrow has been pressed."
+    value: 0
   });
-  accessor.input('D', {
+  input('D', {
     type: "int",
-    value: 0,
-    description: "input (1) when Down arrow has been pressed."
+    value: 0
   });
-  accessor.input('pose', {
+  input('pose', {
     type: "JSON",
-    value: {},
-    description: "Current pose of the Scarab from the /pose topic."
+    value: {}
   });
-  accessor.output('newGoal', {
-    type: "JSON",
-    description: "new waypoint formatted according to the ROS datatype geometry_msg/Pose" });
+  output('newGoal', {
+    type: "JSON"
 }
 
 

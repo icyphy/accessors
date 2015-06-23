@@ -40,22 +40,22 @@
  */
 exports.setup = function() {
 
-    accessor.input('currentPosition', {
+    input('currentPosition', {
         'type':'JSON',
-	    'value': { "x": 0, "y": 0},
+	    'value': { "x": 0, "y": 0}
     });
-    accessor.output('rangeMeasurement', {
+    output('rangeMeasurement', {
+        'type':'number'
+    });
+    parameter('noiseSigma', {
         'type':'number',
+        'value': 2.0
     });
-    accessor.parameter('noiseSigma', {
-        'type':'number',
-        'value': 2.0,
-    });
-    accessor.parameter('intruderKey', {
+    parameter('intruderKey', {
         'type':'string',
-        'value':'intruder',
+        'value':'intruder'
     });
-    accessor.parameter('storeLocation', {
+    parameter('storeLocation', {
     });
 };
 

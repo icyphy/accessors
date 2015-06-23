@@ -63,22 +63,22 @@ var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs, outputs, and parameters. */
 exports.setup = function() {
-    accessor.input('address', {
+    input('address', {
         'value':'topic',
-        'type':'string',
+        'type':'string'
     });
-    accessor.output('message', {
-        'type':'JSON',
+    output('message', {
+        'type':'JSON'
     });
-    accessor.parameter('busHost', {
-        'type':'string',
+    parameter('busHost', {
+        'type':'string'
     });
-    accessor.parameter('busHostPort', {
+    parameter('busHostPort', {
         'value':0,
-        'type':'int',
+        'type':'int'
     });
-    accessor.input('reply', {
-        'type':'JSON',
+    input('reply', {
+        'type':'JSON'
     });
 };
 
