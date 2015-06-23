@@ -43,9 +43,9 @@ var wsClient = require('webSocketClient');
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
 exports.setup = function() {
   wsClient.setup();
-  accessor.parameter('topic', {
+  parameter('topic', {
     type: "string",
-    value: "",
+    value: ""
   });
 }
 

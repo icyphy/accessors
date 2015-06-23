@@ -79,46 +79,38 @@ var handlers = [];
 
 /** Define inputs and outputs. */
 function setup() {
-  accessor.input('bridgeIPAddress', {
+  input('bridgeIPAddress', {
     type: "string",
-    value: "",
-    description: "The bridge IP address (and port, if needed)." 
-    });
-  accessor.parameter('userName', {
+    value: ""
+  });
+  parameter('userName', {
     type: "string",
-    value: "ptolemyuser", 
-    description: "The user name for logging on to the Hue Bridge."
-    });
-  accessor.input('lightID', {
+    value: "ptolemyuser"
+  });
+  input('lightID', {
     type: "int",
-    value: 1, 
-    description: "The light identifier (an integer beginning with 1)."
-    });
-  accessor.input('brightness', {
+    value: 1
+  });
+  input('brightness', {
     type: "number",
-    value: 255, 
-    description: "The brightness (an integer between 0 and 255)."
-    });
-  accessor.input('hue', {
+    value: 255
+  });
+  input('hue', {
     type: "number",
-    value: 65280, 
-    description: "The hue (an integer between 0 and 62580)."
-    });
-  accessor.input('saturation', {
+    value: 65280
+  });
+  input('saturation', {
     type: "number",
-    value: 255, 
-    description: "The saturation (an integer between 0 and 255)."
-    });
-  accessor.input('on', {
+    value: 255 
+  });
+  input('on', {
     type: "boolean",
-    value: false, 
-    description: "Whether the light is on (true) or off (false)."
-    });
-  accessor.input('transitionTime', {
+    value: false
+  });
+  input('transitionTime', {
     type: "int",
-    value: 4, 
-    description: "The transition time, in multiples of 100ms."
-    });
+    value: 4
+  });
 }
 /** Initialize connection. 
  *  Register user if not registered 

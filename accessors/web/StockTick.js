@@ -45,12 +45,12 @@ var http = require('httpClient');
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    accessor.input('symbol', {
+    input('symbol', {
         'value':'YHOO',
-        'type':'string',
+        'type':'string'
     });
-    accessor.output('price', {
-        'type':'number',
+    output('price', {
+        'type':'number'
     });
 };
 

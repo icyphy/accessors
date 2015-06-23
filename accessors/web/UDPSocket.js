@@ -20,6 +20,16 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
+/** UDP socket accessor.
+ *  This accessor listens to the UDP port, and outputs whatever arrives as a string.
+ *
+ *  @accessor UDPSocket
+ *  @author Hokeun Kim
+ *  @version $Id$
+ *  @input {int} port The port to use for the socket.
+ *  @output {string} received The received string.
+ */
+
 // This accessor requires the optional 'udpSocket' module, which may or may
 // not be provided by an accessor host. Most hosts will provide this module.
 var UDPSocket = require('udpSocket');
@@ -27,21 +37,13 @@ var UDPSocket = require('udpSocket');
 // Set up the accessor. In an XML specification, this information would
 // be provided in XML syntax.
 exports.setup = function() {
-    accessor.author('Hokeun Kim');
-    accessor.version('0.1 $Date$');
-    accessor.input('port', {
+    input('port', {
         'value': 8084,
-        'type':'number',
-        'description':'The port number.'
+        'type':'int'
     });
-    accessor.output('received', {
-        'type':'string',
-        'description':'The received string.'
+    output('received', {
+        'type':'string'
     });
-    accessor.description(
-        'This accessor listens to the UDP port.',
-        'text/html'
-    );
 };
 
 // Define the functionality.

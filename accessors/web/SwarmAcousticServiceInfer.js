@@ -35,11 +35,11 @@ var handle = null;
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    accessor.input('input', {
-				'type':'JSON'
+    input('input', {
+		'type':'JSON'
     });
-		accessor.output('events', {
-				'type': 'string'
+	output('events', {
+		'type': 'string'
     });
 };
 

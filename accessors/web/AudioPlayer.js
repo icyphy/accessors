@@ -21,16 +21,18 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 
-// Accessor to play an audio signal.
-// FIXME: This accessor is a placeholder.
-// It just plays 2 seconds of fixed audio in initialize().
-// You should update it to accept an input and play that.
+/** Accessor to play an audio signal.
+ *  FIXME: This accessor is a placeholder.
+ *  It just plays 2 seconds of fixed audio in initialize().
+ *  You should update it to accept an input and play that.
+ *
+ *  @accessor AudioPlayer
+ *  @author Edward A. Lee (eal@eecs.berkeley.edu)
+ *  @version $Id$
+ */
 
-    
 // Set up the accessor.
 exports.setup = function() {
-    accessor.author('FIXME');
-    accessor.version('0.1 $Date$');
     // FIXME: Define your inputs and outputs here.
 };
 
