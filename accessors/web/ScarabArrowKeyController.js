@@ -76,6 +76,7 @@ exports.setup = function() {
   });
   output('newGoal', {
     type: "JSON"
+  });
 }
 
 

@@ -53,66 +53,69 @@
  *  @version $Id$ 
  *
  */
+
 var lightMap;
 var handle;
 
+/** Define inputs, parameters and outputs. */
 exports.setup = function() {
-  accessor.input('pose', {
+  input('pose', {
     type: 'JSON', 
     value: {}
   });
-  accessor.parameter('lightMap', {
+  parameter('lightMap', {
     type: 'JSON', 
     value: {}
   });
-  accessor.parameter('brightness', {
+  parameter('brightness', {
     type: 'number',
     value: 255
   });
-  accessor.parameter('on', {
+  parameter('on', {
     type: 'boolean',
     value: false
   });
-  accessor.parameter('hue', {
+  parameter('hue', {
     type: 'number',
     value: 1
   });
-  accessor.parameter('saturation', {
+  parameter('saturation', {
     type: 'number',
     value: 254
   });
-  accessor.parameter('transitionTime', {
+  parameter('transitionTime', {
     type: 'int',
     value: 1
   });
-  accessor.parameter('checkLightsInterval', {
+  parameter('checkLightsInterval', {
     type: 'int', 
     value: 1000
   });
-  accessor.parameter('distanceThreshold', {
+  parameter('distanceThreshold', {
     type: 'number',
     value: 1
    });
-  accessor.output('lightIDOut', {
+  output('lightIDOut', {
     type: 'int'
   });
-  accessor.output('brightnessOut', {
+  output('brightnessOut', {
     type: 'number'
   });
-  accessor.output('hueOut', {
+  output('hueOut', {
     type: 'number'
   });
-  accessor.output('saturationOut', {
+  output('saturationOut', {
     type: 'number'
   });
-  accessor.output('onOut', {
+  output('onOut', {
     type: 'boolean'
   });
-  accessor.output('transitionTimeOut', {
+  output('transitionTimeOut', {
     type: 'int'
   });
 }
 
+/** check parameters and set interval to check lights */
 exports.initialize = function() {
   lightMap = getParameter('lightMap');
   if (lightMap == null || lightMap.lights == null ) {
@@ -121,6 +124,7 @@ exports.initialize = function() {
   handle = setInterval(checkLights, getParameter('checkLightsInterval'));
 }
 
+/** get closest light and send light data */
 function checkLights() {
   var pose = get('pose');
   //make sure pose isn't empty
@@ -155,6 +159,7 @@ function checkLights() {
   }
 }
 
+/** clear timeout interval. */
 exports.wrapup = function() {
   clearTimeout(handle);
 }
