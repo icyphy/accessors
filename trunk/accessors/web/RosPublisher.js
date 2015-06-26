@@ -21,8 +21,8 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor publishes to a pre-defined ROS topic.<br>
- *  This accessor requires the module 'webSocketClient'. 
- *  It inherits the input and output from webSocketClient, but adds
+ *  This accessor extends WebSocketClient.js. 
+ *  It inherits the input and output from WebSocketClient, but adds
  *  its own 'topic' input. This must be a pre-established topic in ROS.
  *  This input is usually prefixed with a '/' eg: '/noise'.<br> 
  *  On input from 'toSend', this accessor publishes that input to the 
@@ -44,34 +44,31 @@
  *  @version $Id$ 
  */
 
-var wsClient = require('webSocketClient');
 
 /** Sets up by accessor by inheriting inputs from setup() in webSocketClient.<br>
  *  Adds a 'topic' input which is a pre-defined ROS topic to publish to.*/ 
 exports.setup = function() {
-  wsClient.setup();
-  parameter('topic', {
-    type: "string",
-    value: ""
-  });
+   extend('WebSocketClient');
+   parameter('topic', {
+      type: "string",
+      value: ""
+   });
 }
 
-/** Overrides inputHandler on 'toSend' from webSocketClient.<br> 
- *  Inherits initialize from webSocketClient.*/ 
-exports.initialize = function() {
-//must override first before initializing
-  wsClient.toSendInputHandler = function() {
-    var data = {
+/** Override inputHandler on 'toSend' from WebSocketClient */
+exports.toSendInputHandler = function() {
+   var data = {
       "op": "publish",
       "topic": getParameter('topic'),
       "msg": get('toSend') 
-    }
-    wsClient.sendToWebSocket(data);
-  }
-
-  wsClient.initialize();
+   }
+   exports.sendToWebSocket(data);
 }
 
-/** inherits wrapup function from webSocketClient */
-exports.wrapup = wsClient.wrapup;
+/**  Inherits initialize from webSocketClient.*/ 
+exports.initialize = function() {
+   Object.getPrototypeOf(exports).initialize.apply(this);
+}
+
+
 

@@ -21,10 +21,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor subscribes to a ROS topic.<br>
- *  It requires the module 'webSocketClient'. 
- *  It inherits the input and output from webSocketClient, but adds
- *  its own 'topic' input.
- *  This input is usually prefixed with a '/' eg: '/noise'.<br> 
+ *  It communicates to ROS through the rosbridge web socket, and extends the 
+ *  WebSocketClient accessor to do so. 
+ *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br> 
  *
  *  @accessor RosSubscriber
  *  @parameter {string} server The IP address or domain name of server.
@@ -37,32 +36,33 @@
  *
  */
 
-var wsClient = require('webSocketClient');
 
-/** Sets up by accessor by inheriting inputs and outputs from setup() in webSocketClient.<br>
+/** Sets up by accessor by inheriting inputs, outputs and parameters from setup() in WebSocketClient.<br>
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
 exports.setup = function() {
-  wsClient.setup();
-  parameter('topic', {
-    type: "string",
-    value: ""
-  });
+
+   extend('WebSocketClient');
+
+   parameter('topic', {
+      type: "string",
+      value: ""
+   });
+   
+}
+
+/** Overrides the toSendInputHandler to throw an error if called. A subscriber should not be publishing inputs. */
+exports.toSendInputHandler = function() {
+   console.error('This is a subscriber and does not take input to publish.');
 }
 
 /** Inherits initialize from webSocketClient.<br>
-    Overrides the toSendInputHandler to throw an error if called. A subscriber should not be publishing inputs. <br>
     Sends a message to rosbridge to start subscribing to the topic on input 'topic'.*/ 
-
 exports.initialize = function() {
-  wsClient.toSendInputHandler = function(){
-    console.error('This accessor is a subscriber and does not take input to publish.');
-  }
-  wsClient.initialize();
-  wsClient.sendToWebSocket({
+  Object.getPrototypeOf(exports).initialize.apply(this);
+
+  exports.sendToWebSocket({
       "op": "subscribe",
       "topic": getParameter('topic')
   });
 }
 
-/** Inherits wrapup function from webSocketClient. */
-exports.wrapup = wsClient.wrapup;
