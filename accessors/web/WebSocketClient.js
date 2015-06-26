@@ -25,9 +25,9 @@
  *  begins connecting to the web socket server.
  *  Once the connection is established, a `true` boolean is sent to
  *  the `connected` output.
- *  `'ready'` is set to `true`. If a connection
- *  was not established during `initiazlize()`, this
- *  accessor will not try to connect again.
+ *
+ *  If connection is not established immediately, the accessor will attempt to
+ *  reconnect (numberOfRetries) times at an interval of (reconnectInterval)
  *
  *  Whenever an input is received on the `'toSend'`
  *  input, the message is sent to the socket.
@@ -37,23 +37,17 @@
  *
  *  When `wrapup()` is invoked, this accessor closes the
  *  connection.
+ *  
+ *  If the connection is dropped midway, the client will attempt to reconnect if 
+ *  (reconnectOnClose) is true. This does not apply when the accessor wraps up. 
  *
  *  The data can be any type that has a JSON representation.
- *  For incomming messages, this accessor assumes that the message is
+ *  For incoming messages, this accessor assumes that the message is
  *  a string in UTF-8 that encodes a JSON object.<br/>
- *  A copy of this accessor is also in the modules directory, which other accessors can use as 
- *  a generic implementation of a web socket. This accessor-module exports a sendToWebSocket(data) function 
- *  which other accessors can use, for example:
- *  <pre>var wsClient = require('webSocketClient');
- *       wsClient.sendToWebSocket(JSONDataToSend);
- *  </pre> 
  *
- *  This accessor-module also exports its inputHandler function on
- *  'toSend' which other accessors can override, for example:n
- *  <pre> var wsClient = require('webSocketClient');
- *       wsClient.toSendInputHandler = function() {...}
- *  </pre>
+ *  This accessor can be extended by other accessors that need web socket functionality. 
  *  See `RosPublisher.js` for an example.
+ *
  *  This accessor requires the 'webSocket' module.
  *
  *  @accessor WebSocketClient
@@ -106,21 +100,30 @@ exports.setup = function() {
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function() {
+ 
+  //record the object that calls it (could be a derived accessor). 
+  var callObj = this;
+   
   client = new WebSocket.Client({
     'host':getParameter('server'),
     'port':getParameter('port'),
     'numberOfRetries':getParameter('numberOfRetries'),
     'timeBetweenRetries':getParameter('timeBetweenRetries')
   });
+  
   client.on('open', onOpen);
+  
   client.on('message', onMessage);
-  client.on('close', onClose);
+
+  //bind onClose() to caller's object, 
+  //so initialize() of caller's object is called if reconnect is true.
+  client.on('close', onClose.bind(callObj));
   client.on('error', function(message) {
     error(message)
   });
   //only execute once, and not when trying to reconnect. 
   if (inputHandle == null) { 
-    inputHandle = addInputHandler('toSend', exports.toSendInputHandler);
+      inputHandle = addInputHandler('toSend', this.toSendInputHandler);
   }
 } 
 
@@ -139,36 +142,40 @@ exports.sendToWebSocket = function(data) {
  *   Sets 'connected' output to true.
  */
 function onOpen() {
-  console.log('Status: Connection established');
-  send('connected', true);
+   console.log('Status: Connection established');
+   send('connected', true);
 }
   
 /** Executes once web socket closes.<br>
  *  Sets 'connected' output to false.<br>
- *  Sets reconect interval.<br>
+ *  If reconnect parameter is true, call initialize() of caller's object 
+ *  (this could be a derived accessor).
  */
 function onClose(message) {
-  console.log('Status: Connection closed: ' + message);
-  if (getParameter('reconnectOnClose')) {
-    exports.initialize();
-  }
+   send('connected', false);
+   console.log('Status: Connection closed: ' + message);
+   if (getParameter('reconnectOnClose')) {
+      this.initialize();
+   }
 }
   
 /** Outputs message received from web socket. */
 function onMessage(message) {
-  send('received', message);
+   send('received', message);
 }
   
 /** Closes web socket connection. */
 exports.wrapup = function() {
-  if (inputHandle != null) {
-    removeInputHandler(inputHandle, 'toSend');
-  }
-  if (client) {
-    client.removeAllListeners('open');
-    client.removeAllListeners('message');
-    client.removeAllListeners('close');
-    client.close();
-  }
+   if (inputHandle != null) {
+      removeInputHandler(inputHandle, 'toSend');
+   }
+   //'error' event may be triggered on wrapup, so don't remove listener
+   if (client) {
+      client.removeAllListeners('open');
+      client.removeAllListeners('message');
+      client.removeAllListeners('close');
+      console.log('closing listeners');
+      client.close();
+   }
 }
 
