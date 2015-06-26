@@ -9,6 +9,7 @@
     "FFT.js",
     "GeographicLocationByIP.xml",
     "Hue.js",
+    "IPAddress.js",
     "KeyValueStore.xml",
     "RangeSensor.js",
     "RosPublisher.js",
