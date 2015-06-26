@@ -20,55 +20,40 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor discovers devices on the local area network.
- *  It requires the discovery module.  Please see:
- *  https://www.terraswarm.org/accessors/wiki/Version0/Discovery
+/** This accessor outputs the IP address of the local machine.
  * 
- *  @accessor Discovery
+ *  @accessor IPAddress
  *  @module Discovery
- *  @author Elizabeth Latronico (beth@berkeley.edu)
- *  @input {string} hostIP The IP address of the host.  Used to discover other
- *   devices on the local area network.
- *  @output {string} devices A JSON object containing IP addresses and (when
- *   available) names and MAC addresses of devices on the local area network.
- *  @parameter {boolean} useNmap True if nmap should be used for discovery, 
- *   false to use ping and arp.  Default is false.
+ *  @author Elizabeth Latronico (beth@berkeley.edu), based on IPAddress actor
+ *  by Christopher Brooks
+ *  @input {boolean} trigger Send a token here to produce an output.
+ *  @output {string} IPAddress The IP address of the local machine.
  */
 
 var discovery = require('discovery');
 // Initialize ds here, instead of in setup(), so that the ds object is defined
 // when the ds.on() function is encountered
-var ds = new discovery.DiscoveryService();  
+var ds = new discovery.DiscoveryService(); 
 
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    accessor.input('hostIP', {
-        type: 'string',
-      });
-    
-    accessor.output('devices', {
-        type: 'JSON',
-      });
-    
-    accessor.parameter('useNmap', {
+    accessor.input('trigger', {
         type: 'boolean',
-        value: false,
+      });
+    
+    accessor.output('IPAddress', {
+        type: 'string',
       });
 };
 
 var handle;
 
-/** Upon receiving a host IP address, discover devices on the corresponding 
- *  local area network.
+/** Upon receiving a trigger input, output the host machine's IP address.
  */
 exports.initialize = function () {
-	handle = addInputHandler('hostIP', function() {
-		if (get('useNmap')) {
-		    ds.discoverDevices(get('hostIP'), 'nmap');
-		} else {
-			ds.discoverDevices(get('hostIP'));
-		}
+	handle = addInputHandler('trigger', function() {
+		send('IPAddress', ds.getHostAddress());
 	});
 };
 
@@ -76,12 +61,3 @@ exports.initialize = function () {
 exports.wrapup = function () {
     removeInputHandler(handle);
 };
-
-/** When discovery is finished, send a list of devices.  */
-ds.on('discovered', function(data) {
-	if (data == "") {
-       send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
-    } else {
-   send('devices', data);
-    }
-});
