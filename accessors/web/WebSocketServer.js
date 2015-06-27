@@ -83,13 +83,13 @@ exports.setup = function() {
 
 /** Starts the web socket and attaches functions to inputs and outputs. */ 
 exports.initialize = function() {
+    socketID = 0;
     if (!server) {
         server = new WebSocket.Server({'port':getParameter('port')});
         server.on('listening', onListening);
         server.on('connection', onConnection);
         server.start();
     }
-    socketID = 0;
     running = true;
 }
 
