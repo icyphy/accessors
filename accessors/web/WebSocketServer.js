@@ -81,6 +81,9 @@ exports.setup = function() {
     });
 }
 
+var handlers = [];
+var sockets = [];
+
 /** Starts the web socket and attaches functions to inputs and outputs. */ 
 exports.initialize = function() {
     socketID = 0;
@@ -90,15 +93,47 @@ exports.initialize = function() {
         server.on('connection', onConnection);
         server.start();
     }
+    handlers.push(addInputHandler('toSend', function() {
+        var data = get('toSend');
+        // Careful: Don't do if (data) because if data === 0, then data is false.
+        if (data !== null) {
+            if (data.socketID && data.message) {
+                // data has the right form for a point-to-point send.
+                if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
+                    // id matches this socket.
+                    console.log("Sending to socket id " 
+                            + sockets[data.socketID]
+                            + " message: "
+                            + JSON.stringify(data.message));
+                    sockets[data.socketID].send(data.message);
+                } else {
+                    console.log('Socket with ID ' + data.socketID
+                            + ' is not open. Discarding message: ' + data.message);
+                }
+            } else {
+                // No socketID or message, so this is a broadcast message.
+                var success = false;
+                for (var id = 0; id < sockets.length; id++) {
+                    if (sockets[id].isOpen()) {
+                        console.log("Broadcasting to socket id " + id 
+                                + " message: " + JSON.stringify(data));
+                        sockets[id].send(data);
+                        success = true;
+                    }
+                }
+                if (!success) {
+                    console.log('No open sockets. Discarding message: ' + data.message);
+                }
+            }
+        }
+    }));
+
     running = true;
 }
 
 function onListening() {
     console.log('Server: Listening for socket connection requests.');
 }
-
-var handlers = [];
-var sockets = [];
 
 /** Executes when a connection has been establised.<br>
  *  Attaches an inputHandler to the socket.<br>
@@ -111,25 +146,7 @@ function onConnection(socket) {
         send('received', {'socketID':id, 'message':message});
     });
     // For each new connection, store the socket and add an input handler.
-    sockets.push(socket);
-    handlers.push(addInputHandler('toSend', function() {
-        var data = get('toSend');
-        if (data) {
-            if (data.socketID && data.message) {
-                // data has the right form for a point-to-point send.
-                if (data.socketID == id) {
-                    // id matches this socket.
-                    console.log("Sending to socket id " + id + " message: " + JSON.stringify(data.message));
-                    socket.send(data.message);
-                }
-            } else {
-                // No socketID or message, so this is a broadcast message.
-                console.log("Broadcasting to socket id " + id + " message: " + JSON.stringify(data));
-                socket.send(data);
-            }
-        }
-    }));
-    
+    sockets.push(socket);    
     socket.on('close', function(message) {
         send('connection', {'socketID':id, 'status':'closed'});
     });
