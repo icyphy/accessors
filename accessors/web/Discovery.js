@@ -25,7 +25,6 @@
  *  https://www.terraswarm.org/accessors/wiki/Version0/Discovery
  * 
  *  @accessor Discovery
- *  @module Discovery
  *  @author Elizabeth Latronico (beth@berkeley.edu)
  *  @input {string} hostIP The IP address of the host.  Used to discover other
  *   devices on the local area network.
