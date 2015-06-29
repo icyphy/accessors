@@ -1,5 +1,3 @@
-See [http://www.terraswarm.org/accessors](http://www.terraswarm.org/accessors)
-
 Terraswarm Accessors
 ===================
 
@@ -9,6 +7,11 @@ are actors that provide access to a (typically remote) service, sensor, or actua
 source and/or sink for data and/or commands.
 An accessor host is to the Internet of Things what a browser is to the Internet.
 It renders a remote service by locally executing a proxy for that service.
+
+See Also
+--------
+* [TerraSwarm Accessors Main Page](http://www.terraswarm.org/accessors)
+* [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
 
 How to update index.json
 ------------------------
@@ -27,7 +30,7 @@ The doc/jsdoc/ directory contains html created by jsdoc.
 To update the docs by hand, run
   ant jsdoc
 
-An automated build on terra.eecs.berkeley.edu updates the docs as necessary.
+An automated build on terra.eecs.berkeley.edu updates the docs by checking the accessors repo every 5 minutes.
 
 See [https://www.terraswarm.org/accessors/wiki/Main/JSDoc](https://www.terraswarm.org/accessors/wiki/Main/JSDoc).
 
