@@ -21,7 +21,6 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor publishes pose information to Scarab topic /goal.<br>
- *  This accessor requires the module 'webSocketClient'. 
  *  It inherits the input and output ports from webSocketClient, and takes in
  *  pose information at 'toSend'.<br>
  *  The data published must be of the ROS datatype geometry_msgs/PoseStamped.
@@ -45,18 +44,21 @@
  *
  */
 
-var wsClient = require('webSocketClient');
 
 /** Sets up by accessor by inheriting inputs from setup() in webSocketClient.*/
-exports.setup = wsClient.setup;
+exports.setup = function() {
+   extend('WebSocketClient');
+}
+
+/** Inherits initialize from WebSocketClient.*/ 
+exports.initialize = function() {
+   Object.getPrototypeOf(exports).initialize.apply(this);
+}
 
 /** Overrides inputHandler on 'toSend' from webSocketClient.<br> 
   * New inputHandler takes in pose data and formats it according to the 
-  * geometry_msgs/PoseStamped datatype in ROS. <br>
-  * Inherits initialize from webSocketClient.*/ 
-exports.initialize = function() {
-  //must override first
-  wsClient.toSendInputHandler = function() {
+  * geometry_msgs/PoseStamped datatype in ROS. <br> */
+exports.toSendInputHandler = function() {
     var pose = get('toSend');
     var msg = {
       "header": {
@@ -74,11 +76,5 @@ exports.initialize = function() {
       "topic": "/goal",
       "msg": msg 
     }
-    wsClient.sendToWebSocket(data);
-  }
-  wsClient.initialize();
+    exports.sendToWebSocket(data);
 }
-
-/** inherits wrapup function from webSocketClient */
-exports.wrapup = wsClient.wrapup;
-
