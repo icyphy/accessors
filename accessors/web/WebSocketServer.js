@@ -57,7 +57,6 @@
 
 var WebSocket = require('webSocket');
 var server = null;
-var socketID = 0;
 var running = false;
 
 /** Sets up the accessor by defining inputs and outputs. */
@@ -81,54 +80,32 @@ exports.setup = function() {
     });
 }
 
-var handlers = [];
+var handle;
 var sockets = [];
 
-/** Starts the web socket and attaches functions to inputs and outputs. */ 
+/** Starts the web socket and attaches functions to inputs and outputs. 
+  * Adds an input handler on toSend that sends the input received to the right socket. */ 
 exports.initialize = function() {
-    socketID = 0;
     if (!server) {
         server = new WebSocket.Server({'port':getParameter('port')});
         server.on('listening', onListening);
         server.on('connection', onConnection);
         server.start();
     }
-
     running = true;
-}
 
-function onListening() {
-    console.log('Server: Listening for socket connection requests.');
-}
-
-/** Executes when a connection has been establised.<br>
- *  Attaches an inputHandler to the socket.<br>
- *  Triggers an output on <code>'connection'</code>. */
-function onConnection(socket) {
-    var id = socketID++;
-    console.log('Server: new socket established with ID: ' + id);
-    send('connection', {'socketID':id, 'status':'open'});
-    socket.on('message', function(message) {
-        send('received', {'socketID':id, 'message':message});
-    });
-    // For each new connection, store the socket and add an input handler.
-    sockets.push(socket);    
-    socket.on('close', function(message) {
-        send('connection', {'socketID':id, 'status':'closed'});
-    });
-
-    handlers.push(addInputHandler('toSend', function() {
+    handle = addInputHandler('toSend', function() {
         var data = get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
-            if (data.socketID && data.message) {
+            if ((data.socketID != null)  && (data.message != null)) {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
                     console.log("Sending to socket id " 
-                            + sockets[data.socketID]
+                            + data.socketID
                             + " message: "
-                            + JSON.stringify(data.message));
+                            + data.message);
                     sockets[data.socketID].send(data.message);
                 } else {
                     console.log('Socket with ID ' + data.socketID
@@ -140,7 +117,7 @@ function onConnection(socket) {
                 for (var id = 0; id < sockets.length; id++) {
                     if (sockets[id].isOpen()) {
                         console.log("Broadcasting to socket id " + id 
-                                + " message: " + JSON.stringify(data));
+                                + " message: " + data);
                         sockets[id].send(data);
                         success = true;
                     }
@@ -150,17 +127,42 @@ function onConnection(socket) {
                 }
             }
         }
-    }));
+    });
+}
+
+function onListening() {
+    console.log('Server: Listening for socket connection requests.');
+}
+
+/** Executes when a connection has been establised.<br>
+ *  Triggers an output on <code>'connection'</code>.
+ *  Adds an event listener to the socket. */
+function onConnection(socket) {
+   //socketID is the index of the socket in the sockets array. 
+    var socketID = sockets.length;
+    console.log('Server: new socket established with ID: ' + socketID);
+    send('connection', {'socketID':socketID, 'status':'open'});
+    socket.on('message', function(message) {
+        send('received', {'socketID':socketID, 'message':message});
+    });
+    socket.on('close', function(message) {
+        send('connection', {'socketID':socketID, 'status':'closed'});
+    });
+
+    sockets.push(socket);    
 }
 
 /** Removes all inputHandlers from sockets.<br>
  * Unregisters event listeners from sockets.<br>
  * Closes server. */
-function wrapup() {
+exports.wrapup = function(){
     for (var i = 0; i < sockets.length; i++) {
-        removeInputHandler(handlers[i], 'toSend');
         sockets[i].removeAllListeners();
     }
+
+    sockets = [];
+    removeInputHandler(handle); 
+
     if (server != null) {
         server.removeAllListeners();
         server.close();
