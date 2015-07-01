@@ -93,6 +93,30 @@ exports.initialize = function() {
         server.on('connection', onConnection);
         server.start();
     }
+
+    running = true;
+}
+
+function onListening() {
+    console.log('Server: Listening for socket connection requests.');
+}
+
+/** Executes when a connection has been establised.<br>
+ *  Attaches an inputHandler to the socket.<br>
+ *  Triggers an output on <code>'connection'</code>. */
+function onConnection(socket) {
+    var id = socketID++;
+    console.log('Server: new socket established with ID: ' + id);
+    send('connection', {'socketID':id, 'status':'open'});
+    socket.on('message', function(message) {
+        send('received', {'socketID':id, 'message':message});
+    });
+    // For each new connection, store the socket and add an input handler.
+    sockets.push(socket);    
+    socket.on('close', function(message) {
+        send('connection', {'socketID':id, 'status':'closed'});
+    });
+
     handlers.push(addInputHandler('toSend', function() {
         var data = get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
@@ -127,29 +151,6 @@ exports.initialize = function() {
             }
         }
     }));
-
-    running = true;
-}
-
-function onListening() {
-    console.log('Server: Listening for socket connection requests.');
-}
-
-/** Executes when a connection has been establised.<br>
- *  Attaches an inputHandler to the socket.<br>
- *  Triggers an output on <code>'connection'</code>. */
-function onConnection(socket) {
-    var id = socketID++;
-    console.log('Server: new socket established with ID: ' + id);
-    send('connection', {'socketID':id, 'status':'open'});
-    socket.on('message', function(message) {
-        send('received', {'socketID':id, 'message':message});
-    });
-    // For each new connection, store the socket and add an input handler.
-    sockets.push(socket);    
-    socket.on('close', function(message) {
-        send('connection', {'socketID':id, 'status':'closed'});
-    });
 }
 
 /** Removes all inputHandlers from sockets.<br>
