@@ -78,7 +78,7 @@ var handlers = [];
 // alert("Connecting to: " + bridge);
 
 /** Define inputs and outputs. */
-function setup() {
+exports.setup = function() {
   input('bridgeIPAddress', {
     type: "string",
     value: ""
@@ -115,7 +115,7 @@ function setup() {
 /** Initialize connection. 
  *  Register user if not registered 
  *  Input handlers are not added here in case we need to wait for user to regiter */
-function initialize() {
+exports.initialize = function() {
    var ipAddress = get('bridgeIPAddress');
    userName = getParameter('userName');
 
@@ -278,7 +278,7 @@ function inputHandler() {
 }
 
 /** Turn off changed lights on wrapup. */
-function wrapup() {
+exports.wrapup = function() {
    for (var i = 0; i < handlers.length; i++) {
       removeInputHandler(handlers[i]);
    }
