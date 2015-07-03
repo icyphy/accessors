@@ -24,11 +24,17 @@
  *  It communicates to ROS through the rosbridge web socket, and extends the 
  *  WebSocketClient accessor to do so. 
  *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br> 
+ *  The other parameters configure how the data is to be received according to the rosbridge specification:
+ *  https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe
  *
  *  @accessor RosSubscriber
  *  @parameter {string} server The IP address or domain name of server.
  *  @parameter {number} port The port that the web socket listens to.
  *  @parameter {string} topic The ROS topic to subscribe to.
+ *  @parameter {int} throttle_rate The minimum amount of time (in ms) that must elapse between messages sent. Defaults to 0.
+ *  @parameter {int} queue_length The ROS size of the queue to buffer messages. Messages are buffered as a result of the throttle_rate. Defaults to 1.
+ *  @parameter {int} fragment_size The maximum size that a message can take before it is to be fragmented. Defaults to 1000. Ptolemy will close the model if fragment size is too large (not sure what the maximum is).
+ *  @parameter {string} compression A string to specify the compression scheme to be used on messages. Options are "none" (default) and "png". 
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
  *  @author Marcus Pan 
@@ -47,6 +53,22 @@ exports.setup = function() {
       type: "string",
       value: ""
    });
+   parameter('throttle_rate', {
+      type: "int",
+      value: 0
+   });
+   parameter('queue_length', {
+      type: "int",
+      value: 10
+   });
+   parameter('fragment_size', {
+      type: "int",
+      value: 10000
+   });
+   parameter('compression', {
+      type: "string",
+      value: 'none'
+   });
    
 }
 
@@ -62,7 +84,11 @@ exports.initialize = function() {
 
   exports.sendToWebSocket({
       "op": "subscribe",
-      "topic": getParameter('topic')
+      "topic": getParameter('topic'),
+      "throttle_rate": getParameter('throttle_rate'),
+      "queue_length": getParameter('queue_length'),
+      "fragment_size": getParameter('fragment_size'),
+      "compression": getParameter('compression')
   });
 }
 
