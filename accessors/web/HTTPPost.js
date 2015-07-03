@@ -20,41 +20,46 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor outputs the IP address of the local machine.
+/** Post the input to the given URL.  A wrapper for httpRequest for posting. 
+ *  Does NOT handle multiple data types.  Only knows how to post JSON data. 
  * 
- *  @accessor IPAddress
- *  @author Elizabeth Latronico (beth@berkeley.edu), based on IPAddress actor
- *  by Christopher Brooks
- *  @input {boolean} trigger Send a token here to produce an output.
- *  @output {string} IPAddress The IP address of the local machine.
+ *  @accessor HTTPPost
+ *  @author Elizabeth Latronico (beth@berkeley.edu)
+ *  @input {JSON} data The data to post.
+ *  @input {String} url The url to post the data to.
+ *  @output {string} response The server's response.
  */
-
-var discovery = require('discovery');
-// Initialize ds here, instead of in setup(), so that the ds object is defined
-// when the ds.on() function is encountered
-var ds = new discovery.DiscoveryService(); 
 
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    accessor.input('trigger', {
-        type: 'boolean',
+    accessor.input('data', {
+        type: 'JSON',
       });
     
-    accessor.output('IPAddress', {
+    accessor.input('url', {
+        type: 'string',
+      });
+    
+    accessor.output('response', {
         type: 'string',
       });
 };
 
 var handle;
+var timeout = 2000;    // The httpRequest method currently ignores the timeout
 
-/** Upon receiving a trigger input, output the host machine's IP address.
- */
+/** Post the received data to the specified url.  */
 exports.initialize = function () {
-	handle = addInputHandler('trigger', function() {
-		send('IPAddress', ds.getHostAddress());
+	handle = addInputHandler('data', function() {
+		var properties = {};
+		properties["Content-Type"] = "application/json";
+		var responseText = 
+			httpRequest(get('url'), 'POST', properties, get('data'), 
+					timeout);
+		send('response', responseText);
 	});
-};
+}
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {

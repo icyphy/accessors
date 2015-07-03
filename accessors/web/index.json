@@ -8,6 +8,7 @@
     "Exec.js",
     "FFT.js",
     "GeographicLocationByIP.xml",
+    "HTTPPost.js",
     "Hue.js",
     "IPAddress.js",
     "KeyValueStore.xml",
