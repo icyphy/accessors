@@ -23,17 +23,24 @@
       a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
       To view the accessor script from within Ptolemy II, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
     <p>
-    There are two distinct syntaxes for accessors, a JavaScript syntax and an XML syntax.  The XML syntax is intended as an intermediate form and is designed to be able to accomodate evolution to other languages besides JavaScript. 
-    <h2>Example JavaScript Accessors</h2>
+    <h2>Example Accessors</h2>
+    Below is an incomplete list of accessors. See the <a href="index.json">index.json</a> file and subdirectories for a complete list.
     <ul>
+      <li><a href="/accessors/AudioCapture.js">AudioCapture</a></li>
       <li><a href="/accessors/AudioPlayer.js">AudioPlayer</a> (placeholder only)</li>
+      <li><a href="/accessors/cameras/Foscam.js">cameras/Foscam</a></li>
+      <li><a href="/accessors/Discovery.js">Discovery</a></li>
+      <li><a href="/accessors/Exec.js">Exec</a></li>
+      <li><a href="/accessors/FFT.js">FFT</a></li>
+      <li><a href="/accessors/Hue.js">Hue</a></li>
+      <li><a href="/accessors/net/REST.js">net/REST</a></li>
       <li><a href="/accessors/StockTick.js">StockTick</a></li>
       <li><a href="/accessors/VertxPublish.js">VertxPublish</a></li>
       <li><a href="/accessors/VertxSubscribe.js">VertxSubscribe</a>s</li>
     </ul>
 
-    <h2>Example XML Accessors</h2>
-    The following example accessors are defined in an XML file. If you open the XML file in a browser, a browser host instantiates the accessor and provides a form entry for testing it. <b>Currently, none of these work in the browser host! The browser host has not been updated to support new design features. So you can only browse the source in the browser.</b> All of these work in the Ptolemy II host, and some of them in the Node.js host.
+    <h2>XML Accessors</h2>
+    The following accessors are obsolete, but may be useful to browse. We are no longer developing the XML syntax for accessor specification. <b>Currently, none of these work in the browser host! The browser host has not been updated to support new design features. So you can only browse the source in the browser.</b> All of these work in the Ptolemy II host, and some of them in the Node.js host.
     <ul>
       <li><a href="/accessors/Accelerometer.xml">Accelerometer</a> (see <a href="Accelerometer.html">source</a> file)</li>
       <li><a href="/accessors/GeographicLocationByIP.xml">GeographicLocationByIP</a> (see <a href="GeographicLocationByIP.html">source</a> file)</li>
