@@ -23,26 +23,34 @@
 /** Accessor for RESTful interfaces.
  *  Upon receipt of any input, this accessor will issue an HTTP request
  *  specified by the inputs.
- *  The ```url``` input is either a URL (a string) or a JSON object with
- *  the following optional fields:
+ *  The <i>options</i> input can be a string URL
+ *  or an object with the following fields:
  *  <ul>
- *  <li> headers: An object containing request headers. By default this is an empty object.
- *       Items may have a value that is an array of values, for headers with more than one value.
- *  <li> host: A string giving the domain name or IP address of the server to issue the request to.
- *       This defaults to 'localhost'.</li>
- *  <li> keepAlive: A boolean that specified whether to keep sockets around in a pool
- *       to be used by other requests in the future. This defaults to false.
- *  <li> method: A string specifying the HTTP request method. This defaults to 'GET', but can
- *       also be 'PUT', 'POST', 'DELETE', etc.
- *  <li> path: Request path as a string (see command below). This defaults to '/'.
- *  <li> port: Port of remote server. Defaults to 80.
- *  <li> protocol: The protocol. This is a string that defaults to 'http'.
- *  <li> query: A query string to be appended to the path, such as '?page=12'. See arguments below.
+ *  <li> headers: An object containing request headers. By default this
+ *       is an empty object. Items may have a value that is an array of values,
+ *       for headers with more than one value.
+ *  <li> keepAlive: A boolean that specified whether to keep sockets around
+ *       in a pool to be used by other requests in the future. This defaults to false.
+ *  <li> method: A string specifying the HTTP request method.
+ *       This defaults to 'GET', but can also be 'PUT', 'POST', 'DELETE', etc.
+ *  <li> url: A string that can be parsed as a URL, or an object containing
+ *       the following fields:
+ *       <ul>
+ *       <li> host: A string giving the domain name or IP address of
+ *            the server to issue the request to. This defaults to 'localhost'.
+ *       <li> protocol: The protocol. This is a string that defaults to 'http'.
+ *       <li> port: Port of remote server. This defaults to 80. 
+ *       </ul>
  *  </ul>
- *  The path may optionally be specified by the separate input ```command```, which accepts
- *  any string, and the query may optionally be given by the ```arguments``` input, which
- *  accepts any JSON object.  The fields in that object will be encoded into a query string
- *  to be sent along with the request.
+ *  In addition, there is a <i>command</i> input that is a string that is appended
+ *  as a path to the URL constructed from the <i>options</i> input. This defaults
+ *  to the empty string.
+ *
+ *  The <i>arguments</i> input an object with fields that are converted to a query
+ *  string to append to the url, for example '?arg=value'.
+ *
+ *  A trigger input triggers invocation of the current command. Any value provided
+ *  on the trigger input is ignored.
  *
  *  The output response will be a string if the MIME type of the accessed page
  *  begins with "text". If the MIME type begins with anything else, then the
@@ -50,18 +58,21 @@
  *  that the data is given in some form that is usable by downstream accessors
  *  or actors.
  *
- *  If the same command is to be executed repeatedly, then a trigger input
- *  may be provided to trigger invocation of the command
+ *  If the parameter 'outputCompleteResponseOnly' is true (the default), then this
+ *  accessor will produce a 'response' output only upon receiving a complete response.
+ *  If it is false, then multiple outputs may result from a single input or trigger.
  * 
  *  @accessor REST
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
- *  @input {JSON} url The url for the command or an object specifying options.
+ *  @input {JSON} options The url for the command or an object specifying options.
  *  @input {string} command The command.
  *  @input {JSON} arguments Arguments to the command.
  *  @input trigger An input to trigger the command.
  *  @output {string} response The server's response.
- *  @output {int} status The status code of the response.
+ *  @output {string} status The status code and message of the response.
  *  @output {JSON} headers The headers sent with the response.
+ *  @parameter {boolean} outputCompleteResponseOnly If true (the default), the produce a
+ *   'response' output only upon receiving the entire response.
  */
 
 var httpClient = require('httpClient');
@@ -69,13 +80,14 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('url', {'value':''});
+    input('options', {'value':''});
     input('command', {'type':'string', 'value':''});
     input('arguments', {'value':''});
     input('trigger');
     output('response');
-    output('status', {'type':'int'});
+    output('status', {'type':'string'});
     output('headers');
+    parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
 };
 
 /** Build the path from the command and arguments.
@@ -86,12 +98,16 @@ exports.setup = function () {
  *  then the returned string will be
  *     ```command?foo=bar&baz=qux&baz=quux&corge=```
  *  Derived accessors may override this function to customize
- *  the interaction.
+ *  the interaction. The returned string should not include a leading '/'.
+ *  That will be added automatically.
  */
 exports.encodePath = function() {
     var command = get('command');
     var encodedArgs = querystring.stringify(get('arguments'));
-    return command + '?' + encodedArgs;
+    if (encodedArgs) {
+        return command + '?' + encodedArgs;
+    }
+    return command;
 }
 
 /** Issue the command based on the current value of the inputs.
@@ -103,12 +119,14 @@ exports.encodePath = function() {
  */
 exports.issueCommand = function(callback) {
     var encodedPath = this.encodePath();
-    var url = get('url');
-    var command = url;
-    if (typeof url === 'string') {
-        command = url + '/' + encodedPath;
+    var options = get('options');
+    var command = options;
+    if (typeof options === 'string') {
+        command = options + '/' + encodedPath;
+    } else if (typeof command.url === 'string') {
+        command.url += '/' + encodedPath;
     } else {
-        command.path = encodedPath;
+        command.url.path = '/' + encodedPath;
     }
     var request = httpClient.request(command, callback);
     request.on('error', function(message) {
@@ -136,8 +154,8 @@ exports.handleResponse = function(message) {
         } else {
             send('response', message);
         }
-        if (message.status) {
-            send('status', message.status);
+        if (message.statusCode) {
+            send('status', message.statusCode + ': ' + message.statusMessage);
         }
         if (message.headers) {
             send('headers', message.headers);
@@ -150,8 +168,8 @@ var handle;
 
 /** Register the input handler.  */
 exports.initialize = function () {
-    // Upon receiving _any_ input, issue a command.
-	handle = addInputHandler(null, this.issueCommand, this.handleResponse);
+    // Upon receiving a trigger input, issue a command.
+	handle = addInputHandler('trigger', this.issueCommand, this.handleResponse);
 }
 
 /** Upon wrapup, stop handling new inputs.  */
