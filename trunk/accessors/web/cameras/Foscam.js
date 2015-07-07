@@ -41,6 +41,22 @@
  *  #  *stop horizontal patrol*
  *  #  *stop vertical patrol*
  *
+ *  The <i>options</i> input can be a string URL
+ *  or an object with the following fields:
+ *  # headers: An object containing request headers. By default this
+ *    is an empty object. Items may have a value that is an array of values,
+ *    for headers with more than one value.
+ *  # keepAlive: A boolean that specified whether to keep sockets around
+ *    in a pool to be used by other requests in the future. This defaults to false.
+ *  # method: A string specifying the HTTP request method.
+ *    This defaults to 'GET', but can also be 'PUT', 'POST', 'DELETE', etc.
+ *  # url: A string that can be parsed as a URL, or an object containing
+ *    the following fields:
+ *    ## host: A string giving the domain name or IP address of
+ *       the server to issue the request to. This defaults to 'localhost'.
+ *    ## protocol: The protocol. This is a string that defaults to 'http'.
+ *    ## port: Port of remote server. This defaults to 80. 
+ *
  *  This accessor has been tested with a Foscam NVision F18910W only.
  *  The (rather poor) documentation for the camera API can be found here:
  *  http://www.foscam.es/descarga/ipcam_cgi_sdk.pdf.
@@ -49,7 +65,7 @@
  * 
  *  @accessor Foscam
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
- *  @input {JSON} url The url for the command or an object specifying options.
+ *  @input {JSON} options The specification for the URL, as defined above.
  *  @input {string} command The command.
  *  @input {JSON} arguments Arguments to the command.
  *  @input trigger An input to trigger the command.
@@ -65,6 +81,7 @@ exports.setup = function () {
     // Change the type of the input to select.
     input('command', {
         'type':'select',
+        'value':'snapshot',
         'options':[
             'snapshot',
             'center',
@@ -121,7 +138,7 @@ exports.encodePath = function(command) {
     if (additionalArgs !== "") {
         encodedArgs += '&' + additionalArgs;
     }
-    var result = '/' + command + '.cgi?' + encodedArgs;
+    var result = command + '.cgi?' + encodedArgs;
     console.log(result);
     return result;
 }
