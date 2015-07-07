@@ -22,6 +22,7 @@
 
 /** An accessor for a Foscam camera. The commands that this accessor supports are:
  *  #  *snapshot*: Take a picture and produce it on the '''response''' output.
+ *  #  *videostream*: Output a video stream.
  *  #  *center*: Center the camera. This will pan to find the center.
  *  #  *down*: Move the camera down.
  *  #  *left*: Move the camera left.
@@ -40,6 +41,12 @@
  *  #  *vertical patrol*
  *  #  *stop horizontal patrol*
  *  #  *stop vertical patrol*
+ *
+ *  If you select *videostream* then you can specify 'resolution' and 'rate'
+ *  options.  FIXME: Make more user friendly versions of these.
+ *  resolution = 8 specifies 320*240. rate=15 specifies 1fps.
+ *  NOTE: The videostream selection appears to not actually work.
+ *  It has been known to produce a frame or two, but it needs further work.
  *
  *  The <i>options</i> input can be a string URL
  *  or an object with the following fields:
@@ -84,6 +91,7 @@ exports.setup = function () {
         'value':'snapshot',
         'options':[
             'snapshot',
+            'videostream',
             'center',
             'down',
             'left',
@@ -103,11 +111,14 @@ exports.setup = function () {
     parameter('password', {'value':'', 'type':'string'})
 };
 
+// Alternate command to use, for example to stop the camera.
+var alternateCommand;
+
 /** Override the base class to construct the path for the URL from.
  *  more user-friendly descriptions of the command.
  */
-exports.encodePath = function(command) {
-    if (!command) {
+exports.encodePath = function() {
+    if (!alternateCommand) {
         command = get('command');
     }
     var code = -1;
@@ -142,3 +153,12 @@ exports.encodePath = function(command) {
     console.log(result);
     return result;
 }
+
+/** Upon wrapup, attempt to stop the camera videostream.  */
+exports.wrapup = function () {
+    this.ssuper.wrapup();
+    // Assume any command will work to stop the stream.
+    alternateCommand = 'stop up';
+    // No need to specify a callback.
+    this.issueCommand();
+};
