@@ -110,6 +110,8 @@ exports.encodePath = function() {
     return command;
 }
 
+var request;
+
 /** Issue the command based on the current value of the inputs.
  *  This constructs a path using encodePath and combines it with the
  *  url input to construct the full command.
@@ -122,13 +124,19 @@ exports.issueCommand = function(callback) {
     var options = get('options');
     var command = options;
     if (typeof options === 'string') {
-        command = options + '/' + encodedPath;
+        // In order to be able to include the outputCompleteResponseOnly
+        // option, we have to switch styles here.
+        command = {};
+        command.url = options + '/' + encodedPath;
     } else if (typeof command.url === 'string') {
         command.url += '/' + encodedPath;
     } else {
         command.url.path = '/' + encodedPath;
     }
-    var request = httpClient.request(command, callback);
+    if (get('outputCompleteResponseOnly') === false) {
+        command.outputCompleteResponseOnly = false;
+    }
+    request = httpClient.request(command, callback);
     request.on('error', function(message) {
         if (!message) {
             message = 'Request failed. No further information.';
@@ -174,5 +182,10 @@ exports.initialize = function () {
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {
+    // In case there is streaming data coming in, stop it.
+    if (request) {
+        request.stop();
+        request = null;
+    }
     removeInputHandler(handle);
 };
