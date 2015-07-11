@@ -1,3 +1,4 @@
 [
-    "REST.js"
+    "REST.js",
+    "RESTWithBody.js"
 ]
