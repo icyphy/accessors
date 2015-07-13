@@ -171,8 +171,12 @@ exports.toSendInputHandler = function() {
 
 /** Sends JSON data to the web socket. */
 exports.sendToWebSocket = function(data) {
-  client.send(data);
-  console.log("Sending to web socket: " + JSON.stringify(data));
+  if (client != null) {
+    client.send(data);
+    console.log("Sending to web socket: " + JSON.stringify(data));
+  } else {
+    console.log("Client is null. Could not send message: " + JSON.stringify(data)); 
+  }
 }
 
 /** Executes once  web socket establishes a connection.

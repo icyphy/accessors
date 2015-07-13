@@ -94,17 +94,19 @@ exports.initialize = function() {
 /** Format waypoint according to ROS datatype getometry_msgs/Pose */
 function sendNewGoal(px, py, pz, qw, qx, qy, qz) {
     var newGoal = {
-      "position": {
-        "x": px,
-        "y": py,
-        "z": pz 
-      },
-      "orientation": {
-        "w": qw, 
-        "x": qx, 
-        "y": qy,
-        "z": qz
-      }
+      "pose": {
+         "position": {
+           "x": px,
+           "y": py,
+           "z": pz 
+         },
+         "orientation": {
+           "w": qw, 
+           "x": qx, 
+           "y": qy,
+           "z": qz
+         }
+      } 
     };
     send('newGoal', newGoal);
 }
