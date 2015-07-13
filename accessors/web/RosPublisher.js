@@ -20,11 +20,12 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor publishes to a pre-defined ROS topic.<br>
- *  This accessor extends WebSocketClient.js. 
- *  It inherits the input and output from WebSocketClient, but adds
- *  its own 'topic' input. This must be a pre-established topic in ROS.
- *  This input is usually prefixed with a '/' eg: '/noise'.<br> 
+/** This accessor advertises and publishes to a ROS topic. It extends the WebSocketClient to communicate to a rosbridge websocket. <br>
+ * During intialize, it will advertise the  topic it will publish to, along with its type. The purpose of 'advertise' here is to establish the ROS topic if isn't already established. This is slightly different from the 'advertise' function in NodeHandle which simply publicizes that the the node will be publishing messages to the topic. 
+ * <li>If the topic does not already exist, and the type is valid, a topic will be established with this type.</li> 
+ * <li>If the topic already exists with a different type, no new topic will be established
+ * <li>If the topic already exists with the same type, no new topic will be established.</li> 
+ * <li>If the topic already exists but the type isn't resolved, no new topic will be established.</li>
  *  On input from 'toSend', this accessor publishes that input to the 
  *  aforementioned topic. 
  *  The input from 'toSend' must be in JSON form, and must match the message
@@ -32,24 +33,35 @@
  *  expecting <code>std_msgs/String</code>, then the input in 'toSend' should be
  *  as follows:
  *  <pre> { "data": "hello world" } </pre>
+ *  Some ROS types contain a header which consists of a sequence, timestamp, and a frame_id. If the ROS type has a header, you can either:
+ *  <li>send the message on toSend without the header, and check the parameter 'addHeader'. This sends the message with a header with only the frame_id specified, and rosbridge will add the sequence and timestamp for you. 
+ *  <li>send a fully formed message with all fields in the header included and don't check the parameter 'addHeader'.</li> 
+ *  This accessor doesn't do any error checking. All error messages orginate from rosbridge and will appear on the console running rosbridge. More information ccan be viewed on the <a href='https://github.com/RobotWebTools/rosbridge_suite/blob/groovy-devel/ROSBRIDGE_PROTOCOL.md'>rosbridge protocol specification</a> site.
  *
  *  @accessor RosPublisher
- *  @parameter {string} server The IP address or domain name of server.
- *  @parameter {number} port The port that the web socket listens to.
  *  @parameter {string} topic The ROS topic to publish to.
- *  @input {JSON} toSend The data to be published to the topic.
- *  @output {boolean} connected The status of the web socket connection.
- *  @output {JSON} received The data received from the web socket server.
+ *  @parameter {string} ROStype The ROS datatype of the topic.
+ *  @parameter {boolean} addHeader If (true), this accessor will send a header with a blank seq and timestamp field, and rosbridge will add the header for you.
+ *  @parameter {string} frame_id The frame_id of the header (only needed if a header is required).
  *  @author Marcus Pan 
  *  @version $Id$ 
  */
 
 
-/** Sets up by accessor by inheriting inputs from setup() in webSocketClient.<br>
- *  Adds a 'topic' input which is a pre-defined ROS topic to publish to.*/ 
+/** Sets up by accessor by inheriting inputs from setup() in WebSocketClient. Adds additional parameters regarding the ROS topic to publish to. */ 
 exports.setup = function() {
    extend('WebSocketClient');
    parameter('topic', {
+      type: "string"
+   });
+   parameter('ROStype', {
+      type: "string"
+   });
+   parameter('addHeader', {
+      type: "boolean",
+      value: false
+   });
+   parameter('frame_id', {
       type: "string",
       value: ""
    });
@@ -57,18 +69,45 @@ exports.setup = function() {
 
 /** Override inputHandler on 'toSend' from WebSocketClient */
 exports.toSendInputHandler = function() {
+   var msg = get('toSend');
+//add a header with a blank time and sequence info. This will be added by rosbridge.
+   if (getParameter('addHeader')) {
+      msg.header = {
+         "frame_id": getParameter('frame_id')
+      };
+   }
+      
    var data = {
       "op": "publish",
       "topic": getParameter('topic'),
-      "msg": get('toSend') 
+      "msg": msg 
    }
+
    exports.sendToWebSocket(data);
 }
 
-/**  Inherits initialize from webSocketClient.*/ 
+/**  Inherits initialize from WebSocketClient. 
+ *   Advertise the topic we are publishing to.*/ 
 exports.initialize = function() {
-   Object.getPrototypeOf(exports).initialize.apply(this);
+   this.ssuper.initialize.apply(this);
+
+   var advertise = {
+      "op": "advertise",
+      "topic": getParameter('topic'),
+      "type": getParameter('ROStype')
+   };
+   exports.sendToWebSocket(advertise);
+   
 }
 
+/** Unadvertise the topic and inherit wrapup from WebSocketClient */
+exports.wrapup = function() {
+   var unadvertise = {
+      "op": "unadvertise",
+      "topic": getParameter('topic')
+   };
+   exports.sendToWebSocket(unadvertise);
+   this.ssuper.wrapup();
+}
 
 

@@ -20,16 +20,14 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor subscribes to a ROS topic.<br>
+/** This accessor subscribes to a pre-established ROS topic.<br>
  *  It communicates to ROS through the rosbridge web socket, and extends the 
  *  WebSocketClient accessor to do so. 
- *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br> 
+ *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br>. 
  *  The other parameters configure how the data is to be received according to the rosbridge specification:
  *  https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe
  *
  *  @accessor RosSubscriber
- *  @parameter {string} server The IP address or domain name of server.
- *  @parameter {number} port The port that the web socket listens to.
  *  @parameter {string} topic The ROS topic to subscribe to.
  *  @parameter {int} throttle_rate The minimum amount of time (in ms) that must elapse between messages sent. Defaults to 0.
  *  @parameter {int} queue_length The ROS size of the queue to buffer messages. Messages are buffered as a result of the throttle_rate. Defaults to 1.
@@ -80,7 +78,7 @@ exports.toSendInputHandler = function() {
 /** Inherits initialize from webSocketClient.<br>
     Sends a message to rosbridge to start subscribing to the topic on input 'topic'.*/ 
 exports.initialize = function() {
-  Object.getPrototypeOf(exports).initialize.apply(this);
+  this.ssuper.initialize.apply(this);
 
   exports.sendToWebSocket({
       "op": "subscribe",
@@ -90,5 +88,15 @@ exports.initialize = function() {
       "fragment_size": getParameter('fragment_size'),
       "compression": getParameter('compression')
   });
+}
+
+/** Unsubscribe from the topic. Close websocket connections by calling wrapup of WebSocketClient */
+exports.wrapup = function() {
+   var unsubscribe = {
+      "op": "unsubscribe",
+      "topic": getParameter('topic')
+   }
+   exports.sendToWebSocket(unsubscribe);
+   this.ssuper.wrapup();
 }
 
