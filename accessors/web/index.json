@@ -16,7 +16,6 @@
     "RosPublisher.js",
     "RosSubscriber.js",
     "ScarabArrowKeyController.js",
-    "ScarabGoalPublisher.js",
     "ScarabHueController.js",
     "SensorTag.xml",
     "StockTick.js",
