@@ -12,6 +12,7 @@
     "Hue.js",
     "IPAddress.js",
     "KeyValueStore.xml",
+    "Location.js",
     "RangeSensor.js",
     "RosPublisher.js",
     "RosSubscriber.js",
