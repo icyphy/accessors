@@ -40,6 +40,8 @@
  *   'response' output only upon receiving the entire response.
 */
 
+var httpClient = require('httpClient');
+
 /** Define inputs and outputs. */
 exports.setup = function () {
     extend('net/REST');
