@@ -67,6 +67,8 @@
  *  @input {JSON} options The url for the command or an object specifying options.
  *  @input {string} command The command.
  *  @input {JSON} arguments Arguments to the command.
+ *  @input body The request body, if any.  The current implementation assumes 
+ *   the body is compatible with type string (binary or multi-part bodies not yet supported.)
  *  @input trigger An input to trigger the command.
  *  @output {string} response The server's response.
  *  @output {string} status The status code and message of the response.
@@ -84,6 +86,7 @@ exports.setup = function () {
     input('command', {'type':'string', 'value':''});
     input('arguments', {'value':''});
     input('trigger');
+    input('body');
     output('response');
     output('status', {'type':'string'});
     output('headers');
@@ -122,6 +125,7 @@ var request;
 exports.issueCommand = function(callback) {
     var encodedPath = this.encodePath();
     var options = get('options');
+    var body = get('body');
     var command = options;
     if (typeof options === 'string') {
         // In order to be able to include the outputCompleteResponseOnly
@@ -136,6 +140,11 @@ exports.issueCommand = function(callback) {
     if (get('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
+    
+    if (typeof body !== undefined) {
+    	command.body = body; 
+    }
+    
     request = httpClient.request(command, callback);
     request.on('error', function(message) {
         if (!message) {
