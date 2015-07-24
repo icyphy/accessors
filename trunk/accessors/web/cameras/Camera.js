@@ -32,7 +32,7 @@
  *  @input trigger A trigger input for triggered mode.
  *  @output image A stream of captured images.
  *  @parameter {boolean} triggered If true, use triggered mode. Otherwise, use open-loop mode.
- *  @parameter {string} camera The name of the camera to use. A list of available cameras is presented as options.
+ *  @parameter {string} camera The name of the camera to use. A list of available cameras is presented as options. This defaults to "default camera", which uses the system default, if there is one.
  *  @parameter {string} viewSize The view size to use for capture, in pixels. A list of available view sizes for the selected camara is presented as options.
  */
 var cameras = require("cameras");
@@ -44,7 +44,7 @@ exports.setup = function() {
   input('trigger');
   output('image');
   parameter('triggered', {'type':'boolean', 'value':true});
-  parameter('camera', {'type':'string', 'value':cameras.defaultCamera(), 'options':cameras.cameras()});
+  parameter('camera', {'type':'string', 'value':'default camera', 'options':cameras.cameras()});
   // NOTE: The following assumes that setup() is reinvoked whenever a parameter value changes,
   // since the camera will change and so will the available options.
   camera = new cameras.Camera(getParameter('camera'));
