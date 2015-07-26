@@ -1,5 +1,5 @@
 <!-- TerraSwarm Level 1 Accessors DTD Version 0.1, http://terraswarm.org -->
-<!-- $Id: MoML_1.dtd 57539 2010-04-02 00:57:06Z cxh $ -->
+<!-- $Id$ -->
 
 <!ELEMENT class (author | description | input | output | require | script | version)*>
 <!ATTLIST class
