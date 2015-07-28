@@ -87,7 +87,8 @@ var sockets = [];
   * Adds an input handler on toSend that sends the input received to the right socket. */ 
 exports.initialize = function() {
     if (!server) {
-        server = new WebSocket.Server({'port':getParameter('port')});
+        server = new WebSocket.Server({'port':getParameter('port'),
+                                       'hostInterface':getParameter('hostInterface')});
         server.on('listening', onListening);
         server.on('connection', onConnection);
         server.start();
