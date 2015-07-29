@@ -29,6 +29,69 @@ To use this accessor in the Ptolemy II/Nashorn accessor host,
 you have separately install a modified version of the
 AprilTags code by Edwin Olson. This has to be a separate install, because
 (sadly) the code is GPL'd.  See: http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/
+for instructions.
+
+The input to this accessor is an image or a stream of images, e.g. from the Camera
+accessor.  There are two outputs. The one named _output_ is a modified version
+of the input image that outlines any detected AprilTags in the image
+and indicates their center and ID.  The _tags_ output is an array of
+objects representing the detected tags. Each object includes the following fields:
+
++ _id_: The ID of the detected tag.
++ _center_: An array with two doubles giving the center of the tag in pixel coordinates.
+
+The AprilTags detector has a large number of parameters that can be tuned via
+the _options_ input. To set an option, provide an object with a field matching
+the option name.  The options are described below using descriptions provided by
+by Edwin Olson in his Java implementation of an AprilTag detector:
+
++ _MagThresh_: When growing components, the intra component variation is
+  allowed to grow when the component is small in size. This
+  threshold affects how much. The default is 1200.
++ _MaxEdgeCost_: Set the maximum angle range allowed for the gradient directions
+  when connecting edges, in radians. This defaults to the radian
+  equivalent of 30 degrees.
++ _MinMag_: Set the gradient magnitude threshold for ignoring pixels.
+  Do not consider pixels whose gradient magnitude is less than
+  minMag. Small values make the detector more sensitive, but also
+  force us to consider many more edges resulting in slower
+  computation time. A value of 0.001 is very sensitive. A value
+  of 0.01 is quite fast. The default is 0.004.
++ _SegDecimate_: Set whether decimating before segmenting is enabled.
+  Instead of blurring the input image before segmentation, we
+  can achieve similar effects by decimating the image by a factor
+  of two. When enabled, this option applies a block LPF filter of
+  width 2, then decimates the image. With this option, not only
+  can we safely set segSigma = 0, but the slowest part of the
+  algorithm (the segmentation) runs about 4 times faster. The
+  downside is that the position of the targets is determined
+  based on the segmentation: lower resolution will result in more
+  localization error. However, the effect on quality is quite
+  modest, and this optimization is generally recommended (along
+  with segSigma = 0). If segSigma is non-zero, the filtering by
+  segSigma occurs first, followed by the block LPF, and the
+  decimation. This defaults to false, indicating that the option
+  is not enabled.
++ _SegSigma_: Set the Gaussian smoothing kernel applied to image (0 == no filter)
+  used when detecting the outline of the box. It is almost always
+  useful to have some filtering, since the loss of small details
+  won't hurt. Recommended value = 0.8 (the default). The case where sigma ==
+  segsigma has been optimized to avoid a redundant filter
+  operation.
++ _Sigma_: Set the Gaussian smoothing kernel applied to image (0 == no filter, the default)
+  used when sampling bits. Filtering is a good idea in cases
+  where A) a cheap camera is introducing artifical sharpening, B)
+  the bayer pattern is creating artifcats, C) the sensor is very
+  noisy and/or has hot/cold pixels. However, filtering makes it
+  harder to decode very small tags. Reasonable values are 0, or
+  [0.8, 1.5].
++ _TagFamily_: Set the name of the tag family being detected.
+  This defaults to "Tag36h11".
+  The supported families are "Tag16h5", "Tag25h7", "Tag25h9", "Tag36h10", and "Tag36h11".
+  The default family seems least susceptible to false positives.
++ _ThetaThresh_: When growing components, the intra component variation is
+  allowed to grow when the component is small in size. This
+  threshold affects how much. The default is 100.
 
 @accessor AprilTags
 @author Edward A. Lee (eal@eecs.berkeley.edu)
