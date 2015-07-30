@@ -255,19 +255,18 @@ function inputHandler() {
    }
 
    //get inputs and send command to light
-   var command = '{"on":false,';
-   if (get('on') == true) {
-      command = '{"on":true,';
+   var command = {
+      on: get('on') == true,
+      bri: limit(get('brightness'), 0, 255),
+      hue: limit(get('hue'), 0, 65280),
+      sat: limit(get('saturation'), 0, 255),
+      transitiontime: limit(get('transitionTime'), 0, 65535)
    }
-   command = command 
-         + '"bri":' + limit(get('brightness'), 0, 255) + ','
-         + '"hue":' + limit(get('hue'), 0, 65280) + ','
-         + '"sat":' + limit(get('saturation'), 0, 255) + ','
-         + '"transitiontime":' + limit(get('transitionTime'), 0, 65535)
-         + '}';
+
+   var cmd = JSON.stringify(command);
    try {
       var response = httpRequest(url + lightID + "/state/", "PUT", 
-            null, command, timeout);
+            null, cmd, timeout);
       console.log(response);
       if (isNonEmptyArray(response) && response[0].error) {
          throw "Server responds with error: " + response[0].error.description;
