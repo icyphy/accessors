@@ -30,7 +30,7 @@
  */
 exports.setup = function() {
     input('signalIn');
-    output('fftOutput',{'type':'JSON'});
+    output('fftOutput');
 };
  
 var dspEngine = null; 
@@ -52,8 +52,7 @@ function processSignal() {
     // parse the fft coefficients as record tokens with
     // real and imaginary parts
     for (var j = 0; j < fftLength; j++) { 
-        print(fftResult[j]);  
-        var trial = {"real":'number', "imag": 'number'};
+        var trial = {};
         trial.real = fftResult.real[j];
         trial.imag = fftResult.imag[j];
         outputArray[j] = trial; 
