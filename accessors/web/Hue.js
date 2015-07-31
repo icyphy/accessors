@@ -55,6 +55,7 @@
  *  @input {number} saturation The saturation (an integer between 0 and 255).
  *  @output {boolean} on Whether the light is on (true) or off (false).
  *  @input {int} transitionTime The transition time, in multiples of 100ms.
+ *  @input {int} trigger Triggers a PUT request with all the light settings. Can be any type.
  *  @author Edward A. Lee, Marcus Pan 
  *  @version $Id$ 
  *
@@ -73,6 +74,7 @@ var registerInterval = 2000;
 var registerTimeout = 20000;
 var registerAttempts = 0;
 var handlers = [];
+var triggerHandle;
 
 // Uncomment the following to see the URL being used for the bridge.
 // alert("Connecting to: " + bridge);
@@ -111,6 +113,7 @@ exports.setup = function() {
     type: "int",
     value: 4
   });
+  input('trigger', {value: true})
 }
 /** Initialize connection. 
  *  Register user if not registered 
@@ -232,13 +235,15 @@ function getReachableLights() {
    }
    strReachableLights += ".";
    console.log('reachable lights: ' + strReachableLights);
-
+/*
    handlers.push(addInputHandler('brightness', inputHandler));
    handlers.push(addInputHandler('hue', inputHandler));
    handlers.push(addInputHandler('saturation', inputHandler));
    handlers.push(addInputHandler('on', inputHandler));
    handlers.push(addInputHandler('transitionTime', inputHandler));
    handlers.push(addInputHandler('lightID', inputHandler));
+*/
+   triggerHandle = addInputHandler('trigger', inputHandler);
 }
 
 /** Get light settings from inputs and PUT */
@@ -278,8 +283,13 @@ function inputHandler() {
 
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function() {
+   /*
    for (var i = 0; i < handlers.length; i++) {
       removeInputHandler(handlers[i]);
+   }
+   */
+   if (triggerHandle) {
+      removeInputHandler(triggerHandle);
    }
 
    var errorLights = [];
