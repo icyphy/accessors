@@ -48,7 +48,7 @@ exports.setup = function() {
   // NOTE: The following assumes that setup() is reinvoked whenever a parameter value changes,
   // since the camera will change and so will the available options.
   camera = new cameras.Camera(getParameter('camera'));
-  parameter('viewSize', {'type':'string', 'value':camera.getViewSize(), 'options':camera.viewSizes()});
+  parameter('viewSize', {'type':'JSON', 'value':camera.getViewSize(), 'options':camera.viewSizes()});
 }
 
 /** Set the view size of the camera, open it, and depending on the triggered mode, either
