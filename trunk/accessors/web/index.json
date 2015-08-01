@@ -15,7 +15,6 @@
     "RangeSensor.js",
     "RosPublisher.js",
     "RosSubscriber.js",
-    "ScarabApriltagHue.js",
     "ScarabArrowKeyController.js",
     "ScarabHueController.js",
     "SensorTag.xml",
