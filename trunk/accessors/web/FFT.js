@@ -57,9 +57,7 @@ function processSignal() {
         trial.imag = fftResult.imag[j];
         outputArray[j] = trial; 
     }
-    
-
-    send('fftOutput',outputArray); 
+    send('fftOutput', outputArray); 
 }
 
 exports.wrapup = function() { 

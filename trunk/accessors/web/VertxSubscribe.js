@@ -51,8 +51,8 @@
  *  @version $Id$
  *  @input {string} address The event bus address, which is the name of the event stream
  *   to which to subscribe. This defaults to 'topic'.
- *  @output {JSON} message The message received.
- *  @input {JSON} reply The reply to send back to the sender for point-to-point messages,
+ *  @output message The message received.
+ *  @input reply The reply to send back to the sender for point-to-point messages,
  *   or empty to send no reply (the default).
  *  @parameter {string} busHost The name of the network interface to use for the Vert.x
  *   event bus. A blank string is interpreted as 'localhost' (the default).
@@ -67,9 +67,7 @@ exports.setup = function() {
         'value':'topic',
         'type':'string'
     });
-    output('message', {
-        'type':'JSON'
-    });
+    output('message');
     parameter('busHost', {
         'type':'string'
     });
@@ -77,9 +75,7 @@ exports.setup = function() {
         'value':0,
         'type':'int'
     });
-    input('reply', {
-        'type':'JSON'
-    });
+    input('reply');
 };
 
 var bus, currentAddress, addressHandle, replyHandle;
