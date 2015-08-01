@@ -51,14 +51,14 @@
  *  @version $Id$
  *  @input {string} address The event bus address, which is the name of the event stream.
  *   This defaults to 'topic'.
- *  @input {JSON} message The message to publish.
+ *  @input message The message to publish.
  *  @input {boolean} broadcast Indicator of whether to send to all subscribers or just one.
  *   This defaults to true, which means to send to all subscribers.
  *  @parameter {string} busHost The name of the network interface to use for the Vert.x
  *   event bus. A blank string is interpreted as 'localhost' (the default).
  *  @parameter {int} busHostPort The port for the Vert.x event bus. A value of 0
  *   indicates to just find an available port (the default).
- *  @output {JSON} reply The reply, if any, received after a point-to-point send
+ *  @output reply The reply, if any, received after a point-to-point send
  *   (where broadcast == false).
  */
 var eventbus = require('eventbus');
@@ -69,9 +69,7 @@ exports.setup = function() {
         'value':'topic',
         'type':'string'
     });
-    input('message', {
-        'type':'JSON'
-    });
+    input('message');
     input('broadcast', {
         'value':true,
         'type':'boolean'
@@ -83,9 +81,7 @@ exports.setup = function() {
         'value':0,
         'type':'int'
     });
-    output('reply', {
-        'type':'JSON'
-    });
+    output('reply');
 };
 
 // State variables.

@@ -35,9 +35,7 @@ var handle = null;
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    input('input', {
-		'type':'JSON'
-    });
+    input('input');
 	output('events', {
 		'type': 'string'
     });
