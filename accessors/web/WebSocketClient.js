@@ -83,9 +83,9 @@
  *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
  *  @parameter {boolean} discardMessagesBeforeOpen If true, then any messages received on `toSend` before the socket is open will be discarded. This defaults to false.
  *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 0.
- *  @input {JSON} toSend The data to be sent over the socket.
+ *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
- *  @output {JSON} received The data received from the web socket server.
+ *  @output received The data received from the web socket server.
  *  @author Hokeun Kim, Marcus Pan, Edward A. Lee
  *  @version $Id$
  */
@@ -124,9 +124,7 @@ exports.setup = function() {
     type: 'int',
     value: 0
   });
-  input('toSend', {
-    type: 'JSON'
-  });
+  input('toSend');
   output('connected', {
     type: 'boolean'
   });
