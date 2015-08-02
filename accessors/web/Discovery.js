@@ -46,9 +46,7 @@ exports.setup = function () {
         type: 'string',
       });
     
-    accessor.output('devices', {
-        type: 'JSON',
-      });
+    accessor.output('devices');
     
     accessor.parameter('useNmap', {
         type: 'boolean',
