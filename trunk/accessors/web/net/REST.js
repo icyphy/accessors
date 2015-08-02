@@ -21,9 +21,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Accessor for RESTful interfaces.
- *  Upon receipt of any input, this accessor will issue an HTTP request
+ *  Upon receipt of a trigger input, this accessor will issue an HTTP request
  *  specified by the inputs.
- *  The <i>options</i> input can be a string URL
+ *  The <i>options</i> input can be a string URL (with surrounding quotation marks)
  *  or an object with the following fields:
  *  <ul>
  *  <li> headers: An object containing request headers. By default this
@@ -72,7 +72,7 @@
  *  @input trigger An input to trigger the command.
  *  @output {string} response The server's response.
  *  @output {string} status The status code and message of the response.
- *  @output {JSON} headers The headers sent with the response.
+ *  @output headers The headers sent with the response.
  *  @parameter {boolean} outputCompleteResponseOnly If true (the default), the produce a
  *   'response' output only upon receiving the entire response.
  */
@@ -82,9 +82,9 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('options', {'value':''});
+    input('options', {'type':'JSON', 'value':''});
     input('command', {'type':'string', 'value':''});
-    input('arguments', {'value':''});
+    input('arguments', {'type':'JSON', 'value':''});
     input('trigger');
     input('body');
     output('response');
@@ -144,6 +144,8 @@ exports.issueCommand = function(callback) {
     if (typeof body !== undefined) {
     	command.body = body; 
     }
+    
+    console.log("REST request to: " + JSON.stringify(command));
     
     request = httpClient.request(command, callback);
     request.on('error', function(message) {
