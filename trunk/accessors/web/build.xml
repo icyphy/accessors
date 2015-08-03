@@ -42,6 +42,7 @@
       <arg value="doc/jsdoc" />
       <arg value="--readme" />
       <arg value="README.md" />
+      <arg value="--recurse" />
       <arg value="--verbose" />
       <arg value="." />
     </exec>
