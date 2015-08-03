@@ -59,11 +59,12 @@
     See jsdoc/templates/ptdoc/publish.js
     </echo>
     <exec executable="${jsdoc.home}/jsdoc">
-      <arg value="--verbose" />
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
+      <arg value="--recurse" />
       <arg value="--template" />
       <arg value="jsdoc/templates/ptdoc" />
+      <arg value="--verbose" />
       <arg value="." />
     </exec>
   </target>

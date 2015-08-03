@@ -54,7 +54,7 @@ var util = require('util');
  *  @return MoML representation of the accessor xml.
  */
 function accessorPropertiesToMoML(propertyName, elements) {
-    var moml = '', _debugging = false;
+    var moml = '', _debugging = true;
     elements
         .forEach(function (element) {
             var name = element.name, type = element.type, description = element.description;
@@ -90,7 +90,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
  *  @param {TAFFY} data
  */
 exports.publish = function (data) {
-    var docs, fileName = '', moml = '', _debugging = false;
+    var docs, fileName = '', fullFileName = '', moml = '', _debugging = true;
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
@@ -100,17 +100,19 @@ exports.publish = function (data) {
 
             // If the filename changes, then write out the moml.
             if (element.meta !== undefined) {
-                if (element.meta.filename !== fileName) {
+                fullFileName = element.meta.path + "/" + element.meta.filename;
+                if (fullFileName !== fileName) {
                     if (fileName !== '') {
                         writePtDoc(fileName, moml);
                         moml = '';
                     }
-                    fileName = element.meta.filename;
+                    fileName = fullFileName;
                 }
             }
 
             if (_debugging) {
                 if (element.meta !== undefined) {
+                    console.error("ptdoc/public.js: docs.meta.path: " + element.meta.path);
                     console.error("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
                 }
                 console.error("ptdoc/public.js: element.kind: " + element.kind);
@@ -118,7 +120,7 @@ exports.publish = function (data) {
                 //console.error(element);
             }
 
-            if (element.kind === 'module') {
+            if (element.kind === 'accessor') {
                 moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
                 // Alphabetical by tag.
