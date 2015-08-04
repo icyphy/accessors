@@ -31,5 +31,10 @@
     "Weather.xml",
     "WebSocketClient.js",
     "WebSocketServer.js",
-    "WiiMote.xml"
+    "WiiMote.xml",
+    "cameras/Camera.js",
+    "cameras/Foscam.js",
+    "image/AprilTags.js",
+    "image/ImageFilter.js",
+    "net/REST.js"
 ]
