@@ -54,7 +54,7 @@ var util = require('util');
  *  @return MoML representation of the accessor xml.
  */
 function accessorPropertiesToMoML(propertyName, elements) {
-    var moml = '', _debugging = true;
+    var moml = '', _debugging = false;
     elements
         .forEach(function (element) {
             var name = element.name, type = element.type, description = element.description;
@@ -90,7 +90,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
  *  @param {TAFFY} data
  */
 exports.publish = function (data) {
-    var docs, fileName = '', fullFileName = '', moml = '', _debugging = true;
+    var docs, fileName = '', fullFileName = '', moml = '', _debugging = false;
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
