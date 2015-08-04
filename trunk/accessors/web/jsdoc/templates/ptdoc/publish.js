@@ -140,7 +140,7 @@ exports.publish = function (data) {
                 // the inputs, outputs and parameters arrays.
                 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#ModifyJSDocsTemplateFiles
                 if (element.inputs !== undefined) {
-                    moml += accessorPropertiesToMoML('port-parameter', element.inputs);
+                    moml += accessorPropertiesToMoML('port', element.inputs);
                 }
 
                 if (element.outputs !== undefined) {
