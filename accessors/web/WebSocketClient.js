@@ -86,7 +86,7 @@
  *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
- *  @author Hokeun Kim, Marcus Pan, Edward A. Lee
+ *  @author Hokeun Kim, Marcus Pan, Edward A. Lee, Matt Weber
  *  @version $Id$
  */
 
@@ -133,7 +133,7 @@ exports.setup = function() {
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function() {
- 
+  
   //record the object that calls it (could be a derived accessor). 
   var callObj = this;
    
@@ -146,9 +146,8 @@ exports.initialize = function() {
     'throttleFactor':getParameter('throttleFactor')
   });
   
-  client.on('open', onOpen);
-  
-  client.on('message', onMessage);
+  client.on('open', this.onOpen);
+  client.on('message', this.onMessage);
 
   //bind onClose() to caller's object, 
   //so initialize() of caller's object is called if reconnect is true.
@@ -180,7 +179,7 @@ exports.sendToWebSocket = function(data) {
 /** Executes once  web socket establishes a connection.
  *   Sets 'connected' output to true.
  */
-function onOpen() {
+exports.onOpen = function() {
    console.log('Status: Connection established');
    send('connected', true);
 }
@@ -213,7 +212,7 @@ function onClose(message) {
 }
   
 /** Send the message received from web socket to the 'received' output. */
-function onMessage(message) {
+exports.onMessage = function(message) {
    send('received', message);
 }
   
