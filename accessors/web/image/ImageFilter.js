@@ -27,9 +27,9 @@ the accessor host. The filters that are available will depend on the particular
 host implementation of this module and will be provided as select alternatives for the
 'filter' parameter. The options that each filter can accept will also depend on the
 module implementation on the host.  The filters that are implemented by the Ptolemy II
-host and their options are documented here: [FIXME: Replace with URL]:
-$PTII/ptolemy/actor/lib/jjs/modules/imageFilters/imageFilters.js.
-Demos for these filters can be found at
+host and their options are documented in the
+[imageFilters module](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/module-imageFilters.html)
+Demos for these filters can be found in the Ptolemy II tree at
 $PTII/org/terraswarm/accessor/demo/ImageFilters.
 
 @accessor ImageFilter
