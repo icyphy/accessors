@@ -28,7 +28,7 @@
  *  @author Elizabeth Latronico (beth@berkeley.edu)
  *  @input {string} hostIP The IP address of the host.  Used to discover other
  *   devices on the local area network.
- *  @output {string} devices A JSON object containing IP addresses and (when
+ *  @output devices An object containing IP addresses and (when
  *   available) names and MAC addresses of devices on the local area network.
  *  @parameter {boolean} useNmap True if nmap should be used for discovery, 
  *   false to use ping and arp.  Default is false.
