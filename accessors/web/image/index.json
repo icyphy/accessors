@@ -1,4 +1,5 @@
 [
     "AprilTags.js",
-    "ImageFilter.js"
+    "ImageFilter.js",
+    "MotionDetector.js"
 ]

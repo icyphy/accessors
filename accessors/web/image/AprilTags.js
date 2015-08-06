@@ -112,9 +112,8 @@ exports.setup = function() {
 exports.initialize = function() {
     handle = addInputHandler('input', function() {
         var options = get('options');
-        var token = get('input');
-        var image = token.asAWTImage();
-        var result =aprilTags.filter(image, options);
+        var image = get('input');
+        var result = aprilTags.filter(image, options);
         send('output', result);
         var tags = aprilTags.tags();
         if (tags) {
