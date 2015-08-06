@@ -53,8 +53,7 @@ exports.setup = function() {
 exports.initialize = function() {
     handle = addInputHandler('input', function() {
         var options = get('options');
-        var token = get('input');
-        var image = token.asAWTImage();
+        var image = get('input');
         var result = imageFilters.filter(image, getParameter('filter'), options);
         send('output', result);
     });
