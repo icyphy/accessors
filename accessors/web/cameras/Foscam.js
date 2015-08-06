@@ -60,7 +60,7 @@
  *  # url: A string that can be parsed as a URL, or an object containing
  *    the following fields:
  *    ## host: A string giving the domain name or IP address of
- *       the server to issue the request to. This defaults to 'localhost'.
+ *    the server to issue the request to. This defaults to 'localhost'.
  *    ## protocol: The protocol. This is a string that defaults to 'http'.
  *    ## port: Port of remote server. This defaults to 80. 
  *
