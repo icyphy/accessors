@@ -22,6 +22,8 @@
 
 /**
 Accessor to detect AprilTags in an image or stream of images.
+An AprilTag is a pattern of dark and light squares similar to a QR code but easier for
+cameras to detect robustly and at a distance.
 AprilTags were created by Associate Professor Edwin Olson (ebolson@umich.edu),
 EECS, University of Michigan. See https://april.eecs.umich.edu/.
 
