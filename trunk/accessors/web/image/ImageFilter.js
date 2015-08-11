@@ -30,7 +30,7 @@ module implementation on the host.  The filters that are implemented by the Ptol
 host and their options are documented in the
 [imageFilters module](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/module-imageFilters.html)
 Demos for these filters can be found in the Ptolemy II tree at
-$PTII/org/terraswarm/accessor/demo/ImageFilters.
+org/terraswarm/accessor/demo/ImageFilters.
 
 @accessor ImageFilter
 @parameter {string} filter The filter to apply.
