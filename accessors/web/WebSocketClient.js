@@ -89,101 +89,107 @@
  *  @author Hokeun Kim, Marcus Pan, Edward A. Lee, Matt Weber
  *  @version $Id$
  */
+/* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
+"use strict";
+/*global addInputHandler, error, get, getParameter, input, onClose, output, parameter, removeInputHandler, send */
 
 var WebSocket = require('webSocket');
 var client = null;
 var inputHandle = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
-exports.setup = function() {
-  parameter('server', {
-    type: 'string',
-    value: 'localhost'
-  });
-  parameter('port', {
-    type: 'int',
-    value: 8080
-  });
-  parameter('numberOfRetries', {
-    type: 'int',
-    value: 5
-  });
-  parameter('timeBetweenRetries', {
-    type: 'int',
-    value: 100
-  });
-  parameter('reconnectOnClose', {
-    type: 'boolean',
-    value: true
-  });
-  parameter('discardMessagesBeforeOpen', {
-    type: 'boolean',
-    value: false
-  });
-  parameter('throttleFactor', {
-    type: 'int',
-    value: 0
-  });
-  input('toSend');
-  output('connected', {
-    type: 'boolean'
-  });
-  output('received');
-}
+exports.setup = function () {
+    parameter('server', {
+        type : 'string',
+        value : 'localhost'
+    });
+    parameter('port', {
+        type : 'int',
+        value : 8080
+    });
+    parameter('numberOfRetries', {
+        type : 'int',
+        value : 5
+    });
+    parameter('timeBetweenRetries', {
+        type : 'int',
+        value : 100
+    });
+    parameter('reconnectOnClose', {
+        type : 'boolean',
+        value : true
+    });
+    parameter('discardMessagesBeforeOpen', {
+        type : 'boolean',
+        value : false
+    });
+    parameter('throttleFactor', {
+        type : 'int',
+        value : 0
+    });
+    input('toSend');
+    output('connected', {
+        type : 'boolean'
+    });
+    output('received');
+};
 
 /** Initializes accessor by attaching functions to inputs. */
-exports.initialize = function() {
-  
-  //record the object that calls it (could be a derived accessor). 
-  var callObj = this;
-   
-  client = new WebSocket.Client({
-    'host':getParameter('server'),
-    'port':getParameter('port'),
-    'numberOfRetries':getParameter('numberOfRetries'),
-    'timeBetweenRetries':getParameter('timeBetweenRetries'),
-    'discardMessagesBeforeOpen':getParameter('discardMessagesBeforeOpen'),
-    'throttleFactor':getParameter('throttleFactor')
-  });
-  
-  client.on('open', this.onOpen);
-  client.on('message', this.onMessage);
+exports.initialize = function () {
 
-  //bind onClose() to caller's object, 
-  //so initialize() of caller's object is called if reconnect is true.
-  client.on('close', onClose.bind(callObj));
-  client.on('error', function(message) {
-    error(message)
-  });
-  //only execute once, and not when trying to reconnect. 
-  if (inputHandle == null) { 
-      inputHandle = addInputHandler('toSend', this.toSendInputHandler);
-  }
-} 
+    //record the object that calls it (could be a derived accessor). 
+    var callObj = this;
+
+    client = new WebSocket.Client(
+        {
+            'host' : getParameter('server'),
+            'port' : getParameter('port'),
+            'numberOfRetries' : getParameter('numberOfRetries'),
+            'timeBetweenRetries' : getParameter('timeBetweenRetries'),
+            'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),
+            'throttleFactor' : getParameter('throttleFactor')
+        }
+    );
+
+    client.on('open', this.onOpen);
+    client.on('message', this.onMessage);
+
+    //bind onClose() to caller's object, 
+    //so initialize() of caller's object is called if reconnect is true.
+    client.on('close', onClose.bind(callObj));
+    client.on('error', function (message) {
+        error(message);
+    });
+    //only execute once, and not when trying to reconnect. 
+    if (inputHandle === null) {
+        inputHandle = addInputHandler('toSend', this.toSendInputHandler);
+    }
+};
 
 /** Handles input on 'toSend'. */
-exports.toSendInputHandler = function() {
-  exports.sendToWebSocket(get('toSend'));
-}
+exports.toSendInputHandler = function () {
+    exports.sendToWebSocket(get('toSend'));
+};
 
 /** Sends JSON data to the web socket. */
-exports.sendToWebSocket = function(data) {
-  if (client != null) {
-    client.send(data);
-    console.log("Sending to web socket: " + JSON.stringify(data));
-  } else {
-    console.log("Client is null. Could not send message: " + JSON.stringify(data)); 
-  }
-}
+exports.sendToWebSocket = function (data) {
+    if (client !== null) {
+        client.send(data);
+        console.log("Sending to web socket: " + JSON.stringify(data));
+    } else {
+        console.log("Client is null. Could not send message: "
+                    + JSON.stringify(data));
+    }
+};
 
 /** Executes once  web socket establishes a connection.
  *   Sets 'connected' output to true.
  */
-exports.onOpen = function() {
-   console.log('Status: Connection established');
-   send('connected', true);
-}
-  
+exports.onOpen = function () {
+    console.log('Status: Connection established');
+    send('connected', true);
+};
+
 /** Send false to 'connected' output, and if 'reconnectOnClose'
  *  parameter evaluates to true and wrapup() has not been called,
  *  then invoke initialize().
@@ -191,44 +197,43 @@ exports.onOpen = function() {
  *  @param message Possible message about the closure.
  */
 function onClose(message) {
-  console.log('Status: Connection closed: ' + message);
-  if (inputHandle) {
-    // wrapup() has not been called.
-    // Probably the server closed the connection.
-    send('connected', false);
-    // Reconnect if reconnectOnClose is true.
-    if (getParameter('reconnectOnClose')) {
-      // Use 'this' rather than 'export' so initialize() can be overridden.
-      this.initialize();
-    } else {
-      // Not set to reconnect on close.
-      // Close and unregister everything.
-      client.removeAllListeners('open');
-      client.removeAllListeners('message');
-      client.removeAllListeners('close');
-      client = null;
+    console.log('Status: Connection closed: ' + message);
+    if (inputHandle) {
+        // wrapup() has not been called.
+        // Probably the server closed the connection.
+        send('connected', false);
+        // Reconnect if reconnectOnClose is true.
+        if (getParameter('reconnectOnClose')) {
+            // Use 'this' rather than 'export' so initialize() can be overridden.
+            this.initialize();
+        } else {
+            // Not set to reconnect on close.
+            // Close and unregister everything.
+            client.removeAllListeners('open');
+            client.removeAllListeners('message');
+            client.removeAllListeners('close');
+            client = null;
+        }
     }
-  }
-}
-  
-/** Send the message received from web socket to the 'received' output. */
-exports.onMessage = function(message) {
-   send('received', message);
-}
-  
-/** Close the web socket connection. */
-exports.wrapup = function() {
-  if (inputHandle != null) {
-    removeInputHandler(inputHandle);
-    inputHandle = null;
-  }
-  if (client) {
-    client.removeAllListeners('open');
-    client.removeAllListeners('message');
-    client.removeAllListeners('close');
-    client.close();
-    console.log('Status: Connection closed in wrapup.');
-    client = null;
-  }
 }
 
+/** Send the message received from web socket to the 'received' output. */
+exports.onMessage = function (message) {
+    send('received', message);
+};
+
+/** Close the web socket connection. */
+exports.wrapup = function () {
+    if (inputHandle !== null) {
+        removeInputHandler(inputHandle);
+        inputHandle = null;
+    }
+    if (client) {
+        client.removeAllListeners('open');
+        client.removeAllListeners('message');
+        client.removeAllListeners('close');
+        client.close();
+        console.log('Status: Connection closed in wrapup.');
+        client = null;
+    }
+};
