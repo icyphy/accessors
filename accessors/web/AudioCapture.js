@@ -43,7 +43,9 @@ var cacheLength = 128;
 
 function record() {
     var data = recorder.get(); 
-  for (sample in data) { 
+    // "for each" is a Nashorn extension for iterating over Java collections.
+    // Note that JSLint may complain about "for each".
+    for each (sample in data) { 
     send('signal',sample);
   } 
 }
