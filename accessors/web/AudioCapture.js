@@ -43,7 +43,7 @@ var cacheLength = 128;
 
 function record() {
     var data = recorder.get(); 
-  for each (sample in data) { 
+  for (sample in data) { 
     send('signal',sample);
   } 
 }

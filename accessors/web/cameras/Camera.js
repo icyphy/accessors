@@ -35,45 +35,60 @@
  *  @parameter {string} camera The name of the camera to use. A list of available cameras is presented as options. This is a string that defaults to "default camera", which uses the system default, if there is one.
  *  @parameter {{width: number, height: number}} viewSize The view size to use for capture, in pixels. A list of available view sizes for the selected camara is presented as options. This is a JSON specification with a "width" and "height" field, as in for example {"width":640, "height":480}.
  */
+/* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
+"use strict";
+/*global addInputHandler, getParameter, input, output, parameter, removeInputHandler, send */
+
 var cameras = require("cameras");
 var camera;
 var handle = null;
 
 /** Create the inputs, outputs, and parameters, and update the parameters for the selected camera. */
-exports.setup = function() {
-  input('trigger');
-  output('image');
-  parameter('triggered', {'type':'boolean', 'value':true});
-  parameter('camera', {'type':'string', 'value':'default camera', 'options':cameras.cameras()});
-  // NOTE: The following assumes that setup() is reinvoked whenever a parameter value changes,
-  // since the camera will change and so will the available options.
-  camera = new cameras.Camera(getParameter('camera'));
-  parameter('viewSize', {'type':'JSON', 'value':camera.getViewSize(), 'options':camera.viewSizes()});
-}
+exports.setup = function () {
+    input('trigger');
+    output('image');
+    parameter('triggered', {
+        'type' : 'boolean',
+        'value' : true
+    });
+    parameter('camera', {
+        'type' : 'string',
+        'value' : 'default camera',
+        'options' : cameras.cameras()
+    });
+    // NOTE: The following assumes that setup() is reinvoked whenever a parameter value changes,
+    // since the camera will change and so will the available options.
+    camera = new cameras.Camera(getParameter('camera'));
+    parameter('viewSize', {
+        'type' : 'JSON',
+        'value' : camera.getViewSize(),
+        'options' : camera.viewSizes()
+    });
+};
 
 /** Set the view size of the camera, open it, and depending on the triggered mode, either
  *  set up an input handler for the trigger input or set up a handler for the 'image'
  *  event notification from the camera.
  */
-exports.initialize = function() {
-  camera.setViewSize(getParameter('viewSize'));
-  camera.open();
-  if (getParameter('triggered')) {
-    handle = addInputHandler('trigger', function() {
-      send('image', camera.snapshot());
-    });
-  } else {
-    camera.on('image', function(image) {
-      send('image', image);
-    });
-  }
-}
+exports.initialize = function () {
+    camera.setViewSize(getParameter('viewSize'));
+    camera.open();
+    if (getParameter('triggered')) {
+        handle = addInputHandler('trigger', function () {
+            send('image', camera.snapshot());
+        });
+    } else {
+        camera.on('image', function (image) {
+            send('image', image);
+        });
+    }
+};
 
 /** Remove handlers and close the camera. */
-exports.wrapup = function() {
-  camera.removeAllListeners('image');
-  if (handle != null) {
-    removeInputHandler(handle);
-  }
-  camera.close();
-}
+exports.wrapup = function () {
+    camera.removeAllListeners('image');
+    if (handle !== null) {
+        removeInputHandler(handle);
+    }
+    camera.close();
+};
