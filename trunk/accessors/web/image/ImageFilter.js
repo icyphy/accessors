@@ -47,7 +47,7 @@ exports.setup = function() {
     input('input');
     output('output');
     input('options', {'value':{}, 'type':'JSON'});
-    parameter('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
+    input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
 }
 
 exports.initialize = function() {
