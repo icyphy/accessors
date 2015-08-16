@@ -46,7 +46,7 @@ var imageFilters = require('imageFilters');
 exports.setup = function() {
     input('input');
     output('output');
-    input('options', {'value':{}, 'type':'JSON'});
+    input('options', {'value':'', 'type':'JSON'});
     input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
 }
 
