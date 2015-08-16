@@ -46,7 +46,7 @@
  * 
  *  @accessor MotionDetector
  *  @input input A stream of images.
- *  @input {{PixelThreshold: number, AreaThreshold: number}} options The options controlling the filter.
+ *  @input {{"PixelThreshold": number, "AreaThreshold": number}} options The options controlling the filter.
  *  @output {array<{'horizontal': 'number', 'vertical': 'number'}>} cog The horizontal and vertical position of the center of gravity of motion, in pixels.
  *  @output {Object} output The filtered image.
  *  @author Edward A. Lee
@@ -60,7 +60,7 @@ exports.setup = function() {
     output('output');
     output('cog');
     output('area');
-    input('options', {'value':{}, 'type':'JSON'});
+    input('options', {'value':'{"PixelThreshold": 25, "AreaThreshold": 0.2}', 'type':'JSON'});
 }
 
 exports.initialize = function() {
