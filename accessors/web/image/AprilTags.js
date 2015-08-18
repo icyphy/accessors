@@ -95,7 +95,7 @@ by Edwin Olson in his Java implementation of an AprilTag detector:
   allowed to grow when the component is small in size. This
   threshold affects how much. The default is 100.
 
-@accessor AprilTags
+@accessor image/AprilTags
 @author Edward A. Lee (eal@eecs.berkeley.edu)
 @input input An input image.
 @output output An output image, with detected AprilTags outlined in green and identified.
