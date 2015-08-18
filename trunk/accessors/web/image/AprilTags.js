@@ -25,12 +25,12 @@ Accessor to detect AprilTags in an image or stream of images.
 An AprilTag is a pattern of dark and light squares similar to a QR code but easier for
 cameras to detect robustly and at a distance.
 AprilTags were created by Associate Professor Edwin Olson (ebolson@umich.edu),
-EECS, University of Michigan. See https://april.eecs.umich.edu/.
+EECS, University of Michigan. See [https://april.eecs.umich.edu/](https://april.eecs.umich.edu/#in_browser).
 
 To use this accessor in the Ptolemy II/Nashorn accessor host,
 you have separately install a modified version of the
 AprilTags code by Edwin Olson. This has to be a separate install, because
-(sadly) the code is GPL'd.  See: http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/
+(sadly) the code is GPL'd.  See: [http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/](http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/#in_browser)
 for instructions.
 
 The input to this accessor is an image or a stream of images, e.g. from the Camera
@@ -41,9 +41,11 @@ objects representing the detected tags. Each object includes the following field
 
 + _id_: The ID of the detected tag.
 + _center_: An array with two doubles giving the center of the tag in pixel coordinates.
++ _perimeter_: An array with four arrays, each of which gives the x and y coordinates of
+  a corner of the AprilTag.
 
 The AprilTags detector has a large number of parameters that can be tuned via
-the _options_ input. To set an option, provide an object with a field matching
+the _options_ input. To set an option, provide a JSON object with a field matching
 the option name.  The options are described below using descriptions provided by
 by Edwin Olson in his Java implementation of an AprilTag detector:
 
@@ -100,7 +102,8 @@ by Edwin Olson in his Java implementation of an AprilTag detector:
 @input input An input image.
 @output output An output image, with detected AprilTags outlined in green and identified.
 @output tags An array of objects, one object for each tag detected in the image.
-@parameter options The options for the detector.
+@parameter options The options for the detector. This is a JSON object with fields defined above.
+  It defaults to an empty object, meaning to use default values for all the otpions.
 */
 var aprilTags = require('aprilTags');
 
@@ -108,7 +111,7 @@ exports.setup = function() {
     input('input');
     output('output');
     output('tags');
-    input('options', {'value':{}});
+    input('options', {'type':'JSON', 'value':''});
 }
 
 exports.initialize = function() {
