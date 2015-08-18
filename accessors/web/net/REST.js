@@ -62,7 +62,7 @@
  *  accessor will produce a 'response' output only upon receiving a complete response.
  *  If it is false, then multiple outputs may result from a single input or trigger.
  * 
- *  @accessor REST
+ *  @accessor net/REST
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input {JSON} options The url for the command or an object specifying options.
  *  @input {string} command The command.

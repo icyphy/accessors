@@ -70,7 +70,7 @@
  *  The design of this accessor is inspired by the "foscam" module for
  *  Node.js, found at https://github.com/fvdm/nodejs-foscam.
  * 
- *  @accessor Foscam
+ *  @accessor cameras/Foscam
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input {JSON} options The specification for the URL, as defined above.
  *  @input {string} command The command.

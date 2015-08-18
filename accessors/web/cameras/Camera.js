@@ -27,7 +27,7 @@
  *  it captures every image produced by the camera, at the speed of the camera,
  *  and produces on the output a stream of such images.
  * 
- *  @accessor Camera
+ *  @accessor cameras/Camera
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input trigger A trigger input for triggered mode. The value is ignored and can be anything.
  *  @output {Object} image A stream of captured images.

@@ -32,7 +32,7 @@ host and their options are documented in the
 Demos for these filters can be found in the Ptolemy II tree at
 org/terraswarm/accessor/demo/ImageFilters.
 
-@accessor ImageFilter
+@accessor image/ImageFilter
 @parameter {string} filter The filter to apply.
 @input input The image to filter.
 @input {JSON} options The options controlling the filter.
