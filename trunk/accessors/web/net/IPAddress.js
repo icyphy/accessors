@@ -22,7 +22,7 @@
 
 /** This accessor outputs the IP address of the local machine.
  * 
- *  @accessor IPAddress
+ *  @accessor net/IPAddress
  *  @author Elizabeth Latronico (beth@berkeley.edu), based on IPAddress actor
  *  by Christopher Brooks
  *  @input {boolean} trigger Send a token here to produce an output.

@@ -46,7 +46,7 @@
  *  the URL of any discovered bridges to a key-value store. Then the KeyValueStore
  *  accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
  *  </p>
- *  @accessor Hue
+ *  @accessor devices/Hue
  *  @input {string} bridgeIPAddress The bridge IP address (and port, if needed).
  *  @parameter {string} userName The user name for logging on to the Hue Bridge. This must be at least 11 characters, or the Hue regards it as invalid.
  *  @input {int} lightID The light identifier (an integer beginning with 1).

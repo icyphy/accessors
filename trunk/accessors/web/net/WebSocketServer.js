@@ -44,7 +44,7 @@
  *
  *  <p>This accessor requires the module webSocket.</p>
  *
- *  @accessor WebSocketServer
+ *  @accessor net/WebSocketServer
  *  @parameter {string} hostInterface The IP address or domain name of the
  *    network interface to listen to.
  *  @parameter {number} port The port to listen to for connections.

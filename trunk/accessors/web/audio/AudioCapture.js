@@ -25,7 +25,7 @@
  *  This accessor requires the optional 'audio' module, which may or may
  *  not be provided by an accessor host. 
  *
- *  @accessor AudioCapture
+ *  @accessor audio/AudioCapture
  *  @author  Ilge Akkya
  *  @version $Id$
  *  @input trigger Input that triggers recording.
