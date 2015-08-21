@@ -21,7 +21,6 @@
     "RangeSensor.js",
     "RosPublisher.js",
     "RosSubscriber.js",
-    "SensorTag.xml",
     "StockTick.js",
     "StockTick.xml",
     "SwarmAcousticServiceGetdat.js",
