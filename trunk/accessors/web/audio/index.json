@@ -1,0 +1,7 @@
+[
+    "AudioCapture.js",
+    "AudioPlayer.js",
+    "SwarmAcousticServiceGetdat.js",
+    "SwarmAcousticServiceInfer.js",
+    "SwarmAcousticServiceQuery.js",
+]
