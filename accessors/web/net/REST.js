@@ -67,8 +67,7 @@
  *  @input {JSON} options The url for the command or an object specifying options.
  *  @input {string} command The command.
  *  @input {JSON} arguments Arguments to the command.
- *  @input body The request body, if any.  The current implementation assumes 
- *   the body is compatible with type string (binary or multi-part bodies not yet supported.)
+ *  @input body The request body, if any.  This supports at least strings and image data.
  *  @input trigger An input to trigger the command.
  *  @output {string} response The server's response.
  *  @output {string} status The status code and message of the response.
