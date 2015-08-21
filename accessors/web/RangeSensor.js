@@ -42,7 +42,7 @@ exports.setup = function() {
 
     input('currentPosition', {
         'type':'JSON',
-	    'value': { "x": 0, "y": 0}
+	    'value': '{ "x": 0, "y": 0}'
     });
     output('rangeMeasurement', {
         'type':'number'
