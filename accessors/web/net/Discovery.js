@@ -24,7 +24,7 @@
  *  It requires the discovery module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/Discovery
  * 
- *  @accessor Discovery
+ *  @accessor net/Discovery
  *  @author Elizabeth Latronico (beth@berkeley.edu)
  *  @input {string} hostIP The IP address of the host.  Used to discover other
  *   devices on the local area network.

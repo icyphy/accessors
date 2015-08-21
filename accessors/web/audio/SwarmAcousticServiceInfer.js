@@ -22,7 +22,7 @@
 
 /** Perform speech recognition on a array of acoustic events.
  * 
- * @accessor SwarmAcousticServiceInfer
+ * @accessor audio/SwarmAcousticServiceInfer
  * @author Long N.T. Le (longle1@illinois.edu)
  * @version 0.1 $Id$
  * @input {array} an array of acoustic events with only name and (ranking) score.

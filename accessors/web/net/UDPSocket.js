@@ -23,7 +23,7 @@
 /** UDP socket accessor.
  *  This accessor listens to the UDP port, and outputs whatever arrives as a string.
  *
- *  @accessor UDPSocket
+ *  @accessor net/UDPSocket
  *  @author Hokeun Kim
  *  @version $Id$
  *  @input {int} port The port to use for the socket.

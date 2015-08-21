@@ -26,7 +26,7 @@
  *  It just plays 2 seconds of fixed audio in initialize().
  *  You should update it to accept an input and play that.
  *
- *  @accessor AudioPlayer
+ *  @accessor audio/AudioPlayer
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @version $Id$
  */

@@ -38,7 +38,7 @@
  *  <li>send a fully formed message with all fields in the header included and don't check the parameter 'addHeader'.</li> 
  *  This accessor doesn't do any error checking. All error messages orginate from rosbridge and will appear on the console running rosbridge. More information ccan be viewed on the <a href='https://github.com/RobotWebTools/rosbridge_suite/blob/groovy-devel/ROSBRIDGE_PROTOCOL.md'>rosbridge protocol specification</a> site.
  *
- *  @accessor RosPublisher
+ *  @accessor robotics/RosPublisher
  *  @parameter {string} topic The ROS topic to publish to.
  *  @parameter {string} ROStype The ROS datatype of the topic.
  *  @parameter {boolean} addHeader If (true), this accessor will send a header with a blank seq and timestamp field, and rosbridge will add the header for you.

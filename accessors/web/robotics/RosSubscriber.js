@@ -27,7 +27,7 @@
  *  The other parameters configure how the data is to be received according to the rosbridge specification:
  *  https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe
  *
- *  @accessor RosSubscriber
+ *  @accessor robotics/RosSubscriber
  *  @parameter {string} topic The ROS topic to subscribe to.
  *  @parameter {int} throttle_rate The minimum amount of time (in ms) that must elapse between messages sent. Defaults to 0.
  *  @parameter {int} queue_length The ROS size of the queue to buffer messages. Messages are buffered as a result of the throttle_rate. Defaults to 1.

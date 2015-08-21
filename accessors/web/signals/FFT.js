@@ -22,7 +22,7 @@
 
 /** This accessor returns an array of FFT coefficients, corresponding to the input signal.
  *
- *  @accessor FFT
+ *  @accessor services/FFT
  *  @author Ilge Akkaya 
  *  @version $Id$
  *  @input {array<number>} signalIn Input signal array

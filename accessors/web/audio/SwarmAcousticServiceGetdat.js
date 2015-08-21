@@ -22,7 +22,7 @@
 
 /** Return the raw audio data in .wav format for a given input acoustic event.
  * 
- * @accessor SwarmAcousticServiceGetdat
+ * @accessor audio/SwarmAcousticServiceGetdat
  * @author Long N.T. Le (longle1@illinois.edu)
  * @version 0.1 $Id$
  * @input {record} search criteria including the name of an acoustic event (see the accompanied demo for details).

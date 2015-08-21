@@ -75,7 +75,7 @@
  *
  *  This accessor requires the 'webSocket' module.
  *
- *  @accessor WebSocketClient
+ *  @accessor net/WebSocketClient
  *  @parameter {string} server The IP address or domain name of server. Defaults to 'localhost'.
  *  @parameter {int} port The port that the web socket listens to. Defaults to 8080.
  *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
