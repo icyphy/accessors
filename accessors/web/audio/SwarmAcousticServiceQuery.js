@@ -25,7 +25,7 @@
  *  https://play.google.com/store/apps/details?id=com.longle1.spectrogram,
  *  for acoustic events that satisfy given criteria and rank them.
  * 
- *  @accessor SwarmAcousticServiceQuery
+ *  @accessor audio/SwarmAcousticServiceQuery
  *  @author Long N.T. Le (longle1@illinois.edu)
  *  @version 0.1 $Id$
  *  @input {record} search criteria (see the accompanied demo for details).

@@ -33,7 +33,7 @@
  *	"all": Fetches all of the above data at once
  *	All outputs are JSON formatted and contain UNIX timestamps of when the data was
  *	acquired by the location host.
- *  @accessor Location
+ *  @accessor localization/Location
  *
 */
 
