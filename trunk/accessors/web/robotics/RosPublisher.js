@@ -50,7 +50,7 @@
 
 /** Sets up by accessor by inheriting inputs from setup() in WebSocketClient. Adds additional parameters regarding the ROS topic to publish to. */ 
 exports.setup = function() {
-   extend('WebSocketClient');
+   extend('net/WebSocketClient');
    parameter('topic', {
       type: "string"
    });

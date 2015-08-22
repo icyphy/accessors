@@ -45,7 +45,7 @@
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
 exports.setup = function() {
 
-   extend('WebSocketClient');
+   extend('net/WebSocketClient');
 
    parameter('topic', {
       type: "string",
