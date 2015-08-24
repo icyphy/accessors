@@ -33,9 +33,12 @@
  *  @parameter {int} queue_length The ROS size of the queue to buffer messages. Messages are buffered as a result of the throttle_rate. Defaults to 1.
  *  @parameter {int} fragment_size The maximum size that a message can take before it is to be fragmented. Defaults to 1000. Ptolemy will close the model if fragment size is too large (not sure what the maximum is).
  *  @parameter {string} compression A string to specify the compression scheme to be used on messages. Options are "none" (default) and "png". 
+ *  @parameter {boolean} reconstruct_message_from_fragments? A flag which if set to true will cause the accessor to delay in sending messages on the "received" port until it has concatenated the data fields from message fragments back into the original unfragmented message. Otherwise it will send the message fragments as they come in.
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
- *  @author Marcus Pan 
+ *  @author Marcus Pan, Matt Weber
+
+
  *  @version $Id$ 
  *
  */
@@ -62,6 +65,10 @@ exports.setup = function() {
    parameter('fragment_size', {
       type: "int",
       value: 10000
+   });
+   parameter('reconstruct_message_from_fragments?', {
+      type: "boolean",
+      value: true
    });
    parameter('compression', {
       type: "string",
@@ -100,3 +107,54 @@ exports.wrapup = function() {
    this.ssuper.wrapup();
 }
 
+//Combines fragments into the original message. If the message is incomplete this function
+//returns null. When the entire message has been received it returns the whole message.
+exports.defragmentMessage = (function() {
+  
+  //This closure remembers the number and content of fragments already seen.
+  var originalMessage = "";
+  var fragmentCount = 0;
+  
+  var processMessage = function(message){
+
+    //Check for missing fragment
+    if(fragmentCount != message.num){
+      console.error("Fragment " + fragmentCount + " of message is missing. Instead received fragment number " + message.num);
+    }
+
+    //Accumulate data from fragment.
+    if( fragmentCount == 0){
+      originalMessage = message.data;
+      fragmentCount++;
+      return null;
+    } else if(fragmentCount < message.total - 1 ){
+      originalMessage += message.data;
+      fragmentCount++;
+      return null;
+    } else if(fragmentCount == message.total -1 ){
+      originalMessage += message.data;
+      fragmentCount = 0;
+      return originalMessage;
+    } else {
+      console.error("Error in reconstructing fragments. Fragment count exceeds indicated total.");
+      return null;
+    }
+  };
+  return processMessage;
+})();
+
+
+exports.onMessage = function(message){
+  
+  var messageToSend;
+  if( getParameter('reconstruct_message_from_fragments?') && message.op == "fragment"){
+    messageToSend = this.defragmentMessage(message)
+    if(messageToSend == null){
+      return;
+    }
+  } else {
+    messageToSend = message;
+  }
+
+  send('received', messageToSend);
+}
