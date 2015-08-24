@@ -90,9 +90,9 @@ exports.initialize = function() {
   exports.sendToWebSocket({
       "op": "subscribe",
       "topic": getParameter('topic'),
-      "throttleRate": getParameter('throttleRate'),
-      "queueLength": getParameter('queueLength'),
-      "fragmentSize": getParameter('fragmentSize'),
+      "throttle_rate": getParameter('throttleRate'),
+      "queue_length": getParameter('queueLength'),
+      "fragment_size": getParameter('fragmentSize'),
       "compression": getParameter('compression')
   });
 }
