@@ -69,6 +69,14 @@ exports.setup = function() {
         value: 8080, 
         type: "int" 
     });
+    parameter('receiveType', {
+        type : 'string',
+        value : 'application/json'
+    });
+    parameter('sendType', {
+        type : 'string',
+        value : 'application/json'
+    });
     input('toSend');
     output('received');
     output('connection');
@@ -81,10 +89,17 @@ var sockets = [];
   * Adds an input handler on toSend that sends the input received to the right socket. */ 
 exports.initialize = function() {
     if (!server) {
-        server = new WebSocket.Server({'port':getParameter('port'),
-                                       'hostInterface':getParameter('hostInterface')});
+        server = new WebSocket.Server({
+                'port':getParameter('port'),
+                'hostInterface':getParameter('hostInterface'),
+                'receiveType':getParameter('receiveType'),
+                'sendType':getParameter('sendType')
+        });
         server.on('listening', onListening);
         server.on('connection', onConnection);
+        server.on('error', function (message) {
+            error(message);
+        });
         server.start();
     }
     running = true;

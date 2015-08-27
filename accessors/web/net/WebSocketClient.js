@@ -57,10 +57,10 @@
  *  messages or error messages will be issued to the host to be displayed or otherwise
  *  handled as the host sees fit.
  *  
- *  # First, there might be queued messages that were received on `toSend` but have not yet
+ *  * First, there might be queued messages that were received on `toSend` but have not yet
  *    been sent, either because the socket has not yet been opened or because
  *    it was closed from the other side.
- *  # Second, a message might be received from the server after shutdown has commenced.
+ *  * Second, a message might be received from the server after shutdown has commenced.
  *    In particular, received messages are handled asynchronously by a handler function
  *    that can be invoked at any time, and that handler might be invoked after it is no
  *    longer possible for this accessor to produce outputs (it has entered its wrapup
@@ -107,6 +107,14 @@ exports.setup = function () {
         type : 'int',
         value : 8080
     });
+    parameter('receiveType', {
+        type : 'string',
+        value : 'application/json'
+    });
+    parameter('sendType', {
+        type : 'string',
+        value : 'application/json'
+    });
     parameter('numberOfRetries', {
         type : 'int',
         value : 5
@@ -144,6 +152,8 @@ exports.initialize = function () {
         {
             'host' : getParameter('server'),
             'port' : getParameter('port'),
+            'receiveType' : getParameter('receiveType'),
+            'sendType' : getParameter('sendType'),
             'numberOfRetries' : getParameter('numberOfRetries'),
             'timeBetweenRetries' : getParameter('timeBetweenRetries'),
             'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),
@@ -175,10 +185,9 @@ exports.toSendInputHandler = function () {
 exports.sendToWebSocket = function (data) {
     if (client !== null) {
         client.send(data);
-        console.log("Sending to web socket: " + JSON.stringify(data));
+        console.log("Sending to web socket: " + data);
     } else {
-        console.log("Client is null. Could not send message: "
-                    + JSON.stringify(data));
+        console.log("Client is null. Could not send message: " + data);
     }
 };
 
