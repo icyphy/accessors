@@ -40,7 +40,9 @@
  *  the host from executing, so this feature should be used with caution.
  *
  *  Whenever a message is received from the socket, that message is
- *  produced on the `'received'` output.
+ *  produced on the `'received'` output. The maxFrameSize parameter limits the size
+ *  of received messages, and any attempt to send to this client a larger message
+ *  will cause an error.
  *
  *  When `wrapup()` is invoked, this accessor closes the
  *  connection.
@@ -48,9 +50,21 @@
  *  If the connection is dropped midway, the client will attempt to reconnect if 
  *  (reconnectOnClose) is true. This does not apply when the accessor wraps up. 
  *
- *  The data can be any type that has a JSON representation.
- *  For incoming messages, this accessor assumes that the message is
- *  a string in UTF-8 that encodes a JSON object.
+ *  The default type for both sending and receiving
+ *  is 'application/json', which allows sending and receiving anything that has
+ *  a string representation in JSON. The types supported by this implementation
+ *  include at least:
+ *  * __application/json__: The send() function uses JSON.stringify() and sends the
+ *    result with a UTF-8 encoding. An incoming byte stream will be parsed as JSON,
+ *    and if the parsing fails, will be provided as a string interpretation of the byte
+ *    stream.
+ *  * __text/\*__: Any text type is sent as a string encoded in UTF-8.
+ *  * __image/x__: Where __x__ is one of __json__, __png__, __gif__,
+ *    and more.
+ *    In this case, the data passed to send() is assumed to be an image, as encoded
+ *    on the host, and the image will be encoded as a byte stream in the specified
+ *    format before sending.  A received byte stream will be decoded as an image,
+ *    if possible.
  *
  *  When a model with an instance of this accessor stops executing, there
  *  are two mechanisms by which data in transit can be lost. In both cases, warning
@@ -78,6 +92,10 @@
  *  @accessor net/WebSocketClient
  *  @parameter {string} server The IP address or domain name of server. Defaults to 'localhost'.
  *  @parameter {int} port The port that the web socket listens to. Defaults to 8080.
+ *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
+ *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
+ *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 60000).
+ *  @parameter {int} maxFrameSize The maximum frame size for a received message (default is 65536).
  *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
  *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
  *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
@@ -114,6 +132,14 @@ exports.setup = function () {
     parameter('sendType', {
         type : 'string',
         value : 'application/json'
+    });
+    parameter('connectTimeout', {
+        value: 60000, 
+        type: "int" 
+    });
+    parameter('maxFrameSize', {
+        value: 65536, 
+        type: "int" 
     });
     parameter('numberOfRetries', {
         type : 'int',
@@ -154,6 +180,8 @@ exports.initialize = function () {
             'port' : getParameter('port'),
             'receiveType' : getParameter('receiveType'),
             'sendType' : getParameter('sendType'),
+            'connectTimeout' : getParameter('connectTimeout'),
+            'maxFrameSize' : getParameter('maxFrameSize'),
             'numberOfRetries' : getParameter('numberOfRetries'),
             'timeBetweenRetries' : getParameter('timeBetweenRetries'),
             'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),

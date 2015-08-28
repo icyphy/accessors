@@ -26,28 +26,45 @@
  *  network interface (e.g. Ethernet and WiFi) and 'localhost' does
  *  not resolve to the desired interface.
  *
- *  <p>The output <code>connection</code> reports the when a
- *  connection is opened or closed.</p>
+ *  The output `connection` reports the when a
+ *  connection is opened or closed.
  *
- *  <p>When a message arrives on a connection, a <code>received</code>
- *  output is produced with that message.</p>
+ *  When a message arrives on a connection, a `received`
+ *  output is produced with that message. The maxFrameSize parameter limits the size
+ *  of received messages, and any attempt to send to this client a larger message
+ *  will cause an error.
  *
- *  <p>When an input arrives on <code>toSend</code>, then a message is
- *  sent to one or all of the open socket connections.</p>
+ *  When an input arrives on `toSend`, then a message is
+ *  sent to one or all of the open socket connections.
  *
- *  <p>When <code>wrapup()</code> is invoked, this accessor closes the
- *  server and all connections.</p>
+ *  When `wrapup()` is invoked, this accessor closes the
+ *  server and all connections.
  *
- *  <p>The messages can be any type that has a JSON representation.
- *  For incomming messages, this accessor assumes that the message is
- *  a string in UTF-8 that encodes a JSON object.</p>
+ *  The default type for both sending and receiving
+ *  is 'application/json', which allows sending and receiving anything that has
+ *  a string representation in JSON. The types supported by this implementation
+ *  include at least:
+ *  * __application/json__: The send() function uses JSON.stringify() and sends the
+ *    result with a UTF-8 encoding. An incoming byte stream will be parsed as JSON,
+ *    and if the parsing fails, will be provided as a string interpretation of the byte
+ *    stream.
+ *  * __text/\*__: Any text type is sent as a string encoded in UTF-8.
+ *  * __image/x__: Where __x__ is one of __json__, __png__, __gif__,
+ *    and more.
+ *    In this case, the data passed to send() is assumed to be an image, as encoded
+ *    on the host, and the image will be encoded as a byte stream in the specified
+ *    format before sending.  A received byte stream will be decoded as an image,
+ *    if possible.
  *
- *  <p>This accessor requires the module webSocket.</p>
+ *  This accessor requires the module webSocket.
  *
  *  @accessor net/WebSocketServer
  *  @parameter {string} hostInterface The IP address or domain name of the
  *    network interface to listen to.
- *  @parameter {number} port The port to listen to for connections.
+ *  @parameter {int} port The port to listen to for connections.
+ *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
+ *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
+ *  @parameter {int} maxFrameSize The maximum frame size for a received message (default is 65536).
  *  @input toSend The data to be sent to open sockets. If this is an object with 'socketID' field and a 'message' field, then send the value of the message field to the socket identified by the socketID field. If the input has any other form, then the message is broadcast to all open socket connections.
  *  @output connection An output produced when a connection opens or closes. The output is an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'.
  *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
@@ -77,6 +94,10 @@ exports.setup = function() {
         type : 'string',
         value : 'application/json'
     });
+    parameter('maxFrameSize', {
+        value: 65536, 
+        type: "int" 
+    });
     input('toSend');
     output('received');
     output('connection');
@@ -93,7 +114,8 @@ exports.initialize = function() {
                 'port':getParameter('port'),
                 'hostInterface':getParameter('hostInterface'),
                 'receiveType':getParameter('receiveType'),
-                'sendType':getParameter('sendType')
+                'sendType':getParameter('sendType'),
+                'maxFrameSize':getParameter('maxFrameSize')
         });
         server.on('listening', onListening);
         server.on('connection', onConnection);
@@ -157,6 +179,9 @@ function onConnection(socket) {
     });
     socket.on('close', function(message) {
         send('connection', {'socketID':socketID, 'status':'closed'});
+    });
+    socket.on('error', function(message) {
+        error(message);
     });
 
     sockets.push(socket);    
