@@ -26,7 +26,7 @@
 /**
  * This file includes basic utility functions assumed by version 0 accessors.
  * @author Edward A. Lee and Chris Shaver
- * @version $Id$
+ * @version $$Id$
  */
 /*global XMLHttpRequest*/
 'use strict';
