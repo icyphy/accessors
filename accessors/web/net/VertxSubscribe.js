@@ -75,7 +75,9 @@ exports.setup = function() {
         'value':0,
         'type':'int'
     });
-    input('reply');
+    input('reply', {
+        'value': ''
+    });
 };
 
 var bus, currentAddress, addressHandle, replyHandle;
@@ -92,7 +94,7 @@ exports.initialize = function() {
     bus.subscribe(currentAddress);
     bus.on(get('address'), onReceived);
     var replyText = get('reply');
-    if (replyText) {
+    if (replyText != null && replyText != '') {
         bus.setReply(replyText);
     }
     addressHandle = addInputHandler('address', function() {
