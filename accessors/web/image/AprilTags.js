@@ -27,11 +27,12 @@ cameras to detect robustly and at a distance.
 AprilTags were created by Associate Professor Edwin Olson (ebolson@umich.edu),
 EECS, University of Michigan. See [https://april.eecs.umich.edu/](https://april.eecs.umich.edu/#in_browser).
 
-To use this accessor in the Ptolemy II/Nashorn accessor host,
-you have separately install a modified version of the
-AprilTags code by Edwin Olson. This has to be a separate install, because
-(sadly) the code is GPL'd.  See: [http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/](http://ptolemy.eecs.berkeley.edu/~eal/aprilTags/#in_browser)
-for instructions.
+The implementation of this accessor on the Ptolemy II/Nashorn accessor host
+uses an older Java implementation of the AprilTags detector written by Edwin Olson
+and more recently supplanted by a C version that performs much better. But this Java
+version is more easily included in Ptolemy II in a portable way. If you need better
+performance, consider replacing this with the C implementation and using JNI to interface
+to Ptolemy II.
 
 The input to this accessor is an image or a stream of images, e.g. from the Camera
 accessor.  There are two outputs. The one named _output_ is a modified version
