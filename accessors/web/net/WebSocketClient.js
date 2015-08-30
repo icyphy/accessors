@@ -127,11 +127,13 @@ exports.setup = function () {
     });
     parameter('receiveType', {
         type : 'string',
-        value : 'application/json'
+        value : 'application/json',
+        options : WebSocket.supportedReceiveTypes()
     });
     parameter('sendType', {
         type : 'string',
-        value : 'application/json'
+        value : 'application/json',
+        options : WebSocket.supportedSendTypes()
     });
     parameter('connectTimeout', {
         value: 60000, 
