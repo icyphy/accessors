@@ -24,7 +24,7 @@
  *
  *  @accessor services/FFT
  *  @author Ilge Akkaya 
- *  @version $Id$
+ *  @version $$Id$$
  *  @input {array<number>} signalIn Input signal array
  *  @output {array<{'real':'number', 'imag': 'number'}>} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
  */

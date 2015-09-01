@@ -12,7 +12,7 @@
  *  @output {string} stdout The stdout of the executing process. Each line read from the 
  *        executing process is sent out as a token from this port.
  *  @parameter {string} command The command to be executed.
- *  @version $Id$
+ *  @version $$Id$$
  */
 
 // This accessor requires the 'shell' module, which may or may

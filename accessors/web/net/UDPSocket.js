@@ -25,7 +25,7 @@
  *
  *  @accessor net/UDPSocket
  *  @author Hokeun Kim
- *  @version $Id$
+ *  @version $$Id$$
  *  @input {int} port The port to use for the socket.
  *  @output {string} received The received string.
  */

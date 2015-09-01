@@ -28,7 +28,7 @@
  *
  *  @accessor audio/AudioPlayer
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
- *  @version $Id$
+ *  @version $$Id$$
  */
 
 // Set up the accessor.

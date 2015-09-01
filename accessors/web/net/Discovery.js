@@ -32,6 +32,7 @@
  *   available) names and MAC addresses of devices on the local area network.
  *  @parameter {boolean} useNmap True if nmap should be used for discovery, 
  *   false to use ping and arp.  Default is false.
+ *  @version $$Id$$ 
  */
 
 var discovery = require('discovery');

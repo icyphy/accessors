@@ -36,7 +36,7 @@
  *  @parameter {string} topic The ROS topic to publish to.
  *  @parameter {string} frame_id The frame_id of the header (only needed if a header is required).
  *  @author Brad Campbell 
- *  @version $Id: RosPublisher.js 271 2015-08-22 08:23:01Z eal $ 
+ *  @version $$Id: RosPublisher.js 271 2015-08-22 08:23:01Z eal $$ 
  */
 
 
