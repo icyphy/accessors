@@ -29,11 +29,20 @@
  * 
  *  @accessor cameras/Camera
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
- *  @input trigger A trigger input for triggered mode. The value is ignored and can be anything.
+ *  @input trigger A trigger input for triggered mode.
+ *   The value is ignored and can be anything.
  *  @output {Object} image A stream of captured images.
- *  @parameter {boolean} triggered If true, use triggered mode. Otherwise, use open-loop mode. This is a boolean that defaults to true.
- *  @parameter {string} camera The name of the camera to use. A list of available cameras is presented as options. This is a string that defaults to "default camera", which uses the system default, if there is one.
- *  @parameter {{width: number, height: number}} viewSize The view size to use for capture, in pixels. A list of available view sizes for the selected camara is presented as options. This is a JSON specification with a "width" and "height" field, as in for example {"width":640, "height":480}.
+ *  @parameter {boolean} triggered If true, use triggered mode.
+ *   Otherwise, use open-loop mode. This is a boolean that defaults to true.
+ *  @parameter {string} camera The name of the camera to use.
+ *   A list of available cameras is presented as options.
+ *   This is a string that defaults to "default camera",
+ *   which uses the system default, if there is one.
+ *  @parameter {{width: number, height: number}} viewSize The view size
+ *   to use for capture, in pixels. A list of available view sizes for
+ *   the selected camara is presented as options. This is a JSON specification
+ *   with a "width" and "height" field, as in for example {"width":640, "height":480}.
+ *  @version $$Id$$ 
  */
 /* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
 "use strict";
