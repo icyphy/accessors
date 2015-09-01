@@ -24,22 +24,32 @@
  *  It communicates to ROS through the rosbridge web socket, and extends the 
  *  WebSocketClient accessor to do so. 
  *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br>. 
- *  The other parameters configure how the data is to be received according to the rosbridge specification:
+ *  The other parameters configure how the data is to be received according
+ *  to the rosbridge specification:
  *  https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe
  *
  *  @accessor robotics/RosSubscriber
  *  @parameter {string} topic The ROS topic to subscribe to.
- *  @parameter {int} throttleRate The minimum amount of time (in ms) that must elapse between messages sent. Defaults to 0.
- *  @parameter {int} queueLength The ROS size of the queue to buffer messages. Messages are buffered as a result of the throttleRate. Defaults to 1.
- *  @parameter {int} fragment_size The maximum size that a message can take before it is to be fragmented. Defaults to 1000. Ptolemy will close the model if fragment size is too large (not sure what the maximum is).
- *  @parameter {string} compression A string to specify the compression scheme to be used on messages. Options are "none" (default) and "png". 
- *  @parameter {boolean} outputCompleteResponseOnly A flag which if set to true will cause the accessor to delay in sending messages on the "received" port until it has concatenated the data fields from message fragments back into the original unfragmented message. Otherwise it will send the message fragments as they come in.
+ *  @parameter {int} throttleRate The minimum amount of time (in ms)
+ *   that must elapse between messages sent. Defaults to 0.
+ *  @parameter {int} queueLength The ROS size of the queue to buffer messages.
+ *   Messages are buffered as a result of the throttleRate. Defaults to 1.
+ *  @parameter {int} fragment_size The maximum size that a message can take
+ *   before it is to be fragmented. Defaults to 1000. Ptolemy will close the
+ *   model if fragment size is too large (not sure what the maximum is).
+ *  @parameter {string} compression A string to specify the compression
+ *   scheme to be used on messages. Options are "none" (default) and "png". 
+ *  @parameter {boolean} outputCompleteResponseOnly A flag which if set to true
+ *   will cause the accessor to delay in sending messages on the "received" port
+ *   until it has concatenated the data fields from message fragments back into
+ *   the original unfragmented message. Otherwise it will send the message
+ *   fragments as they come in.
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
  *  @author Marcus Pan, Matt Weber
 
 
- *  @version $Id$ 
+ *  @version $$Id$$ 
  *
  */
 

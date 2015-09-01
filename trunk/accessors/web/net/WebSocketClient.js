@@ -105,7 +105,7 @@
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
  *  @author Hokeun Kim, Marcus Pan, Edward A. Lee, Matt Weber
- *  @version $Id$
+ *  @version $$Id$$
  */
 /* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
 "use strict";

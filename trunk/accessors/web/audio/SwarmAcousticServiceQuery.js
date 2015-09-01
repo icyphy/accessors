@@ -27,7 +27,7 @@
  * 
  *  @accessor audio/SwarmAcousticServiceQuery
  *  @author Long N.T. Le (longle1@illinois.edu)
- *  @version 0.1 $Id$
+ *  @version $$Id$$
  *  @input {record} search criteria (see the accompanied demo for details).
  *  @output {array} an array of ranked acoustic events.
  */

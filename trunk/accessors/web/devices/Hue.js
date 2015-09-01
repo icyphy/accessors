@@ -48,7 +48,8 @@
  *  </p>
  *  @accessor devices/Hue
  *  @input {string} bridgeIPAddress The bridge IP address (and port, if needed).
- *  @parameter {string} userName The user name for logging on to the Hue Bridge. This must be at least 11 characters, or the Hue regards it as invalid.
+ *  @parameter {string} userName The user name for logging on to the Hue Bridge.
+ *   This must be at least 11 characters, or the Hue regards it as invalid.
  *  @input {int} lightID The light identifier (an integer beginning with 1).
  *  @input {number} brightness The brightness (an integer between 0 and 255).
  *  @input {number} hue The hue (an integer between 0 and 62580).
@@ -57,9 +58,8 @@
  *  @input {int} transitionTime The transition time, in multiples of 100ms.
  *  @input {int} trigger Triggers a PUT request with all the light settings. Can be any type.
  *  @author Edward A. Lee, Marcus Pan 
- *  @version $Id$ 
- *
-*/
+ *  @version $$Id$$ 
+ */
 
 
 // State variables.

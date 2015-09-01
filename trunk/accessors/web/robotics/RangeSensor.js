@@ -23,7 +23,7 @@
 /** Return the range to an intruder
  *
  * @author: Ilge Akkya, Contributor: Christopher Brooks
- * @version $Id$
+ * @version $$Id$$
  *
  * @accessor robotics/RangeSensor
  * @input {JSON} currentPosition The current position of the robot

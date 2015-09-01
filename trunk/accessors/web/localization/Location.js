@@ -34,8 +34,8 @@
  *	All outputs are JSON formatted and contain UNIX timestamps of when the data was
  *	acquired by the location host.
  *  @accessor localization/Location
- *
-*/
+ *  @version $$Id: Hue.js 268 2015-08-21 21:58:32Z eal $$ 
+ */
 
 
 // State variables.

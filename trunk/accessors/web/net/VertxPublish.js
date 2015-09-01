@@ -48,7 +48,7 @@
  * 
  *  @accessor net/VertxPublish
  *  @author Patricia Derler, Edward A. Lee, Ben Zhang
- *  @version $Id$
+ *  @version $$Id$$
  *  @input {string} address The event bus address, which is the name of the event stream.
  *   This defaults to 'topic'.
  *  @input message The message to publish.

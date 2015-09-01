@@ -44,7 +44,7 @@
  *  @parameter {boolean} addHeader If (true), this accessor will send a header with a blank seq and timestamp field, and rosbridge will add the header for you.
  *  @parameter {string} frame_id The frame_id of the header (only needed if a header is required).
  *  @author Marcus Pan 
- *  @version $Id$ 
+ *  @version $$Id$$ 
  */
 
 

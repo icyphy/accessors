@@ -27,7 +27,7 @@
  *
  *  @accessor audio/AudioCapture
  *  @author  Ilge Akkya
- *  @version $Id$
+ *  @version $$Id$$
  *  @input trigger Input that triggers recording.
  *  @output {number} signal A sequence of numbers representing the captured audio signal.
  */
