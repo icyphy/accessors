@@ -74,6 +74,7 @@
  *  @output headers The headers sent with the response.
  *  @parameter {boolean} outputCompleteResponseOnly If true (the default), the produce a
  *   'response' output only upon receiving the entire response.
+ *  @version $$Id$$ 
  */
 
 var httpClient = require('httpClient');

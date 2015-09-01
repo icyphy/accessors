@@ -24,7 +24,7 @@
  * 
  * @accessor audio/SwarmAcousticServiceGetdat
  * @author Long N.T. Le (longle1@illinois.edu)
- * @version 0.1 $Id$
+ * @version $$Id$$
  * @input {record} search criteria including the name of an acoustic event (see the accompanied demo for details).
  * @output {general} the raw data associated with the input acoustic event, for playback.
  */

@@ -48,7 +48,7 @@
  *
  *  @accessor net/VertxSubscribe
  *  @author Patricia Derler, Edward A. Lee, Ben Zhang
- *  @version $Id$
+ *  @version $$Id$$
  *  @input {string} address The event bus address, which is the name of the event stream
  *   to which to subscribe. This defaults to 'topic'.
  *  @output message The message received.

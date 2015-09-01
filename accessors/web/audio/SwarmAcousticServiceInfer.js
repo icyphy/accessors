@@ -24,7 +24,7 @@
  * 
  * @accessor audio/SwarmAcousticServiceInfer
  * @author Long N.T. Le (longle1@illinois.edu)
- * @version 0.1 $Id$
+ * @version $$Id$$
  * @input {array} an array of acoustic events with only name and (ranking) score.
  * @output {array} an array of acoustic events augmented by transcription.
  */

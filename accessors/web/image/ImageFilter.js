@@ -38,7 +38,7 @@ org/terraswarm/accessor/demo/ImageFilters.
 @input {JSON} options The options controlling the filter.
 @output output The filtered image.
 @author Edward A. Lee
-@version $Id$
+@version $$Id$$
  */
 
 var imageFilters = require('imageFilters');

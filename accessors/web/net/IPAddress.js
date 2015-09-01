@@ -27,6 +27,7 @@
  *  by Christopher Brooks
  *  @input {boolean} trigger Send a token here to produce an output.
  *  @output {string} IPAddress The IP address of the local machine.
+ *  @version $$Id$$ 
  */
 
 var discovery = require('discovery');
