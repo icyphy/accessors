@@ -42,6 +42,12 @@
  *       <li> port: Port of remote server. This defaults to 80. 
  *       </ul>
  *  </ul>
+ *
+ *  For example, in Ptolemy, the <i>options</i> parameter could be set to
+ *  <code>
+ *  {"headers":{"Content-Type":"application/x-www-form-urlencoded"}, "method":"POST", "url":"${baseURL}"}
+ *  </code>
+ *
  *  In addition, there is a <i>command</i> input that is a string that is appended
  *  as a path to the URL constructed from the <i>options</i> input. This defaults
  *  to the empty string.
