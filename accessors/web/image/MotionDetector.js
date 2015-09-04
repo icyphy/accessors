@@ -38,6 +38,9 @@
  *  * _AreaThreshold_: The percentage threshold of image
  *    that has different pixels for motion to be detected
  *    (a double 0-100, with default 0.2).
+ *  * _ModifyImage_: If true (the default), the modify the
+ *    provided image with a visual indication of the location
+ *    and amount of motion.
  *
  *  The implementation for the Ptolemy II host is taken from
  *  the webcam-capture package by Bartosz Firyn (SarXos), available from
@@ -64,7 +67,7 @@ exports.setup = function() {
 }
 
 exports.initialize = function() {
-    handle = addInputHandler('input', function() {
+    addInputHandler('input', function() {
         var options = get('options');
         var image = get('input');
         var result = motionDetector.filter(image, options);
@@ -75,10 +78,4 @@ exports.initialize = function() {
         }
         send('area', motionDetector.area());
     });
-}
-
-exports.wrapup = function() {
-    if (handle) {
-        removeInputHandler(handle);
-    }
 }
