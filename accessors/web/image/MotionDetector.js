@@ -62,7 +62,7 @@ exports.setup = function() {
     input('input');
     output('output');
     output('cog');
-    output('area');
+    output('area', {'type':'number'});
     input('options', {'value':'{"PixelThreshold": 25, "AreaThreshold": 0.2}', 'type':'JSON'});
 }
 
