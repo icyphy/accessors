@@ -58,7 +58,9 @@ var imageFilters = require('imageFilters');
 exports.setup = function() {
     input('image');
     input('graphic', {'value':'', 'type':'string'});
-    input('graphicURI', {'value':'', 'type':'string'}); // FIXME: resource
+    input('graphicURI', {'value':'', 'type':'string'});
+    input('scale', {'value':1.0, 'type':'number'});
+    input('rotation', {'value':0.0, 'type':'number'});
     input('translate');
     input('options', {'value':'', 'type':'JSON'});
     output('output');
@@ -68,12 +70,31 @@ exports.initialize = function() {
     addInputHandler('image', function() {
         var image = get('image');
         var options = get('options');
+        if (options === null) {
+            options = {};
+        }
+        
+        var scale = get('scale');
+        if (scale != null) {
+            // Combine with scale options, if specified.
+            if (options['Scale']) {
+                scale *= options['Scale'];
+            }
+            options['Scale'] = scale;
+        }
+        
+        var rotation = get('rotation');
+        if (rotation != null) {
+            // Combine with rotation options, if specified.
+            if (options['Rotation']) {
+                rotation += options['Rotation'];
+            }
+            options['Rotation'] = rotation;
+        }
+            
         var translate = get('translate');
         if (translate !== null && translate[0] !== null && translate[1] !== null) {
             // Combine with offset options, if specified.
-            if (options === null) {
-                options = {};
-            }
             var xOffset = translate[0];
             if (options['XOffset']) {
                 xOffset += options['XOffset'];
