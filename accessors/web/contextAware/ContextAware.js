@@ -20,44 +20,42 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor discovers IOT services on WWW  
+/** This accessor discovers IOT services on web.
  *  It requires the contextAware module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
  * 
  *  @accessor contextAware
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} just for testing 
- *   
  *  @output {number} just for testing d
  *  @version $$Id$$ 
  */
 
 var contextAware = require("contextAware");
-// Initialize cas here, 
-var cas = new contextAware.DiscoveryOfRESTService();  
+
+// Initialize the context aware service.
+var contextAwareService = new contextAware.DiscoveryOfRESTService();  
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    
-      input('input');
-      output('output');
-      extend("net/REST.js");
-
+    input('input');
+    output('output');
+    extend("net/REST.js");
 }
 var handle;
 
-/** Upon receiving details of a REST service, construct a concrete accessor to access it
+/** Upon receiving details of a REST service, construct a concrete accessor to access it.
  */
 exports.initialize = function () {
     var serviceParam; //the input that is needed for the options port in REST
-	handle = addInputHandler('input', function() {
-                send('output', get('input') *2);
-                serviceParam = cas.discoverServices();
-	        console.log(serviceParam);
-                send('options', "\"http://pluto.cs.txstate.edu:22001\"");
-                send('command', 'gsn');
-                this.issueCommand(this.handleResponse);
-	});
+    handle = addInputHandler('input', function() {
+        send('output', get('input') *2);
+        serviceParam = contextAwareService.discoverServices();
+	console.log(serviceParam);
+        send('options', "\"http://pluto.cs.txstate.edu:22001\"");
+        send('command', 'gsn');
+        this.issueCommand(this.handleResponse);
+    });
 };
 
 /** Upon wrapup, stop handling new inputs.  */
