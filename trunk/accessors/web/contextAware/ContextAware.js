@@ -42,6 +42,7 @@ exports.setup = function () {
     output('output');
     extend("net/REST.js");
 }
+
 var handle;
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
