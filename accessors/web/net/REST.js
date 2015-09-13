@@ -119,6 +119,16 @@ exports.encodePath = function() {
     return command;
 }
 
+/** Filter the response. This base class just returns the argument
+ *  unmodified, but derived classes can override this to extract
+ *  a portion of the response, for example.
+ */
+exports.filterResponse = function(response) {
+    return response;
+}
+
+// Keep track of pending HTTP request so it can be stopped if the
+// model stops executing.
 var request;
 
 /** Issue the command based on the current value of the inputs.
@@ -175,9 +185,9 @@ exports.issueCommand = function(callback) {
 exports.handleResponse = function(message) {
     if (message !== null && message !== undefined) {
         if (message.body) {
-            send('response', message.body);
+            send('response', this.filterResponse(message.body));
         } else {
-            send('response', message);
+            send('response', this.filterResponse(message));
         }
         if (message.statusCode) {
             send('status', message.statusCode + ': ' + message.statusMessage);
