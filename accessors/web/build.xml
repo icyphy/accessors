@@ -79,6 +79,15 @@
       <mkdir dir="${basedir}/vendors"/>
       <exec dir="${basedir}/vendors"
             executable="git">
+	<!-- We set LD_LIBRARY_PATH to "" and avoid
+     [exec] Cloning into 'jsdoc'...
+     [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
+     [exec]   CAfile: /etc/ssl/certs/ca-certificates.crt
+     [exec]   CApath: none
+     [exec] Result: 128
+	     -->
+	<env key="LD_LIBRARY_PATH"
+	     value=""/>
         <arg value="clone"/>
         <arg value="https://github.com/terraswarm/jsdoc.git"/>
       </exec>
