@@ -43,9 +43,9 @@
  *       </ul>
  *  </ul>
  *
- *  For example, in Ptolemy, the <i>options</i> parameter could be set to
+ *  For example, the <i>options</i> parameter could be set to
  *  <code>
- *  {"headers":{"Content-Type":"application/x-www-form-urlencoded"}, "method":"POST", "url":"${baseURL}"}
+ *  {"headers":{"Content-Type":"application/x-www-form-urlencoded"}, "method":"POST", "url":"..."}
  *  </code>
  *
  *  In addition, there is a <i>command</i> input that is a string that is appended
@@ -117,7 +117,7 @@ exports.encodePath = function() {
         return command + '?' + encodedArgs;
     }
     return command;
-}
+};
 
 /** Filter the response. This base class just returns the argument
  *  unmodified, but derived classes can override this to extract
@@ -125,7 +125,7 @@ exports.encodePath = function() {
  */
 exports.filterResponse = function(response) {
     return response;
-}
+};
 
 // Keep track of pending HTTP request so it can be stopped if the
 // model stops executing.
@@ -163,7 +163,14 @@ exports.issueCommand = function(callback) {
     
     console.log("REST request to: " + JSON.stringify(command));
     
-    request = httpClient.request(command, callback);
+    // To ensure that the callback is called with the same context
+    // as this function, create a new function.
+    var thiz = this;
+    var contextCallback = function() {
+        callback.apply(thiz, arguments);
+    }
+    
+    request = httpClient.request(command, contextCallback);
     request.on('error', function(message) {
         if (!message) {
             message = 'Request failed. No further information.';
@@ -171,7 +178,7 @@ exports.issueCommand = function(callback) {
         error(message);
     });
     request.end();
-}
+};
 
 /** Handle the response from the RESTful service. The argument
  *  is expected to be be an instance of IncomingMessage, defined
@@ -196,16 +203,15 @@ exports.handleResponse = function(message) {
             send('headers', message.headers);
         }
     }
-}
+};
 
-var handle;
 // FIXME: Need a timeout.
 
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	handle = addInputHandler('trigger', this.issueCommand, this.handleResponse);
-}
+	addInputHandler('trigger', this.issueCommand, this.handleResponse);
+};
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {
@@ -214,5 +220,4 @@ exports.wrapup = function () {
         request.stop();
         request = null;
     }
-    removeInputHandler(handle);
 };
