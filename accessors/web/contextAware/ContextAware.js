@@ -52,9 +52,11 @@ exports.initialize = function () {
     handle = addInputHandler('input', function() {
         send('output', get('input') *2);
         serviceParam = contextAwareService.discoverServices();
-	console.log(serviceParam);
-        send('options', "\"http://pluto.cs.txstate.edu:22001\"");
+	console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
+        set('options', "{\"url\":\"http://pluto.cs.txstate.edu:22001\"}");
+        //send('options', "{\"url\":\"http://pluto.cs.txstate.edu:22001\"}");
         send('command', 'gsn');
+        this.ssuper.initialize();
         this.issueCommand(this.handleResponse);
     });
 };
