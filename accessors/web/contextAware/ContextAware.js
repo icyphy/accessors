@@ -43,25 +43,23 @@ exports.setup = function () {
     extend("net/REST.js");
 }
 
-var handle;
-
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
  */
 exports.initialize = function () {
+	// The superclass registers a handler for the 'trigger' input
+	// to issue an HTTP request based on the current inputs.
+	this.ssuper.initialize();
+	
     var serviceParam; //the input that is needed for the options port in REST
-    handle = addInputHandler('input', function() {
-        send('output', get('input') *2);
+    
+    // Add a handler for the 'input' input.
+    addInputHandler('input', function() {
+        send('output', get('input') *2); // Test. FIXME: Remove this.
         serviceParam = contextAwareService.discoverServices();
-	console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
-        //set('options', "{\"url\":\"http://pluto.cs.txstate.edu:22001\"}");
-        send('options', "{\"url\":\"http://pluto.cs.txstate.edu:22001\"}");
+		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
+        send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
         send('command', 'gsn');
-        this.ssuper.initialize();
-        this.issueCommand(this.handleResponse);
+        // Cause the base class handler to issue the HTTP request.
+        send('trigger', true);
     });
-};
-
-/** Upon wrapup, stop handling new inputs.  */
-exports.wrapup = function () {
-    removeInputHandler(handle);
 };
