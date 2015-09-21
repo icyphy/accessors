@@ -57,7 +57,8 @@ exports.initialize = function () {
         send('output', get('input') *2); // Test. FIXME: Remove this.
         serviceParam = contextAwareService.discoverServices();
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
-        send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
+        //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
+        send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
         send('command', 'gsn');
         // Cause the base class handler to issue the HTTP request.
         send('trigger', true);
