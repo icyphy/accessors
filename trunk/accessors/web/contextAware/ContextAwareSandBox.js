@@ -24,7 +24,7 @@
  *  It requires the contextAware module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
  * 
- *  @accessor contextAware
+ *  @accessor contextAwareSandBox
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} input to the accessor
  *	@parameter {{string} the name of the REST service that context aware tries
@@ -33,7 +33,8 @@
  *  @version $$Id$$ 
  */
 
-var contextAware = require("contextAware");
+// Use the SandBox version for test
+var contextAware = require("contextAwareSandBox");
 
 // Initialize the context aware service discovery class. Not used currently
 var contextAwareService = new contextAware.DiscoveryOfRESTService();  
@@ -50,7 +51,7 @@ exports.setup = function () {
      );
      selectedService = getParameter('RESTSource');
      if (selectedService == 'GSN')
-       implement("contextAware/GSNInterface.js");
+       implement("contextAware/GSNInterfaceSandBox.js");
      else if (selectedService == 'Paraimpu') {
        implement("contextAware/ParaimpuInterface.js");
       }
