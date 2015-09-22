@@ -26,21 +26,38 @@
  * 
  *  @accessor contextAware
  *  @author Anne H. Ngu (angu@btxstate.edu)
- *  @input {number} just for testing 
- *  @output {number} just for testing d
+ *  @input {number} input to the accessor
+ *	@parameter {{string} the name of the REST service that context aware tries
+ *     to adapt. A list of available services are presented as option.
+ 
  *  @version $$Id$$ 
  */
 
 var contextAware = require("contextAware");
 
-// Initialize the context aware service.
+// Initialize the context aware service discovery class. Not used currently
 var contextAwareService = new contextAware.DiscoveryOfRESTService();  
 
-/** Define inputs and outputs. */
+var selectedService;
+
+
 exports.setup = function () {
-    input('input');
-    output('output');
-    extend("net/REST.js");
+     input('input');
+     // a simple UI interface to start the dialog with users
+     parameter('RESTSource', { 'type': 'string',
+                               'value': 'Make a selection',
+                               'options':contextAware.services()}
+     );
+     selectedService = getParameter('RESTSource');
+     if (selectedService == 'GSN')
+       implement("contextAware/GSNInterface.js");
+     else if (selectedService == 'Paraimpu') {
+       implement("contextAware/ParaimpuInterface.js");
+      }
+     else {
+        console.log("Cannot load service interface !!");
+     }
+     extend("net/REST.js");
 }
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
@@ -54,12 +71,29 @@ exports.initialize = function () {
     
     // Add a handler for the 'input' input.
     addInputHandler('input', function() {
-        send('output', get('input') *2); // Test. FIXME: Remove this.
         serviceParam = contextAwareService.discoverServices();
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
+        var serviceURL = getParameter('ipAddress');
+        //var serviceURL = {"url":{"host":getParameter('ipAddress'), "port": getParameter('port')}};
+        send ('options',  serviceURL);
+        if (selectedService == 'GSN') {
+            send ('command', 'gsn');
+        }
+        else if (selectedService == 'Paraimpu') {
+            send ('command', 'v1/things');
+            //var arg = 'access_token:'+ getParameter('accessToken');
+            //sample access token to use "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
+            var arg = {"access_token": getParameter('accessToken')};
+            console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" + arg);
+            send ('arguments', arg);
+        }
+        else {console.log("no REST service details found");}
+  
+        //ex. of valid json format for reference
         //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
-        send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
-        send('command', 'gsn');
+        //send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
+        //send('command', 'gsn');
+
         // Cause the base class handler to issue the HTTP request.
         send('trigger', true);
     });
