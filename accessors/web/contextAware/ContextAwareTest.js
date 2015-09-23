@@ -24,7 +24,7 @@
  *  It requires the contextAware module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
  * 
- *  @accessor contextAwareSandBox
+ *  @accessor contextAwareTest
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} input to the accessor
  *	@parameter {{string} the name of the REST service that context aware tries
@@ -34,13 +34,12 @@
  */
 
 // Use the SandBox version for test
-var contextAware = require("contextAwareSandBox");
+var contextAware = require("contextAwareTest");
 
 // Initialize the context aware service discovery class. Not used currently
 var contextAwareService = new contextAware.DiscoveryOfRESTService();  
 
 var selectedService;
-
 
 exports.setup = function () {
      input('input');
