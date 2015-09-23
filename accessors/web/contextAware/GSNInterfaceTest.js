@@ -20,18 +20,16 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This is the interface specification of a global sensor network service (GSN)
- *  
- * 
- *  @accessor contextAware
+/** The interface specification of a global sensor network service (GSN).
+ *
+ *  @accessor GSNInterfaceTest
  *  @author Anne H. Ngu (angu@btxstate.edu)
- *  @parameter {string} ipAddress is the host url
- *  @parameter {port} port is the port of host url
- *  @parameter {string} username is the login account name for the service
- *  @parameter {string} password  is the password for the login account
+ *  @parameter {string} ipAddress The host url, ex: 'http://localhost'
+ *  @parameter {port} port The port of host url, ex: 80
+ *  @parameter {string} username The login account name for the service.
+ *  @parameter {string} password  The password for the login account.
  *  @version $$Id$$ 
  */
-
 exports.setup = function () {
     parameter('ipAddress', {'type': 'string', 'value': 'http://localhost'});
     parameter('port', {'type': 'int', 'value': 80});
