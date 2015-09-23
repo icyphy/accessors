@@ -55,7 +55,7 @@
  *  The <i>arguments</i> input an object with fields that are converted to a query
  *  string to append to the url, for example '?arg=value'.
  *
- *  A trigger input triggers invocation of the current command. Any value provided
+ *  A <i>trigger</i> input triggers invocation of the current command. Any value provided
  *  on the trigger input is ignored.
  *
  *  The output response will be a string if the MIME type of the accessed page
@@ -63,6 +63,10 @@
  *  binary data will be produced. It is up to the host implementation to ensure
  *  that the data is given in some form that is usable by downstream accessors
  *  or actors.
+ *
+ *  The parameter 'timeout' specifies how long this accessor will wait for response.
+ *  If it does not receive the response by the specified time, then it will issue
+ *  a null response output and an error event (calling the error() function of the host).
  *
  *  If the parameter 'outputCompleteResponseOnly' is true (the default), then this
  *  accessor will produce a 'response' output only upon receiving a complete response.
@@ -78,6 +82,8 @@
  *  @output {string} response The server's response.
  *  @output {string} status The status code and message of the response.
  *  @output headers The headers sent with the response.
+ *  @parameter {int} timeout The amount of time (in milliseconds) to wait for a response
+ *   before triggering a null response and an error. This defaults to 5000.
  *  @parameter {boolean} outputCompleteResponseOnly If true (the default), the produce a
  *   'response' output only upon receiving the entire response.
  *  @version $$Id$$ 
@@ -96,6 +102,7 @@ exports.setup = function () {
     output('response');
     output('status', {'type':'string'});
     output('headers');
+    parameter('timeout', {'value': 5000, 'type': 'int'});
     parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
 };
 
@@ -153,6 +160,8 @@ exports.issueCommand = function(callback) {
     } else {
         command.url.path = '/' + encodedPath;
     }
+    command.timeout = get('timeout');
+
     if (get('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
@@ -202,6 +211,9 @@ exports.handleResponse = function(message) {
         if (message.headers) {
             send('headers', message.headers);
         }
+    } else {
+        // Send a null response.
+        send('response', null);
     }
 };
 
