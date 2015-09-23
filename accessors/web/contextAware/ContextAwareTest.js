@@ -50,7 +50,7 @@ exports.setup = function () {
      );
      selectedService = getParameter('RESTSource');
      if (selectedService == 'GSN')
-       implement("contextAware/GSNInterfaceSandBox.js");
+       implement("contextAware/GSNInterfaceTest.js");
      else if (selectedService == 'Paraimpu') {
        implement("contextAware/ParaimpuInterface.js");
       }
