@@ -34,7 +34,7 @@
 
 exports.setup = function () {
     parameter('ipAddress', {'type': 'string', 'value': 'http://localhost'});
-    parameter('port', {'type': 'int', 'value': 80});
+    parameter('port', {'type': 'string', 'value': '80'});
     parameter('username', {'type': 'string', 'value': 'admin'});
     parameter('password', {'type': 'string', 'value': ''});
 }
