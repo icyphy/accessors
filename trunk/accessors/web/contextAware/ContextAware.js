@@ -52,6 +52,9 @@
  * <li> for Paraimpu, enter 'api.paraimpu.com' for the host, enter'443' for the
  * port, enter this <code>46e0ee55195c4dd9dca295a7ac8282d28f4a2259</code> for
  * access token.</li>
+ * <li> for Firebase, enter 'sizzling-fire-8605.firebaseio.com' for the host, enter '443' for
+ * port, leave the rest as default. However, if you want to change to retrieve sensor data 
+ * rather then the devices, change the path data to 'sensors.json'.</li>
  * </ul>
  * 
  * @accessor contextAware
@@ -88,9 +91,11 @@ exports.setup = function() {
 	selectedService = getParameter('RESTSource');
 	if (selectedService == 'GSN')
 		implement("contextAware/GSNInterface.js");
-	else if (selectedService == 'Paraimpu') {
+	else if (selectedService == 'Paraimpu') 
 		implement("contextAware/ParaimpuInterface.js");
-	} else {
+	else if (selectedService == 'Firebase')
+		implement("contextAware/FirebaseInterface.js");
+    else {
 		console.log("Service interface not available");
 	}
 	extend("net/REST.js");
@@ -117,23 +122,14 @@ exports.initialize = function() {
 					}
 				};
 				send('options', serviceURL);
-				if (selectedService == 'GSN') {
-					send('command', getParameter('path'));
-				} else if (selectedService == 'Paraimpu') {
-					send('command', getParameter('path'));
-
+			    send('command', getParameter('path'));
+			    if (selectedService == 'Paraimpu') {
 					// sample access token to use
 					// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-					var arg = {
-						"access_token" : getParameter('accessToken')
-					};
-					console
-							.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:"
+					var arg = {"access_token" : getParameter('accessToken')};
+					console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:"
 									+ arg);
 					send('arguments', arg);
-				} else {
-					console.log("no REST service details found");
-					send('status', 'no service details found');
 				}
 
 				// ex. of valid json format for reference
