@@ -76,8 +76,8 @@ exports.initialize = function () {
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
         //var serviceURL = getParameter('ipAddress');
         var serviceURL = {"url":{"host":getParameter('ipAddress'), "port": getParameter('port')}};
-        //send('options',  serviceURL);
-        setDefault('options',  serviceURL);
+        send('options',  serviceURL);
+        //setDefault('options',  serviceURL);
         if (selectedService == 'GSN') {
             send ('command', 'gsn');
         }
@@ -99,5 +99,6 @@ exports.initialize = function () {
         // Cause the base class handler to issue the HTTP request.
         send('trigger', true);
         console.log("ContextAwareTest.js input handler end");
-    });
+    }); 
+    
 };

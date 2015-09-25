@@ -25,16 +25,21 @@
  * 
  *  @accessor contextAware
  *  @author Anne H. Ngu (angu@btxstate.edu)
- *  @parameter {string} ipAddress is the host url
- *  @parameter {port} port is the port of host url
+ *  @parameter {string} host is the ip address of the server hosting the service 
+ *  @parameter {int} port is the port number of host
+ *  @parameter {string} protocol is the communication protocol used. 
  *  @parameter {string} username is the login account name for the service
  *  @parameter {string} password  is the password for the login account
+ *  @parameter {string} method is the http request method
  *  @version $$Id$$ 
  */
 
 exports.setup = function () {
-    parameter('ipAddress', {'type': 'string', 'value': 'http://localhost'});
-    parameter('port', {'type': 'string', 'value': '80'});
+    parameter('host', {'type': 'string', 'value': 'localhost'});
+    parameter('port', {'type': 'int', 'value': 80});
+    parameter('protocol',{'type':'string', 'value': 'http'});
+    parameter('path', {'type':'string', 'value': 'gsn'});
     parameter('username', {'type': 'string', 'value': 'admin'});
     parameter('password', {'type': 'string', 'value': ''});
+    parameter('method',{'type':'string', 'value':'GET'});
 }

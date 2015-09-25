@@ -20,18 +20,23 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** 
- *  @accessor ParaimpuInterface.js
- *  @author Anne H. Ngu (angu@btxstate.edu)
- *  @parameter {string} ipAddress is the url of the service
- *  @parameter {JSON} accessToken is the authentication token 
- *  @parameter {string} method is the method used for teh request
- *  @version $$Id$$ 
+/**
+ *  @author Anne H. Ngu (angu@txstate.edu)
+ *  @parameter {string} host is the ip address of the server hosting the service 
+ *  @parameter {int} port is the port number of the host, default to 80. it is 443 for paraimpu
+ *  @parameter {string} protocol is the communication protocol used (http or https) 
+ *  @parameter {string} accessToken is the authentication information for this service
+ *  @parameter {string} path is the command for invoking the service
+ *  @parameter {string} method is the http request method (GET, POST)
+ *  @version 
  */
 
-//define the interafce of Paraimpu service
+//define the interface of Paraimpu service
 exports.setup = function () {
-    parameter('ipAddress', {'type': 'string', 'value': 'https://api.paraimpu.com'});
-    parameter('accessToken', {'type': 'JSON', 'value': ''});
+    parameter('host', {'type': 'string', 'value': 'api.paraimpu.com'});
+    parameter('port', {'type': 'int', 'value': 80});
+    parameter('protocol',{'type':'string', 'value': 'https'});
+    parameter('path', {'type':'string', 'value': 'v1/things'});
+    parameter('accessToken', {'type': 'string', 'value': ''});
     parameter('method', {'type': 'string', 'value': 'GET'});
 }
