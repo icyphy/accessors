@@ -50,10 +50,12 @@ exports.setup = function () {
      );
      selectedService = getParameter('RESTSource');
      if (selectedService == 'GSN')
-       implement("contextAware/GSNInterfaceTest.js");
+       implement("contextAware/GSNInterface.js");
      else if (selectedService == 'Paraimpu') {
        implement("contextAware/ParaimpuInterface.js");
       }
+     else if (selectedService == 'Firebase')
+       implement("contextAware/FirebaseInterface.js");
      else {
         console.log("Cannot load service interface !!");
      }
@@ -75,22 +77,15 @@ exports.initialize = function () {
         serviceParam = contextAwareService.discoverServices();
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
         //var serviceURL = getParameter('ipAddress');
-        var serviceURL = {"url":{"host":getParameter('ipAddress'), "port": getParameter('port')}};
+        var serviceURL = {"url":{"host":getParameter('host'), "port": getParameter('port'), "protocol": getParameter('protocol')}};
         send('options',  serviceURL);
-        //setDefault('options',  serviceURL);
-        if (selectedService == 'GSN') {
-            send ('command', 'gsn');
-        }
-        else if (selectedService == 'Paraimpu') {
-            send ('command', 'v1/things');
-            //var arg = 'access_token:'+ getParameter('accessToken');
+        send('command', getParameter('path'));
+        if (selectedService == 'Paraimpu') {
             //sample access token to use "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
             var arg = {"access_token": getParameter('accessToken')};
             console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" + arg);
             send ('arguments', arg);
         }
-        else {console.log("no REST service details found");}
-  
         //ex. of valid json format for reference
         //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
         //send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
