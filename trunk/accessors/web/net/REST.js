@@ -217,8 +217,6 @@ exports.handleResponse = function(message) {
     }
 };
 
-// FIXME: Need a timeout.
-
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
