@@ -46,9 +46,9 @@
  *
  *  When `wrapup()` is invoked, this accessor closes the
  *  connection.
- *  
- *  If the connection is dropped midway, the client will attempt to reconnect if 
- *  (reconnectOnClose) is true. This does not apply when the accessor wraps up. 
+ *
+ *  If the connection is dropped midway, the client will attempt to reconnect if
+ *  (reconnectOnClose) is true. This does not apply when the accessor wraps up.
  *
  *  The default type for both sending and receiving
  *  is 'application/json', which allows sending and receiving anything that has
@@ -70,7 +70,7 @@
  *  are two mechanisms by which data in transit can be lost. In both cases, warning
  *  messages or error messages will be issued to the host to be displayed or otherwise
  *  handled as the host sees fit.
- *  
+ *
  *  * First, there might be queued messages that were received on `toSend` but have not yet
  *    been sent, either because the socket has not yet been opened or because
  *    it was closed from the other side.
@@ -79,7 +79,7 @@
  *    that can be invoked at any time, and that handler might be invoked after it is no
  *    longer possible for this accessor to produce outputs (it has entered its wrapup
  *    phase of execution).
- *  
+ *
  *  The server might similarly lose messages by the same two mechanisms occurring
  *  on the server side. In that case, messages will presumably be displayed on the
  *  server side.
@@ -136,12 +136,12 @@ exports.setup = function () {
         options : WebSocket.supportedSendTypes()
     });
     parameter('connectTimeout', {
-        value: 60000, 
-        type: "int" 
+        value: 60000,
+        type: "int"
     });
     parameter('maxFrameSize', {
-        value: 65536, 
-        type: "int" 
+        value: 65536,
+        type: "int"
     });
     parameter('numberOfRetries', {
         type : 'int',
@@ -173,7 +173,7 @@ exports.setup = function () {
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function () {
 
-    //record the object that calls it (could be a derived accessor). 
+    //record the object that calls it (could be a derived accessor).
     var callObj = this;
 
     client = new WebSocket.Client(
@@ -194,13 +194,13 @@ exports.initialize = function () {
     client.on('open', this.onOpen);
     client.on('message', this.onMessage);
 
-    //bind onClose() to caller's object, 
+    //bind onClose() to caller's object,
     //so initialize() of caller's object is called if reconnect is true.
     client.on('close', onClose.bind(callObj));
     client.on('error', function (message) {
-        error(message);
+        console.log(message);
     });
-    //only execute once, and not when trying to reconnect. 
+    //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
         inputHandle = addInputHandler('toSend', this.toSendInputHandler);
     }
@@ -215,7 +215,7 @@ exports.toSendInputHandler = function () {
 exports.sendToWebSocket = function (data) {
     if (client !== null) {
         client.send(data);
-        console.log("Sending to web socket: " + data);
+        // console.log("Sending to web socket: " + data);
     } else {
         console.log("Client is null. Could not send message: " + data);
     }
@@ -260,6 +260,11 @@ function onClose(message) {
 exports.onMessage = function (message) {
     send('received', message);
 };
+
+/** Export the isOpen() function */
+exports.isOpen = function () {
+    return client.isOpen();
+}
 
 /** Close the web socket connection. */
 exports.wrapup = function () {

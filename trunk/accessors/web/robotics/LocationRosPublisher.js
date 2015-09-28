@@ -26,7 +26,7 @@
  *     {
  *       X: <x coordinate>,
  *       Y: <y coordinate>,
- *       id: <unique id for this location>  
+ *       id: <unique id for this location>
  *     }
  *
  *  All locations are published as a PointCloud so that the ROS visualization
@@ -35,8 +35,8 @@
  *  @accessor robotics/LocationRosPublisher
  *  @parameter {string} topic The ROS topic to publish to.
  *  @parameter {string} frame_id The frame_id of the header (only needed if a header is required).
- *  @author Brad Campbell 
- *  @version $$Id: RosPublisher.js 271 2015-08-22 08:23:01Z eal $$ 
+ *  @author Brad Campbell
+ *  @version $$Id: RosPublisher.js 271 2015-08-22 08:23:01Z eal $$
  */
 
 
@@ -45,7 +45,7 @@ ROS_TYPE = 'sensor_msgs/PointCloud';
 // location_id -> {position: {X, Y, Z}, color: <some color as a float>}
 locations = {};
 
-/** Sets up by accessor by inheriting inputs from setup() in WebSocketClient. Adds additional parameters regarding the ROS topic to publish to. */ 
+/** Sets up by accessor by inheriting inputs from setup() in WebSocketClient. Adds additional parameters regarding the ROS topic to publish to. */
 exports.setup = function() {
    extend('net/WebSocketClient');
    parameter('topic', {
@@ -57,11 +57,17 @@ exports.setup = function() {
    });
 }
 
-/**  Inherits initialize from WebSocketClient. 
- *   Advertise the topic we are publishing to.*/ 
+/**  Inherits initialize from WebSocketClient.
+ *   Advertise the topic we are publishing to.*/
 exports.initialize = function() {
    this.ssuper.initialize.apply(this);
+}
 
+/** Override onOpen from WebSocketClient */
+exports.onOpen = function() {
+   this.ssuper.onOpen.apply(this);
+
+   // Advertise what we have when the websocket opens.
    var advertise = {
       "op": "advertise",
       "topic": getParameter('topic'),
@@ -128,11 +134,11 @@ exports.toSendInputHandler = function() {
          }
       ]
    };
-      
+
    var data = {
       "op": "publish",
       "topic": getParameter('topic'),
-      "msg": out 
+      "msg": out
    }
 
    exports.sendToWebSocket(data);
@@ -142,10 +148,12 @@ exports.toSendInputHandler = function() {
 
 /** Unadvertise the topic and inherit wrapup from WebSocketClient */
 exports.wrapup = function() {
-   var unadvertise = {
-      "op": "unadvertise",
-      "topic": getParameter('topic')
-   };
-   exports.sendToWebSocket(unadvertise);
+   if (exports.isOpen()) {
+      var unadvertise = {
+         "op": "unadvertise",
+         "topic": getParameter('topic')
+      };
+      exports.sendToWebSocket(unadvertise);
+   }
    this.ssuper.wrapup();
 }
