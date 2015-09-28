@@ -79,12 +79,12 @@ var running = false;
 /** Sets up the accessor by defining inputs and outputs. */
 exports.setup = function() {
     parameter('hostInterface', {
-        value: "localhost", 
-        type: "string" 
+        value: "localhost",
+        type: "string"
     });
     parameter('port', {
-        value: 8080, 
-        type: "int" 
+        value: 8080,
+        type: "int"
     });
     parameter('receiveType', {
         type : 'string',
@@ -97,8 +97,8 @@ exports.setup = function() {
         options : WebSocket.supportedSendTypes()
     });
     parameter('maxFrameSize', {
-        value: 65536, 
-        type: "int" 
+        value: 65536,
+        type: "int"
     });
     input('toSend');
     output('received');
@@ -108,8 +108,8 @@ exports.setup = function() {
 var handle;
 var sockets = [];
 
-/** Starts the web socket and attaches functions to inputs and outputs. 
-  * Adds an input handler on toSend that sends the input received to the right socket. */ 
+/** Starts the web socket and attaches functions to inputs and outputs.
+  * Adds an input handler on toSend that sends the input received to the right socket. */
 exports.initialize = function() {
     if (!server) {
         server = new WebSocket.Server({
@@ -136,7 +136,7 @@ exports.initialize = function() {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
-                    console.log("Sending to socket id " 
+                    console.log("Sending to socket id "
                             + data.socketID
                             + " message: "
                             + data.message);
@@ -147,18 +147,18 @@ exports.initialize = function() {
                 }
             } else {
                 // No socketID or message, so this is a broadcast message.
-                var success = false;
+                // var success = false;
                 for (var id = 0; id < sockets.length; id++) {
                     if (sockets[id].isOpen()) {
-                        console.log("Broadcasting to socket id " + id 
-                                + " message: " + data);
+                        // console.log("Broadcasting to socket id " + id
+                        //         + " message: " + data);
                         sockets[id].send(data);
-                        success = true;
+                        // success = true;
                     }
                 }
-                if (!success) {
-                    console.log('No open sockets. Discarding message: ' + data.message);
-                }
+                // if (!success) {
+                //     console.log('No open sockets. Discarding message: ' + data.message);
+                // }
             }
         }
     });
@@ -172,7 +172,7 @@ function onListening() {
  *  Triggers an output on <code>'connection'</code>.
  *  Adds an event listener to the socket. */
 function onConnection(socket) {
-   //socketID is the index of the socket in the sockets array. 
+   //socketID is the index of the socket in the sockets array.
     var socketID = sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
     send('connection', {'socketID':socketID, 'status':'open'});
@@ -186,7 +186,7 @@ function onConnection(socket) {
         error(message);
     });
 
-    sockets.push(socket);    
+    sockets.push(socket);
 }
 
 /** Removes all inputHandlers from sockets.<br>
@@ -198,7 +198,7 @@ exports.wrapup = function(){
     }
 
     sockets = [];
-    removeInputHandler(handle); 
+    removeInputHandler(handle);
 
     if (server != null) {
         server.removeAllListeners();
