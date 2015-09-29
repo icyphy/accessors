@@ -50,7 +50,7 @@ exports.setup = function () {
      );
      selectedService = getParameter('RESTSource');
      if (selectedService == 'GSN')
-       implement("contextAware/GSNInterface.js");
+       implement("contextAware/GSNInterfaceTest.js");
      else if (selectedService == 'Paraimpu') {
        implement("contextAware/ParaimpuInterface.js");
       }
@@ -60,10 +60,15 @@ exports.setup = function () {
         console.log("Cannot load service interface !!");
      }
      extend("net/REST.js");
+     input('command', {'visibility':'expert'});
+     input('arguments', {'visibility':'expert'});
+     input('options',{'visibility':'expert'});
+    // input('trigger',{'visibility':'expert'});
 }
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
  */
+ var handle;
 exports.initialize = function () {
 	// The superclass registers a handler for the 'trigger' input
 	// to issue an HTTP request based on the current inputs.
@@ -72,10 +77,10 @@ exports.initialize = function () {
     var serviceParam; //the input that is needed for the options port in REST
     
     // Add a handler for the 'input' input.
-    addInputHandler('input', function() {
+    handle = addInputHandler('input', function() {
         console.log("ContextAwareTest.js input handler start");
         serviceParam = contextAwareService.discoverServices();
-		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: serviceParam: " + serviceParam);
+		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
         //var serviceURL = getParameter('ipAddress');
         var serviceURL = {"url":{"host":getParameter('host'), "port": getParameter('port'), "protocol": getParameter('protocol')}};
         send('options',  serviceURL);
@@ -83,17 +88,22 @@ exports.initialize = function () {
         if (selectedService == 'Paraimpu') {
             //sample access token to use "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
             var arg = {"access_token": getParameter('accessToken')};
-            console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" + arg);
+            console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: access_token:" + arg);
             send ('arguments', arg);
         }
         //ex. of valid json format for reference
         //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
         //send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
-        //send('command', 'gsn');
-
+       
         // Cause the base class handler to issue the HTTP request.
         send('trigger', true);
+        //send('response', this.issueCommand(handleResponse))
+        console.log(get('response'));
         console.log("ContextAwareTest.js input handler end");
     }); 
-    
-};
+   } 
+ exports.wrapup = function() {
+   
+   removeInputHandler(handle);
+   };
+
