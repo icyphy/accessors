@@ -63,8 +63,7 @@ exports.initialize = function() {
     
     var key = getParameter('key');
     if (key == "Enter Key Here") {
-        error("Enter a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.");
-        return;
+        throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
     }
     // Handle location information.
     addInputHandler('address', function() {
@@ -77,7 +76,8 @@ exports.initialize = function() {
             send('arguments', arguments);
             send('trigger', true);
         } else {
-            error('No address.');
+            error('GeoCoder: No address.');
+            send('location', null);
         }
     });
 };
@@ -103,10 +103,11 @@ exports.filterResponse = function(response) {
                         "longitude": parsed.results[0].geometry.location.lng
                 });
             } else {
-                error('No matching location.');
+                error('GeoCoder: No matching location.');
+                send('location', null);
             }
         } catch (err) {
-            error('Unable to parse response: ' + err.message);
+            error('GeoCoder: Unable to parse response: ' + err.message);
         }
     }
     return response;

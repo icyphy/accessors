@@ -73,8 +73,13 @@ exports.initialize = function() {
             send('arguments', reformatted);
             send('trigger', true);
         } else {
-            error('Malformed location: ' + location
-                    + '\nExpecting {"latitude":number, "longitude":number}');
+            if (location == null) {
+                error('Weather: No location information.');
+            } else {
+                error('Weather: Malformed location: ' + location
+                        + '\nExpecting {"latitude":number, "longitude":number}');
+            }
+            send('weather', null);
         }
     });
 };
@@ -147,7 +152,8 @@ exports.filterResponse = function(response) {
             }
             send('weather', weather);
         } catch (err) {
-            error('Unable to parse response: ' + err.message);
+            error('Weather: Unable to parse response: ' + err.message);
+            send('weather', null);
         }
     }
     return response;
