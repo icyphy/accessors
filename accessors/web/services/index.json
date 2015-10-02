@@ -1,4 +1,5 @@
 [
+    "GeoCoder.js",
     "StockTick.js",
-    "Weather.xml",
+    "Weather.js",
 ]
