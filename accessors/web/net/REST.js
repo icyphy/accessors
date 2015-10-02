@@ -118,7 +118,8 @@ exports.setup = function () {
  *  That will be added automatically.
  */
 exports.encodePath = function() {
-    var command = get('command');
+    // Remove any leading slash that might be present.
+    var command = get('command').replace(/^\//, '');
     var encodedArgs = querystring.stringify(get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
