@@ -36,6 +36,7 @@
 // Use the SandBox version for test
 var contextAware = require("contextAwareTest");
 
+
 // Initialize the context aware service discovery class. Not used currently
 var contextAwareService = new contextAware.DiscoveryOfRESTService();  
 
@@ -50,12 +51,29 @@ exports.setup = function () {
      );
      selectedService = getParameter('RESTSource');
      if (selectedService == 'GSN')
-       implement("contextAware/GSNInterfaceTest.js");
+     {
+       implement("contextAware/GSNInterface.js");
+       input('dataType', 
+    	   {'type': 'string',
+      	      'value': 'all',
+      	      'options':contextAware.gsnServices()}); 
+	 }
      else if (selectedService == 'Paraimpu') {
        implement("contextAware/ParaimpuInterface.js");
+       input('dataType', {
+   	    type: 'string',
+   	    value: 'all',
+   	    	'options':contextAware.paraimpuServices()
+   	  }); 
       }
-     else if (selectedService == 'Firebase')
+     else if (selectedService == 'Firebase'){
        implement("contextAware/FirebaseInterface.js");
+       input('dataType', {
+      	    type: 'string',
+      	    value: 'all',
+      	    	'options':contextAware.firebaseServices()
+      	  }); 
+     }
      else {
         console.log("Cannot load service interface !!");
      }
@@ -63,7 +81,10 @@ exports.setup = function () {
      input('command', {'visibility':'expert'});
      input('arguments', {'visibility':'expert'});
      input('options',{'visibility':'expert'});
-    // input('trigger',{'visibility':'expert'});
+     output('header',{'visibility':'expert'});
+   
+     input('trigger',{'visibility':'expert'});
+     
 }
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
@@ -73,7 +94,6 @@ exports.initialize = function () {
 	// The superclass registers a handler for the 'trigger' input
 	// to issue an HTTP request based on the current inputs.
 	this.ssuper.initialize();
-	
     var serviceParam; //the input that is needed for the options port in REST
     
     // Add a handler for the 'input' input.
@@ -98,12 +118,127 @@ exports.initialize = function () {
         // Cause the base class handler to issue the HTTP request.
         send('trigger', true);
         //send('response', this.issueCommand(handleResponse))
-        console.log(get('response'));
+       // console.log(get('response'));
         console.log("ContextAwareTest.js input handler end");
     }); 
    } 
+/**
+ * Filter the response. It overrides the filterResponse() in the base class to
+ * extract a portion of the response that is defined in the corresponding
+ * service interface
+ */
+exports.filterResponse = function(response) {
+	
+	switch(selectedService) {
+	case "GSN":
+		getGSNData(response);
+		break;
+	case "Paraimpu":
+		getParaimpuData(response);
+		break;
+	case "Firebase":
+		getFirebaseData(response);
+		break;
+	}
+	console.log("Response" + response);
+	return response;
+	}
+
+/** Filter the response from Firebase
+ */
+function getFirebaseData(response) {
+	var type = get('dataType');
+	var result=JSON.parse(response);
+	switch(type) {
+	case "microwave":
+		send('microwave', result.Microwave);
+		console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave));
+		break;
+	case "microwaveStatus":
+		send('microwaveStatus',  result.Microwave.status);
+		break;
+	case "pastValues":
+		send('pastValues', result.Microwave.pastValues);
+		break;
+	case "all":
+		send('microwave', result.Microwave);
+		send('microwaveStatus',  result.Microwave.status);
+		send('pastValues', result.Microwave.pastValues);
+		break;
+	default:
+		send('microwave', result.Microwave);
+	}
+}
+/** filter the response from Paraimpu
+ */
+function getParaimpuData(response) {
+	var type = get('dataType');
+	var result=JSON.parse(response);
+	switch (type) {
+	case "payload":
+		send('payload', result.payload);
+		console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.payload));
+		break;
+	case "thingId":
+		send('sensorId', result.thingId);
+		break;
+	case "producer":
+		send('producer', result.producer);
+		break;
+	case "all":
+		send('payload', result.payload);
+		send('sensorId', result.thingId);
+		send('producer', result.producer);
+		break;
+	default:
+		send('response', result);
+	}
+}
+
+/** Filter the response from GSN. Need to convert the data to json format first
+ * 
+ */
+function getGSNData(response) {
+	var type = get('dataType');
+	var xmlJson={};
+    xmlJson=contextAware.xmlToJson(response);
+	var result = JSON.parse(xmlJson);
+	switch(type) {
+	case "sound":
+		send('sound', result."virtual-sensor"[2].field[2]);
+		break;
+	case "sensorName":
+		send('sensorName', result."virtual-sensor"[2].name);
+		break;
+	case "all":
+		send('sound', result."virtual-sensor"[2].field[2]);
+		send('sensorName', result."virtual-sensor"[2].name);
+		break;
+	default:
+		send('response', result."virtual-sensor");
+	}
+}
+	
+
+	/*var itemList = [];
+	var type = "Microwave";
+	var itemKeys = Object.keys(result);
+	for (var x in itemKeys) {
+		itemList.push(itemKeys[x]);
+	}
+	for (var y in itemList) {
+		if (itemList[y] == "Microwave") 
+		  console.log("ContextAwareTest filterResponse() " + JSON.stringify("result."+ type));
+	}
+    console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave.pastValues));
+    */
+  //  return result;
+
+//};
+
+
  exports.wrapup = function() {
-   
+  
    removeInputHandler(handle);
    };
 
