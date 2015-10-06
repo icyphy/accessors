@@ -31,6 +31,9 @@
  *  @parameter {string} username is the login account name for the service
  *  @parameter {string} password  is the password for the login account
  *  @parameter {string} method is the http request method
+ *  @output {JSON} sound is the data retrieved and is 
+ *          structured as {content, name, type, unit}
+ *  @output {string} sensorName is the name of the sensor e.g. phidget sensor
  *  @version $$Id$$ 
  */
 
@@ -42,4 +45,6 @@ exports.setup = function () {
     parameter('username', {'type': 'string', 'value': 'admin'});
     parameter('password', {'type': 'string', 'value': ''});
     parameter('method',{'type':'string', 'value':'GET'});
+    output('sound', {'type':'JSON'});
+    output('sensorName', {'type':'string'});
 }

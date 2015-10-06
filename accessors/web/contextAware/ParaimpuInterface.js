@@ -34,9 +34,12 @@
 //define the interface of Paraimpu service
 exports.setup = function () {
     parameter('host', {'type': 'string', 'value': 'api.paraimpu.com'});
-    parameter('port', {'type': 'int', 'value': 80});
+    parameter('port', {'type': 'int', 'value': 443});
     parameter('protocol',{'type':'string', 'value': 'https'});
-    parameter('path', {'type':'string', 'value': 'v1/things'});
-    parameter('accessToken', {'type': 'string', 'value': ''});
+    parameter('path', {'type':'string', 'value': 'v1/things/67de5874-33b1-48be-a99b-85ed5c55d7a4/data/last'});
+    parameter('accessToken', {'type': 'string', 'value': '46e0ee55195c4dd9dca295a7ac8282d28f4a2259'});
     parameter('method', {'type': 'string', 'value': 'GET'});
+    output('payload',{'type':'number'});
+    output('producer', {'type':'string'});
+    output('sensorId', {'type':'string'});
 }

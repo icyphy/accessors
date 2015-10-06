@@ -41,4 +41,7 @@ exports.setup = function () {
     parameter('protocol',{'type':'string', 'value': 'https'});
     parameter('path', {'type':'string', 'value': 'devices.json'});
     parameter('method',{'type':'string', 'value':'GET'});
+    output('microwave', {'type':'JSON'});
+    output('microwaveStatus',{'type':'string'});
+    output('pastValues',{'type':'JSON'});
 }
