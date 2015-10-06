@@ -31,8 +31,12 @@
  *  @version $$Id$$ 
  */
 exports.setup = function () {
-    parameter('ipAddress', {'type': 'string', 'value': 'http://localhost'});
+	parameter('host', {'type': 'string', 'value': 'localhost'});
     parameter('port', {'type': 'int', 'value': 80});
+    parameter('protocol',{'type':'string', 'value': 'http'});
+    parameter('path', {'type':'string', 'value': 'gsn'});
     parameter('username', {'type': 'string', 'value': 'admin'});
     parameter('password', {'type': 'string', 'value': ''});
+    parameter('method',{'type':'string', 'value':'GET'});
 }
+
