@@ -85,47 +85,47 @@ var selectedService;
  * adapt.
  */
 exports.setup = function() {
-	input('input');
-	// a simple UI interface to start the dialog with users to select a REST
-	// service
-	parameter('RESTSource', {
-		'type' : 'string',
-		'value' : 'Make a selection',
-		'options' : contextAware.services()
-	});
-	selectedService = getParameter('RESTSource');
-	// implement the selected service's input and output ports
-	if (selectedService == 'GSN')
+    input('input');
+    // a simple UI interface to start the dialog with users to select a REST
+    // service
+    parameter('RESTSource', {
+	'type' : 'string',
+	'value' : 'Make a selection',
+	'options' : contextAware.services()
+    });
+    selectedService = getParameter('RESTSource');
+    // implement the selected service's input and output ports
+    if (selectedService == 'GSN')
     {
-      implement("contextAware/GSNInterface.js");
-      input('dataType', 
-   	   {'type': 'string',
-     	      'value': 'all',
-     	      'options':contextAware.gsnServices()}); 
-	 }
+        implement("contextAware/GSNInterface.js");
+        input('dataType', 
+   	      {'type': 'string',
+     	       'value': 'all',
+     	       'options':contextAware.gsnServices()}); 
+    }
     else if (selectedService == 'Paraimpu') {
-      implement("contextAware/ParaimpuInterface.js");
-      input('dataType', {
+        implement("contextAware/ParaimpuInterface.js");
+        input('dataType', {
   	    type: 'string',
   	    value: 'all',
-  	    	'options':contextAware.paraimpuServices()
-  	  }); 
-     }
+  	    'options':contextAware.paraimpuServices()
+  	}); 
+    }
     else if (selectedService == 'Firebase'){
-      implement("contextAware/FirebaseInterface.js");
-      input('dataType', {
+        implement("contextAware/FirebaseInterface.js");
+        input('dataType', {
      	    type: 'string',
      	    value: 'all',
-     	    	'options':contextAware.firebaseServices()
-     	  }); 
+     	    'options':contextAware.firebaseServices()
+     	}); 
     }
-	
+    
     else {
-		console.log("REST Service interface not available");
-	}
-	extend("net/REST.js");
-	// hide the input and output ports of the inherited accessor
-	input('command', {'visibility':'expert'});
+	console.log("REST Service interface not available");
+    }
+    extend("net/REST.js");
+    // hide the input and output ports of the inherited accessor
+    input('command', {'visibility':'expert'});
     input('arguments', {'visibility':'expert'});
     input('options',{'visibility':'expert'});
     output('headers',{'visibility':'expert'});
@@ -138,41 +138,41 @@ exports.setup = function() {
  * to access the service.
  */
 exports.initialize = function() {
-	// The superclass registers a handler for the 'trigger' input
-	// to issue an HTTP request based on the current inputs.
-	this.ssuper.initialize();
-	// Add a handler for the 'input' input.
-	addInputHandler(
-			'input',
-			function() {
-				// construct the URL for the selected service
-				var serviceURL = {
-					"url" : {
-						"host" : getParameter('host'),
-						"port" : getParameter('port'),
-						"protocol" : getParameter('protocol')
-					}
-				};
-				send('options', serviceURL);
-			    send('command', getParameter('path'));
-			    if (selectedService == 'Paraimpu') {
-					// sample access token to use
-					// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-					var arg = {"access_token" : getParameter('accessToken')};
-					console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:"
-									+ arg);
-					send('arguments', arg);
-				}
+    // The superclass registers a handler for the 'trigger' input
+    // to issue an HTTP request based on the current inputs.
+    this.ssuper.initialize();
+    // Add a handler for the 'input' input.
+    addInputHandler(
+	'input',
+	function() {
+	    // construct the URL for the selected service
+	    var serviceURL = {
+		"url" : {
+		    "host" : getParameter('host'),
+		    "port" : getParameter('port'),
+		    "protocol" : getParameter('protocol')
+		}
+	    };
+	    send('options', serviceURL);
+	    send('command', getParameter('path'));
+	    if (selectedService == 'Paraimpu') {
+		// sample access token to use
+		// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
+		var arg = {"access_token" : getParameter('accessToken')};
+		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:"
+			    + arg);
+		send('arguments', arg);
+	    }
 
-				// ex. of valid json format for reference
-				// send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
-				// send('options',
-				// {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
-		
+	    // ex. of valid json format for reference
+	    // send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
+	    // send('options',
+	    // {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
+	    
 
-				// Cause the base class handler to issue the HTTP request.
-				send('trigger', true);
-			});
+	    // Cause the base class handler to issue the HTTP request.
+	    send('trigger', true);
+	});
 };
 /**
  * Filter the response. It overrides the filterResponse() in the base class to
@@ -181,18 +181,18 @@ exports.initialize = function() {
  */
 exports.filterResponse = function(response) {
 
-	switch(selectedService) {
-	case "GSN":
-		getGSNData(response);
-		break;
-	case "Paraimpu":
-		getParaimpuData(response);
-		break;
-	case "Firebase":
-		getFirebaseData(response);
-		break;
-	}
-	return response;
+    switch(selectedService) {
+    case "GSN":
+	getGSNData(response);
+	break;
+    case "Paraimpu":
+	getParaimpuData(response);
+	break;
+    case "Firebase":
+	getFirebaseData(response);
+	break;
+    }
+    return response;
 }
 
 /**
@@ -200,28 +200,28 @@ exports.filterResponse = function(response) {
  * reading and current status
  */
 function getFirebaseData(response) {
-	var type = get('dataType');
-	var result=JSON.parse(response);
-	switch(type) {
-	case "microwave":
-		send('microwave', result.Microwave);
-		// console.log("ContextAwareTest filterResponse() " +
-		// JSON.stringify(result.Microwave));
-		break;
-	case "microwaveStatus":
-		send('microwaveStatus',  result.Microwave.status);
-		break;
-	case "pastValues":
-		send('pastValues', result.Microwave.pastValues);
-		break;
-	case "all":
-		send('microwave', result.Microwave);
-		send('microwaveStatus',  result.Microwave.status);
-		send('pastValues', result.Microwave.pastValues);
-		break;
-	default:
-		send('microwave', result.Microwave);
-	}
+    var type = get('dataType');
+    var result=JSON.parse(response);
+    switch(type) {
+    case "microwave":
+	send('microwave', result.Microwave);
+	// console.log("ContextAwareTest filterResponse() " +
+	// JSON.stringify(result.Microwave));
+	break;
+    case "microwaveStatus":
+	send('microwaveStatus',  result.Microwave.status);
+	break;
+    case "pastValues":
+	send('pastValues', result.Microwave.pastValues);
+	break;
+    case "all":
+	send('microwave', result.Microwave);
+	send('microwaveStatus',  result.Microwave.status);
+	send('pastValues', result.Microwave.pastValues);
+	break;
+    default:
+	send('microwave', result.Microwave);
+    }
 }
 
 /*
@@ -230,28 +230,28 @@ function getFirebaseData(response) {
  * 
  */
 function getParaimpuData(response) {
-	var type = get('dataType');
-	var result=JSON.parse(response);
-	switch (type) {
-	case "payload":
-		send('payload', result.payload);
-		// console.log("ContextAwareTest filterResponse() " +
-		// JSON.stringify(result.payload));
-		break;
-	case "sensorId":
-		send('sensorId', result.thingId);
-		break;
-	case "producer":
-		send('producer', result.producer);
-		break;
-	case "all":
-		send('payload', result.payload);
-		send('sensorId', result.thingId);
-		send('producer', result.producer);
-		break;
-	default:
-		send('response', result);
-	}
+    var type = get('dataType');
+    var result=JSON.parse(response);
+    switch (type) {
+    case "payload":
+	send('payload', result.payload);
+	// console.log("ContextAwareTest filterResponse() " +
+	// JSON.stringify(result.payload));
+	break;
+    case "sensorId":
+	send('sensorId', result.thingId);
+	break;
+    case "producer":
+	send('producer', result.producer);
+	break;
+    case "all":
+	send('payload', result.payload);
+	send('sensorId', result.thingId);
+	send('producer', result.producer);
+	break;
+    default:
+	send('response', result);
+    }
 }
 /**
  * Filter response from GSN. The response is in xml format which needs to be
@@ -262,22 +262,31 @@ function getParaimpuData(response) {
  * 
  */
 function getGSNData(response) {
-	var type = get('dataType');
-	var xmlJson={};
+    var type = get('dataType');
+    var xmlJson={};
     xmlJson=contextAware.xmlToJson(response);
-	var result = JSON.parse(xmlJson);
-	switch(type) {
-	case "sound":
-		send('sound', result."virtual-sensor"[2].field[2]);
-		break;
-	case "sensorName":
-		send('sensorName', result."virtual-sensor"[2].name);
-		break;
-	case "all":
-		send('sound', result."virtual-sensor"[2].field[2]);
-		send('sensorName', result."virtual-sensor"[2].name);
-		break;
-	default:
-		send('response', result."virtual-sensor");
-	}
+    var result = JSON.parse(xmlJson);
+    switch(type) {
+    case "sound":
+        // jsdoc was failing with "line 271: missing name after . operator"
+        // This code has no tests because the GSN source on the web does not stay up.
+        // http://stackoverflow.com/questions/19217365/missing-name-after-operator-yui-compressor-for-socket-io-js-files
+        // suggests using ['..']
+	// send('sound', result."virtual-sensor"[2].field[2]);
+        send('sound', result['virtual-sensor'][2].field[2]);
+	break;
+    case "sensorName":
+	// send('sensorName', result."virtual-sensor"[2].name);
+        send('sensorName', result['virtual-sensor'][2].name);
+	break;
+    case "all":
+	//send('sound', result."virtual-sensor"[2].field[2]);
+        send('sound', result['virtual-sensor'][2].field[2]);
+	//send('sensorName', result."virtual-sensor"[2].name);
+        send('sensorName', result['virtual-sensor'][2].name);
+	break;
+    default:
+	//send('response', result."virtual-sensor");
+        send('response', result['virtual-sensor']);
+    }
 }
