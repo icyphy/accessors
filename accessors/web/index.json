@@ -2,6 +2,7 @@
     "audio",
     "cameras",
     "devices",
+    "gdp",
     "image",
     "localization",
     "net",
