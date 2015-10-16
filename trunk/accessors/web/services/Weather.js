@@ -27,6 +27,9 @@
  *  `{"latitude": 37.85, "longitude": -122.26}`, which is
  *  the location of Berkeley, California.
  *
+ *  This accessor requires a "key" for the API, which you can
+ *  obtain for free at http://openweathermap.org/appid .
+ *
  *  @accessor services/Weather
  *  @author Edward A. Lee
  *  @version $Id$
@@ -45,7 +48,8 @@ exports.setup = function() {
         'options':['Fahrenheit', 'Celsius', 'Kelvin'],
         'value':'Fahrenheit'
     });
-    
+    parameter('key', {'type':'string', 'value':'Enter Key Here'});
+
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     input('options', {'visibility':'expert', 'value':'"http://api.openweathermap.org"'});
@@ -60,6 +64,11 @@ exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.ssuper.initialize();
     
+    var key = getParameter('key');
+    if (key == "Enter Key Here") {
+        throw "Weather:  You need a key, which you can obtain at http://openweathermap.org/appid.";
+    }
+
     // Handle location information.
     addInputHandler('location', function() {
         var location = get('location');
@@ -68,7 +77,8 @@ exports.initialize = function() {
                 && typeof location.longitude === 'number') {
             var reformatted = {
                 'lat' : location.latitude,
-                'lon' : location.longitude
+                'lon' : location.longitude,
+                'APPID' : key
             };
             send('arguments', reformatted);
             send('trigger', true);
