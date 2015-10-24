@@ -53,7 +53,9 @@
  *  to the empty string.
  *
  *  The <i>arguments</i> input an object with fields that are converted to a query
- *  string to append to the url, for example '?arg=value'.
+ *  string to append to the url, for example '?arg=value'. If the value contains
+ *  characters that are not allowed in a URL, such as spaces, they will encoded
+ *  according to the ASCII standard, see http://www.w3schools.com/tags/ref_urlencode.asp .
  *
  *  A <i>trigger</i> input triggers invocation of the current command. Any value provided
  *  on the trigger input is ignored.
@@ -120,6 +122,7 @@ exports.setup = function () {
 exports.encodePath = function() {
     // Remove any leading slash that might be present.
     var command = get('command').replace(/^\//, '');
+    // Encode any characters that are not allowed in a URL.
     var encodedArgs = querystring.stringify(get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
