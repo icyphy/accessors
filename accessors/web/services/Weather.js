@@ -57,6 +57,8 @@ exports.setup = function() {
     input('arguments', {'visibility':'expert', 'value':'{"lat":37.85, "lon":-122.26}'});
     input('body', {'visibility':'expert'});
     input('trigger', {'visibility':'expert'});
+    output('headers', {'visibility':'expert'});
+    output('status', {'visibility':'expert'});
     parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 

@@ -54,6 +54,8 @@ exports.setup = function() {
     input('arguments', {'visibility':'expert', 'value':{"address":"Berkeley, CA", "key":"Enter Key Here"}});
     input('body', {'visibility':'expert'});
     input('trigger', {'visibility':'expert'});
+    output('headers', {'visibility':'expert'});
+    output('status', {'visibility':'expert'});
     parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 

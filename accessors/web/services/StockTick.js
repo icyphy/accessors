@@ -26,11 +26,6 @@
  *  by the input. When the server replies, this accessor produces the most
  *  recent trade price on the *price* output.
  *
- *  The request to the web server is asynchronous. This means that the outputs
- *  may not be produced in the same order as the inputs.
- *  FIXME: This is seriously problematic. Probably should change this to use
- *  a blocking call by default.
- *
  *  This accessor requires the optional 'httpClient' module, which may or may
  *  not be provided by an accessor host. Most hosts will provide this module.
  *
@@ -45,6 +40,7 @@ var http = require('httpClient');
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
+    extend('net/REST');
     input('symbol', {
         'value':'YHOO',
         'type':'string'
@@ -52,40 +48,52 @@ exports.setup = function() {
     output('price', {
         'type':'number'
     });
+    // Change default values of the base class inputs.
+    // Also, hide base class inputs, except trigger.
+    input('options', {'visibility':'expert', 'value':'"http://query.yahooapis.com"'});
+    input('command', {'visibility':'expert', 'value':'/v1/public/yql'});
+    input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
+    input('body', {'visibility':'expert'});
+    input('trigger', {'visibility':'expert'});
+    output('headers', {'visibility':'expert'});
+    output('status', {'visibility':'expert'});
+    parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
-
-/** Function that retrieves the stock price.
- */
-function getPrice() {
-    // Read the current value of the 'symbol' input.
-    var stock = get('symbol');
-    // Construct a URL to obtain a stock price.
-    var url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22"
-        + stock
-        + "%22)%0A%09%09&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json";
-    // Request a stock price, and provide a function to handle the response.
-    http.get(url, function(response) {
-        // Assuming the response is JSON, parse it.
-        var json = JSON.parse(response.body);
-        // Extract the last trade price from the JSON record.
-        var price = parseFloat(json.query.results.quote.LastTradePriceOnly);
-        // Send the price to the 'price' output.
-        send('price', price);
-    });
-}
-
-var handle = null;
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
 exports.initialize = function() {
+    // Be sure to call the superclass so that the trigger input handler gets registered.
+    this.ssuper.initialize();
+
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    handle = addInputHandler('symbol', getPrice);
+    addInputHandler('symbol', function() {
+        // Read the current value of the 'symbol' input.
+        var stock = get('symbol');        
+        var arguments = get('arguments');
+        arguments.q = 'select * from yahoo.finance.quotes where symbol in ("'
+                + stock
+                + '")';
+        send('arguments', arguments);
+        send('trigger', true);
+    });
 }
 
-/** Remove the input handler. */
-exports.wrapup = function() {
-    // Failing to do this will likely trigger an exception when the model stops running,
-    // because the getPrice() function will attempt to send an output after the model
-    // has stopped.
-    removeInputHandler(handle, 'symbol');
-}
+/** Filter the response, extracting the weather information and
+ *  outputting it on the weather output. The full response is produced
+ *  on the 'response' output.
+ */
+exports.filterResponse = function(response) {
+    if (response) {
+        try {
+            var parsed = JSON.parse(response);
+           // Extract the last trade price from the JSON record.
+            var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);
+            // Send the price to the 'price' output.
+            send('price', price);
+        } catch (err) {
+            error('StockTick: Unable to parse response: ' + err.message);
+            send('price', null);
+        }
+    }
+    return response;
+};
