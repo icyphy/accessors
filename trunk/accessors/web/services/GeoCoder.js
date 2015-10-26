@@ -29,6 +29,12 @@
  *  This accessor requires a "key" for the Google Geocoding API, which you can
  *  obtain for free at https://developers.google.com/maps/documentation/geocoding/intro .
  *
+ *  This accessor does not block waiting for the response, but if any additional
+ *  *address* input is received before a pending request has received a response
+ *  or timed out, then the new request will be queued and sent out only after
+ *  the pending request has completed. This strategy ensures that outputs are
+ *  produced in the same order as the input requests.
+ *
  *  @accessor services/GeoCoder
  *  @author Edward A. Lee
  *  @version $Id$
@@ -111,6 +117,8 @@ exports.filterResponse = function(response) {
         } catch (err) {
             error('GeoCoder: Unable to parse response: ' + err.message);
         }
+    } else {
+        send('price', null);
     }
     return response;
 };
