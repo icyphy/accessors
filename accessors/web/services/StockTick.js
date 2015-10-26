@@ -26,6 +26,12 @@
  *  by the input. When the server replies, this accessor produces the most
  *  recent trade price on the *price* output.
  *
+ *  This accessor does not block waiting for the response, but if any additional
+ *  *symbol* input is received before a pending request has received a response
+ *  or timed out, then the new request will be queued and sent out only after
+ *  the pending request has completed. This strategy ensures that outputs are
+ *  produced in the same order as the input requests.
+ *
  *  This accessor requires the optional 'httpClient' module, which may or may
  *  not be provided by an accessor host. Most hosts will provide this module.
  *
@@ -78,8 +84,8 @@ exports.initialize = function() {
     });
 }
 
-/** Filter the response, extracting the weather information and
- *  outputting it on the weather output. The full response is produced
+/** Filter the response, extracting the stock tick information and
+ *  outputting it on the price output. The full response is produced
  *  on the 'response' output.
  */
 exports.filterResponse = function(response) {
@@ -94,6 +100,8 @@ exports.filterResponse = function(response) {
             error('StockTick: Unable to parse response: ' + err.message);
             send('price', null);
         }
+    } else {
+        send('price', null);
     }
     return response;
 };
