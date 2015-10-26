@@ -22,7 +22,18 @@
 
 /** Accessor for RESTful interfaces.
  *  Upon receipt of a trigger input, this accessor will issue an HTTP request
- *  specified by the inputs.
+ *  specified by the inputs. Some time later, the accessor will receive a response
+ *  from the server or a timeout. In the first case, the accessor will produce
+ *  the response (body, status code, and headers) on output ports.
+ *  In the second case, it will produce a nil output on the response port
+ *  and an error.
+ *
+ *  The accessor does not block waiting for the response, but any additional
+ *  triggered requests will be queued to be issued only after the pending request
+ *  has received either a response or a timeout. This strategy ensures that outputs
+ *  from this accessor are produced in the same order as the inputs that trigger the
+ *  HTTP requests.
+ *
  *  The <i>options</i> input can be a string URL (with surrounding quotation marks)
  *  or an object with the following fields:
  *  <ul>
@@ -132,7 +143,10 @@ exports.encodePath = function() {
 
 /** Filter the response. This base class just returns the argument
  *  unmodified, but derived classes can override this to extract
- *  a portion of the response, for example.
+ *  a portion of the response, for example. Note that the response
+ *  argument can be null, indicating that there was no response
+ *  (e.g., a timeout or error occurred).
+ *  @param response The response, or null if there is none.
  */
 exports.filterResponse = function(response) {
     return response;
@@ -217,7 +231,7 @@ exports.handleResponse = function(message) {
         }
     } else {
         // Send a null response.
-        send('response', null);
+        send('response', this.filterResponse(null));
     }
 };
 
