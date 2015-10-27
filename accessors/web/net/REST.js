@@ -188,7 +188,7 @@ exports.issueCommand = function(callback) {
     	command.body = body; 
     }
     
-    console.log("REST request to: " + JSON.stringify(command));
+    // console.log("REST request to: " + JSON.stringify(command));
     
     // To ensure that the callback is called with the same context
     // as this function, create a new function.
