@@ -34,7 +34,7 @@
  *  unless the `discardMessagesBeforeOpen` parameter is true, in which case,
  *  input messages that are received before the socket is opened will be
  *  discarded. If messages are queued and `throttleFactor` is non-zero, then
- *  whenever a message is queued to be later sent, the accessor will stall
+ *  whenever a message is queued to be later sent, the accessor's input handler will stall
  *  by a number of milliseconds given by the queue size times the throttleFactor.
  *  The longer the queue, the longer the stall. Note that this will likely block
  *  the host from executing, so this feature should be used with caution.
@@ -100,7 +100,7 @@
  *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
  *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
  *  @parameter {boolean} discardMessagesBeforeOpen If true, then any messages received on `toSend` before the socket is open will be discarded. This defaults to false.
- *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 0.
+ *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 0. Making it non-zero causes the input handler to take time if there are pending unsent messages.
  *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
@@ -222,7 +222,7 @@ exports.sendToWebSocket = function (data) {
 };
 
 /** Executes once  web socket establishes a connection.
- *   Sets 'connected' output to true.
+ *  Sets 'connected' output to true.
  */
 exports.onOpen = function () {
     console.log('Status: Connection established');
