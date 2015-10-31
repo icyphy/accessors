@@ -31,6 +31,12 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals exports, require*/
+/*jshint globalstrict: true*/
+"use strict";
+
 // Set up the accessor.
 exports.setup = function() {
     // FIXME: Define your inputs and outputs here.
@@ -53,11 +59,11 @@ exports.initialize = function() {
         }
         player.play(sinusoid);
     }
-}
+};
 
 exports.wrapup = function() {
-    if (player != null) {
+    if (player !== null) {
         player.stop();
         player = null;
     }
-}
+};

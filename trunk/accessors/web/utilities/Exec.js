@@ -15,6 +15,12 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, exports, get, input, output, require, send */
+/*jshint globalstrict: true*/
+"use strict";
+
 // This accessor requires the 'shell' module, which may or may
 // not be provided by an accessor host. As this is a very powerful 
 // module, not all host may provide this module for security reasons.
@@ -36,7 +42,7 @@ exports.setup = function() {
         'value': 'ls',
         'type':'string'
     });
-}
+};
 
 /** Initialize the accessor and start the process subsequently.
  */
@@ -57,7 +63,7 @@ exports.initialize = function() {
 	});
 
 	sh.start();
-}
+};
 	
 /** Wrap up the execution of the accessor by stopping the process.
  */
@@ -65,4 +71,4 @@ exports.wrapup = function() {
 	if(sh)  {
 		sh.wrapup();
 	}
-}
+};

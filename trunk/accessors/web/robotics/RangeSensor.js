@@ -38,6 +38,14 @@
  * Ptolemy parameter so that multiple instances of the actor can be
  * easily configured.
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals exports, get, input, output, parameter, readURL, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 exports.setup = function() {
 
     input('currentPosition', {
@@ -83,6 +91,6 @@ exports.fire = function () {
 
     var result = Math.sqrt((intruderX - robotX)*(intruderX - robotX) + (intruderY - robotY)*(intruderY - robotY)) + noiseSample;
     send('rangeMeasurement', result);
+};
 
-}
   

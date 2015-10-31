@@ -31,6 +31,13 @@
  *  @input trigger Input that triggers recording.
  *  @output {number} signal A sequence of numbers representing the captured audio signal.
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, exports, input, output, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+"use strict";
+
 exports.setup = function() {
     input('trigger');
     output('signal',{'type':'number'});  
@@ -42,7 +49,7 @@ var audio = require("audio");
 var cacheLength = 128;  
 
 function record() {
-    var data = recorder.get(); 
+    var data = recorder.get(), i; 
     for (i = 0; i < data.length; i++) {
         send('signal', data[i]);
     }
@@ -51,11 +58,11 @@ function record() {
 exports.initialize = function() { 
     handle = addInputHandler("trigger",record); 
     recorder = new audio.Capture(); 
-} 
+};
 
 exports.wrapup = function() {
-    if (recorder != null) { 
+    if (recorder !== null) { 
         recorder.stop();
         removeInputHandler('trigger',handle);
     } 
-}
+};

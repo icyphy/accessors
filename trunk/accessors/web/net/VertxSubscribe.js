@@ -59,6 +59,14 @@
  *  @parameter {int} busHostPort The port for the Vert.x event bus. A value of 0
  *   indicates to just find an available port (the default).
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, exports, get, input, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs, outputs, and parameters. */
@@ -84,7 +92,7 @@ var bus, currentAddress, addressHandle, replyHandle;
 
 var onReceived = function(msg) {
     send('message', msg);
-}
+};
 
 exports.initialize = function() {
     var port = get('busHostPort');
@@ -94,7 +102,7 @@ exports.initialize = function() {
     bus.subscribe(currentAddress);
     bus.on(get('address'), onReceived);
     var replyText = get('reply');
-    if (replyText != null && replyText != '') {
+    if (replyText !== null && replyText !== '') {
         bus.setReply(replyText);
     }
     addressHandle = addInputHandler('address', function() {
@@ -113,10 +121,10 @@ exports.initialize = function() {
             bus.setReply(null);
         }
     });
-}
+};
 
 exports.wrapup = function() {
     bus.unsubscribe();
     removeInputHandler('address', addressHandle);
     removeInputHandler('reply', replyHandle);
-}
+};

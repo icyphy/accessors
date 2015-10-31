@@ -38,10 +38,17 @@
  *
  *  @accessor services/Weather
  *  @author Edward A. Lee
- *  @version $Id$
+ *  @version $$Id$$
  *  @input location The location, an object with two fields (default is Berkeley).
  *  @output response An object containing current weather data.
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, addInputParameter, error, exports, extend, input, get, getParameter, output, parameter, send */
+/*jshint globalstrict: true*/
+'use strict';
 
 /** Set up the accessor by defining the inputs and outputs.
  */
@@ -80,9 +87,9 @@ exports.initialize = function() {
     // Handle location information.
     addInputHandler('location', function() {
         var location = get('location');
-        if (location
-                && typeof location.latitude === 'number'
-                && typeof location.longitude === 'number') {
+        if (location &&
+                typeof location.latitude === 'number' &&
+                typeof location.longitude === 'number') {
             var reformatted = {
                 'lat' : location.latitude,
                 'lon' : location.longitude,
@@ -91,11 +98,11 @@ exports.initialize = function() {
             send('arguments', reformatted);
             send('trigger', true);
         } else {
-            if (location == null) {
+            if (location ==- null) {
                 error('Weather: No location information.');
             } else {
-                error('Weather: Malformed location: ' + location
-                        + '\nExpecting {"latitude":number, "longitude":number}');
+                error('Weather: Malformed location: ' + location +
+                      '\nExpecting {"latitude":number, "longitude":number}');
             }
             send('weather', null);
         }
@@ -114,10 +121,10 @@ exports.filterResponse = function(response) {
             var parsed = JSON.parse(response);
             var weather = {};
             // Look for a description field.
-            if (parsed.weather
-                    && Array.isArray(parsed.weather)
-                    && parsed.weather[0]
-                    && parsed.weather[0].description) {
+            if (parsed.weather &&
+                    Array.isArray(parsed.weather) &&
+                    parsed.weather[0] &&
+                    parsed.weather[0].description) {
                 weather.description = parsed.weather[0].description;
             }
             if (parsed.main) {

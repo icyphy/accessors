@@ -28,6 +28,13 @@
  *  @input {array<number>} signalIn Input signal array
  *  @output {array<{'real':'number', 'imag': 'number'}>} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
  */
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, exports, get, input, output, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 exports.setup = function() {
     input('signalIn');
     output('fftOutput');
@@ -41,7 +48,7 @@ exports.initialize = function() {
     handle = addInputHandler('signalIn',processSignal); 
     var n = 0; 
     dspEngine = new dsp.Signal();   
-}
+};
 
 function processSignal() {
     var signalValue = get('signalIn');  
@@ -62,4 +69,4 @@ function processSignal() {
 
 exports.wrapup = function() { 
     removeInputHandler('signalIn',handle); 
-}
+};
