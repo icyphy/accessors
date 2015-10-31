@@ -29,9 +29,13 @@
  * and functions for reading inputs and sending outputs.
  * 
  * @author Edward A. Lee and Chris Shaver
- * @version $Id$
+ * @version $$Id$$
  */
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals console, XMLHttpRequest */
 /*jslint browser:true */
+/*jshint globalstrict: true*/
 'use strict';
 
 /** Initialize the accessor.

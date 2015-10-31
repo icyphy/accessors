@@ -72,6 +72,12 @@
  * @version $$Id$$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global addInputHandler, console, exports, extend, get, getParameter, implement, input, output, parameter, require, send */
+/*jshint globalstrict: true*/
+"use strict";
+
 var contextAware = require("contextAware");
 
 // Initialize the context aware service discovery class. Not used currently.
@@ -131,7 +137,7 @@ exports.setup = function() {
     output('headers',{'visibility':'expert'});
     input('body',{'visibility':'expert'});
     input('trigger',{'visibility':'expert'});
-}
+};
 
 /**
  * Upon receiving details of a REST service, construct a concrete REST accessor
@@ -159,8 +165,8 @@ exports.initialize = function() {
 		// sample access token to use
 		// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
 		var arg = {"access_token" : getParameter('accessToken')};
-		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:"
-			    + arg);
+		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" +
+			    arg);
 		send('arguments', arg);
 	    }
 
@@ -174,6 +180,7 @@ exports.initialize = function() {
 	    send('trigger', true);
 	});
 };
+
 /**
  * Filter the response. It overrides the filterResponse() in the base class to
  * extract a portion of the response that is defined in the corresponding
@@ -193,7 +200,7 @@ exports.filterResponse = function(response) {
 	break;
     }
     return response;
-}
+};
 
 /**
  * Filter the response from Firebase. Extracting data about microwave, its last
@@ -253,6 +260,7 @@ function getParaimpuData(response) {
 	send('response', result);
     }
 }
+
 /**
  * Filter response from GSN. The response is in xml format which needs to be
  * converted first to json. Then extract data about the Phidget sound sensor. A

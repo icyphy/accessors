@@ -35,6 +35,13 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, accessor, exports, get, removeInputHandler, require, send  */
+/*jshint globalstrict: true*/
+'use strict';
+
 var discovery = require('discovery');
 // Initialize ds here, instead of in setup(), so that the ds object is defined
 // when the ds.on() function is encountered
@@ -45,14 +52,14 @@ exports.setup = function () {
     
     accessor.input('hostIP', {
         type: 'string',
-      });
+    });
     
     accessor.output('devices');
     
     accessor.parameter('useNmap', {
         type: 'boolean',
         value: false,
-      });
+    });
 };
 
 var handle;
@@ -61,13 +68,13 @@ var handle;
  *  local area network.
  */
 exports.initialize = function () {
-	handle = addInputHandler('hostIP', function() {
-		if (get('useNmap')) {
-		    ds.discoverDevices(get('hostIP'), 'nmap');
-		} else {
-			ds.discoverDevices(get('hostIP'));
-		}
-	});
+    handle = addInputHandler('hostIP', function() {
+	if (get('useNmap')) {
+	    ds.discoverDevices(get('hostIP'), 'nmap');
+	} else {
+	    ds.discoverDevices(get('hostIP'));
+	}
+    });
 };
 
 /** Upon wrapup, stop handling new inputs.  */
@@ -77,9 +84,9 @@ exports.wrapup = function () {
 
 /** When discovery is finished, send a list of devices.  */
 ds.on('discovered', function(data) {
-	if (data == "") {
-       send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+    if (data === "") {
+        send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
     } else {
-   send('devices', data);
+        send('devices', data);
     }
 });

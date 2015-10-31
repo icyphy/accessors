@@ -41,6 +41,14 @@
  *  @input {string} symbol The stock symbol. Default value is 'YHOO'.
  *  @output {number} price The most recent trade price for the stock.
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, get, error, exports, extend, get, input, output, parameter, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var http = require('httpClient');
 
 /** Set up the accessor by defining the inputs and outputs.
@@ -75,14 +83,14 @@ exports.initialize = function() {
     addInputHandler('symbol', function() {
         // Read the current value of the 'symbol' input.
         var stock = get('symbol');        
-        var arguments = get('arguments');
-        arguments.q = 'select * from yahoo.finance.quotes where symbol in ("'
-                + stock
-                + '")';
-        send('arguments', arguments);
+        var args = get('arguments');
+        args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
+            stock +
+            '")';
+        send('arguments', args);
         send('trigger', true);
     });
-}
+};
 
 /** Filter the response, extracting the stock tick information and
  *  outputting it on the price output. The full response is produced

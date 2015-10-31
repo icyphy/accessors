@@ -72,6 +72,13 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, console, get, getParameter, error, exports, input, output, removeInputHandler, require, parameter, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var WebSocket = require('webSocket');
 var server = null;
 var running = false;
@@ -103,7 +110,7 @@ exports.setup = function() {
     input('toSend');
     output('received');
     output('connection');
-}
+};
 
 var handle;
 var sockets = [];
@@ -132,18 +139,18 @@ exports.initialize = function() {
         var data = get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
-            if ((data.socketID != null)  && (data.message != null)) {
+            if ((data.socketID !== null)  && (data.message !== null)) {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
-                    console.log("Sending to socket id "
-                            + data.socketID
-                            + " message: "
-                            + data.message);
+                    console.log("Sending to socket id " +
+                                data.socketID +
+                                " message: " +
+                                data.message);
                     sockets[data.socketID].send(data.message);
                 } else {
-                    console.log('Socket with ID ' + data.socketID
-                            + ' is not open. Discarding message: ' + data.message);
+                    console.log('Socket with ID ' + data.socketID +
+                                ' is not open. Discarding message: ' + data.message);
                 }
             } else {
                 // No socketID or message, so this is a broadcast message.
@@ -162,7 +169,7 @@ exports.initialize = function() {
             }
         }
     });
-}
+};
 
 function onListening() {
     console.log('Server: Listening for socket connection requests.');
@@ -191,7 +198,8 @@ function onConnection(socket) {
 
 /** Removes all inputHandlers from sockets.<br>
  * Unregisters event listeners from sockets.<br>
- * Closes server. */
+ * Closes server.
+ */
 exports.wrapup = function(){
     for (var i = 0; i < sockets.length; i++) {
         sockets[i].removeAllListeners();
@@ -200,9 +208,9 @@ exports.wrapup = function(){
     sockets = [];
     removeInputHandler(handle);
 
-    if (server != null) {
+    if (server !== null) {
         server.removeAllListeners();
         server.close();
         server = null;
     }
-}
+};

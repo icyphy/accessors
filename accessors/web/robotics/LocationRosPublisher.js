@@ -39,13 +39,22 @@
  *  @version $$Id: RosPublisher.js 271 2015-08-22 08:23:01Z eal $$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals exports, extend, get, getParameter, parameter  */
+/*jshint globalstrict: true*/
+'use strict';
 
-ROS_TYPE = 'sensor_msgs/PointCloud';
+var ROS_TYPE = 'sensor_msgs/PointCloud';
 
 // location_id -> {position: {X, Y, Z}, color: <some color as a float>}
-locations = {};
+var locations = {};
 
-/** Sets up by accessor by inheriting inputs from setup() in WebSocketClient. Adds additional parameters regarding the ROS topic to publish to. */
+/** Sets up by accessor by inheriting inputs from setup() in
+ * WebSocketClient. Adds additional parameters regarding the ROS topic
+ * to publish to.
+ */
 exports.setup = function() {
    extend('net/WebSocketClient');
    parameter('topic', {
@@ -55,13 +64,14 @@ exports.setup = function() {
       type: "string",
       value: ""
    });
-}
+};
 
 /**  Inherits initialize from WebSocketClient.
- *   Advertise the topic we are publishing to.*/
+ *   Advertise the topic we are publishing to.
+ */
 exports.initialize = function() {
    this.ssuper.initialize.apply(this);
-}
+};
 
 /** Override onOpen from WebSocketClient */
 exports.onOpen = function() {
@@ -74,7 +84,7 @@ exports.onOpen = function() {
       "type": ROS_TYPE
    };
    exports.sendToWebSocket(advertise);
-}
+};
 
 function random_color () {
    var letters = '0123456789ABCDEF'.split('');
@@ -86,7 +96,7 @@ function random_color () {
 
 }
 
-/** Override inputHandler on 'toSend' from WebSocketClient */
+/** Override inputHandler on 'toSend' from WebSocketClient. */
 exports.toSendInputHandler = function() {
    var msg = get('toSend');
 
@@ -139,14 +149,14 @@ exports.toSendInputHandler = function() {
       "op": "publish",
       "topic": getParameter('topic'),
       "msg": out
-   }
+   };
 
    exports.sendToWebSocket(data);
-}
+};
 
 
 
-/** Unadvertise the topic and inherit wrapup from WebSocketClient */
+/** Unadvertise the topic and inherit wrapup from WebSocketClient. */
 exports.wrapup = function() {
    if (exports.isOpen()) {
       var unadvertise = {
@@ -156,4 +166,4 @@ exports.wrapup = function() {
       exports.sendToWebSocket(unadvertise);
    }
    this.ssuper.wrapup();
-}
+};

@@ -61,6 +61,14 @@
  *  @output reply The reply, if any, received after a point-to-point send
  *   (where broadcast == false).
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, exports, get, input, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs and outputs. */
@@ -105,13 +113,13 @@ exports.initialize = function() {
             }
         }
     });
-}
+};
 
 var replyHandler = function(message) {
    send('reply', message);
-}
+};
 
 exports.wrapup = function() {
   bus.unsubscribe();
   removeInputHandler(handle, 'message');
-}
+};

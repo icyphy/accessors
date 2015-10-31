@@ -82,6 +82,13 @@
  *  @extends net.REST
  *  @version $$Id$$ 
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global console, exports, extend, get, input, parameter, require */
+/*jshint globalstrict: true*/
+"use strict";
+
 var querystring = require('querystring');
 
 /** Define inputs and outputs. */
@@ -110,7 +117,7 @@ exports.setup = function () {
         ]});
     // Provide parameters for username and password.
     parameter('username', {'value':'admin', 'type':'string'});
-    parameter('password', {'value':'', 'type':'string'})
+    parameter('password', {'value':'', 'type':'string'});
 };
 
 // Alternate command to use, for example to stop the camera.
@@ -120,27 +127,28 @@ var alternateCommand;
  *  more user-friendly descriptions of the command.
  */
 exports.encodePath = function() {
+    var command;
     if (!alternateCommand) {
         command = get('command');
     }
     var code = -1;
     switch(command) {
-		case 'up':                      code = 0; break
-		case 'stop up':                 code = 1; break
-		case 'down':                    code = 2; break
-		case 'stop down':               code = 3; break
-		case 'left':                    code = 4; break
-		case 'stop left':               code = 5; break
-		case 'right':                   code = 6; break
-		case 'stop right':              code = 7; break
-		case 'center':                  code = 25; break
-		case 'vertical patrol':         code = 26; break
-		case 'stop vertical patrol':    code = 27; break
-		case 'horizontal patrol':       code = 28; break
-		case 'stop horizontal patrol':  code = 29; break
+		case 'up':                      code = 0; break;
+		case 'stop up':                 code = 1; break;
+		case 'down':                    code = 2; break;
+		case 'stop down':               code = 3; break;
+		case 'left':                    code = 4; break;
+		case 'stop left':               code = 5; break;
+		case 'right':                   code = 6; break;
+		case 'stop right':              code = 7; break;
+		case 'center':                  code = 25; break;
+		case 'vertical patrol':         code = 26; break;
+		case 'stop vertical patrol':    code = 27; break;
+		case 'horizontal patrol':       code = 28; break;
+		case 'stop horizontal patrol':  code = 29; break;
 		// FIXME: No idea what the following mean, so not offerred above.
-		case 'io output high':          code = 94; break
-		case 'io output low':           code = 95; break
+		case 'io output high':          code = 94; break;
+    case 'io output low':           code = 95; break;
 	}
 	var encodedArgs = 'user=' + get('username') + '&pwd=' + get('password');
 	if (code >= 0) {
@@ -154,7 +162,7 @@ exports.encodePath = function() {
     var result = command + '.cgi?' + encodedArgs;
     console.log(result);
     return result;
-}
+};
 
 /** Upon wrapup, attempt to stop the camera videostream.  */
 exports.wrapup = function () {

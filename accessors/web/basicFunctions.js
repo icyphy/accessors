@@ -26,10 +26,14 @@
 /**
  * This file includes basic utility functions assumed by version 0 accessors.
  * @author Edward A. Lee and Chris Shaver
- * @version \$Id$
+ * @version $$Id$$
  */
-/*global XMLHttpRequest*/
-'use strict';
+
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals console, XMLHttpRequest */
+/*jshint globalstrict: true*/
+"use strict";
 
 // Set debug to true to see console outputs.
 var debug = false;
@@ -62,8 +66,8 @@ function error(message) {
  */
 function httpRequest(url, method, properties, body, timeout) {
     if (debug) {
-        console.log("httpRequest("
-                    + (function (obj) {
+        console.log("httpRequest(" +
+                    (function (obj) {
                 var result = [], p;
                 for (p in obj) {
                     if (obj.hasOwnProperty(p)) {
@@ -71,8 +75,8 @@ function httpRequest(url, method, properties, body, timeout) {
                     }
                 }
                 return result;
-            }(arguments))
-            + ")");
+            }(arguments)) +
+                    ")");
     }
     var request = new XMLHttpRequest();
     // The third argument specifies a synchronous read.

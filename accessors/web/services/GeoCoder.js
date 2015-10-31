@@ -37,11 +37,18 @@
  *
  *  @accessor services/GeoCoder
  *  @author Edward A. Lee
- *  @version $Id$
+ *  @version $$Id$#
  *  @input {string} address The address, which defaults to "Berkeley, CA".
  *  @parameter {string} key The key for the Google geocoding API.
  *  @output response An object containing the location information.
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, get, getParameter, error, exports, extend, get, input, output, parameter, require, send */
+/*jshint globalstrict: true*/
+'use strict';
 
 /** Set up the accessor by defining the inputs and outputs.
  */
@@ -77,11 +84,12 @@ exports.initialize = function() {
     addInputHandler('address', function() {
         var address = get('address');
         if (address) {
-            var arguments = {
+            // arguments is a reserved word, so we use args.
+            var args = {
                 'address' : address,
                 'key' : key
             };
-            send('arguments', arguments);
+            send('arguments', args);
             send('trigger', true);
         } else {
             error('GeoCoder: No address.');
@@ -100,12 +108,12 @@ exports.filterResponse = function(response) {
             // schema transformation utility.
             var parsed = JSON.parse(response);
             // FIXME: Just taking the first result if there are multiple matches.
-            if (parsed.results
-                    && parsed.results[0]
-                    && parsed.results[0].geometry
-                    && parsed.results[0].geometry.location
-                    && parsed.results[0].geometry.location.lat
-                    && parsed.results[0].geometry.location.lng) {
+            if (parsed.results &&
+                parsed.results[0] &&
+                parsed.results[0].geometry &&
+                parsed.results[0].geometry.location &&
+                parsed.results[0].geometry.location.lat &&
+                parsed.results[0].geometry.location.lng) {
                 send('location', {
                         "latitude": parsed.results[0].geometry.location.lat,
                         "longitude": parsed.results[0].geometry.location.lng
