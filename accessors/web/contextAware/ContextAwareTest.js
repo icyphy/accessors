@@ -33,6 +33,12 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global addInputHandler, console, exports, extend, get, getParameter, implement, input, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+"use strict";
+
 // Use the SandBox version for test
 var contextAware = require("contextAwareTest");
 
@@ -82,10 +88,8 @@ exports.setup = function () {
     input('arguments', {'visibility':'expert'});
     input('options',{'visibility':'expert'});
     output('header',{'visibility':'expert'});
-    
     input('trigger',{'visibility':'expert'});
-    
-}
+};
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
  */
@@ -121,7 +125,8 @@ exports.initialize = function () {
         // console.log(get('response'));
         console.log("ContextAwareTest.js input handler end");
     }); 
-} 
+};
+
 /**
  * Filter the response. It overrides the filterResponse() in the base class to
  * extract a portion of the response that is defined in the corresponding
@@ -142,7 +147,7 @@ exports.filterResponse = function(response) {
     }
     console.log("Response" + response);
     return response;
-}
+};
 
 /** Filter the response from Firebase
  */

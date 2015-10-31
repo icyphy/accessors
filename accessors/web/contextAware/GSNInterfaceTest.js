@@ -30,13 +30,19 @@
  *  @parameter {string} password  The password for the login account.
  *  @version $$Id$$ 
  */
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global exports, parameter*/
+/*jshint globalstrict: true*/
+"use strict";
+
 exports.setup = function () {
-	parameter('host', {'type': 'string', 'value': 'localhost'});
+    parameter('host', {'type': 'string', 'value': 'localhost'});
     parameter('port', {'type': 'int', 'value': 80});
     parameter('protocol',{'type':'string', 'value': 'http'});
     parameter('path', {'type':'string', 'value': 'gsn'});
     parameter('username', {'type': 'string', 'value': 'admin'});
     parameter('password', {'type': 'string', 'value': ''});
     parameter('method',{'type':'string', 'value':'GET'});
-}
+};
 

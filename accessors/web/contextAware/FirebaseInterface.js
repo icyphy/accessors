@@ -35,6 +35,12 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global exports, parameter, output */
+/*jshint globalstrict: true*/
+"use strict";
+
 exports.setup = function () {
     parameter('host', {'type': 'string', 'value': 'sizzling-fire-8605.firebaseio.com'});
     parameter('port', {'type': 'int', 'value': 443});
@@ -44,4 +50,4 @@ exports.setup = function () {
     output('microwave', {'type':'JSON'});
     output('microwaveStatus',{'type':'string'});
     output('pastValues',{'type':'JSON'});
-}
+};

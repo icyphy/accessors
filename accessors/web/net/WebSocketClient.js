@@ -107,9 +107,13 @@
  *  @author Hokeun Kim, Marcus Pan, Edward A. Lee, Matt Weber
  *  @version $$Id$$
  */
-/* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
-"use strict";
-/*global addInputHandler, error, get, getParameter, input, onClose, output, parameter, removeInputHandler, send */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true*/
+'use strict';
 
 var WebSocket = require('webSocket');
 var client = null;
@@ -264,7 +268,7 @@ exports.onMessage = function (message) {
 /** Export the isOpen() function */
 exports.isOpen = function () {
     return client.isOpen();
-}
+};
 
 /** Close the web socket connection. */
 exports.wrapup = function () {

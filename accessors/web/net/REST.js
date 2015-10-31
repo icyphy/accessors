@@ -102,6 +102,13 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals addInputHandler, error, exports, get, input, output, parameter, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var httpClient = require('httpClient');
 var querystring = require('querystring');
 
@@ -195,7 +202,7 @@ exports.issueCommand = function(callback) {
     var thiz = this;
     var contextCallback = function() {
         callback.apply(thiz, arguments);
-    }
+    };
     
     request = httpClient.request(command, contextCallback);
     request.on('error', function(message) {

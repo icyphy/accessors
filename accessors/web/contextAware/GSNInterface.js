@@ -37,6 +37,12 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global exports, parameter, output */
+/*jshint globalstrict: true*/
+"use strict";
+
 exports.setup = function () {
     parameter('host', {'type': 'string', 'value': 'localhost'});
     parameter('port', {'type': 'int', 'value': 80});
@@ -47,4 +53,4 @@ exports.setup = function () {
     parameter('method',{'type':'string', 'value':'GET'});
     output('sound', {'type':'JSON'});
     output('sensorName', {'type':'string'});
-}
+};

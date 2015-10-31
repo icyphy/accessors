@@ -31,7 +31,13 @@
  *  @version $$Id$$
  */
 
-//define the interface of Paraimpu service
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global exports, parameter, output */
+/*jshint globalstrict: true*/
+"use strict";
+
+// Define the interface of Paraimpu service.
 exports.setup = function () {
     parameter('host', {'type': 'string', 'value': 'api.paraimpu.com'});
     parameter('port', {'type': 'int', 'value': 443});
@@ -42,4 +48,4 @@ exports.setup = function () {
     output('payload',{'type':'number'});
     output('producer', {'type':'string'});
     output('sensorId', {'type':'string'});
-}
+};
