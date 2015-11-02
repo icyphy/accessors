@@ -56,6 +56,9 @@ exports.initialize = function(){
 	mapDataHandle = addInputHandler('mapData', this.mapDataInputHandler);
 }
 
+
+
+
 exports.wrapup = function(){
 	if(reportHandle !==null){
 		removeInputHandler(reportHandle);
