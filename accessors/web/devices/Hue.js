@@ -195,9 +195,11 @@ exports.initialize = function() {
 };
 
 /** Register a new user.
- * This function repeats at registerInterval until registration is successful, or until registerTimeout.
+ * This function repeats at registerInterval until registration is
+ * successful, or until registerTimeout.
  * It does so because it needs to wait until the user clicks
- * the button on the Hue bridge. */
+ * the button on the Hue bridge.
+ */
 function registerUser() {
     var registerData = '{"devicetype":"' + userName + '", "username":"' + userName + '"}';
     var response = JSON.parse(httpRequest(url, "POST", null, registerData, timeout));
@@ -235,7 +237,8 @@ function registerUser() {
 
 /** This function is only called after user has been registered.
  * Get reachable lights.
- * Add input handlers */
+ * Add input handlers
+ */
 function getReachableLights() {
     url = url + userName + "/" + "lights/";
     http.get(url, function (response) {
@@ -328,7 +331,8 @@ function isNonEmptyArray(obj) {
 
 /** Utility function to limit the range of a number
  * and to force it to be an integer. If the value argument
- * is a string, then it will be converted to a Number. */
+ * is a string, then it will be converted to a Number.
+ */
 function limit(value, low, high) {
     var parsed = parseInt(value);
     if (!parsed) {
