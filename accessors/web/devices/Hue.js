@@ -63,6 +63,12 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, clearTimeout, console, error, exports, get, getParameter, httpRequest, input, parameter, removeInputHandler, require, setTimeout,  */
+/*jshint globalstrict: true*/
+"use strict";
+
 var http = require('httpClient');
 
 // State variables.
@@ -116,11 +122,13 @@ exports.setup = function() {
     type: "int",
     value: 4
   });
-  input('trigger', {value: true})
-}
+    input('trigger', {value: true});
+};
+
 /** Initialize connection.
  *  Register user if not registered
- *  Input handlers are not added here in case we need to wait for user to regiter */
+ *  Input handlers are not added here in case we need to wait for user to register.
+ */
 exports.initialize = function() {
   var ipAddress = get('bridgeIPAddress');
   userName = getParameter('userName');
@@ -129,7 +137,7 @@ exports.initialize = function() {
     throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
   }
 
-  if (ipAddress == null || ipAddress.trim() == "") {
+  if (ipAddress === null || ipAddress.trim() === "") {
     throw "No IP Address is given for the Hue Bridge.";
   }
 
@@ -184,7 +192,7 @@ exports.initialize = function() {
     }
   });
   bridge_req.on('error', bridge_req_err_fn);
-}
+};
 
 /** Register a new user.
   * This function repeats at registerInterval until registration is successful, or until registerTimeout.
@@ -215,7 +223,7 @@ function registerUser() {
 
    } else if (isNonEmptyArray(response) && response[0].success) {
       //registration is successful - proceed to next stage of initialization
-      if (handleRegisterUser != null) {
+      if (handleRegisterUser !== null) {
          clearTimeout(handleRegisterUser);
       }
       getReachableLights();
@@ -266,12 +274,12 @@ function inputHandler() {
 
   // Get inputs and send command to light
   var command = {
-    on: get('on') == true,
+    on: get('on') === true,
     bri: limit(get('brightness'), 0, 255),
     hue: limit(get('hue'), 0, 65280),
     sat: limit(get('saturation'), 0, 255),
-    transitiontime: limit(get('transitionTime'), 0, 65535)
-  }
+      transitiontime: limit(get('transitionTime'), 0, 65535)
+  };
 
   var cmd = JSON.stringify(command);
   try {
@@ -303,14 +311,15 @@ exports.wrapup = function() {
             null, '{"on":false}', timeout);
       console.log(response);
       if (isNonEmptyArray(response) && response[0].error) {
+         var lightID = get('lightID').toString();
          errorLights.push(lightID);
       }
    }
 
-   if (errorLights.length != 0) {
+   if (errorLights.length !== 0) {
       error("Error turning of lights " + errorLights.toString());
    }
-}
+};
 
 /** utility function to check that an object is a nonempty array */
 function isNonEmptyArray(obj) {
