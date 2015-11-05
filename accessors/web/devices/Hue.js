@@ -90,38 +90,38 @@ var triggerHandle;
 
 /** Define inputs and outputs. */
 exports.setup = function() {
-  input('bridgeIPAddress', {
-    type: "string",
-    value: ""
-  });
-  parameter('userName', {
-    type: "string",
-    value: "ptolemyuser"
-  });
-  input('lightID', {
-    type: "int",
-    value: 1
-  });
-  input('brightness', {
-    type: "number",
-    value: 255
-  });
-  input('hue', {
-    type: "number",
-    value: 65280
-  });
-  input('saturation', {
-    type: "number",
-    value: 255
-  });
-  input('on', {
-    type: "boolean",
-    value: false
-  });
-  input('transitionTime', {
-    type: "int",
-    value: 4
-  });
+    input('bridgeIPAddress', {
+        type: "string",
+        value: ""
+    });
+    parameter('userName', {
+        type: "string",
+        value: "ptolemyuser"
+    });
+    input('lightID', {
+        type: "int",
+        value: 1
+    });
+    input('brightness', {
+        type: "number",
+        value: 255
+    });
+    input('hue', {
+        type: "number",
+        value: 65280
+    });
+    input('saturation', {
+        type: "number",
+        value: 255
+    });
+    input('on', {
+        type: "boolean",
+        value: false
+    });
+    input('transitionTime', {
+        type: "int",
+        value: 4
+    });
     input('trigger', {value: true});
 };
 
@@ -130,216 +130,216 @@ exports.setup = function() {
  *  Input handlers are not added here in case we need to wait for user to register.
  */
 exports.initialize = function() {
-  var ipAddress = get('bridgeIPAddress');
-  userName = getParameter('userName');
+    var ipAddress = get('bridgeIPAddress');
+    userName = getParameter('userName');
 
-  if (userName.length < 11) {
-    throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
-  }
-
-  if (ipAddress === null || ipAddress.trim() === "") {
-    throw "No IP Address is given for the Hue Bridge.";
-  }
-
-  url = "http://" + ipAddress + "/";
-
-  function bridge_req_err_fn (err) {
-    // FIXME: We should do a UPnP discovery here and find a bridge.
-    // Could not connect to the bridge
-    console.log('Error connecting to Hue basestation.');
-    console.log(err);
-    error('Could not reach the Hue basestation.');
-  }
-
-  // First make sure the bridge is actually there and responding.
-  var bridge_req = http.get(url, function (response) {
-    if (response.statusCode != 200) {
-      bridge_req_err_fn(response.statusMessage);
-
-    } else {
-      // Contacting the bridge succeeded. Next step is validating that the
-      // provided username is valid.
-      url = url + "api/";
-      http.get(url + userName + '/', function (response) {
-        if (response.statusCode == 200) {
-          var lights = JSON.parse(response.body);
-
-          if (isNonEmptyArray(lights) && lights[0].error) {
-            var description = lights[0].error.description;
-
-            if (description.match("unauthorized user")) {
-               // Add this user.
-              console.log(userName + " is not a registered user.\n" +
-                  " Push the link button on the Hue bridge to register.");
-              registerUser();
-            } else {
-              console.log('Error occurred when trying to get Hue light status.');
-              error(description);
-            }
-
-          } else if (lights.lights) {
-            // Proceed to next stage of initialization
-            getReachableLights();
-
-          } else {
-            error("Unknown error. Could not authorize user.");
-          }
-        } else {
-          error('Error with HTTP GET for lights status. Code: ' + response.statusCode);
-        }
-      });
-
+    if (userName.length < 11) {
+        throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
     }
-  });
-  bridge_req.on('error', bridge_req_err_fn);
+
+    if (ipAddress === null || ipAddress.trim() === "") {
+        throw "No IP Address is given for the Hue Bridge.";
+    }
+
+    url = "http://" + ipAddress + "/";
+
+    function bridge_req_err_fn (err) {
+        // FIXME: We should do a UPnP discovery here and find a bridge.
+        // Could not connect to the bridge
+        console.log('Error connecting to Hue basestation.');
+        console.log(err);
+        error('Could not reach the Hue basestation.');
+    }
+
+    // First make sure the bridge is actually there and responding.
+    var bridge_req = http.get(url, function (response) {
+        if (response.statusCode != 200) {
+            bridge_req_err_fn(response.statusMessage);
+
+        } else {
+            // Contacting the bridge succeeded. Next step is validating that the
+            // provided username is valid.
+            url = url + "api/";
+            http.get(url + userName + '/', function (response) {
+                if (response.statusCode == 200) {
+                    var lights = JSON.parse(response.body);
+
+                    if (isNonEmptyArray(lights) && lights[0].error) {
+                        var description = lights[0].error.description;
+
+                        if (description.match("unauthorized user")) {
+                            // Add this user.
+                            console.log(userName + " is not a registered user.\n" +
+                                        " Push the link button on the Hue bridge to register.");
+                            registerUser();
+                        } else {
+                            console.log('Error occurred when trying to get Hue light status.');
+                            error(description);
+                        }
+
+                    } else if (lights.lights) {
+                        // Proceed to next stage of initialization
+                        getReachableLights();
+
+                    } else {
+                        error("Unknown error. Could not authorize user.");
+                    }
+                } else {
+                    error('Error with HTTP GET for lights status. Code: ' + response.statusCode);
+                }
+            });
+
+        }
+    });
+    bridge_req.on('error', bridge_req_err_fn);
 };
 
 /** Register a new user.
-  * This function repeats at registerInterval until registration is successful, or until registerTimeout.
-  * It does so because it needs to wait until the user clicks
-  * the button on the Hue bridge. */
+ * This function repeats at registerInterval until registration is successful, or until registerTimeout.
+ * It does so because it needs to wait until the user clicks
+ * the button on the Hue bridge. */
 function registerUser() {
-   var registerData = '{"devicetype":"' + userName + '", "username":"' + userName + '"}';
-   var response = JSON.parse(httpRequest(url, "POST", null, registerData, timeout));
-   console.log(response);
-   if (isNonEmptyArray(response) && response[0].error) {
-      var description = response[0].error.description;
+    var registerData = '{"devicetype":"' + userName + '", "username":"' + userName + '"}';
+    var response = JSON.parse(httpRequest(url, "POST", null, registerData, timeout));
+    console.log(response);
+    if (isNonEmptyArray(response) && response[0].error) {
+        var description = response[0].error.description;
 
-      if (description.match("link button not pressed")) {
-         //repeat registration attempt unless registerTimeout has been reached
-         console.log('link button');
-         registerAttempts++;
-         if ((registerAttempts * registerInterval) > registerTimeout) {
-            throw "Failed to create user after " + registerTimeout/1000 +
-               "s.";
-         }
-         handleRegisterUser = setTimeout(registerUser, registerInterval);
-         return;
-      }
+        if (description.match("link button not pressed")) {
+            //repeat registration attempt unless registerTimeout has been reached
+            console.log('link button');
+            registerAttempts++;
+            if ((registerAttempts * registerInterval) > registerTimeout) {
+                throw "Failed to create user after " + registerTimeout/1000 +
+                    "s.";
+            }
+            handleRegisterUser = setTimeout(registerUser, registerInterval);
+            return;
+        }
 
-      else {
-         throw description;
-      }
+        else {
+            throw description;
+        }
 
-   } else if (isNonEmptyArray(response) && response[0].success) {
-      //registration is successful - proceed to next stage of initialization
-      if (handleRegisterUser !== null) {
-         clearTimeout(handleRegisterUser);
-      }
-      getReachableLights();
+    } else if (isNonEmptyArray(response) && response[0].success) {
+        //registration is successful - proceed to next stage of initialization
+        if (handleRegisterUser !== null) {
+            clearTimeout(handleRegisterUser);
+        }
+        getReachableLights();
 
-   } else {
-      throw "Error registering new user";
-   }
+    } else {
+        throw "Error registering new user";
+    }
 }
 
 /** This function is only called after user has been registered.
-  * Get reachable lights.
-  * Add input handlers */
+ * Get reachable lights.
+ * Add input handlers */
 function getReachableLights() {
-  url = url + userName + "/" + "lights/";
-  http.get(url, function (response) {
-    if (response.statusCode == 200) {
-      var lights = JSON.parse(response.body);
-      for (var id in lights) {
-        if (lights[id].state.reachable) {
-          reachableLights.push(id);
-          console.log('Reachable bulb ID: ' + id);
+    url = url + userName + "/" + "lights/";
+    http.get(url, function (response) {
+        if (response.statusCode == 200) {
+            var lights = JSON.parse(response.body);
+            for (var id in lights) {
+                if (lights[id].state.reachable) {
+                    reachableLights.push(id);
+                    console.log('Reachable bulb ID: ' + id);
+                }
+            }
         }
-      }
-    }
-  });
-/*
-   handlers.push(addInputHandler('brightness', inputHandler));
-   handlers.push(addInputHandler('hue', inputHandler));
-   handlers.push(addInputHandler('saturation', inputHandler));
-   handlers.push(addInputHandler('on', inputHandler));
-   handlers.push(addInputHandler('transitionTime', inputHandler));
-   handlers.push(addInputHandler('lightID', inputHandler));
-*/
-   triggerHandle = addInputHandler('trigger', inputHandler);
+    });
+    /*
+      handlers.push(addInputHandler('brightness', inputHandler));
+      handlers.push(addInputHandler('hue', inputHandler));
+      handlers.push(addInputHandler('saturation', inputHandler));
+      handlers.push(addInputHandler('on', inputHandler));
+      handlers.push(addInputHandler('transitionTime', inputHandler));
+      handlers.push(addInputHandler('lightID', inputHandler));
+    */
+    triggerHandle = addInputHandler('trigger', inputHandler);
 }
 
 /** Get light settings from inputs and PUT */
 function inputHandler() {
-  // Check if light is reachable
-  var lightID = get('lightID').toString();
-  if (reachableLights.indexOf(lightID) == -1) {
-    console.log('Light ' + lightID + ' may not be reachable.');
-  }
-  // Keep track of changed lights to turn off during wrap up
-  if (changedLights.indexOf(lightID) == -1) {
-    changedLights.push(lightID);
-  }
-
-  // Get inputs and send command to light
-  var command = {
-    on: get('on') === true,
-    bri: limit(get('brightness'), 0, 255),
-    hue: limit(get('hue'), 0, 65280),
-    sat: limit(get('saturation'), 0, 255),
-      transitiontime: limit(get('transitionTime'), 0, 65535)
-  };
-
-  var cmd = JSON.stringify(command);
-  try {
-    var response = httpRequest(url + lightID + "/state/", "PUT",
-          null, cmd, timeout);
-    console.log(response);
-    if (isNonEmptyArray(response) && response[0].error) {
-      error("Server responds with error: " + response[0].error.description);
+    // Check if light is reachable
+    var lightID = get('lightID').toString();
+    if (reachableLights.indexOf(lightID) == -1) {
+        console.log('Light ' + lightID + ' may not be reachable.');
     }
-  } catch(e) {
-    console.log("Error accessing network: " + e);
-  }
+    // Keep track of changed lights to turn off during wrap up
+    if (changedLights.indexOf(lightID) == -1) {
+        changedLights.push(lightID);
+    }
+
+    // Get inputs and send command to light
+    var command = {
+        on: get('on') === true,
+        bri: limit(get('brightness'), 0, 255),
+        hue: limit(get('hue'), 0, 65280),
+        sat: limit(get('saturation'), 0, 255),
+        transitiontime: limit(get('transitionTime'), 0, 65535)
+    };
+
+    var cmd = JSON.stringify(command);
+    try {
+        var response = httpRequest(url + lightID + "/state/", "PUT",
+                                   null, cmd, timeout);
+        console.log(response);
+        if (isNonEmptyArray(response) && response[0].error) {
+            error("Server responds with error: " + response[0].error.description);
+        }
+    } catch(e) {
+        console.log("Error accessing network: " + e);
+    }
 }
 
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function() {
-   /*
-   for (var i = 0; i < handlers.length; i++) {
+    /*
+      for (var i = 0; i < handlers.length; i++) {
       removeInputHandler(handlers[i]);
-   }
-   */
-   if (triggerHandle) {
-      removeInputHandler(triggerHandle);
-   }
-
-   var errorLights = [];
-   for (var i = 0; i < changedLights.length; i++) {
-      var response = httpRequest(url + changedLights[i] + "/state/", "PUT",
-            null, '{"on":false}', timeout);
-      console.log(response);
-      if (isNonEmptyArray(response) && response[0].error) {
-         var lightID = get('lightID').toString();
-         errorLights.push(lightID);
       }
-   }
+    */
+    if (triggerHandle) {
+        removeInputHandler(triggerHandle);
+    }
 
-   if (errorLights.length !== 0) {
-      error("Error turning of lights " + errorLights.toString());
-   }
+    var errorLights = [];
+    for (var i = 0; i < changedLights.length; i++) {
+        var response = httpRequest(url + changedLights[i] + "/state/", "PUT",
+                                   null, '{"on":false}', timeout);
+        console.log(response);
+        if (isNonEmptyArray(response) && response[0].error) {
+            var lightID = get('lightID').toString();
+            errorLights.push(lightID);
+        }
+    }
+
+    if (errorLights.length !== 0) {
+        error("Error turning of lights " + errorLights.toString());
+    }
 };
 
 /** utility function to check that an object is a nonempty array */
 function isNonEmptyArray(obj) {
-   return (obj instanceof Array && obj.length > 0);
+    return (obj instanceof Array && obj.length > 0);
 }
 
 /** Utility function to limit the range of a number
  * and to force it to be an integer. If the value argument
  * is a string, then it will be converted to a Number. */
 function limit(value, low, high) {
-   var parsed = parseInt(value);
-   if (!parsed) {
-      error("Expected a number between " + low + " and " + high + ", but got " + value);
-      return 0;
-   }
-   if (parsed < low) {
-      return low;
-   } else if (parsed > high) {
-      return high;
-   } else {
-      return parsed;
-   }
+    var parsed = parseInt(value);
+    if (!parsed) {
+        error("Expected a number between " + low + " and " + high + ", but got " + value);
+        return 0;
+    }
+    if (parsed < low) {
+        return low;
+    } else if (parsed > high) {
+        return high;
+    } else {
+        return parsed;
+    }
 }
