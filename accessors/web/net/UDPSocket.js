@@ -22,6 +22,7 @@
 
 /** UDP socket accessor.
  *  This accessor listens to the UDP port, and outputs whatever arrives as a string.
+ *  When a message arrives on the 'send' input, that message is sent over the socket.
  *
  *  @accessor net/UDPSocket
  *  @author Hokeun Kim
@@ -47,6 +48,7 @@ exports.setup = function() {
         'value': 8084,
         'type':'int'
     });
+    input('toSend');
     output('received', {
         'type':'string'
     });
@@ -65,6 +67,10 @@ exports.initialize = function() {
     socket.on('message', onMessage);
     var port = get('port');
     socket.bind(port);
+    addInputHandler('toSend', function() {
+        var message = get('toSend');
+        socket.send(message);
+    });
 };
 
 exports.wrapup = function() {
