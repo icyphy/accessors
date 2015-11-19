@@ -1,0 +1,16 @@
+<p> Downloaded on 11/2/2015 from http://www.developers.meethue.com/documentation/conditions-use
+</p>
+
+<p>You are free to develop any kind of application you can imagine with the hue system. There are just a few rules and restrictions you need to keep in mind:</p>
+<ul>
+<li>You may not distribute the documentation shown on <a href="http://www.developers.meethue.com/">www.developers.meethue.com</a> except by links to the site itself or, if you use another method, these conditions of use must be attached.</li>
+<li>You must use a &ldquo;devicetype&rdquo; when creating whitelist entries that contains the name of your application.</li>
+<li>We want all your apps to work with our API to form a rich ecosystem of interoperable applications, so it is a condition of access to our API documentation that you do not use it to develop or distribute any bridges or devices which interpret the hue API in order to control physical devices. Emulators are allowed provided they only control virtual bulbs</li>
+<li>It may happen that working on an app suggests an idea to you for an improvement in the API. If you suggest any improvements to us and we adopt them, they become part of the platform used by everyone, and belong to Philips, you will make no claims in this respect.</li>
+<li>Make sure it is very clear from all you do that your app belongs to you and not to Philips. Do not use any hue or Philips branding trademarks or trade dress or hue or Philips in any logo or graphics.</li>
+<li>If you receive our hue API developer materials, you cannot claim ownership or IP rights in any improvements of that material or in any of the APIs either with respect to us or to other hue app developers.</li>
+<li>We want you and others to enjoy hue. So please don&rsquo;t make any applications that are obscene, not compliant with laws and regulations, offensive or discriminatory or that infringe someone else&rsquo;s rights.</li>
+<li>Please be polite and courteous to others on this site. If you are offensive to others or generally we may cancel your account.</li>
+<li>So, just as a reminder, before you can start having fun, you agree that by using the API provided here to you, you accept these terms of use.</li>
+<li><strong>Have fun.</strong></li>
+</ul>
