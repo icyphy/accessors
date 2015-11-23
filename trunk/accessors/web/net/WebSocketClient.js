@@ -40,9 +40,9 @@
  *  the host from executing, so this feature should be used with caution.
  *
  *  Whenever a message is received from the socket, that message is
- *  produced on the `'received'` output. The maxFrameSize parameter limits the size
- *  of received messages, and any attempt to send to this client a larger message
- *  will cause an error.
+ *  produced on the `'received'` output. Note that the message may actually be sent
+ *  over multiple 'frames', but the frames will be aggregated and produced as one
+ *  message.
  *
  *  When `wrapup()` is invoked, this accessor closes the
  *  connection.
@@ -95,12 +95,11 @@
  *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
  *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 60000).
- *  @parameter {int} maxFrameSize The maximum frame size for a received message (default is 65536).
  *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
  *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
  *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
  *  @parameter {boolean} discardMessagesBeforeOpen If true, then any messages received on `toSend` before the socket is open will be discarded. This defaults to false.
- *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 0. Making it non-zero causes the input handler to take time if there are pending unsent messages.
+ *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 100. Making it non-zero causes the input handler to take time if there are pending unsent messages.
  *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
@@ -143,10 +142,6 @@ exports.setup = function () {
         value: 60000,
         type: "int"
     });
-    parameter('maxFrameSize', {
-        value: 65536,
-        type: "int"
-    });
     parameter('numberOfRetries', {
         type : 'int',
         value : 5
@@ -165,7 +160,7 @@ exports.setup = function () {
     });
     parameter('throttleFactor', {
         type : 'int',
-        value : 0
+        value : 100
     });
     input('toSend');
     output('connected', {
@@ -187,7 +182,6 @@ exports.initialize = function () {
             'receiveType' : getParameter('receiveType'),
             'sendType' : getParameter('sendType'),
             'connectTimeout' : getParameter('connectTimeout'),
-            'maxFrameSize' : getParameter('maxFrameSize'),
             'numberOfRetries' : getParameter('numberOfRetries'),
             'timeBetweenRetries' : getParameter('timeBetweenRetries'),
             'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),
