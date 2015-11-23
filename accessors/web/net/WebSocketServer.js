@@ -30,9 +30,8 @@
  *  connection is opened or closed.
  *
  *  When a message arrives on a connection, a `received`
- *  output is produced with that message. The maxFrameSize parameter limits the size
- *  of received messages, and any attempt to send to this client a larger message
- *  will cause an error.
+ *  output is produced with that message. Note that the message may arrive in
+ *  multiple frames, but it will be produced as a single message.
  *
  *  When an input arrives on `toSend`, then a message is
  *  sent to one or all of the open socket connections.
@@ -64,7 +63,6 @@
  *  @parameter {int} port The port to listen to for connections.
  *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
- *  @parameter {int} maxFrameSize The maximum frame size for a received message (default is 65536).
  *  @input toSend The data to be sent to open sockets. If this is an object with 'socketID' field and a 'message' field, then send the value of the message field to the socket identified by the socketID field. If the input has any other form, then the message is broadcast to all open socket connections.
  *  @output connection An output produced when a connection opens or closes. The output is an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'.
  *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
@@ -103,10 +101,6 @@ exports.setup = function() {
         value : 'application/json',
         options : WebSocket.supportedSendTypes()
     });
-    parameter('maxFrameSize', {
-        value: 65536,
-        type: "int"
-    });
     input('toSend');
     output('received');
     output('connection');
@@ -123,8 +117,7 @@ exports.initialize = function() {
                 'port':getParameter('port'),
                 'hostInterface':getParameter('hostInterface'),
                 'receiveType':getParameter('receiveType'),
-                'sendType':getParameter('sendType'),
-                'maxFrameSize':getParameter('maxFrameSize')
+                'sendType':getParameter('sendType')
         });
         server.on('listening', onListening);
         server.on('connection', onConnection);
