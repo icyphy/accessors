@@ -95,11 +95,11 @@ exports.setup = function() {
   output('state', {
 		  type: "JSON",
 		  value: ""
-  })
+  });
   parameter('bridgeID', {
 	  type: "string",
 	  value: "Bridge1"
-  })
+  });
 }
 
 /** Initialize the accessor.  Create a bridge object, connect to the bridge, and 
