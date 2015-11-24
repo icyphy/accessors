@@ -55,7 +55,10 @@
  * 
  *  @accessor devices/MockHueBridge
  *  @input {string} URI The path  
- *  @input {string} method The http request method.
+ *  @input {string} method The HTTP request method.
+ *  @input {JSON} body The body of the HTTP request, if any.
+ *  @output {string} response The response to be returned to the HTTP request.
+ *  @output {JSON} state The state of the bridge.  May include multiple lights.
  *  @parameter {string} bridgeID The identifier of the bridge to access.  Can be 
  *    any string.
  *  @author Elizabeth Osyk
@@ -85,14 +88,18 @@ exports.setup = function() {
 	  type: "JSON",
 	  value: ""
   });
+  output('response', {
+	    type: "string",
+	    value: ""
+	  });
+  output('state', {
+		  type: "JSON",
+		  value: ""
+  })
   parameter('bridgeID', {
 	  type: "string",
 	  value: "Bridge1"
   })
-  output('response', {
-    type: "string",
-    value: ""
-  });
 }
 
 /** Initialize the accessor.  Create a bridge object, connect to the bridge, and 
@@ -102,6 +109,11 @@ exports.initialize = function() {
 	bridge = new mockHueBridges.MockHueBridge();
 	connection = bridge.connect(get('bridgeID'));
 	connection.initializeToDefault();
+	
+	/** React to a change in the bridge state by outputting the new state.  */
+	connection.on('change', function(data) {
+		send('state', data);
+	});
   
 	// Register input handler
 	handle = addInputHandler('URI', inputHandler);
