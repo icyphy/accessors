@@ -239,17 +239,17 @@ function onClose(message) {
         // wrapup() has not been called.
         // Probably the server closed the connection.
         send('connected', false);
+        
+        // Close and unregister everything.
+        client.removeAllListeners('open');
+        client.removeAllListeners('message');
+        client.removeAllListeners('close');
+        client = null;
+
         // Reconnect if reconnectOnClose is true.
         if (getParameter('reconnectOnClose')) {
             // Use 'this' rather than 'export' so initialize() can be overridden.
             this.initialize();
-        } else {
-            // Not set to reconnect on close.
-            // Close and unregister everything.
-            client.removeAllListeners('open');
-            client.removeAllListeners('message');
-            client.removeAllListeners('close');
-            client = null;
         }
     }
 }
