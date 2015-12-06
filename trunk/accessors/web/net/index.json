@@ -3,6 +3,8 @@
     "IPAddress.js",
     "KeyValueStore.xml",
     "REST.js",
+    "TCPSocketClient.js",
+    "TCPSocketServer.js",
     "UDPSocket.js",
     "VertxPublish.js",
     "VertxSubscribe.js",
