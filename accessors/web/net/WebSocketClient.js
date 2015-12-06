@@ -91,7 +91,7 @@
  *
  *  @accessor net/WebSocketClient
  *  @parameter {string} server The IP address or domain name of server. Defaults to 'localhost'.
- *  @parameter {int} port The port that the web socket listens to. Defaults to 8080.
+ *  @parameter {int} port The port on the server to connect to. Defaults to 8080.
  *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
  *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 60000).
@@ -172,8 +172,6 @@ exports.setup = function () {
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function () {
 
-    //record the object that calls it (could be a derived accessor).
-    var callObj = this;
 
     client = new WebSocket.Client(
         {
@@ -192,8 +190,10 @@ exports.initialize = function () {
     client.on('open', this.onOpen);
     client.on('message', this.onMessage);
 
-    //bind onClose() to caller's object,
-    //so initialize() of caller's object is called if reconnect is true.
+    // Record the object that calls it (could be a derived accessor).
+    var callObj = this;
+    // Bind onClose() to caller's object,
+    // so initialize() of caller's object is called if reconnect is true.
     client.on('close', onClose.bind(callObj));
     client.on('error', function (message) {
         console.log(message);
