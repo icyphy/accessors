@@ -259,7 +259,8 @@ exports.toSendInputHandler = function () {
     } else if (sockets[idToSendTo]) {
         sockets[idToSendTo].send(dataToSend);
     } else {
-        error('Connection is not open: ' + idToSendTo);
+        error('Attempting to send data over socket with id ' + idToSendTo
+                + ', but this socket is not open.');
     }
 };
 
