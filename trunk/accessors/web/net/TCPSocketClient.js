@@ -140,7 +140,7 @@
  *    If this is greater than 0, then a failure to attempt will trigger
  *    additional attempts. This defaults to 10.
  *  @parameter {int} reconnectInterval The time between reconnect attempts, in
- *    milliseconds. This defaults to 100.
+ *    milliseconds. This defaults to 1000 (1 second).
  *  @parameter {boolean} reconnectOnClose If true, then if the connection is closed
  *    before this accessor is wrapped up, then attempt to reconnect.
  *  @parameter {int} sendBufferSize The size of the receive buffer. Defaults to
@@ -224,7 +224,7 @@ exports.setup = function () {
     });
     parameter('reconnectInterval', {
         type : 'int',
-        value : 100
+        value : 1000
     });
     parameter('reconnectOnClose', {
         type : 'boolean',
