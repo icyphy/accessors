@@ -34,22 +34,36 @@
  *  Please see the HueTermsOfUse.txt file for the API's terms of use.
  *  </p>
  *  
- *  <p> The following API requests are implemented.  Any username is accepted.
+ *  <p> The following API requests are implemented.  Username 'ptolemyuser' is
+ *  registered automatically; all other usernames must request registration.  
+ *  Any username registration request will be accepted.
  *  
  *  GET /
  *  The Hue accessor uses this to check if bridge is available.  
  *  Returns {available : true}. 
  *  
- *  GET /api/<username>
+ *  POST /api/
+ *  Add a user to list of registered users, optionally specifying a username.  
+ *  Body is of the form 
+ *  {"devicetype": "my_hue_app#iphone peter"} 
+ *  to request a newly generated username, where "devicetype" is
+ *  <application_name>#<devicename>
+ *  Add a "username" field to explicitly specify the username,
+ *  {"devicetype": "my_hue_app#iphone peter", "username": "peter"}
+ *  Returns a list with a single item indicating success or failure, and the
+ *  (possibly newly generated) username, e.g.:
+ *  [{"success":{"username": "83b7780291a6ceffbe0bd049104df"}}]
+ *  
+ *  GET /api/<username>/
  *  Get entire datastore. 
  *  
- *  GET /api/<username>/lights
+ *  GET /api/<username>/lights/
  *  GET information on all lights.
  *  
- *  GET /api/<username>/lights/<id>
+ *  GET /api/<username>/lights/<id>/
  *  Get information about the light with id <id>.
  *  
- *  PUT /api/<username>/lights/<id>/state
+ *  PUT /api/<username>/lights/<id>/state/
  *  Set the state of the light with id <id>.
  *  </p>
  * 

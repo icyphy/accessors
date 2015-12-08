@@ -130,6 +130,7 @@ exports.setup = function() {
  *  Input handlers are not added here in case we need to wait for user to register.
  */
 exports.initialize = function() {
+	
     var ipAddress = get('bridgeIPAddress');
     userName = getParameter('userName');
 
@@ -150,6 +151,8 @@ exports.initialize = function() {
         console.log(err);
         error('Could not reach the Hue basestation.');
     }
+    
+
 
     // First make sure the bridge is actually there and responding.
     var bridge_req = http.get(url, function (response) {
@@ -201,38 +204,52 @@ exports.initialize = function() {
  * the button on the Hue bridge.
  */
 function registerUser() {
-    var registerData = '{"devicetype":"' + userName + '", "username":"' + userName + '"}';
-    var response = JSON.parse(httpRequest(url, "POST", null, registerData, timeout));
-    console.log(response);
-    if (isNonEmptyArray(response) && response[0].error) {
-        var description = response[0].error.description;
 
-        if (description.match("link button not pressed")) {
-            //repeat registration attempt unless registerTimeout has been reached
-            console.log('link button');
-            registerAttempts++;
-            if ((registerAttempts * registerInterval) > registerTimeout) {
-                throw "Failed to create user after " + registerTimeout/1000 +
-                    "s.";
+	var registerData = {
+		devicetype : userName,
+		username : userName
+	};
+    var options = {
+    		body : JSON.stringify(registerData),
+    		url : url
+    };
+    
+    http.post(options, function(response) {
+    	console.log(JSON.stringify(response));
+        if (isNonEmptyArray(response) && response[0].error) {
+            var description = response[0].error.description;
+
+            if (description.match("link button not pressed")) {
+                //repeat registration attempt unless registerTimeout has been reached
+                console.log('link button');
+                registerAttempts++;
+                if ((registerAttempts * registerInterval) > registerTimeout) {
+                    throw "Failed to create user after " + registerTimeout/1000 +
+                        "s.";
+                }
+                handleRegisterUser = setTimeout(registerUser, registerInterval);
+                return;
             }
-            handleRegisterUser = setTimeout(registerUser, registerInterval);
-            return;
-        }
 
-        else {
-            throw description;
-        }
+            else {
+                throw description;
+            }
 
-    } else if (isNonEmptyArray(response) && response[0].success) {
-        //registration is successful - proceed to next stage of initialization
-        if (handleRegisterUser !== null) {
-            clearTimeout(handleRegisterUser);
-        }
-        getReachableLights();
+        } else if ((isNonEmptyArray(response) && response[0].success) || 
+        		JSON.parse(response.body)[0].success) {
+        		
+            //registration is successful - proceed to next stage of initialization
+            if (handleRegisterUser !== null) {
+                clearTimeout(handleRegisterUser);
+            }
+            getReachableLights();
 
-    } else {
-        throw "Error registering new user";
-    }
+        } else {
+        	console.log("response " + JSON.stringify(response));
+        	console.log(JSON.stringify(JSON.parse(response.body)[0].success));
+            throw "Error registering new user";
+        }
+    });
 }
 
 /** This function is only called after user has been registered.
@@ -285,16 +302,17 @@ function inputHandler() {
     };
 
     var cmd = JSON.stringify(command);
-    try {
-        var response = httpRequest(url + lightID + "/state/", "PUT",
-                                   null, cmd, timeout);
-        console.log(response);
+    var options = {
+    		body : cmd,
+    		url : url + lightID + "/state/"
+    };
+    
+    http.put(options, function(response) {
+    	console.log(JSON.stringify(response));
         if (isNonEmptyArray(response) && response[0].error) {
             error("Server responds with error: " + response[0].error.description);
-        }
-    } catch(e) {
-        console.log("Error accessing network: " + e);
-    }
+        } 
+    });
 }
 
 /** Turn off changed lights on wrapup. */
@@ -307,16 +325,24 @@ exports.wrapup = function() {
     if (triggerHandle) {
         removeInputHandler(triggerHandle);
     }
-
+    
     var errorLights = [];
+    var cmd = JSON.stringify({on:false});
+    var options = {};
+    
     for (var i = 0; i < changedLights.length; i++) {
-        var response = httpRequest(url + changedLights[i] + "/state/", "PUT",
-                                   null, '{"on":false}', timeout);
-        console.log(response);
-        if (isNonEmptyArray(response) && response[0].error) {
-            var lightID = get('lightID').toString();
-            errorLights.push(lightID);
-        }
+        options = {
+        		body : cmd,
+        		url : url + changedLights[i] + "/state/"
+        };
+        
+        http.put(options, function(response) {
+        	console.log(JSON.stringify(response));
+            if (isNonEmptyArray(response) && response[0].error) {
+                var lightID = get('lightID').toString();
+                errorLights.push(lightID);
+            }
+        });
     }
 
     if (errorLights.length !== 0) {
