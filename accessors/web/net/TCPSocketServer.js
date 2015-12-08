@@ -35,6 +35,7 @@
  *  * **remotePort**: The port of the remote host for the socket (an integer).
  *  * **status**: The string 'open'.
  *
+ *
  *  When the connection is closed, the same object as above is produced on the
  *  `connection` output, except with status being 'closed'.
  *
@@ -105,7 +106,7 @@
  *
  *  This accessor requires the 'socket' module.
  *
- *  @accessor net/TCPSocketClient
+ *  @accessor net/TCPSocketServer
  *
  *  @input toSend The data to be sent over the socket.
  *  @input toSendID The ID of the connection over which to send the data, where 0 means
@@ -120,41 +121,44 @@
  *    output was received. This is a positive integer, as indicated in the connection
  *    output.
  *
- *  @parameter {string} clientAuth: One of 'none', 'request', or 'required', meaning
+ *  @parameter {string} clientAuth One of 'none', 'request', or 'required', meaning
  *    whether it requires that a certificate be presented.
- *  @parameter {string} hostInterface: The name of the network interface to use for
+ *  @parameter {boolean} discardSendToUnopenedSocket If true, then discard any data
+ *   sent to a socket that is not open. The data will be logged using console.log()
+ *   instead. This defaults to false.
+ *  @parameter {string} hostInterface The name of the network interface to use for
  *    listening, e.g. 'localhost'. The default is '0.0.0.0', which means to
  *    listen on all available interfaces.
- *  @parameter {int} idleTimeout: The amount of idle time in seconds that will cause
+ *  @parameter {int} idleTimeout The amount of idle time in seconds that will cause
  *    a disconnection of a socket. This defaults to 0, which means no
  *    timeout.
- *  @parameter {boolean} keepAlive: Whether to keep a connection alive and reuse it. This
+ *  @parameter {boolean} keepAlive Whether to keep a connection alive and reuse it. This
  *    defaults to true.
- *  @parameter {string} keyStorePassword: If sslTls is set to true, then this option
+ *  @parameter {string} keyStorePassword If sslTls is set to true, then this option
  *    needs to specify the password for the key store specified by keyStorePath.
- *  @parameter {string} keyStorePath: If sslTls is set to true, then this option
+ *  @parameter {string} keyStorePath If sslTls is set to true, then this option
  *    needs to specify the fully qualified filename for the file that stores the
  *    certificate that this server will use to identify itself. This path can be
  *    any of those understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
- *  @parameter {boolean} noDelay: If true, data as sent as soon as it is available
+ *  @parameter {boolean} noDelay If true, data as sent as soon as it is available
  *    (the default). If false, data may be accumulated until a reasonable packet size is
  *    formed in order to make more efficient use of the network (using Nagle's algorithm).
- *  @parameter {int} port: The default port to listen on. This defaults to 4000.
+ *  @parameter {int} port The default port to listen on. This defaults to 4000.
  *    a value of 0 means to choose a random ephemeral free port.
- *  @parameter {boolean} rawBytes: If true (the default), then transmit only the data bytes provided
+ *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
  *    to send() without any header. If false, then prepend sent data with length
  *    information and assume receive data starts with length information.
  *    Setting this false on both ends will ensure that each data item passed to
  *    send() is emitted once in its entirety at the receiving end, as a single
  *    message. When this is false, the receiving end can emit a partially received
  *    message or could concatenate two messages and emit them together.
- *  @parameter {int} receiveBufferSize: The size of the receive buffer. Defaults to
+ *  @parameter {int} receiveBufferSize The size of the receive buffer. Defaults to
  *    65536.
- *  @parameter {string} receiveType: See below.
- *  @parameter {int} sendBufferSize: The size of the receive buffer. Defaults to
+ *  @parameter {string} receiveType See below.
+ *  @parameter {int} sendBufferSize The size of the receive buffer. Defaults to
  *    65536.
- *  @parameter {string} sendType: See below.
- *  @parameter {boolean} sslTls: Whether SSL/TLS is enabled. This defaults to false.
+ *  @parameter {string} sendType See below.
+ *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
  *
  *  @author Edward A. Lee
  *  @version $$Id$$
@@ -184,6 +188,10 @@ exports.setup = function () {
     parameter('clientAuth', {
         type : 'string',
         value : 'none'    // Indicates no SSL/TSL will be used.
+    });
+    parameter('discardSendToUnopenedSocket', {
+        type : 'boolean',
+        value : false
     });
     parameter('hostInterface', {
         type : 'string',
@@ -259,8 +267,15 @@ exports.toSendInputHandler = function () {
     } else if (sockets[idToSendTo]) {
         sockets[idToSendTo].send(dataToSend);
     } else {
-        error('Attempting to send data over socket with id ' + idToSendTo
-                + ', but this socket is not open.');
+        var discardSendToUnopenedSocket = getParameter('discardSendToUnopenedSocket');
+        if (discardSendToUnopenedSocket) {
+            console.log('Socket with ID ' + idToSendTo
+                    + ' is not open. Discarding data: '
+                    + dataToSend);
+        } else {
+            error('Attempting to send data over socket with id ' + idToSendTo
+                    + ', but this socket is not open.');
+        }
     }
 };
 
