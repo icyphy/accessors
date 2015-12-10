@@ -250,12 +250,16 @@ exports.setup = function () {
     });
 };
 
-/** Handles input on 'toSend'. */
+/** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
     client.send(get('toSend'));
 };
 
-/** Initializes accessor by attaching functions to inputs. */
+/** Initiate a connection to the server using the current parameter values,
+ *  set up handlers for for establishment of the connection, incoming data,
+ *  errors, and closing from the server, and set up a handler for inputs
+ *  on the toSend() input port.
+ */
 exports.initialize = function () {
 
     client = new socket.SocketClient(getParameter('port'), getParameter('host'),
@@ -307,7 +311,7 @@ exports.initialize = function () {
  */
 function onClose(message) {
     console.log('Status: Connection closed: ' + message);
-    if (inputHandle) {
+    if (client) {
         // wrapup() has not been called.
         // Probably the server closed the connection.
         send('connected', false);
@@ -326,7 +330,7 @@ function onClose(message) {
     }
 }
 
-/** Export the isOpen() function */
+/** Return true if this client has an open connection to the server. */
 exports.isOpen = function () {
     return client.isOpen();
 }

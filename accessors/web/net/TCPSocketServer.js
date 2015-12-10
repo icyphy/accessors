@@ -253,7 +253,9 @@ var server = null;
 var connectionCount = 0;
 var sockets = [];
 
-/** Handles input on 'toSend'. */
+/** Handle input on 'toSend' by sending to one or all of the open sockets, depending
+ *  on the most recently received value on the `toSendID` input.
+ */
 exports.toSendInputHandler = function () {
     var dataToSend = get('toSend');
     var idToSendTo = get('toSendID');
@@ -279,8 +281,13 @@ exports.toSendInputHandler = function () {
     }
 };
 
-/** Initialize the accessor by starting the server and
- *  attaching functions to inputs.
+/** Initialize the accessor by starting the server with the current parameter values
+ *  specifying the options, setting up listeners to be notified when the server is
+ *  is listening for connections, when a client requests and connection,
+ *  and when errors occur, and setting up an input handler
+ *  for data arriving on the toSend input. When a client requests a connection, the
+ *  handler will open the socket, send a `connection` output, and and set up listeners
+ *  for incoming data, errors, and closing of the socket from the remote site.
  */
 exports.initialize = function () {
 
