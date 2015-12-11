@@ -9,5 +9,6 @@
     "VertxPublish.js",
     "VertxSubscribe.js",
     "WebSocketClient.js",
-    "WebSocketServer.js"
+    "WebSocketServer.js",
+    "XBee.js"
 ]
