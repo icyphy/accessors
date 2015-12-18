@@ -22,7 +22,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
  
-/** Return an accessor whose interface and functionality is given by the
+/** Return an accessor instance whose interface and functionality is given by the
  *  specified code. Specifically, the returned object includes the following
  *  fields:
  *
@@ -53,8 +53,16 @@ exports.accessor = function(code) {
     if (!code) {
         throw 'No accessor code specified.';
     }
+    // Define the object to be populated by the accessor code with functions
+    // such as setup(), initialize(), etc.
     var exports = {};
-    var inputs = [];
+    
+    // Inputs, outputs, and parameters need to be able to be accessed two ways,
+    // by name and in the order they are defined. Hence, we define two data
+    // structures for each, one of which is an ordered list of names, and one
+    // of which is an object with a field for each input, output, or parameter.
+    var inputList = [];
+    var inputs = {};
     
     // CommonJS specification requires a 'module' object with an 'id' field
     // and an optional 'uri' field. The spec says that module.id should be
@@ -67,10 +75,8 @@ exports.accessor = function(code) {
     /** Define an accessor input.
      */
     function input(name, options) {
-        inputs.push({
-            'name': name,
-            'options': options
-        });
+        inputList.push(name);
+        inputs[name] = options || {};
     }
 
     // In strict mode, eval() cannot modify the scope of this function.
@@ -94,6 +100,7 @@ exports.accessor = function(code) {
     
     return {
         'exports': exports,
+        'inputList' : inputList,
         'inputs': inputs,
         'module': module,
     };
