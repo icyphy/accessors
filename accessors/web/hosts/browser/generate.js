@@ -1,22 +1,61 @@
-/** Generate HTML from the specified accessor object. */
-function generate(accessor) {
+// JavaScript functions for the browser swarmlet host.
+//
+// Copyright (c) 2015 The Regents of the University of California.
+// All rights reserved.
+
+// Permission is hereby granted, without written agreement and without
+// license or royalty fees, to use, copy, modify, and distribute this
+// software and its documentation for any purpose, provided that the above
+// copyright notice and the following two paragraphs appear in all copies
+// of this software.
+
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+// SUCH DAMAGE.
+
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+// ENHANCEMENTS, OR MODIFICATIONS.
+
+/** This module generates a web page from an accessor data structure
+ *  that is built using the /common/accessor.js module.
+ *
+ *  FIXME: To use it:
+ *
+ *  @module generate
+ *  @authors Edward A. Lee
+ */
+
+/** Generate HTML from the specified accessor accessor instance.
+ *  @param accessor An accessor instance created by common/accessor.js.
+ */
+exports.generate = function(accessor) {
     // Generate a table for inputs.
-    if (accessor.inputs && accessor.inputs.length > 0) {
-        generateTable("Inputs", accessor.inputs, true);
+    if (accessor.inputList && accessor.inputList.length > 0) {
+        generateTable("Inputs", accessor.inputList, accessor.inputs, true);
     }
     // Generate a table for outputs.
-    if (accessor.outputs && accessor.outputs.length > 0) {
-        generateTable("Outputs", accessor.outputs, false);
+    if (accessor.outputList && accessor.outputList.length > 0) {
+        generateTable("Outputs", accessor.outputList, accessor.outputs, false);
     }
 }
 
 /** Generate a table with the specified title and contents and
  *  append it to the body of the page.
+ *
+ *  FIXME: Add a parameter for where to put it on the page.
+ *
  *  @param title The title for the table.
- *  @param contents The table contents, an array.
+ *  @param names A list of field names in the contents object to include, in order.
+ *  @param contents An object containing one field for each object to include.
  *  @param editable True to specify that by default, the value is editable.
  */
-function generateTable(title, contents, editable) {
+function generateTable(title, names, contents, editable) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
@@ -55,20 +94,23 @@ function generateTable(title, contents, editable) {
 
     body.appendChild(table);
     
-    for (var i = 0; i < contents.length; i++) {
-        if (contents[i].options && contents[i].options.visibility) {
-            var visibility = contents[i].options.visibility;
-            if (visibility == 'notEditable') {
-                editable = false;
-            } else if (visibility != 'full') {
-                continue;
+    for (var i = 0; i < names.length; i++) {
+        var item = contents[names[i]];
+        if (item) {
+            if (item.visibility) {
+                var visibility = item.visibility;
+                if (visibility == 'notEditable') {
+                    editable = false;
+                } else if (visibility != 'full') {
+                    continue;
+                }
             }
+            generateTableRow(
+                    tbody,
+                    names[i],
+                    item,
+                    editable);
         }
-        generateTableRow(
-                tbody,
-                contents[i].name,
-                contents[i].options,
-                editable);
     }
 }
 
@@ -144,12 +186,3 @@ function invokeHandlers(name) {
         }
     }
 }
-
-<!-- Note that the following will not work in IE 8 or older. -->
-window.addEventListener('DOMContentLoaded', function() {
-    if (!exports.setup) {
-        throw "No setup() function defined.";
-    }
-    exports.setup();
-    generate(accessor);
-});

@@ -5,19 +5,30 @@
     <title>Test Page for Browser Swarmlet Host</title>
     <script src="../require.js"></script>
 <script>
+<!-- Note that the following will not work in IE 8 or older. -->
 window.addEventListener('DOMContentLoaded', function() {
     var code = "exports.setup = function() {input('in');}";
     var body = document.getElementsByTagName('body')[0];
     var pp = document.createElement('p');
 
-    var a = require('/common/accessor.js', function(error, a) {
+    require('/common/accessor.js', function(error, a) {
         if (error) {
             pp.innerHTML = error;
         } else {
-            var result = a.accessor(code);  
-            pp.innerHTML = JSON.stringify(result);
+            var instance = a.accessor(code);  
+            pp.innerHTML = JSON.stringify(instance);
         }
         body.appendChild(pp);
+        
+        require('/generate.js', function(error, g) {
+            if (error) {
+                var pp = document.createElement('p');
+                pp.innerHTML = error;
+                body.appendChild(pp);
+            } else {
+                g.generate(instance);  
+            }
+        });
     });
 });
 </script>
