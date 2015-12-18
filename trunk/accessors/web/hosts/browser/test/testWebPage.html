@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for Browser Swarmlet Host</title>
+    <script src="../require.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    var code = "exports.setup = function() {input('in');}";
+    var body = document.getElementsByTagName('body')[0];
+    var pp = document.createElement('p');
+
+    var a = require('/common/accessor.js', function(error, a) {
+        if (error) {
+            pp.innerHTML = error;
+        } else {
+            var result = a.accessor(code);  
+            pp.innerHTML = JSON.stringify(result);
+        }
+        body.appendChild(pp);
+    });
+});
+</script>
+</head>
+<body>
+<h1>Test Page for Browser Swarmlet Host</h1>
+
+An instance of a simple test accessor is shown below in JSON format:
+
+</body>
+</html>
