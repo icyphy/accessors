@@ -23,13 +23,24 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 exports.setup = function() {
-    input('in');
-    output('out', {'type':'string'});
-    parameter('p', {'value':42});
+    input('untyped');                               // Untyped input.
+    input('numeric', {'type':'number', 'value':0}); // Numeric input.
+    input('boolean', {'type':'boolean'});           // Boolean input.
+    output('typeOfUntyped', {'type':'string'});     // Type of untyped input.
+    output('numericPlusP', {'type':'number'});      // Numeric input plus p.
+    output('negation', {'type':'boolean'});         // Negation of boolean input.
+    parameter('p', {'value':42});                   // Untyped, with numeric value.
 }
 
 exports.initialize = function() {
-    addInputHandler('in', function() {
-        console.log('input received.');
+    // Respond to any input by updating them all.
+    addInputHandler('untyped', function() {
+        send('typeOfUntyped', typeof get('untyped'));
+    });
+    addInputHandler('numeric', function() {
+        send('numericPlusP', get('numeric') + getParameter('p'));
+    });
+    addInputHandler('boolean', function() {
+        send('negation', !get('boolean'));
     });
 }
