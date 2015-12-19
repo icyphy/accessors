@@ -41,13 +41,17 @@
 exports.generate = function(instance) {
     // Generate a table for inputs.
     if (instance.inputList && instance.inputList.length > 0) {
-        generateTable("Inputs", instance.inputList, instance.inputs, true);
+        generateTable("Inputs", instance.inputList, instance.inputs, "input");
     }
     // Generate a table for outputs.
     if (instance.outputList && instance.outputList.length > 0) {
-        generateTable("Outputs", instance.outputList, instance.outputs, false);
+        generateTable("Outputs", instance.outputList, instance.outputs, "output");
     }
-    
+    // Generate a table for parameters.
+    if (instance.parameterList && instance.parameterList.length > 0) {
+        generateTable("Parameters", instance.parameterList, instance.parameters, "parameter");
+    }
+
     // On the assumption that there is never more than one accessor
     // per web page, create or set a global variable 'accessor' that will
     // be available as a property of the window object.
@@ -67,9 +71,9 @@ exports.generate = function(instance) {
  *  @param title The title for the table.
  *  @param names A list of field names in the contents object to include, in order.
  *  @param contents An object containing one field for each object to include.
- *  @param editable True to specify that by default, the value is editable.
+ *  @param role One of 'input', 'output', or 'parameter'.
  */
-function generateTable(title, names, contents, editable) {
+function generateTable(title, names, contents, role) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
@@ -108,6 +112,11 @@ function generateTable(title, names, contents, editable) {
 
     body.appendChild(table);
     
+    var editable = true;
+    if (role === 'output') {
+        editable = false;
+    }
+    
     for (var i = 0; i < names.length; i++) {
         var item = contents[names[i]];
         if (item) {
@@ -123,6 +132,7 @@ function generateTable(title, names, contents, editable) {
                     tbody,
                     names[i],
                     item,
+                    role,
                     editable);
         }
     }
@@ -132,9 +142,10 @@ function generateTable(title, names, contents, editable) {
  *  @param table The element into which to append the row.
  *  @param name The text to put in the name column.
  *  @param options The options.
+ *  @param role One of 'input', 'output', or 'parameter'.
  *  @param editable True to make the value an input element.
  */
-function generateTableRow(table, name, options, editable) {
+function generateTableRow(table, name, options, role, editable) {
     var row = document.createElement("tr");
     
     // Insert the name.
@@ -159,8 +170,17 @@ function generateTableRow(table, name, options, editable) {
     }
     if (!editable) {
         valueCell.innerHTML = value;
+        
+        // Set a unique ID so that this input can be retrieved by the get()
+        // or set by the send() function defined in local.js.
+        valueCell.setAttribute('id', name + '-' + role);
     } else {
         var valueInput = document.createElement("input");
+        
+        // Set a unique ID so that this input can be retrieved by the get()
+        // function defined in local.js.
+        valueInput.setAttribute('id', name + '-' + role);
+
         valueInput.setAttribute('type', 'text');
         valueInput.setAttribute('name', name);
         valueInput.setAttribute('value', value);
@@ -169,11 +189,9 @@ function generateTableRow(table, name, options, editable) {
         
         // Invoke handlers, if there are any.
         valueInput.setAttribute('onchange', 'window.accessor.invokeHandlers("' + name + '")');
-        
+                
         valueCell.appendChild(valueInput);
     }
-    <!-- FIXME: id is not assured of being unique. -->
-    valueCell.setAttribute("id", name);
     row.appendChild(valueCell);
 
     table.appendChild(row);

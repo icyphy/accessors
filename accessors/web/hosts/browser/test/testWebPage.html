@@ -3,31 +3,38 @@
 <head>
     <meta charset="utf-8">
     <title>Test Page for Browser Swarmlet Host</title>
-    <script src="../require.js"></script>
+    <script src="/hosts/browser/local.js"></script>
 <script>
 <!-- Note that the following will not work in IE 8 or older. -->
 window.addEventListener('DOMContentLoaded', function() {
     // FIXME: Read the code for TestAccessor.js from the server.
-    var code = "exports.setup = function() {input('in'); addInputHandler('in', function() {alert('input entered');});}";
+    var code = getJavaScript('/hosts/common/test/TestAccessor');
     var body = document.getElementsByTagName('body')[0];
     var pp = document.createElement('p');
 
-    require('/common/accessor.js', function(error, a) {
+    require('/hosts/common/accessor.js', function(error, a) {
         if (error) {
             pp.innerHTML = error;
         } else {
-            var instance = a.accessor(code);  
-            pp.innerHTML = JSON.stringify(instance);
+            accessor = a.accessor(code);  
+            pp.innerHTML = JSON.stringify(accessor);
         }
         body.appendChild(pp);
         
-        require('/generate.js', function(error, g) {
+        require('/hosts/browser/generate.js', function(error, g) {
             if (error) {
                 var pp = document.createElement('p');
                 pp.innerHTML = error;
                 body.appendChild(pp);
             } else {
-                g.generate(instance);  
+                try {
+                    g.generate(accessor);
+                    if ((typeof accessor.exports.initialize) === 'function') {
+                        accessor.exports.initialize();
+                    }
+                } catch (error) {
+                    alert('Error: ' + error);
+                }
             }
         });
     });
