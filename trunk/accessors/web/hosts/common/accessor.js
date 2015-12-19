@@ -21,7 +21,27 @@
 // PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
+
+/** This module provides a host-independent that, given the code specifying
+ *  an accessor as a string, constructs a data structure for that accessor that
+ *  the host can use to interact with the accessor.
+ *
+ *  In order to use this module, the host must provide implementations of accessor
+ *  functions that cannot be provided in a host-independent way, including get(),
+ *  send(), and require(). In addition, in order to support implement() and extend(),
+ *  the host should provide an implementation of a getAccessor() function, which
+ *  returns an accessor definition (as a string) given the name of the accessor
+ *  (modified as needed with a path to the accessor).  For example,
+ *  ```getAccessor('net/REST')``` should return the JavaScript code defining
+ *  the REST accessor.
+ *
+ *  @module socket
+ *  @authors: Edward A. Lee
+ */
  
+// FIXME: To do:
+// * implement extend() and implement() using getAccessor.
+
 /** Return an accessor instance whose interface and functionality is given by the
  *  specified code. Specifically, the returned object includes the following
  *  fields:
@@ -53,10 +73,14 @@
  *  options were specified.  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
  *
- *  @module socket
- *  @authors: Edward A. Lee
+ *  @param code The accessor source code.
+ *  @param require The host's implementation of the require function, or null if the host
+ *   does not support any external modules.
+ *  @param getAccessor A function that will retrieve the source code of a specified
+ *   accessor (used to implement the extend() and implement() functions), or null if
+ *   the host does not support accessors that extend other accessors.
  */
-exports.accessor = function(code) {
+exports.accessor = function(code, require, getAccessor) {
     if (!code) {
         throw 'No accessor code specified.';
     }
@@ -124,7 +148,7 @@ exports.accessor = function(code) {
         }
 
         // Check that the input exists.
-        if (!inputs[name]) {
+        if (name && !inputs[name]) {
             throw 'Cannot add an input handler to a non-existent input: ' + name;
         }
 
@@ -211,6 +235,15 @@ exports.accessor = function(code) {
     }
 
     ////////////////////////////////////////////////////////////////////
+    //// Provide a default implementation of the require() function.
+    
+    if (!require) {
+        require = function() {
+            throw 'This swarmlet host does not support require().';
+        };
+    }
+
+    ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code using the above function definitions
 
     // In strict mode, eval() cannot modify the scope of this function.
@@ -220,12 +253,12 @@ exports.accessor = function(code) {
     // such as input() will need to be bound to the particular implementation
     // of input() within this accessor function, so that that function
     // updates the proper field of this function.
-    var wrapper = eval('(function(addInputHandler, exports, input, removeInputHandler) {'
+    var wrapper = eval('(function(addInputHandler, exports, input, removeInputHandler, require) {'
             + code
             + '})');
     
     // Populate the exports field.
-    wrapper(addInputHandler, exports, input, removeInputHandler);
+    wrapper(addInputHandler, exports, input, removeInputHandler, require);
         
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the setup() function to populate the structure.
