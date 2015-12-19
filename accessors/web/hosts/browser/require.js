@@ -22,6 +22,8 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
+// FIXME: Obsolete!!! Function now included in local.js.
+
 /** Return a module whose functionality is given in JavaScript by the specified resource.
  *  The resource will be requested from the same server that served the page
  *  executing this script. If no callback function is given, the a synchronous
