@@ -24,4 +24,12 @@
 
 exports.setup = function() {
     input('in');
-} 
+    output('out', {'type':'string'});
+    parameter('p', {'value':42});
+}
+
+exports.initialize = function() {
+    addInputHandler('in', function() {
+        console.log('input received.');
+    });
+}

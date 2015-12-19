@@ -25,6 +25,10 @@
 /** This module generates a web page from an accessor data structure
  *  that is built using the /common/accessor.js module.
  *
+ *  As a side effect of invoking this, the window object for the web page
+ *  acquires a field ```accessor``` whose value is the provided accessor
+ *  instance with some additional utilities to support the web page.
+ *
  *  FIXME: To use it:
  *
  *  @module generate
@@ -34,15 +38,25 @@
 /** Generate HTML from the specified accessor accessor instance.
  *  @param accessor An accessor instance created by common/accessor.js.
  */
-exports.generate = function(accessor) {
+exports.generate = function(instance) {
     // Generate a table for inputs.
-    if (accessor.inputList && accessor.inputList.length > 0) {
-        generateTable("Inputs", accessor.inputList, accessor.inputs, true);
+    if (instance.inputList && instance.inputList.length > 0) {
+        generateTable("Inputs", instance.inputList, instance.inputs, true);
     }
     // Generate a table for outputs.
-    if (accessor.outputList && accessor.outputList.length > 0) {
-        generateTable("Outputs", accessor.outputList, accessor.outputs, false);
+    if (instance.outputList && instance.outputList.length > 0) {
+        generateTable("Outputs", instance.outputList, instance.outputs, false);
     }
+    
+    // On the assumption that there is never more than one accessor
+    // per web page, create or set a global variable 'accessor' that will
+    // be available as a property of the window object.
+    accessor = instance;
+    
+    // Make the local invokeHandlers() function available through
+    // the accessor global variable so that elements on the web page
+    // can react to changes by invoking the function.
+    accessor.invokeHandlers = invokeHandlers;
 }
 
 /** Generate a table with the specified title and contents and
@@ -154,7 +168,7 @@ function generateTableRow(table, name, options, editable) {
         valueInput.setAttribute('style', 'display:table-cell; width:100%; box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;');
         
         // Invoke handlers, if there are any.
-        valueInput.setAttribute('onchange', 'invokeHandlers("' + name + '")');
+        valueInput.setAttribute('onchange', 'window.accessor.invokeHandlers("' + name + '")');
         
         valueCell.appendChild(valueInput);
     }

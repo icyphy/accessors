@@ -34,5 +34,8 @@ var a = require('../accessor.js');
 // Create an accessor instance.
 var instance = a.accessor(code);
 
+// Invoke the initialize function.
+instance.exports.initialize();
+
 // Examine the instance in JSON format.
 console.log("Instance of TestAccessor: %j", instance);
