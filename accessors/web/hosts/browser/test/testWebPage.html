@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 alert('Failed to load generate.js: ' + error);
             } else {
                 try {
-                    g.generate(accessor);
+                    g.generate(accessor, 'accessor');
                     if ((typeof accessor.exports.initialize) === 'function') {
                         accessor.exports.initialize();
                     }
