@@ -8,7 +8,7 @@
 <!-- Note that the following will not work in IE 8 or older. -->
 window.addEventListener('DOMContentLoaded', function() {
     // Read the code for TestAccessor.js from the server.
-    var accessorPath = '/hosts/common/test/TestAccessor';
+    var accessorPath = '/accessors/hosts/common/test/TestAccessor';
     
     // The above script element, which loads local.js, puts all functions
     // defined therein in the window object.
@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function() {
                + error);
     };
 
-    require('/hosts/common/accessor.js', function(error, a) {
+    require('/accessors/hosts/common/accessor.js', function(error, a) {
         if (error) {
             alert('Failed to load accessor.js: ' + error);
         } else {
@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 return;
             }
         }        
-        require('/hosts/browser/generate.js', function(error, g) {
+        require('/accessors/hosts/browser/generate.js', function(error, g) {
             if (error) {
                 alert('Failed to load generate.js: ' + error);
             } else {
