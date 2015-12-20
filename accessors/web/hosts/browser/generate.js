@@ -92,8 +92,6 @@ function generateTable(title, names, contents, role, id) {
     table.appendChild(head);
     
     var titleRow = document.createElement('tr');
-    <!-- FIXME: Should use CSS for style here. -->
-    titleRow.setAttribute('bgcolor', '#9acd32');
     head.appendChild(titleRow);
     
     var column = document.createElement('th');
