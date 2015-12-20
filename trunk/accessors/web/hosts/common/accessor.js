@@ -35,12 +35,11 @@
  *  ```getAccessor('net/REST')``` should return the JavaScript code defining
  *  the REST accessor.
  *
- *  @module socket
+ *  @module accessor
  *  @authors: Edward A. Lee
  */
  
-// FIXME: To do:
-// * implement extend() and implement() using getAccessor.
+'use strict';
 
 /** Return an accessor instance whose interface and functionality is given by the
  *  specified code. Specifically, the returned object includes the following

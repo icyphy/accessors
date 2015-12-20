@@ -7,25 +7,31 @@
 <script>
 <!-- Note that the following will not work in IE 8 or older. -->
 window.addEventListener('DOMContentLoaded', function() {
-    // FIXME: Read the code for TestAccessor.js from the server.
-    var code = getJavaScript('/hosts/common/test/TestAccessor');
-    var body = document.getElementsByTagName('body')[0];
-    var pp = document.createElement('p');
+    // Read the code for TestAccessor.js from the server.
+    var accessorPath = '/hosts/common/test/TestAccessor';
+    var code = getJavaScript(accessorPath);
+    
+    function reportError(error) {
+       alert('Error interpreting specification at '
+               + accessorPath
+               + ': '
+               + error);
+    };
 
     require('/hosts/common/accessor.js', function(error, a) {
         if (error) {
-            pp.innerHTML = error;
+            alert('Failed to load accessor.js: ' + error);
         } else {
-            accessor = a.accessor(code);  
-            pp.innerHTML = JSON.stringify(accessor);
-        }
-        body.appendChild(pp);
-        
+            try {
+                accessor = a.accessor(code, require, getAccessor);
+            } catch(error) {
+                reportError(error);
+                return;
+            }
+        }        
         require('/hosts/browser/generate.js', function(error, g) {
             if (error) {
-                var pp = document.createElement('p');
-                pp.innerHTML = error;
-                body.appendChild(pp);
+                alert('Failed to load generate.js: ' + error);
             } else {
                 try {
                     g.generate(accessor);
@@ -33,7 +39,8 @@ window.addEventListener('DOMContentLoaded', function() {
                         accessor.exports.initialize();
                     }
                 } catch (error) {
-                    alert('Error: ' + error);
+                    reportError(error);
+                    return;
                 }
             }
         });
@@ -43,8 +50,6 @@ window.addEventListener('DOMContentLoaded', function() {
 </head>
 <body>
 <h1>Test Page for Browser Swarmlet Host</h1>
-
-An instance of a simple test accessor is shown below in JSON format:
-
+<p id="accessor"></p>
 </body>
 </html>
