@@ -35,6 +35,8 @@
  *  @authors Edward A. Lee
  */
 
+'use strict';
+
 /** Generate HTML from the specified accessor accessor instance.
  *  @param accessor An accessor instance created by common/accessor.js.
  */
