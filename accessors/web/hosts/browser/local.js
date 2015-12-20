@@ -28,6 +28,8 @@
  *  @version $$Id$$
  */
 
+'use strict';
+
 /** Get data from an input. This implementation assumes that the document
  *  has an element with attribute 'id' equal to ```name + '-input'```.
  *  Such an attribute is created by the generate() function.
@@ -94,9 +96,33 @@ function getInputOrParameter(name, role) {
     }
 }
 
+/** Return the text of an accessor definition.
+ *  This implementation appends the string '.js' to the specified path
+ *  (if it is not already there) and retrieves from the server's accessor
+ *  repository the text of the accessor specification.
+ *  This is a blocking call.
+ *
+ *  @param path The path on the server for the JavaScript code.
+ */
+function getAccessor(path) {
+    // Strip off a leading '/' if provided.
+    if (path.indexOf('/') == 0) {
+        path = path.substring(1);
+    }
+    // The second argument indicated a blocking call, and the third indicates
+    // to look in the accessor directory, not in the modules directory.
+    return getJavaScript(path, null, false);
+}
+
 /** Return the text of an accessor or module definition.
  *  This implementation appends the string '.js' to the specified path
  *  (if it is not already there) and issues an HTTP get with the specified path.
+ *  If the path begins with '/' or './', then it is used as is.
+ *  Otherwise, depending on the third argument, it is prepended with the
+ *  location of the directory in which accessors are stored ('/' on this host)
+ *  or the directory in which modules are stored ('/hosts/browswer/modules' on
+ *  this host).
+ *
  *  If not callback function is given, then this is a blocking request.
  *  It will not return until it has the text, and then will return that text.
  *  If a callback is given, then this will issue the HTTP get and return, and
@@ -105,11 +131,22 @@ function getInputOrParameter(name, role) {
  *  no error occurred) and the text of the response (or null if an error occurred).
  *  @param path The path on the server for the JavaScript code.
  *  @param callback The callback function.
+ *  @param module True to look in the modules directory for paths that do not
+ *   begin with '/' or './'. False (or omitted) to look in '/'.
  */
-function getJavaScript(path, callback) {
+function getJavaScript(path, callback, module) {
     var index = path.lastIndexOf('.js');
     if (index != path.length - 3) {
         path = path + '.js';
+    }
+    if (path.indexOf('/') !== 0 && path.indexOf('./') !== 0) {
+        // A relative path is provided.
+        // Convert this to an absolute path for either a module or an accessor.
+        if (module) {
+            path = '/hosts/browser/modules/' + path;
+        } else {
+            path = '/' + path;
+        }
     }
     var request = new XMLHttpRequest();
     request.overrideMimeType("application/javascript");
@@ -160,9 +197,14 @@ function getParameter(name) {
 /** Return a module whose functionality is given in JavaScript at the specified path
  *  on the server. The path will be requested from the same server that served the page
  *  executing this script. If no callback function is given, the a synchronous
- *  (blocking) request will be made (this is not advised). If a callback function
- *  is given, then after receiving and evaluating the JavaScript code,
- *  the callback function will be invoked.
+ *  (blocking) request will be made (best to avoid this in a web page).
+ *  If a callback function is given, then after receiving and evaluating the
+ *  JavaScript code, the callback function will be invoked.
+ *
+ *  If the path begins with a '/' or './', then it will be interpreted as the path
+ *  to a resource provided by the web server serving this swarmlet host.
+ *  Otherwise, it will be interpreted as the name of a module provided by this
+ *  swarmlet host.
  * 
  *  The returned object includes any properties
  *  that have been added to the 'exports' property in the specified code.
@@ -188,7 +230,7 @@ function getParameter(name) {
  *
  *    https://github.com/walterhiggins/commonjs-modules-javax-script
  *
- *  @param path The code to fetch (a JavaScript file).
+ *  @param path The code to fetch (a JavaScript file or module name).
  *  @param callback The callback function, which gets two arguments: an error
  *   message (or null if the request succeeded) and the response JavaScript text.
  *   If this argument is omitted or null, then the path is retrieved synchronously
@@ -212,15 +254,19 @@ function require(path, callback) {
         return exports;
     };
     if (callback) {
+        // The third argument states that unless the path starts with '/'
+        // or './', then the path should be searched for in the modules directory.
         getJavaScript(path, function(error, code) {
             if (error) {
                 callback(error, code);
             } else {
                 callback(null, evaluate(code));
             }
-        });
+        }, true);
     } else {
-        var code = getJavaScript(resource);
+        // The third argument states that unless the path starts with '/'
+        // or './', then the path should be searched for in the modules directory.
+        var code = getJavaScript(path, null, true);
         return evaluate(code);
     }
 }
