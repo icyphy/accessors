@@ -37,23 +37,24 @@
 
 'use strict';
 
-/** Generate HTML from the specified accessor accessor instance.
+/** Generate HTML from the specified accessor accessor instance and insert it
+ *  into the element on the page with the specified id.
  *  @param accessor An accessor instance created by common/accessor.js.
- *
- *  FIXME: Add a parameter for where to put it on the page.
+ *  @param id The id of the page element into which to insert the generated HTML.
  */
-exports.generate = function(instance) {
+exports.generate = function(instance, id) {
     // Generate a table for inputs.
     if (instance.inputList && instance.inputList.length > 0) {
-        generateTable("Inputs", instance.inputList, instance.inputs, "input");
+        generateTable("Inputs", instance.inputList, instance.inputs, "input", id);
     }
     // Generate a table for outputs.
     if (instance.outputList && instance.outputList.length > 0) {
-        generateTable("Outputs", instance.outputList, instance.outputs, "output");
+        generateTable("Outputs", instance.outputList, instance.outputs, "output", id);
     }
     // Generate a table for parameters.
     if (instance.parameterList && instance.parameterList.length > 0) {
-        generateTable("Parameters", instance.parameterList, instance.parameters, "parameter");
+        generateTable("Parameters", 
+                instance.parameterList, instance.parameters, "parameter", id);
     }
 
     // On the assumption that there is never more than one accessor
@@ -68,21 +69,20 @@ exports.generate = function(instance) {
 }
 
 /** Generate a table with the specified title and contents and
- *  append it to the body of the page.
- *
- *  FIXME: Add a parameter for where to put it on the page.
+ *  append it to the element on the page with the specified id.
  *
  *  @param title The title for the table.
  *  @param names A list of field names in the contents object to include, in order.
  *  @param contents An object containing one field for each object to include.
  *  @param role One of 'input', 'output', or 'parameter'.
+ *  @param id The id of the page element into which to insert the generated HTML.
  */
-function generateTable(title, names, contents, role) {
+function generateTable(title, names, contents, role, id) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
-    var body = document.getElementsByTagName('body')[0];
-    body.appendChild(header);
+    var target = document.getElementById(id);
+    target.appendChild(header);
     
     var table = document.createElement('table');
     table.setAttribute('border', 1);
@@ -114,7 +114,7 @@ function generateTable(title, names, contents, role) {
     var tbody = document.createElement('tbody');
     table.appendChild(tbody);
 
-    body.appendChild(table);
+    target.appendChild(table);
     
     var editable = true;
     if (role === 'output') {
