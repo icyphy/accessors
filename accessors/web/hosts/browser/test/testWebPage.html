@@ -5,54 +5,16 @@
     <title>Test Page for Browser Swarmlet Host</title>
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
     <script src="/accessors/hosts/browser/local.js"></script>
-<script>
-<!-- Note that the following will not work in IE 8 or older. -->
-window.addEventListener('DOMContentLoaded', function() {
-    // Read the code for TestAccessor.js from the server.
-    var accessorPath = '/accessors/hosts/common/test/TestAccessor';
-    
-    // The above script element, which loads local.js, puts all functions
-    // defined therein in the window object.
-    var code = window.getJavaScript(accessorPath);
-    
-    function reportError(error) {
-       alert('Error interpreting specification at '
-               + accessorPath
-               + ': '
-               + error);
-    };
-
-    require('/accessors/hosts/common/accessor.js', function(error, a) {
-        if (error) {
-            alert('Failed to load accessor.js: ' + error);
-        } else {
-            try {
-                // The following will define a global variable 'accessor'
-                // if it is not already defined.
-                accessor = a.accessor(code, window.require, window.getAccessor);
-            } catch(error) {
-                reportError(error);
-                return;
-            }
-        }        
-        require('/accessors/hosts/browser/generate.js', function(error, g) {
-            if (error) {
-                alert('Failed to load generate.js: ' + error);
-            } else {
-                try {
-                    g.generate(accessor, 'accessor');
-                    if ((typeof accessor.exports.initialize) === 'function') {
-                        accessor.exports.initialize();
-                    }
-                } catch (error) {
-                    reportError(error);
-                    return;
-                }
-            }
-        });
+    <script>
+    <!-- Note that the following will not work in IE 8 or older. -->
+    window.addEventListener('DOMContentLoaded', function() {
+        // Read the code for TestAccessor.js from the server.
+        var accessorPath = '/accessors/hosts/common/test/TestAccessor';
+        // The second argument says to insert the accessor interface in the element
+        // with id 'accessor', defined below.
+        generate(accessorPath, 'accessor');
     });
-});
-</script>
+    </script>
 </head>
 <body>
 <h1>Test Page for Browser Swarmlet Host</h1>

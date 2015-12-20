@@ -1,7 +1,29 @@
 body {
-    font-family: Tahoma, Geneva, sans-serif
+    font-family: Tahoma, Geneva, sans-serif;
 }
-/* Table headers. */
+/* Table style. */
 th {
-    background-color: #9acd32
+    background-color: #9acd32;
+    text-align: left;
+    padding: 3px;
+}
+td {
+    padding: 3px;
+}
+table {
+    width: 100%;
+}
+table, th, td {
+   border: 1px solid black;
+   max-width: 800px;
+}
+tr:hover {background-color: #f5f5f5}
+
+/* Style for class description. */
+.description {
+    background-color: #f5f5f5;
+    border-style: solid;
+    border-color: grey;
+    border-width: 1px;
+    box-shadow: 10px 10px 5px grey;
 }
