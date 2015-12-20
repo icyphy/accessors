@@ -119,9 +119,9 @@ function getAccessor(path) {
  *  (if it is not already there) and issues an HTTP get with the specified path.
  *  If the path begins with '/' or './', then it is used as is.
  *  Otherwise, depending on the third argument, it is prepended with the
- *  location of the directory in which accessors are stored ('/' on this host)
- *  or the directory in which modules are stored ('/hosts/browswer/modules' on
- *  this host).
+ *  location of the directory in which accessors are stored ('/accessors' on this host)
+ *  or the directory in which modules are stored ('/accessors/hosts/browswer/modules'
+ *  on this host).
  *
  *  If not callback function is given, then this is a blocking request.
  *  It will not return until it has the text, and then will return that text.
@@ -132,7 +132,7 @@ function getAccessor(path) {
  *  @param path The path on the server for the JavaScript code.
  *  @param callback The callback function.
  *  @param module True to look in the modules directory for paths that do not
- *   begin with '/' or './'. False (or omitted) to look in '/'.
+ *   begin with '/' or './'. False (or omitted) to look in '/accessors'.
  */
 function getJavaScript(path, callback, module) {
     var index = path.lastIndexOf('.js');
@@ -143,9 +143,9 @@ function getJavaScript(path, callback, module) {
         // A relative path is provided.
         // Convert this to an absolute path for either a module or an accessor.
         if (module) {
-            path = '/hosts/browser/modules/' + path;
+            path = '/accessors/hosts/browser/modules/' + path;
         } else {
-            path = '/' + path;
+            path = '/accessors' + path;
         }
     }
     var request = new XMLHttpRequest();
