@@ -39,6 +39,8 @@
 
 /** Generate HTML from the specified accessor accessor instance.
  *  @param accessor An accessor instance created by common/accessor.js.
+ *
+ *  FIXME: Add a parameter for where to put it on the page.
  */
 exports.generate = function(instance) {
     // Generate a table for inputs.
