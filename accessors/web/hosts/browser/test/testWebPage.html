@@ -9,7 +9,10 @@
 window.addEventListener('DOMContentLoaded', function() {
     // Read the code for TestAccessor.js from the server.
     var accessorPath = '/hosts/common/test/TestAccessor';
-    var code = getJavaScript(accessorPath);
+    
+    // The above script element, which loads local.js, puts all functions
+    // defined therein in the window object.
+    var code = window.getJavaScript(accessorPath);
     
     function reportError(error) {
        alert('Error interpreting specification at '
@@ -23,7 +26,9 @@ window.addEventListener('DOMContentLoaded', function() {
             alert('Failed to load accessor.js: ' + error);
         } else {
             try {
-                accessor = a.accessor(code, require, getAccessor);
+                // The following will define a global variable 'accessor'
+                // if it is not already defined.
+                accessor = a.accessor(code, window.require, window.getAccessor);
             } catch(error) {
                 reportError(error);
                 return;
