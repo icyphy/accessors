@@ -85,7 +85,7 @@ function generateTable(title, names, contents, role, id) {
     target.appendChild(header);
     
     var table = document.createElement('table');
-    table.setAttribute('border', 1);
+    // table.setAttribute('border', 1);
     table.setAttribute('width', '100%');
     
     var head = document.createElement('thead');
