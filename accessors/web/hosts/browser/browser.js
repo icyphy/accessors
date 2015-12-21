@@ -45,7 +45,7 @@
  *  @param id The id of the page element into which to insert the generated HTML.
  */
 function generate(path, id) {
-    var code = window.getJavaScript(path);
+    var code = getAccessor(path);
     
     function reportError(error) {
        alert('Error interpreting specification at '
@@ -61,7 +61,7 @@ function generate(path, id) {
             try {
                 // The following will define a global variable 'accessor'
                 // if it is not already defined.
-                accessor = a.accessor(code, window.require, window.getAccessor);
+                accessor = a.accessor(code, require, getAccessor);
             } catch(error) {
                 reportError(error);
                 return;
@@ -307,7 +307,7 @@ function getInputOrParameter(name, role) {
     }
 }
 
-/** Return the text of an accessor definition.
+/** Return the text of an accessor definition from the accessor library on the host.
  *  This implementation appends the string '.js' to the specified path
  *  (if it is not already there) and retrieves from the server's accessor
  *  repository the text of the accessor specification.
@@ -327,7 +327,7 @@ function getAccessor(path) {
 
 /** Return the text of an accessor or module definition.
  *  This implementation appends the string '.js' to the specified path
- *  (if it is not already there) and issues an HTTP get with the specified path.
+ *  (if it is not already there) and issues an HTTP GET with the specified path.
  *  If the path begins with '/' or './', then it is used as is.
  *  Otherwise, depending on the third argument, it is prepended with the
  *  location of the directory in which accessors are stored ('/accessors' on this host)
@@ -355,8 +355,10 @@ function getJavaScript(path, callback, module) {
         // Convert this to an absolute path for either a module or an accessor.
         if (module) {
             path = '/accessors/hosts/browser/modules/' + path;
-        } else {
+        } else if (path.indexOf('accessors/') != 0) {
             path = '/accessors' + path;
+        } else {
+            path = '/' + path;
         }
     }
     var request = new XMLHttpRequest();
