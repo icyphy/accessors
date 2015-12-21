@@ -34,19 +34,18 @@
  *  Please see the HueTermsOfUse.txt file for the API's terms of use.
  *  </p>
  *  
- *  <p> The following API requests are implemented.  Username 'ptolemyuser' is
- *  registered automatically; all other usernames must request registration.  
- *  Any username registration request will be accepted.
+ *  <p> The following API requests are implemented.  Each request 
+ *  (other than GET /  and POST /api/) is checked for user authorization.
+ *  Any new username registration request will be accepted.
  *  
  *  GET /
- *  The Hue accessor uses this to check if bridge is available.  
- *  Returns {available : true}. 
+ *  Check if bridge is available.  Returns {available : true}. 
  *  
  *  POST /api/
  *  Add a user to list of registered users, optionally specifying a username.  
  *  Body is of the form 
  *  {"devicetype": "my_hue_app#iphone peter"} 
- *  to request a newly generated username, where "devicetype" is
+ *  to request a newly generated username, where "devicetype" is of the form
  *  <application_name>#<devicename>
  *  Add a "username" field to explicitly specify the username,
  *  {"devicetype": "my_hue_app#iphone peter", "username": "peter"}
@@ -61,14 +60,16 @@
  *  GET information on all lights.
  *  
  *  GET /api/<username>/lights/<id>/
- *  Get information about the light with id <id>.
+ *  Get information about the light with id <id> .
  *  
  *  PUT /api/<username>/lights/<id>/state/
- *  Set the state of the light with id <id>.
+ *  Set the state of the light with id <id> .
+ *  
+ *  Other requests return {supported : false} .
  *  </p>
  * 
  *  @accessor devices/MockHueBridge
- *  @input {string} URI The path  
+ *  @input {string} URI The path of the request.  
  *  @input {string} method The HTTP request method.
  *  @input {JSON} body The body of the HTTP request, if any.
  *  @output {string} response The response to be returned to the HTTP request.
@@ -82,8 +83,6 @@
 var mockHueBridges = require("mockHueBridges");
 var bridge;
 var connection;
-
-var lights;
 var handle;
 var transitionTime = 400;  // Default transition time is 400 ms
 
@@ -120,7 +119,10 @@ exports.setup = function() {
  * initialize its state.
  */
 exports.initialize = function() {
-	bridge = new mockHueBridges.MockHueBridge();
+	// mockHueBridges.MockHueBridge is an object containing the results
+	// of a self-executing function.  This, in essence, creates a singleton
+	// object with a set of functions as its public API.
+	bridge = mockHueBridges.MockHueBridge;
 	connection = bridge.connect(get('bridgeID'));
 	connection.initializeToDefault();
 	
