@@ -241,7 +241,7 @@ exports.instantiate = function(code, require, getAccessorCode) {
             throw 'This swarmlet host does not support require().';
         };
     }
-
+    
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code using the above function definitions
 

@@ -43,6 +43,10 @@ exports.setup = function() {
     parameter('p', {'value':42});                   // Untyped, with numeric value.
 }
 
+exports.fire = function() {
+    console.log('TestAccessor fired.');
+}
+
 exports.initialize = function() {
     // Respond to any input by updating them all.
     addInputHandler('untyped', function() {

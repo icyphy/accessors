@@ -1,5 +1,6 @@
-/** Test for the Node.js Swarmlet host.
- */
+a = instantiate('hosts/common/test/SimpleTestAccessor');
+a.initialize();
+a.fire();
+quit;
 
-var host = require('./host.js');
 
