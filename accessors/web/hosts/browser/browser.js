@@ -41,6 +41,8 @@
  *  specification will be loaded from the accessor library stored on the host.
  *  If the path is absolute (beginning with '/'), then the accessor specification
  *  will be loaded from the web server providing this swarmlet host at that path.
+ *  If the accessor defines an initialize() function, then this function will
+ *  execute its initialize() function after generating the web page.
  *  @path The path to the accessor.
  *  @param id The id of the page element into which to insert the generated HTML.
  */
@@ -54,7 +56,7 @@ function generate(path, id) {
                + error);
     };
     // Load common/commonHost.js code asynchronously.
-    require('/accessors/hosts/common/commonHost.js', function(error, a) {
+    require('/accessors/hosts/common/commonHost.js', function(error, commonHost) {
         if (error) {
             alert('Failed to load commonHost.js: ' + error);
         } else {
@@ -68,7 +70,7 @@ function generate(path, id) {
             try {
                 // The following will define a global variable 'accessor'
                 // if it is not already defined.
-                accessor = a.instantiate(code, getAccessorCode, bindings);
+                accessor = commonHost.instantiate(code, getAccessorCode, bindings);
             } catch(error) {
                 reportError(error);
                 return;
@@ -110,11 +112,6 @@ function generateFromInstance(instance, id) {
     // per web page, create or set a global variable 'accessor' that will
     // be available as a property of the window object.
     accessor = instance;
-    
-    // Make the local invokeHandlers() function available through
-    // the accessor global variable so that elements on the web page
-    // can react to changes by invoking the function.
-    accessor.invokeHandlers = invokeHandlers;
 }
 
 /** Generate a table with the specified title and contents and
@@ -412,28 +409,6 @@ function getJavaScript(path, callback, module) {
  */
 function getParameter(name) {
     return getInputOrParameter(name, 'parameter');
-}
-
-/** Invoke handlers for the specified input, if there are any.
- *  Also invoke any handlers that have been registered to respond to any input.
- *  @param name The name of the input.
- */
-function invokeHandlers(name) {
-    if (accessor.inputHandlers[name] && accessor.inputHandlers[name].length > 0) {
-        for (var i = 0; i < accessor.inputHandlers[name].length; i++) {
-            if (typeof accessor.inputHandlers[name][i] === 'function') {
-                accessor.inputHandlers[name][i]();
-            }
-        }
-    }
-    // Next, invoke handlers registered to handle any input.
-    if (accessor.anyInputHandlers.length > 0) {
-        for (var i = 0; i < accessor.anyInputHandlers.length; i++) {
-            if (typeof accessor.anyInputHandlers[i] === 'function') {
-                accessor.anyInputHandlers[i]();
-            }
-        }
-    }
 }
 
 /** Return a module whose functionality is given in JavaScript at the specified path

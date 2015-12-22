@@ -35,7 +35,39 @@ var commonHost = require('../commonHost.js');
 var instance = commonHost.instantiate(code);
 
 // Invoke the initialize function.
-instance.exports.initialize();
+instance.initialize();
 
 // Examine the instance in JSON format.
-console.log('Instance of TestAccessor: %j', instance);
+console.log('Instance of TestAccessor: %j\nTests:', instance);
+
+function test(testName, expression, expectedValue) {
+    if (expression != expectedValue) {
+        throw('Test failed: ' + testName
+                + '. Expected: ' + expectedValue
+                + ', but got: ' + expression);
+    } else {
+        console.log('Test passed: ' + testName);
+    }
+}
+
+// Check getParameter() with default value.
+test('getParameter', instance.getParameter('p'), 42);
+
+// Check setParameter() and getParameter.
+instance.setParameter('p', 12);
+test('setParameter', instance.getParameter('p'), 12);
+
+// Check get().
+test('get', instance.get('numeric'), 0);
+
+// Check get() with input undefined.
+test('get with undefined', instance.get('boolean'), undefined);
+
+// Check provideInput().
+instance.provideInput('boolean', true);
+test('provideInput()', instance.get('boolean'), true);
+
+// Check inputHandlers, send, and latestOutput.
+instance.invokeHandlers();
+test('inputHandlers, send, and latestOutput', instance.latestOutput('negation'), false);
+
