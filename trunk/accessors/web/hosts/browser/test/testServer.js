@@ -1,14 +1,18 @@
 
 // This is a simple Node.js server that you can run.
-// Then point your browser to http://localhost:8080/test.html
+// Then point your browser to http://localhost:8080/hosts/browser/test/testWebPage.html
 // to open the test file.
 
-// This server will serve files in the same directory or
-// any subdirectory from which it is started.
+// This server will serve files from a base directory three
+// levels up from the directory in which this script is located.
+// Specifically, the base directory is __dirname/../..,
+// where __dirname is the directory where this script is located.
+
 // Only utf-8 encoded files will be served.
 
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
 
 var server = http.createServer();
 server.on('request', function(request, response) {
@@ -24,16 +28,16 @@ server.on('request', function(request, response) {
         //    '/accessors/hosts/common/test/TestAccessor.js'
         // but the actual file location is:
         //    '/accessors/web/hosts/common/test/TestAccessor
-        // So to make the code work both in this test server and in the terraswarm
-        // server, we assume this server is executed in the directory
-        //    '/accessors/web'
         // and hence the path should not include any leading '/accessors/'.
         if (url.indexOf('accessors/') == 0) {
             url = url.substring(10);
         }
+
         // Disallow any ..
         if (url.indexOf('..') < 0) {
-            fs.readFile(url, 'utf-8', function(error, data) {
+            var base = path.join(__dirname, '..', '..', '..');
+            var location = path.join(base, url);
+            fs.readFile(location, 'utf8', function(error, data) {
                 if (error) {
                     response.statusCode = 404;
                     response.end(error.message);

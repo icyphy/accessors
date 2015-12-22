@@ -12,7 +12,9 @@
         var accessorPath = '/accessors/hosts/common/test/TestAccessor';
         // The second argument says to insert the accessor interface in the element
         // with id 'accessor', defined below.
-        generate(accessorPath, 'accessor');
+        // This is invoked from the 'window' object because that is apparently where
+        // any functions defined in a script element are put.
+        window.generate(accessorPath, 'accessor');
     });
     </script>
 </head>

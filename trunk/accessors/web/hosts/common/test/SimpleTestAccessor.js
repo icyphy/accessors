@@ -1,4 +1,4 @@
-// Test accessor for various accessor hosts, but not for the common host.
+// Test code for functions to be shared among accessor hosts.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -23,14 +23,12 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Test accessor for various accessor hosts.
- *  This accessor requires that the host implement the require() function,
- *  which the common host does not.
+ *  This accessor is designed to be instantiable on any host, including
+ *  the common host, which does not implement the require() function.
  *
- *  @accessor TestAccessor
+ *  @accessor SimpleTestAccessor
  *  @author Edward A. Lee
  */
-
-var util = require('util');
 
 exports.setup = function() {
     input('untyped');                               // Untyped input.
@@ -47,7 +45,8 @@ exports.initialize = function() {
     // Respond to any input by updating them all.
     addInputHandler('untyped', function() {
         send('typeOfUntyped', typeof get('untyped'));
-        send('jsonOfUntyped', util.format('JSON for untyped input: %j', get('untyped')));
+        send('jsonOfUntyped', 'JSON for untyped input: '
+                + JSON.toString(get('untyped')));
     });
     addInputHandler('numeric', function() {
         send('numericPlusP', get('numeric') + getParameter('p'));
