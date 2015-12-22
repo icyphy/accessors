@@ -4,11 +4,4 @@ in Node.js, just do this:
 
 > node testCommon.js
 
-You may need to first install the 'fs' (filesystem) Node.js module using one of the
-following:
-
-> npm install fs
-> npm install -g fs
-> sudo npm install -g fs
-
 Comments and suggestions to eal@eecs.berkeley.edu.

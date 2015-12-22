@@ -29,10 +29,10 @@
  *  In order to use this module, the host must provide implementations of accessor
  *  functions that cannot be provided in a host-independent way, including get(),
  *  send(), and require(). In addition, in order to support implement() and extend(),
- *  the host should provide an implementation of a getAccessor() function, which
+ *  the host should provide an implementation of a getAccessorCode() function, which
  *  returns an accessor definition (as a string) given the name of the accessor
  *  (modified as needed with a path to the accessor).  For example,
- *  ```getAccessor('net/REST')``` should return the JavaScript code defining
+ *  ```getAccessorCode('net/REST')``` should return the JavaScript code defining
  *  the REST accessor.
  *
  *  @module accessor
@@ -75,11 +75,11 @@
  *  @param code The accessor source code.
  *  @param require The host's implementation of the require function, or null if the host
  *   does not support any external modules.
- *  @param getAccessor A function that will retrieve the source code of a specified
+ *  @param getAccessorCode A function that will retrieve the source code of a specified
  *   accessor (used to implement the extend() and implement() functions), or null if
  *   the host does not support accessors that extend other accessors.
  */
-exports.accessor = function(code, require, getAccessor) {
+exports.instantiate = function(code, require, getAccessorCode) {
     if (!code) {
         throw 'No accessor code specified.';
     }

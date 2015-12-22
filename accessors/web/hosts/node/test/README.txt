@@ -2,11 +2,13 @@ This directory contains an implementation of a Node.js swarmlet host.
 Prerequisite modules that must be installed in Node using npm:
  * fs: file system access
 
-Start node, requiring the host.js file:
+To start the interactive version of the Node.js host:
 
-> node -e testNodeHost.js
+> node nodeHost.js
 
-You will receive a reply "undefined", which is normal.
+instantiate('hosts/common/test/SimpleTestAccessor');
+
+
 
 Set a search path for accessors:
 
