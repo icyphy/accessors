@@ -63,15 +63,25 @@ startHost = function() {
     });
     // Emitted whenever a command is entered.
     rl.on('line', function(command) {
+        // Remove any trailing semicolon.
+        command = command.replace(/;$/, '');
+        
+        ///////////////
+        // exit and quit functions.
         // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
+        // Also, tolerate trailing semicolon.
         if (command.match(/^\s*quit\s*$/i)
                 || command.match(/^\s*exit\s*$/i)) {
             console.log('exit');
             rl.close();
             return;
         }
+        ///////////////
+        // Evaluate anything else.
         try {
-            console.log(eval(command));
+            // Using eval.call evaluates in the context 'this', which is presumably
+            // the global scope.
+            console.log(eval.call(this, command));
         } catch(error) {
             console.log(error);
         }
@@ -93,9 +103,16 @@ startHost = function() {
     });
     
     console.log('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
-    rl.setPrompt('nsh > ');
+    rl.setPrompt('nsh> ');
     rl.prompt();
 }
+
+// Table of accessor instances indexed by their exports field.
+// This allows us to retrieve the full accessor data structure, but to only
+// expose to the user of this module the exports field of the accessor.
+// Note that this host does not support removing accessors, so the instance
+// will be around as long as the process exists.
+var _accessorInstanceTable = {};
 
 /** Instantiate and return an accessor from its fully qualified name.
  *  This will throw an exception if there is no such accessor on the accessor
@@ -123,7 +140,13 @@ instantiate = function(name) {
     console.log('Instantiating accessor at: ' + location);
     // FIXME: Second argument should be requireLocal function that
     // searches first for local modules.
-    return commonHost.instantiate('hosts/common/test/TestAccessor', require, null);
+    var instance = commonHost.instantiate(code, require, null);
+    
+    // Record the instance indexed by its exports field.
+    _accessorInstanceTable[instance.exports] = instance;
+    
+    // Return the exports field.
+    return instance.exports;
 }
 
 exports = {
