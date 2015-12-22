@@ -26,13 +26,13 @@
 var fs = require('fs');
 
 // Read the accessor source code.
-var code = fs.readFileSync('./TestAccessor.js', 'utf-8');
+var code = fs.readFileSync('./SimpleTestAccessor.js', 'utf8');
 
 // Require the accessor module to turn the source code into an accessor instance.
-var a = require('../accessor.js');
+var commonHost = require('../commonHost.js');
 
 // Create an accessor instance.
-var instance = a.accessor(code);
+var instance = commonHost.instantiate(code);
 
 // Invoke the initialize function.
 instance.exports.initialize();
