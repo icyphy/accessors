@@ -38,4 +38,4 @@ var instance = commonHost.instantiate(code);
 instance.exports.initialize();
 
 // Examine the instance in JSON format.
-console.log("Instance of TestAccessor: %j", instance);
+console.log('Instance of TestAccessor: %j', instance);

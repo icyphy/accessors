@@ -107,13 +107,6 @@ startHost = function() {
     rl.prompt();
 }
 
-// Table of accessor instances indexed by their exports field.
-// This allows us to retrieve the full accessor data structure, but to only
-// expose to the user of this module the exports field of the accessor.
-// Note that this host does not support removing accessors, so the instance
-// will be around as long as the process exists.
-var _accessorInstanceTable = {};
-
 /** Instantiate and return an accessor from its fully qualified name.
  *  This will throw an exception if there is no such accessor on the accessor
  *  search path.
@@ -138,13 +131,14 @@ instantiate = function(name) {
         throw('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     console.log('Instantiating accessor at: ' + location);
-    // FIXME: Second argument should be requireLocal function that
+    // FIXME: Second argument should be a getAccessorCode() function.
+    // The bindings should be a bindings object where require == a requireLocal function that
     // searches first for local modules.
-    var instance = commonHost.instantiate(code, require, null);
-    
-    // Record the instance indexed by its exports field.
-    _accessorInstanceTable[instance.exports] = instance;
-    
+    var bindings = {
+        'require': require,
+    }
+    var instance = commonHost.instantiate(code, require, bindings);
+        
     // Return the exports field.
     return instance.exports;
 }
