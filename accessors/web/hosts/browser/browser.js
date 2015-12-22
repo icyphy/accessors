@@ -58,10 +58,17 @@ function generate(path, id) {
         if (error) {
             alert('Failed to load commonHost.js: ' + error);
         } else {
+            // Function bindings for the accessor:
+            var bindings = {
+                'get': get,
+                'getParameter': getParameter,
+                'require': require,
+                'send': send,
+            };
             try {
                 // The following will define a global variable 'accessor'
                 // if it is not already defined.
-                accessor = a.instantiate(code, require, getAccessorCode);
+                accessor = a.instantiate(code, getAccessorCode, bindings);
             } catch(error) {
                 reportError(error);
                 return;

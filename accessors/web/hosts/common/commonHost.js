@@ -22,7 +22,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This module provides a host-independent that, given the code specifying
+/** This module provides a host-independent function that, given the code specifying
  *  an accessor as a string, constructs a data structure for that accessor that
  *  the host can use to interact with the accessor.
  *
@@ -72,17 +72,41 @@
  *  options were specified.  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
  *
+ *  The bindings parameter provides function bindings for functions that are used by
+ *  accessors.  Any that are not provided will be provided with defaults. These are:
+ *
+ *  * '''require''': The host's implementation of the require function.
+ *     The default implementation throws an exception indicating that the host
+ *     does not support any external modules.
+ *  * '''get''': A function to retrieve the value of an input. The default
+ *     implementation returns the the value specified by a setInput() call, or
+ *     if there has been no setInput() call, then the value provided in the
+ *     options argument of the input() call, or null if there is no value.
+ *  * '''getParameter''': A function to retrieve the value of a parameter. The default
+ *     implementation returns the the value specified by a setParameter() call, or
+ *     if there has been no setParameter() call, then the value provided in the
+ *     options argument of the parameter() call, or null if there is no value.
+ *  * '''send''': A function to send an output. The default implementation produces
+ *     the output using console.log().
+ *
  *  @param code The accessor source code.
- *  @param require The host's implementation of the require function, or null if the host
- *   does not support any external modules.
  *  @param getAccessorCode A function that will retrieve the source code of a specified
  *   accessor (used to implement the extend() and implement() functions), or null if
  *   the host does not support accessors that extend other accessors.
+ *  @param bindings The function bindings to be used by the accessor.
  */
-exports.instantiate = function(code, require, getAccessorCode) {
+exports.instantiate = function(code, getAccessorCode, bindings) {
     if (!code) {
         throw 'No accessor code specified.';
     }
+    var get = null, getParameter = null, require = null, send = null;
+    if (bindings) {
+        get = bindings['get'];
+        getParameter = bindings['getParameter'];
+        require = bindings['require'];
+        send = bindings['send'];
+    }
+    
     // CommonJS specification requires a 'module' object with an 'id' field
     // and an optional 'uri' field. The spec says that module.id should be
     // a valid argument to require(). Here, we are just given the JavaScript
@@ -115,6 +139,9 @@ exports.instantiate = function(code, require, getAccessorCode) {
     var inputHandlers = {};
     var anyInputHandlers = [];
     var inputHandlersIndex = {};
+    
+    // Counter used to assign unique IDs to each input handler.
+    var inputHandlerID = 0;
     
     /** Add an input handler for the specified input and return a handle that
      *  can be used to remove the input handler.
@@ -243,6 +270,42 @@ exports.instantiate = function(code, require, getAccessorCode) {
     }
     
     ////////////////////////////////////////////////////////////////////
+    //// Provide defaults for the top-level functions that the accessor might invoke.
+    
+    if (!get) {
+        get = function(name) {
+            // FIXME: Type handling.
+            if (!inputs[name]) {
+                throw('No input named ' + name);
+            }
+            // If setInput() has been called, return that value.
+            if (inputs[name]['currentValue']) {
+                return inputs[name]['currentValue'];
+            }
+            return inputs[name]['value'];
+        };
+    }
+    if (!getParameter) {
+        getParameter = function(name) {
+            // FIXME: Type handling.
+            if (!parameters[name]) {
+                throw('No parameter named ' + name);
+            }
+            // If setParameter() has been called, return that value.
+            if (parameters[name]['currentValue']) {
+                return parameters[name]['currentValue'];
+            }
+            return parameters[name]['value'];
+        };
+    }
+    if (!send) {
+        send = function(name, value) {
+            // FIXME: Type handling?
+            console.log('"' + name + '" output produced: ' + value);
+        };
+    };
+    
+    ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code using the above function definitions
 
     // In strict mode, eval() cannot modify the scope of this function.
@@ -271,7 +334,7 @@ exports.instantiate = function(code, require, getAccessorCode) {
     ////////////////////////////////////////////////////////////////////
     //// Construct and return the final data structure.
 
-    return {
+    var instance = {
         'anyInputHandlers': anyInputHandlers,
         'exports': exports,
         'inputHandlers': inputHandlers,
@@ -284,9 +347,59 @@ exports.instantiate = function(code, require, getAccessorCode) {
         'parameterList' : parameterList,
         'parameters': parameters,
     };
+    
+    // Record the instance indexed by its exports field.
+    _accessorInstanceTable[instance.exports] = instance;
+
+    return instance;
 }
 
-// Counter used to assign unique IDs to each input handler.
-var inputHandlerID = 0;
+/** Set an input of the specified accessor to the specified value.
+ *  @param accessor The exports field of an accessor data structure returned
+ *   by instantiate().
+ *  @param name The name of the input to set.
+ *  @param value The value to set the input to.
+ */
+exports.setInput = function(accessor, name, value) {
+    var a = _accessorInstanceTable[accessor];
+    if (!a) {
+        // This should not happen.
+        throw('No corresponding accessor: ' + accessor);
+    }
+    if (!a.inputs[name]) {
+        throw('setInput(): Accessor has no input named ' + name);
+    }
+    a.inputs[name].currentValue = value;
+}
+
+/** Set a parameter of the specified accessor to the specified value.
+ *  @param accessor The exports field of an accessor data structure returned
+ *   by instantiate().
+ *  @param name The name of the parameter to set.
+ *  @param value The value to set the parameter to.
+ */
+exports.setParameter = function(accessor, name, value) {
+    var a = _accessorInstanceTable[accessor];
+    if (!a) {
+        // This should not happen.
+        throw('No corresponding accessor: ' + accessor);
+    }
+    if (!a.parameters[name]) {
+        throw('setParameter(): Accessor has no parameter named ' + name);
+    }
+    a.parameters[name].currentValue = value;
+}
+
+////////////////////////////////////////////////////////////////////
+//// Module variables.
+
+/** Table of accessor instances indexed by their exports field.
+ *  This allows us to retrieve the full accessor data structure, but to only
+ *  expose to the user of this module the exports field of the accessor.
+ *  Note that this host does not support removing accessors, so the instance
+ *  will be around as long as the process exists.
+ */
+var _accessorInstanceTable = {};
+
 
 

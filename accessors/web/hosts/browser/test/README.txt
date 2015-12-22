@@ -4,7 +4,7 @@ To run the test, first run the test server.
 This test server will serve any files in the accessors repo that are referenced
 using '/accessors/...'.
 
-> node hosts/browser/test/testServer.js &
+> node testServer.js &
 
 Then, point your favorite browser to
 
