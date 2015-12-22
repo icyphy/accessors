@@ -23,7 +23,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This module provides a Node.js swarmlet host.
- *  This is an interactive program.
+ *  This is an interactive program that takes inputs from stdin in the form
+ *  of JavaScript expressions or statements.
+ *
  *  FIXME: Instructions
  *
  *  @module nodeHost
@@ -35,6 +37,9 @@ var fs = require('fs');
 
 // Locally defined modules.
 var commonHost = require('../common/commonHost.js');
+
+// Indicator of whether the interactive host is already running.
+var interactiveHostRunning = false;
 
 /** Module variable giving the paths to search for accessors.
  *  By default this module assumes that accessors are stored in
@@ -48,10 +53,27 @@ var accessorPath = [path.join(__dirname, '..', '..')];
  *  and executes them.
  */ 
 startHost = function() {
+    if (interactiveHostRunning) {
+        console.log('Interactive host is already running.');
+        return;
+    }
+    interactiveHostRunning = true;
     var readline = require('readline');
+    
+    // Support auto completion for common commands.
     function completer(line) {
-        var completions = 'help exit quit instantiate('.split(' ')
-        var hits = completions.filter(function(c) { return c.indexOf(line) == 0 })
+        var completions = [
+            'exit',
+            'help',
+            'instantiate(',
+            'setInput(',
+            'setParameter(',
+            'quit',
+        ];
+        var hits = completions.filter(function(candidate) {
+            // FIXME: need a better filter.
+            return candidate.indexOf(line) == 0;
+        });
         // show all completions if none found
         return [hits.length ? hits : completions, line]
     }
@@ -73,6 +95,7 @@ startHost = function() {
         if (command.match(/^\s*quit\s*$/i)
                 || command.match(/^\s*exit\s*$/i)) {
             console.log('exit');
+            interactiveHostRunning = false;
             rl.close();
             return;
         }
@@ -137,14 +160,19 @@ instantiate = function(name) {
     var bindings = {
         'require': require,
     }
-    var instance = commonHost.instantiate(code, require, bindings);
-        
-    // Return the exports field.
-    return instance.exports;
+    return commonHost.instantiate(code, require, bindings);
 }
 
+// Define additional functions that should appear in the global scope
+// so that they can be invoked on the command line.
+setInput = commonHost.setInput;
+setParameter = commonHost.setParameter;
+
+// In case this gets used a module, create an exports object.
 exports = {
     'instantiate': instantiate,
+    'setInput': commonHost.setInput,
+    'setParameter': commonHost.setParameter,
     'startHost': startHost,
 };
 
