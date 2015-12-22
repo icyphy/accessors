@@ -35,7 +35,7 @@
  *  ```getAccessorCode('net/REST')``` should return the JavaScript code defining
  *  the REST accessor.
  *
- *  @module accessor
+ *  @module commonHost
  *  @authors: Edward A. Lee
  */
  
@@ -79,8 +79,8 @@
  *     The default implementation throws an exception indicating that the host
  *     does not support any external modules.
  *  * '''get''': A function to retrieve the value of an input. The default
- *     implementation returns the the value specified by a setInput() call, or
- *     if there has been no setInput() call, then the value provided in the
+ *     implementation returns the the value specified by a provideInput() call, or
+ *     if there has been no provideInput() call, then the value provided in the
  *     options argument of the input() call, or null if there is no value.
  *  * '''getParameter''': A function to retrieve the value of a parameter. The default
  *     implementation returns the the value specified by a setParameter() call, or
@@ -210,6 +210,49 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
         return result;
     }
     
+    /** Invoke any registered handlers for all inputs or for a specified input.
+     *  Also invoke any handlers that have been registered to respond to any input,
+     *  if there are any such handlers.
+     *  If no input name is given, or the name is null, then invoke handlers for
+     *  all inputs that have been provided with input value using provideInput()
+     *  since the last time input handlers were invoked.
+     *  @param name The name of the input.
+     */
+    function invokeHandlers(name) {
+        // To avoid code duplication, define a local function.
+        var invokeSpecificHandler = function(name) {
+            if (inputHandlers[name] && inputHandlers[name].length > 0) {
+                for (var i = 0; i < inputHandlers[name].length; i++) {
+                    if (typeof inputHandlers[name][i] === 'function') {
+                        inputHandlers[name][i]();
+                    }
+                }
+            }
+        };
+
+        if (name) {
+            // Handling a specific input.
+            invokeSpecificHandler(name);
+        } else {
+            // No specific input has been given.
+            for (var i = 0; i < inputList.length; i++) {
+                name = inputList[i];
+                if (inputs[name].pendingHandler) {
+                    inputs[name].pendingHandler = false;
+                    invokeSpecificHandler(name);
+                }
+            }
+        }
+        // Next, invoke handlers registered to handle any input.
+        if (anyInputHandlers.length > 0) {
+            for (var i = 0; i < anyInputHandlers.length; i++) {
+                if (typeof anyInputHandlers[i] === 'function') {
+                    anyInputHandlers[i]();
+                }
+            }
+        }
+    }
+
     /** Remove the input handler with the specified handle, if it exists.
      *  @param handle The handle.
      *  @see #addInputHandler()
@@ -236,9 +279,22 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
      *  addInputHandler is null.
      */
     function nullHandlerFunction() {}
+    
+    /** Set an input of this accessor to the specified value.
+     *  @param name The name of the input to set.
+     *  @param value The value to set the input to.
+     */
+    function provideInput(name, value) {
+        if (!inputs[name]) {
+            throw('provideInput(): Accessor has no input named ' + name);
+        }
+        inputs[name].currentValue = value;
+        // Mark this input as requiring invocation of an input handler.
+        inputs[name].pendingHandler = true;
+    }
 
     ////////////////////////////////////////////////////////////////////
-    //// Define the functions that define outputs and parameters.
+    //// Define the functions that define outputs.
     
     var outputList = [];
     var outputs = {};
@@ -249,6 +305,19 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
         outputList.push(name);
         outputs[name] = options || {};
     }
+    
+    /** Return the latest value produced on this output, or null if no
+     *  output has been produced.
+     */
+    function latestOutput(name) {
+        if (!outputs[name]) {
+            throw('lastestOutput(): No output named ' + name);
+        }
+        return outputs[name].latestOutput;
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    //// Define the functions that define parameters.
 
     var parameterList = [];
     var parameters = {};
@@ -258,6 +327,17 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     function parameter(name, options) {
         parameterList.push(name);
         parameters[name] = options || {};
+    }
+
+    /** Set a parameter of the specified accessor to the specified value.
+     *  @param name The name of the parameter to set.
+     *  @param value The value to set the parameter to.
+     */
+    function setParameter(name, value) {
+        if (!parameters[name]) {
+            throw('setParameter(): Accessor has no parameter named ' + name);
+        }
+        parameters[name].currentValue = value;
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -276,9 +356,9 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
         get = function(name) {
             // FIXME: Type handling.
             if (!inputs[name]) {
-                throw('No input named ' + name);
+                throw('get(name): No input named ' + name);
             }
-            // If setInput() has been called, return that value.
+            // If provideInput() has been called, return that value.
             if (inputs[name]['currentValue']) {
                 return inputs[name]['currentValue'];
             }
@@ -289,7 +369,7 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
         getParameter = function(name) {
             // FIXME: Type handling.
             if (!parameters[name]) {
-                throw('No parameter named ' + name);
+                throw('getParameter(name): No parameter named ' + name);
             }
             // If setParameter() has been called, return that value.
             if (parameters[name]['currentValue']) {
@@ -301,7 +381,11 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     if (!send) {
         send = function(name, value) {
             // FIXME: Type handling?
-            console.log('"' + name + '" output produced: ' + value);
+            // FIXME: If the port is connected, call provideInput on the destination(s).
+            if (!outputs[name]) {
+                throw('send(name, value): No output named ' + name);
+            }
+            outputs[name].latestOutput = value;
         };
     };
     
@@ -315,12 +399,28 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     // such as input() will need to be bound to the particular implementation
     // of input() within this accessor function, so that that function
     // updates the proper field of this function.
-    var wrapper = eval('(function(addInputHandler, exports, input, removeInputHandler, require) {'
+    var wrapper = eval('(function( \
+            addInputHandler, \
+            exports, \
+            get, \
+            getParameter, \
+            input, \
+            removeInputHandler, \
+            require, \
+            send) {'
             + code
             + '})');
     
     // Populate the exports field.
-    wrapper(addInputHandler, exports, input, removeInputHandler, require);
+    wrapper(
+            addInputHandler,
+            exports,
+            get,
+            getParameter,
+            input,
+            removeInputHandler,
+            require,
+            send);
         
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the setup() function to populate the structure.
@@ -330,64 +430,38 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     } else {
         throw 'No setup() function.';
     }
-    
+        
     ////////////////////////////////////////////////////////////////////
     //// Construct and return the final data structure.
 
     var instance = {
         'anyInputHandlers': anyInputHandlers,
         'exports': exports,
+        'fire': exports.fire,
+        'get': get,
+        'getParameter': getParameter,
+        'initialize': exports.initialize,
         'inputHandlers': inputHandlers,
         'inputHandlersIndex': inputHandlersIndex,
         'inputList' : inputList,
         'inputs': inputs,
+        'invokeHandlers': invokeHandlers,
+        'latestOutput': latestOutput,
         'module': module,
         'outputList' : outputList,
         'outputs': outputs,
         'parameterList' : parameterList,
         'parameters': parameters,
+        'send': send,
+        'provideInput': provideInput,
+        'setParameter': setParameter,
+        'wrapup': exports.wrapup,
     };
     
     // Record the instance indexed by its exports field.
     _accessorInstanceTable[instance.exports] = instance;
 
     return instance;
-}
-
-/** Set an input of the specified accessor to the specified value.
- *  @param accessor The exports field of an accessor data structure returned
- *   by instantiate().
- *  @param name The name of the input to set.
- *  @param value The value to set the input to.
- */
-exports.setInput = function(accessor, name, value) {
-    var a = _accessorInstanceTable[accessor];
-    if (!a) {
-        // This should not happen.
-        throw('No corresponding accessor: ' + accessor);
-    }
-    if (!a.inputs[name]) {
-        throw('setInput(): Accessor has no input named ' + name);
-    }
-    a.inputs[name].currentValue = value;
-}
-
-/** Set a parameter of the specified accessor to the specified value.
- *  @param accessor The exports field of an accessor data structure returned
- *   by instantiate().
- *  @param name The name of the parameter to set.
- *  @param value The value to set the parameter to.
- */
-exports.setParameter = function(accessor, name, value) {
-    var a = _accessorInstanceTable[accessor];
-    if (!a) {
-        // This should not happen.
-        throw('No corresponding accessor: ' + accessor);
-    }
-    if (!a.parameters[name]) {
-        throw('setParameter(): Accessor has no parameter named ' + name);
-    }
-    a.parameters[name].currentValue = value;
 }
 
 ////////////////////////////////////////////////////////////////////
