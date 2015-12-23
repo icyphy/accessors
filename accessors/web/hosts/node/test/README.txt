@@ -1,3 +1,5 @@
+$Id$
+
 This directory contains an implementation of a Node.js swarmlet host.
 
 To start the interactive version of the Node.js host:
@@ -39,4 +41,5 @@ You will see the following output:
    undefined
    nsh> quit;
    exit
+
 
