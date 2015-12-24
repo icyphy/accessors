@@ -29,26 +29,21 @@
  *  @author Edward A. Lee
  */
 
-var util = require('util');
-
 exports.setup = function() {
     input('input', {'type':'number', 'value':0});
     output('output', {'type':'number'});
-    var gain1 = instantiate('hosts/common/test/TestGainAccessor');
-    var gain2 = instantiate('hosts/common/test/TestGainAccessor');
+    var gain = instantiate('hosts/common/test/TestGainAccessor');
+    gain.setParameter('gain', 4);
     var adder = instantiate('hosts/common/test/TestAdderAccessor');
-    gain2.setParameter('gain', 4);
-    connect('input', gain1, 'input');
-    connect('input', gain2, 'input');
-    connect(gain1, 'output', adder, 'inputLeft');
-    connect(gain2, 'output', adder, 'inputRight');
-    connect(adder, 'output', 'output');
+    connect('input', adder, 'inputLeft');
+    connect('input', gain, 'input');
+    connect(gain, 'scaled', adder, 'inputRight');
+    connect(adder, 'sum', 'output');
 }
 
 exports.fire = function() {
     console.log('TestCompositeAccessor fired.');
 }
 
-exports.initialize = function() {
-    // FIXME: This should be provided by a base class accessor.
-}
+// NOTE: If you provide an initialize() function, it is up to you to initialize
+// the contained accessors.

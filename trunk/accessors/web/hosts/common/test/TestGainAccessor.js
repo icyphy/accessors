@@ -30,12 +30,12 @@
 
 exports.setup = function() {
     input('input', {'type':'number', 'value':0});
-    output('output', {'type':'number'});
+    output('scaled', {'type':'number'});
     parameter('gain', {'type':'number', 'value':2});
 }
 
 exports.initialize = function() {
     addInputHandler('input', function() {
-        send('output', get('input') * getParameter('gain'));
+        send('scaled', get('input') * getParameter('gain'));
     });
 }

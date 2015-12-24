@@ -31,9 +31,9 @@
 exports.setup = function() {
     input('inputLeft', {'type':'number', 'value':0});
     input('inputRight', {'type':'number', 'value':0});
-    output('output', {'type':'number'});
+    output('sum', {'type':'number'});
 }
 
 exports.fire = function() {
-    send('output', get('inputLeft') + get('inputRight'));
+    send('sum', get('inputLeft') + get('inputRight'));
 }
