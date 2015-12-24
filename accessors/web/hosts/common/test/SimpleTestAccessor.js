@@ -55,3 +55,6 @@ exports.initialize = function() {
         send('negation', !get('boolean'));
     });
 }
+exports.fire = function() {
+    console.log('SimpleTestAccess.fire() invoked.');
+}
