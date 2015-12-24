@@ -71,3 +71,20 @@ test('provideInput()', instance.get('boolean'), true);
 instance.invokeHandlers();
 test('invokeHandlers, send, and latestOutput', instance.latestOutput('negation'), false);
 
+// Check composite accessors with manual scheduling.
+// Have to provide an implementation of instantiate(), which in this case will only
+// instantiate accessors in the current directory.
+getAccessorCode = function(name) {
+    var lastSlash = name.lastIndexOf('/');
+    if (lastSlash >= 0) {
+        name = name.substring(lastSlash + 1);
+    }
+    return fs.readFileSync(name + '.js', 'utf8');
+}
+var code = getAccessorCode('TestCompositeAccessor');
+var a = commonHost.instantiateFromCode(code, getAccessorCode);
+a.initialize()
+a.provideInput('input', 10)
+a.containedAccessors[0].invokeHandlers()
+a.containedAccessors[1].invokeHandlers()
+test('composite accessor with manual scheduling', a.latestOutput('output'), 50);

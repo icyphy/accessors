@@ -299,12 +299,28 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
      *  @param value The value to set the input to.
      */
     function provideInput(name, value) {
-        if (!inputs[name]) {
+        var input = inputs[name];
+        if (!input) {
             throw('provideInput(): Accessor has no input named ' + name);
         }
-        inputs[name].currentValue = value;
+        input.currentValue = value;
         // Mark this input as requiring invocation of an input handler.
-        inputs[name].pendingHandler = true;
+        input.pendingHandler = true;
+        
+        // If the input is connected on the inside, then provide the same input
+        // to the destination(s).
+        if (input.destinations) {
+            for (var i = 0; i < input.destinations.length; i++) {
+                var destination = input.destinations[i];
+                if (typeof destination === 'string') {
+                    // The destination is output port of this accessor.
+                    send(destination, value);
+                } else {
+                    // The destination is an input port of a contained accessor.
+                    destination.accessor.provideInput(destination.inputName, value);
+                }
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -392,14 +408,43 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             return parameters[name]['value'];
         };
     }
+    // Default initialization function initializes all contained accessors.
+    if (!exports.initialize) {
+        exports.initialize = function() {
+            if (instance.containedAccessors) {
+                for (var i = 0; i < instance.containedAccessors.length; i++) {
+                    if (instance.containedAccessors[i].initialize) {
+                        instance.containedAccessors[i].initialize();
+                    }
+                }
+            }
+        }
+    }
     if (!send) {
         send = function(name, value) {
             // FIXME: Type handling?
-            // FIXME: If the port is connected, call provideInput on the destination(s).
-            if (!outputs[name]) {
+            var output = outputs[name];
+            if (!output) {
                 throw('send(name, value): No output named ' + name);
             }
-            outputs[name].latestOutput = value;
+            output.latestOutput = value;
+            // console.log('Sending output through ' + name + ': ' + value);
+            if (output.destinations) {
+                for (var i = 0; i < output.destinations.length; i++) {
+                    var destination = output.destinations[i];
+                    if (typeof destination === 'string') {
+                        // The destination is output port of this accessor.
+                        if (instance.container) {
+                            instance.container.send(destination, value);
+                        } else {
+                            console.log('Output named "' + name + '" produced: ' + value);
+                        }
+                    } else {
+                        // The destination is an input port of a contained accessor.
+                        destination.accessor.provideInput(destination.inputName, value);
+                    }
+                }
+            }
         };
     };
     
@@ -421,7 +466,16 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
         // Not sure why it is needed, but this needs to be delegated to
         // an external function because the instantiate function that we are
         // within appears to not yet be defined.
-        var containedInstance = instantiateFromName(name, getAccessorCode, bindings);
+        // NOTE: Need to modify the bindings so that send() is not defined.
+        // This ensures that contained accessors use the default send().
+        var insideBindings = {};
+        for (var property in bindings) {
+            if (property !== bindings.send) {
+                insideBindings[property] = property[bindings];
+            }
+        }
+        var containedInstance = instantiateFromName(
+                name, getAccessorCode, insideBindings);
         containedInstance.container = instance;
         containedAccessors.push(containedInstance);
         return containedInstance;
@@ -571,8 +625,8 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     instance.outputs = outputs;
     instance.parameterList = parameterList;
     instance.parameters = parameters;
-    instance.send = send;
     instance.provideInput = provideInput;
+    instance.send = send;
     instance.setParameter = setParameter;
     instance.wrapup = exports.wrapup;
     
