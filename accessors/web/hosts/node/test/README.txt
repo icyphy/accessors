@@ -14,13 +14,40 @@ To instantiate and run a test accessor, do this:
 
 nsh> var a = instantiate('hosts/common/test/TestAccessor');
 undefined
+
+Below is an example of a complete session, to give you an idea of what can be done:
+
+---------------------start
+> node nodeHost.js 
+Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
+nsh> var a = instantiate('hosts/common/test/TestAccessor');
+Instantiating accessor at: /ptII/org/terraswarm/accessor/accessors/web/hosts/common/test/TestAccessor.js
+undefined
 nsh> a.initialize();
 undefined
-nsh> a.fire();
-TestAccessor fired.
+nsh> a.inputs
+{ untyped: {},
+  numeric: { type: 'number', value: 0 },
+  boolean: { type: 'boolean' } }
+nsh> a.provideInput('untyped', 'hello world');
 undefined
+nsh> a.invokeHandlers();
+undefined
+nsh> a.outputs
+{ typeOfUntyped: { type: 'string', latestOutput: 'string' },
+  jsonOfUntyped: 
+   { type: 'string',
+     latestOutput: 'JSON for untyped input: "hello world"' },
+  numericPlusP: { type: 'number' },
+  negation: { type: 'boolean' } }
+nsh> a.latestOutput('typeOfUntyped');
+string
+nsh> a.latestOutput('jsonOfUntyped');
+JSON for untyped input: "hello world"
 nsh> quit
 exit
+-----------------------end
+
 
 
 To run a simple test, assuming you are in this test directory:

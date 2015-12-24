@@ -48,6 +48,47 @@ var interactiveHostRunning = false;
  */
 var accessorPath = [path.join(__dirname, '..', '..')];
 
+/** Return the source code for an accessor from its fully qualified name.
+ *  This will throw an exception if there is no such accessor on the accessor
+ *  search path.
+ *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+ */
+getAccessorCode = function(name) {
+    var code;
+    // Append a '.js' to the name, if needed.
+    if (name.indexOf('.js') !== name.length - 3) {
+        name += '.js';
+    }
+    for (var i = 0; i < accessorPath.length; i++) {
+        var location = path.join(accessorPath[i], name);
+        try {
+            code = fs.readFileSync(location, 'utf8');
+        } catch(error) {
+            console.log(error);
+            continue;
+        }
+    }
+    if (!code) {
+        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+    }
+    return code;
+}
+
+/** Instantiate and return an accessor from its fully qualified name.
+ *  This will throw an exception if there is no such accessor on the accessor
+ *  search path.
+ *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+ */
+instantiate = function(name) {
+    console.log('Instantiating accessor at: ' + name);
+    // FIXME: The bindings should be a bindings object where require == a requireLocal
+    // function that searches first for local modules.
+    var bindings = {
+        'require': require,
+    }
+    return commonHost.instantiateFromName(name, getAccessorCode, bindings);
+}
+
 /** Start an interactive version of this host.
  *  This will produce a prompt on stdout that accepts JavaScript statements
  *  and executes them.
@@ -130,48 +171,15 @@ startHost = function() {
     rl.prompt();
 }
 
-/** Instantiate and return an accessor from its fully qualified name.
- *  This will throw an exception if there is no such accessor on the accessor
- *  search path.
- *  @param name Fully qualified accessor name, e.g. 'net/REST'.
- */
-instantiate = function(name) {
-    var code;
-    // Append a '.js' to the name, if needed.
-    if (name.indexOf('.js') !== name.length - 3) {
-        name += '.js';
-    }
-    for (var i = 0; i < accessorPath.length; i++) {
-        var location = path.join(accessorPath[i], name);
-        try {
-            code = fs.readFileSync(location, 'utf8');
-        } catch(error) {
-            console.log(error);
-            continue;
-        }
-    }
-    if (!code) {
-        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
-    }
-    console.log('Instantiating accessor at: ' + location);
-    // FIXME: Second argument should be a getAccessorCode() function.
-    // The bindings should be a bindings object where require == a requireLocal function that
-    // searches first for local modules.
-    var bindings = {
-        'require': require,
-    }
-    return commonHost.instantiate(code, require, bindings);
-}
-
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
-setInput = commonHost.setInput;
+provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
 
 // In case this gets used a module, create an exports object.
 exports = {
     'instantiate': instantiate,
-    'setInput': commonHost.setInput,
+    'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
     'startHost': startHost,
 };

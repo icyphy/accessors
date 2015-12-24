@@ -65,9 +65,10 @@
  *
  *
  *  Inputs, outputs, and parameters in an accessor have a defined order.
- *  The ```inputList``` field is an array giving the name of each input in the order in which
- *  it is defined in the setup() function.  For each entry in that array, there is a
- *  field by that name in the ```inputs``` object. The value of that field is the
+ *  The ```inputList``` field is an array giving the name of each input
+ *  in the order in which it is defined in the setup() function.
+ *  For each entry in that array, there is a field by that name in the
+ *  ```inputs``` object, indexed by the name. The value of that field is the
  *  options object given to the ```input()``` function, or an empty object if no
  *  options were specified.  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
@@ -95,17 +96,25 @@
  *   the host does not support accessors that extend other accessors.
  *  @param bindings The function bindings to be used by the accessor.
  */
-exports.instantiate = function(code, getAccessorCode, bindings) {
+exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     if (!code) {
         throw 'No accessor code specified.';
     }
-    var get = null, getParameter = null, require = null, send = null;
+    var     get = null,
+            getParameter = null,
+            require = null, 
+            send = null;
     if (bindings) {
         get = bindings['get'];
         getParameter = bindings['getParameter'];
         require = bindings['require'];
         send = bindings['send'];
     }
+    
+    // This accessor instance will be an object with many fields.
+    // Here we initialize it empty so that functions defined herein
+    // can reference it.
+    var instance = {}
     
     // CommonJS specification requires a 'module' object with an 'id' field
     // and an optional 'uri' field. The spec says that module.id should be
@@ -216,6 +225,7 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
      *  If no input name is given, or the name is null, then invoke handlers for
      *  all inputs that have been provided with input value using provideInput()
      *  since the last time input handlers were invoked.
+     *  Also invoke the fire function of the accessor, if one has been defined.
      *  @param name The name of the input.
      */
     function invokeHandlers(name) {
@@ -250,6 +260,10 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
                     anyInputHandlers[i]();
                 }
             }
+        }
+        // Next, invoke the fire() function.
+        if (typeof exports.fire === 'function') {
+            exports.fire();
         }
     }
 
@@ -390,6 +404,102 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     };
     
     ////////////////////////////////////////////////////////////////////
+    //// Support for composite accessors.
+
+    // List of contained accessors.
+    var containedAccessors = [];
+    
+    /** Instantiate the specified accessor as a contained accessor.
+     *  This will throw an exception if no getAccessorCode() function
+     *  has been specified.
+     *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+     */
+    function instantiate(name) {
+        if (!getAccessorCode) {
+            throw('instantiate() is not supported by this swarmlet host.');
+        }
+        // Not sure why it is needed, but this needs to be delegated to
+        // an external function because the instantiate function that we are
+        // within appears to not yet be defined.
+        var containedInstance = instantiateFromName(name, getAccessorCode, bindings);
+        containedInstance.container = instance;
+        containedAccessors.push(containedInstance);
+        return containedInstance;
+    }
+    
+    /** Connect the specified inputs and outputs.
+     *  There are four forms of this function:
+     *
+     *  1. connect(sourceAccessor, 'outputName', destinationAccessor, 'inputName');
+     *  2. connect('myInputName', destinationAccessor, 'inputName');
+     *  3. connect(sourceAccessor, 'outputName', 'myOutputName');
+     *  4. connect('myInputName', 'myOutputName');
+     *
+     *  In all cases, this connects a data source to a destination.
+     *  An input port of this accessor, with name 'myInputName', can be a source of data
+     *  for a contained accessor or for an output port of this accessor, with name
+     *  'myOutputName'.
+     *
+     *  This method appends a destination to the destination field of the input
+     *  or output object in the inputs or outputs field of this accessor. The form
+     *  of the destination is either a string (if the destination is an output
+     *  of this accessor) or an object with two fields,
+     *  '''accessor''' and '''inputName'''.
+     *
+     *  @param a An accessor or a name.
+     *  @param b An accessor or a name.
+     *  @param c An accessor or a name.
+     *  @param d A destination port name.
+     */
+    function connect(a, b, c, d) {
+        if (typeof a === 'string') {
+            // form 2 or 4.
+            var myInput = inputs[a];
+            if (!myInput) {
+                throw('connect(): No such input: ' + a);
+            }
+            if (!myInput.destinations) {
+                myInput.destinations = [];
+            }
+            if (typeof b === 'string') {
+                // form 4.
+                if (!outputs[b]) {
+                    throw('connect(): No such output: ' + b);
+                }
+                myInput.destinations.push(b);
+            } else {
+                // form 2.
+                if (!b.inputs[c]) {
+                    throw('connect(): Destination has no such input: ' + c);
+                }
+                myInput.destinations.push({'accessor': b, 'inputName': c});
+            }
+        } else {
+            // form 1 or 3.
+            var myOutput = a.outputs[b];
+            if (!myOutput) {
+                throw('connect(): Source has no such output: ' + b);
+            }
+            if (!myOutput.destinations) {
+                myOutput.destinations = [];
+            }
+            if (typeof c === 'string') {
+                // form 3.
+                if (!outputs[c]) {
+                    throw('connect(): No such output: ' + b);
+                }
+                myOutput.destinations.push(c);
+            } else {
+                // form 1.
+                if (!c.inputs[d]) {
+                    throw('connect(): Destination has no such input: ' + d);
+                }
+                myOutput.destinations.push({'accessor': c, 'inputName': d});
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code using the above function definitions
 
     // In strict mode, eval() cannot modify the scope of this function.
@@ -401,10 +511,12 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     // updates the proper field of this function.
     var wrapper = eval('(function( \
             addInputHandler, \
+            connect, \
             exports, \
             get, \
             getParameter, \
             input, \
+            instantiate, \
             removeInputHandler, \
             require, \
             send) {'
@@ -414,10 +526,12 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     // Populate the exports field.
     wrapper(
             addInputHandler,
+            connect,
             exports,
             get,
             getParameter,
             input,
+            instantiate,
             removeInputHandler,
             require,
             send);
@@ -434,35 +548,58 @@ exports.instantiate = function(code, getAccessorCode, bindings) {
     ////////////////////////////////////////////////////////////////////
     //// Construct and return the final data structure.
 
-    var instance = {
-        'anyInputHandlers': anyInputHandlers,
-        'exports': exports,
-        'fire': exports.fire,
-        'get': get,
-        'getParameter': getParameter,
-        'initialize': exports.initialize,
-        'inputHandlers': inputHandlers,
-        'inputHandlersIndex': inputHandlersIndex,
-        'inputList' : inputList,
-        'inputs': inputs,
-        'invokeHandlers': invokeHandlers,
-        'latestOutput': latestOutput,
-        'module': module,
-        'outputList' : outputList,
-        'outputs': outputs,
-        'parameterList' : parameterList,
-        'parameters': parameters,
-        'send': send,
-        'provideInput': provideInput,
-        'setParameter': setParameter,
-        'wrapup': exports.wrapup,
-    };
+    // FIXME: Document all these functions.
+    // Also the className field, if instantiateFromName is used.
+    // Also the container field, if this was instantiated within another accessor.
+    instance.anyInputHandlers = anyInputHandlers;
+    instance.connect = connect;
+    instance.containedAccessors = containedAccessors;
+    instance.exports = exports;
+    instance.fire = exports.fire;
+    instance.get = get;
+    instance.getParameter = getParameter;
+    instance.initialize = exports.initialize;
+    instance.inputHandlers = inputHandlers;
+    instance.inputHandlersIndex = inputHandlersIndex;
+    instance.inputList = inputList;
+    instance.inputs = inputs;
+    instance.instantiate = instantiate;
+    instance.invokeHandlers = invokeHandlers;
+    instance.latestOutput = latestOutput;
+    instance.module = module;
+    instance.outputList = outputList;
+    instance.outputs = outputs;
+    instance.parameterList = parameterList;
+    instance.parameters = parameters;
+    instance.send = send;
+    instance.provideInput = provideInput;
+    instance.setParameter = setParameter;
+    instance.wrapup = exports.wrapup;
     
     // Record the instance indexed by its exports field.
     _accessorInstanceTable[instance.exports] = instance;
 
     return instance;
 }
+
+/** Instantiate an accessor given its fully qualified name, a function to retrieve
+ *  the code, and a require function to retrieve modules.
+ *  The returned object will have a field '''className''' with the value of the
+ *  name parameter passed in here.
+ *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+ *  @param getAccessorCode A function that will retrieve the source code of a specified
+ *   accessor (used to implement the extend() and implement() functions), or null if
+ *   the host does not support accessors that extend other accessors.
+ *  @param bindings The function bindings to be used by the accessor.
+ */
+function instantiateFromName(name, getAccessorCode, bindings) {
+    var code = getAccessorCode(name);
+    var instance = exports.instantiateFromCode(code, getAccessorCode, bindings);
+    instance.className = name;
+    return instance;
+}
+
+exports.instantiateFromName = instantiateFromName;
 
 ////////////////////////////////////////////////////////////////////
 //// Module variables.
