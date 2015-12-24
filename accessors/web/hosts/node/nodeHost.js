@@ -85,8 +85,18 @@ instantiate = function(name) {
     // function that searches first for local modules.
     var bindings = {
         'require': require,
+        'send': send,
     }
     return commonHost.instantiateFromName(name, getAccessorCode, bindings);
+}
+
+/** Set an output.  This implementation simply produces the output on the
+ *  console, prefixed with an identifying string.
+ *  @param name The name of the output (a string).
+ *  @param value The value to set the output to.
+ */
+function send(name, value) {
+    console.log('Output named "' + name + '" produced: ' + value);
 }
 
 /** Start an interactive version of this host.
@@ -107,7 +117,7 @@ startHost = function() {
             'exit',
             'help',
             'instantiate(',
-            'setInput(',
+            'provideInput(',
             'setParameter(',
             'quit',
         ];
@@ -140,6 +150,14 @@ startHost = function() {
             rl.close();
             return;
         }
+        if (command.match(/^\s*help\s*$/i)) {
+            var helpFile = path.join(__dirname, 'nodeHostHelp.txt');
+            var helpText = fs.readFileSync(helpFile, 'utf8');
+            console.log(helpText);
+            rl.prompt();
+            return;
+        }
+
         ///////////////
         // Evaluate anything else.
         try {
