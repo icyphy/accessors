@@ -32,13 +32,13 @@ var code = fs.readFileSync('./SimpleTestAccessor.js', 'utf8');
 var commonHost = require('../commonHost.js');
 
 // Create an accessor instance.
-var instance = commonHost.instantiate(code);
+var instance = commonHost.instantiateFromCode(code);
 
 // Invoke the initialize function.
 instance.initialize();
 
 // Examine the instance in JSON format.
-console.log('Instance of TestAccessor: %j\nTests:', instance);
+console.log('Instance of SimpleTestAccessor: %j\nTests:', instance);
 
 function test(testName, expression, expectedValue) {
     if (expression != expectedValue) {
@@ -69,5 +69,5 @@ test('provideInput()', instance.get('boolean'), true);
 
 // Check inputHandlers, send, and latestOutput.
 instance.invokeHandlers();
-test('inputHandlers, send, and latestOutput', instance.latestOutput('negation'), false);
+test('invokeHandlers, send, and latestOutput', instance.latestOutput('negation'), false);
 

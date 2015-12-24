@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for Composite Accessors in the Browser Swarmlet Host</title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script>
+    <!-- Note that the following will not work in IE 8 or older. -->
+    window.addEventListener('DOMContentLoaded', function() {
+        // Read the code for TestAccessor.js from the server.
+        var accessorPath = '/accessors/hosts/common/test/TestCompositeAccessor';
+        // The second argument says to insert the accessor interface in the element
+        // with id 'accessor', defined below.
+        // This is invoked from the 'window' object because that is apparently where
+        // any functions defined in a script element are put.
+        window.generate(accessorPath, 'accessor');
+    });
+    </script>
+</head>
+<body>
+<h1>Test Page for Composite Accessors in the Browser Swarmlet Host</h1>
+<p id="accessor"></p>
+</body>
+</html>
