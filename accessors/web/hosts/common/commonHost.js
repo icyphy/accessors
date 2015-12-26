@@ -43,16 +43,16 @@
 
 /** Return an accessor instance whose interface and functionality is given by the
  *  specified code. Specifically, the returned object includes the following
- *  fields:
+ *  properties:
  *
  *  * '''exports''': An object that includes any properties that have have been
  *    explicitly added to the exports property in the specified code.
  *  * '''inputList''': An array of input names (see below).
- *  * '''inputs''': An object with one field per input (see below).
+ *  * '''inputs''': An object with one property per input (see below).
  *  * '''outputList''': An array of output names (see below).
- *  * '''outputs''': An object with one field per output (see below).
+ *  * '''outputs''': An object with one property per output (see below).
  *  * '''parameterList''': An array of parameter names (see below).
- *  * '''parameters''': An object with one field per parameter (see below).
+ *  * '''parameters''': An object with one property per parameter (see below).
  *  * '''inputHandlers''': An object indexed by input name with
  *    an array of input handlers, each of which is a function.
  *  * '''anyInputHandlers''': An array of input handlers to be invoked
@@ -65,10 +65,10 @@
  *
  *
  *  Inputs, outputs, and parameters in an accessor have a defined order.
- *  The ```inputList``` field is an array giving the name of each input
+ *  The ```inputList``` property is an array giving the name of each input
  *  in the order in which it is defined in the setup() function.
- *  For each entry in that array, there is a field by that name in the
- *  ```inputs``` object, indexed by the name. The value of that field is the
+ *  For each entry in that array, there is a property by that name in the
+ *  ```inputs``` object, indexed by the name. The value of that property is the
  *  options object given to the ```input()``` function, or an empty object if no
  *  options were specified.  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
@@ -111,13 +111,13 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
         send = bindings['send'];
     }
     
-    // This accessor instance will be an object with many fields.
+    // This accessor instance will be an object with many properties.
     // Here we initialize it empty so that functions defined herein
     // can reference it.
     var instance = {}
     
-    // CommonJS specification requires a 'module' object with an 'id' field
-    // and an optional 'uri' field. The spec says that module.id should be
+    // CommonJS specification requires a 'module' object with an 'id' property
+    // and an optional 'uri' property. The spec says that module.id should be
     // a valid argument to require(). Here, we are just given the JavaScript
     // code, so we don't have any information about where it came from.
     // Hence, we set a default id to 'unspecified', with the expectation that the
@@ -134,7 +134,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     // Inputs, outputs, and parameters need to be able to be accessed two ways,
     // by name and in the order they are defined. Hence, we define two data
     // structures for each, one of which is an ordered list of names, and one
-    // of which is an object with a field for each input, output, or parameter.
+    // of which is an object with a property for each input, output, or parameter.
     var inputList = [];
     var inputs = {};
     
@@ -228,7 +228,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
      *  Also invoke the fire function of the accessor, if one has been defined.
      *  @param name The name of the input.
      */
-    function invokeHandlers(name) {
+    function react(name) {
         // To avoid code duplication, define a local function.
         var invokeSpecificHandler = function(name) {
             if (inputHandlers[name] && inputHandlers[name].length > 0) {
@@ -408,10 +408,12 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             return parameters[name]['value'];
         };
     }
-    // Default initialization function initializes all contained accessors.
+    // Default initialization function initializes all contained accessors
+    // and constructs a topological sort.
     if (!exports.initialize) {
         exports.initialize = function() {
             if (instance.containedAccessors) {
+                assignPriorities(instance);
                 for (var i = 0; i < instance.containedAccessors.length; i++) {
                     if (instance.containedAccessors[i].initialize) {
                         instance.containedAccessors[i].initialize();
@@ -494,11 +496,16 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
      *  for a contained accessor or for an output port of this accessor, with name
      *  'myOutputName'.
      *
-     *  This method appends a destination to the destination field of the input
-     *  or output object in the inputs or outputs field of this accessor. The form
+     *  This method appends a destination to the destination property of the input
+     *  or output object in the inputs or outputs property of this accessor. The form
      *  of the destination is either a string (if the destination is an output
-     *  of this accessor) or an object with two fields,
+     *  of this accessor) or an object with two properties,
      *  '''accessor''' and '''inputName'''.
+     *
+     *  This method also sets a '''source''' property of the input or output that is
+     *  the source of data on the connection. Again, that property is either a string
+     *  name (to mean an input of the container accessor) or an object with two
+     *  properties '''accessor''' and '''outputName'''.
      *
      *  @param a An accessor or a name.
      *  @param b An accessor or a name.
@@ -521,12 +528,14 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
                     throw('connect(): No such output: ' + b);
                 }
                 myInput.destinations.push(b);
+                outputs[b].source = a;
             } else {
                 // form 2.
                 if (!b.inputs[c]) {
                     throw('connect(): Destination has no such input: ' + c);
                 }
                 myInput.destinations.push({'accessor': b, 'inputName': c});
+                b.inputs[c].source = a;
             }
         } else {
             // form 1 or 3.
@@ -543,12 +552,14 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
                     throw('connect(): No such output: ' + b);
                 }
                 myOutput.destinations.push(c);
+                outputs[c].source = {'accessor': a, 'outputName': b};
             } else {
                 // form 1.
                 if (!c.inputs[d]) {
                     throw('connect(): Destination has no such input: ' + d);
                 }
                 myOutput.destinations.push({'accessor': c, 'inputName': d});
+                c.inputs[d].source = {'accessor': a, 'outputName': b};
             }
         }
     }
@@ -562,7 +573,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     // Inside that function, references to top-level accessor functions
     // such as input() will need to be bound to the particular implementation
     // of input() within this accessor function, so that that function
-    // updates the proper field of this function.
+    // updates the proper property of this function.
     var wrapper = eval('(function( \
             addInputHandler, \
             connect, \
@@ -577,7 +588,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             + code
             + '})');
     
-    // Populate the exports field.
+    // Populate the exports property.
     wrapper(
             addInputHandler,
             connect,
@@ -603,8 +614,8 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     //// Construct and return the final data structure.
 
     // FIXME: Document all these functions.
-    // Also the className field, if instantiateFromName is used.
-    // Also the container field, if this was instantiated within another accessor.
+    // Also the className property, if instantiateFromName is used.
+    // Also the container property, if this was instantiated within another accessor.
     instance.anyInputHandlers = anyInputHandlers;
     instance.connect = connect;
     instance.containedAccessors = containedAccessors;
@@ -618,7 +629,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     instance.inputList = inputList;
     instance.inputs = inputs;
     instance.instantiate = instantiate;
-    instance.invokeHandlers = invokeHandlers;
+    instance.react = react;
     instance.latestOutput = latestOutput;
     instance.module = module;
     instance.outputList = outputList;
@@ -630,15 +641,157 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     instance.setParameter = setParameter;
     instance.wrapup = exports.wrapup;
     
-    // Record the instance indexed by its exports field.
+    // Record the instance indexed by its exports property.
     _accessorInstanceTable[instance.exports] = instance;
 
     return instance;
 }
 
+/** Assign priorities to contained accessors based on a topological sort of the
+ *  connectivity graph. Priorities are integers (positive or negative), where a lower
+ *  number indicates a higher priority. The number for an accessor is assured of being
+ *  higher than the number for any upstream accessor.  An accessor A is upstream of
+ *  an accessor B if A has an output connected to an input of B and that output is not
+ *  marked "spontaneous" (that is, it does not have an option with name "spontaneous"
+ *  and value true). A spontaneous output is produced by an asynchronous callback
+ *  rather than as a response to an input.  Every directed cycle in a connectivity
+ *  graph must contain at least one spontaneous output or there will be a deadlock
+ *  due to a causality loop.
+ *  @param container The container instance.
+ */
+function assignPriorities(container) {
+    var accessors = container.containedAccessors;
+    
+    // First, initialize the contained accessors with a null priority.
+    for (var i = 0; i < accessors.length; i++) {
+        accessors[i].priority = null;
+    }
+    // Next, assign the first accessor an arbitrary priority and follow its
+    // connections to assign priorities implied by those connections.
+    var startingPriority = 0;
+    for (var i = 0; i < accessors.length; i++) {
+        // If the instance already has a priority, skip it.
+        if (accessors[i].priority != null) {
+            continue;
+        }
+        accessors[i].priority = startingPriority;
+        // console.log('Assigned priority to ' + accessors[i].className + ' of ' + startingPriority);
+        // Follow connections to get implied priorities.
+        assignImpliedPrioritiesUpstream(container, accessors[i], startingPriority);
+        assignImpliedPrioritiesDownstream(container, accessors[i], startingPriority);
+
+        // Any remaining accessors without priorities are in one or more independent
+        // connected subgraphs. To ensure that the next set of priorities does not
+        // overlap those already assigned, we start with a sufficiently higher number.
+        startingPriority = accessors.length - i;
+    }
+}
+
+/** Assuming that the specified accessor has an assigned priority, follow its
+ *  connections downstream and assign priorities to connected accessors.
+ *  @param container The container accessor.
+ *  @param accessor The contained accessor with a priority.
+ *  @param cyclePriority If we encounter an accessor with this priority, then
+ *   there is a causality loop.
+ */
+function assignImpliedPrioritiesDownstream(container, accessor, cyclePriority) {
+    var myPriority = accessor.priority;
+    // To get repeatable priorities, iterate over outputs in order.
+    for (var i = 0; i < accessor.outputList.length; i++) {
+        var output = accessor.outputs[accessor.outputList[i]];
+        if (output.spontaneous) {
+            // Output is spontaneous, so my priority has no implications
+            // for downstream accessors.
+            continue;
+        }
+        if (output.destinations) {
+            // There are destination accessors.
+            for (var j = 0; j < output.destinations.length; j++) {
+                var destination = output.destinations[j];
+                if (typeof destination === 'string') {
+                    // Destination is an output of the container.
+                    continue;
+                }
+                var destinationAccessor = destination.accessor;
+                var destinationInput = destinationAccessor.inputs[destination.inputName];
+                var theirPriority = destinationAccessor.priority;
+                if (theirPriority === cyclePriority) {
+                    // FIXME: Really need for accessors to have names, or error reporting
+                    // will be pretty useless, as in this case.
+                    throw('Causality loop found.');
+                }
+                if (theirPriority === null) {
+                    // Destination has no previously assigned priority. Give it one,
+                    // and follow the implications.
+                    destinationAccessor.priority = myPriority + 1;
+                    // console.log('Assigned downstream priority to ' + destinationAccessor.className + ' of ' + (myPriority + 1));
+                    assignImpliedPrioritiesDownstream(
+                            container, destinationAccessor, cyclePriority);
+                } else {
+                    if (theirPriority > myPriority) {
+                        // Priority is OK. Continue.
+                        continue;
+                    }
+                    // Priority has to be adjusted.
+                    destinationAccessor.priority = myPriority + 1;
+                    // console.log('Assigned downstream priority to ' + destinationAccessor.className + ' of ' + (myPriority + 1));
+                    assignImpliedPrioritiesDownstream(
+                            container, destinationAccessor, cyclePriority);
+                }
+            }
+        }
+    }        
+}
+
+/** Assuming that the specified accessor has an assigned priority, follow its
+ *  connections upstream and assign priorities to connected accessors.
+ *  @param container The container accessor.
+ *  @param accessor The contained accessor with a priority.
+ *  @param cyclePriority If we encounter an accessor with this priority, then
+ *   there is a causality loop.
+ */
+function assignImpliedPrioritiesUpstream(container, accessor, cyclePriority) {
+    var myPriority = accessor.priority;
+    // To get repeatable priorities, iterate over inputs in order.
+    for (var i = 0; i < accessor.inputList.length; i++) {
+        var input = accessor.inputs[accessor.inputList[i]];
+        if (input.source && typeof input.source !== 'string') {
+            // There is a source accessor.
+            var source = input.source.accessor;
+            var output = source.outputs[source.outputName];
+            // If the output is marked 'spontaneous' then we can ignore it.
+            if (output.spontaneous) {
+                continue;
+            }
+            var theirPriority = source.priority;
+            if (theirPriority === cyclePriority) {
+                // FIXME: Really need for accessors to have names, or error reporting
+                // will be pretty useless, as in this case.
+                throw('Causality loop found.');
+            }
+            if (theirPriority === null) {
+                // Source has no previously assigned priority. Give it one,
+                // and follow the implications.
+                source.priority = myPriority - 1;
+                // console.log('Assigned upstream priority to ' + accessors[i].className + ' of ' + (myPriority - 1));
+                assignImpliedPrioritiesUpstream(container, source, cyclePriority);
+            } else {
+                if (theirPriority < myPriority) {
+                    // Priority is OK. Continue.
+                    continue;
+                }
+                // Priority has to be adjusted.
+                source.priority = myPriority - 1;
+                // console.log('Assigned upstream priority to ' + accessors[i].className + ' of ' + (myPriority - 1));
+                assignImpliedPrioritiesUpstream(container, source, cyclePriority);
+            }
+        }
+    }        
+}
+
 /** Instantiate an accessor given its fully qualified name, a function to retrieve
  *  the code, and a require function to retrieve modules.
- *  The returned object will have a field '''className''' with the value of the
+ *  The returned object will have a property '''className''' with the value of the
  *  name parameter passed in here.
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  *  @param getAccessorCode A function that will retrieve the source code of a specified
@@ -658,9 +811,9 @@ exports.instantiateFromName = instantiateFromName;
 ////////////////////////////////////////////////////////////////////
 //// Module variables.
 
-/** Table of accessor instances indexed by their exports field.
+/** Table of accessor instances indexed by their exports property.
  *  This allows us to retrieve the full accessor data structure, but to only
- *  expose to the user of this module the exports field of the accessor.
+ *  expose to the user of this module the exports property of the accessor.
  *  Note that this host does not support removing accessors, so the instance
  *  will be around as long as the process exists.
  */

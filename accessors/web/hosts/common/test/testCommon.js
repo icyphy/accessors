@@ -68,10 +68,10 @@ instance.provideInput('boolean', true);
 test('provideInput()', instance.get('boolean'), true);
 
 // Check inputHandlers, send, and latestOutput.
-instance.invokeHandlers();
-test('invokeHandlers, send, and latestOutput', instance.latestOutput('negation'), false);
+instance.react();
+test('react, send, and latestOutput', instance.latestOutput('negation'), false);
 
-// Check composite accessors with manual scheduling.
+// Check composite accessors with manual and automatic scheduling.
 // Have to provide an implementation of instantiate(), which in this case will only
 // instantiate accessors in the current directory.
 getAccessorCode = function(name) {
@@ -84,7 +84,13 @@ getAccessorCode = function(name) {
 var code = getAccessorCode('TestCompositeAccessor');
 var a = commonHost.instantiateFromCode(code, getAccessorCode);
 a.initialize()
+
+// Check assigned priorities.
+test('priority number of destination is higher than source',
+        a.containedAccessors[0].priority < a.containedAccessors[1].priority,
+        true);
+
 a.provideInput('input', 10)
-a.containedAccessors[0].invokeHandlers()
-a.containedAccessors[1].invokeHandlers()
+a.containedAccessors[0].react()
+a.containedAccessors[1].react()
 test('composite accessor with manual scheduling', a.latestOutput('output'), 50);
