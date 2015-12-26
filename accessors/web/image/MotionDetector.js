@@ -56,6 +56,12 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
+/*jshint globalstrict: true */
+"use strict";
+
 var motionDetector = require('motionDetector');
 
 exports.setup = function() {
@@ -64,7 +70,7 @@ exports.setup = function() {
     output('cog');
     output('area', {'type':'number'});
     input('options', {'value':'{"PixelThreshold": 25, "AreaThreshold": 0.2}', 'type':'JSON'});
-}
+};
 
 exports.initialize = function() {
     addInputHandler('input', function() {
@@ -78,4 +84,5 @@ exports.initialize = function() {
         }
         send('area', motionDetector.area());
     });
-}
+};
+

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -165,8 +165,11 @@
  */
 
 /* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true */
 "use strict";
-/*global addInputHandler, error, get, getParameter, input, onClose, output, parameter, removeInputHandler, send */
 
 var socket = require('socket');
 
@@ -271,12 +274,12 @@ exports.toSendInputHandler = function () {
     } else {
         var discardSendToUnopenedSocket = getParameter('discardSendToUnopenedSocket');
         if (discardSendToUnopenedSocket) {
-            console.log('Socket with ID ' + idToSendTo
-                    + ' is not open. Discarding data: '
-                    + dataToSend);
+            console.log('Socket with ID ' + idToSendTo +
+                        ' is not open. Discarding data: ' +
+                        dataToSend);
         } else {
-            error('Attempting to send data over socket with id ' + idToSendTo
-                    + ', but this socket is not open.');
+            error('Attempting to send data over socket with id ' + idToSendTo +
+                    ', but this socket is not open.');
         }
     }
 };
