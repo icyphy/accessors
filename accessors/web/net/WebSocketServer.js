@@ -75,7 +75,7 @@
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
 /*globals addInputHandler, console, get, getParameter, error, exports, input, output, removeInputHandler, require, parameter, send */
 /*jshint globalstrict: true*/
-//'use strict';
+'use strict';
 
 var WebSocket = require('webSocket');
 var server = null;
@@ -133,7 +133,7 @@ exports.initialize = function() {
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
             // Careful: if we do data.socketID !== null, then org/terraswarm/accessor/test/auto/WebSocketClient.xml will fail.
-            if ((data.socketID != null)  && (data.message !== null)) {
+            if ((data.socketID !== null)  && (data.message !== null)) {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.

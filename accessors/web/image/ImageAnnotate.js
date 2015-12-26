@@ -53,6 +53,12 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, getResource, input, output, removeInputHandler, require, send */
+/*jshint globalstrict: true */
+"use strict";
+
 var imageFilters = require('imageFilters');
 
 exports.setup = function() {
@@ -64,7 +70,7 @@ exports.setup = function() {
     input('translate');
     input('options', {'value':'', 'type':'JSON'});
     output('output');
-}
+};
 
 exports.initialize = function() {
     addInputHandler('image', function() {
@@ -75,49 +81,49 @@ exports.initialize = function() {
         }
         
         var scale = get('scale');
-        if (scale != null) {
+        if (scale !== null) {
             // Combine with scale options, if specified.
-            if (options['Scale']) {
-                scale *= options['Scale'];
+            if (options.Scale) {
+                scale *= options.Scale;
             }
-            options['Scale'] = scale;
+            options.Scale = scale;
         }
         
         var rotation = get('rotation');
-        if (rotation != null) {
+        if (rotation !== null) {
             // Combine with rotation options, if specified.
-            if (options['Rotation']) {
-                rotation += options['Rotation'];
+            if (options.Rotation) {
+                rotation += options.Rotation;
             }
-            options['Rotation'] = rotation;
+            options.Rotation = rotation;
         }
             
         var translate = get('translate');
         if (translate !== null && translate[0] !== null && translate[1] !== null) {
             // Combine with offset options, if specified.
             var xOffset = translate[0];
-            if (options['XOffset']) {
-                xOffset += options['XOffset'];
+            if (options.XOffset) {
+                xOffset += options.XOffset;
             }
-            options['XOffset'] = xOffset;
+            options.XOffset = xOffset;
             
             var yOffset = translate[1];
-            if (options['YOffset']) {
-                yOffset += options['YOffset'];
+            if (options.YOffset) {
+                yOffset += options.YOffset;
             }
-            options['YOffset'] = yOffset;
+            options.YOffset = yOffset;
         }
         var graphic = get('graphic');
         if (graphic) {
-            options['Graphic'] = graphic;
+            options.Graphic = graphic;
         } else {
             var graphicURI = get('graphicURI');
             if (graphicURI) {
                 // Second argument is a timeout.
-                options['Graphic'] = getResource(graphicURI, 3000);
+                options.Graphic = getResource(graphicURI, 3000);
             }
         }
         var result = imageFilters.filter(image, 'Annotate', options);
         send('output', result);
     });
-}
+};

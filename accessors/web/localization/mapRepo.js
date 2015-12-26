@@ -35,13 +35,21 @@
  * @output {JSON} repoData MapSchema structured map data from the repository.
  * 
  * @author Matt Weber
+ * @version $$Id$$ 
  */
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, httpRequest, input, output, removeInputHandler, require, send */
+/*jshint globalstrict: true */
+"use strict";
 
 mapManager = require("mapManager");
 
 var reportHandle = null;
 var clearHandle = null;
 var mapDataHandle = null;
+var mapManager = null;
 
 exports.setup = function(){
 	input('report');
@@ -86,4 +94,4 @@ exports.wrapup = function(){
 		removeInputHandler(mapDataHandle);
 		mapDataHandle = null;
 	}
-}
+};

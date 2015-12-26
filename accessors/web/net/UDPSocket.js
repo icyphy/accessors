@@ -30,10 +30,11 @@
  *  @input {int} port The port to use for the socket.
  *  @output {string} received The received string.
  */
+
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals console, exports, get, input, output, require, send */
+/*globals addInputHandler, console, exports, get, input, output, require, send */
 /*jshint globalstrict: true*/
 'use strict';
 

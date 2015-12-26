@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -83,9 +83,12 @@
  *  @author Edward A. Lee
  *  @version $$Id$$
  */
-/* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global addInputHandler, error, exports, get, getParameter, input, output, parameter, removeInputHandler, require, send */
+/*jshint globalstrict: true */
 "use strict";
-/*global addInputHandler, error, get, getParameter, input, output, parameter, removeInputHandler, send */
 
 var xbee = require('xbee');
 var port = null;

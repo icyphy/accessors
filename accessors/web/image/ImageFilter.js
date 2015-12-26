@@ -41,6 +41,12 @@ org/terraswarm/accessor/demo/ImageFilters.
 @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
+/*jshint globalstrict: true */
+"use strict";
+
 var imageFilters = require('imageFilters');
 
 exports.setup = function() {
@@ -48,8 +54,9 @@ exports.setup = function() {
     output('output');
     input('options', {'value':'', 'type':'JSON'});
     input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
-}
+};
 
+var handle = null;
 exports.initialize = function() {
     handle = addInputHandler('input', function() {
         var options = get('options');
@@ -57,10 +64,10 @@ exports.initialize = function() {
         var result = imageFilters.filter(image, getParameter('filter'), options);
         send('output', result);
     });
-}
+};
 
 exports.wrapup = function() {
     if (handle) {
         removeInputHandler(handle);
     }
-}
+};
