@@ -1,4 +1,5 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.  // All rights reserved.
+// Copyright (c) 2014-2015 The Regents of the University of California.
+// All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
 // license or royalty fees, to use, copy, modify, and distribute this
@@ -80,6 +81,12 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, input, output, parameter, send, removeInputHandler, require */
+/*jshint globalstrict: true*/
+"use strict";
+
 var mockHueBridges = require("mockHueBridges");
 var bridge;
 var connection;
@@ -113,7 +120,7 @@ exports.setup = function() {
 	  type: "string",
 	  value: "Bridge1"
   });
-}
+};
 
 /** Initialize the accessor.  Create a bridge object, connect to the bridge, and 
  * initialize its state.
@@ -133,7 +140,7 @@ exports.initialize = function() {
   
 	// Register input handler
 	handle = addInputHandler('URI', inputHandler);
-}
+};
 
 /** Input HTTP request information and generate a response from the bridge.  */
 function inputHandler() {
@@ -150,7 +157,7 @@ function inputHandler() {
   }
  
   send('response', output);
-};
+}
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {

@@ -1,4 +1,5 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.  // All rights reserved.
+// Copyright (c) 2014-2015 The Regents of the University of California.
+// All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
 // license or royalty fees, to use, copy, modify, and distribute this
@@ -20,29 +21,39 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor reads sensor and location data from a location host
- *  <p>
- *	The accessor makes REST GET requests to a location host to obtain sensor and location
- *	data. The type of data requested is defined by the dataType parameter. Possible values for
- *  the dataType parameter are:
- *	"ibeacon": Fetches region UUID, major, minor, range, proximity and RSSI values of
- *	nearby iBeacons.
- *	"alps": Fetches ALPS region ID, transmitter IDs, TOA and RSSI values of nearby ALPS
- *	transmitters
- *	"imu": Fetches pedometer and heading values
- *	"wifi": Fetches SSIDs, BSSIDs and RSSI values from nearby WiFi hotspots
- *	"all": Fetches all of the above data at once
- *	All outputs are JSON formatted and contain UNIX timestamps of when the data was
- *	acquired by the location host.
+ *
+ *  <p> The accessor makes REST GET requests to a location host to
+ *  obtain sensor and location data. The type of data requested is
+ *  defined by the dataType parameter. Possible values for the
+ *  dataType parameter are:</p>
+ *  <ul>
+ *   <li>"ibeacon": Fetches region UUID, major, minor, range, proximity and RSSI values of
+ *   nearby iBeacons.</li>
+ *   <li>"alps": Fetches ALPS region ID, transmitter IDs, TOA and RSSI values of nearby ALPS
+ *   transmitters.</li>
+ *   <li>"imu": Fetches pedometer and heading values.</li>
+ *   <li>"wifi": Fetches SSIDs, BSSIDs and RSSI values from nearby WiFi hotspots.</li>
+ *   <li>"all": Fetches all of the above data at once</li>
+ * </ul>
+ *
+ * <p> All outputs are JSON formatted and contain UNIX timestamps of when the data was
+ * acquired by the location host.</p>
+ *
  *  @accessor localization/Location
  *  @version $$Id: Hue.js 268 2015-08-21 21:58:32Z eal $$ 
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, getResource, httpRequest, input, output, require, send */
+/*jshint globalstrict: true */
+"use strict";
 
 // State variables.
 var timeout = 3000;
 var url = "";
 var handlers = [];
-
+var handle = null;
 
 /** Define inputs and outputs. */
 exports.setup = function() {
@@ -63,22 +74,23 @@ exports.setup = function() {
   output('IMU',{'type':'JSON'});
   output('WiFi',{'type':'JSON'});
   output('Location',{'type':'JSON'});
-}
+};
+
 /* Initialize connection.*/
 exports.initialize = function() {
    var ipAddress = get('HostIP');
    var port = get('HostPort');
 
-   if (ipAddress == null || ipAddress.trim() == "") {
+   if (ipAddress === null|| ipAddress.trim() === "") {
       throw "No IP Address is given for the localization host.";
    }
-    if (port == null || port.trim() == "") {
+    if (port === null|| port.trim() === "") {
       throw "No Port is given for the localization host.";
    }
 
    url = "http://" + ipAddress + ":" + port;  
    handle = addInputHandler('dataType', getData);
-}
+};
 
 /* Get data over REST based on dataType input */
 function getData(){

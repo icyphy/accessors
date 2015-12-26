@@ -98,15 +98,22 @@ by Edwin Olson in his Java implementation of an AprilTag detector:
   allowed to grow when the component is small in size. This
   threshold affects how much. The default is 100.
 
-@accessor image/AprilTags
-@author Edward A. Lee (eal@eecs.berkeley.edu)
-@input input An input image.
-@output output An output image, with detected AprilTags outlined in green and identified.
-@output tags An array of objects, one object for each tag detected in the image.
-@parameter options The options for the detector. This is a JSON object with fields defined above.
+  @accessor image/AprilTags
+  @author Edward A. Lee (eal@eecs.berkeley.edu)
+  @input input An input image.
+  @output output An output image, with detected AprilTags outlined in green and identified.
+  @output tags An array of objects, one object for each tag detected in the image.
+  @parameter options The options for the detector. This is a JSON object with fields defined above.
   It defaults to an empty object, meaning to use default values for all the otpions.
- *  @version $$Id$$ 
+  @version $$Id$$ 
 */
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals addInputHandler, exports, get, input, output, removeInputHandler, require, send,  */
+/*jshint globalstrict: true */
+"use strict";
+
 var aprilTags = require('aprilTags');
 
 exports.setup = function() {
@@ -114,8 +121,9 @@ exports.setup = function() {
     output('output');
     output('tags');
     input('options', {'type':'JSON', 'value':''});
-}
+};
 
+var handle;
 exports.initialize = function() {
     handle = addInputHandler('input', function() {
         var options = get('options');
@@ -127,10 +135,10 @@ exports.initialize = function() {
             send('tags', tags);
         }
     });
-}
+};
 
 exports.wrapup = function() {
     if (handle) {
         removeInputHandler(handle);
     }
-}
+};

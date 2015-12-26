@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -156,9 +156,12 @@
  *  @author Edward A. Lee
  *  @version $$Id$$
  */
-/* These are needed by JSLint, see https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSLint */
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, send, require*/
+/*jshint globalstrict: true */
 "use strict";
-/*global addInputHandler, error, get, getParameter, input, onClose, output, parameter, removeInputHandler, send */
 
 var socket = require('socket');
 var client = null;
@@ -333,7 +336,7 @@ function onClose(message) {
 /** Return true if this client has an open connection to the server. */
 exports.isOpen = function () {
     return client.isOpen();
-}
+};
 
 /** Close the web socket connection. */
 exports.wrapup = function () {
