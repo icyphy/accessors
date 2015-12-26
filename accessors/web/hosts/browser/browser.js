@@ -265,7 +265,7 @@ function generateTableRow(table, name, options, role, editable) {
         valueInput.setAttribute('style', 'display:table-cell; width:100%; box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;');
         
         // Invoke handlers, if there are any.
-        valueInput.setAttribute('onchange', 'window.accessor.invokeHandlers("' + name + '")');
+        valueInput.setAttribute('onchange', 'window.accessor.react("' + name + '")');
                 
         valueCell.appendChild(valueInput);
     }
