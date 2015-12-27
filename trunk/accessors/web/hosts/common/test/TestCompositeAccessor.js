@@ -41,9 +41,8 @@ exports.setup = function() {
     connect(adder, 'sum', 'output');
 }
 
-exports.fire = function() {
-    console.log('TestCompositeAccessor fired.');
-}
+// NOTE: If you provide a fire() function, it is up to you to invoke react() on
+// the contained accessors.
 
 // NOTE: If you provide an initialize() function, it is up to you to initialize
 // the contained accessors.

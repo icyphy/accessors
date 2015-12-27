@@ -61,7 +61,10 @@ test('setParameter', instance.getParameter('p'), 12);
 test('get', instance.get('numeric'), 0);
 
 // Check get() with input undefined.
-test('get with undefined', instance.get('boolean'), undefined);
+test('get with undefined', instance.get('untyped'), undefined);
+
+// Check get() with input undefined but type being boolean.
+test('get with undefined', instance.get('boolean'), false);
 
 // Check provideInput().
 instance.provideInput('boolean', true);
@@ -94,3 +97,9 @@ a.provideInput('input', 10)
 a.containedAccessors[0].react()
 a.containedAccessors[1].react()
 test('composite accessor with manual scheduling', a.latestOutput('output'), 50);
+
+a.initialize();
+a.provideInput('input', 5)
+a.react();
+test('composite accessor with automatic scheduling', a.latestOutput('output'), 25);
+
