@@ -295,6 +295,9 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     function nullHandlerFunction() {}
     
     /** Set an input of this accessor to the specified value.
+     *  This function will perform conversions to the destination port type, if possible.
+     *  For example, if a number is expected, but a string is provided, then it will
+     *  attempt to parse the string to create a number.
      *  @param name The name of the input to set.
      *  @param value The value to set the input to.
      */
@@ -303,9 +306,17 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
         if (!input) {
             throw('provideInput(): Accessor has no input named ' + name);
         }
+        value = convertType(value, input);
         input.currentValue = value;
+
         // Mark this input as requiring invocation of an input handler.
         input.pendingHandler = true;
+        
+        // If there is a container accessor, then put this accessor in its
+        // event queue for handling in its fire() function.
+        if (instance.container) {
+            scheduleEvent(instance.container, instance);
+        }
         
         // If the input is connected on the inside, then provide the same input
         // to the destination(s).
@@ -364,10 +375,14 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
      *  @param value The value to set the parameter to.
      */
     function setParameter(name, value) {
-        if (!parameters[name]) {
+        var parameter = parameters[name];
+        if (!parameter) {
             throw('setParameter(): Accessor has no parameter named ' + name);
         }
-        parameters[name].currentValue = value;
+        // If necessary, convert the value to the match the type.
+        value = convertType(value, parameter);
+
+        parameter.currentValue = value;
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -384,51 +399,49 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     
     if (!get) {
         get = function(name) {
-            // FIXME: Type handling.
-            if (!inputs[name]) {
+            var input = inputs[name];
+            if (!input) {
                 throw('get(name): No input named ' + name);
             }
             // If provideInput() has been called, return that value.
-            if (inputs[name]['currentValue']) {
-                return inputs[name]['currentValue'];
+            if (input['currentValue']) {
+                return input['currentValue'];
             }
-            return inputs[name]['value'];
+            // If necessary, convert the value to the match the type.
+            var value = input['value'];
+            value = convertType(value, input);
+            return value;
         };
     }
     if (!getParameter) {
         getParameter = function(name) {
-            // FIXME: Type handling.
-            if (!parameters[name]) {
+            var parameter = parameters[name];
+            if (!parameter) {
                 throw('getParameter(name): No parameter named ' + name);
             }
             // If setParameter() has been called, return that value.
-            if (parameters[name]['currentValue']) {
-                return parameters[name]['currentValue'];
+            if (parameter['currentValue']) {
+                return parameter['currentValue'];
             }
-            return parameters[name]['value'];
+            // If necessary, convert the value to the match the type.
+            var value = parameter['value'];
+            value = convertType(value, parameter);
+            return value;
         };
     }
-    // Default initialization function initializes all contained accessors
-    // and constructs a topological sort.
-    if (!exports.initialize) {
-        exports.initialize = function() {
-            if (instance.containedAccessors) {
-                assignPriorities(instance);
-                for (var i = 0; i < instance.containedAccessors.length; i++) {
-                    if (instance.containedAccessors[i].initialize) {
-                        instance.containedAccessors[i].initialize();
-                    }
-                }
-            }
-        }
-    }
+    // Provide a default implementation of send().
+    // If a host provides some other implementation, then it should
+    // set the latestOutput property of the outputs[name] object equal
+    // to the value.
     if (!send) {
         send = function(name, value) {
-            // FIXME: Type handling?
             var output = outputs[name];
             if (!output) {
                 throw('send(name, value): No output named ' + name);
             }
+            // If necessary, convert the value to the match the type.
+            value = convertType(value, output);
+
             output.latestOutput = value;
             // console.log('Sending output through ' + name + ': ' + value);
             if (output.destinations) {
@@ -439,6 +452,8 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
                         if (instance.container) {
                             instance.container.send(destination, value);
                         } else {
+                            // If no other implementation of send() has been provided and
+                            // there is no container, produce to standard output.
                             console.log('Output named "' + name + '" produced: ' + value);
                         }
                     } else {
@@ -609,7 +624,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     } else {
         throw 'No setup() function.';
     }
-        
+    
     ////////////////////////////////////////////////////////////////////
     //// Construct and return the final data structure.
 
@@ -620,10 +635,8 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     instance.connect = connect;
     instance.containedAccessors = containedAccessors;
     instance.exports = exports;
-    instance.fire = exports.fire;
     instance.get = get;
     instance.getParameter = getParameter;
-    instance.initialize = exports.initialize;
     instance.inputHandlers = inputHandlers;
     instance.inputHandlersIndex = inputHandlersIndex;
     instance.inputList = inputList;
@@ -639,10 +652,52 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     instance.provideInput = provideInput;
     instance.send = send;
     instance.setParameter = setParameter;
-    instance.wrapup = exports.wrapup;
     
     // Record the instance indexed by its exports property.
     _accessorInstanceTable[instance.exports] = instance;
+
+    ////////////////////////////////////////////////////////////////////
+    //// Provide default initialize, fire, and wrapup functions.
+
+    // Default initialization function initializes all contained accessors,
+    // clears the event queue, and assigns priorities according to a topological sort.
+    if (!exports.initialize) {
+        exports.initialize = function() {
+            if (instance.containedAccessors && instance.containedAccessors.length > 0) {
+                assignPriorities(instance);
+                instance.eventQueue = [];
+                for (var i = 0; i < instance.containedAccessors.length; i++) {
+                    if (instance.containedAccessors[i].initialize) {
+                        instance.containedAccessors[i].initialize();
+                    }
+                }
+            }
+        }
+    }
+    instance.initialize = exports.initialize;
+
+    // Default fire function invokes react on all accessors on the event queue
+    // (but only if there are contained accessors).
+    if (!exports.fire
+            && instance.containedAccessors
+            && instance.containedAccessors.length > 0) {
+        exports.fire = function() {
+            console.log('Composite is reacting with ' + instance.eventQueue.length + ' events.');
+            while (instance.eventQueue && instance.eventQueue.length > 0) {
+                // Remove from the event queue the first accessor, which will now react.
+                // It may add itself back in, if it sends to its own input. But in that
+                // case, it should fire again immediately, so that is correct.
+                var removed = instance.eventQueue.splice(0, 1);
+                removed[0].react();        
+            }
+        }
+    }    
+    instance.fire = exports.fire;
+
+    if (!exports.wrapup) {
+        exports.wrapup = function() {};
+    }
+    instance.wrapup = exports.wrapup;
 
     return instance;
 }
@@ -789,6 +844,75 @@ function assignImpliedPrioritiesUpstream(container, accessor, cyclePriority) {
     }        
 }
 
+/** Convert the specified type to the type expected by the specified input,
+ *  or throw an exception if no such conversion is possible.
+ *  @param value The value to convert.
+ *  @param destination The destination object, which may have a type property.
+ *   This is an input, parameter, or output options object.
+ */
+function convertType(value, destination) {
+    if (!destination.type || destination.type === typeof value) {
+        // Type is unspecified or a match. Use value as given.
+    } else if (destination.type === 'string') {
+        if (typeof value !== 'string') {
+            // Convert to string.
+            try {
+                value = JSON.stringify(value);
+            } catch (error) {
+                throw('Object provided to '
+                        + name
+                        + ' does not have a string representation: '
+                        + error);
+            }
+        }
+    } else if (typeof value === 'string') {
+        // Provided value is a string, but 
+        // destination type is boolean, number, int, or JSON.
+        try {
+            value = JSON.parse(value);
+        } catch (error) {
+            throw('Failed to convert value to destination type: '
+                    + name
+                    + ' expected a '
+                    + destination.type
+                    + ' but received: '
+                    + value);
+        }
+    } else if (destination.type === 'boolean' && typeof value !== 'boolean') {
+        // Liberally convert JavaScript data to boolean.
+        if (value) {
+            value = true;
+        } else {
+            value = false;
+        }
+    } else if (destination.type === 'int' || destination.type === 'number') {
+        // value is not a string. Needs to be a number.
+        if (typeof value !== 'number') {
+            throw(name + ' expected an int, but got a '
+                    + (typeof value)
+                    + ': '
+                    + value);
+        }
+        // If type is int, need the value to be an integer.
+        if (destination.type === 'int' && value % 1 !== 0) {
+            throw(name + ' expected an int, but got ' + value);
+        }
+    } else {
+        // Only remaining case: value is not a string
+        // and destination type is JSON. Just check that the value has a
+        // JSON representation.
+        try {
+            JSON.stringify(value);
+        } catch(error) {
+            throw('Object provided to '
+                    + name
+                    + ' does not have a JSON representation: '
+                    + error);
+        }
+    }
+    return value;
+}
+
 /** Instantiate an accessor given its fully qualified name, a function to retrieve
  *  the code, and a require function to retrieve modules.
  *  The returned object will have a property '''className''' with the value of the
@@ -807,6 +931,59 @@ function instantiateFromName(name, getAccessorCode, bindings) {
 }
 
 exports.instantiateFromName = instantiateFromName;
+
+/** Schedule a reaction of the specified accessor within the specified container.
+ *  This puts the accessor onto the event queue in priority order.
+ *  This assumes that priorities are unique to each accessor.
+ *  @param container The container.
+ *  @param accessor The accessor.
+ */
+function scheduleEvent(container, accessor) {
+    var queue = container.eventQueue;
+    if (!queue || queue.length === 0) {
+        // Use a simple array as an event queue because almost all
+        // sorted insertions will be at the end, and all extractions
+        // will be at the beginning.
+        container.eventQueue = [accessor];
+        return;
+    }
+    // There are already items in the event queue.
+    var myPriority = accessor.priority;
+    if (typeof myPriority !== 'number') {
+        throw('Composite accessor has not been initialized(). '
+                + 'Perhaps intialize() is overridden?');
+    }
+    // Recall that a higher priority number means a lower priority.
+    var theirPriority = queue[queue.length - 1].priority;
+    if (myPriority > theirPriority) {
+        // Simple case. Append to the end of the queue.
+        queue.push(instance);
+        return;
+    }
+    if (myPriority == theirPriority) {
+        // Already on the queue.
+        return;
+    }
+    // More complicated case. Insert into the queue.
+    // Here we just search from the end.
+    // This is not efficient for random access, but these insertions are
+    // expected to occur in priority order anyway.
+    // Insertions are likely to be near the end.
+    for (var i = queue.length - 2; i >= 0; i--) {
+        theirPriority = queue[i].priority;
+        if (myPriority > theirPriority) {
+            // Insert at location i+1, removing 0 elements.
+            queue.splice(i+1, 0, accessor);
+            return;
+        }
+        if (myPriority == theirPriority) {
+            // Already on the queue.
+            return;
+        }
+    }
+    // Final case: My priority is less than all in the queue.
+    queue.splice(0, 0, accessor);
+}
 
 ////////////////////////////////////////////////////////////////////
 //// Module variables.

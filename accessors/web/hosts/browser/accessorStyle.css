@@ -1,5 +1,9 @@
-body {
+body, p, button {
     font-family: Tahoma, Geneva, sans-serif;
+}
+button {
+    font-size: 100%;
+    background-color: #ffcdcd;
 }
 /* Table style. */
 th {

@@ -103,6 +103,9 @@ function generateFromInstance(instance, id) {
     if (instance.inputList && instance.inputList.length > 0) {
         generateTable("Inputs", instance.inputList, instance.inputs, "input", id);
     }
+    // Generate a react button.
+    generateReactButton(instance, id);
+    
     // Generate a table for outputs.
     if (instance.outputList && instance.outputList.length > 0) {
         generateTable("Outputs", instance.outputList, instance.outputs, "output", id);
@@ -141,6 +144,25 @@ function generateListOfContainedAccessors(instance, id) {
             listElement.innerHTML = '<a href="' + className + '.html">' + className + '</a>';
         }
     }
+}
+
+/** Generate a react button.
+ *  @param instance The instance to have react.
+ *  @param id The id of the page element into which to insert the generated HTML.
+ */
+function generateReactButton(instance, id) {
+    var pp = document.createElement('p');
+    var button = document.createElement('button');
+    pp.appendChild(button);
+    
+    button.innerHTML = 'react to inputs';
+    button.setAttribute('name', 'react');
+    button.setAttribute('type', 'button');
+    button.setAttribute('autofocus', 'true');
+    button.setAttribute('onclick', 'window.accessor.react()');
+
+    var target = document.getElementById(id);
+    target.appendChild(pp);
 }
 
 /** Generate a table with the specified title and contents and
@@ -265,7 +287,7 @@ function generateTableRow(table, name, options, role, editable) {
         valueInput.setAttribute('style', 'display:table-cell; width:100%; box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;');
         
         // Invoke handlers, if there are any.
-        valueInput.setAttribute('onchange', 'window.accessor.react("' + name + '")');
+        valueInput.setAttribute('onchange', 'window.accessor.provideInput(name, value)');
                 
         valueCell.appendChild(valueInput);
     }
@@ -399,7 +421,7 @@ function getJavaScript(path, callback, module) {
     if (!callback) {
         // Synchronous version.
         request.open('GET', path, false);   // Pass false for synchronous
-        request.send();                         // Send the request now
+        request.send();                     // Send the request now
         // Throw an error if the request was not 200 OK 
         if (request.status !== 200) {
                 throw 'require() failed to get '
@@ -540,6 +562,7 @@ function send(name, value) {
         alert('No record of output named ' + name);
         return null;
     }
+    options.latestValue = value;
     if (options.type === 'string') {
         element.innerHTML = value;
     } else {
