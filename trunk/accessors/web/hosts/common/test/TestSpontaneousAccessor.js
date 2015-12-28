@@ -1,4 +1,4 @@
-// Test accessor that multiplies its input by a scale factor.
+// Test accessor that spontaneously produces outputs once per time interval.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,20 +22,31 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor that multiplies its input by a scale factor.
+/** Test accessor that spontaneously produces outputs once per time interval.
+ *  This implementation produces a counting sequence.
  *
- *  @accessor TestGainAccessor
+ *  @accessor TestSpontaneousAccessor
+ *  @parameter interval The interval between outputs in milliseconds.
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
-    input('input', {'type':'number', 'value':0});
-    output('scaled', {'type':'number'});
-    parameter('gain', {'type':'number', 'value':2});
+    parameter('interval', {'type':'number', 'value':1000});
+    output('output', {'type': 'number'});
 }
+var handle = null;
+var count = 0;
 
 exports.initialize = function() {
-    addInputHandler('input', function() {
-        send('scaled', get('input') * getParameter('gain'));
-    });
+    count = 0;
+    handle = setInterval(function() {
+        send('output', count++);
+    }, getParameter('interval'));
+}
+
+exports.wrapup = function() {
+    if (handle) {
+        clearInterval(handle);
+        handle = null;
+    }
 }

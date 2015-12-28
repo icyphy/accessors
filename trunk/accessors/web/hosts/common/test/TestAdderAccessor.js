@@ -1,4 +1,4 @@
-// Test accessor for various accessor hosts, but not for the common host.
+// Test accessor that adds its input values.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,9 +22,9 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor that multiplies its input by a scale factor.
+/** Test accessor that adds its input values.
  *
- *  @accessor TestCompositeAccessor
+ *  @accessor TestAdderAccessor
  *  @author Edward A. Lee
  */
 

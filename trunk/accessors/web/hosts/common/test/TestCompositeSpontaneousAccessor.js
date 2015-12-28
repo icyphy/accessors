@@ -1,4 +1,4 @@
-// Test accessor that multiplies its input by a scale factor.
+// Test a composite accessor containing a spontaneous accessor.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,20 +22,24 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor that multiplies its input by a scale factor.
+/** Test a composite accessor containing a spontaneous accessor.
+ *  This test contains a single accessor that produces a counting sequence.
  *
- *  @accessor TestGainAccessor
+ *  @accessor TestCompositeSpontaneousAccessor
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
-    input('input', {'type':'number', 'value':0});
-    output('scaled', {'type':'number'});
-    parameter('gain', {'type':'number', 'value':2});
+    output('output', {'type':'number'});
+    var gen = instantiate('hosts/common/test/TestSpontaneousAccessor');
+    var gain = instantiate('hosts/common/test/TestGainAccessor');
+    gain.setParameter('gain', 4);
+    connect(gen, 'output', gain, 'input');
+    connect(gain, 'scaled', 'output');
 }
 
-exports.initialize = function() {
-    addInputHandler('input', function() {
-        send('scaled', get('input') * getParameter('gain'));
-    });
-}
+// NOTE: If you provide a fire() function, it is up to you to invoke react() on
+// the contained accessors.
+
+// NOTE: If you provide an initialize() function, it is up to you to initialize
+// the contained accessors.
