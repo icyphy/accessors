@@ -103,3 +103,28 @@ a.provideInput('input', 5)
 a.react();
 test('composite accessor with automatic scheduling', a.latestOutput('output'), 25);
 
+// Note that the following two tests will run concurrently (!)
+
+// Test spontaneous accessor.
+var b = commonHost.instantiateFromName('TestSpontaneousAccessor', getAccessorCode);
+b.initialize();
+setTimeout(function() {
+    test('spontaneous accessor produces 0 after 1 second', b.latestOutput('output'), 0);
+}, 1500);
+setTimeout(function() {
+    test('spontaneous accessor produces 1 after 2 seconds', b.latestOutput('output'), 1);
+    b.wrapup();
+}, 2500);
+
+// Test composite spontaneous accessor.
+var c = commonHost.instantiateFromName('TestCompositeSpontaneousAccessor', getAccessorCode);
+c.initialize();
+setTimeout(function() {
+    test('composite spontaneous accessor produces 0 after 1 second', c.latestOutput('output'), 0);
+}, 1500);
+setTimeout(function() {
+    test('composite spontaneous accessor produces 4 after 2 seconds', c.latestOutput('output'), 4);
+    c.wrapup();
+}, 2500);
+
+

@@ -22,18 +22,100 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This module provides a host-independent function that, given the code specifying
- *  an accessor as a string, constructs a data structure for that accessor that
- *  the host can use to interact with the accessor.
+/** This module provides host-independent functions for swarmlet hosts.
+ *  A specific host (such as the Node.js host, the browser host, or the Ptolemy II
+ *  host) can use this module to implement common functionality that is realizable
+ *  in pure JavaScript.
  *
- *  In order to use this module, the host must provide implementations of accessor
- *  functions that cannot be provided in a host-independent way, including get(),
- *  send(), and require(). In addition, in order to support implement() and extend(),
- *  the host should provide an implementation of a getAccessorCode() function, which
- *  returns an accessor definition (as a string) given the name of the accessor
- *  (modified as needed with a path to the accessor).  For example,
- *  ```getAccessorCode('net/REST')``` should return the JavaScript code defining
- *  the REST accessor.
+ *  Specifically, this module provides two functions for instantiating accessors,
+ *  one that takes as an argument the accessor source code ('''instantiateFromCode''')
+ *  and one that takes as an argument the fully qualified accessor name
+ *  ('''instantiateFromName'''), such as 'net/REST'.
+ *
+ *  For these functions to be able to instantiate an accessor
+ *  given only its name, the host needs to provide as an argument to
+ *  instantiateFromName() a function, here designated getAccessorCode(), that
+ *  will retrieve the accessor source code given the name. This cannot be done
+ *  in a host-independent way. For example, ```getAccessorCode('net/REST')```
+ *  should return the JavaScript  code defining the REST accessor.
+ *  This function must also be provided if the host is to support accessor
+ *  subclassing (extend()) or interface implementation (implement()).
+ *
+ *  The two instantiate functions return an object that is an instance of an accessor.
+ *  A specific host will typically use this by invoking the following instance's
+ *  functions, perhaps in this order:
+ *
+ *  * '''setParameter'''(name, value): Set a parameter value.
+ *  * '''initialize'''(): Initialize the accessor.
+ *  * '''provideInput'''(name, value): Provide an input value.
+ *  * '''react()''' React to input values and fire the accessor.
+ *  * '''latestOutput'''(name): Retrieve an output value produced in react().
+ *  * '''wrapup'''(): Wrap up the accessor.
+ *
+ *
+ *  The react() function first invokes all input handlers that have been registered
+ *  to handle provided inputs. It then invokes all input handlers that have been
+ *  registered to handle any input.  Finally, it invokes the fire() function of the
+ *  accessor, if one is defined.
+ *
+ *  If a getAccessorCode() function is provided, then this implementation supports
+ *  composite accessors, which can instantiate other accessors (instantiate()) and
+ *  connect them (connect()).  That is, an accessor may be defined as a hierarchical
+ *  composition of other accessors.
+ *
+ *  If C is a composite accessor and you invoke C.provideInput(name, value) to
+ *  provide an input to C, the same input will be automatically provided to any
+ *  contained accessor that is connected to the input with the specified name.
+ *
+ *  Moreover, if C does not provide its own fire() function, then a default fire()
+ *  function will invoke react() on any contained accessors that are provided with
+ *  an input. If those contained accessors produce outputs, those will be provided
+ *  as inputs to any connected accessors and then those will react as well.
+ *  Finally, a contained accessor may send an output to an output of C, in which
+ *  case the composite accessor will produce an output.
+ *  
+ *  The reactions of contained accessors in a composite will occur in topological
+ *  sort order (upstream accessors are assured of reacting first). This ensures that
+ *  reactions of a composite are deterministic. Specifically, suppose that A, B, and
+ *  D are all accessors contained by a composite C. Suppose that the output of A goes
+ *  to both B and D, and that the output of B also goes to D. Then B will always react
+ *  before D, since it is upstream of D.
+ *
+ *  A composition of accessors can have cycles, but at least one output in any
+ *  directed cycle must have the option 'spontaneous' set to 'true'. This means that
+ *  the output is not immediately produced as a reaction to an input, but rather will
+ *  be produced some time later as a consequence of a callback. If there is no such
+ *  marked output, then the cycle is a causality loop. There is no way to determine
+ *  the order in which accessors should react.
+ *
+ *  An accessor need not have any inputs. In this case, an invocation of react()
+ *  will not invoke any input handlers (there cannot be any) and will only invoke the
+ *  fire() function.  Even with no fire() function, such an accessor can produce outputs
+ *  if it sets up callbacks in its initialize() function, for example using
+ *  setTimeout() or setInterval(). We call such an accessor a '''spontaneous accessor''',
+ *  because it spontaneously produces outputs without being triggered by any input.
+ *
+ *  A composite accessor can contain spontaneous accessors. When these produce outputs,
+ *  the composite accessor will automatically react. Hence, the contained spontaneous
+ *  accessor can trigger reactions of other contained accessors.
+ *
+ *  The two instantiate functions can also be provided a set of function
+ *  bindings as follows:
+ *
+ *  * '''require''': The host's implementation of the require function.
+ *     The default implementation throws an exception indicating that the host
+ *     does not support any external modules.
+ *  * '''get''': A function to retrieve the value of an input. The default
+ *     implementation returns the the value specified by a provideInput() call, or
+ *     if there has been no provideInput() call, then the value provided in the
+ *     options argument of the input() call, or null if there is no value.
+ *  * '''getParameter''': A function to retrieve the value of a parameter. The default
+ *     implementation returns the the value specified by a setParameter() call, or
+ *     if there has been no setParameter() call, then the value provided in the
+ *     options argument of the parameter() call, or null if there is no value.
+ *  * '''send''': A function to send an output. The default implementation produces
+ *     the output using console.log().
+ *
  *
  *  @module commonHost
  *  @authors: Edward A. Lee
@@ -74,21 +156,7 @@
  *  data structure by an array of names and an object with the options values.
  *
  *  The bindings parameter provides function bindings for functions that are used by
- *  accessors.  Any that are not provided will be provided with defaults. These are:
- *
- *  * '''require''': The host's implementation of the require function.
- *     The default implementation throws an exception indicating that the host
- *     does not support any external modules.
- *  * '''get''': A function to retrieve the value of an input. The default
- *     implementation returns the the value specified by a provideInput() call, or
- *     if there has been no provideInput() call, then the value provided in the
- *     options argument of the input() call, or null if there is no value.
- *  * '''getParameter''': A function to retrieve the value of a parameter. The default
- *     implementation returns the the value specified by a setParameter() call, or
- *     if there has been no setParameter() call, then the value provided in the
- *     options argument of the parameter() call, or null if there is no value.
- *  * '''send''': A function to send an output. The default implementation produces
- *     the output using console.log().
+ *  accessors.  Any that are not provided will be provided with defaults.
  *
  *  @param code The accessor source code.
  *  @param getAccessorCode A function that will retrieve the source code of a specified
@@ -96,10 +164,13 @@
  *   the host does not support accessors that extend other accessors.
  *  @param bindings The function bindings to be used by the accessor.
  */
-exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
+ function instantiateFromCode(code, getAccessorCode, bindings) {
     if (!code) {
         throw 'No accessor code specified.';
     }
+    // Functions invoked by the accessor need to be defined in the scope
+    // in which the accessor code is evaluated, not as 'this.get', etc.,
+    // because the accessor code just invokes 'get()' not 'this.get()'.
     var     get = null,
             getParameter = null,
             require = null, 
@@ -121,7 +192,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     // a valid argument to require(). Here, we are just given the JavaScript
     // code, so we don't have any information about where it came from.
     // Hence, we set a default id to 'unspecified', with the expectation that the
-    // code passed in will override that, and possibly the uri.
+    // code passed in will override that, and possibly the uri property.
     var module = {'id': 'unspecified'};
 
     // Define the object to be populated by the accessor code with functions
@@ -229,6 +300,9 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
      *  @param name The name of the input.
      */
     function react(name) {
+        // Allow further reactions to be scheduled by this reaction.
+        instance.reactRequestedAlready = false;
+        
         // To avoid code duplication, define a local function.
         var invokeSpecificHandler = function(name) {
             if (inputHandlers[name] && inputHandlers[name].length > 0) {
@@ -306,7 +380,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
         if (!input) {
             throw('provideInput(): Accessor has no input named ' + name);
         }
-        value = convertType(value, input);
+        value = convertType(value, input, name);
         input.currentValue = value;
 
         // Mark this input as requiring invocation of an input handler.
@@ -380,7 +454,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             throw('setParameter(): Accessor has no parameter named ' + name);
         }
         // If necessary, convert the value to the match the type.
-        value = convertType(value, parameter);
+        value = convertType(value, parameter, name);
 
         parameter.currentValue = value;
     }
@@ -409,7 +483,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             }
             // If necessary, convert the value to the match the type.
             var value = input['value'];
-            value = convertType(value, input);
+            value = convertType(value, input, name);
             return value;
         };
     }
@@ -425,7 +499,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             }
             // If necessary, convert the value to the match the type.
             var value = parameter['value'];
-            value = convertType(value, parameter);
+            value = convertType(value, parameter, name);
             return value;
         };
     }
@@ -440,11 +514,11 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
                 throw('send(name, value): No output named ' + name);
             }
             // If necessary, convert the value to the match the type.
-            value = convertType(value, output);
+            value = convertType(value, output, name);
 
             output.latestOutput = value;
             // console.log('Sending output through ' + name + ': ' + value);
-            if (output.destinations) {
+            if (output.destinations && output.destinations.length > 0) {
                 for (var i = 0; i < output.destinations.length; i++) {
                     var destination = output.destinations[i];
                     if (typeof destination === 'string') {
@@ -461,6 +535,10 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
                         destination.accessor.provideInput(destination.inputName, value);
                     }
                 }
+            } else {
+                // If no other implementation of send() has been provided and
+                // there are no destinations, produce to standard output.
+                console.log('Output named "' + name + '" produced: ' + value);
             }
         };
     };
@@ -682,7 +760,7 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
             && instance.containedAccessors
             && instance.containedAccessors.length > 0) {
         exports.fire = function() {
-            console.log('Composite is reacting with ' + instance.eventQueue.length + ' events.');
+            // console.log('Composite is reacting with ' + instance.eventQueue.length + ' events.');
             while (instance.eventQueue && instance.eventQueue.length > 0) {
                 // Remove from the event queue the first accessor, which will now react.
                 // It may add itself back in, if it sends to its own input. But in that
@@ -694,8 +772,17 @@ exports.instantiateFromCode = function(code, getAccessorCode, bindings) {
     }    
     instance.fire = exports.fire;
 
+    // Default wrapup() function invokes wrapup on all contained accessors.
     if (!exports.wrapup) {
-        exports.wrapup = function() {};
+        exports.wrapup = function() {
+            if (instance.containedAccessors && instance.containedAccessors.length > 0) {
+                for (var i = 0; i < instance.containedAccessors.length; i++) {
+                    if (instance.containedAccessors[i].wrapup) {
+                        instance.containedAccessors[i].wrapup();
+                    }
+                }
+            }
+        };
     }
     instance.wrapup = exports.wrapup;
 
@@ -849,8 +936,9 @@ function assignImpliedPrioritiesUpstream(container, accessor, cyclePriority) {
  *  @param value The value to convert.
  *  @param destination The destination object, which may have a type property.
  *   This is an input, parameter, or output options object.
+ *  @param name The name of the input, output, or parameter (for error reporting).
  */
-function convertType(value, destination) {
+function convertType(value, destination, name) {
     if (!destination.type || destination.type === typeof value) {
         // Type is unspecified or a match. Use value as given.
     } else if (destination.type === 'string') {
@@ -930,16 +1018,24 @@ function instantiateFromName(name, getAccessorCode, bindings) {
     return instance;
 }
 
-exports.instantiateFromName = instantiateFromName;
-
 /** Schedule a reaction of the specified accessor within the specified container.
  *  This puts the accessor onto the event queue in priority order.
  *  This assumes that priorities are unique to each accessor.
- *  @param container The container.
+ *  It is necessary for the react() function to be invoked for this event
+ *  to be handled, so this function uses setTimeout(function, time) with time
+ *  argument 0 to schedule a reaction. This ensures that the reaction occurs
+ *  after the currently executing function has completely executed.
+ *  @param container The container accessor.
  *  @param accessor The accessor.
  */
 function scheduleEvent(container, accessor) {
     var queue = container.eventQueue;
+    // If we haven't already scheduled a react() since the last react(),
+    // schedule it now.
+    if (!container.reactRequestedAlready) {
+        container.reactRequestedAlready = true;
+        setTimeout(function() { container.react(); }, 0);
+    }
     if (!queue || queue.length === 0) {
         // Use a simple array as an event queue because almost all
         // sorted insertions will be at the end, and all extractions
@@ -995,6 +1091,14 @@ function scheduleEvent(container, accessor) {
  *  will be around as long as the process exists.
  */
 var _accessorInstanceTable = {};
+
+////////////////////////////////////////////////////////////////////
+//// Exports
+
+exports.instantiateFromCode = instantiateFromCode;
+exports.instantiateFromName = instantiateFromName;
+
+
 
 
 
