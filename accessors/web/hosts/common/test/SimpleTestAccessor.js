@@ -1,4 +1,4 @@
-// Test code for functions to be shared among accessor hosts.
+// Test accessor with various input and output types and handlers.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,7 +22,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor for various accessor hosts.
+/** Test accessor with various input and output types and handlers.
  *  This accessor is designed to be instantiable on any host, including
  *  the common host, which does not implement the require() function.
  *

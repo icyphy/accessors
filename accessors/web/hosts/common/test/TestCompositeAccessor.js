@@ -1,4 +1,4 @@
-// Test accessor for various accessor hosts, but not for the common host.
+// Test composite accessor.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,8 +22,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor for various accessor hosts.
- *  This accessor tests composition of other accessors.
+/** Test composite accessor.
+ *  This accessor contains two accessors, a gain and an adder.
+ *  It multiplies the input by 4 and adds the result to the input.
+ *  The sum is sent to the output.
  *
  *  @accessor TestCompositeAccessor
  *  @author Edward A. Lee
