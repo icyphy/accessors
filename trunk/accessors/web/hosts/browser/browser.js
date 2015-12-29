@@ -41,6 +41,9 @@
  *  The id attribute can have whatever value you like, but it must be unique on
  *  the web page.
  *
+ *  The main entry point to this module is the generate() function, which is
+ *  invoked when the web page DOM content has been loaded.
+ *
  *  @author Edward A. Lee
  *  @version $$Id$$
  */
@@ -57,6 +60,33 @@ window.addEventListener('DOMContentLoaded', function() {
 
 //////////////////////////////////////////////////////////////////////////
 //// Functions
+
+/** Local function controlling how standard elements are rendered in the
+ *  document with an optional label.
+ *  @param target The target document element id.
+ *  @param label The label, or null to not have a label.
+ *  @param content The content.
+ */
+function appendDoc(target, label, content) {
+    var pp = document.createElement('p');
+    var title = '';
+    if (label) {
+        title = '<b>' + label + ':</b> ';
+    }
+    pp.innerHTML = title + content;
+    target.appendChild(pp);
+}
+
+/** Local function to add a placeholder to later populate.
+ *  @param target The target document element id.
+ *  @param id The id for the placeholder.
+ *  @param element The element type (e.g. 'div', 'pp', or 'span').
+ */
+function appendPlaceholder(target, id, element) {
+    var pp = document.createElement(element);
+    pp.setAttribute('id', id);
+    target.appendChild(pp);
+}
 
 /** Populate the current page by searching for elements with class 'accessor'
  *  and attribute 'src', generating HTML for the specified accessor, and
@@ -108,6 +138,16 @@ function generateAccessorHTML(path, id) {
                + ': '
                + error);
     };
+    
+    // Create documentation for the accessor.
+    generateAccessorDocumentation(path, id);
+    
+    // Create a button to view the accessor code.
+    generateAccessorCodeElement(code, 'revealCode');
+    
+    // Next, evaluate the accessor code to invoke the setup() function, which
+    // will determine what the parameters, inputs, and outputs are, and will set
+    // up the accessor to be executed.
     
     // The following functions have to be defined here because the page may
     // have more than one accessor on it and we need the id.
@@ -165,9 +205,43 @@ function generateAccessorHTML(path, id) {
             element.innerHTML = JSON.stringify(value);
         }
     }
-
+    // Load the specified module.
+    function require(path) {
+        // Indicate required modules in the docs.
+        var modules = document.getElementById('modules');
+        var text = modules.innerHTML;
+        if (!text) {
+            text = '<p><b>Modules required:</b> ' + path;
+        } else {
+            // Remove the trailing '</p>'
+            text = text.replace('</p>', '');
+            text += ', ' + path;
+        }
+        // Default return value.
+        var result = 'Module failed to load';
+        // Load the module synchronously because the calling function needs the returned
+        // value. If a module fails to load, however, we will still want to display a web
+        // page. It's just that execution will fail.
+        try {
+            // The third argument (null) indicates synchronous load.
+            var result = loadFromServer(path, id, null);
+            // If successful, add the module name to the text of the modules list.
+        } catch (error) {
+            // Mark the page not executable so that buttons are not generated for
+            // execution.
+            var element = document.getElementById(id);
+            if (element) {
+                element.setAttribute('class', 'notExecutable');
+            }
+            text += '<span class="error"> (Not supported by this host)</span>';
+        }
+        modules.innerHTML = text + '</p>';
+        return result;
+    }
+    
     // Load common/commonHost.js code asynchronously.
-    require('/accessors/hosts/common/commonHost.js', function(error, commonHost) {
+    loadFromServer('/accessors/hosts/common/commonHost.js',
+            id, function(error, commonHost) {
         var instance;
         if (error) {
             alert('Failed to load commonHost.js: ' + error);
@@ -199,6 +273,137 @@ function generateAccessorHTML(path, id) {
     });
 }
 
+/** Generate a button that will optionally reveal the accessor source code.
+ *  @param code The code.
+ *  @param id The id of the element into which to put the button and code block.
+ */
+function generateAccessorCodeElement(code, id) {
+    var target = document.getElementById(id);
+    
+    var button = document.createElement('button');
+    button.innerHTML = 'reveal code';
+    button.onclick = function() {
+        if (button.innerHTML === 'hide code') {
+            pre.style.display = 'none';
+            button.innerHTML = 'reveal code';
+        } else {
+            pre.style.display = 'block';
+            button.innerHTML = 'hide code';
+        }
+    }
+    target.appendChild(button);
+    
+    // Include Google's pretty printer, if possible.
+    var script = document.createElement('script');
+    script.src = "https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js";
+    target.appendChild(script);
+    
+    var pre = document.createElement('pre');
+    // Class prettyprint invokes Google's pretty printer, if available.
+    pre.setAttribute('class', 'prettyprint');
+    // Start out hidden.
+    pre.style.display = 'none';
+    target.appendChild(pre);
+
+    var codeElement = document.createElement('code');
+    pre.appendChild(codeElement);
+    // Need to escape HTML markup. It is sufficient to just escape <
+    codeElement.innerHTML = code.replace(/</g, '&lt;');
+}
+
+/** Generate documentation for the accessor. At a minimum, this creates a header
+ *  with the name of the accessor class.  If in addition, however, it can find a
+ *  a PtDoc file for the accessor, then it uses that to build a documentation
+ *  display.
+ *  @param path The fully qualified class name of the accessor.
+ *  @param id The id of the accessor, which is also assumed to be the id of the
+ *   document element into which to insert the documentation.
+ */
+function generateAccessorDocumentation(path, id) {
+    var target = document.getElementById(id);
+    
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', 'title');
+    // Extract the class name from the path.
+    var className = path;
+    if (className.indexOf('/') === 0) {
+        className = className.substring(1);
+    }
+    if (className.indexOf('accessors/') === 0) {
+        className = className.substring(10);
+    }
+    h1.innerHTML = 'Accessor class: ' + className;
+    target.appendChild(h1);
+    
+    appendPlaceholder(target, 'revealCode', 'span');
+    appendPlaceholder(target, 'implements', 'div');
+    appendPlaceholder(target, 'extends', 'div');
+    appendPlaceholder(target, 'modules', 'div');
+    
+    // Next, attempt to read the PtDoc file.
+    // Remove any trailing '.js'.
+    if (path.indexOf('.js') === path.length - 3) {
+        path = path.substring(0, path.length - 3);
+    }
+    path = path + 'PtDoc.xml';
+    
+    // Make sure the path starts with /accessors so that it will work
+    // with the TerraSwarm accessor host.
+    if (path.indexOf('/') === 0) {
+        path = path.substring(1);
+    }
+    if (path.indexOf('accessors/') !== 0) {
+        path = '/accessors/' + path;
+    } else {
+        path = '/' + path;
+    }
+        
+    var request = new XMLHttpRequest();
+    request.overrideMimeType("application/xml");
+    request.open('GET', path, true);    // Pass true for asynchronous
+    request.onreadystatechange = function() {
+        // NOTE: At readyState === 3, we seem to get a console message
+        // "Syntax error", at least with Firefox, if the file is not found.
+        // No idea why, but it seems harmless.
+        
+        // If the request is complete (state is 4)
+        if (request.readyState === 4) {
+            // If the request was successful.
+            if (request.status !== 200) {
+                var pp = document.createElement('p');
+                pp.setAttribute('class', 'error');
+                pp.innerHTML = 'No documentation found for the accessor (tried '
+                        + path + ').';
+                target.appendChild(pp);
+                return;
+            }
+            var properties = request.responseXML.getElementsByTagName('property');
+            var docs = {};
+            for (var i = 0; i < properties.length; i++) {
+                var property = properties[i];
+                var name = property.getAttribute('name');
+                docs[name] = property.getAttribute('value');
+            }
+            if (docs['description']) {
+                appendDoc(target, null, docs['description']);
+            }
+            if (docs['author']) {
+                appendDoc(target, 'Author', docs['author']);
+            }
+            if (docs['version']) {
+                appendDoc(target, 'Version', docs['version']);
+            }
+            // Record the docs for future use in generating input/output/parameter
+            // documentation.
+            if (!window.accessorDocs) {
+                window.accessorDocs = {};
+            }
+            window.accessorDocs[id] = docs;
+        }
+    };
+    request.send();
+}
+
 /** Generate HTML from the specified accessor instance and insert it
  *  into the element on the page with the specified id.
  *  @param accessor An accessor instance created by common/commonHost.js.
@@ -221,8 +426,6 @@ function generateFromInstance(instance, id) {
     if (instance.inputList && instance.inputList.length > 0) {
         generateTable("Inputs", instance.inputList, instance.inputs, "input", id);
     }
-    // Generate a react button.
-    generateReactButton(instance, id);
     
     // Generate a table for outputs.
     if (instance.outputList && instance.outputList.length > 0) {
@@ -242,29 +445,49 @@ function generateFromInstance(instance, id) {
 function generateListOfContainedAccessors(instance, id) {
     if (instance.containedAccessors && instance.containedAccessors.length > 0) {
         var header = document.createElement('h2');
-        header.innerHTML = 'ContainedAccessors';
+        header.innerHTML = 'Contained Accessors';
         var target = document.getElementById(id);
         target.appendChild(header);
-
-        var list = document.createElement('ol');
-        target.appendChild(list);
         
         for (var i = 0; i < instance.containedAccessors.length; i++) {
             var containedInstance = instance.containedAccessors[i];
             var className = containedInstance.className;
-            var listElement = document.createElement('li');
-            list.appendChild(listElement);
-            listElement.innerHTML = '<a href="' + className + '.html">' + className + '</a>';
+            var contentID = id + '_' + i;
+            var listElement = document.createElement('h3');
+            target.appendChild(listElement);
+            listElement.innerHTML = (i+1) + '. Instance of: ' + className
+                + ' <button onclick=toggleVisibility("'
+                + contentID
+                + '")>toggle visibility</button>';
+            var div = document.createElement('div');
+            div.setAttribute('id', contentID);
+            div.setAttribute('class', 'containedAccessor');
+            // Start out hidden.
+            div.style.display = 'none';
+            target.appendChild(div);
+            // FIXME: This generates HTML that shows the initial value of
+            // inputs and outputs. But likely the user wants the current value
+            // when they toggle, or better yet, even see the values get updated
+            // when the container runs. This doesn't seem so easy to do.
+            generateFromInstance(containedInstance, contentID);
         }
     }
 }
 
 /** Generate a react button.
- *  @param instance The instance to have react.
- *  @param id The id of the page element into which to insert the generated HTML.
+ *  @param id The id of the accessor, which is also the id of the
+ *   page element into which to insert the generated HTML.
  */
-function generateReactButton(instance, id) {
-    var pp = document.createElement('p');
+function generateReactButton(id) {
+    var target = document.getElementById(id);
+    var targetClass = target.getAttribute('class');
+    if (targetClass &&
+            (targetClass === 'containedAccessor' || targetClass === 'notExecutable')) {
+        // A contained accessor cannot be asked to react independently.
+        return;
+    }
+
+    var pp = document.createElement('span');
     var button = document.createElement('button');
     pp.appendChild(button);
     
@@ -273,8 +496,8 @@ function generateReactButton(instance, id) {
     button.setAttribute('type', 'button');
     button.setAttribute('autofocus', 'true');
     button.setAttribute('onclick', 'window.accessors["' + id + '"].react()');
+    button.setAttribute('id', 'reactToInputs');
 
-    var target = document.getElementById(id);
     target.appendChild(pp);
 }
 
@@ -291,8 +514,14 @@ function generateTable(title, names, contents, role, id) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
+    header.id = role + 'TableTitle';
     var target = document.getElementById(id);
     target.appendChild(header);
+    
+    if (role === 'input') {
+        // Generate a react button.
+        generateReactButton(id);
+    }
     
     var table = document.createElement('table');
     // table.setAttribute('border', 1);
@@ -319,6 +548,10 @@ function generateTable(title, names, contents, role, id) {
     column.innerHTML = 'Value';
     titleRow.appendChild(column);
     
+    column = document.createElement('th');
+    column.innerHTML = 'Documentation';
+    titleRow.appendChild(column);
+
     var tbody = document.createElement('tbody');
     table.appendChild(tbody);
 
@@ -326,6 +559,9 @@ function generateTable(title, names, contents, role, id) {
     
     var editable = true;
     if (role === 'output') {
+        editable = false;
+    }
+    if (target.getAttribute('class') === 'containedAccessor') {
         editable = false;
     }
     
@@ -355,7 +591,7 @@ function generateTable(title, names, contents, role, id) {
  *  @param name The text to put in the name column.
  *  @param id The id of the accessor.
  *  @param options The options.
- *  @param editable True to make the value an input element.
+ *  @param editable True to make the value an editable input element.
  */
 function generateTableRow(table, name, id, options, editable) {
     var row = document.createElement("tr");
@@ -369,17 +605,17 @@ function generateTableRow(table, name, id, options, editable) {
     var typeCell = document.createElement("td");
     var type = options['type'];
     if (!type) {
-        type = 'general';
+        type = '';
     }
     typeCell.innerHTML = type;
     row.appendChild(typeCell);
     
     // Insert the value.
     var valueCell = document.createElement("td");
-    var value = options['value'];
-    if (!value) {
-        value = '';
-    }
+    var value = options['currentValue']
+        || options['value']
+        || options['latestOutput']
+        || '';
     if (!editable) {
         valueCell.innerHTML = value;
         
@@ -396,8 +632,7 @@ function generateTableRow(table, name, id, options, editable) {
         valueInput.setAttribute('type', 'text');
         valueInput.setAttribute('name', name);
         valueInput.setAttribute('value', value);
-        <!-- Song and dance here required to get table cell to stretch, but not overrun the border. -->
-        valueInput.setAttribute('style', 'display:table-cell; width:100%; box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;');
+        valueInput.setAttribute('class', 'valueInputBox');
         
         // Invoke handlers, if there are any.
         valueInput.setAttribute('onchange',
@@ -406,6 +641,49 @@ function generateTableRow(table, name, id, options, editable) {
         valueCell.appendChild(valueInput);
     }
     row.appendChild(valueCell);
+    
+    // Insert the documentation, if any is found.
+    var success = false;
+    if (window.accessorDocs) {
+        var docs = window.accessorDocs[id];
+        if (docs) {
+            // Try with various suffixes.
+            var doc = docs[name];
+            if (!doc) {
+                doc = docs[name + ' (parameter)'];
+            }
+            if (!doc) {
+                doc = docs[name + ' (port)'];
+            }
+            if (!doc) {
+                doc = docs[name + ' (port-parameter)'];
+            }
+            if (doc) {
+                success = true;
+                var docCell = document.createElement("td");
+                docCell.setAttribute('class', 'documentation');
+                // Strip out the type information, as we have it in more
+                // reliably already from the accessor.
+                // FIXME: The type info shouldn't even be here.
+                // Get rid of this when it is gone.
+                if (doc.indexOf('({') === 0) {
+                    var end = doc.indexOf('})');
+                    if (end > 0) {
+                        doc = doc.substring(end + 2);
+                    }
+                }
+                docCell.innerHTML = doc;
+                row.appendChild(docCell);
+            }
+        }
+    }
+    if (!success) {
+        var docCell = document.createElement("td");
+        docCell.setAttribute('class', 'documentation');
+        docCell.setAttribute('class', 'error');
+        docCell.innerHTML = 'No documentation found';
+        row.appendChild(docCell);
+    }
 
     table.appendChild(row);
 }
@@ -485,7 +763,7 @@ function getAccessorCode(path) {
     return getJavaScript(path, null, false);
 }
 
-/** Return the text of an accessor or module definition.
+/** Return the source code of an accessor or module definition.
  *  This implementation appends the string '.js' to the specified path
  *  (if it is not already there) and issues an HTTP GET with the specified path.
  *  If the path begins with '/' or './', then it is used as is.
@@ -494,7 +772,7 @@ function getAccessorCode(path) {
  *  or the directory in which modules are stored ('/accessors/hosts/browswer/modules'
  *  on this host).
  *
- *  If not callback function is given, then this is a blocking request.
+ *  If no callback function is given, then this is a blocking request.
  *  It will not return until it has the text, and then will return that text.
  *  If a callback is given, then this will issue the HTTP get and return, and
  *  then later invoke the callback when the response has been completely received.
@@ -529,8 +807,8 @@ function getJavaScript(path, callback, module) {
         request.send();                     // Send the request now
         // Throw an error if the request was not 200 OK 
         if (request.status !== 200) {
-                throw 'require() failed to get '
-                        + path + ': ' + request.statusText;
+            throw 'Failed to get '
+                    + path + ': ' + request.statusText;
         }
         return request.responseText;
     } else {
@@ -554,10 +832,10 @@ function getJavaScript(path, callback, module) {
     }
 }
 
-/** Return a module whose functionality is given in JavaScript at the specified path
- *  on the server. The path will be requested from the same server that served the page
- *  executing this script. If no callback function is given, the a synchronous
- *  (blocking) request will be made (best to avoid this in a web page).
+/** Fetch and execute a module or accessor whose functionality is given in JavaScript at
+ *  the specified path on the server. The path will be requested from the same server
+ *  that served the page executing this script. If no callback function is given,
+ *  then a synchronous (blocking) request will be made (best to avoid this in a web page).
  *  If a callback function is given, then after receiving and evaluating the
  *  JavaScript code, the callback function will be invoked.
  *
@@ -585,12 +863,17 @@ function getJavaScript(path, callback, module) {
  *   };
  *  ```
  *
+ *  The module can be an accessor. If the module or accessor
+ *  fails to load and no callback is given, then an exception will be thrown.
+ *  The caller should catch this exception and generate appropriate HTML content.
+ *
  *  This implementation is inspired by the requires() function implemented
  *  by Walter Higgins, found here:
  *
  *    https://github.com/walterhiggins/commonjs-modules-javax-script
  *
  *  @param path The code to fetch (a JavaScript file or module name).
+ *  @param id The id on the page for which the module is needed.
  *  @param callback The callback function, which gets two arguments: an error
  *   message (or null if the request succeeded) and the response JavaScript text.
  *   If this argument is omitted or null, then the path is retrieved synchronously
@@ -598,7 +881,7 @@ function getJavaScript(path, callback, module) {
  *  @see http://nodejs.org/api/modules.html#modules_the_module_object
  *  @see also: http://wiki.commonjs.org/wiki/Modules
  */
-function require(path, callback) {
+function loadFromServer(path, id, callback) {
     var evaluate = function(code) {
         // Create the exports object to be populated.
         var exports = {};
@@ -624,9 +907,25 @@ function require(path, callback) {
             }
         }, true);
     } else {
+        // Synchronous execution.
+        // This could throw an exception.
         // The third argument states that unless the path starts with '/'
         // or './', then the path should be searched for in the modules directory.
         var code = getJavaScript(path, null, true);
         return evaluate(code);
+    }
+}
+
+/** Toggle the visibility of an element on the web page.
+ *  @param id The id of the element.
+ */
+function toggleVisibility(id) {
+    var element = document.getElementById(id);
+    if (element) {
+        if (element.style.display == 'block') {
+            element.style.display = 'none';
+        } else {
+            element.style.display = 'block';
+        }
     }
 }
