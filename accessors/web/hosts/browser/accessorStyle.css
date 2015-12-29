@@ -5,23 +5,54 @@ button {
     font-size: 100%;
     background-color: #ffcdcd;
 }
+/* So that 'reveal code' button appears to the right of the title. */
+h1 {
+    display: inline;
+}
+/* So that 'react to inputs' button appears to the right of the table title. */
+#inputTableTitle {
+    display: inline;
+}
+#inputTableTitle:before {
+    margin-top: 10px;
+}
 /* Table style. */
 th {
-    background-color: #9acd32;
+    background-color: #555555;
+    color: white;
     text-align: left;
     padding: 3px;
-}
-td {
-    padding: 3px;
+    border: 1px solid lightgrey;
 }
 table {
     width: 100%;
+    border: 1px solid lightgrey;
+    border-collapse: collapse;
+    margin-bottom: 15px;
 }
-table, th, td {
-   border: 1px solid black;
-   max-width: 800px;
+td {
+    border: 1px solid lightgrey;
+    padding: 3px;
 }
-tr:hover {background-color: #f5f5f5}
+tr {
+    background-color: #f5f5f5;
+}
+tr:hover {
+    background-color: #ffffcc;
+}
+/* Song and dance here required to get table cell to stretch, but not overrun the border. */
+.valueInputBox {
+    font-size: 100%;
+    display:table-cell;
+    width:100%;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+/* Ensure that documentation doesn't occupy more than 50% of the width of the table. */
+.documentation {
+    width: 50%;
+}
 
 /* Style for class description. */
 .description {
@@ -30,4 +61,26 @@ tr:hover {background-color: #f5f5f5}
     border-color: grey;
     border-width: 1px;
     box-shadow: 10px 10px 5px grey;
+}
+
+/* Style for contained accessors. */
+.containedAccessor {
+    background-color: #eeffee;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+/* Style for pretty printed JavaScript. */
+.prettyprint {
+    background-color: #eeffff;
+}
+
+/* Style for error messages. */
+.error {
+    color: #cc1111;
+}
+
+/* Put buttons at the right. */
+#revealCode, #reactToInputs {
+    float: right;
 }
