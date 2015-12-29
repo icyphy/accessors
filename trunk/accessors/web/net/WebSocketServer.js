@@ -132,8 +132,13 @@ exports.initialize = function() {
         var data = get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
-            // Careful: if we do data.socketID !== null, then org/terraswarm/accessor/test/auto/WebSocketClient.xml will fail.
-            if ((data.socketID !== null)  && (data.message !== null)) {
+
+            // JSHint WARNING: Do not change dataSocketID != null to
+            // data.socketID !== null because it will cause
+            // org/terraswarm/accessor/test/auto/WebSocketClient.xml
+            // to fail upon reloading.  See
+            // org/terraswarm/accessor/test/WebSocketClientTest.tcl
+            if ((data.socketID != null)  && (data.message !== null)) {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
