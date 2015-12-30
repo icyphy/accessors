@@ -382,7 +382,7 @@ function generateAccessorDirectory(element) {
     }
 
     // Fetch the top-level index.json file.
-    getIndex('/', element, 0);
+    getIndex('/accessors/', element, 0);
 }
 
 /** Generate documentation for the accessor. At a minimum, this creates a header
