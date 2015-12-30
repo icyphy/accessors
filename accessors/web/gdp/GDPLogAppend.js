@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Accessor for a log.
- *  @author 
+ *  @author Edward A. Lee, Nitesh Mor
  *  @version $$Id$$ 
  */
 
