@@ -258,7 +258,7 @@ function generateAccessorHTML(path, id) {
             if (element) {
                 element.setAttribute('class', 'notExecutable');
             }
-            text += '<span class="error"> (Not supported by this host)</span>';
+            text += '<span class="accessorError"> (Not supported by this host)</span>';
         }
         modules.innerHTML = text + '</p>';
         return result;
@@ -306,6 +306,7 @@ function generateAccessorCodeElement(code, id) {
     var target = document.getElementById(id);
     
     var button = document.createElement('button');
+    button.setAttribute('class', 'accessorButton');
     button.innerHTML = 'reveal code';
     button.onclick = function() {
         if (button.innerHTML === 'hide code') {
@@ -407,7 +408,7 @@ function generateAccessorDirectory(element) {
                     }
                 } else {
                     var pp = document.createElement('p');
-                    pp.setAttribute('class', 'error');
+                    pp.setAttribute('class', 'accessorError');
                     pp.innerHTML = 'No index.json file';
                     docElement.appendChild(pp);
                 }
@@ -480,7 +481,7 @@ function generateAccessorDocumentation(path, id) {
             // If the request was successful.
             if (request.status !== 200) {
                 var pp = document.createElement('p');
-                pp.setAttribute('class', 'warning');
+                pp.setAttribute('class', 'accessorWarning');
                 pp.innerHTML = 'No documentation found for the accessor (tried '
                         + path + ').';
                 target.appendChild(pp);
@@ -565,7 +566,7 @@ function generateListOfContainedAccessors(instance, id) {
             var listElement = document.createElement('h3');
             target.appendChild(listElement);
             listElement.innerHTML = (i+1) + '. Instance of: ' + className
-                + ' <button onclick=toggleVisibility("'
+                + ' <button class="accessorButton" onclick=toggleVisibility("'
                 + contentID
                 + '")>toggle visibility</button>';
             var div = document.createElement('div');
@@ -601,6 +602,7 @@ function generateReactButton(id) {
     pp.appendChild(button);
     
     button.innerHTML = 'react to inputs';
+    button.setAttribute('class', 'accessorButton');
     button.setAttribute('name', 'react');
     button.setAttribute('type', 'button');
     button.setAttribute('autofocus', 'true');
@@ -633,6 +635,7 @@ function generateTable(title, names, contents, role, id) {
     }
     
     var table = document.createElement('table');
+    table.setAttribute('class', 'accessorTable');
     // table.setAttribute('border', 1);
     table.setAttribute('width', '100%');
     
@@ -640,24 +643,29 @@ function generateTable(title, names, contents, role, id) {
     table.appendChild(head);
     
     var titleRow = document.createElement('tr');
+    titleRow.setAttribute('class', 'accessorTableRow');
     head.appendChild(titleRow);
     
     var column = document.createElement('th');
+    column.setAttribute('class', 'accessorTableHeader');
     <!-- To not expand, use 1%. -->
     column.setAttribute('width', '1%');
     column.innerHTML = 'Name';
     titleRow.appendChild(column);
     
     column = document.createElement('th');
+    column.setAttribute('class', 'accessorTableHeader');
     column.setAttribute('width', '1%');
     column.innerHTML = 'Type';
     titleRow.appendChild(column);
 
     column = document.createElement('th');
+    column.setAttribute('class', 'accessorTableHeader');
     column.innerHTML = 'Value';
     titleRow.appendChild(column);
     
     column = document.createElement('th');
+    column.setAttribute('class', 'accessorTableHeader');
     column.innerHTML = 'Documentation';
     titleRow.appendChild(column);
 
@@ -704,14 +712,17 @@ function generateTable(title, names, contents, role, id) {
  */
 function generateTableRow(table, name, id, options, editable) {
     var row = document.createElement("tr");
-    
+    row.setAttribute('class', 'accessorTableData');
+
     // Insert the name.
     var nameCell = document.createElement("td");
+    nameCell.setAttribute('class', 'accessorTableData');
     nameCell.innerHTML = name;
     row.appendChild(nameCell);
     
     // Insert the type.
     var typeCell = document.createElement("td");
+    typeCell.setAttribute('class', 'accessorTableData');
     var type = options['type'];
     if (!type) {
         type = '';
@@ -721,6 +732,7 @@ function generateTableRow(table, name, id, options, editable) {
     
     // Insert the value.
     var valueCell = document.createElement("td");
+    valueCell.setAttribute('class', 'accessorTableData');
     var value = options['currentValue']
         || options['value']
         || options['latestOutput']
@@ -770,7 +782,7 @@ function generateTableRow(table, name, id, options, editable) {
             if (doc) {
                 success = true;
                 var docCell = document.createElement("td");
-                docCell.setAttribute('class', 'documentation');
+                docCell.setAttribute('class', 'accessorDocumentation');
                 // Strip out the type information, as we have it in more
                 // reliably already from the accessor.
                 // FIXME: The type info shouldn't even be here.
@@ -788,8 +800,8 @@ function generateTableRow(table, name, id, options, editable) {
     }
     if (!success) {
         var docCell = document.createElement("td");
-        docCell.setAttribute('class', 'documentation');
-        docCell.setAttribute('class', 'warning');
+        docCell.setAttribute('class', 'accessorDocumentation');
+        docCell.setAttribute('class', 'accessorWarning');
         docCell.innerHTML = 'No description found';
         row.appendChild(docCell);
     }

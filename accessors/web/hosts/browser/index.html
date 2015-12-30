@@ -3,15 +3,29 @@
 <head>
     <meta charset="utf-8">
     <title>Browser Swarmlet Host</title>
-    <script src="topLevelFunctions.js"></script>
-    <script src="StockTick.js"></script>
-    <script src="epilog.js"></script>
-    <script src="browserHostGenerate.js"></script>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorPageStyle.css">
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script src="/accessors/hosts/browser/browser.js"></script>
 </head>
 <body>
-<h1>Browser Swarmlet Host</h1>
-
-<h2>FIXME</h2>
-
+<div class="header"><h1 class="header">Browser Swarmlet Host</h1></div>
+<div id="container">
+    <div id="navcol">
+        <div class="accessorDirectory"></div>
+    </div>
+    <div id="contentcol">
+<p>
+The Browser Swarmlet Host is able to instantiate many accessors in your browser
+and provide an interface to them. Parameters, inputs, and outputs of the accessor
+are shown as tables. If the modules required by the accessor are all implemented
+in the browser host, then you will be able to provide inputs to the accessor and
+execute it. Some accessors, however, require resources that the browser cannot grant
+due to security restrictions. Such accessors will be displayed, but cannot be executed.
+To display and/or execute an accessor, choose one from the library. Its interface
+will appear below.
+<hr>
+        <div id="accessorDirectoryTarget"></div>
+    </div>
+</div>
 </body>
 </html>
