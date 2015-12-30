@@ -1,9 +1,59 @@
+/* Following are for building a complete web page.
+ * Do not use this with the TerraSwarm site, since it will conflict.
+ */
+body {
+    margin: 0;
+}
+
+#container {
+    margin: 0;
+    height: auto;
+}
+
+#navcol {
+    position: absolute;
+    width: 220px;
+    height: 100%;
+    background-color: #252c58;
+    color: #f8da73;
+    padding: 10px;
+    margin: 0;
+}
+
+#contentcol {
+    padding-left: 230px;
+    margin-left: 20px;
+    max-width: 1100px;
+    height: auto;
+}
+
+div.header {
+    padding: 10px;
+    color: #f8da73;
+    background-color: #252c58;
+    clear: left;
+}
+
+div.header a:link, div.header a:visited {
+    color: #f8da73;
+    text-decoration: none
+}
+
+div.header a:hover, div.header a:active {
+    color: #f8da73;
+    text-decoration: underline
+}
+
 body, p, button {
     font-family: Tahoma, Geneva, sans-serif;
 }
+
+/* Following are specifically for accessor displays. */
+
+/* Consistency with buttons. */
 button {
     font-size: 100%;
-    background-color: #ffcdcd;
+    background-color: #f8da73;
 }
 /* So that 'reveal code' button appears to the right of the title. */
 h1 {
@@ -91,32 +141,4 @@ tr:hover {
     float: right;
 }
 
-/* For expandable list of accessors. */
-#listContainer{
-  margin-top:15px;
-}
- 
-#expandableList ul, li {
-    list-style: none;
-    margin:0;
-    padding:0;
-    cursor: pointer;
-}
 
-#expandableList li {
-    line-height:140%;
-    text-indent:0px;
-    background-position: 1px 8px;
-    padding-left: 20px;
-    background-repeat: no-repeat;
-}
- 
-/* Collapsed state for list element */
-#expandableList .collapsed {
-    background-image: url(/image/collapsed.png);
-}
-/* Expanded state for list element
-/* NOTE: This class must be located UNDER the collapsed one */
-#expandableList .expanded {
-    background-image: url(/image/expanded.png);
-}
