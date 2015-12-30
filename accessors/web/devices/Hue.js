@@ -156,43 +156,51 @@ exports.initialize = function() {
 
     // First make sure the bridge is actually there and responding.
     var bridge_req = http.get(url, function (response) {
-        if (response.statusCode != 200) {
-            bridge_req_err_fn(response.statusMessage);
-
-        } else {
-            // Contacting the bridge succeeded. Next step is validating that the
-            // provided username is valid.
-            url = url + "api/";
-            http.get(url + userName + '/', function (response) {
-                if (response.statusCode == 200) {
-                    var lights = JSON.parse(response.body);
-
-                    if (isNonEmptyArray(lights) && lights[0].error) {
-                        var description = lights[0].error.description;
-
-                        if (description.match("unauthorized user")) {
-                            // Add this user.
-                            console.log(userName + " is not a registered user.\n" +
-                                        " Push the link button on the Hue bridge to register.");
-                            registerUser();
-                        } else {
-                            console.log('Error occurred when trying to get Hue light status.');
-                            error(description);
-                        }
-
-                    } else if (lights.lights) {
-                        // Proceed to next stage of initialization
-                        getReachableLights();
-
-                    } else {
-                        error("Unknown error. Could not authorize user.");
-                    }
-                } else {
-                    error('Error with HTTP GET for lights status. Code: ' + response.statusCode);
-                }
+    	if (response != null) {
+	        if (response.statusCode != 200) {
+	            bridge_req_err_fn(response.statusMessage);
+	
+	        } else {
+	            // Contacting the bridge succeeded. Next step is validating that the
+	            // provided username is valid.
+	            url = url + "api/";
+	            http.get(url + userName + '/', function (response) {
+	            	if (response != null) {
+		                if (response.statusCode == 200) {
+		                    var lights = JSON.parse(response.body);
+		
+		                    if (isNonEmptyArray(lights) && lights[0].error) {
+		                        var description = lights[0].error.description;
+		
+		                        if (description.match("unauthorized user")) {
+		                            // Add this user.
+		                            console.log(userName + " is not a registered user.\n" +
+		                                        " Push the link button on the Hue bridge to register.");
+		                            registerUser();
+		                        } else {
+		                            console.log('Error occurred when trying to get Hue light status.');
+		                            error(description);
+		                        }
+		
+		                    } else if (lights.lights) {
+		                        // Proceed to next stage of initialization
+		                        getReachableLights();
+		
+		                    } else {
+		                        error("Unknown error. Could not authorize user.");
+		                    }
+		                } else {
+		                    error('Error with HTTP GET for lights status. Code: ' + response.statusCode);
+		                }
+	            	} else {
+	            		error('Error with HTTP GET for lights status.  Null response.');
+	            	}
             });
 
-        }
+	        }
+    	} else {
+    		error('Error with HTTP GET for lights status.  Null response.');
+    	}
     });
     bridge_req.on('error', bridge_req_err_fn);
 };
