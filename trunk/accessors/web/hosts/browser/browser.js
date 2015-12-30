@@ -712,7 +712,7 @@ function generateTable(title, names, contents, role, id) {
  */
 function generateTableRow(table, name, id, options, editable) {
     var row = document.createElement("tr");
-    row.setAttribute('class', 'accessorTableData');
+    row.setAttribute('class', 'accessorTableRow');
 
     // Insert the name.
     var nameCell = document.createElement("td");
@@ -782,7 +782,7 @@ function generateTableRow(table, name, id, options, editable) {
             if (doc) {
                 success = true;
                 var docCell = document.createElement("td");
-                docCell.setAttribute('class', 'accessorDocumentation');
+                docCell.className = 'accessorDocumentation accessorTableData';
                 // Strip out the type information, as we have it in more
                 // reliably already from the accessor.
                 // FIXME: The type info shouldn't even be here.
