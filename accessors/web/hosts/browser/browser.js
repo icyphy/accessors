@@ -432,7 +432,7 @@ function generateAccessorDocumentation(path, id) {
     var target = document.getElementById(id);
     
     var h1 = document.createElement('h1');
-    h1.setAttribute('id', 'title');
+    h1.setAttribute('id', 'accessorTitle');
     // Extract the class name from the path.
     var className = path;
     if (className.indexOf('/') === 0) {
@@ -623,7 +623,7 @@ function generateTable(title, names, contents, role, id) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
-    header.setAttribute('class', 'tableTitle');
+    header.setAttribute('class', 'accessorTableTitle');
     var target = document.getElementById(id);
     target.appendChild(header);
     

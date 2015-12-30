@@ -48,7 +48,7 @@ body, p, button {
     font-family: Tahoma, Geneva, sans-serif;
 }
 
-/* Following are specifically for accessor displays. */
+/********** Following are specifically for accessor displays. *********/
 
 /* Consistency with buttons. */
 button {
@@ -56,15 +56,15 @@ button {
     background-color: #f8da73;
 }
 /* So that 'reveal code' button appears to the right of the title. */
-h1 {
+#accessorTitle {
     display: inline;
 }
 /* So that 'react to inputs' button appears to the right of the table title. */
-.tableTitle {
+.accessorTableTitle {
     display: inline;
 }
 /* So that there is spacing before the table titles. */
-.tableTitle:before {
+.accessorTableTitle:before {
     margin-top: 10px;
 }
 /* Table style. */
