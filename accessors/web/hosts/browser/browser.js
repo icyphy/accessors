@@ -111,6 +111,13 @@ function generate() {
             }
         }
     }
+    var elements = document.getElementsByClassName('accessorDirectory');
+    if (elements && elements.length > 0) {
+        for (var i = 0; i < elements.length; i++) {
+            var element = elements[i];
+            generateAccessorDirectory(element);
+        }
+    }
 }
 
 /** Generate HTML for an accessor defined at the specified path.
@@ -311,6 +318,73 @@ function generateAccessorCodeElement(code, id) {
     codeElement.innerHTML = code.replace(/</g, '&lt;');
 }
 
+/** Generate a directory of accessors and place into the specified page element.
+ *  @param id The id into which to place the directory.
+ */
+function generateAccessorDirectory(element) {
+    // Fetch the top-level index.json file and puts its contents in the specified
+    // docElement.
+    // This inner function will be invoked recursively to populate subdirectories.
+    function getIndex(baseDirectory, docElement, indent) {
+        var request = new XMLHttpRequest();
+        request.overrideMimeType("application/json");
+        var path = baseDirectory + 'index.json';
+        request.open('GET', path, true);    // Pass true for asynchronous
+        request.onreadystatechange = function() {
+            // If the request is complete (state is 4)
+            if (request.readyState === 4) {
+                // If the request was successful.
+                if (request.status === 200) {
+                    var response = JSON.parse(request.responseText);
+                    // Expected response is a list of directories and/or .js files.
+                    for (var i = 0; i < response.length; i++) {
+                        var item = response[i];
+                        var content = document.createElement('div');
+                        content.style.marginLeft = indent + 'px';
+                        docElement.appendChild(content);
+                        if (item.indexOf('.js') === item.length - 3) {
+                            // Accessor reference.
+                            // Strip off the .js
+                            content.innerHTML = item.substring(0, item.length - 3);
+                        } else if (item.indexOf('.xml') !== -1) {
+                            // Obsolete accessor reference.
+                            continue;
+                        } else {
+                            // Directory reference.
+                            // FIXME: + and - for expanded and not.
+                            content.innerHTML = item;
+                            var id = (baseDirectory + item);
+                            content.onclick = (function(id) {
+                                return function() {
+                                    toggleVisibility(id);
+                                };
+                            })(id);
+                            // Create an element for the subdirectory.
+                            // FIXME: indent.
+                            var subElement = document.createElement('div');
+                            // Start it hidden.
+                            subElement.style.display = 'none';
+                            subElement.id = id;
+                            docElement.appendChild(subElement);
+                            getIndex(baseDirectory + item + '/',
+                                    subElement, indent + 10);
+                        }
+                    }
+                } else {
+                    var pp = document.createElement('p');
+                    pp.setAttribute('class', 'error');
+                    pp.innerHTML = 'No index.json file';
+                    docElement.appendChild(pp);
+                }
+            }
+        };
+        request.send();
+    }
+
+    // Fetch the top-level index.json file.
+    getIndex('/', element, 0);
+}
+
 /** Generate documentation for the accessor. At a minimum, this creates a header
  *  with the name of the accessor class.  If in addition, however, it can find a
  *  a PtDoc file for the accessor, then it uses that to build a documentation
@@ -371,7 +445,7 @@ function generateAccessorDocumentation(path, id) {
             // If the request was successful.
             if (request.status !== 200) {
                 var pp = document.createElement('p');
-                pp.setAttribute('class', 'error');
+                pp.setAttribute('class', 'warning');
                 pp.innerHTML = 'No documentation found for the accessor (tried '
                         + path + ').';
                 target.appendChild(pp);
@@ -514,7 +588,7 @@ function generateTable(title, names, contents, role, id) {
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
-    header.id = role + 'TableTitle';
+    header.setAttribute('class', 'tableTitle');
     var target = document.getElementById(id);
     target.appendChild(header);
     
@@ -680,8 +754,8 @@ function generateTableRow(table, name, id, options, editable) {
     if (!success) {
         var docCell = document.createElement("td");
         docCell.setAttribute('class', 'documentation');
-        docCell.setAttribute('class', 'error');
-        docCell.innerHTML = 'No documentation found';
+        docCell.setAttribute('class', 'warning');
+        docCell.innerHTML = 'No description found';
         row.appendChild(docCell);
     }
 
