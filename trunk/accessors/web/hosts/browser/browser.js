@@ -36,10 +36,28 @@
  *  HTML element with class "accessor" and specifying a source, which is the fully
  *  qualified accessor name.  For example:
  *
- *     &lt;p class="accessor" src="net/REST" id="REST"&gt;&lt;/p&gt;
+ *     &lt;div class="accessor" src="net/REST" id="REST"&gt;&lt;/div&gt;
  *
  *  The id attribute can have whatever value you like, but it must be unique on
  *  the web page.
+ *
+ *  You can also create a directory of accessors by including in your document
+ *  an element with class "accessorDirectory". For example:
+ *
+ *     &lt;div class="accessorDirectory"&gt;&lt;/div&gt;
+ *
+ *  This will provide a hierarchical expandable list of accessors that this host
+ *  can instantiate.  In addition, if your document has an element with id equal to
+ *  "accessorDirectoryTarget", then clicking on an accessor in the directory will
+ *  cause that target to be filled with an instance of the accessor, similar to the
+ *  one above with class "accessor".  For example,
+ *
+ *     &lt;div class="accessorDirectoryTarget"&gt;&lt;/div&gt;
+ *
+ *  The style of the generated web pages can be customized using CSS. A default
+ *  style is achieved by including in the head section of your document the following:
+ *
+ *     &lt;link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css"&gt;
  *
  *  The main entry point to this module is the generate() function, which is
  *  invoked when the web page DOM content has been loaded.
@@ -319,6 +337,9 @@ function generateAccessorCodeElement(code, id) {
 }
 
 /** Generate a directory of accessors and place into the specified page element.
+ *  If the document has an element with id equal to "accessorDirectoryTarget", then
+ *  clicking on an accessor in the directory will cause that target to be filled with
+ *  the accessor HTML.
  *  @param id The id into which to place the directory.
  */
 function generateAccessorDirectory(element) {
@@ -346,6 +367,21 @@ function generateAccessorDirectory(element) {
                             // Accessor reference.
                             // Strip off the .js
                             content.innerHTML = item.substring(0, item.length - 3);
+                            // If the document has an element with id =
+                            // accessorDirectoryTarget, then create a reaction to a
+                            // click.
+                            if (document.getElementById('accessorDirectoryTarget')) {
+                                content.onclick = (function(baseDirectory, item) {
+                                    return function() {
+                                        // First clear the target.
+                                        var target = document.getElementById(
+                                                'accessorDirectoryTarget');
+                                        target.innerHTML = '';
+                                        generateAccessorHTML(baseDirectory + item,
+                                                'accessorDirectoryTarget');
+                                    };
+                                })(baseDirectory, item);
+                            }
                         } else if (item.indexOf('.xml') !== -1) {
                             // Obsolete accessor reference.
                             continue;
@@ -360,7 +396,6 @@ function generateAccessorDirectory(element) {
                                 };
                             })(id);
                             // Create an element for the subdirectory.
-                            // FIXME: indent.
                             var subElement = document.createElement('div');
                             // Start it hidden.
                             subElement.style.display = 'none';
