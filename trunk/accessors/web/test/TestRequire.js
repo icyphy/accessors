@@ -1,4 +1,4 @@
-// Test accessor with various input and output types and handlers.
+// Test accessor for various accessor hosts, but not for the common host.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,15 +22,26 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor with various input and output types and handlers.
- *  This accessor is designed to be instantiable on any host, including
- *  the common host, which does not implement the require() function.
+/** Test accessor that is similar to its base class, except that it requires
+ *  the 'util' module.
  *
- *  @accessor SimpleTestAccessor
+ *  @accessor TestRequire
+ *  @parameter p A parameter with default value 42.
+ *  @input untyped An untyped input that will accept any JavaScript object.
+ *  @input numeric A numeric input.
+ *  @input boolean A boolean input.
+ *  @output typeOfUntyped Produces the type (a string) of the input named 'untyped'.
+ *  @output jsonOfUntyped Produces a JSON representation of the input named 'untyped',
+ *   created using the util module.
+ *  @output numericPlusP Produces the value of the 'numeric' input plus 'p'.
+ *  @output negation Produces the negation of the 'boolean' input.
  *  @author Edward A. Lee
  */
 
+var util = require('util');
+
 exports.setup = function() {
+    parameter('p', {'value':42});                   // Untyped, with numeric value.
     input('untyped');                               // Untyped input.
     input('numeric', {'type':'number', 'value':0}); // Numeric input.
     input('boolean', {'type':'boolean'});           // Boolean input.
@@ -38,15 +49,17 @@ exports.setup = function() {
     output('jsonOfUntyped', {'type':'string'});     // JSON of untyped input.
     output('numericPlusP', {'type':'number'});      // Numeric input plus p.
     output('negation', {'type':'boolean'});         // Negation of boolean input.
-    parameter('p', {'value':42});                   // Untyped, with numeric value.
+}
+
+exports.fire = function() {
+    console.log('TestAccessor fired.');
 }
 
 exports.initialize = function() {
     // Respond to any input by updating them all.
     addInputHandler('untyped', function() {
         send('typeOfUntyped', typeof get('untyped'));
-        send('jsonOfUntyped', 'JSON for untyped input: '
-                + JSON.toString(get('untyped')));
+        send('jsonOfUntyped', util.format('JSON for untyped input: %j', get('untyped')));
     });
     addInputHandler('numeric', function() {
         send('numericPlusP', get('numeric') + getParameter('p'));
@@ -54,7 +67,4 @@ exports.initialize = function() {
     addInputHandler('boolean', function() {
         send('negation', !get('boolean'));
     });
-}
-exports.fire = function() {
-    console.log('SimpleTestAccess.fire() invoked.');
 }
