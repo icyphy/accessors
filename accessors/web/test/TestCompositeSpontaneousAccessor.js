@@ -31,8 +31,8 @@
 
 exports.setup = function() {
     output('output', {'type':'number'});
-    var gen = instantiate('hosts/common/test/TestSpontaneousAccessor');
-    var gain = instantiate('hosts/common/test/TestGainAccessor');
+    var gen = instantiate('test/TestSpontaneousAccessor');
+    var gain = instantiate('test/TestGainAccessor');
     gain.setParameter('gain', 4);
     connect(gen, 'output', gain, 'input');
     connect(gain, 'scaled', 'output');

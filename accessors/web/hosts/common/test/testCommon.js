@@ -26,7 +26,7 @@
 var fs = require('fs');
 
 // Read the accessor source code.
-var code = fs.readFileSync('./SimpleTestAccessor.js', 'utf8');
+var code = fs.readFileSync('../../../test/SimpleTestAccessor.js', 'utf8');
 
 // Require the accessor module to turn the source code into an accessor instance.
 var commonHost = require('../commonHost.js');
@@ -75,16 +75,13 @@ instance.react();
 test('react, send, and latestOutput', instance.latestOutput('negation'), false);
 
 // Check composite accessors with manual and automatic scheduling.
+
 // Have to provide an implementation of instantiate(), which in this case will only
-// instantiate accessors in the current directory.
+// instantiate accessors founds in the accessors repo directory.
 getAccessorCode = function(name) {
-    var lastSlash = name.lastIndexOf('/');
-    if (lastSlash >= 0) {
-        name = name.substring(lastSlash + 1);
-    }
-    return fs.readFileSync(name + '.js', 'utf8');
+    return fs.readFileSync('../../../' + name + '.js', 'utf8');
 }
-var code = getAccessorCode('TestCompositeAccessor');
+var code = getAccessorCode('test/TestCompositeAccessor');
 var a = commonHost.instantiateFromCode(code, getAccessorCode);
 a.initialize()
 
@@ -106,7 +103,7 @@ test('composite accessor with automatic scheduling', a.latestOutput('output'), 2
 // Note that the following two tests will run concurrently (!)
 
 // Test spontaneous accessor.
-var b = commonHost.instantiateFromName('TestSpontaneousAccessor', getAccessorCode);
+var b = commonHost.instantiateFromName('test/TestSpontaneousAccessor', getAccessorCode);
 b.initialize();
 setTimeout(function() {
     test('spontaneous accessor produces 0 after 1 second', b.latestOutput('output'), 0);
@@ -117,7 +114,7 @@ setTimeout(function() {
 }, 2500);
 
 // Test composite spontaneous accessor.
-var c = commonHost.instantiateFromName('TestCompositeSpontaneousAccessor', getAccessorCode);
+var c = commonHost.instantiateFromName('test/TestCompositeSpontaneousAccessor', getAccessorCode);
 c.initialize();
 setTimeout(function() {
     test('composite spontaneous accessor produces 0 after 1 second', c.latestOutput('output'), 0);
