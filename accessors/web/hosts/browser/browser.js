@@ -162,10 +162,32 @@ function generate() {
  *  id argument whose value is the provided accessor
  *  instance with some additional utilities to support the web page.
  *
+ *  If there was a previously generated accessor with this same id, then this
+ *  function will invoke its wrapup() function, if it defines one, before
+ *  generating the HTML. It will also clear the target element (which has
+ *  the same id as the accessor).
+ *
  *  @path The path to the accessor.
- *  @param id The id of the accessor.
+ *  @param id The id of the accessor, which is also the id of the target element
+ *   on the web page into which to insert the generated HTML.
  */
 function generateAccessorHTML(path, id) {
+
+    // Need to ensure the wrapup method of any
+    // previous accessor at this target is invoked.
+    if (window.accessors) {
+        var accessor = window.accessors[id];
+        if (accessor
+                && accessor.exports
+                && accessor.exports.wrapup) {
+            accessor.exports.wrapup();
+        }
+    }
+
+    // Clear any previous contents in the target element.
+    var target = document.getElementById(id);
+    target.innerHTML = '';
+    
     var code = getAccessorCode(path);
     
     function reportError(error) {
@@ -311,14 +333,15 @@ function generateAccessorHTML(path, id) {
 
 /** Generate a button that will optionally reveal the accessor source code.
  *  @param code The code.
- *  @param id The id of the element into which to put the button and code block.
+ *  @param elementId The id of the element into which to put the button and code block.
  */
-function generateAccessorCodeElement(code, id) {
-    var target = document.getElementById(id);
+function generateAccessorCodeElement(code, elementId) {
+    var target = document.getElementById(elementId);
     
     var button = document.createElement('button');
     button.setAttribute('class', 'accessorButton');
     button.innerHTML = 'reveal code';
+    button.id = 'revealCode';
     button.onclick = function() {
         if (button.innerHTML === 'hide code') {
             pre.style.display = 'none';
@@ -385,21 +408,6 @@ function generateAccessorDirectory(element) {
                             if (document.getElementById('accessorDirectoryTarget')) {
                                 content.onclick = (function(baseDirectory, item) {
                                     return function() {
-                                        // First clear the target.
-                                        var target = document.getElementById(
-                                                'accessorDirectoryTarget');
-                                        target.innerHTML = '';
-                                        // Need to ensure the wrapup method of any
-                                        // previous accessor at this target is invoked.
-                                        if (window.accessors) {
-                                            var accessor = window.accessors[
-                                                    'accessorDirectoryTarget'];
-                                            if (accessor
-                                                    && accessor.exports
-                                                    && accessor.exports.wrapup) {
-                                                accessor.exports.wrapup();
-                                            }
-                                        }
                                         generateAccessorHTML(baseDirectory + item,
                                                 'accessorDirectoryTarget');
                                     };

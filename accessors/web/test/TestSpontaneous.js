@@ -1,4 +1,4 @@
-// Test a composite accessor containing a spontaneous accessor.
+// Test accessor that spontaneously produces outputs once per time interval.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,24 +22,32 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test a composite accessor containing a spontaneous accessor.
- *  This test contains a single accessor that produces a counting sequence.
+/** Test accessor that spontaneously produces outputs once per time interval.
+ *  This implementation produces a counting sequence.
  *
- *  @accessor TestCompositeSpontaneousAccessor
+ *  @accessor TestSpontaneous
+ *  @parameter interval The interval between outputs in milliseconds.
+ *  @output output Output for the counting sequence, of type number.
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
-    output('output', {'type':'number'});
-    var gen = instantiate('test/TestSpontaneousAccessor');
-    var gain = instantiate('test/TestGainAccessor');
-    gain.setParameter('gain', 4);
-    connect(gen, 'output', gain, 'input');
-    connect(gain, 'scaled', 'output');
+    parameter('interval', {'type':'number', 'value':1000});
+    output('output', {'type': 'number'});
+}
+var handle = null;
+var count = 0;
+
+exports.initialize = function() {
+    count = 0;
+    handle = setInterval(function() {
+        send('output', count++);
+    }, getParameter('interval'));
 }
 
-// NOTE: If you provide a fire() function, it is up to you to invoke react() on
-// the contained accessors.
-
-// NOTE: If you provide an initialize() function, it is up to you to initialize
-// the contained accessors.
+exports.wrapup = function() {
+    if (handle) {
+        clearInterval(handle);
+        handle = null;
+    }
+}

@@ -24,7 +24,10 @@
 
 /** Test accessor that adds its input values.
  *
- *  @accessor TestAdderAccessor
+ *  @accessor TestAdder
+ *  @input inputLeft The left input, a number with default 0.
+ *  @input inputRight The right input, a number with default 0.
+ *  @output output The sum of the two inputs.
  *  @author Edward A. Lee
  */
 
