@@ -34,9 +34,9 @@
 exports.setup = function() {
     input('input', {'type':'number', 'value':0});
     output('output', {'type':'number'});
-    var gain = instantiate('hosts/common/test/TestGainAccessor');
+    var gain = instantiate('test/TestGainAccessor');
     gain.setParameter('gain', 4);
-    var adder = instantiate('hosts/common/test/TestAdderAccessor');
+    var adder = instantiate('test/TestAdderAccessor');
     connect('input', adder, 'inputLeft');
     connect('input', gain, 'input');
     connect(gain, 'scaled', adder, 'inputRight');
