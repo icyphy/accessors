@@ -1,0 +1,9 @@
+[
+    "TestAccessor.js",
+    "TestAdder.js",
+    "TestComposite.js",
+    "TestCompositeSpontaneous.js",
+    "TestGain.js",
+    "TestRequire.js",
+    "TestSpontaneous.js"
+]
