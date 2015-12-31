@@ -1,4 +1,4 @@
-// Test accessor that spontaneously produces outputs once per time interval.
+// Test composite accessor.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,31 +22,31 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor that spontaneously produces outputs once per time interval.
- *  This implementation produces a counting sequence.
+/** Test composite accessor.
+ *  This accessor contains two accessors, a gain and an adder.
+ *  It multiplies the input by 4 and adds the result to the input.
+ *  The sum is sent to the output.
  *
- *  @accessor TestSpontaneousAccessor
- *  @parameter interval The interval between outputs in milliseconds.
+ *  @accessor TestComposite
+ *  @input input A numeric input with default value 0.
+ *  @output output The result of x + 4x, where x is the value of the input.
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
-    parameter('interval', {'type':'number', 'value':1000});
-    output('output', {'type': 'number'});
-}
-var handle = null;
-var count = 0;
-
-exports.initialize = function() {
-    count = 0;
-    handle = setInterval(function() {
-        send('output', count++);
-    }, getParameter('interval'));
+    input('input', {'type':'number', 'value':0});
+    output('output', {'type':'number'});
+    var gain = instantiate('test/TestGain');
+    gain.setParameter('gain', 4);
+    var adder = instantiate('test/TestAdder');
+    connect('input', adder, 'inputLeft');
+    connect('input', gain, 'input');
+    connect(gain, 'scaled', adder, 'inputRight');
+    connect(adder, 'sum', 'output');
 }
 
-exports.wrapup = function() {
-    if (handle) {
-        clearInterval(handle);
-        handle = null;
-    }
-}
+// NOTE: If you provide a fire() function for a composite accessor,
+// then it is up to you to invoke react() on the contained accessors.
+
+// NOTE: If you provide an initialize() function for a composite accessor,
+// then it is up to you to initialize the contained accessors.

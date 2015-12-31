@@ -1,4 +1,4 @@
-// Test composite accessor.
+// Test accessor that multiplies its input by a scale factor.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,29 +22,23 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test composite accessor.
- *  This accessor contains two accessors, a gain and an adder.
- *  It multiplies the input by 4 and adds the result to the input.
- *  The sum is sent to the output.
+/** Test accessor that multiplies its input by a scale factor.
  *
- *  @accessor TestCompositeAccessor
+ *  @accessor TestGain
+ *  @param gain The gain, a number with default 2.
+ *  @param input The input, a number with default 0.
+ *  @param scaled The output, the result of input * gain.
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
     input('input', {'type':'number', 'value':0});
-    output('output', {'type':'number'});
-    var gain = instantiate('test/TestGainAccessor');
-    gain.setParameter('gain', 4);
-    var adder = instantiate('test/TestAdderAccessor');
-    connect('input', adder, 'inputLeft');
-    connect('input', gain, 'input');
-    connect(gain, 'scaled', adder, 'inputRight');
-    connect(adder, 'sum', 'output');
+    output('scaled', {'type':'number'});
+    parameter('gain', {'type':'number', 'value':2});
 }
 
-// NOTE: If you provide a fire() function, it is up to you to invoke react() on
-// the contained accessors.
-
-// NOTE: If you provide an initialize() function, it is up to you to initialize
-// the contained accessors.
+exports.initialize = function() {
+    addInputHandler('input', function() {
+        send('scaled', get('input') * getParameter('gain'));
+    });
+}
