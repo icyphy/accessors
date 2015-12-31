@@ -197,16 +197,36 @@ function generateAccessorHTML(path, id) {
                + error);
     };
     
+    // Create a header.
+    var target = document.getElementById(id);
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', 'accessorTitle');
+    // Extract the class name from the path.
+    var className = path;
+    if (className.indexOf('/') === 0) {
+        className = className.substring(1);
+    }
+    if (className.indexOf('accessors/') === 0) {
+        className = className.substring(10);
+    }
+    h1.innerHTML = 'Accessor class: ' + className;
+    target.appendChild(h1);
+    
+    // Create placeholders for the content.
+    appendPlaceholder(target, id + 'RevealCode', 'span');
+    appendPlaceholder(target, id + 'Implements', 'div');
+    appendPlaceholder(target, id + 'Extends', 'div');
+    appendPlaceholder(target, id + 'Modules', 'div');
+    appendPlaceholder(target, id + 'Documentation', 'p');
+    appendPlaceholder(target, id + 'Tables', 'p');
+
     // Create documentation for the accessor.
     generateAccessorDocumentation(path, id);
     
     // Create a button to view the accessor code.
-    generateAccessorCodeElement(code, id + 'RevealCode');
+    generateAccessorCodeElement(code, id);
     
-    // Next, evaluate the accessor code to invoke the setup() function, which
-    // will determine what the parameters, inputs, and outputs are, and will set
-    // up the accessor to be executed.
-    
+    // Define the functions that will be invoked by the accessor.    
     // The following functions have to be defined here because the page may
     // have more than one accessor on it and we need the id.
 
@@ -263,6 +283,7 @@ function generateAccessorHTML(path, id) {
             element.innerHTML = JSON.stringify(value);
         }
     }
+    
     // Load the specified module.
     function require(path) {
         // Indicate required modules in the docs.
@@ -297,12 +318,18 @@ function generateAccessorHTML(path, id) {
         return result;
     }
     
+    // Next, load and evaluate the accessor code to invoke the setup() function, which
+    // will determine what the parameters, inputs, and outputs are, and will set
+    // up the accessor to be executed. Also invoke the initialize() function,
+    // if one is defined.
+
     // Load common/commonHost.js code asynchronously.
     loadFromServer('/accessors/hosts/common/commonHost.js',
             id, function(error, commonHost) {
         var instance;
         if (error) {
             alert('Failed to load commonHost.js: ' + error);
+            return;
         } else {
             // Function bindings for the accessor:
             var bindings = {
@@ -318,9 +345,18 @@ function generateAccessorHTML(path, id) {
                 reportError(error);
                 return;
             }
-        }        
+        }
+        // Record the accessor instance.
+        // The following will define a global variable 'accessors'
+        // if it is not already defined.
+        if (!window.accessors) {
+            window.accessors = {};
+        }
+        window.accessors[id] = instance;
+        
+        // Generate tables for the accessor.
         try {
-            generateFromInstance(instance, id);
+            generateTables(instance, id);
             if ((typeof instance.exports.initialize) === 'function') {
                 instance.exports.initialize();
             }
@@ -333,10 +369,10 @@ function generateAccessorHTML(path, id) {
 
 /** Generate a button that will optionally reveal the accessor source code.
  *  @param code The code.
- *  @param elementId The id of the element into which to put the button and code block.
+ *  @param id The ID of the accessor.
  */
-function generateAccessorCodeElement(code, elementId) {
-    var target = document.getElementById(elementId);
+function generateAccessorCodeElement(code, id) {
+    var target = document.getElementById(id + 'RevealCode');
     
     var button = document.createElement('button');
     button.setAttribute('class', 'accessorButton');
@@ -375,7 +411,7 @@ function generateAccessorCodeElement(code, elementId) {
  *  If the document has an element with id equal to "accessorDirectoryTarget", then
  *  clicking on an accessor in the directory will cause that target to be filled with
  *  the accessor HTML.
- *  @param id The id into which to place the directory.
+ *  @param element The document element into which to place the directory.
  */
 function generateAccessorDirectory(element) {
     // Fetch the top-level index.json file and puts its contents in the specified
@@ -451,37 +487,14 @@ function generateAccessorDirectory(element) {
     getIndex('/accessors/', element, 0);
 }
 
-/** Generate documentation for the accessor. At a minimum, this creates a header
- *  with the name of the accessor class.  If in addition, however, it can find a
+/** Generate documentation for the accessor. This looks for a
  *  a PtDoc file for the accessor, then it uses that to build a documentation
  *  display.
  *  @param path The fully qualified class name of the accessor.
- *  @param id The id of the accessor, which is also assumed to be the id of the
- *   document element into which to insert the documentation.
+ *  @param id The id of the accessor.
  */
 function generateAccessorDocumentation(path, id) {
-    var target = document.getElementById(id);
-    
-    var h1 = document.createElement('h1');
-    h1.setAttribute('id', 'accessorTitle');
-    // Extract the class name from the path.
-    var className = path;
-    if (className.indexOf('/') === 0) {
-        className = className.substring(1);
-    }
-    if (className.indexOf('accessors/') === 0) {
-        className = className.substring(10);
-    }
-    h1.innerHTML = 'Accessor class: ' + className;
-    target.appendChild(h1);
-    
-    appendPlaceholder(target, id + 'RevealCode', 'span');
-    appendPlaceholder(target, id + 'Implements', 'div');
-    appendPlaceholder(target, id + 'Extends', 'div');
-    appendPlaceholder(target, id + 'Modules', 'div');
-    appendPlaceholder(target, id + 'Documentation', 'p');
-
-    // Next, attempt to read the PtDoc file.
+    // Attempt to read the PtDoc file.
     // Remove any trailing '.js'.
     if (path.indexOf('.js') === path.length - 3) {
         path = path.substring(0, path.length - 3);
@@ -544,19 +557,14 @@ function generateAccessorDocumentation(path, id) {
     request.send();
 }
 
-/** Generate HTML from the specified accessor instance and insert it
+/** Generate parameter, input, and output tables for
+ *  the specified accessor instance and insert it
  *  into the element on the page with the specified id.
+ *  Also generate a list of contained accessors, if there are any.
  *  @param accessor An accessor instance created by common/commonHost.js.
- *  @param id The id of the page element into which to insert the generated HTML.
+ *  @param id The id of the accessor.
  */
-function generateFromInstance(instance, id) {
-    // The following will define a global variable 'accessors'
-    // if it is not already defined.
-    if (!window.accessors) {
-        window.accessors = {};
-    }
-    window.accessors[id] = instance;
-
+function generateTables(instance, id) {
     // Generate a table for parameters.
     if (instance.parameterList && instance.parameterList.length > 0) {
         generateTable("Parameters", 
@@ -575,51 +583,35 @@ function generateFromInstance(instance, id) {
     generateListOfContainedAccessors(instance, id);
 }
 
-/** Generate HTML of accessors contained by the specified accessor instance
- *  and insert it into the element on the page with the specified id.
- *  This assumes that every accessor has a corresponding HTML page at the same
- *  location as the accessor.
+/** Generate a list of accessors contained by the specified accessor instance.
  *  @param instance An accessor instance created by common/commonHost.js.
- *  @param id The id of the page element into which to insert the generated HTML.
+ *  @param id The id of the accessor.
  */
 function generateListOfContainedAccessors(instance, id) {
+    var target = document.getElementById(id + 'Tables');
     if (instance.containedAccessors && instance.containedAccessors.length > 0) {
         var header = document.createElement('h2');
         header.innerHTML = 'Contained Accessors';
-        var target = document.getElementById(id);
         target.appendChild(header);
+        
+        var list = document.createElement('ol');
+        target.appendChild(list);
         
         for (var i = 0; i < instance.containedAccessors.length; i++) {
             var containedInstance = instance.containedAccessors[i];
             var className = containedInstance.className;
-            var contentID = id + '_' + i;
-            var listElement = document.createElement('h3');
-            target.appendChild(listElement);
-            listElement.innerHTML = (i+1) + '. Instance of: ' + className
-                + ' <button class="accessorButton" onclick=toggleVisibility("'
-                + contentID
-                + '")>toggle visibility</button>';
-            var div = document.createElement('div');
-            div.setAttribute('id', contentID);
-            div.setAttribute('class', 'containedAccessor');
-            // Start out hidden.
-            div.style.display = 'none';
-            target.appendChild(div);
-            // FIXME: This generates HTML that shows the initial value of
-            // inputs and outputs. But likely the user wants the current value
-            // when they toggle, or better yet, even see the values get updated
-            // when the container runs. This doesn't seem so easy to do.
-            generateFromInstance(containedInstance, contentID);
+            var listElement = document.createElement('li');
+            list.appendChild(listElement);
+            listElement.innerHTML = 'Instance of: ' + className;
         }
     }
 }
 
 /** Generate a react button.
- *  @param id The id of the accessor, which is also the id of the
- *   page element into which to insert the generated HTML.
+ *  @param id The id of the accessor.
  */
 function generateReactButton(id) {
-    var target = document.getElementById(id);
+    var target = document.getElementById(id + 'Tables');
     var targetClass = target.getAttribute('class');
     if (targetClass &&
             (targetClass === 'containedAccessor' || targetClass === 'notExecutable')) {
@@ -649,14 +641,15 @@ function generateReactButton(id) {
  *  @param names A list of field names in the contents object to include, in order.
  *  @param contents An object containing one field for each object to include.
  *  @param role One of 'input', 'output', or 'parameter'.
- *  @param id The id of the page element into which to insert the generated HTML.
+ *  @param id The id of the accessor.
  */
 function generateTable(title, names, contents, role, id) {
+    var target = document.getElementById(id + 'Tables');
+    
     // Create header line.
     var header = document.createElement('h2');
     header.innerHTML = title
     header.setAttribute('class', 'accessorTableTitle');
-    var target = document.getElementById(id);
     target.appendChild(header);
     
     if (role === 'input') {
@@ -666,7 +659,6 @@ function generateTable(title, names, contents, role, id) {
     
     var table = document.createElement('table');
     table.setAttribute('class', 'accessorTable');
-    // table.setAttribute('border', 1);
     table.setAttribute('width', '100%');
     
     var head = document.createElement('thead');
@@ -740,7 +732,7 @@ function generateTable(title, names, contents, role, id) {
  *  @param options The options.
  *  @param editable True to make the value an editable input element.
  */
-function generateTableRow(table, name, id, options, editable) {
+function generateTableRow(table, name, id, options, editable) {    
     var row = document.createElement("tr");
     row.setAttribute('class', 'accessorTableRow');
 
