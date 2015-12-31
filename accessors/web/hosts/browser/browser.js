@@ -76,6 +76,17 @@ window.addEventListener('DOMContentLoaded', function() {
     window.generate();
 });
 
+window.onunload = function() {
+    if (window.accessors) {
+        for (accessor in window.accessors) {
+            if (accessor.exports && accessor.exports.wrapup) {
+                accessor.exports.wrapup();
+            }
+        }
+    }
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //// Functions
 
@@ -152,7 +163,7 @@ function generate() {
  *  instance with some additional utilities to support the web page.
  *
  *  @path The path to the accessor.
- *  @param id The id of the page element into which to insert the generated HTML.
+ *  @param id The id of the accessor.
  */
 function generateAccessorHTML(path, id) {
     var code = getAccessorCode(path);
@@ -168,7 +179,7 @@ function generateAccessorHTML(path, id) {
     generateAccessorDocumentation(path, id);
     
     // Create a button to view the accessor code.
-    generateAccessorCodeElement(code, 'revealCode');
+    generateAccessorCodeElement(code, id + 'RevealCode');
     
     // Next, evaluate the accessor code to invoke the setup() function, which
     // will determine what the parameters, inputs, and outputs are, and will set
@@ -233,7 +244,7 @@ function generateAccessorHTML(path, id) {
     // Load the specified module.
     function require(path) {
         // Indicate required modules in the docs.
-        var modules = document.getElementById('modules');
+        var modules = document.getElementById(id + 'Modules');
         var text = modules.innerHTML;
         if (!text) {
             text = '<p><b>Modules required:</b> ' + path;
@@ -378,6 +389,17 @@ function generateAccessorDirectory(element) {
                                         var target = document.getElementById(
                                                 'accessorDirectoryTarget');
                                         target.innerHTML = '';
+                                        // Need to ensure the wrapup method of any
+                                        // previous accessor at this target is invoked.
+                                        if (window.accessors) {
+                                            var accessor = window.accessors[
+                                                    'accessorDirectoryTarget'];
+                                            if (accessor
+                                                    && accessor.exports
+                                                    && accessor.exports.wrapup) {
+                                                accessor.exports.wrapup();
+                                            }
+                                        }
                                         generateAccessorHTML(baseDirectory + item,
                                                 'accessorDirectoryTarget');
                                     };
@@ -445,11 +467,12 @@ function generateAccessorDocumentation(path, id) {
     h1.innerHTML = 'Accessor class: ' + className;
     target.appendChild(h1);
     
-    appendPlaceholder(target, 'revealCode', 'span');
-    appendPlaceholder(target, 'implements', 'div');
-    appendPlaceholder(target, 'extends', 'div');
-    appendPlaceholder(target, 'modules', 'div');
-    
+    appendPlaceholder(target, id + 'RevealCode', 'span');
+    appendPlaceholder(target, id + 'Implements', 'div');
+    appendPlaceholder(target, id + 'Extends', 'div');
+    appendPlaceholder(target, id + 'Modules', 'div');
+    appendPlaceholder(target, id + 'Documentation', 'p');
+
     // Next, attempt to read the PtDoc file.
     // Remove any trailing '.js'.
     if (path.indexOf('.js') === path.length - 3) {
@@ -479,12 +502,11 @@ function generateAccessorDocumentation(path, id) {
         // If the request is complete (state is 4)
         if (request.readyState === 4) {
             // If the request was successful.
+            var target = document.getElementById(id + 'Documentation');
             if (request.status !== 200) {
-                var pp = document.createElement('p');
-                pp.setAttribute('class', 'accessorWarning');
-                pp.innerHTML = 'No documentation found for the accessor (tried '
+                target.setAttribute('class', 'accessorWarning');
+                target.innerHTML = 'No documentation found for the accessor (tried '
                         + path + ').';
-                target.appendChild(pp);
                 return;
             }
             var properties = request.responseXML.getElementsByTagName('property');
