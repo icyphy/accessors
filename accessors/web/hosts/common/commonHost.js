@@ -124,7 +124,7 @@
 'use strict';
 
 /** Return an accessor instance whose interface and functionality is given by the
- *  specified code. Specifically, the returned object includes the following
+ *  specified code. Specifically, the returned object includes at least the following
  *  properties:
  *
  *  * '''exports''': An object that includes any properties that have have been
@@ -563,6 +563,9 @@
     ////////////////////////////////////////////////////////////////////
     //// Support for subclassing.
     
+    var baseAccessor = null;
+    var implementedInterfaces = [];
+    
     /** Extend the specified accessor, inheriting its interface as defined
      *  in its setup() function and making its exports object the prototype
      *  of the exports object of this accessor.
@@ -575,6 +578,9 @@
         if (!getAccessorCode) {
             throw('extend() is not supported by this swarmlet host.');
         }
+        
+        baseAccessor = name;
+        
         // Provide the subclass with the function bindings of this accessor so that
         // its input(), output(), etc. functions all populate the interface of this
         // accessor when invoked.
@@ -634,6 +640,9 @@
         if (!getAccessorCode) {
             throw('implement() is not supported by this swarmlet host.');
         }
+        
+        implementedInterfaces.push(name);
+        
         // Provide the subclass with the function bindings of this accessor so that
         // its input(), output(), etc. functions all populate the interface of this
         // accessor when invoked. Omit the bindings that would affect functionality
@@ -822,11 +831,13 @@
     // Also the className property, if instantiateFromName is used.
     // Also the container property, if this was instantiated within another accessor.
     instance.anyInputHandlers = anyInputHandlers;
+    instance.baseAccessor = baseAccessor;
     instance.connect = connect;
     instance.containedAccessors = containedAccessors;
     instance.exports = exports;
     instance.get = get;
     instance.getParameter = getParameter;
+    instance.implementedInterfaces = implementedInterfaces;
     instance.inputHandlers = inputHandlers;
     instance.inputHandlersIndex = inputHandlersIndex;
     instance.inputList = inputList;
