@@ -79,13 +79,14 @@ window.addEventListener('DOMContentLoaded', function() {
 window.onunload = function() {
     if (window.accessors) {
         for (var accessor in window.accessors) {
-            if (accessor.exports && accessor.exports.wrapup) {
+            if (accessor.initialized
+                    && accessor.exports
+                    && accessor.exports.wrapup) {
                 accessor.exports.wrapup();
             }
         }
     }
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Functions
@@ -156,15 +157,17 @@ function generate() {
  *  specification will be loaded from the accessor library stored on the host.
  *  If the path is absolute (beginning with '/'), then the accessor specification
  *  will be loaded from the web server providing this swarmlet host at that path.
- *  If the accessor defines an initialize() function, then this function will
- *  execute its initialize() function after generating the web page.
+ *  If the accessor has no inputs, then it will be initialized and fired.
+ *  Otherwise, a 'react to inputs' button will appear that will initialize and
+ *  fire the actor on command.
  *
  *  As a side effect of invoking this, the window object for the web page
  *  acquires a field ```accessors``` with a property whose name equals the
  *  id argument whose value is the provided accessor
  *  instance with some additional utilities to support the web page.
  *
- *  If there was a previously generated accessor with this same id, then this
+ *  If there was a previously generated accessor with this same id, and it has
+ *  has been initialized, then this
  *  function will invoke its wrapup() function, if it defines one, before
  *  generating the HTML. It will also clear the target element (which has
  *  the same id as the accessor).
@@ -175,11 +178,16 @@ function generate() {
  */
 function generateAccessorHTML(path, id) {
 
+    // Unless an error occurs or required modules are missing,
+    // assume the accessor is executable.
+    var executable = true;
+
     // Need to ensure the wrapup method of any
     // previous accessor at this target is invoked.
     if (window.accessors) {
         var accessor = window.accessors[id];
         if (accessor
+                && accessor.initialized
                 && accessor.exports
                 && accessor.exports.wrapup) {
             accessor.exports.wrapup();
@@ -209,33 +217,31 @@ function generateAccessorHTML(path, id) {
     
     // Create placeholders for the content.
     appendPlaceholder(target, id + 'RevealCode', 'span');
-    appendPlaceholder(target, id + 'Implements', 'div');
-    appendPlaceholder(target, id + 'Extends', 'div');
+    appendPlaceholder(target, id + 'Error', 'div');
+    appendPlaceholder(target, id + 'Base', 'div');
     appendPlaceholder(target, id + 'Modules', 'div');
     var docElement = appendPlaceholder(target, id + 'Documentation', 'p');
     appendPlaceholder(target, id + 'Tables', 'p');
 
-    /** Report on the console, and also report using alert so that the user of the
-     *  web page knows that loading the accessor was unsuccessful.
+    /** Report an error on the console and on the web page.
      *  @param error The error.
+     *  @param detail Context information for the error
      */
-    function reportError(error) {
+    function reportError(error, detail) {
         console.error(error);
         var pp = document.createElement('p');
         pp.setAttribute('class', 'accessorError');
-        pp.innerHTML = 'Error interpreting specification at '
-               + path
-               + ': '
-               + error;        
-        docElement.insertBefore(pp, docElement.firstChild);
+        pp.innerHTML = 'Error '
+                + detail
+                + ' at '
+                + path
+                + ': '
+                + error;
+        var target = document.getElementById(id + 'Error');      
+        target.appendChild(pp);
+        executable = false;
     };
 
-    // Create documentation for the accessor.
-    generateAccessorDocumentation(path, id);
-    
-    // Create a button to view the accessor code.
-    generateAccessorCodeElement(code, id);
-    
     // Define the functions that will be invoked by the accessor.    
     // The following functions have to be defined here because the page may
     // have more than one accessor on it and we need the id.
@@ -316,12 +322,7 @@ function generateAccessorHTML(path, id) {
             var result = loadFromServer(path, id, null);
             // If successful, add the module name to the text of the modules list.
         } catch (error) {
-            // Mark the page not executable so that buttons are not generated for
-            // execution.
-            var element = document.getElementById(id);
-            if (element) {
-                element.setAttribute('class', 'notExecutable');
-            }
+            executable = false;
             text += '<span class="accessorError"> (Not supported by this host)</span>';
         }
         modules.innerHTML = text + '</p>';
@@ -330,15 +331,14 @@ function generateAccessorHTML(path, id) {
     
     // Next, load and evaluate the accessor code to invoke the setup() function, which
     // will determine what the parameters, inputs, and outputs are, and will set
-    // up the accessor to be executed. Also invoke the initialize() function,
-    // if one is defined.
+    // up the accessor to be executed.
 
     // Load common/commonHost.js code asynchronously.
     loadFromServer('/accessors/hosts/common/commonHost.js',
             id, function(error, commonHost) {
         var instance;
         if (error) {
-            reportError(error);
+            reportError(error, 'loading commonHost.js');
             return;
         } else {
             // Function bindings for the accessor:
@@ -352,9 +352,18 @@ function generateAccessorHTML(path, id) {
                 instance = commonHost.instantiateFromCode(
                         code, getAccessorCode, bindings);
             } catch(error) {
-                reportError(error);
+                reportError(error, 'instantiating accessor');
+                executable = false;
+                // Failed to instantiate the accessor. Can't generate very much.
+                // Generate docs and button to view the accessor code.
+                generateAccessorDocumentation(path, id);
+                generateAccessorCodeElement(code, id);
                 return;
             }
+            // If an error occurred or a module was found missing during instantiation,
+            // then executable will be false.
+            instance.executable = executable;
+            instance.initialized = false;
         }
         // Record the accessor instance.
         // The following will define a global variable 'accessors'
@@ -364,15 +373,20 @@ function generateAccessorHTML(path, id) {
         }
         window.accessors[id] = instance;
         
+        // Create documentation for the accessor.
+        generateAccessorDocumentation(path, id);
+    
+        // Create a button to view the accessor code.
+        generateAccessorCodeElement(code, id);
+        
         // Generate tables for the accessor.
-        try {
-            generateTables(instance, id);
-            if ((typeof instance.exports.initialize) === 'function') {
-                instance.exports.initialize();
-            }
-        } catch (error) {
-            reportError(error);
-            return;
+        generateTables(instance, id);
+        
+        // If the accessor has no inputs, then there will be no
+        // 'react to inputs' button. In this case, attempt to initialize
+        // and fire accessor.
+        if (instance && (!instance.inputList || instance.inputList.length === 0)) {
+            reactIfExecutable(id);
         }
     });
 }
@@ -505,22 +519,8 @@ function generateAccessorDirectory(element) {
  */
 function generateAccessorDocumentation(path, id) {
     // Attempt to read the PtDoc file.
-    // Remove any trailing '.js'.
-    if (path.indexOf('.js') === path.length - 3) {
-        path = path.substring(0, path.length - 3);
-    }
+    path = normalizePath(path);
     path = path + 'PtDoc.xml';
-    
-    // Make sure the path starts with /accessors so that it will work
-    // with the TerraSwarm accessor host.
-    if (path.indexOf('/') === 0) {
-        path = path.substring(1);
-    }
-    if (path.indexOf('accessors/') !== 0) {
-        path = '/accessors/' + path;
-    } else {
-        path = '/' + path;
-    }
         
     var request = new XMLHttpRequest();
     request.overrideMimeType("application/xml");
@@ -532,21 +532,41 @@ function generateAccessorDocumentation(path, id) {
         
         // If the request is complete (state is 4)
         if (request.readyState === 4) {
-            // If the request was successful.
-            var target = document.getElementById(id + 'Documentation');
-            if (request.status !== 200) {
-                target.setAttribute('class', 'accessorWarning');
-                target.innerHTML = 'No documentation found for the accessor (tried '
-                        + path + ').';
-                return;
-            }
-            var properties = request.responseXML.getElementsByTagName('property');
+            // Data structure to populate with doc information.
             var docs = {};
-            for (var i = 0; i < properties.length; i++) {
-                var property = properties[i];
-                var name = property.getAttribute('name');
-                docs[name] = property.getAttribute('value');
+            var target = document.getElementById(id + 'Documentation');
+
+            // Read docs from base class and implemented interfaces to provide
+            // defaults, but omit the description, author, and version from
+            // those. Make sure the instance exists before getting this info.
+            if (window.accessors && window.accessors[id]) {
+                var implemented = window.accessors[id].implementedInterfaces;
+                for (var i = 0; i < implemented.length; i++) {
+                    appendDoc(target, 'Implements', implemented[i]);
+                    getBaseDocumentation(docs, implemented[i]);
+                }
+            
+                if (window.accessors[id].baseAccessor) {
+                    appendDoc(target, 'Extends', window.accessors[id].baseAccessor);
+                    getBaseDocumentation(docs, window.accessors[id].baseAccessor);
+                }
             }
+
+            // If the request was unsuccessful.
+            if (request.status !== 200) {
+                docs['description'] = 
+                        '<p class="accessorWarning">No documentation found for \
+                        the accessor (tried ' + path + ').';
+            } else {
+                // Request was successful.
+                var properties = request.responseXML.getElementsByTagName('property');
+                for (var i = 0; i < properties.length; i++) {
+                    var property = properties[i];
+                    var name = property.getAttribute('name');
+                    docs[name] = property.getAttribute('value');
+                }
+            }
+            // Now write contents to the web page.
             if (docs['description']) {
                 appendDoc(target, null, docs['description']);
             }
@@ -624,7 +644,7 @@ function generateReactButton(id) {
     var target = document.getElementById(id + 'Tables');
     var targetClass = target.getAttribute('class');
     if (targetClass &&
-            (targetClass === 'containedAccessor' || targetClass === 'notExecutable')) {
+            (targetClass === 'containedAccessor')) {
         // A contained accessor cannot be asked to react independently.
         return;
     }
@@ -638,7 +658,7 @@ function generateReactButton(id) {
     button.setAttribute('name', 'react');
     button.setAttribute('type', 'button');
     button.setAttribute('autofocus', 'true');
-    button.setAttribute('onclick', 'window.accessors["' + id + '"].react()');
+    button.setAttribute('onclick', 'reactIfExecutable("' + id + '")');
     button.setAttribute('id', 'reactToInputs');
 
     target.appendChild(pp);
@@ -839,6 +859,48 @@ function generateTableRow(table, name, id, options, editable) {
     }
 
     table.appendChild(row);
+}
+
+/** Get default documentation from a base accessor or implemented interface.
+ *  This ignores description, author, and version fields of the base documentation.
+ *  @param docs The data structure to populate with documentation.
+ *  @param path The path of the base accessor or interface.
+ */
+function getBaseDocumentation(docs, path) {
+    // Attempt to read the PtDoc file.
+    path = normalizePath(path);
+    path = path + 'PtDoc.xml';
+
+    var request = new XMLHttpRequest();
+    request.overrideMimeType("application/xml");
+    // FIXME: Have to do this as a synchronous request with this design
+    // because we are populating the data structure that will be used upon
+    // returning.
+    request.open('GET', path, false);    // Pass false for synchronous
+    request.send();
+    // FIXME: Need to instantiate the base in order to know whether
+    // it, in turn, extends or implements anything, and follow that here.
+    // Need the id of that here:
+    /*
+    var implemented = window.accessors[id].implementedInterfaces;
+    for (var i = 0; i < implemented.length; i++) {
+        getBaseDocumentation(docs, implemented[i]);
+    }
+    */
+
+    // If the request was successful.
+    if (request.status === 200) {
+        var properties = request.responseXML.getElementsByTagName('property');
+        for (var i = 0; i < properties.length; i++) {
+            var property = properties[i];
+            var name = property.getAttribute('name');
+            if (name !== 'description'
+                    && name !== 'author'
+                    && name !== 'version') {
+                docs[name] = property.getAttribute('value');
+            }
+        }
+    }
 }
 
 /** Get data from an input or parameter. This is used by get() and getParameter().
@@ -1071,6 +1133,60 @@ function loadFromServer(path, id, callback) {
         var code = getJavaScript(path, null, true);
         return evaluate(code);
     }
+}
+
+/** Normalize the specified accessor path by removing any trailing '.js' and
+ *  prepending, if necessary, with '/accessors/'.
+ *  @param path The path to normalize.
+ */
+function normalizePath(path) {
+    // Remove any trailing '.js'.
+    if (path.indexOf('.js') === path.length - 3) {
+        path = path.substring(0, path.length - 3);
+    }
+    
+    // Make sure the path starts with /accessors so that it will work
+    // with the TerraSwarm accessor host.
+    if (path.indexOf('/') === 0) {
+        path = path.substring(1);
+    }
+    if (path.indexOf('accessors/') !== 0) {
+        path = '/accessors/' + path;
+    } else {
+        path = '/' + path;
+    }
+    return path;
+}
+
+/** If the accessor is marked executable, then invoke its react() function.
+ *  If it has not been previously initialized, then initialize it first.
+ *  Otherwise, provide a message that the accessor is not executable.
+ *  @param id The accessor ID.
+ */
+function reactIfExecutable(id) {
+    if (window.accessors) {
+        var instance = window.accessors[id];
+        if (instance && instance.executable) {
+            if (!instance.initialized) {
+                if ((typeof instance.exports.initialize) === 'function') {
+                    try {
+                        instance.exports.initialize();
+                    } catch (error) {
+                        alert('Error initializing accessor: ' + error);
+                        return;
+                    }
+                }
+                instance.initialized = true;
+            }
+            try {
+                window.accessors[id].react();
+            } catch (error) {
+                alert('Error executing accessor: ' + error);
+            }
+            return;
+        }
+    }
+    alert('Accessor is not executable.');
 }
 
 /** Toggle the visibility of an element on the web page.
