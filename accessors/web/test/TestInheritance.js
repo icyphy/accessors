@@ -1,4 +1,4 @@
-// Test accessor require() function.
+// Test accessor inheritance.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,10 +22,9 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test accessor that is similar to its base class, except that it requires
- *  the 'util' module. This tests both require() and extend().
+/** Test inheritance (extend() function and overrides.
  *
- *  @accessor TestRequire
+ *  @accessor TestInheritance
  *  @parameter p A parameter with default value 42.
  *  @input untyped An untyped input that will accept any JavaScript object.
  *  @input numeric A numeric input.
@@ -38,8 +37,6 @@
  *  @author Edward A. Lee
  */
 
-var util = require('util');
-
 exports.setup = function() {
     extend('test/TestAccessor');
 }
@@ -49,7 +46,8 @@ exports.initialize = function() {
     this.ssuper.initialize();
 }
 
-/** Override the base class to use util. */
+/** Override the base class to use output a constant read from the base class. */
 exports.formatOutput = function(value) {
-    return util.format('JSON for untyped input using util.format(): %j', value);
+    // Variable 'variable' is defined in the base class.
+    return this.variable;
 }

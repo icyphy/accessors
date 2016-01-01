@@ -78,7 +78,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 window.onunload = function() {
     if (window.accessors) {
-        for (accessor in window.accessors) {
+        for (var accessor in window.accessors) {
             if (accessor.exports && accessor.exports.wrapup) {
                 accessor.exports.wrapup();
             }
@@ -110,11 +110,13 @@ function appendDoc(target, label, content) {
  *  @param target The target document element id.
  *  @param id The id for the placeholder.
  *  @param element The element type (e.g. 'div', 'pp', or 'span').
+ *  @return The placeholder element.
  */
 function appendPlaceholder(target, id, element) {
     var pp = document.createElement(element);
     pp.setAttribute('id', id);
     target.appendChild(pp);
+    return pp;
 }
 
 /** Populate the current page by searching for elements with class 'accessor'
@@ -189,14 +191,7 @@ function generateAccessorHTML(path, id) {
     target.innerHTML = '';
     
     var code = getAccessorCode(path);
-    
-    function reportError(error) {
-       alert('Error interpreting specification at '
-               + path
-               + ': '
-               + error);
-    };
-    
+        
     // Create a header.
     var target = document.getElementById(id);
     var h1 = document.createElement('h1');
@@ -217,8 +212,23 @@ function generateAccessorHTML(path, id) {
     appendPlaceholder(target, id + 'Implements', 'div');
     appendPlaceholder(target, id + 'Extends', 'div');
     appendPlaceholder(target, id + 'Modules', 'div');
-    appendPlaceholder(target, id + 'Documentation', 'p');
+    var docElement = appendPlaceholder(target, id + 'Documentation', 'p');
     appendPlaceholder(target, id + 'Tables', 'p');
+
+    /** Report on the console, and also report using alert so that the user of the
+     *  web page knows that loading the accessor was unsuccessful.
+     *  @param error The error.
+     */
+    function reportError(error) {
+        console.error(error);
+        var pp = document.createElement('p');
+        pp.setAttribute('class', 'accessorError');
+        pp.innerHTML = 'Error interpreting specification at '
+               + path
+               + ': '
+               + error;        
+        docElement.insertBefore(pp, docElement.firstChild);
+    };
 
     // Create documentation for the accessor.
     generateAccessorDocumentation(path, id);
@@ -328,7 +338,7 @@ function generateAccessorHTML(path, id) {
             id, function(error, commonHost) {
         var instance;
         if (error) {
-            alert('Failed to load commonHost.js: ' + error);
+            reportError(error);
             return;
         } else {
             // Function bindings for the accessor:
@@ -1046,7 +1056,11 @@ function loadFromServer(path, id, callback) {
             if (error) {
                 callback(error, code);
             } else {
-                callback(null, evaluate(code));
+                try {
+                    callback(null, evaluate(code));
+                } catch (error) {
+                    callback(error, null);
+                }
             }
         }, true);
     } else {

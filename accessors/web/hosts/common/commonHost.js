@@ -120,7 +120,7 @@
  *  @module commonHost
  *  @authors: Edward A. Lee
  */
- 
+
 'use strict';
 
 /** Return an accessor instance whose interface and functionality is given by the
@@ -143,7 +143,8 @@
  *    by addInputHandler()) that contains objects of the form
  *    {'name': nameOfInput, 'index': arrayIndexOfHandler}.
  *    This is used by removeInputHandler(). If the handler is one
- *    for any input, then nameOfInput is null.
+ *    for any input, then nameOfInput is null and arrayIndexOfHandler
+ *    specifies the position of the handler in the anyInputHandlers array.
  *
  *
  *  Inputs, outputs, and parameters in an accessor have a defined order.
@@ -151,12 +152,14 @@
  *  in the order in which it is defined in the setup() function.
  *  For each entry in that array, there is a property by that name in the
  *  ```inputs``` object, indexed by the name. The value of that property is the
- *  options object given to the ```input()``` function, or an empty object if no
- *  options were specified.  Similarly, parameters and outputs are represented in the
+ *  options object given to the ```input()``` function, possibly with additional
+ *  properties such as 'destination', which is used for composite accessors.
+ *  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
  *
  *  The bindings parameter provides function bindings for functions that are used by
  *  accessors.  Any that are not provided will be provided with defaults.
+ *  Any that are provided will override the defaults.
  *
  *  @param code The accessor source code.
  *  @param getAccessorCode A function that will retrieve the source code of a specified
@@ -171,16 +174,21 @@
     // Functions invoked by the accessor need to be defined in the scope
     // in which the accessor code is evaluated, not as 'this.get', etc.,
     // because the accessor code just invokes 'get()' not 'this.get()'.
-    var     get = null,
-            getParameter = null,
-            require = null, 
-            send = null;
-    if (bindings) {
-        get = bindings['get'];
-        getParameter = bindings['getParameter'];
-        require = bindings['require'];
-        send = bindings['send'];
-    }
+    var bindings = bindings || {};
+    
+    // In the following, all will default to null, indicating that they aren't defined
+    var addInputHandler = bindings['addInputHandler'];
+    var connect = bindings['connect'];
+    var get = bindings['get'];
+    var getParameter = bindings['getParameter'];
+    var input = bindings['input'];
+    var instantiate = bindings['instantiate'];
+    var output = bindings['output'];
+    var parameter = bindings['parameter'];
+    var removeInputHandler = bindings['removeInputHandler'];
+    var require = bindings['require']; 
+    var send = bindings['send'];
+    var setParameter = bindings['setParameter'];
     
     // This accessor instance will be an object with many properties.
     // Here we initialize it empty so that functions defined herein
@@ -209,11 +217,13 @@
     var inputList = [];
     var inputs = {};
     
-    /** Define an accessor input.
-     */
-    function input(name, options) {
-        inputList.push(name);
-        inputs[name] = options || {};
+    // Define an accessor input.
+    if (!input) {    
+        input = function(name, options) {
+            // The input may have been previously defined in a base accessor.
+            pushIfNotPresent(name, inputList);
+            inputs[name] = mergeObjects(inputs[name], options);
+        }
     }
 
     var inputHandlers = {};
@@ -223,71 +233,72 @@
     // Counter used to assign unique IDs to each input handler.
     var inputHandlerID = 0;
     
-    /** Add an input handler for the specified input and return a handle that
-     *  can be used to remove the input handler.
-     *  If no name is given (the first argument is null or a function), then the
-     *  function will be invoked when any input changes.
-     *  If more arguments are given beyond the first two (or first, if the function
-     *  is given first), then those arguments
-     *  will be passed to the input handler function when it is invoked.
-     *  @param name The name of the input (a string).
-     *  @param func The function to be invoked.
-     *  @param args Additional arguments to pass to the function.
-     *  @return An ID that can be passed to removeInputHandler().
-     */
-    function addInputHandler(name, func) {
-        var argCount = 2, callback, id, tail;
-        if (name && typeof name !== 'string') {
-            // Tolerate a single argument, a function.
-            if (typeof name === 'function') {
-                func = name;
-                name = null;
-                argCount = 1;
+    // Add an input handler for the specified input and return a handle that
+    // can be used to remove the input handler.
+    // If no name is given (the first argument is null or a function), then the
+    // function will be invoked when any input changes.
+    // If more arguments are given beyond the first two (or first, if the function
+    // is given first), then those arguments
+    // will be passed to the input handler function when it is invoked.
+    // @param name The name of the input (a string).
+    // @param func The function to be invoked.
+    // @param args Additional arguments to pass to the function.
+    // @return An ID that can be passed to removeInputHandler().
+    if (!addInputHandler) {
+        addInputHandler = function(name, func) {
+            var argCount = 2, callback, id, tail;
+            if (name && typeof name !== 'string') {
+                // Tolerate a single argument, a function.
+                if (typeof name === 'function') {
+                    func = name;
+                    name = null;
+                    argCount = 1;
+                } else {
+                    throw ('name argument is required to be a string. Got: ' + (typeof name));
+                }
+            }
+            if (!func) {
+                func = nullHandlerFunction;
+            } else if (typeof func !== 'function') {
+                throw ('Argument of addInputHandler is not a function. It is: ' + func);
+            }
+
+            // Check that the input exists.
+            if (name && !inputs[name]) {
+                throw 'Cannot add an input handler to a non-existent input: ' + name;
+            }
+
+            // If there are arguments to the callback, create a new function.
+            // Get an array of arguments excluding the first two.
+            // When that function is invoked, the exports data structure will be 'this'.
+            tail = Array.prototype.slice.call(arguments, argCount);
+            if (tail.length !== 0) {
+                callback = function() {
+                    func.apply(exports, tail);
+                };
             } else {
-                throw ('name argument is required to be a string. Got: ' + (typeof name));
+                callback = func.bind(exports);
             }
-        }
-        if (!func) {
-            func = nullHandlerFunction;
-        } else if (typeof func !== 'function') {
-            throw ('Argument of addInputHandler is not a function. It is: ' + func);
-        }
-
-        // Check that the input exists.
-        if (name && !inputs[name]) {
-            throw 'Cannot add an input handler to a non-existent input: ' + name;
-        }
-
-        // If there are arguments to the callback, create a new function.
-        // Get an array of arguments excluding the first two.
-        // When that function is invoked, the exports data structure will be 'this'.
-        tail = Array.prototype.slice.call(arguments, argCount);
-        if (tail.length !== 0) {
-            callback = function() {
-                func.apply(exports, tail);
+            // Need to allow more than one handler and need to return a handle
+            // that can be used by removeInputHandler.
+            var index;
+            if (name) {
+                if (! inputHandlers[name]) {
+                    inputHandlers[name] = [];
+                }
+                index = inputHandlers[name].length;
+                inputHandlers[name].push(callback);
+            } else {
+                index = anyInputHandlers.length;
+                anyInputHandlers.push(callback);
+            }
+            var result = inputHandlerID;
+            inputHandlersIndex[inputHandlerID++] = {
+                'name': name,
+                'index': index
             };
-        } else {
-            callback = func.bind(exports);
+            return result;
         }
-        // Need to allow more than one handler and need to return a handle
-        // that can be used by removeInputHandler.
-        var index;
-        if (name) {
-            if (! inputHandlers[name]) {
-                inputHandlers[name] = [];
-            }
-            index = inputHandlers[name].length;
-            inputHandlers[name].push(callback);
-        } else {
-            index = anyInputHandlers.length;
-            anyInputHandlers.push(callback);
-        }
-        var result = inputHandlerID;
-        inputHandlersIndex[inputHandlerID++] = {
-            'name': name,
-            'index': index
-        };
-        return result;
     }
     
     /** Invoke any registered handlers for all inputs or for a specified input.
@@ -341,25 +352,26 @@
         }
     }
 
-    /** Remove the input handler with the specified handle, if it exists.
-     *  @param handle The handle.
-     *  @see #addInputHandler()
-     */
-    function removeInputHandler(handle) {
-        var handler = inputHandlersIndex[handle];
-        if (handler) {
-            if (handler.name) {
-                if (inputHandlers[handler.name]
-                        && inputHandlers[handler.name][handler.index]) {
-                    inputHandlers[handler.name][handler.index] = null;
+    // Remove the input handler with the specified handle, if it exists.
+    // @param handle The handle.
+    // @see #addInputHandler()
+    if (!removeInputHandler) {
+        removeInputHandler = function(handle) {
+            var handler = inputHandlersIndex[handle];
+            if (handler) {
+                if (handler.name) {
+                    if (inputHandlers[handler.name]
+                            && inputHandlers[handler.name][handler.index]) {
+                        inputHandlers[handler.name][handler.index] = null;
+                    }
+                } else {
+                    // Handler is set up to handle any input.
+                    if (anyInputHandlers[handler.index]) {
+                        anyInputHandlers[handler.index] = null;
+                    }
                 }
-            } else {
-                // Handler is set up to handle any input.
-                if (anyInputHandlers[handler.index]) {
-                    anyInputHandlers[handler.index] = null;
-                }
+                inputHandlersIndex[handle] = null;
             }
-            inputHandlersIndex[handle] = null;
         }
     }
     
@@ -414,11 +426,13 @@
     var outputList = [];
     var outputs = {};
     
-    /** Define an accessor output.
-     */
-    function output(name, options) {
-        outputList.push(name);
-        outputs[name] = options || {};
+    // Define an accessor output.
+    if (!output) {
+        output = function(name, options) {
+            // The output may have been previously defined in a base accessor.
+            pushIfNotPresent(name, outputList);
+            outputs[name] = mergeObjects(outputs[name], options);
+        }
     }
     
     /** Return the latest value produced on this output, or null if no
@@ -437,26 +451,29 @@
     var parameterList = [];
     var parameters = {};
     
-    /** Define an accessor parameter.
-     */
-    function parameter(name, options) {
-        parameterList.push(name);
-        parameters[name] = options || {};
-    }
-
-    /** Set a parameter of the specified accessor to the specified value.
-     *  @param name The name of the parameter to set.
-     *  @param value The value to set the parameter to.
-     */
-    function setParameter(name, value) {
-        var parameter = parameters[name];
-        if (!parameter) {
-            throw('setParameter(): Accessor has no parameter named ' + name);
+    // Define an accessor parameter.
+    if (!parameter) {
+        parameter = function(name, options) {
+            // The parameter may have been previously defined in a base accessor.
+            pushIfNotPresent(name, parameterList);
+            parameters[name] = mergeObjects(parameters[name], options);
         }
-        // If necessary, convert the value to the match the type.
-        value = convertType(value, parameter, name);
+    }
+    
+    // Set a parameter of the specified accessor to the specified value.
+    // @param name The name of the parameter to set.
+    // @param value The value to set the parameter to.
+    if (!setParameter) {
+        setParameter = function(name, value) {
+            var parameter = parameters[name];
+            if (!parameter) {
+                throw('setParameter(): Accessor has no parameter named ' + name);
+            }
+            // If necessary, convert the value to the match the type.
+            value = convertType(value, parameter, name);
 
-        parameter.currentValue = value;
+            parameter.currentValue = value;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -544,36 +561,97 @@
     };
     
     ////////////////////////////////////////////////////////////////////
+    //// Support for subclassing.
+    
+    /** Extend the specified accessor, inheriting its interface as defined
+     *  in its setup() function and making its exports object the prototype
+     *  of the exports object of this accessor.
+     *  This will throw an exception if no getAccessorCode() function
+     *  has been specified.
+     *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+     */
+    function extend(name) {
+        // NOTE: This function cannot be overridden in the bindings.
+        if (!getAccessorCode) {
+            throw('extend() is not supported by this swarmlet host.');
+        }
+        // Provide the subclass with the function bindings of this accessor so that
+        // its input(), output(), etc. functions all populate the interface of this
+        // accessor when invoked.
+        var superBindings = {
+            'addInputHandler': addInputHandler,
+            'connect': connect,
+            'get': get,
+            'getParameter': getParameter,
+            'input': input,
+            'instantiate': instantiate,
+            'output': output,
+            'parameter': parameter,
+            'removeInputHandler': removeInputHandler,
+            'require': require, 
+            'send': send,
+            'setParameter': setParameter
+        };
+        
+        var extendedInstance = instantiateFromName(name, getAccessorCode, superBindings);
+        if (extendedInstance.exports) {
+            // Make sure the prototype has default methods defined,
+            // so that accessors can always invoke them using ssuper.
+            if (!extendedInstance.exports.fire ||
+                    !extendedInstance.exports.initialize ||
+                    !extendedInstance.exports.setup ||
+                    !extendedInstance.exports.wrapup) {
+                Object.setPrototypeOf(extendedInstance.exports, {
+                        fire: function() {},
+                        initialize: function() {},
+                        setup: function() {},
+                        wrapup: function() {}
+                });
+            }
+            Object.setPrototypeOf(exports, extendedInstance.exports);
+            
+            // Now invoke the setup method.
+            extendedInstance.exports.setup();
+            
+            // Make the superclass functions available through 'this.ssuper'
+            // regardless of whether 'this' is the exports object or the accessor
+            // instance.
+            // NOTE: The super keyword is built in to ECMA 6.
+            // Since it isn't available in earlier versions, we provide an alternate:
+            exports.ssuper = extendedInstance.exports;
+            instance.ssuper = extendedInstance.exports;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////
     //// Support for composite accessors.
 
     // List of contained accessors.
     var containedAccessors = [];
     
-    /** Instantiate the specified accessor as a contained accessor.
-     *  This will throw an exception if no getAccessorCode() function
-     *  has been specified.
-     *  @param name Fully qualified accessor name, e.g. 'net/REST'.
-     */
-    function instantiate(name) {
-        if (!getAccessorCode) {
-            throw('instantiate() is not supported by this swarmlet host.');
-        }
-        // Not sure why it is needed, but this needs to be delegated to
-        // an external function because the instantiate function that we are
-        // within appears to not yet be defined.
-        // NOTE: Need to modify the bindings so that send() is not defined.
-        // This ensures that contained accessors use the default send().
-        var insideBindings = {};
-        for (var property in bindings) {
-            if (property !== bindings.send) {
-                insideBindings[property] = property[bindings];
+    // Instantiate the specified accessor as a contained accessor.
+    // This will throw an exception if no getAccessorCode() function
+    // has been specified.
+    // @param name Fully qualified accessor name, e.g. 'net/REST'.
+    if (!instantiate) {
+        instantiate = function(name) {
+            if (!getAccessorCode) {
+                throw('instantiate() is not supported by this swarmlet host.');
             }
+            // NOTE: Need to modify the bindings so that send() is not defined.
+            // This ensures that contained accessors use the default send().
+            var insideBindings = {};
+            for (var property in bindings) {
+                if (property !== bindings.send) {
+                    insideBindings[property] = property[bindings];
+                }
+            }
+            var containedInstance = instantiateFromName(
+                    name, getAccessorCode, insideBindings);
+            containedInstance.container = instance;
+            containedAccessors.push(containedInstance);
+            return containedInstance;
         }
-        var containedInstance = instantiateFromName(
-                name, getAccessorCode, insideBindings);
-        containedInstance.container = instance;
-        containedAccessors.push(containedInstance);
-        return containedInstance;
     }
     
     /** Connect the specified inputs and outputs.
@@ -605,54 +683,56 @@
      *  @param c An accessor or a name.
      *  @param d A destination port name.
      */
-    function connect(a, b, c, d) {
-        if (typeof a === 'string') {
-            // form 2 or 4.
-            var myInput = inputs[a];
-            if (!myInput) {
-                throw('connect(): No such input: ' + a);
-            }
-            if (!myInput.destinations) {
-                myInput.destinations = [];
-            }
-            if (typeof b === 'string') {
-                // form 4.
-                if (!outputs[b]) {
-                    throw('connect(): No such output: ' + b);
+    if (!connect) {
+        connect = function(a, b, c, d) {
+            if (typeof a === 'string') {
+                // form 2 or 4.
+                var myInput = inputs[a];
+                if (!myInput) {
+                    throw('connect(): No such input: ' + a);
                 }
-                myInput.destinations.push(b);
-                outputs[b].source = a;
+                if (!myInput.destinations) {
+                    myInput.destinations = [];
+                }
+                if (typeof b === 'string') {
+                    // form 4.
+                    if (!outputs[b]) {
+                        throw('connect(): No such output: ' + b);
+                    }
+                    myInput.destinations.push(b);
+                    outputs[b].source = a;
+                } else {
+                    // form 2.
+                    if (!b.inputs[c]) {
+                        throw('connect(): Destination has no such input: ' + c);
+                    }
+                    myInput.destinations.push({'accessor': b, 'inputName': c});
+                    b.inputs[c].source = a;
+                }
             } else {
-                // form 2.
-                if (!b.inputs[c]) {
-                    throw('connect(): Destination has no such input: ' + c);
+                // form 1 or 3.
+                var myOutput = a.outputs[b];
+                if (!myOutput) {
+                    throw('connect(): Source has no such output: ' + b);
                 }
-                myInput.destinations.push({'accessor': b, 'inputName': c});
-                b.inputs[c].source = a;
-            }
-        } else {
-            // form 1 or 3.
-            var myOutput = a.outputs[b];
-            if (!myOutput) {
-                throw('connect(): Source has no such output: ' + b);
-            }
-            if (!myOutput.destinations) {
-                myOutput.destinations = [];
-            }
-            if (typeof c === 'string') {
-                // form 3.
-                if (!outputs[c]) {
-                    throw('connect(): No such output: ' + b);
+                if (!myOutput.destinations) {
+                    myOutput.destinations = [];
                 }
-                myOutput.destinations.push(c);
-                outputs[c].source = {'accessor': a, 'outputName': b};
-            } else {
-                // form 1.
-                if (!c.inputs[d]) {
-                    throw('connect(): Destination has no such input: ' + d);
+                if (typeof c === 'string') {
+                    // form 3.
+                    if (!outputs[c]) {
+                        throw('connect(): No such output: ' + b);
+                    }
+                    myOutput.destinations.push(c);
+                    outputs[c].source = {'accessor': a, 'outputName': b};
+                } else {
+                    // form 1.
+                    if (!c.inputs[d]) {
+                        throw('connect(): Destination has no such input: ' + d);
+                    }
+                    myOutput.destinations.push({'accessor': c, 'inputName': d});
+                    c.inputs[d].source = {'accessor': a, 'outputName': b};
                 }
-                myOutput.destinations.push({'accessor': c, 'inputName': d});
-                c.inputs[d].source = {'accessor': a, 'outputName': b};
             }
         }
     }
@@ -671,6 +751,7 @@
             addInputHandler, \
             connect, \
             exports, \
+            extend, \
             get, \
             getParameter, \
             input, \
@@ -686,6 +767,7 @@
             addInputHandler,
             connect,
             exports,
+            extend,
             get,
             getParameter,
             input,
@@ -696,7 +778,7 @@
         
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the setup() function to populate the structure.
-    
+        
     if (typeof exports.setup === 'function') {
         exports.setup();
     } else {
@@ -730,7 +812,7 @@
     instance.provideInput = provideInput;
     instance.send = send;
     instance.setParameter = setParameter;
-    
+
     // Record the instance indexed by its exports property.
     _accessorInstanceTable[instance.exports] = instance;
 
@@ -1016,6 +1098,51 @@ function instantiateFromName(name, getAccessorCode, bindings) {
     var instance = exports.instantiateFromCode(code, getAccessorCode, bindings);
     instance.className = name;
     return instance;
+}
+
+/** Merge the specified objects. If the two have common properties, the merged object
+ *  will have the properties of the second argument. If the first argument is null,
+ *  then the returned object will equal the second argument, unless it too is null,
+ *  in which case the returned object will be an empty object.
+ *  @param first The first argument, giving default properties.
+ *  @param second The second argument.
+ */
+function mergeObjects(first, second) {
+    if (first) {
+        if (second) {
+            // Both objects exist. Copy the first.
+            var result = {};
+            for (var property in first) {
+                result[property] = first[property];
+            }
+            // Override with the second.
+            for (var property in second) {
+                result[property] = second[property];
+            }
+            return result;
+        } else {
+            // First but no second object.
+            return first;
+        }
+    } else if (second) {
+        // Second but no first object.
+        return second;
+    }
+    // No first or second.
+    return {};
+}
+
+/** Push the specified item onto the specified list if it is not already there.
+ *  @param item Item to push.
+ *  @param list List onto which to push it.
+ */
+function pushIfNotPresent(item, list) {
+    for (var j = 0; j < list.length; j++) {
+        if (item === list[j]) {
+            return;
+        }
+    }
+    list.push(item);
 }
 
 /** Schedule a reaction of the specified accessor within the specified container.
