@@ -126,11 +126,19 @@ setTimeout(function() {
     c.wrapup();
 }, 2500);
 
-// Test inheritance.
+// Test extend().
 var d = commonHost.instantiateFromName('test/TestInheritance', getAccessorCode);
 d.initialize();
 d.provideInput('untyped', 'foo');
 d.react();
 test('inheritance, function overriding, and variable visibility',
         d.latestOutput('jsonOfUntyped'), 'hello');
+
+// Test implement().
+var e = commonHost.instantiateFromName('test/TestImplement', getAccessorCode);
+e.initialize();
+e.provideInput('numeric', '42');
+e.react();
+test('implementing an interface',
+        e.latestOutput('numericPlusP'), 84);
 

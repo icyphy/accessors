@@ -74,5 +74,5 @@ exports.formatOutput = function(value) {
     return 'JSON for untyped input: ' + JSON.toString(value);
 }
 exports.fire = function() {
-    console.log('SimpleTestAccess.fire() invoked.');
+    console.log('TestAccessor.fire() invoked.');
 }
