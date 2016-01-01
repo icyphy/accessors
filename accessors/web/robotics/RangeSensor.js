@@ -74,9 +74,9 @@ exports.setup = function() {
  *  The range is then adjusted by a noise sample.
  */
 exports.fire = function () {
-    var sigma = get('noiseSigma');
-    var store = get('storeLocation');
-    var intruder = get('intruderKey');
+    var sigma = getParameter('noiseSigma');
+    var store = getParameter('storeLocation');
+    var intruder = getParameter('intruderKey');
     var url = store + '/get?id=' + intruder;
     var intruderPosition = JSON.parse(readURL(url));
 
