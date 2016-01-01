@@ -623,6 +623,36 @@
         }
     }
 
+    /** Implement the specified accessor interface, inheriting its inputs, outputs,
+     *  and parameters as defined in its setup() function.
+     *  This will throw an exception if no getAccessorCode() function
+     *  has been specified.
+     *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+     */
+    function implement(name) {
+        // NOTE: This function cannot be overridden in the bindings.
+        if (!getAccessorCode) {
+            throw('implement() is not supported by this swarmlet host.');
+        }
+        // Provide the subclass with the function bindings of this accessor so that
+        // its input(), output(), etc. functions all populate the interface of this
+        // accessor when invoked. Omit the bindings that would affect functionality
+        // rather than interface, such as addInputHandler(), connect(), etc.
+        var superBindings = {
+            'input': input,
+            'output': output,
+            'parameter': parameter,
+            'require': require, 
+            'setParameter': setParameter
+        };
+        
+        var extendedInstance = instantiateFromName(name, getAccessorCode, superBindings);
+        if (extendedInstance.exports) {            
+            // Now invoke the setup method.
+            extendedInstance.exports.setup();
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////
     //// Support for composite accessors.
 

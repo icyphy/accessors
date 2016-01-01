@@ -4,6 +4,8 @@
     "TestComposite.js",
     "TestCompositeSpontaneous.js",
     "TestGain.js",
+    "TestImplement.js",
+    "TestInheritance.js",
     "TestRequire.js",
     "TestSpontaneous.js"
 ]
