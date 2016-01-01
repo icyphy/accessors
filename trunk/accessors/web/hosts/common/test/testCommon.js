@@ -26,7 +26,7 @@
 var fs = require('fs');
 
 // Read the accessor source code.
-var code = fs.readFileSync('../../../test/SimpleTestAccessor.js', 'utf8');
+var code = fs.readFileSync('../../../test/TestAccessor.js', 'utf8');
 
 // Require the accessor module to turn the source code into an accessor instance.
 var commonHost = require('../commonHost.js');
@@ -38,7 +38,7 @@ var instance = commonHost.instantiateFromCode(code);
 instance.initialize();
 
 // Examine the instance in JSON format.
-console.log('Instance of SimpleTestAccessor: %j\nTests:', instance);
+console.log('Instance of TestAccessor: %j\nTests:', instance);
 
 function test(testName, expression, expectedValue) {
     if (expression != expectedValue) {
@@ -81,7 +81,7 @@ test('react, send, and latestOutput', instance.latestOutput('negation'), false);
 getAccessorCode = function(name) {
     return fs.readFileSync('../../../' + name + '.js', 'utf8');
 }
-var code = getAccessorCode('test/TestCompositeAccessor');
+var code = getAccessorCode('test/TestComposite');
 var a = commonHost.instantiateFromCode(code, getAccessorCode);
 a.initialize()
 
@@ -103,7 +103,7 @@ test('composite accessor with automatic scheduling', a.latestOutput('output'), 2
 // Note that the following two tests will run concurrently (!)
 
 // Test spontaneous accessor.
-var b = commonHost.instantiateFromName('test/TestSpontaneousAccessor', getAccessorCode);
+var b = commonHost.instantiateFromName('test/TestSpontaneous', getAccessorCode);
 b.initialize();
 setTimeout(function() {
     test('spontaneous accessor produces 0 after 1 second', b.latestOutput('output'), 0);
@@ -114,14 +114,23 @@ setTimeout(function() {
 }, 2500);
 
 // Test composite spontaneous accessor.
-var c = commonHost.instantiateFromName('test/TestCompositeSpontaneousAccessor', getAccessorCode);
+var c = commonHost.instantiateFromName('test/TestCompositeSpontaneous', getAccessorCode);
 c.initialize();
 setTimeout(function() {
-    test('composite spontaneous accessor produces 0 after 1 second', c.latestOutput('output'), 0);
+    test('composite spontaneous accessor produces 0 after 1 second',
+            c.latestOutput('output'), 0);
 }, 1500);
 setTimeout(function() {
-    test('composite spontaneous accessor produces 4 after 2 seconds', c.latestOutput('output'), 4);
+    test('composite spontaneous accessor produces 4 after 2 seconds',
+            c.latestOutput('output'), 4);
     c.wrapup();
 }, 2500);
 
+// Test inheritance.
+var d = commonHost.instantiateFromName('test/TestInheritance', getAccessorCode);
+d.initialize();
+d.provideInput('untyped', 'foo');
+d.react();
+test('inheritance, function overriding, and variable visibility',
+        d.latestOutput('jsonOfUntyped'), 'hello');
 

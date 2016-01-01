@@ -51,12 +51,15 @@ exports.setup = function() {
     parameter('p', {'value':42});                   // Untyped, with numeric value.
 }
 
+// Base class variable.
+exports.variable = 'hello';
+
 exports.initialize = function() {
     // Respond to any input by updating them all.
     addInputHandler('untyped', function() {
         send('typeOfUntyped', typeof get('untyped'));
-        send('jsonOfUntyped', 'JSON for untyped input: '
-                + JSON.toString(get('untyped')));
+        // Refer to the function using 'this' rather than 'exports' to allow an override.
+        send('jsonOfUntyped', this.formatOutput(get('untyped')));
     });
     addInputHandler('numeric', function() {
         send('numericPlusP', get('numeric') + getParameter('p'));
@@ -64,6 +67,11 @@ exports.initialize = function() {
     addInputHandler('boolean', function() {
         send('negation', !get('boolean'));
     });
+}
+
+/** Define a function that can be overridden in subclasses. */
+exports.formatOutput = function(value) {
+    return 'JSON for untyped input: ' + JSON.toString(value);
 }
 exports.fire = function() {
     console.log('SimpleTestAccess.fire() invoked.');
