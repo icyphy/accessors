@@ -4,7 +4,7 @@ Commands:
 > quit      quit interactive host
 
 Top-Level Functions:
-> instantiate('fullAccessorName')    return an accessor instance
+> instantiate(accessorName, accessorClass)    return an accessor instance
 
 Accessor Instance Fields:
 > a.className                        the full accessor name, if known
@@ -13,11 +13,10 @@ Accessor Instance Fields:
 > a.parameterList                    list of parameter names
 
 Accessor Functions:
-> a.fire()                           accessor fire function, if defined.
 > a.get(name)                        get the current value of an input.
 > a.getParameter(name)               get the current value of a parameter.
 > a.initialize()                     accessor initialize function, if defined.
-> a.invokeHandlers()                 invoke handlers for any provided inputs and fire().
+> a.react()                          react to inputs and fire().
 > a.latestOutput(name)               retrieve the latest value on an output.
 > a.provideInput(name, value)        provide an input to the accessor.
 > a.setParameter(name, value)        set the value of a parameter.

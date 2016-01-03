@@ -22,18 +22,13 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test inheritance (extend() function and overrides.
+/** Test inheritance (extend() function and overrides).
+ *  This modifies the base class so that on the 'jsonOfUntyped' output it produces
+ *  the string 'hello', a string defined in a variable defined in the base class.
+ *  This tests the ability to access variables defined in the base class and the
+ *  ability to override functions defined and used in the base class.
  *
  *  @accessor TestInheritance
- *  @parameter p A parameter with default value 42.
- *  @input untyped An untyped input that will accept any JavaScript object.
- *  @input numeric A numeric input.
- *  @input boolean A boolean input.
- *  @output typeOfUntyped Produces the type (a string) of the input named 'untyped'.
- *  @output jsonOfUntyped Produces a JSON representation of the input named 'untyped',
- *   created using the util module.
- *  @output numericPlusP Produces the value of the 'numeric' input plus 'p'.
- *  @output negation Produces the negation of the 'boolean' input.
  *  @author Edward A. Lee
  */
 
