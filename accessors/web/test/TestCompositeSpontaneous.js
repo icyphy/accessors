@@ -33,8 +33,8 @@
 
 exports.setup = function() {
     output('output', {'type':'number'});
-    var gen = instantiate('test/TestSpontaneous');
-    var gain = instantiate('test/TestGain');
+    var gen = instantiate('TestSpontaneous', 'test/TestSpontaneous');
+    var gain = instantiate('TestGain', 'test/TestGain');
     gain.setParameter('gain', 4);
     connect(gen, 'output', gain, 'input');
     connect(gain, 'scaled', 'output');

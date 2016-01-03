@@ -71,7 +71,7 @@ exports.initialize = function() {
 
 /** Define a function that can be overridden in subclasses. */
 exports.formatOutput = function(value) {
-    return 'JSON for untyped input: ' + JSON.toString(value);
+    return 'JSON for untyped input: ' + JSON.stringify(value);
 }
 exports.fire = function() {
     console.log('TestAccessor.fire() invoked.');
