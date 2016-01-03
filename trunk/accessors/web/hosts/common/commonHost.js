@@ -252,13 +252,14 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
     // of input() within this accessor function, so that that function
     // updates the proper property of this function.
     
-    // FIXME: There must be a better way to do this.
+    // NOTE: This only needs to include exports and the top-level functions
+    // that the accessor can invoke. It need not include local functions, nor
+    // should include functions that the host uses but accessors do not, such
+    // as latestOutput(), provideInput(), and react().
+    // It should also include the module object.
         
     var wrapper = eval('(function( \
             addInputHandler, \
-            assignPriorities, \
-            assignImpliedPrioritiesDownstream, \
-            assignImpliedPrioritiesUpstream, \
             connect, \
             exports, \
             extend, \
@@ -267,15 +268,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
             implement, \
             input, \
             instantiate, \
-            latestOutput, \
             module, \
             output, \
             parameter, \
-            provideInput, \
-            react, \
             removeInputHandler, \
             require, \
-            scheduleEvent, \
             send, \
             setDefault, \
             setParameter) {'
@@ -292,9 +289,6 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
     // FIXME: These should only the top-level functions that an accessor can invoke.
     wrapper(
             this.addInputHandler.bind(self),
-            this.assignPriorities.bind(self),
-            this.assignImpliedPrioritiesDownstream.bind(self),
-            this.assignImpliedPrioritiesUpstream.bind(self),
             this.connect.bind(self),
             this.exports,
             this.extend.bind(self),
@@ -303,15 +297,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
             this.implement.bind(self),
             this.input.bind(self),
             this.instantiate.bind(self),
-            this.latestOutput.bind(self),
             this.module,
             this.output.bind(self),
             this.parameter.bind(self),
-            this.provideInput.bind(self),
-            this.react.bind(self),
             this.removeInputHandler.bind(self),
             this.require.bind(self),
-            this.scheduleEvent.bind(self),
             this.send.bind(self),
             this.setDefault.bind(self),
             this.setParameter.bind(self));
