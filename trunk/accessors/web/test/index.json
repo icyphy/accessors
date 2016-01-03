@@ -1,8 +1,10 @@
 [
     "TestAccessor.js",
     "TestAdder.js",
+    "TestBaseC.js",
     "TestComposite.js",
     "TestCompositeSpontaneous.js",
+    "TestDerivedC.js",
     "TestGain.js",
     "TestImplement.js",
     "TestInheritance.js",

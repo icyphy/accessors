@@ -32,7 +32,7 @@ var code = fs.readFileSync('../../../test/TestAccessor.js', 'utf8');
 var commonHost = require('../commonHost.js');
 
 // Create an accessor instance.
-var instance = commonHost.instantiateFromCode(code);
+var instance = new commonHost.Accessor('TestAccessor', code);
 
 // Invoke the initialize function.
 instance.initialize();
@@ -51,28 +51,28 @@ function test(testName, expression, expectedValue) {
 }
 
 // Check getParameter() with default value.
-test('getParameter', instance.getParameter('p'), 42);
+test('TestAccessor: getParameter', instance.getParameter('p'), 42);
 
 // Check setParameter() and getParameter.
 instance.setParameter('p', 12);
-test('setParameter', instance.getParameter('p'), 12);
+test('TestAccessor: setParameter', instance.getParameter('p'), 12);
 
 // Check get().
-test('get', instance.get('numeric'), 0);
+test('TestAccessor: get', instance.get('numeric'), 0);
 
 // Check get() with input undefined.
-test('get with undefined', instance.get('untyped'), undefined);
+test('TestAccessor: get with undefined', instance.get('untyped'), undefined);
 
 // Check get() with input undefined but type being boolean.
-test('get with undefined', instance.get('boolean'), false);
+test('TestAccessor: get with undefined', instance.get('boolean'), false);
 
 // Check provideInput().
 instance.provideInput('boolean', true);
-test('provideInput()', instance.get('boolean'), true);
+test('TestAccessor: provideInput()', instance.get('boolean'), true);
 
 // Check inputHandlers, send, and latestOutput.
 instance.react();
-test('react, send, and latestOutput', instance.latestOutput('negation'), false);
+test('TestAccessor: react, send, and latestOutput', instance.latestOutput('negation'), false);
 
 // Check composite accessors with manual and automatic scheduling.
 
@@ -82,63 +82,79 @@ getAccessorCode = function(name) {
     return fs.readFileSync('../../../' + name + '.js', 'utf8');
 }
 var code = getAccessorCode('test/TestComposite');
-var a = commonHost.instantiateFromCode(code, getAccessorCode);
+var a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
 a.initialize()
 
 // Check assigned priorities.
-test('priority number of destination is higher than source',
+test('TestComposite: priority number of destination is higher than source',
         a.containedAccessors[0].priority < a.containedAccessors[1].priority,
         true);
 
 a.provideInput('input', 10)
 a.containedAccessors[0].react()
 a.containedAccessors[1].react()
-test('composite accessor with manual scheduling', a.latestOutput('output'), 50);
+test('TestComposite: composite accessor with manual scheduling',
+        a.latestOutput('output'), 50);
 
 a.initialize();
 a.provideInput('input', 5)
 a.react();
-test('composite accessor with automatic scheduling', a.latestOutput('output'), 25);
+test('TestComposite: composite accessor with automatic scheduling',
+        a.latestOutput('output'), 25);
 
 // Note that the following two tests will run concurrently (!)
 
 // Test spontaneous accessor.
-var b = commonHost.instantiateFromName('test/TestSpontaneous', getAccessorCode);
+var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
+        getAccessorCode);
 b.initialize();
 setTimeout(function() {
-    test('spontaneous accessor produces 0 after 1 second', b.latestOutput('output'), 0);
+    test('TestSpontaneous: spontaneous accessor produces 0 after 1 second',
+            b.latestOutput('output'), 0);
 }, 1500);
 setTimeout(function() {
-    test('spontaneous accessor produces 1 after 2 seconds', b.latestOutput('output'), 1);
+    test('TestSpontaneous: spontaneous accessor produces 1 after 2 seconds',
+            b.latestOutput('output'), 1);
     b.wrapup();
 }, 2500);
 
 // Test composite spontaneous accessor.
-var c = commonHost.instantiateFromName('test/TestCompositeSpontaneous', getAccessorCode);
+var c = commonHost.instantiateAccessor(
+        'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
 c.initialize();
 setTimeout(function() {
-    test('composite spontaneous accessor produces 0 after 1 second',
+    test('TestCompositeSpontaneous: composite spontaneous accessor produces 0 after 1 second',
             c.latestOutput('output'), 0);
 }, 1500);
 setTimeout(function() {
-    test('composite spontaneous accessor produces 4 after 2 seconds',
+    test('TestCompositeSpontaneous: composite spontaneous accessor produces 4 after 2 seconds',
             c.latestOutput('output'), 4);
     c.wrapup();
 }, 2500);
 
 // Test extend().
-var d = commonHost.instantiateFromName('test/TestInheritance', getAccessorCode);
+var d = commonHost.instantiateAccessor(
+        'TestInheritance', 'test/TestInheritance', getAccessorCode);
 d.initialize();
 d.provideInput('untyped', 'foo');
 d.react();
-test('inheritance, function overriding, and variable visibility',
+test('TestInheritance: inheritance, function overriding, and variable visibility',
         d.latestOutput('jsonOfUntyped'), 'hello');
 
 // Test implement().
-var e = commonHost.instantiateFromName('test/TestImplement', getAccessorCode);
+var e = commonHost.instantiateAccessor(
+        'TestImplement', 'test/TestImplement', getAccessorCode);
 e.initialize();
 e.provideInput('numeric', '42');
 e.react();
-test('implementing an interface',
+test('TestImplement: implementing an interface',
         e.latestOutput('numericPlusP'), 84);
 
+// Test access to exported fields of base classes an proper scoping of initialize().
+var f = commonHost.instantiateAccessor(
+        'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
+f.initialize();
+f.provideInput('in1', '42');
+f.react();
+test('TestDerivedC: access to base class exports properties',
+        f.latestOutput('out1'), 2);

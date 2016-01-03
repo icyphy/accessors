@@ -53,7 +53,7 @@ var accessorPath = [path.join(__dirname, '..', '..')];
  *  search path.
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
-getAccessorCode = function(name) {
+function getAccessorCode(name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
@@ -63,6 +63,7 @@ getAccessorCode = function(name) {
         var location = path.join(accessorPath[i], name);
         try {
             code = fs.readFileSync(location, 'utf8');
+            console.log('Reading accessor at: ' + location);
         } catch(error) {
             console.log(error);
             continue;
@@ -74,19 +75,22 @@ getAccessorCode = function(name) {
     return code;
 }
 
-/** Instantiate and return an accessor from its fully qualified name.
- *  This will throw an exception if there is no such accessor on the accessor
+/** Instantiate and return an accessor.
+ *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
- *  @param name Fully qualified accessor name, e.g. 'net/REST'.
+ *  @param accessorName The name to give to the instance.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiate = function(name) {
-    console.log('Instantiating accessor at: ' + name);
+instantiate = function(accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
         'require': require,
     }
-    return commonHost.instantiateFromName(name, getAccessorCode, bindings);
+    var result = new commonHost.instantiateAccessor(
+            accessorName, accessorClass, getAccessorCode, bindings);
+    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    return result;
 }
 
 /** Start an interactive version of this host.
