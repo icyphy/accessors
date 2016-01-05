@@ -67,13 +67,18 @@ function accessorPropertiesToMoML(propertyName, elements) {
                 console.error(propertyName + " description: " + description);
             }
             // What we want:
-            // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" value="The most recent trade price for the stock.">
+            // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" type="int" value="The most recent trade price for the stock.">
 
-            moml += '    <property name="' + xmlEscape(name) + " (" + propertyName + ")"
-                + '" class="ptolemy.kernel.util.StringAttribute" value="'
-                + xmlEscape(type) + " "
-                + xmlEscape(description) + '">\n'
-                + '    </property>\n';
+            simplerType = xmlEscape(type);
+            if (type !== undefined) {
+                simplerType = simplerType.replace(/^\({names:\[&quot;/g, '').replace(/&quot;\]}\)$/g, '');
+                //console.error("simplerType: type: " + type + ", new simpleType: " + simplerType);
+            }
+            moml += '    <property name="' + xmlEscape(name) + " (" + propertyName + ")" +
+                '" class="ptolemy.kernel.util.StringAttribute" type="' +
+                simplerType + '" value="' +
+                xmlEscape(description) + '">\n' +
+                '    </property>\n';
         });
     return moml;
 }
