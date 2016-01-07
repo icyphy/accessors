@@ -50,13 +50,13 @@ var ds = new discovery.DiscoveryService();
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    accessor.input('hostIP', {
+    input('hostIP', {
         type: 'string',
     });
     
-    accessor.output('devices');
+    output('devices');
     
-    accessor.parameter('useNmap', {
+    parameter('useNmap', {
         type: 'boolean',
         value: false,
     });

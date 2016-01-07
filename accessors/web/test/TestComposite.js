@@ -36,18 +36,13 @@
 exports.setup = function() {
     input('input', {'type':'number', 'value':0});
     output('output', {'type':'number'});
-
-    // FIXME: instantiate is not yet developed, but
-    // if the code below is uncommented, then the config clone tests fail,
-    // which could hide other clone failures.
-    
-    // var gain = instantiate('TestGain', 'test/TestGain');
-    // gain.setParameter('gain', 4);
-    // var adder = instantiate('TestAdder', 'test/TestAdder');
-    // connect('input', adder, 'inputLeft');
-    // connect('input', gain, 'input');
-    // connect(gain, 'scaled', adder, 'inputRight');
-    // connect(adder, 'sum', 'output');
+    var gain = instantiate('TestGain', 'test/TestGain');
+    gain.setParameter('gain', 4);
+    var adder = instantiate('TestAdder', 'test/TestAdder');
+    connect('input', adder, 'inputLeft');
+    connect('input', gain, 'input');
+    connect(gain, 'scaled', adder, 'inputRight');
+    connect(adder, 'sum', 'output');
 }
 
 // NOTE: If you provide a fire() function for a composite accessor,

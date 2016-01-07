@@ -32,7 +32,7 @@
  *  class name ('''instantiateAccessor'''), such as 'net/REST'.
  *
  *  For these functions to be able to instantiate an accessor
- *  given only its class, the host needs to provide as an argument to
+ *  given only its class, the host needs to provide as an argument to new Accessor() or
  *  instantiateAccessor() a function, here designated getAccessorCode(), that
  *  will retrieve the accessor source code given the class name. This cannot be done
  *  in a host-independent way. For example, ```getAccessorCode('net/REST')```
@@ -40,9 +40,9 @@
  *  This function must also be provided if the host is to support accessor
  *  subclassing (extend()) or interface implementation (implement()).
  *
- *  The two instantiate functions return an object that is an instance of an accessor.
- *  A specific host will typically use this by invoking the following instance's
- *  functions, perhaps in this order:
+ *  The constructor and instantiate functions return an object that is an instance of an
+ *  accessor. A specific host will typically use this by invoking the following
+ *  instance's functions, perhaps in this order:
  *
  *  * '''setParameter'''(name, value): Set a parameter value.
  *  * '''initialize'''(): Initialize the accessor.
@@ -257,6 +257,8 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
     // should include functions that the host uses but accessors do not, such
     // as latestOutput(), provideInput(), and react().
     // It should also include the module object.
+    
+    // FIXME: Use the Function constructor for this:
         
     var wrapper = eval('(function( \
             addInputHandler, \
@@ -286,7 +288,7 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
     }
              
     // Populate the exports property by invoking the function defined above.
-    // FIXME: These should only the top-level functions that an accessor can invoke.
+    // These should only the top-level functions that an accessor can invoke.
     wrapper(
             this.addInputHandler.bind(self),
             this.connect.bind(self),
@@ -314,85 +316,51 @@ function Accessor(accessorName, code, getAccessorCode, bindings, context) {
     }
         
     ////////////////////////////////////////////////////////////////////
-    //// Provide default functions and make selected exports functions
-    //// available at this level.
+    //// Provide wrapper functions for initialize() and wrapup().
     
-    // As a convenience, selected functions defined in exports by the above evaluations
-    // are exported here as functions of this object.  The bind() ensures that they
-    // will be invoked in the context of the correct exports object.
-    if (typeof this.exports.initialize === 'function') {
-        // It is up to the caller of these methods to invoke them in the context
-        // of the exports object.
-        // this.exports.initialize = this.exports.initialize.bind(context.exports);
-        this.initialize = this.exports.initialize.bind(this.exports);
-    } else {
-        this.initialize = function() {
-            // Invoke base class initialize method.
-            // FIXME: Causes an infinite call stack.
-            /*
-            if (this.ssuper && this.ssuper.initialize) {
-                this.ssuper.initialize.call(self.exports);
-            }
-            */
-            if (self.containedAccessors && self.containedAccessors.length > 0) {
-                self.assignPriorities();
-                self.eventQueue = [];
-                for (var i = 0; i < self.containedAccessors.length; i++) {
-                    if (self.containedAccessors[i].initialize) {
-                        self.containedAccessors[i].initialize();
-                    }
+    // The instance versions of initialize() and wrapup() perform
+    // functions that every accessor should perform, including handling
+    // scheduling of any contained accessors.  They will also invoke
+    // exports.initialize() and exports.wrapup(), if those are defined.
+    
+    this.initialize = function() {
+        if (self.containedAccessors && self.containedAccessors.length > 0) {
+            self.assignPriorities();
+            self.eventQueue = [];
+            for (var i = 0; i < self.containedAccessors.length; i++) {
+                if (self.containedAccessors[i].initialize) {
+                    self.containedAccessors[i].initialize();
                 }
             }
-        };
-        this.exports.initialize = this.initialize;
-    }
-    if (typeof this.exports.fire === 'function') {
-        // this.exports.fire = this.exports.fire.bind(context.exports);
-        this.fire = this.exports.fire.bind(this.exports);
-    } else {
-        this.fire = function() {
-            // Invoke base class fire method.
-            // FIXME: Causes an infinite call stack.
-            /*
-            if (this.ssuper && this.ssuper.fire) {
-                this.ssuper.fire.call(self.exports);
-            }
-            */
-            if (self.containedAccessors && self.containedAccessors.length > 0) {
-                // console.log('Composite is reacting with ' + self.eventQueue.length + ' events.');
-                while (self.eventQueue && self.eventQueue.length > 0) {
-                    // Remove from the event queue the first accessor, which will now react.
-                    // It may add itself back in, if it sends to its own input. But in that
-                    // case, it should fire again immediately, so that is correct.
-                    var removed = self.eventQueue.splice(0, 1);
-                    removed[0].react();        
+        }
+        if (typeof self.exports.initialize === 'function') {
+            self.exports.initialize();
+        }
+    };
+
+    this.wrapup = function() {
+        // Mark that this accessor has not been initialized.
+        self.initialized = false;
+        
+        // Remove all input handlers.
+        this.inputHandlers = {};
+        this.anyInputHandlers = [];
+        this.inputHandlersIndex = {};
+        // Counter used to assign unique IDs to each input handler.
+        this.inputHandlerID = 0;
+                
+        // Invoke wrapup on contained accessors.
+        if (self.containedAccessors && self.containedAccessors.length > 0) {
+            for (var i = 0; i < self.containedAccessors.length; i++) {
+                if (self.containedAccessors[i].wrapup) {
+                    self.containedAccessors[i].wrapup();
                 }
             }
-        };
-        this.exports.fire = this.fire;
-    }
-    if (typeof this.exports.wrapup === 'function') {
-        this.wrapup = this.exports.wrapup.bind(this.exports);
-    } else {
-        this.wrapup = function() {
-            self.initialized = false;
-            // Invoke base class wrapup method.
-            // FIXME: Causes an infinite call stack.
-            /*
-            if (self.exports.ssuper && self.exports.ssuper.wrapup) {
-                self.exports.ssuper.wrapup.call(self.exports);
-            }
-            */
-            if (self.containedAccessors && self.containedAccessors.length > 0) {
-                for (var i = 0; i < self.containedAccessors.length; i++) {
-                    if (self.containedAccessors[i].wrapup) {
-                        self.containedAccessors[i].wrapup();
-                    }
-                }
-            }
-        };
-        this.exports.wrapup = this.wrapup;
-    }
+        }
+        if (typeof self.exports.wrapup === 'function') {
+            self.exports.wrapup();
+        }
+    };
 
     // Record the instance indexed by its exports property.
     _accessorInstanceTable[this.exports] = this;
@@ -438,8 +406,9 @@ Accessor.prototype.addInputHandler = function(name, func) {
     // When that function is invoked, the exports data structure will be 'this'.
     tail = Array.prototype.slice.call(arguments, argCount);
     if (tail.length !== 0) {
+        var thiz = this;
         callback = function() {
-            func.apply(this.exports, tail);
+            func.apply(thiz.exports, tail);
         };
     } else {
         callback = func.bind(this.exports);
@@ -500,7 +469,7 @@ Accessor.prototype.assignPriorities = function() {
         // Any remaining accessors without priorities are in one or more independent
         // connected subgraphs. To ensure that the next set of priorities does not
         // overlap those already assigned, we start with a sufficiently higher number.
-        startingPriority = accessors.length - i;
+        startingPriority = 2*(accessors.length - i);
     }
 }
 
@@ -533,9 +502,8 @@ Accessor.prototype.assignImpliedPrioritiesDownstream
                 var destinationInput = destinationAccessor.inputs[destination.inputName];
                 var theirPriority = destinationAccessor.priority;
                 if (theirPriority === cyclePriority) {
-                    // FIXME: Really need for accessors to have names, or error reporting
-                    // will be pretty useless, as in this case.
-                    throw('Causality loop found.');
+                    throw('Causality loop found including at least: '
+                            + destinationAccessor.accessorName);
                 }
                 if (theirPriority === null) {
                     // Destination has no previously assigned priority. Give it one,
@@ -581,9 +549,8 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
             }
             var theirPriority = source.priority;
             if (theirPriority === cyclePriority) {
-                // FIXME: Really need for accessors to have names, or error reporting
-                // will be pretty useless, as in this case.
-                throw('Causality loop found.');
+                    throw('Causality loop found including at least: '
+                            + accessor.accessorName);
             }
             if (theirPriority === null) {
                 // Source has no previously assigned priority. Give it one,
@@ -694,8 +661,8 @@ Accessor.prototype.connect = function(a, b, c, d) {
  *  @param name The name of the input, output, or parameter (for error reporting).
  */
 function convertType(value, destination, name) {
-    if (!destination.type || destination.type === typeof value) {
-        // Type is unspecified or a match. Use value as given.
+    if (!destination.type || destination.type === typeof value  || value === null) {
+        // Type is unspecified or a match, or value is null. Use value as given.
     } else if (destination.type === 'string') {
         if (typeof value !== 'string') {
             // Convert to string.
@@ -711,15 +678,23 @@ function convertType(value, destination, name) {
     } else if (typeof value === 'string') {
         // Provided value is a string, but 
         // destination type is boolean, number, int, or JSON.
-        try {
-            value = JSON.parse(value);
-        } catch (error) {
-            throw('Failed to convert value to destination type: '
-                    + name
-                    + ' expected a '
-                    + destination.type
-                    + ' but received: '
-                    + value);
+        if (value === '') {
+            // If the value is an empty string, then convert
+            // to null, unless the destination type is JSON.
+            if (!(destination.type === 'JSON')) {
+                value = null;
+            }
+        } else {
+            try {
+                value = JSON.parse(value);
+            } catch (error) {
+                throw('Failed to convert value to destination type: '
+                        + name
+                        + ' expected a '
+                        + destination.type
+                        + ' but received: '
+                        + value);
+            }
         }
     } else if (destination.type === 'boolean' && typeof value !== 'boolean') {
         // Liberally convert JavaScript data to boolean.
@@ -809,15 +784,31 @@ Accessor.prototype.extend = function(accessorClass) {
  */
 Accessor.prototype.get = function(name) {
     var input = this.inputs[name];
+    
     if (!input) {
-        throw('get(name): No input named ' + name);
+        // Tolerate using get() to retrieve a parameter instead of input,
+        // since names are required to be unique anyway. This ensure backward
+        // compatibility with earlier models for the Ptolemy host, which used
+        // get() for both inputs and parameters.
+        input = this.parameters[name];
+        if (!input) {
+            throw('get(name): No input named ' + name);
+        }
     }
-    // If provideInput() has been called, return that value.
-    if (input['currentValue']) {
-        return input['currentValue'];
+    var value;
+    var currentValue = input['currentValue'];
+    if (typeof currentValue !== 'undefined' && currentValue !== null) {
+        // If provideInput() has been called, return that value.
+        value = input['currentValue'];
+    } else {
+        // Note that if both currentValue and value are null or undefined,
+        // then the correct response is null.
+        value = input['value'];
+        if (typeof value === 'undefined') {
+            value = null;
+        }
     }
     // If necessary, convert the value to the match the type.
-    var value = input['value'];
     value = convertType(value, input, name);
     return value;
 }
@@ -1018,29 +1009,35 @@ Accessor.prototype.provideInput = function(name, value) {
     if (!input) {
         throw('provideInput(): Accessor has no input named ' + name);
     }
+
     value = convertType(value, input, name);
     input.currentValue = value;
 
     // Mark this input as requiring invocation of an input handler.
-    input.pendingHandler = true;
+    // But be careful: If the value is null and the port has no default
+    // value, then this is being called to indicate that there is _no_
+    // input. The accessor specification says that if there is a default
+    // value, then sending null to the port _will_ trigger an event handler.
+    if (value !== null || (typeof input.value !== 'undefined' && input.value !== null)) {
+        input.pendingHandler = true;
+        // If there is a container accessor, then put this accessor in its
+        // event queue for handling in its fire() function.
+        if (this.container) {
+            this.container.scheduleEvent(this);
+        }
     
-    // If there is a container accessor, then put this accessor in its
-    // event queue for handling in its fire() function.
-    if (this.container) {
-        this.container.scheduleEvent(this);
-    }
-    
-    // If the input is connected on the inside, then provide the same input
-    // to the destination(s).
-    if (input.destinations) {
-        for (var i = 0; i < input.destinations.length; i++) {
-            var destination = input.destinations[i];
-            if (typeof destination === 'string') {
-                // The destination is output port of this accessor.
-                this.send(destination, value);
-            } else {
-                // The destination is an input port of a contained accessor.
-                destination.accessor.provideInput(destination.inputName, value);
+        // If the input is connected on the inside, then provide the same input
+        // to the destination(s).
+        if (input.destinations) {
+            for (var i = 0; i < input.destinations.length; i++) {
+                var destination = input.destinations[i];
+                if (typeof destination === 'string') {
+                    // The destination is output port of this accessor.
+                    this.send(destination, value);
+                } else {
+                    // The destination is an input port of a contained accessor.
+                    destination.accessor.provideInput(destination.inputName, value);
+                }
             }
         }
     }
@@ -1078,6 +1075,7 @@ Accessor.prototype.react = function(name) {
         if (thiz.inputHandlers[name] && thiz.inputHandlers[name].length > 0) {
             for (var i = 0; i < thiz.inputHandlers[name].length; i++) {
                 if (typeof thiz.inputHandlers[name][i] === 'function') {
+                    // Input handlers functions are bound to the exports object.
                     thiz.inputHandlers[name][i]();
                 }
             }
@@ -1101,10 +1099,24 @@ Accessor.prototype.react = function(name) {
     if (this.anyInputHandlers.length > 0) {
         for (var i = 0; i < this.anyInputHandlers.length; i++) {
             if (typeof this.anyInputHandlers[i] === 'function') {
+                // Call input handlers in the context of the exports object.
                 this.anyInputHandlers[i]();
             }
         }
     }
+    
+    // Next, invoke react() on any contained accessors.
+    if (this.containedAccessors && this.containedAccessors.length > 0) {
+        // console.log('Composite is reacting with ' + this.eventQueue.length + ' events.');
+        while (this.eventQueue && this.eventQueue.length > 0) {
+            // Remove from the event queue the first accessor, which will now react.
+            // It may add itself back in, if it sends to its own input. But in that
+            // case, it should fire again immediately, so that is correct.
+            var removed = this.eventQueue.splice(0, 1);
+            removed[0].react();        
+        }
+    }
+
     // Next, invoke the fire() function.
     if (typeof this.exports.fire === 'function') {
         this.exports.fire();
@@ -1204,15 +1216,22 @@ Accessor.prototype.scheduleEvent = function(accessor) {
     queue.splice(0, 0, accessor);
 }
 
-/** Send via an output. This default implementation invoked provideInput() on any
- *  connected inputs if there are any and otherwise prints the output on the console.
+/** Send via an output. This default implementation invokes provideInput() on any
+ *  connected inputs if there are any. It also records the output for retrieval
+ *  by latestOutput().
  *  @param name The output name.
  *  @param value The output value.
  */
 Accessor.prototype.send = function(name, value) {
     var output = this.outputs[name];
     if (!output) {
-        throw('send(name, value): No output named ' + name);
+        // May be sending to my own input.
+        var input = this.inputs[name];
+        if (!input) {
+            throw('send(name, value): No output or input named ' + name);
+        }
+        this.provideInput(name, value);
+        return;
     }
     // If necessary, convert the value to the match the type.
     value = convertType(value, output, name);
@@ -1228,8 +1247,11 @@ Accessor.prototype.send = function(name, value) {
                     this.container.send(destination, value);
                 } else {
                     // If no other implementation of send() has been provided and
-                    // there is no container, produce to standard output.
-                    console.log('Output named "' + name + '" produced: ' + value);
+                    // there is no container, this used to produce to standard output.
+                    // But this is not a good idea, because hosts should invoke this
+                    // superclass function in their own send(), and this will produce
+                    // a lot of noise on the console.
+                    // console.log('Output named "' + name + '" produced: ' + value);
                 }
             } else {
                 // The destination is an input port of a contained accessor.
@@ -1238,8 +1260,11 @@ Accessor.prototype.send = function(name, value) {
         }
     } else {
         // If no other implementation of send() has been provided and
-        // there are no destinations, produce to standard output.
-        console.log('Output named "' + name + '" produced: ' + value);
+        // there are no destinations, this used to produce to standard output.
+        // But this is not a good idea, because hosts should invoke this
+        // superclass function in their own send(), and this will produce
+        // a lot of noise on the console.
+        // console.log('Output named "' + name + '" produced: ' + value);
     }
 }
 

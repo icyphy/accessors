@@ -46,7 +46,7 @@ exports.setup = function() {
 
 /** Initialize the accessor and start the process subsequently.
  */
-exports.initialize = function() {	
+exports.initialize = function() {
 	sh = new shell.Shell({'cmd' : get('command')});
 	
 	addInputHandler('stdin', function() {

@@ -42,6 +42,14 @@ console.log('Instance of TestAccessor: %j\nTests:', instance);
 
 function test(testName, expression, expectedValue) {
     if (expression != expectedValue) {
+        // Print a stack trace.
+        var e = new Error('dummy');
+        var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+                .replace(/^\s+at\s+/gm, '')
+                .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+                .split('\n');
+        console.log(stack);
+        
         throw('Test failed: ' + testName
                 + '. Expected: ' + expectedValue
                 + ', but got: ' + expression);
@@ -60,11 +68,11 @@ test('TestAccessor: setParameter', instance.getParameter('p'), 12);
 // Check get().
 test('TestAccessor: get', instance.get('numeric'), 0);
 
-// Check get() with input undefined.
-test('TestAccessor: get with undefined', instance.get('untyped'), undefined);
+// Check get() with no input yet provided.
+test('TestAccessor: get with undefined', instance.get('untyped'), null);
 
-// Check get() with input undefined but type being boolean.
-test('TestAccessor: get with undefined', instance.get('boolean'), false);
+// Check get() with no input yet provided but type being boolean.
+test('TestAccessor: get with undefined', instance.get('boolean'), null);
 
 // Check provideInput().
 instance.provideInput('boolean', true);
@@ -83,7 +91,7 @@ getAccessorCode = function(name) {
 }
 var code = getAccessorCode('test/TestComposite');
 var a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
-a.initialize()
+a.initialize();
 
 // Check assigned priorities.
 test('TestComposite: priority number of destination is higher than source',
