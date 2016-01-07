@@ -38,26 +38,19 @@ var ds = new discovery.DiscoveryService();
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    accessor.input('trigger', {
+    input('trigger', {
         type: 'boolean',
       });
     
-    accessor.output('IPAddress', {
+    output('IPAddress', {
         type: 'string',
       });
 };
 
-var handle;
-
 /** Upon receiving a trigger input, output the host machine's IP address.
  */
 exports.initialize = function () {
-	handle = addInputHandler('trigger', function() {
+	addInputHandler('trigger', function() {
 		send('IPAddress', ds.getHostAddress());
 	});
-};
-
-/** Upon wrapup, stop handling new inputs.  */
-exports.wrapup = function () {
-    removeInputHandler(handle);
 };
