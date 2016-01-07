@@ -35,8 +35,6 @@ nsh> a.provideInput('untyped', 'hello world');
 undefined
 
 nsh> a.react();
-Output named "typeOfUntyped" produced: string
-Output named "jsonOfUntyped" produced: JSON for untyped input: "hello world"
 TestAccessor.fire() invoked.
 
 
@@ -62,16 +60,28 @@ To run a simple test, assuming you are in this test directory:
 The testNodeHost.js file just contains the above commands collected into a file.
 You will see the following output:
 
-   Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
-   nsh> var a = instantiate('TestAccessor', 'hosts/common/test/TestAccessor');
-   Instantiating accessor at: /ptII/org/terraswarm/accessor/accessors/web/hosts/common/test/TestAccessor.js
-   undefined
-   nsh> a.initialize();
-   undefined
-   nsh> a.fire();
-   TestAccessor fired.
-   undefined
-   nsh> quit;
-   exit
+Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
+nsh> // This is just a simple smoke test for the Node.js host.
+undefined
+nsh> // To use it, run the node host and copy and paste the following into it.
+undefined
+nsh> var a = instantiate('TestComposite', 'test/TestComposite');
+Reading accessor at: /ptII/org/terraswarm/accessor/accessors/web/test/TestComposite.js
+Reading accessor at: /ptII/org/terraswarm/accessor/accessors/web/test/TestGain.js
+Reading accessor at: /ptII/org/terraswarm/accessor/accessors/web/test/TestAdder.js
+Instantiated accessor TestComposite with class test/TestComposite
+undefined
+nsh> a.initialize();
+undefined
+nsh> a.provideInput('input', 10);
+undefined
+nsh> a.react();
+undefined
+nsh> a.latestOutput('output');  // Should return 50
+50
+nsh> a.wrapup();
+undefined
+nsh> quit;
+exit
 
 

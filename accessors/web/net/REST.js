@@ -182,8 +182,8 @@ exports.issueCommand = function(callback) {
         // option, we have to switch styles here.
         command = {};
         command.url = options + '/' + encodedPath;
-    } else if (typeof command.url === 'string') {
-        command.url += '/' + encodedPath;
+    } else if (typeof options.url === 'string') {
+        command.url = options.url + '/' + encodedPath;
     } else {
         command.url.path = '/' + encodedPath;
     }

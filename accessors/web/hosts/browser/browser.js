@@ -79,12 +79,9 @@ window.addEventListener('DOMContentLoaded', function() {
 window.onunload = function() {
     if (window.accessors) {
         for (var accessor in window.accessors) {
-            if (accessor.initialized
-                    && accessor.exports
-                    && accessor.exports.wrapup) {
-                accessor.exports.wrapup();
+            if (accessor.initialized) {
+                accessor.wrapup();
             }
-            accessor.initialized = false;
         }
     }
 };
@@ -188,10 +185,8 @@ function generateAccessorHTML(path, id) {
     if (window.accessors) {
         var accessor = window.accessors[id];
         if (accessor) {
-            if (accessor.initialized
-                    && accessor.exports
-                    && accessor.exports.wrapup) {
-                accessor.exports.wrapup();
+            if (accessor.initialized) {
+                accessor.wrapup();
             }
             accessor.initialized = false;
         }
@@ -1063,13 +1058,11 @@ function getJavaScript(path, callback, module) {
  */
 function initializeIfNecessary(instance) {
     if (!instance.initialized) {
-        if ((typeof instance.exports.initialize) === 'function') {
-            try {
-                instance.exports.initialize();
-            } catch (err) {
-                alert('Error initializing accessor: ' + err);
-                return;
-            }
+        try {
+            instance.initialize();
+        } catch (err) {
+            alert('Error initializing accessor: ' + err);
+            return;
         }
         instance.initialized = true;
     }

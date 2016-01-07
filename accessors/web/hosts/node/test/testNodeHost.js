@@ -3,7 +3,8 @@
 var a = instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);
-a.fire();  // Should show an output of 50.
+a.react();
+a.latestOutput('output');  // Should return 50
 a.wrapup();
 quit;
 
