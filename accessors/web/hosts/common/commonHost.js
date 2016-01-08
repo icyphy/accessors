@@ -22,6 +22,17 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
+
+                ////////////////////////////////////////////
+                ////                NOTE:               ////
+                ////  This file has an exact copy in    ////
+                ////    accessors/web/hosts/common      ////
+                ////    and in the Ptolemy tree at      ////
+                ////   $PTII/ptolemy/actor/lib/jjs      ////
+                //// If you update here, please update  ////
+                ////   both places and run the tests    ////
+                ////////////////////////////////////////////
+
 /** This module provides host-independent functions for swarmlet hosts.
  *  A specific host (such as the Node.js host, the browser host, or the Ptolemy II
  *  host) can use this module to implement common functionality that is realizable
@@ -118,7 +129,7 @@
  *
  *
  *  @module commonHost
- *  @authors: Edward A. Lee
+ *  @authors: Edward A. Lee and Chris Shaver
  */
 
 'use strict';
