@@ -47,3 +47,11 @@ div.header a:hover, div.header a:active {
 body, p, button {
     font-family: Tahoma, Geneva, sans-serif;
 }
+
+/* Style for boxed messages. */
+.boxed {
+    border: 1px solid;
+    margin: 10px 0px;
+    padding:15px 10px 15px 50px;
+    background-color: #eeffee;
+}

@@ -4,18 +4,21 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <title>Accessors</title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
   </head>
   <body>
   <div id="accessorDirectoryTarget">
-<!--------------------------------------->
+<!--*****************************-->
 <h1>Accessors</h1>
 <h2>What are Accessors?</h2>
 <p>
 <div class="boxed">
-An <b>accessor</b> is a software component that wraps a (possibly remote) device or
-service in an actor interface.  An actor <b>actor</b> is a software component
+An <b>actor</b> is a software component
 that reacts to streaming input events and produces streaming output events.
+An <b>accessor</b> is a software component that wraps a (possibly remote) device or
+service in an actor interface.
 </div>
+</p><p>
 Accessors are defined in a JavaScript file that includes a specification of the
 <b>interface</b> (inputs, outputs, and parameters) and an implementation of the
 functionality (reactions to inputs and/or production of outputs).
@@ -27,16 +30,13 @@ that evaluates the JavaScript in the accessor definition.
 At this time, there are at least three accessor hosts compatible
 with <b>accessor specification 1.0</b>:
 <ul>
-<li> A <b>browser host</b>, which allows inspection of the accessor, and in 
-
+<li> A <a href="/accessors/hosts/browser"><b>browser host</b></a>, which allows inspection of the accessor, and if the accessor is suitable for execution in a browser, interactive invocation of the accessor.
+<li> A <a href="FIXME"><b>Node.js host</b></a>, an interactive program that runs in Node.js that allows instantiation and execution of accessors.
+<li> A <a href="FIXME"><b>Ptolemy II host</b></a>, which supports composition of accessors with visual block diagrams and provides a large library of actors that the accessors can interact with.
 </ul>
-      are actors that provide access to a (typically remote) service, sensor, or actuator. An accessor is instantiated by an
-      <b>accessor host</b> or <b>swarmlet host</b>, which is a program or browser script. The host uses the accessor as if it were a local
-      source and/or sink for data and/or commands.
-      An accessor host is to the Internet of Things what a browser is to the Internet.
-      It renders a remote service by locally executing a proxy for that service.
     </p>
-<p><font color="red">The <a href="http://www.terraswarm.org/accessors/wiki/">wiki page</a> for this workgroup is the place to go to participate in the design of the accessor mechanism.</font></p>
+<p><font color="red">This project is a <b>work in progress</b>. Please contribute. The <a href="http://www.terraswarm.org/accessors/wiki/">wiki page</a> for this workgroup is the place to go to participate in the design of the accessor mechanism.</font></p>
+<p>FIXME: need to update the information below:</p>
     <p>
       The TerraSwarm project has developed a "version 0.1" accessor design and a suite of accessor hosts that should be viewed as concept demonstrations. We are further developing the design.
       <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (the Development Version in the SVN repository) is currently
@@ -45,13 +45,13 @@ with <b>accessor specification 1.0</b>:
       a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
       To view the accessor script from within Ptolemy II, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
     <p>
-<!--------------------------------------->
+<!--*****************************-->
 <h1>Presentations</h1>
 <ul>
 <li> <a href="http://chess.eecs.berkeley.edu/pubs/1112.html">The Internet of Important Things</a>, Edward A. Lee, Keynote, Software Engineering and Formal Methods (SEFM), York, England, UK, September 11. 2015.</li>
 <li> <a href="http://chess.eecs.berkeley.edu/pubs/1096.html">Connecting the Cloud to Things</a>, Edward A. Lee, Invited Talk, Berkeley Cloud Workshop, Berkeley, California, February 27, 2015.</li>
 </ul>
-<!--------------------------------------->
+<!--*****************************-->
 <h1>References</h1>
 <ul>
 <li> Marten Lohstroh, Edward A. Lee, "<a href="http://chess.eecs.berkeley.edu/pubs/1102.html">An Interface Theory for the Internet of Things</a>," in Proceedings of the 13th International Conference on Software Engineering and Formal Methods (SEFM) Sept. 7-11, 2015, York, UK, Springer, LNCS 9276, pp. 20-34.</li>
