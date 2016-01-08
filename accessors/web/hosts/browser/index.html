@@ -7,16 +7,23 @@
     <script src="/accessors/hosts/browser/browser.js"></script>
 </head>
 <body>
-<h1 class="header">Browser Swarmlet Host</h1><
+<h1 class="header">Browser Swarmlet Host</h1>
 <p>
-The Browser Swarmlet Host is able to instantiate many accessors in your browser
-and provide an interface to them. Parameters, inputs, and outputs of the accessor
-are shown as tables. If the modules required by the accessor are all implemented
-in the browser host, then you will be able to provide inputs to the accessor and
-execute it. Some accessors, however, require resources that the browser cannot grant
-due to security restrictions. Such accessors will be displayed, but cannot be executed.
-To display and/or execute an accessor, choose one from the library. Its interface
-will appear below.
+The Browser Swarmlet Host enables you to inspect accessors in your browser.
+Parameters, inputs, and outputs of the accessor are shown as tables.
+Documentation is extracted from the accessor specification and displayed on the web page.
+The table of contents on the left shows all accessors currently checked into the
+repository, and clicking on an accessor will display it below.
+</p><p>
+A few accessors are also executable within the browser.
+At this time, however, this includes only accessors that do not require any external
+modules. Even as more modules are implemented for this host, some accessors will always
+be out of reach for the browser host because of security restrictions for JavaScript
+executing in a browser.
+</p><p>
+See the <a href="https://www.terraswarm.org/accessors/wiki/Main/ToDoList">To Do List</a>
+for work that needs to be done on this host.
+</p>
 <hr>
 <div id="accessorDirectoryTarget"></div>
 </body>
