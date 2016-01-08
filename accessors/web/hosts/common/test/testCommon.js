@@ -166,3 +166,12 @@ f.provideInput('in1', '42');
 f.react();
 test('TestDerivedC: access to base class exports properties',
         f.latestOutput('out1'), 2);
+
+// Test two-level inheritance.
+var g = commonHost.instantiateAccessor(
+        'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
+g.initialize();
+g.provideInput('in1', 42);
+g.react();
+test('TestDerivedAgainA: two-level inheritance, out1', g.latestOutput('out1'), 2);
+test('TestDerivedAgainA: two-level inheritance, out2', g.latestOutput('out2'), 2);

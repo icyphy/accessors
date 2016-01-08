@@ -12,12 +12,12 @@ accessors directory at ../../../
 
 For a simple test web page, point your favorite browser to
 
-  http://localhost:8080/hosts/browser/test/testWebPage.html
+  http://localhost:8088/hosts/browser/test/testWebPage.html
   
 For a more elaborate page where you can instantiate all accessors in the library,
 point your browser to:
 
-  http://localhost:8080/hosts/browser/test/testAccessorDirectory.html
+  http://localhost:8088/hosts/browser/test/testAccessorDirectory.html
   
 The test library there is particularly useful for testing.
 
