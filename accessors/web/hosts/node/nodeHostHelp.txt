@@ -4,10 +4,11 @@ Commands:
 > quit      quit interactive host
 
 Top-Level Functions:
-> instantiate(accessorName, accessorClass)    return an accessor instance
+> var a = instantiate(accessorName, accessorClass)    return an accessor instance
 
 Accessor Instance Fields:
-> a.className                        the full accessor name, if known
+> a.accessorClass                    the full accessor class name, if known
+> a.accessorName                     the full accessor name, if known
 > a.inputList                        list of input names
 > a.outputList                       list of output names
 > a.parameterList                    list of parameter names

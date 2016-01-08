@@ -4,6 +4,7 @@
     "TestBaseC.js",
     "TestComposite.js",
     "TestCompositeSpontaneous.js",
+    "TestDerivedAgainA.js",
     "TestDerivedC.js",
     "TestGain.js",
     "TestImplement.js",
