@@ -91,8 +91,6 @@ var mockHueBridges = require("mockHueBridges");
 var bridge;
 var connection;
 var handle;
-var transitionTime = 400;  // Default transition time is 400 ms
-
 
 /** Define inputs and outputs. */
 exports.setup = function() {
