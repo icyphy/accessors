@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ptolemy Swarmlet Host</title>
+</head>
+<body>
+<!--*****************************-->
+<h1 class="header">Ptolemy Swarmlet Host</h1>
+<p>
+FIXME: This is a placeholder for information about the Ptolemy Swarmlet Host.
+</p><p>
+FIXME: Information about the CapeCode configuration.
+</p><p>
+In Ptolemy II, the accessors in the TerraSwarm accessor repository can be
+instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
+a Ptolemy II model.
+For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
+<!--*****************************-->
+<h2>Demos</h2>
+<!-- See https://www.terraswarm.org/accessors/wiki/Main/AccessorDemoPolicy -->
+<p>To run the following models, save them to some directory, and open them with a current version of Ptolemy II
+(<a href="https://chess.eecs.berkeley.edu/ptexternal">SVN Development Version</a>).
+<i>These models are also available in the ptII svn repo as <code>$PTII/src/ptII/org/terraswarm/accessor/demo</code></i></p>
+    <ul>
+      <li><b>StockTick</b>:
+	The
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
+	accesses and displays the stock prices of the publicly-held sponsors of the TerraSwarm project.
+      </li>
+      <li><b>Hue</b>:
+	The
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HueToggle/HueToggle.xml">HueToggle.xml</a> Ptolemy II model
+	randomly toggles the color of a Philips Hue lightbulb. 
+	The
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HappySadStock/HappySadStock.xml">HappySadStock.xml</a> model
+	uses the StockTick accessor to control the color of a Hue lightbulb based on stock prices. 
+	You will need to know the IP address of a local Hue Bridge.
+      </li>
+      <li><b>KeyValueStore</b>:
+	Two Ptolemy II models are provided to demonstrate the KeyValueStore accessor.
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreServer.xml">KeyValueStoreServer.xml</a> provides a server.
+	Run this model to create a key-value storage service on your local host.
+	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
+	client that uses this server. More interesting clients will be distributed across several machines.
+	<br/>
+	You <i>may</i> find our server running and accessible.  See <a href="http://ptango.eecs.berkeley.edu:8077/keyvalue/help">http://ptango.eecs.berkeley.edu:8077/keyvalue/help</a>.
+      </li>
+    </ul>
+<!--*****************************-->
+<h2>Resources</h2>
+<ul>
+<li> <a href="http://chess.eecs.berkeley.edu/ptexternal/">Ptolemy II Download</a> (use the current SVN version).</li>
+<li> Claudius Ptolemaeus, Editor, <a href="http://ptolemy.eecs.berkeley.edu/books/Systems/">System Design, Modeling, and Simulation Using Ptolemy II</a>, Ptolemy.org, 2014.</li>
+</ul>
+</p>
+</body>
+</html>
