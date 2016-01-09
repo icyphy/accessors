@@ -67,7 +67,7 @@
  *  @output connection An output produced when a connection opens or closes. The output is an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'.
  *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
  *  @author Hokeun Kim, Edward Lee 
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
