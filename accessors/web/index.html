@@ -22,29 +22,25 @@ service in an actor interface.
 Accessors are defined in a JavaScript file that includes a specification of the
 <b>interface</b> (inputs, outputs, and parameters) and an implementation of the
 functionality (reactions to inputs and/or production of outputs).
-Any JavaScript file that conforms with the <b>accessor specification</b>
+Any JavaScript file that conforms with the
+<a href="https://www.terraswarm.org/accessors/wiki/AccessorSpecification"><b>accessor specification</b></a>
 defines an <b>accessor class</b>.
-</p>
+</p><p>
+The <a href="/accessors/library">TerraSwarm accessor library</a> provides a collection of example accessors.
+This library is maintained via an <a href="http://www.terraswarm.org/accessors/svn.html">SVN repository</a>
+that permits many contributors to add accessors to the library.
+</p><p>
 An <b>instance</b> of an accessor is created by a <b>swarmlet host</b>
 that evaluates the JavaScript in the accessor definition.
 At this time, there are at least three accessor hosts compatible
 with <b>accessor specification 1.0</b>:
 <ul>
 <li> A <a href="/accessors/hosts/browser"><b>browser host</b></a>, which allows inspection of the accessor, and if the accessor is suitable for execution in a browser, interactive invocation of the accessor.
-<li> A <a href="FIXME"><b>Node.js host</b></a>, an interactive program that runs in Node.js that allows instantiation and execution of accessors.
-<li> A <a href="FIXME"><b>Ptolemy II host</b></a>, which supports composition of accessors with visual block diagrams and provides a large library of actors that the accessors can interact with.
+<li> A <a href="/accessors/hosts/node"><b>Node.js host</b></a>, an interactive program that runs in Node.js that allows instantiation and execution of accessors.
+<li> A <a href="/accessors/hosts/ptolemy"><b>Ptolemy II host</b></a>, which supports composition of accessors with visual block diagrams and provides a large library of actors that the accessors can interact with.
 </ul>
-    </p>
+</p>
 <p><font color="red">This project is a <b>work in progress</b>. Please contribute. The <a href="http://www.terraswarm.org/accessors/wiki/">wiki page</a> for this workgroup is the place to go to participate in the design of the accessor mechanism.</font></p>
-<p>FIXME: need to update the information below:</p>
-    <p>
-      The TerraSwarm project has developed a "version 0.1" accessor design and a suite of accessor hosts that should be viewed as concept demonstrations. We are further developing the design.
-      <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> (the Development Version in the SVN repository) is currently
-      the most complete prototype of an accessor host. In Ptolemy II, the accessors listed here can be
-      instantiated using the File-Import-Import Accessor menu item, and can then be incorporated into
-      a Ptolemy II model.  For a tutorial on Ptolemy II, see the <a href="http://ptolemy.org/systems">Ptolemy Book</a> (a free download).
-      To view the accessor script from within Ptolemy II, double click on the accessor instance, select Preferences, and enable "expert mode."</p>
-    <p>
 <!--*****************************-->
 <h1>Presentations</h1>
 <ul>
@@ -57,48 +53,5 @@ with <b>accessor specification 1.0</b>:
 <li> Marten Lohstroh, Edward A. Lee, "<a href="http://chess.eecs.berkeley.edu/pubs/1102.html">An Interface Theory for the Internet of Things</a>," in Proceedings of the 13th International Conference on Software Engineering and Formal Methods (SEFM) Sept. 7-11, 2015, York, UK, Springer, LNCS 9276, pp. 20-34.</li>
 <li> Elizabeth Latronico, Edward A. Lee, Marten Lohstroh, Chris Shaver, Armin Wasicek, and Matthew Weber, "<a href="http://dx.doi.org/10.1109/MIC.2015.17">A Vision of Swarmlets</a>," <i>IEEE Internet Computing</i>, 19(2), pp. 20-28, March-April 2015.</li>
 </ul>
-
-    <h1>Demos</h1>
-
-    <!-- See https://www.terraswarm.org/accessors/wiki/Main/AccessorDemoPolicy -->
-
-    <p>To run the following models, save them to some directory, and open them with a current version of Ptolemy II
-      (<a href="https://chess.eecs.berkeley.edu/ptexternal">SVN Development Version</a>).
-      <i>These models are also available in the ptII svn repo as <code>$PTII/src/ptII/org/terraswarm/accessor/demo</code></i></p>
-    <ul>
-      <li><b>StockTick</b>:
-	The
-	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/StockTick/StockTick.xml">StockTick.xml</a> Ptolemy II model
-	accesses and displays the stock prices of the publicly-held sponsors of the TerraSwarm project.
-      </li>
-      <li><b>Hue</b>:
-	The
-	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HueToggle/HueToggle.xml">HueToggle.xml</a> Ptolemy II model
-	randomly toggles the color of a Philips Hue lightbulb. 
-	The
-	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/HappySadStock/HappySadStock.xml">HappySadStock.xml</a> model
-	uses the StockTick accessor to control the color of a Hue lightbulb based on stock prices. 
-	You will need to know the IP address of a local Hue Bridge.
-      </li>
-      <li><b>KeyValueStore</b>:
-	Two Ptolemy II models are provided to demonstrate the KeyValueStore accessor.
-	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreServer.xml">KeyValueStoreServer.xml</a> provides a server.
-	Run this model to create a key-value storage service on your local host.
-	<a href="https://chess.eecs.berkeley.edu/ptexternal/src/ptII/org/terraswarm/accessor/demo/KeyValueStoreClient/KeyValueStoreClient.xml">KeyValueStoreClient.xml</a> provides a simple
-	client that uses this server. More interesting clients will be distributed across several machines.
-	<br/>
-	You <i>may</i> find our server running and accessible.  See <a href="http://ptango.eecs.berkeley.edu:8077/keyvalue/help">http://ptango.eecs.berkeley.edu:8077/keyvalue/help</a>.
-      </li>
-    </ul>
-
-    <h1>Additional Information</h1>
-    <ul>
-      <li> <a href="/accessors/Accessor_1.dtd">Accessor_1.dtd</a>, the document type definition that gives the interface specification for XML accessors.</li>
-      <li> <a href="/accessors/wiki">The Accessors Wiki</a></li>
-    </ul>
-
-    <p>To edit accessors, add your own accessors or demos, or to edit this page <a href="http://www.terraswarm.org/accessors/svn.html">use Subversion</a>.</p>
-
-  </div> <!-- accessorDirectoryTarget -->
   </body>
 </html>
