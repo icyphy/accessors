@@ -219,6 +219,7 @@ function registerUser() {
 	};
     var options = {
     		body : JSON.stringify(registerData),
+    		timeout: 10000,
     		url : url
     };
     
@@ -312,6 +313,7 @@ function inputHandler() {
     var cmd = JSON.stringify(command);
     var options = {
     		body : cmd,
+    		timeout : 10000,
     		url : url + lightID + "/state/"
     };
     
@@ -336,11 +338,12 @@ exports.wrapup = function() {
     
     var errorLights = [];
     var cmd = JSON.stringify({on:false});
-    var options = {};
+    var options = { };
     
     for (var i = 0; i < changedLights.length; i++) {
         options = {
         		body : cmd,
+        		timeout : 10000, 
         		url : url + changedLights[i] + "/state/"
         };
         
