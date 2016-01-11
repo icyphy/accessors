@@ -991,7 +991,7 @@ function getAccessorCode(path) {
  *  If the path begins with '/' or './', then it is used as is.
  *  Otherwise, depending on the third argument, it is prepended with the
  *  location of the directory in which accessors are stored ('/accessors' on this host)
- *  or the directory in which modules are stored ('/accessors/hosts/browswer/modules'
+ *  or the directory in which modules are stored ('/accessors/hosts/browser/modules'
  *  on this host).
  *
  *  If no callback function is given, then this is a blocking request.
@@ -1120,9 +1120,13 @@ function initializeIfNecessary(instance) {
  *  @see also: http://wiki.commonjs.org/wiki/Modules
  */
 function loadFromServer(path, id, callback) {
+	
     var evaluate = function(code) {
         // Create the exports object to be populated.
-        var exports = {};
+    	// Some libraries overwrite module.exports instead of adding to exports.
+    	var module = {};
+    	module.exports = {};
+    	var exports = module.exports;
         
         // In strict mode, eval() cannot modify the scope of this function.
         // Hence, we wrap the code in the function, and will pass in the
@@ -1130,10 +1134,9 @@ function loadFromServer(path, id, callback) {
         var wrapper = eval('(function(exports) {' + code + '})');
     
         // Populate the exports field.
-        wrapper(exports);
-        
-        return exports;
-    };
+        wrapper(module.exports);
+        return module.exports;
+    }
     if (callback) {
         // The third argument states that unless the path starts with '/'
         // or './', then the path should be searched for in the modules directory.
