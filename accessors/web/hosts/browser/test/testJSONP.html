@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for JSON with Padding technique </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    
+</head>
+<body>
+<div> <p> This demo shows how the JSON with padding (JSONP) technique can enable 
+cross-domain data transfer. </p>
+<p> Try "http://jsonplaceholder.typicode.com/posts/1?callback=?" for the 
+URL.  Some sample data will be displayed as the response. </p>
+<p> (For some reason, react to inputs does not seem to issue the request if a
+default value is given). </p> 
+
+</div>
+<div class="accessor"
+   src="test/TestJSONP"
+   id="TestJSONP"></div>
+</body>
+</html>
