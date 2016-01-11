@@ -7,15 +7,24 @@
 </head>
 <body>
 <div id="onecolumn">
-  <h1>Using Subversion to update this page</h1>
+  <h1>Using Subversion to update the accessors web pages</h1>
+  <p>The files that are used to generate this page are checked in to a Subversion (svn) repo.</p>
+
+  <p>Only TerraSwarm participants may obtain read/write access to the repository.
+    For details, see <a href="/terraswarm/faq/2.htm">Who can get a login?</a>.
+    However, the contents of the repository appear at
+    <a href="http://www.terraswarm.org/accessors/">http://www.terraswarm.org/accessors/</a> and the repository
+    is available via anonymous access for non-TerraSwarm participants.</p>
+    
   <p>This page is updated every five minutes via a cronjob run as the vc user on moog that does a svn update.
     The output is at <a href="/accessors/svn.out">svn.out</a>.
   </p>
   
-  <p>The docs are updated by a Jenkins job, see <a href="/accessors/wiki/Main/JSDoc#CI">JSDoc Continuous Integration</a> (<i>Not world readable</i>)</p>
+  <p>The docs are updated by a Jenkins job, see <a href="/accessors/wiki/Main/JSDoc#CI">JSDoc Continuous Integration</a>.  Note that Jenkins job is not world readable, but the details are world readable.</p>
   
   <p>To update these pages by hand, see <a href="http://terraswarm.org/terraswarm/faq/72.html">How do I update workgroup pages using SVN?</a></p>
-  <p>Once you have an account and access, you can check out a tree with:</p>
+
+  <p>Once you have a repo.eecs.berkeley.edu account and access, you can check out a tree with using read/write access with:</p>
   <pre>
     svn co https://repo.eecs.berkeley.edu/svn/projects/terraswarm/accessors/trunk/accessors
   </pre>
