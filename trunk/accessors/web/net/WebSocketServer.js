@@ -61,10 +61,21 @@
  *  @parameter {string} hostInterface The IP address or domain name of the
  *    network interface to listen to.
  *  @parameter {int} port The port to listen to for connections.
- *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
- *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
- *  @input toSend The data to be sent to open sockets. If this is an object with 'socketID' field and a 'message' field, then send the value of the message field to the socket identified by the socketID field. If the input has any other form, then the message is broadcast to all open socket connections.
- *  @output connection An output produced when a connection opens or closes. The output is an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'status' field, which is the string 'open' or 'closed'.
+ *  @parameter {string} receiveType The MIME type for incoming messages, 
+ *    which defaults to 'application/json'.
+ *  @parameter {string} sendType The MIME type for outgoing messages,
+ *    which defaults to 'application/json'.
+ *  @input toSend The data to be sent to open sockets. 
+ *    If this is an object with 'socketID' field and a 'message' field,
+ *    then send the value of the message field to the socket identified
+ *    by the socketID field. If the input has any other form, then the
+ *    message is broadcast to all open socket connections.
+ *  @output {int} listening When the server is listening for connections, this output
+ *    will produce the port number that the server is listening on
+ *  @output connection An output produced when a connection opens or closes.
+ *    The output is an object with two fields, a 'socketID',
+ *    which is a unique ID for this client connection, and a 'status' field,
+ *    which is the string 'open' or 'closed'.
  *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
  *  @author Hokeun Kim, Edward Lee 
  *  @version $$Id$$
@@ -103,6 +114,7 @@ exports.setup = function() {
     });
     input('toSend');
     output('received');
+    output('listening', {'type':'int'});
     output('connection');
 };
 
@@ -172,6 +184,7 @@ exports.initialize = function() {
 
 function onListening() {
     console.log('Server: Listening for socket connection requests.');
+    send('listening', getParameter('port'));
 }
 
 /** Executes when a connection has been establised.<br>
