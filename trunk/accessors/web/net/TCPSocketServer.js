@@ -24,8 +24,8 @@
  *  a TCP socket and can send and/or receives messages from the client that makes the
  *  request.
  *
- *  When the server is listening and accepting connections, a 'true' is emitted on the
- *  `listening` output port.
+ *  When the server is listening and accepting connections, the port on which it is
+ *  listening is emitted on the `listening` output port.
  *
  *  When a connection is established, this accessor outputs on the `connection` output
  *  an object with the following fields:
@@ -111,8 +111,8 @@
  *  @input toSend The data to be sent over the socket.
  *  @input toSendID The ID of the connection over which to send the data, where 0 means
  *    to send to all open connections.
- *  @output {int} listening When the server is listening for connections, this port will
- *    produce the port number that the server is listening on
+ *  @output {int} listening When the server is listening for connections, this output
+ *    will produce the port number that the server is listening on
  *    (this is useful if the port is specified to be 0).
  *  @output connection Output an object with the fields specified above when a
  *     connection is established.
