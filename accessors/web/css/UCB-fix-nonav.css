@@ -1,5 +1,0 @@
-@charset "utf-8";
-
-/* fixed page width without left navigation column */
-#outside {width:770px; background-image:none;}
-#contentcol {padding-left:0;}
