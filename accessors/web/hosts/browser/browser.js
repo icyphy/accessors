@@ -445,6 +445,12 @@ function generateAccessorCodeElement(code, id) {
  *  @param element The document element into which to place the directory.
  */
 function generateAccessorDirectory(element) {
+    // Unfortunately, on some websites, this function may be called more than once.
+    // The DOM loaded event occurs more than once.
+    // If the element is not empty, therefore, just return.
+    if (element.innerHTML !== '') {
+        return;
+    }
     // Fetch the top-level index.json file and puts its contents in the specified
     // docElement.
     // This inner function will be invoked recursively to populate subdirectories.
