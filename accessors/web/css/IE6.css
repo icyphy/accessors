@@ -1,9 +1,0 @@
-/* IE6-specific style overrides */
-#banr {height: 100px;}
-#navcol {margin-right: -3px;}
-#menu ul ul a {width: 176px;}
-#menu-flyout {margin-bottom: 0;}
-#menu-flyout ul {margin-top: 0;}
-#contentcol {display: inline-block; padding-left: 0;}
-#content {margin-top:1em;}
-hr {border: 0; border-top: 2px dotted #e3d6bf; width: 50%; height:1px; margin-top:.1em; margin-bottom:.1em;}
