@@ -120,7 +120,8 @@ function appendPlaceholder(target, id, element) {
 
 /** Populate the current page by searching for elements with class 'accessor'
  *  and attribute 'src', generating HTML for the specified accessor, and
- *  inserting that HTML content into the element.
+ *  inserting that HTML content into the element. Also search for elements
+ *  with class 'accessorDirectory' and insert an accessory directory.
  */
 function generate() {
     var accessorCount = 0;
@@ -487,19 +488,17 @@ function generateAccessorDirectory(element) {
                             // FIXME: + and - for expanded and not.
                             content.innerHTML = item;
                             var id = (baseDirectory + item);
-                            content.onclick = (function(id) {
-                                return function() {
-                                    toggleVisibility(id);
-                                };
-                            })(id);
                             // Create an element for the subdirectory.
                             var subElement = document.createElement('div');
                             // Start it hidden.
                             subElement.style.display = 'none';
                             subElement.id = id;
                             docElement.appendChild(subElement);
-                            getIndex(baseDirectory + item + '/',
-                                    subElement, indent + 10);
+                            content.onclick = (function(id, indent, getIndex) {
+                                return function() {
+                                    toggleVisibility(id, indent, getIndex);
+                                };
+                            })(id, indent + 10, getIndex);
                         }
                     }
                 } else {
@@ -1217,14 +1216,22 @@ function reactIfExecutable(id) {
 }
 
 /** Toggle the visibility of an element on the web page.
+ *  If the element is empty, then populate it from the directory.
  *  @param id The id of the element.
+ *  @param indent The amount by which to indent the contents.
+ *  @param getIndex A function that will populate a specified element with an
+ *   index of accessors.
  */
-function toggleVisibility(id) {
+function toggleVisibility(id, indent, getIndex) {
     var element = document.getElementById(id);
     if (element) {
         if (element.style.display == 'block') {
             element.style.display = 'none';
         } else {
+            if (element.innerHTML === '') {
+                // Element is empty. Populate it.
+                getIndex(id + '/', element, indent);
+            }
             element.style.display = 'block';
         }
     }
