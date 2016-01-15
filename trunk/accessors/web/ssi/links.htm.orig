@@ -1,9 +1,0 @@
-<div id="links"><select name="current" onchange="window.open(this.options[this.selectedIndex].value,'_top')" title="No mouse? Use Alt-Down Arrow to open list">
-<option>Quick Links</option>
-<option value="#">Link 1</option>
-<option value="#">Link 2</option>
-<option value="#">Link 3</option>
-<option value="#">Link 4</option>
-<option value="#">Link 5</option>
-</select> 
-</div><!-- /#links -->
