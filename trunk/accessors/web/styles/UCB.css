@@ -1,0 +1,551 @@
+/* NOTE: Change image paths to match your site's folder structure.
+         Recommended pathing is relative to site root: /img/filename.jpg
+         Alternative pathing is relative to .css file, NOT to page file: ../img/filename.jpg  */
+
+/* ********** Defaults - gets all browser baselines in sync ************* */
+html,body,div,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,p,blockquote,fieldset,input {margin:0; padding:0;}
+fieldset,img {border:none;}
+caption,th {text-align:left;}
+table {border-collapse:collapse; border-spacing:0;}
+.clear {clear:both; height:0; overflow:hidden; line-height:1px; font-size:1px;}
+
+/* ********** basics - main typography *********** */
+body {
+background-color: #fff;
+color: #000;
+font: normal 1em Verdana, Arial, Helvetica, sans-serif;
+position: relative;
+}
+h1, h2, h3, h4, h5, h6 {
+font-family: Arial, Helvetica, sans-serif;
+margin-top: .6em;
+margin-bottom: .4em;
+}
+h1 {
+font-size: 175%;
+}
+h2 {
+font-size: 145%;
+}
+h3 {
+font-size: 125%;
+color: #ba7d00;
+}
+h4 {
+font-size: 105%;
+}
+h5 {
+font-size: 90%;
+}
+h6 {
+font-size: 80%;
+}
+/* Smaller gray deck */
+h1.subhead {
+font-size:130%;
+color:#555;
+margin-top:-.5em;
+}
+/* removes vertical separator in front of first item in horizontal list */
+#outside li.first, #footer li.first {
+border-left: 0;
+}
+/* Skip to main content - for accessibility */
+#skip a, #skip2 a {
+position: absolute;
+left: -1000px;
+font-size: 80%;
+color:#fff;
+}
+#skip a:focus, #skipnav a:active {
+left: 220px;
+top: 10px;
+overflow: visible;
+}
+#skip2 a:focus, #skipnav a:active {
+left: 480px;
+overflow: visible;
+}
+hr {
+border: 0; 
+border-top: 2px dotted #e3d6bf;
+width: 50%;
+height: 1px;
+margin: 1em 0;
+}
+
+/* ********** banner section ************ */
+/* Change background-image to appropriate selection for your logo/icon; max logo height is 170px */
+#banr {
+width: 100%;
+min-height:105px;
+background-color:#252c58;
+/*background-image:url(/img/banr1.jpg);*/
+background-repeat: no-repeat;
+position:relative;
+font-size: 70%;
+color:#fff;
+text-align:left;
+}
+/* Places required link to campus homepage */
+#ucb {
+position: relative;
+top: 9px;
+left: 12px;
+width:50%;
+}
+#ucb a {
+color:#fff;
+text-decoration: none;
+}
+#ucb a:hover, #ucb a:active {
+text-decoration:underline;
+}
+#logo {
+margin-top: 0px;
+}
+/* Common toolset - map/email/search */
+#tools {
+position:absolute;
+top: 2px;
+right: 7px;
+vertical-align: top;
+text-align: right;
+}
+#tools form {
+display:inline;
+}
+#tools input {
+margin: 2px 0;
+border:none;
+}
+#tools input.go {
+margin-bottom:-4px;
+}
+#tools a, #tools a:visited {
+text-decoration:none;
+color: #fff;
+}
+#tools a:hover, #tools a:visited:hover {
+text-decoration:underline;
+}	
+/* Dropdown list of Quick Links */
+#links {
+position:absolute;
+top:43px;
+right:10px;
+}
+#links select {
+background-color:#556b8c;
+font-size:95%;
+color:#fff;
+padding:2px;
+border-style:none;
+}
+#links option {
+padding:1px 1px 1px 5px;
+}
+/* Horizontal navigation list */
+#topnav {
+position:absolute; 
+top: 120px; 
+right:5px;
+}
+#topnav ul   {
+padding: 5px;
+color:#c19e36;
+}
+#topnav ul li {
+list-style-type:none;
+display:inline;
+padding: 0 3px 0 5px;
+border-left: 1px solid #c19e36;
+}
+#topnav a, #topnav a:visited {
+text-decoration:none;
+color: #c19e36;
+}
+#topnav a:hover, #topnav a:visited:hover {
+text-decoration:underline;
+color: #c19e36;
+}	
+
+/* ******** container divs *********** */
+/* Page width fixed at 770px, floated in center of viewport; adjust width: value as desired */
+/* 200px left column for main navigation menu uses "faux column" background-image to fill */
+#outside {
+text-align:center;
+margin: 0 auto;
+border:solid 1px #ccc;
+border-top:0;
+background-image:url(/img/column-bg.gif);
+background-repeat:repeat-y;
+overflow:auto;
+}
+#navcol {
+float:left;
+width:200px;
+}
+#contentcol {
+padding-left:201px;
+}
+
+/* ****** sub-banner and photostrip ************** */
+/* Change text color/background-color as desired for optional section title */
+#section {
+/*height:3em; */
+font: bold 140% Arial, Helvetica, sans-serif; 
+color: #fff; 
+background-color: #ba7d00; 
+text-align: left;
+}
+#section-txt {
+padding: 3px 15px;
+}
+#pstrip {
+/* Standard photostrip is 900px x 95px */
+/* If photostrip image is narrower than content column, it will tile horizontally to fill */
+/*background-image:url(/img/photostrip.jpg);*/
+background-repeat:repeat-x;
+height:95px;
+}
+
+/* ****** side nav ************** */
+
+.sidebar_left {
+background:#252c58;
+/* width: 129px; */
+/*float: bottom;*/
+/*padding: 0px 31px 1em 32px;*/
+/*font-size: 1em;*/
+/*line-height: 2.2em;*/
+}
+/* STATIC: vertical list for main site navigation in left column */
+#menu, #menu2 {
+font-size:85%;
+text-align:left;
+}
+#leftmenu {
+font-size:85%;
+text-align:left;
+}
+#menu, #menu2, #leftmenu ul {
+list-style-type:none;
+}
+#menu a, #menu2 a {
+display:block; 
+width:170px;
+padding: 6px 7px 7px 23px;
+text-indent: -8px;
+color:#e7c254;
+background:#252c58;
+border-bottom:1px dotted #616688;
+border-right: 1px dotted #616688;
+text-decoration:none;
+}
+/* A copy of #menu a ... above. */
+#menu li.bold {
+display:block; 
+width:170px;
+padding: 6px 7px 7px 23px;
+text-indent: -8px;
+color:#e7c254;
+background:#252c58;
+border-bottom:1px dotted #616688;
+border-right: 1px dotted #616688;
+text-decoration:none;
+}
+#leftmenu a {
+display:block; 
+/*width:170px;*/
+padding: 6px 7px 7px 23px;
+text-indent: -8px;
+color:#e7c254;
+background:#252c58;
+border-bottom:1px dotted #616688;
+border-right: 1px dotted #616688;
+text-decoration:none;
+}
+#leftmenu li {
+background: #252c58;
+}
+#leftmenu li #bold {
+background: #252c58;
+border-top: 1px solid #CCC;	
+
+}
+#leftmenu b {
+color:#e7c254;
+background: scroll#252c58;
+margin: 0px;
+padding: 0px 0px 0px 21px;
+font-size: 16px;
+font-weight: bold;	
+}
+
+#leftmenu h2.sectionhead {
+color:#e7c254;
+background:#252c58;
+		margin: 0px;
+		padding: 20px;
+		border-top: 1px solid #CCC;	
+		font-size: 16px;
+		font-weight: bold;	
+}
+* html #menu, #menu2, #leftmenu a:hover {
+color:#f8da73;
+background:#5e6489; 
+}
+#menu, #menu2 :hover > a {
+color:#f8da73;
+background:#5e6489; 
+}
+
+/* FLYOUT: vertical list for main site navigation in left column */
+#menu-flyout {
+z-index:100;
+width:200px;
+font-size:85%;
+text-align:left;
+float:left;
+list-style-type:none;
+position:relative;
+margin-bottom: .8em;
+}
+#menu-flyout .flytop {
+font-size:100%;
+font-weight:normal;
+display:inline;
+}
+/* get rid of the table */
+#menu-flyout table {
+position:absolute;
+border-collapse:collapse;
+top:0;
+left:0;
+width:0;
+height:0;
+z-index:10;
+font-size:1em;
+}
+/* style the links */
+#menu-flyout a {
+display:block; 
+text-decoration:none;
+padding: 6px 3px 7px 22px;
+width:175px;
+color:#e7c254;
+text-indent: -8px;						
+border-bottom:1px dotted #616688;
+border-right:1px dotted #616688;
+background:#252c58;
+position:relative;
+}
+#menu-flyout ul a {
+width:260px;                      
+color:#fff;
+padding-left:20px;
+padding-right:10px;
+border-left:1px dotted #616688;
+background:#808b9d;
+}
+#menu-flyout ul li a {
+text-indent: -10px;
+}
+/* style the link hover */
+* html #menu-flyout a:hover {
+color:#f8da73;
+background:#5e6489;
+}
+#menu-flyout :hover > a {
+color:#f8da73; 
+background:#5e6489;
+}
+/* hide sublevels, position so they take up no room */
+#menu-flyout ul {
+visibility:hidden;
+position:absolute;
+left:200px; 
+margin-top: -2.4em;
+list-style-type:none;
+font-size:90%;                        
+}
+/* make sublevel visible when hover on first level list OR link */
+#menu-flyout li:hover ul, #menu-flyout a:hover ul {
+visibility:visible;
+}
+
+/* Optional info section below main navigation in left column; images should be 185px max */
+#addon {
+padding: 0 10px 0 15px;
+color: #fff;
+font-size: 85%;
+text-align:left
+}
+#addon p, #addon ul, #addon ol {
+margin: 1em 0;
+}
+#addon ul li {
+margin-left: 1.3em;
+}
+#addon ol li {
+margin-left: 2em;
+}
+#addon a, #addon a:visited {
+color:#fff;
+}
+#addon a:hover, #addon a:active {
+color:#c19e36;
+}
+
+/* *********** Main content content ************ */
+/* If section title & photostrip are removed, remove margin-top:70px; line from #content */
+#content {
+text-align:left;
+margin: 10px;
+/*margin-top: 70px;*/
+padding-left:5px;
+font-size: 90%;
+}
+#content p {
+margin: 1em 0;
+}
+#content ul li {
+margin: .3em 0 .3em 1.3em;
+}
+#content ol {
+margin-left:3em;
+}
+#content ol li {
+margin: .3em 0;
+}
+#content a {
+color:#527091;
+text-decoration:underline;
+}
+#content a:hover, #content a:hover:visited {
+color:#ba7d00;
+}
+#content a:visited {
+color:#666;
+}
+/* puts all images in #content section on separate line; override for individual img's with display:inline; if required */
+#content img {
+display:block;
+}
+#content form {
+margin-top:1em;
+margin-bottom:1em;
+}
+/* ************ sidebar container for pagelinks and infobox ************* */
+#sidebar {
+float:right;
+width: 200px;
+margin-left: .5em;
+}
+
+/* FIXME: this is needed for http://www.icyphy.org/icyphy.  Instead, we should use 
+   #leftmenu h2.sectionhead above. */
+.sidebar_left h2.sectionhead {
+color:#e7c254;
+background:#252c58;
+text-align:center;
+		margin: 0px;
+		padding: 20px;
+		border-top: 1px solid #CCC;	
+		font-size: 16px;
+		font-weight: bold;	
+	}
+a.workgroup {
+display:block; 
+/*width:170px;*/
+padding: 6px 7px 7px 23px;
+text-indent: -8px;
+color:#e7c254;
+background:#252c58;
+border-bottom: 0px dotted #616688;
+border-right: 0px dotted #616688;
+text-decoration:none;
+}
+
+/* ********** pagelinks - same-page anchors *********** */
+#pagelinks {
+/*background-image:url(/img/pagelink-bg.gif);*/
+font-size:85%;
+border:2px dotted #e3d6bf;
+padding:.3em .6em;
+margin-bottom:.8em;
+}
+#pagelinks p {
+margin-bottom:.5em;
+}
+#pagelinks ul {
+/* list-style-image:url(/img/list-arrow.gif); */
+list-style-position:inside;
+}
+#pagelinks ul li {
+font-size: 90%;
+padding-left: 20px;
+text-indent: -20px;
+}
+#pagelinks a {
+color:#ba7d00;
+text-decoration:none;
+}
+#pagelinks a:hover, #pagelinks a:active {
+text-decoration:underline;
+}
+
+/* ********* infobox  *********** */
+#infobox {
+border:1px solid #ccc;
+font-size:90%;
+padding:.3em .6em;
+margin-bottom: .8em;
+}
+#infobox p {
+margin:.5em 0;
+}
+
+/* ********* images  *********** */
+/* Apply class to <div> containing image and optional caption. Specify div width inline to match img width */
+
+/* For image floated on right of text */
+.pixRight {
+margin: .1em 0 .3em .5em;
+float: right;
+font-size: 75%;
+color: #300;
+}
+/* For image floated on left of text */
+.pixLeft {
+margin: .1em .5em .3em 0;
+float: left;
+font-size: 75%;
+color: #300;
+}
+
+/* ********** footer *********** */
+/* Horizontal unordered list for footer links */
+#footer {
+font-size: 70%;
+text-align:center;
+padding-bottom:1em;
+}
+#footer ul  {
+padding: 10px;
+}
+#footer ul li {
+list-style-type:none;
+display:inline;
+padding: 0 .6em;
+border-left: 1px solid #000;
+}
+#footer a, #footer a:visited {
+text-decoration:none;
+color: #31418c;
+}
+#footer a:hover, #footer a:visited:hover {
+text-decoration:underline;
+color: #c19e36;
+}
