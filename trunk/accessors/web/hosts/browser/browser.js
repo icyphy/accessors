@@ -447,10 +447,13 @@ function generateAccessorCodeElement(code, id) {
 function generateAccessorDirectory(element) {
     // Unfortunately, on some websites, this function may be called more than once.
     // The DOM loaded event occurs more than once.
-    // If the element is not empty, therefore, just return.
-    if (element.innerHTML !== '') {
+    // If populating has already been requested, therefore, just return.
+    // Note that the populating may not yet have completed.
+    if (element.populating) {
         return;
     }
+    element.populating = true;
+    
     // Fetch the top-level index.json file and puts its contents in the specified
     // docElement.
     // This inner function will be invoked recursively to populate subdirectories.
