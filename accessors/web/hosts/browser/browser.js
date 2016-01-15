@@ -517,9 +517,6 @@ function generateAccessorDirectory(element) {
         };
         request.send();
     }
-    // Clear any previous data from the element.
-    element.innerHTML = "";
-
     // Fetch the top-level index.json file.
     getIndex('/accessors/', element, 0);
 }
