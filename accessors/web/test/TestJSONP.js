@@ -32,7 +32,7 @@
  *  For more details on cross-origin requests please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor TestJSONPAccessor
+ *  @accessor test/TestJSONPAccessor
  *  @author Elizabeth Osyk
  */
 
