@@ -235,7 +235,6 @@ exports.setup = function () {
     parameter('receiveType', {
         type : 'string',
         value : 'string',
-        options : socket.supportedReceiveTypes()
     });
     parameter('sendBufferSize', {
         value: 65536,
@@ -244,12 +243,23 @@ exports.setup = function () {
     parameter('sendType', {
         type : 'string',
         value : 'string',
-        options : socket.supportedSendTypes()
     });
     parameter('sslTls', {
         type : 'boolean',
         value : false
     });
+    // Attempt to add a list of options for types, but do not error out
+    // if the socket module is not supported by the host.
+    try {
+        parameter('receiveType', {
+            options : socket.supportedReceiveTypes()
+        });
+        parameter('sendType', {
+            options : socket.supportedSendTypes()
+        });
+    } catch(err) {
+        error(err);
+    }
 };
 
 var server = null;

@@ -131,12 +131,10 @@ exports.setup = function () {
     parameter('receiveType', {
         type : 'string',
         value : 'application/json',
-        options : WebSocket.supportedReceiveTypes()
     });
     parameter('sendType', {
         type : 'string',
         value : 'application/json',
-        options : WebSocket.supportedSendTypes()
     });
     parameter('connectTimeout', {
         value: 60000,
@@ -167,6 +165,19 @@ exports.setup = function () {
         type : 'boolean'
     });
     output('received');
+    
+    // Attempt to add a list of options for types, but do not error out
+    // if the socket module is not supported by the host.
+    try {
+        parameter('receiveType', {
+            options : WebSocket.supportedReceiveTypes()
+        });
+        parameter('sendType', {
+            options : WebSocket.supportedSendTypes()
+        });
+    } catch(err) {
+        error(err);
+    }
 };
 
 /** Initializes accessor by attaching functions to inputs. */

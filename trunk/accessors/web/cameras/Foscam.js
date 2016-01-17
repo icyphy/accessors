@@ -21,26 +21,27 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** An accessor for a Foscam camera. The commands that this accessor supports are:
- *  #  *snapshot*: Take a picture and produce it on the '''response''' output.
- *  #  *videostream*: Output a video stream.
- *  #  *center*: Center the camera. This will pan to find the center.
- *  #  *down*: Move the camera down.
- *  #  *left*: Move the camera left.
- *  #  *right*: Move the camera left.
- *  #  *up*: Move the camera left.
+ *  1.  *snapshot*: Take a picture and produce it on the '''response''' output.
+ *  1.  *videostream*: Output a video stream.
+ *  1.  *center*: Center the camera. This will pan to find the center.
+ *  1.  *down*: Move the camera down.
+ *  1.  *left*: Move the camera left.
+ *  1.  *right*: Move the camera left.
+ *  1.  *up*: Move the camera left.
  *  For the last four motion command commands, you can specify an argument
  *  'degree' in the arguments object to move a specified number of degrees.
  *  If no degree argument is given, the camera will move as far as it can in
  *  the specified direction, or until you give it a stop command:
- *  #  *stop down*
- *  #  *stop left*
- *  #  *stop right*
- *  #  *stop up*
+ *  1.  *stop down*
+ *  1.  *stop left*
+ *  1.  *stop right*
+ *  1.  *stop up*
  *  The following commands start and stop continual panning of the camera:
- *  #  *horizontal patrol*
- *  #  *vertical patrol*
- *  #  *stop horizontal patrol*
- *  #  *stop vertical patrol*
+ *  1.  *horizontal patrol*
+ *  1.  *vertical patrol*
+ *  1.  *stop horizontal patrol*
+ *  1.  *stop vertical patrol*
+ *
  *
  *  If you select *videostream* then you can specify 'resolution' and 'rate'
  *  options.  FIXME: Make more user friendly versions of these.
@@ -50,19 +51,21 @@
  *
  *  The <i>options</i> input can be a string URL
  *  or an object with the following fields:
- *  # headers: An object containing request headers. By default this
+ *
+ *  1. '''headers''': An object containing request headers. By default this
  *    is an empty object. Items may have a value that is an array of values,
  *    for headers with more than one value.
- *  # keepAlive: A boolean that specified whether to keep sockets around
+ *  1. '''keepAlive''': A boolean that specified whether to keep sockets around
  *    in a pool to be used by other requests in the future. This defaults to false.
- *  # method: A string specifying the HTTP request method.
+ *  1. '''method''': A string specifying the HTTP request method.
  *    This defaults to 'GET', but can also be 'PUT', 'POST', 'DELETE', etc.
- *  # url: A string that can be parsed as a URL, or an object containing
+ *  1. '''url''': A string that can be parsed as a URL, or an object containing
  *    the following fields:
- *    ## host: A string giving the domain name or IP address of
+ *    * '''host''': A string giving the domain name or IP address of
  *    the server to issue the request to. This defaults to 'localhost'.
- *    ## protocol: The protocol. This is a string that defaults to 'http'.
- *    ## port: Port of remote server. This defaults to 80. 
+ *    * '''protocol''': The protocol. This is a string that defaults to 'http'.
+ *    * '''port''': Port of remote server. This defaults to 80. 
+ *
  *
  *  This accessor has been tested with a Foscam NVision F18910W only.
  *  The (rather poor) documentation for the camera API can be found here:

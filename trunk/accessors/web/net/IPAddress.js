@@ -33,7 +33,15 @@
 var discovery = require('discovery');
 // Initialize ds here, instead of in setup(), so that the ds object is defined
 // when the ds.on() function is encountered
-var ds = new discovery.DiscoveryService(); 
+// But surround in a try-catch so that the browser host or any other host
+// that does not support the discovery module can proceed and at least read
+// the interface.
+var ds;
+try {
+    ds = new discovery.DiscoveryService();  
+} catch(err) {
+    error('Failed to instantiate discovery service: ' + err);
+}
 
 /** Define inputs and outputs. */
 exports.setup = function () {
