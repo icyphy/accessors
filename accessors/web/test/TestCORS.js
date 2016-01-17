@@ -29,7 +29,7 @@
  *  For more details please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor TestCORSAccessor
+ *  @accessor test/TestCORSAccessor
  *  @author Elizabeth Osyk
  */
 

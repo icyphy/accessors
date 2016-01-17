@@ -27,7 +27,7 @@
  *  the common host, which does not implement the require() function
  *  nor provide any mechanism for loading accessors.
  *
- *  @accessor TestAccessor
+ *  @accessor test/TestAccessor
  *  @parameter p A parameter with default value 42.
  *  @input untyped An untyped input that will accept any JavaScript object.
  *  @input numeric A numeric input.

@@ -27,8 +27,7 @@
  *  for example by providing forms to be filled in.
  *  For now, however, it simply displays HTML provided to its input.
  *
- *  @accessor Browser
- *  @module Browser
+ *  @accessor utilities/Browser
  *  @input {string} html An HTML document to render in the browser.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  */

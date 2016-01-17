@@ -28,7 +28,7 @@
  *  any fire message, even though the base class has a fire() function
  *  that does.
  *
- *  @accessor TestImplement
+ *  @accessor test/TestImplement
  *  @author Edward A. Lee
  */
 

@@ -24,7 +24,7 @@
 
 /** Test accessor that multiplies its input by a scale factor.
  *
- *  @accessor TestGain
+ *  @accessor test/TestGain
  *  @param gain The gain, a number with default 2.
  *  @param input The input, a number with default 0.
  *  @param scaled The output, the result of input * gain.

@@ -5,7 +5,7 @@
  * stdout to the accessor ports with the same name.
  * FIXME: Provide a selection of shells (e.g., bash, awk, etc)
  *
- *  @accessor util/Exec
+ *  @accessor utilities/Exec
  *  @author Armin Wasicek (arminw@berkeley.edu)
  *  @input {string} stdin The stdin of the executing process. A token received on this
  *        port is interpreted as a line entered in stdin of the process.

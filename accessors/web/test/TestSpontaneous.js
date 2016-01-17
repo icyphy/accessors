@@ -25,7 +25,7 @@
 /** Test accessor that spontaneously produces outputs once per time interval.
  *  This implementation produces a counting sequence.
  *
- *  @accessor TestSpontaneous
+ *  @accessor test/TestSpontaneous
  *  @parameter interval The interval between outputs in milliseconds.
  *  @output output Output for the counting sequence, of type number.
  *  @author Edward A. Lee
