@@ -28,7 +28,7 @@
  *  This tests the ability to access variables defined in the base class and the
  *  ability to override functions defined and used in the base class.
  *
- *  @accessor TestInheritance
+ *  @accessor test/TestInheritance
  *  @author Edward A. Lee
  */
 

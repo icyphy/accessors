@@ -62,6 +62,7 @@
  *  The main entry point to this module is the generate() function, which is
  *  invoked when the web page DOM content has been loaded.
  *
+ *  @module browser
  *  @author Edward A. Lee
  *  @version $$Id$$
  */

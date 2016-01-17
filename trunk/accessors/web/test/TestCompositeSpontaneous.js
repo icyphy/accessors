@@ -26,7 +26,7 @@
  *  This test contains an accessor that produces a counting sequence that is then
  *  fed into a TestGain accessor, which multiplies the counting sequence by 4.
  *
- *  @accessor TestCompositeSpontaneous
+ *  @accessor test/TestCompositeSpontaneous
  *  @output output A counting sequence with increments of 4.
  *  @author Edward A. Lee
  */

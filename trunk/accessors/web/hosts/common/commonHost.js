@@ -40,7 +40,7 @@
  *
  *  Specifically, this module provides a constructor for instantiating accessors,
  *  and a convenience function that takes as an argument the fully qualified accessor
- *  class name ('''instantiateAccessor'''), such as 'net/REST'.
+ *  class name (**instantiateAccessor**), such as 'net/REST'.
  *
  *  For these functions to be able to instantiate an accessor
  *  given only its class, the host needs to provide as an argument to new Accessor() or
@@ -55,12 +55,12 @@
  *  accessor. A specific host will typically use this by invoking the following
  *  instance's functions, perhaps in this order:
  *
- *  * '''setParameter'''(name, value): Set a parameter value.
- *  * '''initialize'''(): Initialize the accessor.
- *  * '''provideInput'''(name, value): Provide an input value.
- *  * '''react()''' React to input values and fire the accessor.
- *  * '''latestOutput'''(name): Retrieve an output value produced in react().
- *  * '''wrapup'''(): Wrap up the accessor.
+ *  * **setParameter**(name, value): Set a parameter value.
+ *  * **initialize**(): Initialize the accessor.
+ *  * **provideInput**(name, value): Provide an input value.
+ *  * **react()** React to input values and fire the accessor.
+ *  * **latestOutput**(name): Retrieve an output value produced in react().
+ *  * **wrapup**(): Wrap up the accessor.
  *
  *
  *  The react() function first invokes all input handlers that have been registered
@@ -102,7 +102,7 @@
  *  will not invoke any input handlers (there cannot be any) and will only invoke the
  *  fire() function.  Even with no fire() function, such an accessor can produce outputs
  *  if it sets up callbacks in its initialize() function, for example using
- *  setTimeout() or setInterval(). We call such an accessor a '''spontaneous accessor''',
+ *  setTimeout() or setInterval(). We call such an accessor a **spontaneous accessor**,
  *  because it spontaneously produces outputs without being triggered by any input.
  *
  *  A composite accessor can contain spontaneous accessors. When these produce outputs,
@@ -113,18 +113,18 @@
  *  bindings that will override the defaults in this implementation.
  *  The most useful ones to override are probably these:
  *
- *  * '''require''': The host's implementation of the require function.
+ *  * **require**: The host's implementation of the require function.
  *     The default implementation throws an exception indicating that the host
  *     does not support any external modules.
- *  * '''get''': A function to retrieve the value of an input. The default
+ *  * **get**: A function to retrieve the value of an input. The default
  *     implementation returns the the value specified by a provideInput() call, or
  *     if there has been no provideInput() call, then the value provided in the
  *     options argument of the input() call, or null if there is no value.
- *  * '''getParameter''': A function to retrieve the value of a parameter. The default
+ *  * **getParameter**: A function to retrieve the value of a parameter. The default
  *     implementation returns the the value specified by a setParameter() call, or
  *     if there has been no setParameter() call, then the value provided in the
  *     options argument of the parameter() call, or null if there is no value.
- *  * '''send''': A function to send an output. The default implementation produces
+ *  * **send**: A function to send an output. The default implementation produces
  *     the output using console.log().
  *
  *
@@ -138,19 +138,19 @@
  *  the specified code. Specifically, the created object includes at least the following
  *  properties:
  *
- *  * '''exports''': An object that includes any properties that have have been
+ *  * **exports**: An object that includes any properties that have have been
  *    explicitly added to the exports property in the specified code.
- *  * '''inputList''': An array of input names (see below).
- *  * '''inputs''': An object with one property per input (see below).
- *  * '''outputList''': An array of output names (see below).
- *  * '''outputs''': An object with one property per output (see below).
- *  * '''parameterList''': An array of parameter names (see below).
- *  * '''parameters''': An object with one property per parameter (see below).
- *  * '''inputHandlers''': An object indexed by input name with
+ *  * **inputList**: An array of input names (see below).
+ *  * **inputs**: An object with one property per input (see below).
+ *  * **outputList**: An array of output names (see below).
+ *  * **outputs**: An object with one property per output (see below).
+ *  * **parameterList**: An array of parameter names (see below).
+ *  * **parameters**: An object with one property per parameter (see below).
+ *  * **inputHandlers**: An object indexed by input name with
  *    an array of input handlers, each of which is a function.
- *  * '''anyInputHandlers''': An array of input handlers to be invoked
+ *  * **anyInputHandlers**: An array of input handlers to be invoked
  *    when any input arrives (the name argument of addInputHandler is null).
- *  * '''inputHandlersIndex''': An object indexed by handler id (returned
+ *  * **inputHandlersIndex**: An object indexed by handler id (returned
  *    by addInputHandler()) that contains objects of the form
  *    {'name': nameOfInput, 'index': arrayIndexOfHandler}.
  *    This is used by removeInputHandler(). If the handler is one
@@ -605,12 +605,12 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
  *  or output object in the inputs or outputs property of this accessor. The form
  *  of the destination is either a string (if the destination is an output
  *  of this accessor) or an object with two properties,
- *  '''accessor''' and '''inputName'''.
+ *  **accessor** and **inputName**.
  *
- *  This method also sets a '''source''' property of the input or output that is
+ *  This method also sets a **source** property of the input or output that is
  *  the source of data on the connection. Again, that property is either a string
  *  name (to mean an input of the container accessor) or an object with two
- *  properties '''accessor''' and '''outputName'''.
+ *  properties **accessor** and **outputName**.
  *
  *  @param a An accessor or a name.
  *  @param b An accessor or a name.
@@ -913,7 +913,7 @@ Accessor.prototype.instantiate = function(instanceName, accessorClass) {
 
 /** Instantiate an accessor given its fully qualified name, a function to retrieve
  *  the code, and a require function to retrieve modules.
- *  The returned object will have a property '''accessorClass''' with the value of the
+ *  The returned object will have a property **accessorClass** with the value of the
  *  name parameter passed in here.
  *  @param accessorName A name to give to the accessor instance.
  *  @param accessorClass Fully qualified accessor class, e.g. 'net/REST'.

@@ -27,7 +27,7 @@
  *  It multiplies the input by 4 and adds the result to the input.
  *  The sum is sent to the output.
  *
- *  @accessor TestComposite
+ *  @accessor test/TestComposite
  *  @input input A numeric input with default value 0.
  *  @output output The result of x + 4x, where x is the value of the input.
  *  @author Edward A. Lee
