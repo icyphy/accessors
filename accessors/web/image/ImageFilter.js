@@ -53,7 +53,13 @@ exports.setup = function() {
     input('input');
     output('output');
     input('options', {'value':'', 'type':'JSON'});
-    input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
+    try {
+        input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
+    } catch(error) {
+        // If the host does not support imageFilters, the above will fail.
+        // Proceed anyway so the browser host can display the accessor.
+        input('filter', {'type':'string'});
+    }
 };
 
 var handle = null;

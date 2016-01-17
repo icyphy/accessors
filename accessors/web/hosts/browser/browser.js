@@ -246,10 +246,6 @@ function generateAccessorHTML(path, id) {
         executable = false;
     };
 
-    // Define the functions that will be invoked by the accessor.    
-    // The following functions have to be defined here because the page may
-    // have more than one accessor on it and we need the id.
-
     // Get data from an input. This implementation assumes that the document
     // has an element with attribute 'id' equal to ```id.name```,
     // where id is the id of this accessor.
@@ -393,7 +389,7 @@ function generateAccessorHTML(path, id) {
         // 'react to inputs' button. In this case, attempt to initialize
         // and fire accessor.
         if (instance && (!instance.inputList || instance.inputList.length === 0)) {
-            reactIfExecutable(id);
+            reactIfExecutable(id, true);
         }
     });
 }
@@ -526,7 +522,7 @@ function generateAccessorDirectory(element) {
 
 /** Generate documentation for the accessor. This looks for a
  *  a PtDoc file for the accessor, then it uses that to build a documentation
- *  display.
+ *  data structure.
  *  @param path The fully qualified class name of the accessor.
  *  @param id The id of the accessor.
  */
@@ -537,67 +533,60 @@ function generateAccessorDocumentation(path, id) {
         
     var request = new XMLHttpRequest();
     request.overrideMimeType("application/xml");
-    request.open('GET', path, true);    // Pass true for asynchronous
-    request.onreadystatechange = function() {
-        // NOTE: At readyState === 3, we seem to get a console message
-        // "Syntax error", at least with Firefox, if the file is not found.
-        // No idea why, but it seems harmless.
-        
-        // If the request is complete (state is 4)
-        if (request.readyState === 4) {
-            // Data structure to populate with doc information.
-            var docs = {};
-            var target = document.getElementById(id + 'Documentation');
-
-            // Read docs from base class and implemented interfaces to provide
-            // defaults, but omit the description, author, and version from
-            // those. Make sure the instance exists before getting this info.
-            if (window.accessors && window.accessors[id]) {
-                var implemented = window.accessors[id].implementedInterfaces;
-                for (var i = 0; i < implemented.length; i++) {
-                    appendDoc(target, 'Implements', implemented[i]);
-                    getBaseDocumentation(docs, implemented[i]);
-                }
-            
-                if (window.accessors[id].baseAccessor) {
-                    appendDoc(target, 'Extends', window.accessors[id].baseAccessor);
-                    getBaseDocumentation(docs, window.accessors[id].baseAccessor);
-                }
-            }
-
-            // If the request was unsuccessful.
-            if (request.status !== 200) {
-                docs['description'] = 
-                        '<p class="accessorWarning">No documentation found for \
-                        the accessor (tried ' + path + ').';
-            } else {
-                // Request was successful.
-                var properties = request.responseXML.getElementsByTagName('property');
-                for (var i = 0; i < properties.length; i++) {
-                    var property = properties[i];
-                    var name = property.getAttribute('name');
-                    docs[name] = property.getAttribute('value');
-                }
-            }
-            // Now write contents to the web page.
-            if (docs['description']) {
-                appendDoc(target, null, docs['description']);
-            }
-            if (docs['author']) {
-                appendDoc(target, 'Author', docs['author']);
-            }
-            if (docs['version']) {
-                appendDoc(target, 'Version', docs['version']);
-            }
-            // Record the docs for future use in generating input/output/parameter
-            // documentation.
-            if (!window.accessorDocs) {
-                window.accessorDocs = {};
-            }
-            window.accessorDocs[id] = docs;
-        }
-    };
+    // FIXME: Have to do a synchronous fetch here with this design because the
+    // data structure being constructed will be used when this return.
+    request.open('GET', path, false);    // Pass false for synchronous
     request.send();
+    // Data structure to populate with doc information.
+    var docs = {};
+    var target = document.getElementById(id + 'Documentation');
+
+    // Read docs from base class and implemented interfaces to provide
+    // defaults, but omit the description, author, and version from
+    // those. Make sure the instance exists before getting this info.
+    if (window.accessors && window.accessors[id]) {
+        var implemented = window.accessors[id].implementedInterfaces;
+        for (var i = 0; i < implemented.length; i++) {
+            appendDoc(target, 'Implements', implemented[i]);
+            getBaseDocumentation(docs, implemented[i]);
+        }
+    
+        if (window.accessors[id].baseAccessor) {
+            appendDoc(target, 'Extends', window.accessors[id].baseAccessor);
+            getBaseDocumentation(docs, window.accessors[id].baseAccessor);
+        }
+    }
+
+    // If the request was unsuccessful.
+    if (request.status !== 200) {
+        docs['description'] = 
+                '<p class="accessorWarning">No documentation found for \
+                the accessor (tried ' + path + ').';
+    } else {
+        // Request was successful. Parsed DOM is in responseXML.
+        var properties = request.responseXML.getElementsByTagName('property');
+        for (var i = 0; i < properties.length; i++) {
+            var property = properties[i];
+            var name = property.getAttribute('name');
+            docs[name] = property.getAttribute('value');
+        }
+    }
+    // Now write contents to the web page.
+    if (docs['description']) {
+        appendDoc(target, null, docs['description']);
+    }
+    if (docs['author']) {
+        appendDoc(target, 'Author', docs['author']);
+    }
+    if (docs['version']) {
+        appendDoc(target, 'Version', docs['version']);
+    }
+    // Record the docs for future use in generating input/output/parameter
+    // documentation.
+    if (!window.accessorDocs) {
+        window.accessorDocs = {};
+    }
+    window.accessorDocs[id] = docs;
 }
 
 /** Generate parameter, input, and output tables for
@@ -847,16 +836,6 @@ function generateTableRow(table, name, id, options, editable) {
                 success = true;
                 var docCell = document.createElement("td");
                 docCell.className = 'accessorDocumentation accessorTableData';
-                // Strip out the type information, as we have it in more
-                // reliably already from the accessor.
-                // FIXME: The type info shouldn't even be here.
-                // Get rid of this when it is gone.
-                if (doc.indexOf('({') === 0) {
-                    var end = doc.indexOf('})');
-                    if (end > 0) {
-                        doc = doc.substring(end + 2);
-                    }
-                }
                 docCell.innerHTML = doc;
                 row.appendChild(docCell);
             }
@@ -1202,10 +1181,12 @@ function provideInput(id, name, value) {
 
 /** If the accessor is marked executable, then invoke its react() function.
  *  If it has not been previously initialized, then initialize it first.
- *  Otherwise, provide a message that the accessor is not executable.
+ *  Otherwise, provide a message that the accessor is not executable, unless
+ *  that message is suppressed by the second argument.
  *  @param id The accessor ID.
+ *  @param suppress True to suppress the 'not executable' message.
  */
-function reactIfExecutable(id) {
+function reactIfExecutable(id, suppress) {
     if (window.accessors) {
         var instance = window.accessors[id];
         if (instance && instance.executable) {
@@ -1218,7 +1199,9 @@ function reactIfExecutable(id) {
             return;
         }
     }
-    alert('Accessor is not executable.');
+    if (!suppress) {
+        alert('Accessor is not executable.');
+    }
 }
 
 /** Toggle the visibility of an element on the web page.

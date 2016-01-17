@@ -63,19 +63,29 @@ exports.setup = function () {
         'type' : 'boolean',
         'value' : true
     });
+    // NOTE: The following assumes that setup() is reinvoked whenever a parameter
+    // value changes, since the camera will change and so will the available options.
     parameter('camera', {
         'type' : 'string',
         'value' : 'default camera',
-        'options' : cameras.cameras()
     });
-    // NOTE: The following assumes that setup() is reinvoked whenever a parameter value changes,
-    // since the camera will change and so will the available options.
-    camera = new cameras.Camera(getParameter('camera'));
     parameter('viewSize', {
         'type' : 'JSON',
-        'value' : camera.getViewSize(),
-        'options' : camera.viewSizes()
     });
+    // This is in a try-catch so that this accessor can be instantiated even if the
+    // host does not provide a cameras module.
+    try {
+        parameter('camera', {
+            'options' : cameras.cameras()
+        });
+        camera = new cameras.Camera(getParameter('camera'));
+        parameter('viewSize', {
+            'value' : camera.getViewSize(),
+            'options' : camera.viewSizes()
+        });
+    } catch(err) {
+        error(err);
+    }
 };
 
 /** Set the view size of the camera, open it, and depending on the triggered mode, either
