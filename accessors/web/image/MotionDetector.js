@@ -52,6 +52,7 @@
  *  @input {{"PixelThreshold": number, "AreaThreshold": number}} options The options controlling the filter.
  *  @output {array<{'horizontal': 'number', 'vertical': 'number'}>} cog The horizontal and vertical position of the center of gravity of motion, in pixels.
  *  @output {Object} output The filtered image.
+ *  @output {number} area The percentage of area covered by motion.
  *  @author Edward A. Lee
  *  @version $$Id$$
  */

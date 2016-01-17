@@ -276,6 +276,7 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     var wrapper = eval('(function( \
             addInputHandler, \
             connect, \
+            error, \
             exports, \
             extend, \
             get, \
@@ -299,6 +300,7 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     wrapper(
             this.addInputHandler.bind(this),
             this.connect.bind(this),
+            this.error.bind(this),
             this.exports,
             this.extend.bind(this),
             this.get.bind(this),
@@ -743,6 +745,13 @@ function convertType(value, destination, name) {
         }
     }
     return value;
+}
+
+/** Report an error using console.error().
+ *  @param message The error message.
+ */
+Accessor.prototype.error = function(message) {
+    console.error(message);
 }
 
 /** Extend the specified accessor, inheriting its interface as defined

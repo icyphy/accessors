@@ -98,26 +98,38 @@ exports.setup = function () {
     input('toSend');
     output('received');
 
-    var serialPorts = xbee.hostSerialPorts();
 	parameter('baudRate', {
 		'type': 'int',
 		'value': 9600
 	});
 	parameter('port', {
 		'type':'string',
-		'options': serialPorts,
-		'value': serialPorts[serialPorts.length - 1]
 	});
 	parameter('receiveType', {
 		'type': 'string',
 		'value': 'string',
-		'options': xbee.supportedReceiveTypes()
 	});
 	parameter('sendType', {
 		'type':'string',
 		'value': 'string',
-		'options': xbee.supportedSendTypes()
 	});
+    // Attempt to add a list of options for types and ports, but do not error out
+    // if the socket module is not supported by the host.
+    try {
+        var serialPorts = xbee.hostSerialPorts();
+    	parameter('port', {
+    		'options': serialPorts,
+		    'value': serialPorts[serialPorts.length - 1]
+	    });
+        parameter('receiveType', {
+		    'options': xbee.supportedReceiveTypes()
+        });
+        parameter('sendType', {
+		    'options': xbee.supportedSendTypes()
+        });
+    } catch(err) {
+        error(err);
+    }
 };
 
 /** Handle input on 'toSend' by sending the specified data over the radio. */
