@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Query a Key/Value store.
- *  @accessor KVStoreWQuery
+ *  @accessor gdp/KVStoreQuery
  *  @version $$Id$$ 
  */
 
