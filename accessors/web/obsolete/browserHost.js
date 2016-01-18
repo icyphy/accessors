@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/**
+/*
  * JavaScript functions for a browser swarmlet host.
  * This file includes default accessor functions (initialize, fire, wrapup)
  * and functions for reading inputs and sending outputs.
@@ -38,7 +38,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-/** Initialize the accessor.
+/* Initialize the accessor.
  * This implementation throws an exception.
  * The accessor may shadow this method.
  */
@@ -46,7 +46,7 @@ function initialize() {
     throw "No initialize() method defined.";
 }
 
-/** Fire the accessor.
+/* Fire the accessor.
  * This implementation throws an exception.
  * The accessor may shadow this method.
  */
@@ -54,7 +54,7 @@ function fire() {
     throw "No fire() method defined.";
 }
 
-/** Wrapup the accessor.
+/* Wrapup the accessor.
  * This implementation throws an exception.
  * The accessor may shadow this method.
  */
@@ -62,7 +62,7 @@ function wrapup() {
     throw "No wrapup() method defined.";
 }
 
-/** Retrieve an input.
+/* Retrieve an input.
  *  @param {string} input
  *  @return The elemeny in the document with the 
  *  Id input + "Input".
@@ -71,7 +71,7 @@ function get(input) {
     return document.getElementById(input + "Input").value;
 }
 
-/** Set an output.
+/* Set an output.
  *  @param output
  *  @param value.
  */
