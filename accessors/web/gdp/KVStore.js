@@ -23,6 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Accessor for GDP Key-Value Store.
+ *  @accessor KVStore
  *  @version $$Id$$ 
  */
 
