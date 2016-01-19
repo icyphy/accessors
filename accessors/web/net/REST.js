@@ -193,7 +193,7 @@ exports.issueCommand = function(callback) {
         command.outputCompleteResponseOnly = false;
     }
     
-    if (typeof body !== undefined) {
+    if (typeof body !== 'undefined') {
     	command.body = body; 
     }
     
