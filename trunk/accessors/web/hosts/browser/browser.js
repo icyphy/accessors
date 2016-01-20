@@ -225,7 +225,12 @@ function generateAccessorHTML(path, id) {
     
     ////////////////////////////////////////////////////////////////////
     //// Define top-level functions that the accessor might invoke.
-
+    
+    // NOTE: alert(), clearInterval(), clearTimeout(), setInterval(), and
+    // setTimeout() are all provided by the browser.
+    // FIXME: Reimplement setInterval() and setTimeout() to make them
+    // precise for composite accessors.
+    
     // Report an error on the console and on the web page.
     // @param err The error.
     // @param detail Optional context information for the error
@@ -269,7 +274,108 @@ function generateAccessorHTML(path, id) {
     function getParameter(name) {
         return getInputOrParameter(name, 'parameter', id);
     }
+    
+    // Return a resource, which in this implementation just attempts to read the
+    // resource using HTTP.
+    // @param uri The uri to be read.
+    // @param timeout The time to wait before giving up. This defaults to 5000,
+    //  5 seconds, if not provided.
+    // @return The responseText from the request.
+    function getResource(uri, timeout) {
+        if (!timeout && timeout !== 0) {
+            timeout = 5000;
+        }
+        // console.log("readURL(" + uri + ")");
+        var request = new XMLHttpRequest();
+        
+        // The third argument specifies a synchronous read.
+        request.open("GET", uri, false);
+        var timeoutHandler = setTimeout(handleTimeout, timeout);
+        function handleTimeout() {
+            request.abort();
+            error("getResource timed out at URI: " + uri);
+        };
+        // Null argument says there is no body.
+        request.send(null);
+        clearTimeout(timeoutHandler);
+        // readyState === 4 is the same as readyState === request.DONE.
+        if (request.readyState === request.DONE) {
+            if (request.status <= 400) {
+                return request.responseText;
+            }
+            throw "getResource failed with code " + request.status + " at URL: " + uri;
+        }
+        throw "getResource did not complete: " + uri;
+    }
 
+    // Perform a synchronous HTTP request.
+    // @deprecated Use the httpClient module instead.
+    // @param url The url.
+    // @param method The method to be passed to the XMLHttpRequest.open() call.
+    // @param properties Ignored in this implementation
+    // @param body The body that is to be sent.  If this argument
+    // is null, then no body is sent.
+    // @param timeout Ignored in this implementation.
+    function httpRequest(url, method, properties, body, timeout) {
+        var request = new XMLHttpRequest();
+        // The third argument specifies a synchronous read.
+        request.open(method, url, false);
+        // Null argument says there is no body.
+        request.send(body);
+        // readyState === 4 is the same as readyState === request.DONE.
+        if (request.readyState === request.DONE) {
+            if (request.status <= 400) {
+                return request.responseText;
+            }
+            throw "httpRequest failed with code " + request.status + " at URL: " + url;
+        }
+        throw "httpRequest did not complete: " + url;
+    }
+
+    // Print a message to the console.
+    // @param message The message that is passed
+    // to console.log().
+    function print(message) {
+        console.log(message);
+    }
+
+    // Synchronously read a URL.
+    // @deprecated Use the httpClient module instead.
+    // @param url The url to be read
+    // @return The responseText from the request.
+    function readURL(url) {
+        return getResource(url);
+    }
+
+    // Load the specified module.
+    function require(path) {
+        // Indicate required modules in the docs.
+        var modules = document.getElementById(id + 'Modules');
+        var text = modules.innerHTML;
+        if (!text) {
+            text = '<p><b>Modules required:</b> ' + path;
+        } else {
+            // Remove the trailing '</p>'
+            text = text.replace('</p>', '');
+            text += ', ' + path;
+        }
+        // Default return value.
+        var result = 'Module failed to load';
+        // Load the module synchronously because the calling function needs the returned
+        // value. If a module fails to load, however, we will still want to display a web
+        // page. It's just that execution will fail.
+        try {
+            // The third argument (null) indicates synchronous load.
+            var result = loadFromServer(path, id, null);
+            // If successful, add the module name to the text of the modules list.
+        } catch (err) {
+            executable = false;
+            text += '<span class="accessorError"> (Not supported by this host)</span>';
+        }
+        modules.innerHTML = text + '</p>';
+        return result;
+    }
+    
     // Send an output.  This implementation assumes that the document
     // has an element with attribute 'id' equal to ```id.name```, where
     // id is the id of the accessor and name is the name of the output.
@@ -301,35 +407,6 @@ function generateAccessorHTML(path, id) {
         }
     }
     
-    // Load the specified module.
-    function require(path) {
-        // Indicate required modules in the docs.
-        var modules = document.getElementById(id + 'Modules');
-        var text = modules.innerHTML;
-        if (!text) {
-            text = '<p><b>Modules required:</b> ' + path;
-        } else {
-            // Remove the trailing '</p>'
-            text = text.replace('</p>', '');
-            text += ', ' + path;
-        }
-        // Default return value.
-        var result = 'Module failed to load';
-        // Load the module synchronously because the calling function needs the returned
-        // value. If a module fails to load, however, we will still want to display a web
-        // page. It's just that execution will fail.
-        try {
-            // The third argument (null) indicates synchronous load.
-            var result = loadFromServer(path, id, null);
-            // If successful, add the module name to the text of the modules list.
-        } catch (err) {
-            executable = false;
-            text += '<span class="accessorError"> (Not supported by this host)</span>';
-        }
-        modules.innerHTML = text + '</p>';
-        return result;
-    }
-    
     ////////////////////////////////////////////////////////////////////
     //// Instantiate the accessor and generate page contents.
 
@@ -347,8 +424,12 @@ function generateAccessorHTML(path, id) {
         } else {
             // Function bindings for the accessor:
             var bindings = {
+                'error' : error,
                 'get': get,
                 'getParameter': getParameter,
+                'getResource': getResource,
+                'httpRequest' : httpRequest,
+                'readURL': readURL,
                 'require': require,
                 'send': send,
             };

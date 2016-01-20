@@ -281,12 +281,15 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
             extend, \
             get, \
             getParameter, \
+            getResource, \
+            httpRequest, \
             implement, \
             input, \
             instantiate, \
             module, \
             output, \
             parameter, \
+            readURL, \
             removeInputHandler, \
             require, \
             send, \
@@ -305,12 +308,15 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
             this.extend.bind(this),
             this.get.bind(this),
             this.getParameter.bind(this),
+            this.getResource.bind(this),
+            this.httpRequest.bind(this),
             this.implement.bind(this),
             this.input.bind(this),
             this.instantiate.bind(this),
             this.module,
             this.output.bind(this),
             this.parameter.bind(this),
+            this.readURL.bind(this),
             this.removeInputHandler.bind(this),
             this.require.bind(this),
             this.send.bind(this.extendedBy),
@@ -850,6 +856,22 @@ Accessor.prototype.getParameter = function(name) {
     return value;
 }
 
+/** Default implement of the getResource() function, which throws an exception stating
+ *  that getResource is not supported.
+ */    
+Accessor.prototype.getResource = function() {
+    throw 'This swarmlet host does not support getResource().';
+}
+
+/** Default implement of the httpRequest() function, which throws an exception stating
+ *  that httpRequest is not supported.
+ *  Note that this function is deprecated in the Accessor Specification version 1,
+ *  but we include it here anyway.
+ */    
+Accessor.prototype.httpRequest = function() {
+    throw 'This swarmlet host does not support httpRequest().';
+}
+
 /** Implement the specified accessor interface, inheriting its inputs, outputs,
  *  and parameters as defined in its setup() function.
  *  This will throw an exception if no getAccessorCode() function
@@ -1102,7 +1124,7 @@ Accessor.prototype.react = function(name) {
                         // Remove the input handler.
                         thiz.extendedBy.removeInputHandler(
                                 thiz.extendedBy.inputHandlers[name][i].handle);
-                        error('Exception occurred in input handler.'
+                        thiz.error('Exception occurred in input handler.'
                                 + ' Handler has been removed: '
                                 + exception);
                     }
@@ -1135,7 +1157,7 @@ Accessor.prototype.react = function(name) {
                     // Remove the input handler.
                     this.extendedBy.removeInputHandler(
                             this.extendedBy.anyInputHandlers[i].handle);
-                    error('Exception occurred in input handler.'
+                    this.error('Exception occurred in input handler.'
                             + ' Handler has been removed: '
                             + exception);
                 }
@@ -1159,6 +1181,15 @@ Accessor.prototype.react = function(name) {
     if (typeof this.exports.fire === 'function') {
         this.exports.fire();
     }
+}
+
+/** Default implement of the readURL function, which throws an exception stating
+ *  that readURL is not supported.
+ *  Note that this function is deprecated in the Accessor Specification version 1,
+ *  but we include it here anyway.
+ */    
+Accessor.prototype.readURL = function() {
+    throw 'This swarmlet host does not support readURL().';
 }
 
 /** Remove the input handler with the specified handle, if it exists.

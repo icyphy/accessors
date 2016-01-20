@@ -76,7 +76,7 @@ exports.initialize = function() {
     addInputHandler('image', function() {
         var image = get('image');
         var options = get('options');
-        if (options === null) {
+        if (!options) {
             options = {};
         }
         
