@@ -159,6 +159,12 @@
  *    65536.
  *  @parameter {string} sendType See below.
  *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
+ *  @parameter {string} trustedCACertPath If sslTls is set to true and this server
+ *    requests/requires a certificate from the client, then this option needs to specify
+ *    the filename for the file that stores the certificate of a certificate authority (CA) that
+ *    this server will use to verify client certificates. This path can be any of those
+ *    understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
+ *    FIXME: Need to be a list of paths for certificates rather than a single path.
  *
  *  @author Edward A. Lee, Hokeun Kim
  *  @version $$Id$$
@@ -248,6 +254,10 @@ exports.setup = function () {
         type : 'boolean',
         value : false
     });
+    parameter('trustedCACertPath', {
+        type : 'string',
+        value : ''
+    });
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
@@ -319,7 +329,8 @@ exports.initialize = function () {
             'receiveType' : getParameter('receiveType'),
             'sendBufferSize' : getParameter('sendBufferSize'),
             'sendType' : getParameter('sendType'),
-            'sslTls' : getParameter('sslTls')
+            'sslTls' : getParameter('sslTls'),
+            'trustedCACertPath' : getParameter('trustedCACertPath')
         }
     );
 
