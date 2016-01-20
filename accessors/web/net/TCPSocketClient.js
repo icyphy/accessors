@@ -127,6 +127,14 @@
  *  @parameter {boolean} noDelay If true, data as sent as soon as it is available (the default).
  *    If false, data may be accumulated until a reasonable packet size is formed
  *    in order to make more efficient use of the network (using Nagle's algorithm).
+ *  @parameter {string} pfxKeyCertPassword If sslTls is set to true and the server requires
+ *    client authentication, then this option needs to specify the password for the pfx key-cert
+ *    file specified by pfxKeyCertPath.
+ *  @parameter {string} pfxKeyCertPath If sslTls is set to true and the server requires
+ *    client authentication, then this option needs to specify the fully qualified filename for 
+ *    the file that stores the private key and certificate that this client will use to authenticate
+ *    itself to the server. This path can be any of those understood by the Ptolemy host, 
+ *    e.g. paths beginning with $CLASSPATH/.
  *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
  *    to send() without any header. If false, then prepend sent data with length
  *    information and assume receive data starts with length information.
@@ -215,6 +223,14 @@ exports.setup = function () {
         type : 'boolean',
         value : true
     });
+    parameter('pfxKeyCertPassword', {
+        type : 'string',
+        value : ''
+    });
+    parameter('pfxKeyCertPath', {
+        type : 'string',
+        value : ''
+    });
     parameter('rawBytes', {
         type : 'boolean',
         value : false
@@ -294,6 +310,8 @@ exports.initialize = function () {
             'keepAlive' : getParameter('keepAlive'),
             'maxUnsentMessages' : getParameter('maxUnsentMessages'),
             'noDelay' : getParameter('noDelay'),
+            'pfxKeyCertPassword' : getParameter('pfxKeyCertPassword'),
+            'pfxKeyCertPath' : getParameter('pfxKeyCertPath'),
             'rawBytes' : getParameter('rawBytes'),
             'receiveBufferSize' : getParameter('receiveBufferSize'),
             'receiveType' : getParameter('receiveType'),
