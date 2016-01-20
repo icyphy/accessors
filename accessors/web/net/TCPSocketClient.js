@@ -153,7 +153,7 @@
  *    any certificate provided by the server will be trusted.
  *    FIXME: Need to provide a trusted list if this is false.
  *
- *  @author Edward A. Lee
+ *  @author Edward A. Lee, Hokeun Kim
  *  @version $$Id$$
  */
 
@@ -249,6 +249,10 @@ exports.setup = function () {
         type : 'boolean',
         value : false
     });
+    parameter('trustedCACertPath', {
+        type : 'string',
+        value : ''
+    });
     
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
@@ -293,6 +297,7 @@ exports.initialize = function () {
             'sendType' : getParameter('sendType'),
             'sslTls' : getParameter('sslTls'),
             'trustAll' : getParameter('trustAll'),
+            'trustedCACertPath' : getParameter('trustedCACertPath')
         }
     );
 

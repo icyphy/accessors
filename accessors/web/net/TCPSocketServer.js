@@ -160,7 +160,7 @@
  *  @parameter {string} sendType See below.
  *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
  *
- *  @author Edward A. Lee
+ *  @author Edward A. Lee, Hokeun Kim
  *  @version $$Id$$
  */
 
@@ -208,17 +208,17 @@ exports.setup = function () {
         type : 'boolean',
         value : true
     });
-    parameter('keyStorePassword', {
-        type : 'string',
-        value : ''
-    });
-    parameter('keyStorePath', {
-        type : 'string',
-        value : ''
-    });
     parameter('noDelay', {
         type : 'boolean',
         value : true
+    });
+    parameter('pfxKeyCertPassword', {
+        type : 'string',
+        value : ''
+    });
+    parameter('pfxKeyCertPath', {
+        type : 'string',
+        value : ''
     });
     parameter('port', {
         type : 'int',
@@ -310,9 +310,9 @@ exports.initialize = function () {
             'hostInterface' : getParameter('hostInterface'),
             'idleTimeout' : getParameter('idleTimeout'),
             'keepAlive' : getParameter('keepAlive'),
-            'keyStorePassword' : getParameter('keyStorePassword'),
-            'keyStorePath' : getParameter('keyStorePath'),
             'noDelay' : getParameter('noDelay'),
+            'pfxKeyCertPassword' : getParameter('pfxKeyCertPassword'),
+            'pfxKeyCertPath' : getParameter('pfxKeyCertPath'),
             'port' : getParameter('port'),
             'rawBytes' : getParameter('rawBytes'),
             'receiveBufferSize' : getParameter('receiveBufferSize'),
@@ -323,43 +323,43 @@ exports.initialize = function () {
         }
     );
 
-	server.on('error', function(message) {
+    server.on('error', function(message) {
         error(message);
-	});
-	
-	server.on('listening', function(port) {
+    });
+    
+    server.on('listening', function(port) {
         console.log('Server: Listening for socket connection requests.');
-		send('listening', port);
-	});
-	
-	server.on('connection', function(serverSocket) {
-		connectionCount++;
-		var socketID = {
-		    'id': connectionCount,
-		    'remoteHost': serverSocket.remoteHost(),
-		    'remotePort': serverSocket.remotePort(),
-		    'status': 'open'
-		};
-		send('connection', socketID);
-		
-		sockets[connectionCount] = serverSocket;
+        send('listening', port);
+    });
+    
+    server.on('connection', function(serverSocket) {
+        connectionCount++;
+        var socketID = {
+            'id': connectionCount,
+            'remoteHost': serverSocket.remoteHost(),
+            'remotePort': serverSocket.remotePort(),
+            'status': 'open'
+        };
+        send('connection', socketID);
+        
+        sockets[connectionCount] = serverSocket;
 
-		serverSocket.on('close', function() {
-		    serverSocket.removeAllListeners();
-		    socketID.status = 'closed';
+        serverSocket.on('close', function() {
+            serverSocket.removeAllListeners();
+            socketID.status = 'closed';
             send('connection', socketID);
-		    // Avoid a memory leak here.
-			sockets[connectionCount] = null;
-		});
-		serverSocket.on('data', function(data) {
-			send('received', data);
-			send('receivedID', connectionCount);
-		});
-		serverSocket.on('error', function(message) {
+            // Avoid a memory leak here.
+            sockets[connectionCount] = null;
+        });
+        serverSocket.on('data', function(data) {
+            send('received', data);
+            send('receivedID', connectionCount);
+        });
+        serverSocket.on('error', function(message) {
             error(message);
-		});
-	});
-	
+        });
+    });
+    
     // Record the object that calls it (could be a derived accessor).
     var callObj = this;
     // Bind the input handler to caller's object so that when it is invoked,
