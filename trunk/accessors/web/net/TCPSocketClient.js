@@ -152,6 +152,12 @@
  *    Setting it to true means that if sslTls is set to true, then
  *    any certificate provided by the server will be trusted.
  *    FIXME: Need to provide a trusted list if this is false.
+ *  @parameter {boolean} trustedCACertPath If sslTls is set to true and trustAll is
+ *    set to false, then this option needs to specify the fully qualified filename
+ *    for the file that stores the certificate of a certificate authority (CA) that
+ *    this client will use to verify server certificates. This path can be any of those
+ *    understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
+ *    FIXME: Need to be a list of paths for certificates rather than a single path.
  *
  *  @author Edward A. Lee, Hokeun Kim
  *  @version $$Id$$
