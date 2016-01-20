@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/**
+/*
  * This file includes basic utility functions assumed by version 0 accessors.
  * @author Edward A. Lee and Chris Shaver
  * @version $$Id$$
@@ -47,7 +47,7 @@ var debug = false;
 // clearTimeout(timeout) is built in to the Window object.
 
 
-/** Handle an error.
+/* Handle an error.
  *  This function merely throws an exception.
  *  @param message
  */
@@ -56,7 +56,7 @@ function error(message) {
 }
 
 
-/** Perform a synchronous HTTP request.
+/* Perform a synchronous HTTP request.
  *  @param url The url.
  *  @param method The method to be passed to the XMLHttpRequest.open() call.
  *  @param properties Ignored in this implementation
@@ -94,7 +94,7 @@ function httpRequest(url, method, properties, body, timeout) {
 }
 
 
-/** Print a message to the console.
+/* Print a message to the console.
  *  @param message The message that is passed
  *  to console.log().
  */
@@ -103,7 +103,7 @@ function print(message) {
 }
 
 
-/** Synchronously read a URL.
+/* Synchronously read a URL.
  *  @param url The url to be read
  *  @return The responseText from the request.
  */
