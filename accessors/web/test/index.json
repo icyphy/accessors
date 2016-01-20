@@ -6,6 +6,7 @@
     "TestCompositeSpontaneous.js",
     "TestDerivedAgainA.js",
     "TestDerivedC.js",
+    "TestFunctions.js",
     "TestGain.js",
     "TestImplement.js",
     "TestInheritance.js",
