@@ -134,15 +134,15 @@
  *    timeout.
  *  @parameter {boolean} keepAlive Whether to keep a connection alive and reuse it. This
  *    defaults to true.
- *  @parameter {string} keyStorePassword If sslTls is set to true, then this option
- *    needs to specify the password for the key store specified by keyStorePath.
- *  @parameter {string} keyStorePath If sslTls is set to true, then this option
- *    needs to specify the fully qualified filename for the file that stores the
- *    certificate that this server will use to identify itself. This path can be
- *    any of those understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
  *  @parameter {boolean} noDelay If true, data as sent as soon as it is available
  *    (the default). If false, data may be accumulated until a reasonable packet size is
  *    formed in order to make more efficient use of the network (using Nagle's algorithm).
+ *  @parameter {string} pfxKeyCertPassword If sslTls is set to true, then this option
+ *    needs to specify the password for the pfx key-cert file specified by pfxKeyCertPath.
+ *  @parameter {string} pfxKeyCertPath If sslTls is set to true, then this option
+ *    needs to specify the fully qualified filename for the file that stores the
+ *    private key and certificate that this server will use to identify itself. This path can be
+ *    any of those understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
  *  @parameter {int} port The default port to listen on. This defaults to 4000.
  *    a value of 0 means to choose a random ephemeral free port.
  *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
