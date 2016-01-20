@@ -22,6 +22,7 @@
 // --- Modified by Edward A. Lee, eal@eecs.berkeley.edu to remove Node.js dependence.
 // Changes made:
 // --- Removed deprecated functions and the deprecate function that deprecates them.
+// --- Eliminate JSdoc tags since docs are hopelessly incomplete.
 // FIXME: Test all functions.
 
 var formatRegExp = /%[sdj%]/g;
@@ -86,7 +87,7 @@ exports.debuglog = function(set) {
 };
 
 
-/**
+/*
  * Echos the value of a value. Trys to print the value out
  * in the best way possible given the different types.
  *
@@ -584,7 +585,7 @@ exports.log = function() {
 };
 
 
-/**
+/*
  * Inherit the prototype methods from one constructor into another.
  *
  * The Function.prototype.inherits from lang.js rewritten as a standalone
