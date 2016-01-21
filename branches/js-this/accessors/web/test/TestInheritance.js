@@ -33,7 +33,7 @@
  */
 
 exports.setup = function() {
-    extend('test/TestAccessor');
+    this.extend('test/TestAccessor');
 }
 
 exports.initialize = function() {
@@ -42,7 +42,7 @@ exports.initialize = function() {
 }
 
 /** Override the base class to use output a constant read from the base class. */
-exports.formatOutput = function(value) {
+this.formatOutput = function(value) {
     // Variable 'variable' is defined in the base class.
     return this.variable;
 }

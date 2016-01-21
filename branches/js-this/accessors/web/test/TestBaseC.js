@@ -7,16 +7,16 @@
  *   base class.
  */
 exports.setup = function() {
-   input('in1');
-   output('out1');
+   this.input('in1');
+   this.output('out1');
 }
 
 exports.initialize = function() {
-   addInputHandler('in1', this.inputHandler);
+   this.addInputHandler('in1', this.inputHandler);
 }
 
-exports.inputHandler = function() {
-   send('out1', this.baseField);
+this.inputHandler = function() {
+   this.send('out1', this.baseField);
 }
 
-exports.baseField = 1;
+this.baseField = 1;

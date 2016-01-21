@@ -41,36 +41,36 @@
  */
 
 exports.setup = function() {
-    input('untyped');                               // Untyped input.
-    input('numeric', {'type':'number', 'value':0}); // Numeric input.
-    input('boolean', {'type':'boolean'});           // Boolean input.
-    output('typeOfUntyped', {'type':'string'});     // Type of untyped input.
-    output('jsonOfUntyped', {'type':'string'});     // JSON of untyped input.
-    output('numericPlusP', {'type':'number'});      // Numeric input plus p.
-    output('negation', {'type':'boolean'});         // Negation of boolean input.
-    parameter('p', {'value':42});                   // Untyped, with numeric value.
+    this.input('untyped');                               // Untyped input.
+    this.input('numeric', {'type':'number', 'value':0}); // Numeric input.
+    this.input('boolean', {'type':'boolean'});           // Boolean input.
+    this.output('typeOfUntyped', {'type':'string'});     // Type of untyped input.
+    this.output('jsonOfUntyped', {'type':'string'});     // JSON of untyped input.
+    this.output('numericPlusP', {'type':'number'});      // Numeric input plus p.
+    this.output('negation', {'type':'boolean'});         // Negation of boolean input.
+    this.parameter('p', {'value':42});                   // Untyped, with numeric value.
 }
 
-// Base class variable.
-exports.variable = 'hello';
+// Base class variable that is visible to subclasses through inheritance.
+this.variable = 'hello';
 
 exports.initialize = function() {
     // Respond to any input by updating them all.
-    addInputHandler('untyped', function() {
-        send('typeOfUntyped', typeof get('untyped'));
-        // Refer to the function using 'this' rather than 'exports' to allow an override.
-        send('jsonOfUntyped', this.formatOutput(get('untyped')));
+    this.addInputHandler('untyped', function() {
+        this.send('typeOfUntyped', typeof this.get('untyped'));
+        // Refer to the function using 'this.exports' rather than 'exports' to allow an override.
+        this.send('jsonOfUntyped', this.formatOutput(this.get('untyped')));
     });
-    addInputHandler('numeric', function() {
-        send('numericPlusP', get('numeric') + getParameter('p'));
+    this.addInputHandler('numeric', function() {
+        this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
     });
-    addInputHandler('boolean', function() {
-        send('negation', !get('boolean'));
+    this.addInputHandler('boolean', function() {
+        this.send('negation', !this.get('boolean'));
     });
 }
 
 /** Define a function that can be overridden in subclasses. */
-exports.formatOutput = function(value) {
+this.formatOutput = function(value) {
     return 'JSON for untyped input: ' + JSON.stringify(value);
 }
 exports.fire = function() {

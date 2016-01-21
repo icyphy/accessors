@@ -41,7 +41,7 @@
 var util = require('util');
 
 exports.setup = function() {
-    extend('test/TestAccessor');
+    this.extend('test/TestAccessor');
 }
 
 exports.initialize = function() {
