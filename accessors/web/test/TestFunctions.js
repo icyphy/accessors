@@ -35,25 +35,25 @@
  */
 
 exports.setup = function() {
-    output('getResource', {'type':'string'});
-    output('httpRequest', {'type':'string'});
-    output('readURL', {'type':'string'});
+    this.output('getResource', {'type':'string'});
+    this.output('httpRequest', {'type':'string'});
+    this.output('readURL', {'type':'string'});
 }
 
 exports.fire = function() {
     try {
-        send('getResource', getResource('index.html', 3000));
+        this.send('getResource', getResource('index.html', 3000));
     } catch(exception) {
-        send('getResource', 'FAILED: ' + exception);
+        this.send('getResource', 'FAILED: ' + exception);
     }
     try {
-        send('httpRequest', httpRequest('index.html', 'GET'));
+        this.send('httpRequest', httpRequest('index.html', 'GET'));
     } catch(exception) {
-        send('httpRequest', 'FAILED: ' + exception);
+        this.send('httpRequest', 'FAILED: ' + exception);
     }
     try {
-        send('readURL', readURL('index.html'));
+        this.send('readURL', readURL('index.html'));
     } catch(exception) {
-        send('readURL', 'FAILED: ' + exception);
+        this.send('readURL', 'FAILED: ' + exception);
     }
 }

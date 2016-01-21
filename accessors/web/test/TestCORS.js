@@ -29,29 +29,29 @@
  *  For more details please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor test/TestCORSAccessor
+ *  @accessor test/TestCORS
  *  @author Elizabeth Osyk
  */
 
 var jQuery = require('jquery');
 
 exports.setup = function() {
-    input('URL');                               
-    output('response');        
+    this.input('URL');                               
+    this.output('response');        
 }
 
 exports.fire = function() {
-    console.log('TestCORSAccessor fired.');
+    console.log('TestCORS fired.');
 }
 
 exports.initialize = function() {
-    addInputHandler('URL', function() {
+    this.addInputHandler('URL', function() {
     	jQuery.ajax(get('URL'), {
     		success: function(data) {
-    			send('response', data);
+    			this.send('response', data);
     		},
     		error: function() {
-    			send('response', 'error');
+    			this.send('response', 'error');
     		}
     	});
     });

@@ -32,13 +32,13 @@
  */
 
 exports.setup = function() {
-    input('input', {'type':'number', 'value':0});
-    output('scaled', {'type':'number'});
-    parameter('gain', {'type':'number', 'value':2});
+    this.input('input', {'type':'number', 'value':0});
+    this.output('scaled', {'type':'number'});
+    this.parameter('gain', {'type':'number', 'value':2});
 }
 
 exports.initialize = function() {
-    addInputHandler('input', function() {
-        send('scaled', get('input') * getParameter('gain'));
+    this.addInputHandler('input', function() {
+        this.send('scaled', this.get('input') * this.getParameter('gain'));
     });
 }

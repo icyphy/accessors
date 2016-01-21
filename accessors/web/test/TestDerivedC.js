@@ -5,6 +5,6 @@
  *  @author Edward A. Lee
  */ 
 exports.setup = function() {
-	extend('test/TestBaseC');
+	this.extend('test/TestBaseC');
 }
-exports.baseField = 2;
+this.baseField = 2;

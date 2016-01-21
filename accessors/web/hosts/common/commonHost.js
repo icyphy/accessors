@@ -271,63 +271,20 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     // as latestOutput(), provideInput(), and react().
     // It should also include the module object.
     
-    // FIXME: Use the Function constructor for this:
-        
-    var wrapper = eval('(function( \
-            addInputHandler, \
-            connect, \
-            error, \
-            exports, \
-            extend, \
-            get, \
-            getParameter, \
-            getResource, \
-            httpRequest, \
-            implement, \
-            input, \
-            instantiate, \
-            module, \
-            output, \
-            parameter, \
-            readURL, \
-            removeInputHandler, \
-            require, \
-            send, \
-            setDefault, \
-            setParameter) {'
-            + code
-            + '})');
-               
-    // Populate the exports property by invoking the function defined above.
-    // These should only the top-level functions that an accessor can invoke.
-    wrapper(
-            this.addInputHandler.bind(this),
-            this.connect.bind(this),
-            this.error.bind(this),
-            this.exports,
-            this.extend.bind(this),
-            this.get.bind(this),
-            this.getParameter.bind(this),
-            this.getResource.bind(this),
-            this.httpRequest.bind(this),
-            this.implement.bind(this),
-            this.input.bind(this),
-            this.instantiate.bind(this),
-            this.module,
-            this.output.bind(this),
-            this.parameter.bind(this),
-            this.readURL.bind(this),
-            this.removeInputHandler.bind(this),
-            this.require.bind(this),
-            this.send.bind(this.extendedBy),
-            this.setDefault.bind(this),
-            this.setParameter.bind(this));
+    var wrapper = new Function('exports', code);
+    wrapper.call(this, this.exports);
+    
+    // Mark that the accessor has not been initialized
+    this.initialized = false;
+    
+    // Record the instance indexed by its exports property.
+    _accessorInstanceTable[this.exports] = this;
         
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the setup() function to populate the structure.
         
     if (typeof this.exports.setup === 'function') {
-        this.exports.setup();
+        this.exports.setup.call(this);
     }
         
     ////////////////////////////////////////////////////////////////////
@@ -337,48 +294,53 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     // functions that every accessor should perform, including handling
     // scheduling of any contained accessors.  They will also invoke
     // exports.initialize() and exports.wrapup(), if those are defined.
-    
-    this.initialize = function() {
-        if (this.extendedBy.containedAccessors && this.extendedBy.containedAccessors.length > 0) {
-            this.extendedBy.assignPriorities();
-            this.extendedBy.eventQueue = [];
-            for (var i = 0; i < this.extendedBy.containedAccessors.length; i++) {
-                if (this.extendedBy.containedAccessors[i].initialize) {
-                    this.extendedBy.containedAccessors[i].initialize();
+    // @param inside True if initializing a contained accessor, and therefore
+    //  should skip descending into contained accessors.
+    this.initialize = function(inside) {
+        var thiz = this.extendedBy;
+        if (!inside && thiz.containedAccessors && thiz.containedAccessors.length > 0) {
+            thiz.assignPriorities();
+            thiz.eventQueue = [];
+            for (var i = 0; i < thiz.containedAccessors.length; i++) {
+                if (thiz.containedAccessors[i].initialize) {
+                    thiz.containedAccessors[i].initialize(true);
                 }
             }
         }
         if (typeof this.exports.initialize === 'function') {
-            this.exports.initialize();
+            this.exports.initialize.call(thiz);
         }
+        thiz.initialized = true;
     };
 
-    this.wrapup = function() {
-        // Mark that this accessor has not been initialized.
-        this.extendedBy.initialized = false;
-        
-        // Remove all input handlers.
-        this.inputHandlers = {};
-        this.anyInputHandlers = [];
-        this.inputHandlersIndex = {};
-        // Counter used to assign unique IDs to each input handler.
-        this.inputHandlerID = 0;
-                
-        // Invoke wrapup on contained accessors.
-        if (this.extendedBy.containedAccessors && this.extendedBy.containedAccessors.length > 0) {
-            for (var i = 0; i < this.extendedBy.containedAccessors.length; i++) {
-                if (this.extendedBy.containedAccessors[i].wrapup) {
-                    this.extendedBy.containedAccessors[i].wrapup();
+    // @param inside True if initializing a contained accessor, and therefore
+    //  should skip descending into contained accessors.
+    this.wrapup = function(inside) {
+        var thiz = this.extendedBy;
+        if (!inside) {
+            // Mark that this accessor has not been initialized.
+            thiz.initialized = false;
+       
+            // Remove all input handlers.
+            thiz.inputHandlers = {};
+            thiz.anyInputHandlers = [];
+            thiz.inputHandlersIndex = {};
+            // Counter used to assign unique IDs to each input handler.
+            thiz.inputHandlerID = 0;
+               
+            // Invoke wrapup on contained accessors.
+            if (thiz.containedAccessors && thiz.containedAccessors.length > 0) {
+                for (var i = 0; i < thiz.containedAccessors.length; i++) {
+                    if (thiz.containedAccessors[i].wrapup) {
+                        thiz.containedAccessors[i].wrapup(true);
+                    }
                 }
             }
         }
         if (typeof this.exports.wrapup === 'function') {
-            this.exports.wrapup();
+            this.exports.wrapup.call(thiz);
         }
     };
-
-    // Record the instance indexed by its exports property.
-    _accessorInstanceTable[this.exports] = this;
 }
 
 /** Add an input handler for the specified input and return a handle that
@@ -417,36 +379,36 @@ Accessor.prototype.addInputHandler = function(name, func) {
     }
     
     // Bind the callback function so that it is always invoked in the context
-    // of the exports object of the master accessor object (no the base classes).
+    // of the master accessor object (no the base classes).
     // If there are arguments to the callback, create a new function.
     // Get an array of arguments excluding the first two.
-    // When that function is invoked, 'this' will be the exports data structure
+    // When that function is invoked, 'this' will be the data structure
     // of the top-level instance (which by prototype chain, can reach down
     // the inheritance hierarchy).
     tail = Array.prototype.slice.call(arguments, argCount);
-    var context = this.extendedBy.exports;
+    var thiz = this.extendedBy;
     if (tail.length !== 0) {
         callback = function() {
-            func.apply(context, tail);
+            func.apply(thiz, tail);
         };
     } else {
-        callback = func.bind(context);
+        callback = func.bind(thiz);
     }
     // Need to allow more than one handler and need to return a handle
     // that can be used by removeInputHandler.
     var index;
     if (name) {
-        if (! this.extendedBy.inputHandlers[name]) {
-            this.extendedBy.inputHandlers[name] = [];
+        if (! thiz.inputHandlers[name]) {
+            thiz.inputHandlers[name] = [];
         }
-        index = this.extendedBy.inputHandlers[name].length;
-        this.extendedBy.inputHandlers[name].push(callback);
+        index = thiz.inputHandlers[name].length;
+        thiz.inputHandlers[name].push(callback);
     } else {
-        index = this.extendedBy.anyInputHandlers.length;
-        this.extendedBy.anyInputHandlers.push(callback);
+        index = thiz.anyInputHandlers.length;
+        thiz.anyInputHandlers.push(callback);
     }
-    var result = this.extendedBy.inputHandlerID;
-    this.extendedBy.inputHandlersIndex[this.extendedBy.inputHandlerID++] = {
+    var result = thiz.inputHandlerID;
+    thiz.inputHandlersIndex[thiz.inputHandlerID++] = {
         'name': name,
         'index': index
     };
@@ -468,7 +430,8 @@ Accessor.prototype.addInputHandler = function(name, func) {
  *  due to a causality loop.
  */
 Accessor.prototype.assignPriorities = function() {
-    var accessors = this.extendedBy.containedAccessors;
+    var thiz = this.extendedBy;
+    var accessors = thiz.containedAccessors;
     
     // First, initialize the contained accessors with a null priority.
     for (var i = 0; i < accessors.length; i++) {
@@ -485,8 +448,8 @@ Accessor.prototype.assignPriorities = function() {
         accessors[i].priority = startingPriority;
         // console.log('Assigned priority to ' + accessors[i].accessorName + ' of ' + startingPriority);
         // Follow connections to get implied priorities.
-        this.extendedBy.assignImpliedPrioritiesUpstream(accessors[i], startingPriority);
-        this.extendedBy.assignImpliedPrioritiesDownstream(accessors[i], startingPriority);
+        thiz.assignImpliedPrioritiesUpstream(accessors[i], startingPriority);
+        thiz.assignImpliedPrioritiesDownstream(accessors[i], startingPriority);
 
         // Any remaining accessors without priorities are in one or more independent
         // connected subgraphs. To ensure that the next set of priorities does not
@@ -624,9 +587,10 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
  *  @param d A destination port name.
  */
 Accessor.prototype.connect = function(a, b, c, d) {
+    var thiz = this.extendedBy;
     if (typeof a === 'string') {
         // form 2 or 4.
-        var myInput = this.extendedBy.inputs[a];
+        var myInput = thiz.inputs[a];
         if (!myInput) {
             throw('connect(): No such input: ' + a);
         }
@@ -635,11 +599,11 @@ Accessor.prototype.connect = function(a, b, c, d) {
         }
         if (typeof b === 'string') {
             // form 4.
-            if (!this.extendedBy.outputs[b]) {
+            if (!thiz.outputs[b]) {
                 throw('connect(): No such output: ' + b);
             }
             myInput.destinations.push(b);
-            this.extendedBy.outputs[b].source = a;
+            thiz.outputs[b].source = a;
         } else {
             // form 2.
             if (!b.inputs[c]) {
@@ -659,11 +623,11 @@ Accessor.prototype.connect = function(a, b, c, d) {
         }
         if (typeof c === 'string') {
             // form 3.
-            if (!this.extendedBy.outputs[c]) {
+            if (!thiz.outputs[c]) {
                 throw('connect(): No such output: ' + b);
             }
             myOutput.destinations.push(c);
-            this.extendedBy.outputs[c].source = {'accessor': a, 'outputName': b};
+            thiz.outputs[c].source = {'accessor': a, 'outputName': b};
         } else {
             // form 1.
             if (!c.inputs[d]) {
@@ -777,7 +741,8 @@ Accessor.prototype.extend = function(accessorClass) {
     
     var baseName = this.accessorName + '_' + accessorClass;
     
-    // Provide the instance with the top-level accessor extending this new instance.
+    // Provide the instance with the top-level accessor extending this new instance
+    // as the last argument.
     var extendedInstance = instantiateAccessor(
             baseName, accessorClass, this.getAccessorCode, this.bindings, this.extendedBy);
             
@@ -806,14 +771,15 @@ Accessor.prototype.extend = function(accessorClass) {
  *  @param name The name of the input.
  */
 Accessor.prototype.get = function(name) {
-    var input = this.extendedBy.inputs[name];
+    var thiz = this.extendedBy;
+    var input = thiz.inputs[name];
     
     if (!input) {
         // Tolerate using get() to retrieve a parameter instead of input,
         // since names are required to be unique anyway. This ensure backward
         // compatibility with earlier models for the Ptolemy host, which used
         // get() for both inputs and parameters.
-        input = this.extendedBy.parameters[name];
+        input = thiz.parameters[name];
         if (!input) {
             throw('get(name): No input named ' + name);
         }
@@ -903,9 +869,10 @@ Accessor.prototype.implement = function(accessorClass) {
  *  @param options The options for the input.
  */
 Accessor.prototype.input = function(name, options) {
-     // The input may have been previously defined in a base accessor.
-     pushIfNotPresent(name, this.extendedBy.inputList);
-     this.extendedBy.inputs[name] = mergeObjects(this.extendedBy.inputs[name], options);
+    var thiz = this.extendedBy;
+    // The input may have been previously defined in a base accessor.
+    pushIfNotPresent(name, thiz.inputList);
+    thiz.inputs[name] = mergeObjects(thiz.inputs[name], options);
 }
 
 /** Instantiate the specified accessor as a contained accessor.
@@ -964,10 +931,11 @@ function instantiateAccessor(
  *  @return The latest value produced on this output.
  */
 Accessor.prototype.latestOutput = function(name) {
-    if (!this.extendedBy.outputs[name]) {
+    var thiz = this.extendedBy;
+    if (!thiz.outputs[name]) {
         throw('lastestOutput(): No output named ' + name);
     }
-    return this.extendedBy.outputs[name].latestOutput;
+    return thiz.outputs[name].latestOutput;
 }
 
 /** Merge the specified objects. If the two have common properties, the merged object
@@ -1022,9 +990,10 @@ function nullHandlerFunction() {}
  *  @param options The options.
  */
 Accessor.prototype.output = function(name, options) {
+    var thiz = this.extendedBy;
     // The output may have been previously defined in a base accessor.
-    pushIfNotPresent(name, this.extendedBy.outputList);
-    this.extendedBy.outputs[name] = mergeObjects(this.extendedBy.outputs[name], options);
+    pushIfNotPresent(name, thiz.outputList);
+    thiz.outputs[name] = mergeObjects(thiz.outputs[name], options);
 }
 
 /** Define an accessor parameter.
@@ -1032,9 +1001,10 @@ Accessor.prototype.output = function(name, options) {
  *  @param options The options.
  */
 Accessor.prototype.parameter = function(name, options) {
+    var thiz = this.extendedBy;
     // The parameter may have been previously defined in a base accessor.
-    pushIfNotPresent(name, this.extendedBy.parameterList);
-    this.extendedBy.parameters[name] = mergeObjects(this.extendedBy.parameters[name], options);
+    pushIfNotPresent(name, thiz.parameterList);
+    thiz.parameters[name] = mergeObjects(thiz.parameters[name], options);
 }
     
 /** Set an input of this accessor to the specified value.
@@ -1045,7 +1015,8 @@ Accessor.prototype.parameter = function(name, options) {
  *  @param value The value to set the input to.
  */
 Accessor.prototype.provideInput = function(name, value) {
-    var input = this.extendedBy.inputs[name];
+    var thiz = this.extendedBy;
+    var input = thiz.inputs[name];
     if (!input) {
         throw('provideInput(): Accessor has no input named ' + name);
     }
@@ -1062,8 +1033,8 @@ Accessor.prototype.provideInput = function(name, value) {
         input.pendingHandler = true;
         // If there is a container accessor, then put this accessor in its
         // event queue for handling in its fire() function.
-        if (this.extendedBy.container) {
-            this.extendedBy.container.scheduleEvent(this);
+        if (thiz.container) {
+            thiz.container.scheduleEvent(this);
         }
     
         // If the input is connected on the inside, then provide the same input
@@ -1073,7 +1044,7 @@ Accessor.prototype.provideInput = function(name, value) {
                 var destination = input.destinations[i];
                 if (typeof destination === 'string') {
                     // The destination is output port of this accessor.
-                    this.extendedBy.send(destination, value);
+                    thiz.send(destination, value);
                 } else {
                     // The destination is an input port of a contained accessor.
                     destination.accessor.provideInput(destination.inputName, value);
@@ -1108,11 +1079,11 @@ function pushIfNotPresent(item, list) {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function(name) {
+    var thiz = this.extendedBy;
     // Allow further reactions to be scheduled by this reaction.
-    this.extendedBy.reactRequestedAlready = false;
+    thiz.reactRequestedAlready = false;
     
     // To avoid code duplication, define a local function.
-    var thiz = this.extendedBy;
     var invokeSpecificHandler = function(name) {
         if (thiz.inputHandlers[name] && thiz.inputHandlers[name].length > 0) {
             for (var i = 0; i < thiz.inputHandlers[name].length; i++) {
@@ -1122,8 +1093,8 @@ Accessor.prototype.react = function(name) {
                         thiz.inputHandlers[name][i]();
                     } catch (exception) {
                         // Remove the input handler.
-                        thiz.extendedBy.removeInputHandler(
-                                thiz.extendedBy.inputHandlers[name][i].handle);
+                        thiz.removeInputHandler(
+                                thiz.inputHandlers[name][i].handle);
                         thiz.error('Exception occurred in input handler.'
                                 + ' Handler has been removed: '
                                 + exception);
@@ -1138,26 +1109,26 @@ Accessor.prototype.react = function(name) {
         invokeSpecificHandler(name);
     } else {
         // No specific input has been given.
-        for (var i = 0; i < this.extendedBy.inputList.length; i++) {
-            name = this.extendedBy.inputList[i];
-            if (this.extendedBy.inputs[name].pendingHandler) {
-                this.extendedBy.inputs[name].pendingHandler = false;
+        for (var i = 0; i < thiz.inputList.length; i++) {
+            name = thiz.inputList[i];
+            if (thiz.inputs[name].pendingHandler) {
+                thiz.inputs[name].pendingHandler = false;
                 invokeSpecificHandler(name);
             }
         }
     }
     // Next, invoke handlers registered to handle any input.
-    if (this.extendedBy.anyInputHandlers.length > 0) {
-        for (var i = 0; i < this.extendedBy.anyInputHandlers.length; i++) {
-            if (typeof this.extendedBy.anyInputHandlers[i] === 'function') {
+    if (thiz.anyInputHandlers.length > 0) {
+        for (var i = 0; i < thiz.anyInputHandlers.length; i++) {
+            if (typeof thiz.anyInputHandlers[i] === 'function') {
                 // Call input handlers in the context of the exports object.
                 try {
-                    this.extendedBy.anyInputHandlers[i]();
+                    thiz.anyInputHandlers[i]();
                 } catch (exception) {
                     // Remove the input handler.
-                    this.extendedBy.removeInputHandler(
-                            this.extendedBy.anyInputHandlers[i].handle);
-                    this.error('Exception occurred in input handler.'
+                    thiz.removeInputHandler(
+                            thiz.anyInputHandlers[i].handle);
+                    thiz.error('Exception occurred in input handler.'
                             + ' Handler has been removed: '
                             + exception);
                 }
@@ -1166,20 +1137,20 @@ Accessor.prototype.react = function(name) {
     }
     
     // Next, invoke react() on any contained accessors.
-    if (this.extendedBy.containedAccessors && this.extendedBy.containedAccessors.length > 0) {
-        // console.log('Composite is reacting with ' + this.extendedBy.eventQueue.length + ' events.');
-        while (this.extendedBy.eventQueue && this.extendedBy.eventQueue.length > 0) {
+    if (thiz.containedAccessors && thiz.containedAccessors.length > 0) {
+        // console.log('Composite is reacting with ' + thiz.eventQueue.length + ' events.');
+        while (thiz.eventQueue && thiz.eventQueue.length > 0) {
             // Remove from the event queue the first accessor, which will now react.
             // It may add itself back in, if it sends to its own input. But in that
             // case, it should fire again immediately, so that is correct.
-            var removed = this.extendedBy.eventQueue.splice(0, 1);
+            var removed = thiz.eventQueue.splice(0, 1);
             removed[0].react();        
         }
     }
 
     // Next, invoke the fire() function.
     if (typeof this.exports.fire === 'function') {
-        this.exports.fire();
+        this.exports.fire.call(this);
     }
 }
 
@@ -1197,20 +1168,21 @@ Accessor.prototype.readURL = function() {
  *  @see #addInputHandler()
  */
 Accessor.prototype.removeInputHandler = function(handle) {
-    var handler = this.extendedBy.inputHandlersIndex[handle];
+    var thiz = this.extendedBy;
+    var handler = thiz.inputHandlersIndex[handle];
     if (handler) {
         if (handler.name) {
-            if (this.extendedBy.inputHandlers[handler.name]
-                    && this.extendedBy.inputHandlers[handler.name][handler.index]) {
-                this.extendedBy.inputHandlers[handler.name][handler.index] = null;
+            if (thiz.inputHandlers[handler.name]
+                    && thiz.inputHandlers[handler.name][handler.index]) {
+                thiz.inputHandlers[handler.name][handler.index] = null;
             }
         } else {
             // Handler is set up to handle any input.
-            if (this.extendedBy.anyInputHandlers[handler.index]) {
-                this.extendedBy.anyInputHandlers[handler.index] = null;
+            if (thiz.anyInputHandlers[handler.index]) {
+                thiz.anyInputHandlers[handler.index] = null;
             }
         }
-        this.extendedBy.inputHandlersIndex[handle] = null;
+        thiz.inputHandlersIndex[handle] = null;
     }
 }
 
@@ -1231,19 +1203,19 @@ Accessor.prototype.require = function() {
  *  @param accessor The accessor.
  */
 Accessor.prototype.scheduleEvent = function(accessor) {
-    var queue = this.extendedBy.eventQueue;
+    var thiz = this.extendedBy;
+    var queue = thiz.eventQueue;
     // If we haven't already scheduled a react() since the last react(),
     // schedule it now.
-    if (!this.extendedBy.reactRequestedAlready) {
-        this.extendedBy.reactRequestedAlready = true;
-        var self = this.extendedBy;
-        setTimeout(function() { self.react(); }, 0);
+    if (!thiz.reactRequestedAlready) {
+        thiz.reactRequestedAlready = true;
+        setTimeout(function() { thiz.react(); }, 0);
     }
     if (!queue || queue.length === 0) {
         // Use a simple array as an event queue because almost all
         // sorted insertions will be at the end, and all extractions
         // will be at the beginning.
-        this.extendedBy.eventQueue = [accessor];
+        thiz.eventQueue = [accessor];
         return;
     }
     // There are already items in the event queue.
@@ -1292,15 +1264,15 @@ Accessor.prototype.scheduleEvent = function(accessor) {
  *  @param value The output value.
  */
 Accessor.prototype.send = function(name, value) {
-    var output = this.extendedBy.outputs[name];
+    var thiz = this.extendedBy;
+    var output = thiz.outputs[name];
     if (!output) {
         // May be sending to my own input.
-        var input = this.extendedBy.inputs[name];
+        var input = thiz.inputs[name];
         if (!input) {
             throw('send(name, value): No output or input named ' + name);
         }
         // Make the input available in the _next_ reaction.
-        var thiz = this.extendedBy;
         setTimeout(function() {
             thiz.provideInput(name, value);
         }, 0);
@@ -1316,8 +1288,8 @@ Accessor.prototype.send = function(name, value) {
             var destination = output.destinations[i];
             if (typeof destination === 'string') {
                 // The destination is output port of this accessor.
-                if (this.extendedBy.container) {
-                    this.extendedBy.container.send(destination, value);
+                if (thiz.container) {
+                    thiz.container.send(destination, value);
                 } else {
                     // If no other implementation of send() has been provided and
                     // there is no container, this used to produce to standard output.

@@ -33,11 +33,11 @@
  */
 
 exports.setup = function() {
-    implement('test/TestAccessor');
+    this.implement('test/TestAccessor');
 }
 
 exports.initialize = function() {
-    addInputHandler('numeric', function() {
-        send('numericPlusP', get('numeric') + getParameter('p'));
+    this.addInputHandler('numeric', function() {
+        this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
     });
 }

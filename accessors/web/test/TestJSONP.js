@@ -32,28 +32,28 @@
  *  For more details on cross-origin requests please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor test/TestJSONPAccessor
+ *  @accessor test/TestJSONP
  *  @author Elizabeth Osyk
  */
 
 var jQuery = require('jquery');
 
 exports.setup = function() {
-    input('URL');        
-    output('response');        
+    this.input('URL');        
+    this.output('response');        
 }
 
 exports.fire = function() {
-    console.log('TestJSONPAccessor fired.');
+    console.log('TestJSONP fired.');
 }
 
 exports.initialize = function() {
-    addInputHandler('URL', function() {
+    this.addInputHandler('URL', function() {
     	// If a URL ends in ?callback=? then the .getJSON function will issue
     	// a JSON with padding (JSONP) dataType request.  This allows 
     	// cross-domain data transfer.
     	jQuery.getJSON(get('URL'), function(data) {
-    		send('response', JSON.stringify(data));
+    		this.send('response', JSON.stringify(data));
     	});
     });
 }
