@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Editing accessors workgroup content</title>
+</head>
+<body>
+<div id="onecolumn">
+  <h1>The Accessors Repository</h1>
+  <p>
+The TerraSwarm accessors repository is an <a href="https://subversion.apache.org">Apache Subversion</a>
+(SVN) repository that is readable by anyone. Currently, affiliation with the
+<a href="http://terraswarm.org">TerraSwarm Research Center</a> is required to get write access
+(see <a href="/terraswarm/faq/2.htm">Who can get a login?</a>).
+</p><p>
+The repository includes a library of accessors, some swarmlet hosts (including a Browser and
+Node.js host), and the <a href="/accessors">http://www.terraswarm.org/accessors/</a>
+web page contents. It does not include the <a href="http://capecode.org">Cape Code</a>
+swarmlet host (which uses its accessor library), nor the
+<a href="/accessors/wiki">accessors wiki pages</a>, which are used
+to document the accessor API and swarmlet hosts, nor the auto-generated
+<a href="http://usejsdoc.org/">JSDoc</a> JavaScript <a href="https://www.terraswarm.org/accessors/doc/jsdoc/index.html">code documentation</a>.
+</p><p>
+For anonymous read-only access, you can check out the repository using
+the command line (assuming you have SVN installed):
+  <pre>
+    svn co https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors
+  </pre>
+</p><p>
+For read-write access, you need a repo.eecs.berkeley.edu account,
+in which case you can check out a tree with:</p>
+  <pre>
+    svn co https://repo.eecs.berkeley.edu/svn/projects/terraswarm/accessors/trunk/accessors
+  </pre>
+</p><p>
+The <a href="/accessors">accessors web page</a> and web-accessible
+accessor library is updated every five minutes via a cronjob run as the vc user on
+moog.eecs.berkeley.edu that does a svn update.
+The output produced by this checkout is at <a href="/accessors/svn.out">svn.out</a>.
+</p><p>
+The JSDoc documentation files are updated by a Jenkins job
+(see <a href="/accessors/wiki/Main/JSDoc#CI">JSDoc Continuous Integration</a>).
+Note that Jenkins job is not world readable, but the details are world readable.
+</p><p>
+To update the web pages by hand, see
+<a href="http://terraswarm.org/terraswarm/faq/72.html">How do I update workgroup pages using SVN?</a>
+</p>
+</div> <!-- end onecolumn -->
+<!-- no need to close /body and /html here, it will be done for us -->

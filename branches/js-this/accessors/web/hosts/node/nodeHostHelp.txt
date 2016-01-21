@@ -1,0 +1,27 @@
+Commands:
+> exit      quit interactive host
+> help      display this file
+> quit      quit interactive host
+
+Top-Level Functions:
+> var a = instantiate(accessorName, accessorClass)    return an accessor instance
+
+Accessor Instance Fields:
+> a.accessorClass                    the full accessor class name, if known
+> a.accessorName                     the full accessor name, if known
+> a.inputList                        list of input names
+> a.outputList                       list of output names
+> a.parameterList                    list of parameter names
+
+Accessor Functions:
+> a.get(name)                        get the current value of an input.
+> a.getParameter(name)               get the current value of a parameter.
+> a.initialize()                     accessor initialize function, if defined.
+> a.react()                          react to inputs and fire().
+> a.latestOutput(name)               retrieve the latest value on an output.
+> a.provideInput(name, value)        provide an input to the accessor.
+> a.setParameter(name, value)        set the value of a parameter.
+> a.wrapup()                         accessor wrapup function, if defined.
+
+There are additional accessor fields that are not intended for interactive use.
+See documentation for the commonHost module for details.

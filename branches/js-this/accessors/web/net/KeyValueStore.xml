@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/obsolete/Accessor_1.dtd">
+<class name="KeyValueStore" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date$</version>
+  <author>Edward A. Lee</author>
+  <input
+    name="storeLocation"
+    value="http://localhost:8077/keyvalue"
+    type="string"/>
+  <input
+    name="key"
+    type="string"
+    description="Key to be updated or retrieved."/>
+  <input
+    name="remove"
+    type="boolean"
+    value="false"
+    description="If true, then remove the key from the store; otherwise, retrieve the value for the key."/>
+  <input
+    name="value"
+    type="string"
+    description="Value to store in the key-value store, or empty to not store anything."/>    
+  <output
+    name="result"
+    type="string"
+    description="Value retrieved from or written to the key-value store."/>    
+  <description type="text/html">
+    <![CDATA[
+This accessor reads or writes data to a key-value store web service.
+A URL for the service is specified by the <i>storeLocation</i> parameter.
+A Ptolemy II model that provides such a key-value store service can be found
+at <a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml</a>.
+A demo client that uses this accessor is provided at
+<a href="http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml">
+http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml</a>.
+<p>
+The key and the value are both text items provided as inputs.
+If <i>remove</i> is true and the <i>key</i> is non-empty, then upon firing, this actor
+will remove the specified key from the store, producing on its output the previous
+value (if any). If <i>remove</i> is false, then this actor will either set or
+retrieve a value in the key-value store, depending on whether the
+and the <i>value</i> input is non-empty. If the <i>value</i> is non-empty, then this
+actor sets the value. If it is empty, then this actor retrieves the value.
+<p>
+If an error occurs accessing the key-value store (e.g., no store is found at the specified
+URL, or no value is found with the specified key),
+then an exception is thrown.
+<p>
+This accessor assumes that the protocol implemented at that location matches
+the specification below for the default location:
+<ul>
+<li>To store a value with key MY_ID and value MY_VALUE, use
+<pre>
+   http://localhost:8077/keyvalue/set?id=MY_ID&value=MY_VALUE
+</pre>
+</li>
+<li>To retrieve the value, use
+<pre>
+   http://localhost:8077/keyvalue/get?id=MY_ID
+</pre>
+</li>
+<li>To remove a value, use
+<pre>
+   http://localhost:8077/keyvalue/delete?id=MY_ID
+</pre>
+</li>
+<p>
+</ul>
+The key and value are both
+encoded using the JavaScript encodeURIComponent() function,
+and on retrieval, decoded using decodeURIComponent(),
+and hence can include any text characters.
+    ]]>
+  </description>
+  <script type="text/javascript">
+    // <![CDATA[
+function fire() {
+    var store = get('storeLocation');
+    var theKey = get('key');
+    var toRemove = get('remove');
+    var theValue = get('value');
+    var url = store + '/get?id=' + theKey;
+    var produce;
+    if (toRemove) {
+       if (theKey != "") {
+           produce = readURL(url);
+           url = store + '/delete?id=' + theKey;
+           readURL(url);
+           if (produce != "") {
+               send('result', produce);
+           }
+        }
+    } else {
+        // toRemove == false. If there is a value, use it to set.
+        if (theValue != "") {
+            // FIXME: Escape theValue to make a valid URL.
+            url = store + '/set?id=' + encodeURIComponent(theKey) + '&value=' + encodeURIComponent(theValue);
+            readURL(url);
+            send('result', theValue);
+        } else {
+            var valueFromStore = decodeURIComponent(readURL(url));
+            send('result', valueFromStore);
+        }
+    }
+}
+    // ]]>
+  </script>
+</class>

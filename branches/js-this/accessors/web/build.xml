@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- $Id$ -->
+
+<project basedir="." default="build" name="accessors" 
+         >
+  <!-- We can refer to any environment variable FOO as ${env.FOO} -->
+  <property environment="env" />
+
+  <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
+  <property name="jsdoc.home" value="vendors/jsdoc" />
+
+  <target name="build"
+          depends="jsdoc, ptdoc"
+          description="Generate html and Ptdoc documentation.">
+  </target>
+
+  <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
+    <available property="vendors.jsdoc.exists" file="${jsdoc.home}/jsdoc"/>
+  </target>
+
+  <target name="cleanAll" 
+	  description="Remove the reports/ and doc/jsdoc directories.">
+    <delete quiet="true" verbose="no" includeemptydirs="true">
+      <fileset dir="${basedir}" includes="reports/**" defaultexcludes="false"/>
+      <fileset dir="${basedir}" includes="doc/jsdoc/**" defaultexcludes="false"/>
+    </delete>
+  </target>
+
+  <target name="jsdoc"
+          depends="vendors-jsdoc"
+          description="Run jsdoc to generate documentation for JavaScript files."
+          >
+    <echo>Invoke jsdoc to generate documentation for .js files.
+    The output appears in doc/jsdoc/index.html
+    </echo>
+    <exec executable="${jsdoc.home}/jsdoc"
+          timeout="10000"
+          >
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--destination" />
+      <arg value="doc/jsdoc" />
+      <arg value="--readme" />
+      <arg value="README.md" />
+      <arg value="--recurse" />
+      <arg value="--verbose" />
+      <arg value="." />
+    </exec>
+  </target>
+
+    <target name="ptdoc"
+          depends="vendors-jsdoc"
+          description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
+          >
+    <echo>Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
+    See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
+    See jsdoc/jsdoc.json
+    See jsdoc/plugins/accessorJSDocTags.js
+    See jsdoc/templates/ptdoc/publish.js
+    </echo>
+    <exec executable="${jsdoc.home}/jsdoc">
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--recurse" />
+      <arg value="--template" />
+      <arg value="jsdoc/templates/ptdoc" />
+      <arg value="--verbose" />
+      <arg value="." />
+    </exec>
+  </target>
+
+  <target name="vendors-jsdoc"
+	  depends="-check-vendors-jsdoc"
+	  description="Check out jsdoc using git to create vendors/jsdoc."
+	  unless="${vendors.jsdoc.exists}">
+    <echo> Clone the git repo.  We use an accessor-specific fork of https://github.com/terraswarm/jsdoc.git,
+    made on 12-Jun-2015 so that we can support @accessor, @input, @output, @parameter.
+    </echo>
+      <mkdir dir="${basedir}/vendors"/>
+      <exec dir="${basedir}/vendors"
+            executable="git">
+	<!-- We set LD_LIBRARY_PATH to "" and avoid
+     [exec] Cloning into 'jsdoc'...
+     [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
+     [exec]   CAfile: /etc/ssl/certs/ca-certificates.crt
+     [exec]   CApath: none
+     [exec] Result: 128
+	     -->
+	<env key="LD_LIBRARY_PATH"
+	     value=""/>
+        <arg value="clone"/>
+        <arg value="https://github.com/terraswarm/jsdoc.git"/>
+      </exec>
+  </target>
+
+    <target name="vendors-jsdoc-pull"
+	  depends="vendors-jsdoc"
+	  description="Do a git pull in vendors/jsdoc">
+      <exec dir="${basedir}/vendors/jsdoc"
+            executable="git">
+        <arg value="pull"/>
+      </exec>
+  </target>
+</project>

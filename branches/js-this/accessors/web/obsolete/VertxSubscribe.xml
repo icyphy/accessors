@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/obsolete/Accessor_1.dtd">
+<class name="VertxSubscribe" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date$</version>
+  <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
+  <require name="eventbus"/>
+  <input
+    name="address"
+    value="topic"
+    type="string"
+    description="The event bus address, or the name of the events to which to subscribe. This defaults to 'topic'."/>
+  <output
+    name="message"
+    type="JSON"
+    description="The message from the bus."/>
+  <input
+    name="reply"
+    value=""
+    type="JSON"
+    description="The reply to send back to the sender for point-to-point messages, or the empty string to send no reply."/>
+  <input
+    name="busHost"
+    value=""
+    type="string"
+    description="The name of the network interface to use for the Vert.x event bus. A blank string is interpreted as 'localhost'."/>
+  <input
+    name="busHostPort"
+    value="0"
+    type="int"
+    description="The port for the Vert.x event bus. A value of 0 indicates a default port of 25500."/>
+  <description type="text/html">
+    <![CDATA[
+This accessor subscribes to a Vert.x event bus, which is a peer-to-peer publish-and-subscribe system. This accessor will receive data that is sent by any subscriber that publishes to the same address and runs in the same Vertx cluster (see the VertxPublish accessor). The Vertx cluster normally includes all machines that hear multicast packets sent by the machine hosting this accessor.
+<p>
+The output produced by this accessor may be any data type supported by accessors that has a string representation in JSON syntax. The data sent by a VertxPublish accessor is first converted to a string in JSON format and sent to the event bus. This VertxSubscribe accessor will parse that string and output the data in the native format of its host.
+</p><p>
+If the reply input is set to a non-empty value, then whenever this accessor receives a point-to-point message from the event bus (see VertxPublish), then it will reply with the specified message, acknowledging receipt. The reply can also be any data type that has a JSON string representation.
+</p><p>
+The busHost input specifies the name of the network interface through which to connect to the Vert.x event bus cluster, and busHostPort specifies the port to use for this. Normally, you can leave these at their default values unless you need to need to use a network interface that is not 'localhost' or you need to use a particular port. These two inputs are examined only at initialization time, so changing them during execution of a swarmlet will have no effect.
+</p>
+	]]>
+  </description>
+  <script type="text/javascript">
+    // <![CDATA[
+var eventbus = require('eventbus');
+var bus;
+var currentAddress;
+
+var onReceived = function(msg) {
+    send('message', msg);
+}
+
+var addressHandle, replyHandle;
+
+exports.initialize = function() {
+    var port = get('busHostPort');
+    var host = get('busHost');
+    bus = new eventbus.VertxBus({'port':port, 'host':host});
+    currentAddress = get('address');
+    bus.subscribe(currentAddress);
+    bus.on(get('address'), onReceived);
+    var replyText = get('reply');
+    if (replyText) {
+        bus.setReply(replyText);
+    }
+    addressHandle = addInputHandler('address', function() {
+        var topic = get('address');
+        if (topic != currentAddress) {
+            bus.unsubscribe(currentAddress);
+            bus.subscribe(topic);
+        }
+    });
+
+    replyHandle = addInputHandler('reply', function() {
+        var replyText = get('reply');
+        if (replyText) {
+            bus.setReply(replyText);
+        } else {
+            bus.setReply(null);
+        }
+    });
+}
+
+exports.wrapup = function() {
+    bus.unsubscribe();
+    removeInputHandler('address', addressHandle);
+    removeInputHandler('reply', replyHandle);
+}
+  	// ]]>
+  </script>
+</class>

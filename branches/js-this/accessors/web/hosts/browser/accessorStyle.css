@@ -1,0 +1,93 @@
+/********** Following are specifically for accessor displays. *********/
+
+/* Directory will be light on dark. */
+.accessorDirectory {
+    padding: 10px;
+    font-size: 100%;
+    background-color: #252c58;
+    color: #f8da73;
+}
+/* Consistency with buttons. */
+.accessorButton {
+    font-size: 100%;
+    background-color: #f8da73;
+}
+/* So that 'reveal code' button appears to the right of the title. */
+#accessorTitle {
+    display: inline;
+}
+/* So that 'react to inputs' button appears to the right of the table title. */
+.accessorTableTitle {
+    display: inline;
+}
+/* So that there is spacing before the table titles. */
+.accessorTableTitle:before {
+    margin-top: 10px;
+}
+/* Table style. */
+.accessorTableHeader {
+    background-color: #252c58;
+    color: #f8da73;
+    text-align: left;
+    padding: 3px;
+    border: 1px solid lightgrey;
+}
+.accessorTable {
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+.accessorTableData {
+    border: 1px solid lightgrey;
+    padding: 3px;
+}
+.accessorTableRow {
+    background-color: #f0f5ff;
+}
+.accessorTableRow:hover {
+    background-color: #ffffcc;
+}
+/* Song and dance here required to get table cell to stretch, but not overrun the border. */
+.valueInputBox {
+    font-size: 100%;
+    display:table-cell;
+    width:100%;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+/* Ensure that documentation doesn't occupy more than 50% of the width of the table. */
+.accessorDocumentation {
+    width: 50%;
+}
+
+/* Style for contained accessors. */
+.containedAccessor {
+    background-color: #eeffee;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+/* Style for pretty printed JavaScript. */
+.prettyprint {
+    background-color: #eeffff;
+}
+
+/* Style for error messages. */
+.accessorError {
+    color: #cc1111;
+}
+
+/* Style for warning messages. */
+.accessorWarning {
+    color: #991111;
+}
+
+/* Put buttons at the right. */
+#revealCode, #reactToInputs {
+    float: right;
+}
+
+
+

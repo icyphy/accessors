@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://www.terraswarm.org/accessors/renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "http://www.terraswarm.org/accessors/obsolete/Accessor_1.dtd">
+<class name="StockTick" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date$</version>
+  <author>Edward A. Lee</author>
+  <input
+    name="symbol"
+    value="YHOO"
+    type="string"
+    description="The stock symbol."/>
+  <output
+    name="price"
+    type="number"
+    description="The most recent stock price (bid)."/>       
+  <description type="text/html">
+    <![CDATA[
+This accessor, when fired, reads the most recent trade price for the specified stock symbol from a Yahoo server.
+    ]]>
+  </description>
+  <require name="httpClient"/>
+  <script type="text/javascript">
+    // <![CDATA[
+// This accessor requires the optional 'httpClient' module, which may or may
+// not be provided by an accessor host. Most hosts will provide this module.
+var http = require('httpClient');
+
+function getPrice() {
+    // Read the current value of the 'symbol' input.
+    var stock = get('symbol');
+    // Construct a URL to obtain a stock price.
+    var url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22"
+        + stock
+        + "%22)%0A%09%09&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json";
+    // Request a stock price, and provide a function to handle the response.
+    http.get(url, function(response) {
+        // Assuming the response is JSON, parse it.
+        var json = JSON.parse(response.body);
+        // Extract the last trade price from the JSON record.
+        var price = parseFloat(json.query.results.quote.LastTradePriceOnly);
+        // Send the price to the 'price' output.
+        send('price', price);
+    });
+}
+
+var handle = null;
+
+exports.initialize = function() {
+    // Invoke the getPrice function each time a 'symbol' input arrives.
+    handle = addInputHandler('symbol', getPrice);
+}
+
+exports.wrapup = function() {
+    // Failing to do this will likely trigger an exception when the model stops running,
+    // because the getPrice() function will attempt to send an output after the model
+    // has stopped.
+    removeInputHandler(handle, 'symbol');
+}
+    // ]]>
+  </script>
+</class>
