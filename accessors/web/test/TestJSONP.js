@@ -32,7 +32,7 @@
  *  For more details on cross-origin requests please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor test/TestJSONPAccessor
+ *  @accessor test/TestJSONP
  *  @author Elizabeth Osyk
  */
 
@@ -44,7 +44,7 @@ exports.setup = function() {
 }
 
 exports.fire = function() {
-    console.log('TestJSONPAccessor fired.');
+    console.log('TestJSONP fired.');
 }
 
 exports.initialize = function() {
