@@ -187,9 +187,9 @@ exports.issueCommand = function(callback) {
     } else {
         command.url.path = '/' + encodedPath;
     }
-    command.timeout = get('timeout');
+    command.timeout = getParameter('timeout');
 
-    if (get('outputCompleteResponseOnly') === false) {
+    if (getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
     
@@ -208,6 +208,7 @@ exports.issueCommand = function(callback) {
     
     request = httpClient.request(command, contextCallback);
     request.on('error', function(message) {
+    	console.log("REST found error");
         if (!message) {
             message = 'Request failed. No further information.';
         }
