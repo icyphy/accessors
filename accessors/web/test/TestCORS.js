@@ -29,7 +29,7 @@
  *  For more details please see: 
  *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor test/TestCORSAccessor
+ *  @accessor test/TestCORS
  *  @author Elizabeth Osyk
  */
 
@@ -41,7 +41,7 @@ exports.setup = function() {
 }
 
 exports.fire = function() {
-    console.log('TestCORSAccessor fired.');
+    console.log('TestCORS fired.');
 }
 
 exports.initialize = function() {
