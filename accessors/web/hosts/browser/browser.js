@@ -331,6 +331,97 @@ function generateAccessorHTML(path, id) {
         }
         throw "httpRequest did not complete: " + url;
     }
+    
+    /** Fetch and execute a module or accessor whose functionality is given in JavaScript at
+     *  the specified path on the server. The path will be requested from the same server
+     *  that served the page executing this script. If no callback function is given,
+     *  then a synchronous (blocking) request will be made (best to avoid this in a web page).
+     *  If a callback function is given, then after receiving and evaluating the
+     *  JavaScript code, the callback function will be invoked.
+     *
+     *  If the path begins with a '/' or './', then it will be interpreted as the path
+     *  to a resource provided by the web server serving this swarmlet host.
+     *  Otherwise, it will be interpreted as the name of a module provided by this
+     *  swarmlet host.
+     * 
+     *  The returned object includes any properties
+     *  that have been added to the 'exports' property in the specified code.
+     *  For example, if the module is to export a function, the code
+     *  could define the function as follows:</p>
+     *
+     *  ```javascript
+     *   exports.myFunction = function() {...};
+     *  ```
+     *
+     *  Alternatively, the code can explicitly define
+     *  the exports object as follows:
+     *
+     *  ```javascript
+     *   var myFunction = function() {...};
+     *   module.exports = {
+     *       myFunction : myFunction
+     *   };
+     *  ```
+     *
+     *  The module can be an accessor. If the module or accessor
+     *  fails to load and no callback is given, then an exception will be thrown.
+     *  The caller should catch this exception and generate appropriate HTML content.
+     *
+     *  This implementation is inspired by the requires() function implemented
+     *  by Walter Higgins, found here:
+     *
+     *    https://github.com/walterhiggins/commonjs-modules-javax-script
+     *
+     *  @param path The code to fetch (a JavaScript file or module name).
+     *  @param id The id on the page for which the module is needed.
+     *  @param callback The callback function, which gets two arguments: an error
+     *   message (or null if the request succeeded) and the response JavaScript text.
+     *   If this argument is omitted or null, then the path is retrieved synchronously
+     *   and either the JavaScript text will be returned or an exception will be thrown.
+     *  @see http://nodejs.org/api/modules.html#modules_the_module_object
+     *  @see also: http://wiki.commonjs.org/wiki/Modules
+     */
+    function loadFromServer(path, id, callback) {
+    	
+        var evaluate = function(code) {
+            // Create the exports object to be populated.
+        	// Some libraries overwrite module.exports instead of adding to exports.
+        	var module = {};
+        	module.exports = {};
+        	var exports = module.exports;
+            
+            // In strict mode, eval() cannot modify the scope of this function.
+            // Hence, we wrap the code in the function, and will pass in the
+            // exports object that we want the code to modify.
+            var wrapper = eval('(function(exports) {' + code + '})');
+        
+            // Populate the exports field.
+            wrapper(module.exports);
+            return module.exports;
+        }
+        if (callback) {
+            // The third argument states that unless the path starts with '/'
+            // or './', then the path should be searched for in the modules directory.
+            getJavaScript(path, function(err, code) {
+                if (err) {
+                    callback(err, code);
+                } else {
+                    try {
+                        callback(null, evaluate(code));
+                    } catch (err) {
+                        callback(err, null);
+                    }
+                }
+            }, true);
+        } else {
+            // Synchronous execution.
+            // This could throw an exception.
+            // The third argument states that unless the path starts with '/'
+            // or './', then the path should be searched for in the modules directory.
+            var code = getJavaScript(path, null, true);
+            return evaluate(code);
+        }
+    }
 
     // Print a message to the console.
     // @param message The message that is passed
@@ -1133,97 +1224,6 @@ function initializeIfNecessary(instance) {
             return;
         }
         instance.initialized = true;
-    }
-}
-
-/** Fetch and execute a module or accessor whose functionality is given in JavaScript at
- *  the specified path on the server. The path will be requested from the same server
- *  that served the page executing this script. If no callback function is given,
- *  then a synchronous (blocking) request will be made (best to avoid this in a web page).
- *  If a callback function is given, then after receiving and evaluating the
- *  JavaScript code, the callback function will be invoked.
- *
- *  If the path begins with a '/' or './', then it will be interpreted as the path
- *  to a resource provided by the web server serving this swarmlet host.
- *  Otherwise, it will be interpreted as the name of a module provided by this
- *  swarmlet host.
- * 
- *  The returned object includes any properties
- *  that have been added to the 'exports' property in the specified code.
- *  For example, if the module is to export a function, the code
- *  could define the function as follows:</p>
- *
- *  ```javascript
- *   exports.myFunction = function() {...};
- *  ```
- *
- *  Alternatively, the code can explicitly define
- *  the exports object as follows:
- *
- *  ```javascript
- *   var myFunction = function() {...};
- *   module.exports = {
- *       myFunction : myFunction
- *   };
- *  ```
- *
- *  The module can be an accessor. If the module or accessor
- *  fails to load and no callback is given, then an exception will be thrown.
- *  The caller should catch this exception and generate appropriate HTML content.
- *
- *  This implementation is inspired by the requires() function implemented
- *  by Walter Higgins, found here:
- *
- *    https://github.com/walterhiggins/commonjs-modules-javax-script
- *
- *  @param path The code to fetch (a JavaScript file or module name).
- *  @param id The id on the page for which the module is needed.
- *  @param callback The callback function, which gets two arguments: an error
- *   message (or null if the request succeeded) and the response JavaScript text.
- *   If this argument is omitted or null, then the path is retrieved synchronously
- *   and either the JavaScript text will be returned or an exception will be thrown.
- *  @see http://nodejs.org/api/modules.html#modules_the_module_object
- *  @see also: http://wiki.commonjs.org/wiki/Modules
- */
-function loadFromServer(path, id, callback) {
-	
-    var evaluate = function(code) {
-        // Create the exports object to be populated.
-    	// Some libraries overwrite module.exports instead of adding to exports.
-    	var module = {};
-    	module.exports = {};
-    	var exports = module.exports;
-        
-        // In strict mode, eval() cannot modify the scope of this function.
-        // Hence, we wrap the code in the function, and will pass in the
-        // exports object that we want the code to modify.
-        var wrapper = eval('(function(exports) {' + code + '})');
-    
-        // Populate the exports field.
-        wrapper(module.exports);
-        return module.exports;
-    }
-    if (callback) {
-        // The third argument states that unless the path starts with '/'
-        // or './', then the path should be searched for in the modules directory.
-        getJavaScript(path, function(err, code) {
-            if (err) {
-                callback(err, code);
-            } else {
-                try {
-                    callback(null, evaluate(code));
-                } catch (err) {
-                    callback(err, null);
-                }
-            }
-        }, true);
-    } else {
-        // Synchronous execution.
-        // This could throw an exception.
-        // The third argument states that unless the path starts with '/'
-        // or './', then the path should be searched for in the modules directory.
-        var code = getJavaScript(path, null, true);
-        return evaluate(code);
     }
 }
 
