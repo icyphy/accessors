@@ -74,7 +74,7 @@ exports.setup = function() {
 };
 
 exports.initialize = function() {
-    addInputHandler('input', function() {
+    this.addInputHandler('input', function() {
         var options = get('options');
         var image = get('input');
         var result = motionDetector.filter(image, options);

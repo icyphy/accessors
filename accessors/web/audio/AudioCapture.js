@@ -56,7 +56,7 @@ function record() {
 }
 
 exports.initialize = function() { 
-    handle = addInputHandler("trigger",record); 
+    handle = this.addInputHandler("trigger",record); 
     recorder = new audio.Capture(); 
 };
 

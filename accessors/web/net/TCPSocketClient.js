@@ -343,7 +343,7 @@ exports.initialize = function () {
     client.on('error', function (message) {
         error(message);
     });
-    addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
 };
 
 /** Send false to 'connected' output, and if 'reconnectOnClose'

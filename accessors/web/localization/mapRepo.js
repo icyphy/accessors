@@ -52,21 +52,21 @@ var mapDataHandle = null;
 var mapManager = null;
 
 exports.setup = function(){
-	input('report');
-	input('clear');
-	input('mapData', {'type' : 'JSON'});
-	output('repoData', {'type' : 'JSON'} );
+	this.input('report');
+	this.input('clear');
+	this.input('mapData', {'type' : 'JSON'});
+	this.output('repoData', {'type' : 'JSON'} );
 };
 
 exports.initialize = function(){
-	reportHandle = addInputHandler('report', this.reportInputHandler); 
-	clearHandle = addInputHandler('clearHandle', this.clearInputHandler);
-	mapDataHandle = addInputHandler('mapData', this.mapDataInputHandler);
+	reportHandle = this.addInputHandler('report', this.reportInputHandler); 
+	clearHandle = this.addInputHandler('clearHandle', this.clearInputHandler);
+	mapDataHandle = this.addInputHandler('mapData', this.mapDataInputHandler);
 };
 
 
 exports.reportInputHandler = function(){
-	send("repoData", mapManager.localRepoToJSONString());
+	this.send("repoData", mapManager.localRepoToJSONString());
 };
 
 
@@ -83,15 +83,15 @@ exports.mapDataInputHandler = function(){
 
 exports.wrapup = function(){
 	if(reportHandle !==null){
-		removeInputHandler(reportHandle);
+		this.removeInputHandler(reportHandle);
 		reportHandle = null;
 	}
 	if(clearHandle !==null){
-		removeInputHandler(clearHandle);
+		this.removeInputHandler(clearHandle);
 		clearHandle = null;
 	}
 	if(mapDataHandle !==null){
-		removeInputHandler(mapDataHandle);
+		this.removeInputHandler(mapDataHandle);
 		mapDataHandle = null;
 	}
 };

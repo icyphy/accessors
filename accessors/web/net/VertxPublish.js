@@ -101,7 +101,7 @@ exports.initialize = function() {
     var host = get('busHost');
     bus = new eventbus.VertxBus({'port':port, 'host':host});
     
-    handle = addInputHandler('message', function() {
+    handle = this.addInputHandler('message', function() {
         var topic = get('address');
         var msg = get('message');
         var all = get('broadcast');

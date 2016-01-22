@@ -85,7 +85,7 @@ exports.initialize = function() {
     }
 
     // Handle location information.
-    addInputHandler('location', function() {
+    this.addInputHandler('location', function() {
         var location = get('location');
         if (location &&
                 typeof location.latitude === 'number' &&

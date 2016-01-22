@@ -286,7 +286,7 @@ function getReachableLights() {
       handlers.push(addInputHandler('transitionTime', inputHandler));
       handlers.push(addInputHandler('lightID', inputHandler));
     */
-    triggerHandle = addInputHandler('trigger', inputHandler);
+    triggerHandle = this.addInputHandler('trigger', inputHandler);
 }
 
 /** Get light settings from inputs and PUT */

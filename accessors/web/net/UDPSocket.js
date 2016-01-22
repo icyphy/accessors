@@ -68,7 +68,7 @@ exports.initialize = function() {
     socket.on('message', onMessage);
     var port = get('port');
     socket.bind(port);
-    addInputHandler('toSend', function() {
+    this.addInputHandler('toSend', function() {
         var message = get('toSend');
         socket.send(message);
     });

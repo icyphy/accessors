@@ -54,7 +54,7 @@ exports.append = function(data) {
 exports.initialize = function() {
     var logname = getParameter('logname');
     log = GDP.GDP(logname, 2);
-    handle = addInputHandler('trigger', this.append);
+    handle = this.addInputHandler('trigger', this.append);
 };
 
 exports.wrapup = function() {

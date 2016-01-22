@@ -375,7 +375,7 @@ exports.initialize = function () {
     var callObj = this;
     // Bind the input handler to caller's object so that when it is invoked,
     // it is invoked in the context of that object and not this one.
-    addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
 };
 
 /** Close all sockets, unregister event listeners, and close the server.

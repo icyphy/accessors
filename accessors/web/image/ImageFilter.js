@@ -64,7 +64,7 @@ exports.setup = function() {
 
 var handle = null;
 exports.initialize = function() {
-    handle = addInputHandler('input', function() {
+    handle = this.addInputHandler('input', function() {
         var options = get('options');
         var image = get('input');
         var result = imageFilters.filter(image, getParameter('filter'), options);

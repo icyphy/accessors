@@ -133,11 +133,11 @@ exports.initialize = function() {
 	
 	/** React to a change in the bridge state by outputting the new state.  */
 	connection.on('change', function(data) {
-		send('state', data);
+		this.send('state', data);
 	});
   
 	// Register input handler
-	handle = addInputHandler('URI', inputHandler);
+	handle = this.addInputHandler('URI', inputHandler);
 };
 
 /** Input HTTP request information and generate a response from the bridge.  */

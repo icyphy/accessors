@@ -151,7 +151,7 @@ exports.initialize = function() {
     }
     running = true;
 
-    handle = addInputHandler('toSend', function() {
+    handle = this.addInputHandler('toSend', function() {
         var data = get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
