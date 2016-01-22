@@ -208,7 +208,6 @@ exports.issueCommand = function(callback) {
     
     request = httpClient.request(command, contextCallback);
     request.on('error', function(message) {
-    	console.log("REST found error");
         if (!message) {
             message = 'Request failed. No further information.';
         }
