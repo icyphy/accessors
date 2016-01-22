@@ -98,18 +98,18 @@ exports.setup = function () {
     input('toSend');
     output('received');
 
-	parameter('baudRate', {
+	this.parameter('baudRate', {
 		'type': 'int',
 		'value': 9600
 	});
-	parameter('port', {
+	this.parameter('port', {
 		'type':'string',
 	});
-	parameter('receiveType', {
+	this.parameter('receiveType', {
 		'type': 'string',
 		'value': 'string',
 	});
-	parameter('sendType', {
+	this.parameter('sendType', {
 		'type':'string',
 		'value': 'string',
 	});
@@ -117,7 +117,7 @@ exports.setup = function () {
     // if the socket module is not supported by the host.
     try {
         var serialPorts = xbee.hostSerialPorts();
-    	parameter('port', {
+    	this.parameter('port', {
     		'options': serialPorts,
 		    'value': serialPorts[serialPorts.length - 1]
 	    });
@@ -144,20 +144,20 @@ exports.toSendInputHandler = function () {
  */
 exports.initialize = function() {
 	port = new xbee.XBee(
-		get('port'), {
+		this.get('port'), {
 		    'baudRate': getParameter('baudRate'),
 			'receiveType': getParameter('receiveType'),
 			'sendType': getParameter('sendType'),
 		});
 		
 	port.on('data', function(data) {
-		send('received', data);
+		this.send('received', data);
 	});
 		
     // Record the object that calls it (could be a derived accessor).
     var callObj = this;
 
-    addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
 };
 
 /** Close the web socket connection. */

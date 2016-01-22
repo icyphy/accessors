@@ -211,7 +211,7 @@ exports.initialize = function () {
     });
     //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
-        inputHandle = addInputHandler('toSend', this.toSendInputHandler);
+        inputHandle = this.addInputHandler('toSend', this.toSendInputHandler);
     }
 };
 

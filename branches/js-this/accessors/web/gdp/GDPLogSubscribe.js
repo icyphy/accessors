@@ -59,7 +59,7 @@ exports.initialize = function() {
     var logname = getParameter('logname');
     log = new GDP.GDP(logname, 1);
     log.subscribe(getParameter('startrec'), getParameter('numrec'));
-    handle = addInputHandler('trigger', this.get_next_data);
+    handle = this.addInputHandler('trigger', this.get_next_data);
 };
 
 exports.wrapup = function() {

@@ -148,7 +148,7 @@ exports.initialize = function() {
     // to issue an HTTP request based on the current inputs.
     this.ssuper.initialize();
     // Add a handler for the 'input' input.
-    addInputHandler(
+    this.addInputHandler(
 	'input',
 	function() {
 	    // construct the URL for the selected service
@@ -167,7 +167,7 @@ exports.initialize = function() {
 		var arg = {"access_token" : getParameter('accessToken')};
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" +
 			    arg);
-		send('arguments', arg);
+		this.send('arguments', arg);
 	    }
 
 	    // ex. of valid json format for reference
@@ -211,23 +211,23 @@ function getFirebaseData(response) {
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
-	send('microwave', result.Microwave);
+	this.send('microwave', result.Microwave);
 	// console.log("ContextAwareTest filterResponse() " +
 	// JSON.stringify(result.Microwave));
 	break;
     case "microwaveStatus":
-	send('microwaveStatus',  result.Microwave.status);
+	this.send('microwaveStatus',  result.Microwave.status);
 	break;
     case "pastValues":
-	send('pastValues', result.Microwave.pastValues);
+	this.send('pastValues', result.Microwave.pastValues);
 	break;
     case "all":
-	send('microwave', result.Microwave);
-	send('microwaveStatus',  result.Microwave.status);
-	send('pastValues', result.Microwave.pastValues);
+	this.send('microwave', result.Microwave);
+	this.send('microwaveStatus',  result.Microwave.status);
+	this.send('pastValues', result.Microwave.pastValues);
 	break;
     default:
-	send('microwave', result.Microwave);
+	this.send('microwave', result.Microwave);
     }
 }
 
@@ -241,23 +241,23 @@ function getParaimpuData(response) {
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
-	send('payload', result.payload);
+	this.send('payload', result.payload);
 	// console.log("ContextAwareTest filterResponse() " +
 	// JSON.stringify(result.payload));
 	break;
     case "sensorId":
-	send('sensorId', result.thingId);
+	this.send('sensorId', result.thingId);
 	break;
     case "producer":
-	send('producer', result.producer);
+	this.send('producer', result.producer);
 	break;
     case "all":
-	send('payload', result.payload);
-	send('sensorId', result.thingId);
-	send('producer', result.producer);
+	this.send('payload', result.payload);
+	this.send('sensorId', result.thingId);
+	this.send('producer', result.producer);
 	break;
     default:
-	send('response', result);
+	this.send('response', result);
     }
 }
 

@@ -96,7 +96,7 @@ exports.initialize = function () {
     camera.setViewSize(getParameter('viewSize'));
     camera.open();
     if (getParameter('triggered')) {
-        handle = addInputHandler('trigger', function () {
+        handle = this.addInputHandler('trigger', function () {
             send('image', camera.snapshot());
         });
     } else {

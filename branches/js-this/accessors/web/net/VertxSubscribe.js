@@ -105,7 +105,7 @@ exports.initialize = function() {
     if (replyText !== null && replyText !== '') {
         bus.setReply(replyText);
     }
-    addressHandle = addInputHandler('address', function() {
+    addressHandle = this.addInputHandler('address', function() {
         var topic = get('address');
         if (topic != currentAddress) {
             bus.unsubscribe(currentAddress);
@@ -113,7 +113,7 @@ exports.initialize = function() {
         }
     });
 
-    replyHandle = addInputHandler('reply', function() {
+    replyHandle = this.addInputHandler('reply', function() {
         var replyText = get('reply');
         if (replyText) {
             bus.setReply(replyText);

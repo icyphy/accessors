@@ -101,7 +101,7 @@ exports.initialize = function () {
     var serviceParam; //the input that is needed for the options port in REST
     
     // Add a handler for the 'input' input.
-    handle = addInputHandler('input', function() {
+    handle = this.addInputHandler('input', function() {
         console.log("ContextAwareTest.js input handler start");
         serviceParam = contextAwareService.discoverServices();
 	console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
@@ -156,22 +156,22 @@ function getFirebaseData(response) {
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
-	send('microwave', result.Microwave);
+	this.send('microwave', result.Microwave);
 	console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave));
 	break;
     case "microwaveStatus":
-	send('microwaveStatus',  result.Microwave.status);
+	this.send('microwaveStatus',  result.Microwave.status);
 	break;
     case "pastValues":
-	send('pastValues', result.Microwave.pastValues);
+	this.send('pastValues', result.Microwave.pastValues);
 	break;
     case "all":
-	send('microwave', result.Microwave);
-	send('microwaveStatus',  result.Microwave.status);
-	send('pastValues', result.Microwave.pastValues);
+	this.send('microwave', result.Microwave);
+	this.send('microwaveStatus',  result.Microwave.status);
+	this.send('pastValues', result.Microwave.pastValues);
 	break;
     default:
-	send('microwave', result.Microwave);
+	this.send('microwave', result.Microwave);
     }
 }
 /** filter the response from Paraimpu
@@ -181,22 +181,22 @@ function getParaimpuData(response) {
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
-	send('payload', result.payload);
+	this.send('payload', result.payload);
 	console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.payload));
 	break;
     case "thingId":
-	send('sensorId', result.thingId);
+	this.send('sensorId', result.thingId);
 	break;
     case "producer":
-	send('producer', result.producer);
+	this.send('producer', result.producer);
 	break;
     case "all":
-	send('payload', result.payload);
-	send('sensorId', result.thingId);
-	send('producer', result.producer);
+	this.send('payload', result.payload);
+	this.send('sensorId', result.thingId);
+	this.send('producer', result.producer);
 	break;
     default:
-	send('response', result);
+	this.send('response', result);
     }
 }
 
@@ -219,17 +219,17 @@ function getGSNData(response) {
 	break;
     case "sensorName":
 	//send('sensorName', result."virtual-sensor"[2].name);
-	send('sensorName', result['virtual-sensor'][2].name);
+	this.send('sensorName', result['virtual-sensor'][2].name);
 	break;
     case "all":
 	//send('sound', result."virtual-sensor"[2].field[2]);
-	send('sound', result['virtual-sensor'][2].field[2]);
+	this.send('sound', result['virtual-sensor'][2].field[2]);
 	//send('sensorName', result."virtual-sensor"[2].name);
         send('sensorName', result['virtual-sensor'][2].name);
 	break;
     default:
 	//send('response', result."virtual-sensor");
-	send('response', result['virtual-sensor']);
+	this.send('response', result['virtual-sensor']);
     }
 }
 

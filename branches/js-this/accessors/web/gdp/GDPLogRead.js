@@ -53,7 +53,7 @@ exports.read = function() {
 exports.initialize = function() {
     var logname = getParameter('logname');
     log = GDP.GDP(logname, 1);
-    handle = addInputHandler('trigger', this.read);
+    handle = this.addInputHandler('trigger', this.read);
 };
 
 exports.wrapup = function() {

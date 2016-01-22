@@ -76,7 +76,7 @@ var handle;
  *  local area network.
  */
 exports.initialize = function () {
-    handle = addInputHandler('hostIP', function() {
+    handle = this.addInputHandler('hostIP', function() {
 	if (get('useNmap')) {
 	    ds.discoverDevices(get('hostIP'), 'nmap');
 	} else {

@@ -125,7 +125,7 @@ exports.setup = function() {
 
 var handle;
 exports.initialize = function() {
-    handle = addInputHandler('input', function() {
+    handle = this.addInputHandler('input', function() {
         var options = get('options');
         var image = get('input');
         var result = aprilTags.filter(image, options);

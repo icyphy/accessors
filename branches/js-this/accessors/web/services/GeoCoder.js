@@ -81,7 +81,7 @@ exports.initialize = function() {
         throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
     }
     // Handle location information.
-    addInputHandler('address', function() {
+    this.addInputHandler('address', function() {
         var address = get('address');
         if (address) {
             // arguments is a reserved word, so we use args.

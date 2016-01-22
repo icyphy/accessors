@@ -61,7 +61,7 @@ exports.setup = function() {
     type: "string",
     value: ""
   });
-	input('HostPort', {
+	this.input('HostPort', {
     type: "string",
     value: ""
   });
@@ -89,7 +89,7 @@ exports.initialize = function() {
    }
 
    url = "http://" + ipAddress + ":" + port;  
-   handle = addInputHandler('dataType', getData);
+   handle = this.addInputHandler('dataType', getData);
 };
 
 /* Get data over REST based on dataType input */
@@ -97,19 +97,19 @@ function getData(){
 	var type = get('dataType');
 	switch(type){
 		case "ibeacon":
-			send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
+			this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
 			break;
 		case "alps":
-			send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
+			this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
 			break;
 		case "imu":
-			send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
+			this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
 			break;
 		case "wifi":
-			send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
+			this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
 			break;
 		case "location":
-			send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+			this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
 			break;
 		case "all":
 			getAll();
@@ -121,10 +121,10 @@ function getData(){
 
 /* Get all location/sensor data */
 function getAll() {
-   	send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
-   	send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
-   	send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
-   	send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
-   	send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+   	this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
+   	this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
+   	this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
+   	this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
+   	this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
 }
 	

@@ -45,7 +45,7 @@ var dsp = require("dsp");
 var handle = null;
 
 exports.initialize = function() { 
-    handle = addInputHandler('signalIn',processSignal); 
+    handle = this.addInputHandler('signalIn',processSignal); 
     var n = 0; 
     dspEngine = new dsp.Signal();   
 };

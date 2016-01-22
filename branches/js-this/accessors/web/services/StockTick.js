@@ -80,7 +80,7 @@ exports.initialize = function() {
     this.ssuper.initialize();
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    addInputHandler('symbol', function() {
+    this.addInputHandler('symbol', function() {
         // Read the current value of the 'symbol' input.
         var stock = get('symbol');        
         var args = get('arguments');

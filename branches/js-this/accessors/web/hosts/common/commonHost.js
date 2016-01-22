@@ -151,7 +151,7 @@
  *  * **anyInputHandlers**: An array of input handlers to be invoked
  *    when any input arrives (the name argument of addInputHandler is null).
  *  * **inputHandlersIndex**: An object indexed by handler id (returned
- *    by addInputHandler()) that contains objects of the form
+ *    by this.addInputHandler()) that contains objects of the form
  *    {'name': nameOfInput, 'index': arrayIndexOfHandler}.
  *    This is used by removeInputHandler(). If the handler is one
  *    for any input, then nameOfInput is null and arrayIndexOfHandler

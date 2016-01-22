@@ -73,7 +73,7 @@ exports.setup = function() {
 };
 
 exports.initialize = function() {
-    addInputHandler('image', function() {
+    this.addInputHandler('image', function() {
         var image = get('image');
         var options = get('options');
         if (!options) {

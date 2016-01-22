@@ -58,7 +58,7 @@ exports.setup = function () {
 /** Upon receiving a trigger input, output the host machine's IP address.
  */
 exports.initialize = function () {
-	addInputHandler('trigger', function() {
-		send('IPAddress', ds.getHostAddress());
+	this.addInputHandler('trigger', function() {
+		this.send('IPAddress', ds.getHostAddress());
 	});
 };
