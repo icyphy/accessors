@@ -4,14 +4,12 @@
     "TestBaseC.js",
     "TestComposite.js",
     "TestCompositeSpontaneous.js",
-    "TestCORS.js",
     "TestDerivedAgainA.js",
     "TestDerivedC.js",
     "TestFunctions.js",
     "TestGain.js",
     "TestImplement.js",
     "TestInheritance.js",
-    "TestJSONP.js",
     "TestRequire.js",
     "TestSpontaneous.js"
 ]
