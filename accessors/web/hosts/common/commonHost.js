@@ -38,12 +38,15 @@
  *  host) can use this module to implement common functionality that is realizable
  *  in pure JavaScript.
  *
- *  Specifically, this module provides a constructor for instantiating accessors,
- *  and a convenience function that takes as an argument the fully qualified accessor
- *  class name (**instantiateAccessor**), such as 'net/REST'.
+ *  Instantiating Accessors
+ *  -----------------------
  *
- *  For these functions to be able to instantiate an accessor
- *  given only its class, the host needs to provide as an argument to new Accessor() or
+ *  Specifically, this module provides a constructor for instantiating accessors,
+ *  and a convenience function (**instantiateAccessor**) that takes as an argument
+ *  the fully qualified accessor class name, such as 'net/REST'.
+ *
+ *  For these functions to be able to instantiate an accessor given only its class name,
+ *  the host needs to provide as an argument to new Accessor() or
  *  instantiateAccessor() a function, here designated getAccessorCode(), that
  *  will retrieve the accessor source code given the class name. This cannot be done
  *  in a host-independent way. For example, ```getAccessorCode('net/REST')```
@@ -67,6 +70,46 @@
  *  to handle provided inputs. It then invokes all input handlers that have been
  *  registered to handle any input.  Finally, it invokes the fire() function of the
  *  accessor, if one is defined.
+ *
+ *  Extend and Implement
+ *  --------------------
+ *
+ *  If a getAccessorCode() function is provided, then this implementation supports
+ *  the **extend**() and **implement**() functions. An accessor A extends an accessor
+ *  B if it includes in its setup() function a statement like:
+ *
+ *      this.extend(B);
+ *
+ *  In this case, there will be two accessor instances created, one for A and one for
+ *  B. Somewhat confusingly, A will be the prototype of B. This may seem backwards,
+ *  but there is a good reason for it. B omits several key properties, such as its
+ *  lists of inputs, outputs, and parameters. And thus, when the setup() function of
+ *  B creates an input, that input becomes an input of A.  Accessor A can reference
+ *  the instance of B as A.ssuper.  The exported functions of B are accessible via
+ *  as A.ssuper.exports.
+ *
+ *  Accessor A **implements** accessor B if its setup function includes:
+ *
+ *      this.implement(B);
+ *
+ *  This case is similar, in that A becomes the prototype of B, but the instance of
+ *  B is not available to A. The only interaction between the two is that when the
+ *  setup() function of B is invoked, it will again create inputs, outputs, and
+ *  parameters in A rather than in its own instance.
+ *
+ *  If A extends B, then the exports property of B becomes the prototype of the
+ *  exports property of A.  This is the reverse of the prototype chain for the
+ *  accessor instance itself. The reason for this is that B may define 'base-class'
+ *  functions and properties that may or may not be overridden by A. These should
+ *  be declared as exported properties.  For example, if B has a property:
+ *
+ *      exports.foo = 10;
+ *
+ *  Then A can refer to foo as `exports.foo`. A can also override the value of
+ *  foo by just writing to it.
+ *
+ *  Composite Accessors
+ *  -------------------
  *
  *  If a getAccessorCode() function is provided, then this implementation supports
  *  composite accessors, which can instantiate other accessors (instantiate()) and
@@ -98,6 +141,9 @@
  *  marked output, then the cycle is a causality loop. There is no way to determine
  *  the order in which accessors should react.
  *
+ *  Spontaneous Accessors
+ *  ---------------------
+ *
  *  An accessor need not have any inputs. In this case, an invocation of react()
  *  will not invoke any input handlers (there cannot be any) and will only invoke the
  *  fire() function.  Even with no fire() function, such an accessor can produce outputs
@@ -109,8 +155,13 @@
  *  the composite accessor will automatically react. Hence, the contained spontaneous
  *  accessor can trigger reactions of other contained accessors.
  *
- *  The two instantiate functions can also be provided a set of function
- *  bindings that will override the defaults in this implementation.
+ *  Overriding Function Bindings
+ *  ----------------------------
+ *
+ *  A particular accessor host (such as the browser host or Node.js host) can
+ *  provide an accessor instance with specific implementations of various functions
+ *  that the accessor invokes. Such custom function
+ *  bindings will override the defaults in this implementation.
  *  The most useful ones to override are probably these:
  *
  *  * **require**: The host's implementation of the require function.
@@ -135,9 +186,11 @@
 'use strict';
 
 /** Create (using new) an accessor instance whose interface and functionality is given by
- *  the specified code. Specifically, the created object includes at least the following
- *  properties:
+ *  the specified code. This will evaluate the specified code, and if it exports a
+ *  setup() function, invoke that function. The created object includes at least the
+ *  following properties:
  *
+ *  * **accessorName**: The name of the instance provided to the constructor.
  *  * **exports**: An object that includes any properties that have have been
  *    explicitly added to the exports property in the specified code.
  *  * **inputList**: An array of input names (see below).
@@ -168,6 +221,22 @@
  *  Similarly, parameters and outputs are represented in the
  *  data structure by an array of names and an object with the options values.
  *
+ *  The returned instance may also include the following properties:
+ *
+ *  * **accessorClass**: The class name of the accessor, if not anonymous.
+ *  * **container**: A reference to the containing accessor, if this instance is
+ *    instantiated by such a container.
+ *  * **extendedBy**: A reference to the accessor that this is extended by, if there is
+ *    one.
+ *  * **extending**: A reference to the accessor that this extends, if it extends one.
+ *  * **implementedInterfaces**: An array of interfaces that this accessor implements.
+ *  * **root**: The root of the extend/implement tree. This is the accessor instance
+ *    being invoked in a swarmlet, and each of the instances it extends or implements
+ *    will reference it in their root property.
+ *  * **ssuper**: If this accessor extends another, this is a reference to the instance
+ *    of the accessor it extends.
+ *
+ *
  *  The bindings parameter provides function bindings for functions that are used by
  *  accessors.  Any that are not provided will be provided with defaults.
  *  Any that are provided will override the defaults.
@@ -178,27 +247,46 @@
  *   accessor (used to implement the extend() and implement() functions), or null if
  *   the host does not support accessors that extend other accessors.
  *  @param bindings The function bindings to be used by the accessor.
- *  @param extendedBy An optional argument specifying what accessor is extending or
- *   implementing this new instance. Pass null or no argument if it is not being extended.
- *   This should always be the top-level object doing the extending, not the immediate
- *   parent.
+ *  @param extendedBy An optional argument specifying what accessor is extending
+ *   this new instance. Pass null or no argument if this accessor is not being extended.
+ *   If this argument is present, then the getAccessorCode and bindings arguments are
+ *   ignored (the instance inherits those properties from the extender).
+ *  @param implementedBy An optional argument specifying what accessor is implementing
+ *   this new instance. Pass null or no argument if this accessor is not being
+ *   implemented.
+ *   If this argument is present, then the getAccessorCode and bindings arguments are
+ *   ignored (the instance inherits those properties from the implementer).
  */
-function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
+function Accessor(
+        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy) {
     if (!code) {
         throw 'No accessor code specified.';
     }
+    // First, create all the properties that this instance will have as its 'own'
+    // properties, even if it is being extended or implemented.
     this.accessorName = accessorName;
-    this.getAccessorCode = getAccessorCode;
-    this.bindings = bindings;
     this.extendedBy = extendedBy;
     
-    // If no extendedBy is given, then initialize the data structures to be used
-    // by this instance.
-    if (!extendedBy) {
-    
-        // Indicate that the top-level object is this.
-        this.extendedBy = this;
-            
+    // If no extendedBy or implementedBy is given, then initialize the data structures
+    // to be used by this accessor instance.  These data structures will be in the
+    // prototype chain for any instance that this accessor implements or extends,
+    // so that the setup() function of those instances can modify these data structures.
+    if (!extendedBy && !implementedBy) {
+
+        this.getAccessorCode = getAccessorCode;
+        this.bindings = bindings;
+
+        ////////////////////////////////////////////////////////////////////
+        //// Override using specified bindings.
+
+        // Any property defined in the bindings argument overrides prototype functions
+        // for this instance. Do this before creating other own properties in case
+        // the caller accidentally tries to provide bindings whose names match key
+        // properties of this instance.
+        for (var binding in bindings) {
+            this[binding] = bindings[binding];
+        }
+
         ////////////////////////////////////////////////////////////////////
         //// Define the properties that define inputs and input handlers
     
@@ -234,15 +322,6 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
         this.containedAccessors = [];
     }
     
-    ////////////////////////////////////////////////////////////////////
-    //// Override using specified bindings.
-
-    // Any property defined in the bindings argument overrides prototype functions
-    // for this instance.
-    for (var binding in bindings) {
-        this[binding] = bindings[binding];
-    }
-
     // Define the exports object to be populated by the accessor code.
     // Even if there is an object extending this one, this one has its own
     // exports property. If this object is being extended (rather than
@@ -252,7 +331,14 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     this.exports = {};
     
     // To keep track of implemented interfaces.
+    // Note that since this is an 'own' property, only the immediately
+    // implemented interfaces are listed.
     this.implementedInterfaces = [];
+    
+    // To prevent ssuper from being inherited via the prototype chain,
+    // define it explicitly to be null.
+    this.ssuper = null;
+    this.exports.ssuper = null;
     
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code.
@@ -260,28 +346,73 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
     // In strict mode, eval() cannot modify the scope of this function.
     // Hence, we wrap the code in the function, and will pass in the
     // exports object that we want the code to modify.
-    // Inside that function, references to top-level accessor functions
-    // such as input() will need to be bound to the particular implementation
-    // of input() within this accessor function, so that that function
-    // updates the proper property of this function.
     
-    // NOTE: This only needs to include exports and the top-level functions
-    // that the accessor can invoke. It need not include local functions, nor
-    // should include functions that the host uses but accessors do not, such
-    // as latestOutput(), provideInput(), and react().
-    // It should also include the module object.
-    
-    var wrapper = new Function('exports', code);
-    wrapper.call(this, this.exports);
+    // Need to provide all the functions that are allowed to be invoked
+    // as top-level functions in the accessor specification.
+    // FIXME: Probably need to include setInterval, clearInterval,
+    // setTimeout, clearTimeout, because these will need to overridden.
+        
+    var wrapper = new Function(
+            'error, \
+            exports, \
+            getResource, \
+            httpRequest, \
+            readURL, \
+            require',
+            code);
+    wrapper.call(this,
+            this.error,
+            this.exports,
+            this.getResource,
+            this.httpRequest,
+            this.readURL,
+            this.require);
     
     // Mark that the accessor has not been initialized
     this.initialized = false;
     
     // Record the instance indexed by its exports property.
     _accessorInstanceTable[this.exports] = this;
-        
+
     ////////////////////////////////////////////////////////////////////
-    //// Evaluate the setup() function to populate the structure.
+    //// Set up the prototype chain and ssuper properties.
+    
+    // By default, the root property is this instance.
+    this.root = this;
+    
+    if (extendedBy) {
+        // This accessor is being extended.
+        
+        // First argument is the object, second is the prototype.
+        // Note the reverse arrangment for the accessor instance vs.
+        // its exports property.
+        Object.setPrototypeOf(this, extendedBy);
+        Object.setPrototypeOf(extendedBy.exports, this.exports);
+        
+        if (extendedBy.ssuper) {
+            throw new Error('Cannot extend more than one base accessor.');
+        }
+        
+        extendedBy.ssuper = this;
+        extendedBy.exports.ssuper = this.exports;
+        
+        this.root = extendedBy.root;
+        
+        extendedBy.extending = this;
+        
+    } else if (implementedBy) {
+        // This accessor interface is being implemented.
+        Object.setPrototypeOf(this, implementedBy);
+        // Note that these now no relationship between the exports properties,
+        // and there are no ssuper properties provided.
+        
+        this.root = implementedBy.root;
+        
+        implementedBy.implementedInterfaces.push(this);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    //// Evaluate the setup() function to populate the data structures.
         
     if (typeof this.exports.setup === 'function') {
         this.exports.setup.call(this);
@@ -289,58 +420,56 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy) {
         
     ////////////////////////////////////////////////////////////////////
     //// Provide wrapper functions for initialize() and wrapup().
-    
-    // The instance versions of initialize() and wrapup() perform
-    // functions that every accessor should perform, including handling
-    // scheduling of any contained accessors.  They will also invoke
-    // exports.initialize() and exports.wrapup(), if those are defined.
-    // @param inside True if initializing a contained accessor, and therefore
-    //  should skip descending into contained accessors.
-    this.initialize = function(inside) {
-        var thiz = this.extendedBy;
-        if (!inside && thiz.containedAccessors && thiz.containedAccessors.length > 0) {
-            thiz.assignPriorities();
-            thiz.eventQueue = [];
-            for (var i = 0; i < thiz.containedAccessors.length; i++) {
-                if (thiz.containedAccessors[i].initialize) {
-                    thiz.containedAccessors[i].initialize(true);
-                }
-            }
-        }
-        if (typeof this.exports.initialize === 'function') {
-            this.exports.initialize.call(thiz);
-        }
-        thiz.initialized = true;
-    };
 
-    // @param inside True if initializing a contained accessor, and therefore
-    //  should skip descending into contained accessors.
-    this.wrapup = function(inside) {
-        var thiz = this.extendedBy;
-        if (!inside) {
-            // Mark that this accessor has not been initialized.
-            thiz.initialized = false;
-       
-            // Remove all input handlers.
-            thiz.inputHandlers = {};
-            thiz.anyInputHandlers = [];
-            thiz.inputHandlersIndex = {};
-            // Counter used to assign unique IDs to each input handler.
-            thiz.inputHandlerID = 0;
-               
-            // Invoke wrapup on contained accessors.
-            if (thiz.containedAccessors && thiz.containedAccessors.length > 0) {
-                for (var i = 0; i < thiz.containedAccessors.length; i++) {
-                    if (thiz.containedAccessors[i].wrapup) {
-                        thiz.containedAccessors[i].wrapup(true);
+    if (!extendedBy && !implementedBy) {
+        // The instance versions of initialize() and wrapup() perform
+        // functions that every accessor should perform, including handling
+        // scheduling of any contained accessors.  They will also invoke
+        // exports.initialize() and exports.wrapup(), if those are defined.
+        this.initialize = function() {
+            if (this.containedAccessors && this.containedAccessors.length > 0) {
+                this.assignPriorities();
+                this.eventQueue = [];
+                for (var i = 0; i < this.containedAccessors.length; i++) {
+                    if (this.containedAccessors[i].initialize) {
+                        this.containedAccessors[i].initialize();
                     }
                 }
             }
-        }
-        if (typeof this.exports.wrapup === 'function') {
-            this.exports.wrapup.call(thiz);
-        }
-    };
+            if (typeof this.exports.initialize === 'function') {
+                // Call with 'this' being the accessor instance, not the exports
+                // property.
+                this.exports.initialize.call(this);
+            }
+            this.initialized = true;
+        };
+
+        this.wrapup = function(inside) {
+            // Mark that this accessor has not been initialized.
+            this.initialized = false;
+   
+            // Remove all input handlers.
+            this.inputHandlers = {};
+            this.anyInputHandlers = [];
+            this.inputHandlersIndex = {};
+            // Reset counter used to assign unique IDs to each input handler.
+            this.inputHandlerID = 0;
+           
+            // Invoke wrapup on contained accessors.
+            if (this.containedAccessors && this.containedAccessors.length > 0) {
+                for (var i = 0; i < this.containedAccessors.length; i++) {
+                    if (this.containedAccessors[i].wrapup) {
+                        this.containedAccessors[i].wrapup();
+                    }
+                }
+            }
+            if (typeof this.exports.wrapup === 'function') {
+                // Call with 'this' being the accessor instance, not the exports
+                // property.
+                this.exports.wrapup.call(this);
+            }
+        };
+    }
 }
 
 /** Add an input handler for the specified input and return a handle that
@@ -374,19 +503,19 @@ Accessor.prototype.addInputHandler = function(name, func) {
     }
 
     // Check that the input exists.
-    if (name && !this.extendedBy.inputs[name]) {
+    if (name && !this.inputs[name]) {
         throw 'Cannot add an input handler to a non-existent input: ' + name;
     }
     
     // Bind the callback function so that it is always invoked in the context
-    // of the master accessor object (no the base classes).
+    // of the root accessor object (not extended or implemented instances).
     // If there are arguments to the callback, create a new function.
     // Get an array of arguments excluding the first two.
     // When that function is invoked, 'this' will be the data structure
     // of the top-level instance (which by prototype chain, can reach down
     // the inheritance hierarchy).
     tail = Array.prototype.slice.call(arguments, argCount);
-    var thiz = this.extendedBy;
+    var thiz = this.root;
     if (tail.length !== 0) {
         callback = function() {
             func.apply(thiz, tail);
@@ -430,7 +559,9 @@ Accessor.prototype.addInputHandler = function(name, func) {
  *  due to a causality loop.
  */
 Accessor.prototype.assignPriorities = function() {
-    var thiz = this.extendedBy;
+    // Note that we could just use this instead of this.root because of the
+    // prototype chain, but in a deep hierarchy, this will be more efficient.
+    var thiz = this.root;
     var accessors = thiz.containedAccessors;
     
     // First, initialize the contained accessors with a null priority.
@@ -587,7 +718,9 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
  *  @param d A destination port name.
  */
 Accessor.prototype.connect = function(a, b, c, d) {
-    var thiz = this.extendedBy;
+    // Note that we could just use this instead of this.root because of the
+    // prototype chain, but in a deep hierarchy, this will be more efficient.
+    var thiz = this.root;
     if (typeof a === 'string') {
         // form 2 or 4.
         var myInput = thiz.inputs[a];
@@ -736,33 +869,14 @@ Accessor.prototype.extend = function(accessorClass) {
     if (!this.getAccessorCode) {
         throw('extend() is not supported by this swarmlet host.');
     }
-
-    this.extending = accessorClass;
     
     var baseName = this.accessorName + '_' + accessorClass;
     
-    // Provide the instance with the top-level accessor extending this new instance
-    // as the last argument.
+    // Create an instance of the accessor this is extending.
+    // Note that that instance inherits the bindings
+    // of this one, so that argument is null.
     var extendedInstance = instantiateAccessor(
-            baseName, accessorClass, this.getAccessorCode, this.bindings, this.extendedBy);
-            
-    if (extendedInstance.exports) {
-        if (typeof extendedInstance.exports.setup === 'function') {
-            // Now invoke the setup method in the context of this accessor.
-            extendedInstance.exports.setup.call(this);
-        }
-        // Make the superclass functions available through 'this.ssuper'
-        // regardless of whether 'this' is the exports object or the accessor
-        // this.
-        // NOTE: The super keyword is built in to ECMA 6.
-        // Since it isn't available in earlier versions, we provide an alternate:
-        this.exports.ssuper = extendedInstance.exports;
-        this.ssuper = extendedInstance;
-        
-        // Set up the prototype chain for inheritance.
-        Object.setPrototypeOf(this.exports, extendedInstance.exports);
-        Object.setPrototypeOf(this, extendedInstance);
-    }
+            baseName, accessorClass, this.getAccessorCode, null, this, null);
 }
 
 /** Default implementation of get(), which reads the current value of the input
@@ -771,7 +885,9 @@ Accessor.prototype.extend = function(accessorClass) {
  *  @param name The name of the input.
  */
 Accessor.prototype.get = function(name) {
-    var thiz = this.extendedBy;
+    // Note that we could just use this instead of this.root because of the
+    // prototype chain, but in a deep hierarchy, this will be more efficient.
+    var thiz = this.root;
     var input = thiz.inputs[name];
     
     if (!input) {
@@ -808,7 +924,7 @@ Accessor.prototype.get = function(name) {
  *  @param name The name of the parameter.
  */
 Accessor.prototype.getParameter = function(name) {
-    var parameter = this.extendedBy.parameters[name];
+    var parameter = this.parameters[name];
     if (!parameter) {
         throw('getParameter(name): No parameter named ' + name);
     }
@@ -841,7 +957,7 @@ Accessor.prototype.httpRequest = function() {
 /** Implement the specified accessor interface, inheriting its inputs, outputs,
  *  and parameters as defined in its setup() function.
  *  This will throw an exception if no getAccessorCode() function
- *  has been specified.
+ *  has not been specified.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
 Accessor.prototype.implement = function(accessorClass) {
@@ -850,16 +966,13 @@ Accessor.prototype.implement = function(accessorClass) {
         throw('implement() is not supported by this swarmlet host.');
     }
 
-    this.implementedInterfaces.push(accessorClass);
-
     var interfaceName = this.accessorName + '_' + accessorClass;
-    // Provide this as the context in which to invoke top-level functions.
+
+    // Create an instance of the accessor this is implementing.
+    // Note that that instance inherits the bindings
+    // of this one, so that argument is null.
     var extendedInstance = instantiateAccessor(
-            interfaceName, accessorClass, this.getAccessorCode, this.bindings, this);
-    if (extendedInstance.exports) {            
-        // Now invoke the setup method in the context of this object.
-        extendedInstance.exports.setup.call(this);
-    }
+            interfaceName, accessorClass, this.getAccessorCode, null, null, this);
 }
 
 /** Default implementation of the function to define an accessor input.
@@ -869,10 +982,9 @@ Accessor.prototype.implement = function(accessorClass) {
  *  @param options The options for the input.
  */
 Accessor.prototype.input = function(name, options) {
-    var thiz = this.extendedBy;
     // The input may have been previously defined in a base accessor.
-    pushIfNotPresent(name, thiz.inputList);
-    thiz.inputs[name] = mergeObjects(thiz.inputs[name], options);
+    pushIfNotPresent(name, this.inputList);
+    this.inputs[name] = mergeObjects(this.inputs[name], options);
 }
 
 /** Instantiate the specified accessor as a contained accessor.
@@ -896,7 +1008,7 @@ Accessor.prototype.instantiate = function(instanceName, accessorClass) {
     var containedInstance = instantiateAccessor(
             instanceName, accessorClass, this.getAccessorCode, insideBindings);
     containedInstance.container = this;
-    this.extendedBy.containedAccessors.push(containedInstance);
+    this.containedAccessors.push(containedInstance);
     return containedInstance;
 }
 
@@ -910,17 +1022,21 @@ Accessor.prototype.instantiate = function(instanceName, accessorClass) {
  *   accessor (used to implement the extend() and implement() functions), or null if
  *   the host does not support accessors that extend other accessors.
  *  @param bindings The function bindings to be used by the accessor.
- *  @param extendedBy An optional argument specifying what accessor is extending or
- *   implementing this new instance. Pass null or no argument if it is not being extended.
- *   This should always be the top-level object doing the extending, not the immediate
- *   parent. This is used by the extend() function and should not normally be used by
- *   a user.
+ *  @param extendedBy An optional argument specifying what accessor is extending
+ *   this new instance. Pass null or no argument if this accessor is not being extended.
+ *   If this argument is present, then the getAccessorCode and bindings arguments are
+ *   ignored (the instance inherits those properties from the extender).
+ *  @param implementedBy An optional argument specifying what accessor is implementing
+ *   this new instance. Pass null or no argument if this accessor is not being
+ *   implemented.
+ *   If this argument is present, then the getAccessorCode and bindings arguments are
+ *   ignored (the instance inherits those properties from the implementer).
  */
 function instantiateAccessor(
-        accessorName, accessorClass, getAccessorCode, bindings, extendedBy) {
+        accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
     var instance = new Accessor(
-            accessorName, code, getAccessorCode, bindings, extendedBy);
+            accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
     return instance;
 }
@@ -931,11 +1047,10 @@ function instantiateAccessor(
  *  @return The latest value produced on this output.
  */
 Accessor.prototype.latestOutput = function(name) {
-    var thiz = this.extendedBy;
-    if (!thiz.outputs[name]) {
+    if (!this.outputs[name]) {
         throw('lastestOutput(): No output named ' + name);
     }
-    return thiz.outputs[name].latestOutput;
+    return this.outputs[name].latestOutput;
 }
 
 /** Merge the specified objects. If the two have common properties, the merged object
@@ -990,10 +1105,9 @@ function nullHandlerFunction() {}
  *  @param options The options.
  */
 Accessor.prototype.output = function(name, options) {
-    var thiz = this.extendedBy;
     // The output may have been previously defined in a base accessor.
-    pushIfNotPresent(name, thiz.outputList);
-    thiz.outputs[name] = mergeObjects(thiz.outputs[name], options);
+    pushIfNotPresent(name, this.outputList);
+    this.outputs[name] = mergeObjects(this.outputs[name], options);
 }
 
 /** Define an accessor parameter.
@@ -1001,10 +1115,9 @@ Accessor.prototype.output = function(name, options) {
  *  @param options The options.
  */
 Accessor.prototype.parameter = function(name, options) {
-    var thiz = this.extendedBy;
     // The parameter may have been previously defined in a base accessor.
-    pushIfNotPresent(name, thiz.parameterList);
-    thiz.parameters[name] = mergeObjects(thiz.parameters[name], options);
+    pushIfNotPresent(name, this.parameterList);
+    this.parameters[name] = mergeObjects(this.parameters[name], options);
 }
     
 /** Set an input of this accessor to the specified value.
@@ -1015,8 +1128,7 @@ Accessor.prototype.parameter = function(name, options) {
  *  @param value The value to set the input to.
  */
 Accessor.prototype.provideInput = function(name, value) {
-    var thiz = this.extendedBy;
-    var input = thiz.inputs[name];
+    var input = this.inputs[name];
     if (!input) {
         throw('provideInput(): Accessor has no input named ' + name);
     }
@@ -1033,8 +1145,8 @@ Accessor.prototype.provideInput = function(name, value) {
         input.pendingHandler = true;
         // If there is a container accessor, then put this accessor in its
         // event queue for handling in its fire() function.
-        if (thiz.container) {
-            thiz.container.scheduleEvent(this);
+        if (this.container) {
+            this.container.scheduleEvent(this);
         }
     
         // If the input is connected on the inside, then provide the same input
@@ -1044,7 +1156,7 @@ Accessor.prototype.provideInput = function(name, value) {
                 var destination = input.destinations[i];
                 if (typeof destination === 'string') {
                     // The destination is output port of this accessor.
-                    thiz.send(destination, value);
+                    this.send(destination, value);
                 } else {
                     // The destination is an input port of a contained accessor.
                     destination.accessor.provideInput(destination.inputName, value);
@@ -1079,7 +1191,7 @@ function pushIfNotPresent(item, list) {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function(name) {
-    var thiz = this.extendedBy;
+    var thiz = this.root;
     // Allow further reactions to be scheduled by this reaction.
     thiz.reactRequestedAlready = false;
     
@@ -1168,7 +1280,7 @@ Accessor.prototype.readURL = function() {
  *  @see #addInputHandler()
  */
 Accessor.prototype.removeInputHandler = function(handle) {
-    var thiz = this.extendedBy;
+    var thiz = this.root;
     var handler = thiz.inputHandlersIndex[handle];
     if (handler) {
         if (handler.name) {
@@ -1203,7 +1315,7 @@ Accessor.prototype.require = function() {
  *  @param accessor The accessor.
  */
 Accessor.prototype.scheduleEvent = function(accessor) {
-    var thiz = this.extendedBy;
+    var thiz = this.root;
     var queue = thiz.eventQueue;
     // If we haven't already scheduled a react() since the last react(),
     // schedule it now.
@@ -1264,7 +1376,7 @@ Accessor.prototype.scheduleEvent = function(accessor) {
  *  @param value The output value.
  */
 Accessor.prototype.send = function(name, value) {
-    var thiz = this.extendedBy;
+    var thiz = this.root;
     var output = thiz.outputs[name];
     if (!output) {
         // May be sending to my own input.
@@ -1324,7 +1436,7 @@ Accessor.prototype.setDefault = function(name, value) {
     if (typeof name !== 'string') {
         throw ('input argument is required to be a string. Got: ' + (typeof name));
     }
-    var input = this.extendedBy.inputs[name];
+    var input = this.inputs[name];
     if (!input) {
         throw('setDefault(): Accessor has no input named ' + name);
     }
@@ -1337,7 +1449,7 @@ Accessor.prototype.setDefault = function(name, value) {
  * @param value The value to set the parameter to.
  */
 Accessor.prototype.setParameter = function(name, value) {
-    var parameter = this.extendedBy.parameters[name];
+    var parameter = this.parameters[name];
     if (!parameter) {
         throw('setParameter(): Accessor has no parameter named ' + name);
     }

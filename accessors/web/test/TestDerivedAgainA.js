@@ -8,12 +8,14 @@ exports.setup = function() {
    this.output('out2');
 }
 
-//Override input Handler of base. try to access fields defined in
-//base and derived
+// Override input Handler of base.
+// Access a field defined in TestBaseC and overridden in TestDerivedC.
 exports.inputHandler = function() {
    // Invoke the base class inputHandler, defined two levels up.
-   Object.getPrototypeOf(exports).inputHandler.apply(this);
-   this.send('out2', this.baseField);
+   // Have to call it with 'this' bound to this accessor, otherwise,
+   // 'this' will be the superclass exports property.
+   this.exports.ssuper.inputHandler.call(this);
+   this.send('out2', this.exports.baseField);
 }
 
 
