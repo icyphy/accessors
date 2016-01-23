@@ -718,13 +718,13 @@ function generateAccessorDocumentation(path, id) {
     if (window.accessors && window.accessors[id]) {
         var implemented = window.accessors[id].implementedInterfaces;
         for (var i = 0; i < implemented.length; i++) {
-            appendDoc(target, 'Implements', implemented[i]);
-            getBaseDocumentation(docs, implemented[i]);
+            appendDoc(target, 'Implements', implemented[i].accessorClass);
+            getBaseDocumentation(docs, implemented[i].accessorClass);
         }
     
-        if (window.accessors[id].baseAccessor) {
-            appendDoc(target, 'Extends', window.accessors[id].baseAccessor);
-            getBaseDocumentation(docs, window.accessors[id].baseAccessor);
+        if (window.accessors[id].extending) {
+            appendDoc(target, 'Extends', window.accessors[id].extending.accessorClass);
+            getBaseDocumentation(docs, window.accessors[id].extending.accessorClass);
         }
     }
 

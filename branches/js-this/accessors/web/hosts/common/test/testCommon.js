@@ -174,4 +174,4 @@ g.initialize();
 g.provideInput('in1', 42);
 g.react();
 test('TestDerivedAgainA: two-level inheritance, out1', g.latestOutput('out1'), 2);
-test('TestDerivedAgainA: two-level inheritance, out2', g.latestOutput('out2'), 2);
+test('TestDerivedAgainA-2: two-level inheritance, out2', g.latestOutput('out2'), 2);

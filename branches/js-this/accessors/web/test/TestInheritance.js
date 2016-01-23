@@ -42,7 +42,9 @@ exports.initialize = function() {
 }
 
 /** Override the base class to use output a constant read from the base class. */
-this.formatOutput = function(value) {
+exports.formatOutput = function(value) {
     // Variable 'variable' is defined in the base class.
+    // Note that the base class invokes this function with 'this' bound to the
+    // exports property, of which variable is a property.
     return this.variable;
 }

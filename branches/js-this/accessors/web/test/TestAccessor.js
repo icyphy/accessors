@@ -52,14 +52,16 @@ exports.setup = function() {
 }
 
 // Base class variable that is visible to subclasses through inheritance.
-this.variable = 'hello';
+exports.variable = 'hello';
 
 exports.initialize = function() {
     // Respond to any input by updating them all.
     this.addInputHandler('untyped', function() {
         this.send('typeOfUntyped', typeof this.get('untyped'));
-        // Refer to the function using 'this.exports' rather than 'exports' to allow an override.
-        this.send('jsonOfUntyped', this.formatOutput(this.get('untyped')));
+        // Refer to the function using 'this.exports' rather than 'exports'
+        // to allow an override. Note that we choose here to invoke formatOutput
+        // with 'this' bound to 'this.exports'.
+        this.send('jsonOfUntyped', this.exports.formatOutput(this.get('untyped')));
     });
     this.addInputHandler('numeric', function() {
         this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
@@ -70,7 +72,7 @@ exports.initialize = function() {
 }
 
 /** Define a function that can be overridden in subclasses. */
-this.formatOutput = function(value) {
+exports.formatOutput = function(value) {
     return 'JSON for untyped input: ' + JSON.stringify(value);
 }
 exports.fire = function() {
