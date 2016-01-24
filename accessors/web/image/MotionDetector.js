@@ -66,24 +66,24 @@
 var motionDetector = require('motionDetector');
 
 exports.setup = function() {
-    input('input');
-    output('output');
-    output('cog');
-    output('area', {'type':'number'});
-    input('options', {'value':'{"PixelThreshold": 25, "AreaThreshold": 0.2}', 'type':'JSON'});
+    this.input('input');
+    this.output('output');
+    this.output('cog');
+    this.output('area', {'type':'number'});
+    this.input('options', {'value':'{"PixelThreshold": 25, "AreaThreshold": 0.2}', 'type':'JSON'});
 };
 
 exports.initialize = function() {
     this.addInputHandler('input', function() {
-        var options = get('options');
-        var image = get('input');
+        var options = this.get('options');
+        var image = this.get('input');
         var result = motionDetector.filter(image, options);
-        send('output', result);
+        this.send('output', result);
         var cog = motionDetector.cog();
         if (cog) {
-            send('cog', cog);
+            this.send('cog', cog);
         }
-        send('area', motionDetector.area());
+        this.send('area', motionDetector.area());
     });
 };
 

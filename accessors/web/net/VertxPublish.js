@@ -73,23 +73,23 @@ var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs and outputs. */
 exports.setup = function() {
-    input('address', {
+    this.input('address', {
         'value':'topic',
         'type':'string'
     });
-    input('message');
-    input('broadcast', {
+    this.input('message');
+    this.input('broadcast', {
         'value':true,
         'type':'boolean'
     });
-    parameter('busHost', {
+    this.parameter('busHost', {
         'type':'string'
     });
-    parameter('busHostPort', {
+    this.parameter('busHostPort', {
         'value':0,
         'type':'int'
     });
-    output('reply');
+    this.output('reply');
 };
 
 // State variables.
@@ -97,14 +97,14 @@ var bus;
 var handle;
 
 exports.initialize = function() {
-    var port = get('busHostPort');
-    var host = get('busHost');
+    var port = this.get('busHostPort');
+    var host = this.get('busHost');
     bus = new eventbus.VertxBus({'port':port, 'host':host});
     
     handle = this.addInputHandler('message', function() {
-        var topic = get('address');
-        var msg = get('message');
-        var all = get('broadcast');
+        var topic = this.get('address');
+        var msg = this.get('message');
+        var all = this.get('broadcast');
         if (msg) {
             if (all) {
                 bus.publish(topic, msg);
@@ -116,10 +116,10 @@ exports.initialize = function() {
 };
 
 var replyHandler = function(message) {
-   send('reply', message);
+   this.send('reply', message);
 };
 
 exports.wrapup = function() {
   bus.unsubscribe();
-  removeInputHandler(handle, 'message');
+  this.removeInputHandler(handle, 'message');
 };

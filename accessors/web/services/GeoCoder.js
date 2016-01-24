@@ -53,47 +53,47 @@
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    extend('net/REST');
-    input('address');
-    output('location');
-    parameter('key', {'type':'string', 'value':'Enter Key Here'});
+    this.extend('net/REST');
+    this.input('address');
+    this.output('location');
+    this.parameter('key', {'type':'string', 'value':'Enter Key Here'});
     
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     // Note the need for quotation marks on the options parameter.
-    input('options', {'visibility':'expert', 'value':'"https://maps.googleapis.com"'});
-    input('command', {'visibility':'expert', 'value':'maps/api/geocode/json'});
+    this.input('options', {'visibility':'expert', 'value':'"https://maps.googleapis.com"'});
+    this.input('command', {'visibility':'expert', 'value':'maps/api/geocode/json'});
     // NOTE: The value can be given as a JSON string or a JavaScript object.
-    input('arguments', {'visibility':'expert', 'value':{"address":"Berkeley, CA", "key":"Enter Key Here"}});
-    input('body', {'visibility':'expert'});
-    input('trigger', {'visibility':'expert'});
-    output('headers', {'visibility':'expert'});
-    output('status', {'visibility':'expert'});
-    parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('arguments', {'visibility':'expert', 'value':{"address":"Berkeley, CA", "key":"Enter Key Here"}});
+    this.input('body', {'visibility':'expert'});
+    this.input('trigger', {'visibility':'expert'});
+    this.output('headers', {'visibility':'expert'});
+    this.output('status', {'visibility':'expert'});
+    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.ssuper.initialize();
     
-    var key = getParameter('key');
+    var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
     }
     // Handle location information.
     this.addInputHandler('address', function() {
-        var address = get('address');
+        var address = this.get('address');
         if (address) {
             // arguments is a reserved word, so we use args.
             var args = {
                 'address' : address,
                 'key' : key
             };
-            send('arguments', args);
-            send('trigger', true);
+            this.send('arguments', args);
+            this.send('trigger', true);
         } else {
             error('GeoCoder: No address.');
-            send('location', null);
+            this.send('location', null);
         }
     });
 };
@@ -114,19 +114,19 @@ exports.filterResponse = function(response) {
                 parsed.results[0].geometry.location &&
                 parsed.results[0].geometry.location.lat &&
                 parsed.results[0].geometry.location.lng) {
-                send('location', {
+                this.send('location', {
                         "latitude": parsed.results[0].geometry.location.lat,
                         "longitude": parsed.results[0].geometry.location.lng
                 });
             } else {
                 error('GeoCoder: No matching location.');
-                send('location', null);
+                this.send('location', null);
             }
         } catch (err) {
             error('GeoCoder: Unable to parse response: ' + err.message);
         }
     } else {
-        send('price', null);
+        this.send('price', null);
     }
     return response;
 };

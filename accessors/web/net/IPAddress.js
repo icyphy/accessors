@@ -46,11 +46,11 @@ try {
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    input('trigger', {
+    this.input('trigger', {
         type: 'boolean',
       });
     
-    output('IPAddress', {
+    this.output('IPAddress', {
         type: 'string',
       });
 };

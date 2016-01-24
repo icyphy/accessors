@@ -49,32 +49,32 @@ var contextAwareService = new contextAware.DiscoveryOfRESTService();
 var selectedService;
 
 exports.setup = function () {
-    input('input');
+    this.input('input');
     // a simple UI interface to start the dialog with users
-    parameter('RESTSource', { 'type': 'string',
+    this.parameter('RESTSource', { 'type': 'string',
                               'value': 'Make a selection',
                               'options':contextAware.services()}
              );
-    selectedService = getParameter('RESTSource');
+    selectedService = this.getParameter('RESTSource');
     if (selectedService == 'GSN')
     {
-        implement("contextAware/GSNInterface.js");
-        input('dataType', 
+        this.implement("contextAware/GSNInterface.js");
+        this.input('dataType', 
     	      {'type': 'string',
       	       'value': 'all',
       	       'options':contextAware.gsnServices()}); 
     }
     else if (selectedService == 'Paraimpu') {
-        implement("contextAware/ParaimpuInterface.js");
-        input('dataType', {
+        this.implement("contextAware/ParaimpuInterface.js");
+        this.input('dataType', {
    	    type: 'string',
    	    value: 'all',
    	    'options':contextAware.paraimpuServices()
    	}); 
     }
     else if (selectedService == 'Firebase'){
-        implement("contextAware/FirebaseInterface.js");
-        input('dataType', {
+        this.implement("contextAware/FirebaseInterface.js");
+        this.input('dataType', {
       	    type: 'string',
       	    value: 'all',
       	    'options':contextAware.firebaseServices()
@@ -83,12 +83,12 @@ exports.setup = function () {
     else {
         console.log("Cannot load service interface !!");
     }
-    extend("net/REST.js");
-    input('command', {'visibility':'expert'});
-    input('arguments', {'visibility':'expert'});
-    input('options',{'visibility':'expert'});
-    output('header',{'visibility':'expert'});
-    input('trigger',{'visibility':'expert'});
+    this.extend("net/REST.js");
+    this.input('command', {'visibility':'expert'});
+    this.input('arguments', {'visibility':'expert'});
+    this.input('options',{'visibility':'expert'});
+    this.output('header',{'visibility':'expert'});
+    this.input('trigger',{'visibility':'expert'});
 };
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
@@ -105,13 +105,13 @@ exports.initialize = function () {
         console.log("ContextAwareTest.js input handler start");
         serviceParam = contextAwareService.discoverServices();
 	console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
-        //var serviceURL = getParameter('ipAddress');
-        var serviceURL = {"url":{"host":getParameter('host'), "port": getParameter('port'), "protocol": getParameter('protocol')}};
-        send('options',  serviceURL);
-        send('command', getParameter('path'));
+        //var serviceURL = this.getParameter('ipAddress');
+        var serviceURL = {"url":{"host":getParameter('host'), "port": this.getParameter('port'), "protocol": this.getParameter('protocol')}};
+        this.send('options',  serviceURL);
+        this.send('command', this.getParameter('path'));
         if (selectedService == 'Paraimpu') {
             //sample access token to use "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-            var arg = {"access_token": getParameter('accessToken')};
+            var arg = {"access_token": this.getParameter('accessToken')};
             console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: access_token:" + arg);
             send ('arguments', arg);
         }
@@ -120,7 +120,7 @@ exports.initialize = function () {
         //send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
         
         // Cause the base class handler to issue the HTTP request.
-        send('trigger', true);
+        this.send('trigger', true);
         //send('response', this.issueCommand(handleResponse))
         // console.log(get('response'));
         console.log("ContextAwareTest.js input handler end");
@@ -152,7 +152,7 @@ exports.filterResponse = function(response) {
 /** Filter the response from Firebase
  */
 function getFirebaseData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
@@ -177,7 +177,7 @@ function getFirebaseData(response) {
 /** filter the response from Paraimpu
  */
 function getParaimpuData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
@@ -204,7 +204,7 @@ function getParaimpuData(response) {
  * 
  */
 function getGSNData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var xmlJson={};
     xmlJson=contextAware.xmlToJson(response);
     var result = JSON.parse(xmlJson);
@@ -215,7 +215,7 @@ function getGSNData(response) {
         // http://stackoverflow.com/questions/19217365/missing-name-after-operator-yui-compressor-for-socket-io-js-files
         // suggests using ['..']
 	//send('sound', result."virtual-sensor"[2].field[2]);
-        send('sound', result['virtual-sensor'][2].field[2]);
+        this.send('sound', result['virtual-sensor'][2].field[2]);
 	break;
     case "sensorName":
 	//send('sensorName', result."virtual-sensor"[2].name);
@@ -225,7 +225,7 @@ function getGSNData(response) {
 	//send('sound', result."virtual-sensor"[2].field[2]);
 	this.send('sound', result['virtual-sensor'][2].field[2]);
 	//send('sensorName', result."virtual-sensor"[2].name);
-        send('sensorName', result['virtual-sensor'][2].name);
+        this.send('sensorName', result['virtual-sensor'][2].name);
 	break;
     default:
 	//send('response', result."virtual-sensor");
@@ -253,6 +253,6 @@ function getGSNData(response) {
 
 exports.wrapup = function() {
     
-    removeInputHandler(handle);
+    this.removeInputHandler(handle);
 };
 

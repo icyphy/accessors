@@ -26,7 +26,7 @@
  *
  *  @accessor test/TestFunctions
  *  @output getResource Outputs the contents of index.html if the host implements
- *   getResource() and can serve contents given 'index.html' as the URI.
+ *   this.getResource() and can serve contents given 'index.html' as the URI.
  *  @output httpRequest Outputs the contents of index.html if the host implements
  *   httpRequest() and can serve contents given 'index.html' as the URL.
  *  @output readURL Outputs the contents of index.html if the host implements
@@ -42,7 +42,7 @@ exports.setup = function() {
 
 exports.fire = function() {
     try {
-        this.send('getResource', getResource('index.html', 3000));
+        this.send('getResource', this.getResource('index.html', 3000));
     } catch(exception) {
         this.send('getResource', 'FAILED: ' + exception);
     }

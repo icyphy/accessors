@@ -117,28 +117,28 @@ by Edwin Olson in his Java implementation of an AprilTag detector:
 var aprilTags = require('aprilTags');
 
 exports.setup = function() {
-    input('input');
-    output('output');
-    output('tags');
-    input('options', {'type':'JSON', 'value':''});
+    this.input('input');
+    this.output('output');
+    this.output('tags');
+    this.input('options', {'type':'JSON', 'value':''});
 };
 
 var handle;
 exports.initialize = function() {
     handle = this.addInputHandler('input', function() {
-        var options = get('options');
-        var image = get('input');
+        var options = this.get('options');
+        var image = this.get('input');
         var result = aprilTags.filter(image, options);
-        send('output', result);
+        this.send('output', result);
         var tags = aprilTags.tags();
         if (tags) {
-            send('tags', tags);
+            this.send('tags', tags);
         }
     });
 };
 
 exports.wrapup = function() {
     if (handle) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
 };

@@ -116,16 +116,16 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('options', {'type':'JSON', 'value':''});
-    input('command', {'type':'string', 'value':''});
-    input('arguments', {'type':'JSON', 'value':''});
-    input('trigger');
-    input('body');
-    output('response');
-    output('status', {'type':'string'});
-    output('headers');
-    parameter('timeout', {'value': 5000, 'type': 'int'});
-    parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
+    this.input('options', {'type':'JSON', 'value':''});
+    this.input('command', {'type':'string', 'value':''});
+    this.input('arguments', {'type':'JSON', 'value':''});
+    this.input('trigger');
+    this.input('body');
+    this.output('response');
+    this.output('status', {'type':'string'});
+    this.output('headers');
+    this.parameter('timeout', {'value': 5000, 'type': 'int'});
+    this.parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
 };
 
 /** Build the path from the command and arguments.
@@ -141,7 +141,7 @@ exports.setup = function () {
  */
 exports.encodePath = function() {
     // Remove any leading slash that might be present.
-    var command = get('command').replace(/^\//, '');
+    var command = this.get('command').replace(/^\//, '');
     // Encode any characters that are not allowed in a URL.
     var encodedArgs = querystring.stringify(get('arguments'));
     if (encodedArgs) {
@@ -174,8 +174,8 @@ var request;
  */
 exports.issueCommand = function(callback) {
     var encodedPath = this.encodePath();
-    var options = get('options');
-    var body = get('body');
+    var options = this.get('options');
+    var body = this.get('body');
     var command = options;
     if (typeof options === 'string') {
         // In order to be able to include the outputCompleteResponseOnly
@@ -187,7 +187,7 @@ exports.issueCommand = function(callback) {
     } else {
         command.url.path = '/' + encodedPath;
     }
-    command.timeout = get('timeout');
+    command.timeout = this.get('timeout');
 
     if (get('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
@@ -228,19 +228,19 @@ exports.issueCommand = function(callback) {
 exports.handleResponse = function(message) {
     if (message !== null && message !== undefined) {
         if (message.body) {
-            send('response', this.filterResponse(message.body));
+            this.send('response', this.filterResponse(message.body));
         } else {
-            send('response', this.filterResponse(message));
+            this.send('response', this.filterResponse(message));
         }
         if (message.statusCode) {
-            send('status', message.statusCode + ': ' + message.statusMessage);
+            this.send('status', message.statusCode + ': ' + message.statusMessage);
         }
         if (message.headers) {
-            send('headers', message.headers);
+            this.send('headers', message.headers);
         }
     } else {
         // Send a null response.
-        send('response', this.filterResponse(null));
+        this.send('response', this.filterResponse(null));
     }
 };
 

@@ -58,13 +58,13 @@ try {
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    input('hostIP', {
+    this.input('hostIP', {
         type: 'string',
     });
     
-    output('devices');
+    this.output('devices');
     
-    parameter('useNmap', {
+    this.parameter('useNmap', {
         type: 'boolean',
         value: false,
     });
@@ -87,16 +87,16 @@ exports.initialize = function () {
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {
-    removeInputHandler(handle);
+    this.removeInputHandler(handle);
 };
 
 /** When discovery is finished, send a list of devices.  */
 if (ds) {
     ds.on('discovered', function(data) {
         if (data === "") {
-            send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+            this.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
         } else {
-            send('devices', data);
+            this.send('devices', data);
         }
     });
 }

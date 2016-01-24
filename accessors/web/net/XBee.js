@@ -61,7 +61,7 @@
  *  https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3 .
  *
  *  For numeric types, you can also send an array with a single call
- *  to send(). The elements of the array will be sent in sequence all
+ *  to this.send(). The elements of the array will be sent in sequence all
  *  at once, and will be received in one batch and emitted as an array.
  *
  *  Accessors that extend this one can override the `toSendInputHandler` function
@@ -95,8 +95,8 @@ var port = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    input('toSend');
-    output('received');
+    this.input('toSend');
+    this.output('received');
 
 	this.parameter('baudRate', {
 		'type': 'int',
@@ -121,10 +121,10 @@ exports.setup = function () {
     		'options': serialPorts,
 		    'value': serialPorts[serialPorts.length - 1]
 	    });
-        parameter('receiveType', {
+        this.parameter('receiveType', {
 		    'options': xbee.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
 		    'options': xbee.supportedSendTypes()
         });
     } catch(err) {
@@ -145,9 +145,9 @@ exports.toSendInputHandler = function () {
 exports.initialize = function() {
 	port = new xbee.XBee(
 		this.get('port'), {
-		    'baudRate': getParameter('baudRate'),
-			'receiveType': getParameter('receiveType'),
-			'sendType': getParameter('sendType'),
+		    'baudRate': this.getParameter('baudRate'),
+			'receiveType': this.getParameter('receiveType'),
+			'sendType': this.getParameter('sendType'),
 		});
 		
 	port.on('data', function(data) {

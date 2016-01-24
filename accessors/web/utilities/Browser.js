@@ -34,10 +34,10 @@
 var browser = require('browser');
 
 exports.setup = function() {
-    input('html', {'type':'string'});
+    this.input('html', {'type':'string'});
 }
 function display() {
-	var toDisplay = get('html');
+	var toDisplay = this.get('html');
 	browser.display(toDisplay);
 }
 exports.initialize = function() {

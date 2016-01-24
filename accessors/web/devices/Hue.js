@@ -90,39 +90,39 @@ var triggerHandle;
 
 /** Define inputs and outputs. */
 exports.setup = function() {
-    input('bridgeIPAddress', {
+    this.input('bridgeIPAddress', {
         type: "string",
         value: ""
     });
-    parameter('userName', {
+    this.parameter('userName', {
         type: "string",
         value: "ptolemyuser"
     });
-    input('lightID', {
+    this.input('lightID', {
         type: "int",
         value: 1
     });
-    input('brightness', {
+    this.input('brightness', {
         type: "number",
         value: 255
     });
-    input('hue', {
+    this.input('hue', {
         type: "number",
         value: 65280
     });
-    input('saturation', {
+    this.input('saturation', {
         type: "number",
         value: 255
     });
-    input('on', {
+    this.input('on', {
         type: "boolean",
         value: false
     });
-    input('transitionTime', {
+    this.input('transitionTime', {
         type: "int",
         value: 4
     });
-    input('trigger', {value: true});
+    this.input('trigger', {value: true});
 };
 
 /** Initialize connection.
@@ -131,8 +131,8 @@ exports.setup = function() {
  */
 exports.initialize = function() {
 	
-    var ipAddress = get('bridgeIPAddress');
-    userName = getParameter('userName');
+    var ipAddress = this.get('bridgeIPAddress');
+    userName = this.getParameter('userName');
 
     if (userName.length < 11) {
         throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
@@ -292,7 +292,7 @@ function getReachableLights() {
 /** Get light settings from inputs and PUT */
 function inputHandler() {
     // Check if light is reachable
-    var lightID = get('lightID').toString();
+    var lightID = this.get('lightID').toString();
     if (reachableLights.indexOf(lightID) == -1) {
         console.log('Light ' + lightID + ' may not be reachable.');
     }
@@ -303,7 +303,7 @@ function inputHandler() {
 
     // Get inputs and send command to light
     var command = {
-        on: get('on') === true,
+        on: this.get('on') === true,
         bri: limit(get('brightness'), 0, 255),
         hue: limit(get('hue'), 0, 65280),
         sat: limit(get('saturation'), 0, 255),
@@ -329,11 +329,11 @@ function inputHandler() {
 exports.wrapup = function() {
     /*
       for (var i = 0; i < handlers.length; i++) {
-      removeInputHandler(handlers[i]);
+      this.removeInputHandler(handlers[i]);
       }
     */
     if (triggerHandle) {
-        removeInputHandler(triggerHandle);
+        this.removeInputHandler(triggerHandle);
     }
     
     var errorLights = [];
@@ -350,7 +350,7 @@ exports.wrapup = function() {
         http.put(options, function(response) {
         	console.log(JSON.stringify(response));
             if (isNonEmptyArray(response) && response[0].error) {
-                var lightID = get('lightID').toString();
+                var lightID = this.get('lightID').toString();
                 errorLights.push(lightID);
             }
         });

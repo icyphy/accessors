@@ -259,7 +259,7 @@ function generateAccessorHTML(path, id) {
     // ```accessors``` with a property whose name equals the id of this accessor
     // whose value is an instance of the Accessor class of the common/commonHost.js
     // module.
-    function get(name) {
+    function this.get(name) {
         return getInputOrParameter(name, 'input', id);
     }
 
@@ -270,7 +270,7 @@ function generateAccessorHTML(path, id) {
     // ```accessors``` with a property whose name matches id
     // whose value is an instance of the Accessor class of the common/commonHost.js
     // module.
-    function getParameter(name) {
+    function this.getParameter(name) {
         return getInputOrParameter(name, 'parameter', id);
     }
     
@@ -280,7 +280,7 @@ function generateAccessorHTML(path, id) {
     // @param timeout The time to wait before giving up. This defaults to 5000,
     //  5 seconds, if not provided.
     // @return The responseText from the request.
-    function getResource(uri, timeout) {
+    function this.getResource(uri, timeout) {
         if (!timeout && timeout !== 0) {
             timeout = 5000;
         }
@@ -434,7 +434,7 @@ function generateAccessorHTML(path, id) {
     // @param url The url to be read
     // @return The responseText from the request.
     function readURL(url) {
-        return getResource(url);
+        return this.getResource(url);
     }
 
     // Load the specified module.
@@ -474,7 +474,7 @@ function generateAccessorHTML(path, id) {
     // ```accessors``` that contains a property with name equal to the
     // whose value is an instance of the Accessor class of the common/commonHost.js
     // module.
-    function send(name, value) {
+    function this.send(name, value) {
         var element = document.getElementById(id + '.' + name);
         if (!element) {
             alert('No output named ' + name + ' for accessor with id ' + id);
@@ -965,13 +965,13 @@ function generateTableRow(table, name, id, options, editable) {
     if (!editable) {
         valueCell.innerHTML = value;
         
-        // Set a unique ID so that this input can be retrieved by the get()
-        // or set by the send() function defined in local.js.
+        // Set a unique ID so that this input can be retrieved by the this.get()
+        // or set by the this.send() function defined in local.js.
         valueCell.setAttribute('id', id + '.' + name);
     } else {
         var valueInput = document.createElement("input");
         
-        // Set a unique ID so that this input can be retrieved by the get()
+        // Set a unique ID so that this input can be retrieved by the this.get()
         // function defined in local.js.
         valueInput.setAttribute('id', id + '.' + name);
 
@@ -1065,7 +1065,7 @@ function getBaseDocumentation(docs, path) {
     }
 }
 
-/** Get data from an input or parameter. This is used by get() and getParameter().
+/** Get data from an input or parameter. This is used by this.get() and this.getParameter().
  *  @param name The name of the input (a string).
  *  @param role One of 'input' or 'parameter'.
  *  @param id The id of the accessor.

@@ -37,13 +37,13 @@ var httpClient = require('httpClient');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('trigger');
-    input('write', {'type': 'boolean', 'value': false});
-    input('key', {'type':'string'});
-    input('ts', {'type':'string'});
-    input('value', {'type': 'string'});
-    output('output', {'type':'string'});
-    parameter('url', {'type':'string', 'value':''});
+    this.input('trigger');
+    this.input('write', {'type': 'boolean', 'value': false});
+    this.input('key', {'type':'string'});
+    this.input('ts', {'type':'string'});
+    this.input('value', {'type': 'string'});
+    this.output('output', {'type':'string'});
+    this.parameter('url', {'type':'string', 'value':''});
 };
 
 
@@ -51,13 +51,13 @@ exports.setup = function () {
 exports.makeRequest = function() {
 
     var request = {};
-    var ts = get('ts');
-    var key = get('key');
-    var url = get('url');
+    var ts = this.get('ts');
+    var key = this.get('key');
+    var url = this.get('url');
     console.log(get('write'));
     if (get('write') === true) {
         request.method = "PUT";
-        request.body = get('value');
+        request.body = this.get('value');
         request.url = url + key;
     } else {
         request.method = "GET";
@@ -102,9 +102,9 @@ exports.issueCommand = function(callback) {
 
 exports.handleResponse = function(message) {
     if (message !== null && message !== undefined) {
-        send('output', JSON.parse(message.body).value);
+        this.send('output', JSON.parse(message.body).value);
     } else {
-        send('output', null);
+        this.send('output', null);
     }
 };
 

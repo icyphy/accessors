@@ -62,25 +62,25 @@
 var imageFilters = require('imageFilters');
 
 exports.setup = function() {
-    input('image');
-    input('graphic', {'value':'', 'type':'string'});
-    input('graphicURI', {'value':'', 'type':'string'});
-    input('scale', {'value':1.0, 'type':'number'});
-    input('rotation', {'value':0.0, 'type':'number'});
-    input('translate');
-    input('options', {'value':'', 'type':'JSON'});
-    output('output');
+    this.input('image');
+    this.input('graphic', {'value':'', 'type':'string'});
+    this.input('graphicURI', {'value':'', 'type':'string'});
+    this.input('scale', {'value':1.0, 'type':'number'});
+    this.input('rotation', {'value':0.0, 'type':'number'});
+    this.input('translate');
+    this.input('options', {'value':'', 'type':'JSON'});
+    this.output('output');
 };
 
 exports.initialize = function() {
     this.addInputHandler('image', function() {
-        var image = get('image');
-        var options = get('options');
+        var image = this.get('image');
+        var options = this.get('options');
         if (!options) {
             options = {};
         }
         
-        var scale = get('scale');
+        var scale = this.get('scale');
         if (scale !== null) {
             // Combine with scale options, if specified.
             if (options.Scale) {
@@ -89,7 +89,7 @@ exports.initialize = function() {
             options.Scale = scale;
         }
         
-        var rotation = get('rotation');
+        var rotation = this.get('rotation');
         if (rotation !== null) {
             // Combine with rotation options, if specified.
             if (options.Rotation) {
@@ -98,7 +98,7 @@ exports.initialize = function() {
             options.Rotation = rotation;
         }
             
-        var translate = get('translate');
+        var translate = this.get('translate');
         if (translate !== null && translate[0] !== null && translate[1] !== null) {
             // Combine with offset options, if specified.
             var xOffset = translate[0];
@@ -113,17 +113,17 @@ exports.initialize = function() {
             }
             options.YOffset = yOffset;
         }
-        var graphic = get('graphic');
+        var graphic = this.get('graphic');
         if (graphic) {
             options.Graphic = graphic;
         } else {
-            var graphicURI = get('graphicURI');
+            var graphicURI = this.get('graphicURI');
             if (graphicURI) {
                 // Second argument is a timeout.
-                options.Graphic = getResource(graphicURI, 3000);
+                options.Graphic = this.getResource(graphicURI, 3000);
             }
         }
         var result = imageFilters.filter(image, 'Annotate', options);
-        send('output', result);
+        this.send('output', result);
     });
 };

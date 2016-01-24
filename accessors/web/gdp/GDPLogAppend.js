@@ -38,27 +38,27 @@ var log = null;
 var handle = null;
 
 exports.setup = function() {
-    input('trigger');
-    input('data', {'type': 'string'});
-    parameter('logname', {'type': 'string'});
+    this.input('trigger');
+    this.input('data', {'type': 'string'});
+    this.parameter('logname', {'type': 'string'});
 };
 
 
 exports.append = function(data) {
     console.log("Okay, inside append");
     console.log(typeof(log));
-    var dataValues = get('data');
+    var dataValues = this.get('data');
     log.append(dataValues);
 };
 
 exports.initialize = function() {
-    var logname = getParameter('logname');
+    var logname = this.getParameter('logname');
     log = GDP.GDP(logname, 2);
     handle = this.addInputHandler('trigger', this.append);
 };
 
 exports.wrapup = function() {
     if (handle !== null) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
 };
