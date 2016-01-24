@@ -41,5 +41,5 @@ function display() {
 	browser.display(toDisplay);
 }
 exports.initialize = function() {
-	addInputHandler('html', display);
+	this.addInputHandler('html', display);
 }
