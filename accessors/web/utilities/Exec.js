@@ -38,7 +38,7 @@ exports.setup = function() {
 	this.output('stdout', {
 		'type': 'string'
 	});
-    input('command', {
+    this.input('command', {
         'value': 'ls',
         'type':'string'
     });
@@ -47,10 +47,12 @@ exports.setup = function() {
 /** Initialize the accessor and start the process subsequently.
  */
 exports.initialize = function() {
-	sh = new shell.Shell({'cmd' : get('command')});
+	sh = new shell.Shell({'cmd' : this.get('command')});
+	
+	var self = this;
 	
 	this.addInputHandler('stdin', function() {
-	    var data = get('stdin');
+	    var data = self.get('stdin');
 	    if (data) {
 		  sh.write(data);
 	    }
@@ -58,7 +60,7 @@ exports.initialize = function() {
 
 	sh.on('message', function(data) {
 		if(data)  {
-			this.send('stdout', data.toString());
+			self.send('stdout', data.toString());
 		}		
 	});
 
