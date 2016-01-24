@@ -61,29 +61,29 @@
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
 exports.setup = function() {
 
-    extend('net/WebSocketClient');
+    this.extend('net/WebSocketClient');
 
-    parameter('topic', {
+    this.parameter('topic', {
         type: "string",
         value: ""
     });
-    parameter('throttleRate', {
+    this.parameter('throttleRate', {
         type: "int",
         value: 0
     });
-    parameter('queueLength', {
+    this.parameter('queueLength', {
         type: "int",
         value: 10
     });
-    parameter('fragmentSize', {
+    this.parameter('fragmentSize', {
         type: "int",
         value: 10000
     });
-    parameter('outputCompleteResponseOnly', {
+    this.parameter('outputCompleteResponseOnly', {
         type: "boolean",
         value: true
     });
-    parameter('compression', {
+    this.parameter('compression', {
         type: "string",
         value: 'none'
     });
@@ -104,11 +104,11 @@ exports.initialize = function() {
 
     exports.sendToWebSocket({
         "op": "subscribe",
-        "topic": getParameter('topic'),
-        "throttle_rate": getParameter('throttleRate'),
-        "queue_length": getParameter('queueLength'),
-        "fragment_size": getParameter('fragmentSize'),
-        "compression": getParameter('compression')
+        "topic": this.getParameter('topic'),
+        "throttle_rate": this.getParameter('throttleRate'),
+        "queue_length": this.getParameter('queueLength'),
+        "fragment_size": this.getParameter('fragmentSize'),
+        "compression": this.getParameter('compression')
     });
 };
 
@@ -116,7 +116,7 @@ exports.initialize = function() {
 exports.wrapup = function() {
     var unsubscribe = {
         "op": "unsubscribe",
-        "topic": getParameter('topic')
+        "topic": this.getParameter('topic')
     };
     exports.sendToWebSocket(unsubscribe);
     this.ssuper.wrapup();
@@ -171,5 +171,5 @@ exports.onMessage = function(message){
         messageToSend = message;
     }
 
-    send('received', messageToSend);
+    this.send('received', messageToSend);
 };

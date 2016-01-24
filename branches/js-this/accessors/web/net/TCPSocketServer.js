@@ -68,7 +68,7 @@
  *  https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3 .
  *
  *  For numeric types, you can also send an array with a single call
- *  to send(). The elements of the array will be sent in sequence all
+ *  to this.send(). The elements of the array will be sent in sequence all
  *  at once, and may be received in one batch. If both ends have
  *  `rawBytes` set to false (specifying message framing), then these
  *  elements will be emitted at the receiving end all at once in a single
@@ -146,10 +146,10 @@
  *  @parameter {int} port The default port to listen on. This defaults to 4000.
  *    a value of 0 means to choose a random ephemeral free port.
  *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
- *    to send() without any header. If false, then prepend sent data with length
+ *    to this.send() without any header. If false, then prepend sent data with length
  *    information and assume receive data starts with length information.
  *    Setting this false on both ends will ensure that each data item passed to
- *    send() is emitted once in its entirety at the receiving end, as a single
+ *    this.send() is emitted once in its entirety at the receiving end, as a single
  *    message. When this is false, the receiving end can emit a partially received
  *    message or could concatenate two messages and emit them together.
  *  @parameter {int} receiveBufferSize The size of the receive buffer. Defaults to
@@ -181,90 +181,90 @@ var socket = require('socket');
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    input('toSend');
-    input('toSendID', {
+    this.input('toSend');
+    this.input('toSendID', {
         type: 'int',
         value: 0
     });
-    output('listening', {
+    this.output('listening', {
         type: 'int'
     });
-    output('connection');
-    output('received');
-    output('receivedID');
+    this.output('connection');
+    this.output('received');
+    this.output('receivedID');
 
     // The parameters below are listed alphabetically.
-    parameter('clientAuth', {
+    this.parameter('clientAuth', {
         type : 'string',
         value : 'none'    // Indicates no SSL/TSL will be used.
     });
-    parameter('discardSendToUnopenedSocket', {
+    this.parameter('discardSendToUnopenedSocket', {
         type : 'boolean',
         value : false
     });
-    parameter('hostInterface', {
+    this.parameter('hostInterface', {
         type : 'string',
         value : '0.0.0.0' // Means listen on all available interfaces.
     });
-    parameter('idleTimeout', {
+    this.parameter('idleTimeout', {
         value: 0,         // In seconds. 0 means don't timeout.
         type: "int"
     });
-    parameter('keepAlive', {
+    this.parameter('keepAlive', {
         type : 'boolean',
         value : true
     });
-    parameter('noDelay', {
+    this.parameter('noDelay', {
         type : 'boolean',
         value : true
     });
-    parameter('pfxKeyCertPassword', {
+    this.parameter('pfxKeyCertPassword', {
         type : 'string',
         value : ''
     });
-    parameter('pfxKeyCertPath', {
+    this.parameter('pfxKeyCertPath', {
         type : 'string',
         value : ''
     });
-    parameter('port', {
+    this.parameter('port', {
         type : 'int',
         value : 4000
     });
-    parameter('rawBytes', {
+    this.parameter('rawBytes', {
         type : 'boolean',
         value : false      // Means to use a messaging protocol.
     });
-    parameter('receiveBufferSize', {
+    this.parameter('receiveBufferSize', {
         value: 65536,
         type: "int"
     });
-    parameter('receiveType', {
+    this.parameter('receiveType', {
         type : 'string',
         value : 'string',
     });
-    parameter('sendBufferSize', {
+    this.parameter('sendBufferSize', {
         value: 65536,
         type: "int"
     });
-    parameter('sendType', {
+    this.parameter('sendType', {
         type : 'string',
         value : 'string',
     });
-    parameter('sslTls', {
+    this.parameter('sslTls', {
         type : 'boolean',
         value : false
     });
-    parameter('trustedCACertPath', {
+    this.parameter('trustedCACertPath', {
         type : 'string',
         value : ''
     });
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
-        parameter('receiveType', {
+        this.parameter('receiveType', {
             options : socket.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
             options : socket.supportedSendTypes()
         });
     } catch(err) {
@@ -280,8 +280,8 @@ var sockets = [];
  *  on the most recently received value on the `toSendID` input.
  */
 exports.toSendInputHandler = function () {
-    var dataToSend = get('toSend');
-    var idToSendTo = get('toSendID');
+    var dataToSend = this.get('toSend');
+    var idToSendTo = this.get('toSendID');
     if (idToSendTo === 0) {
         // Broadcast to all sockets.
         for (var i = 0; i < sockets.length; i++) {
@@ -292,7 +292,7 @@ exports.toSendInputHandler = function () {
     } else if (sockets[idToSendTo]) {
         sockets[idToSendTo].send(dataToSend);
     } else {
-        var discardSendToUnopenedSocket = getParameter('discardSendToUnopenedSocket');
+        var discardSendToUnopenedSocket = this.getParameter('discardSendToUnopenedSocket');
         if (discardSendToUnopenedSocket) {
             console.log('Socket with ID ' + idToSendTo +
                         ' is not open. Discarding data: ' +
@@ -316,21 +316,21 @@ exports.initialize = function () {
 
     server = new socket.SocketServer(
         {
-            'clientAuth' : getParameter('clientAuth'),
-            'hostInterface' : getParameter('hostInterface'),
-            'idleTimeout' : getParameter('idleTimeout'),
-            'keepAlive' : getParameter('keepAlive'),
-            'noDelay' : getParameter('noDelay'),
-            'pfxKeyCertPassword' : getParameter('pfxKeyCertPassword'),
-            'pfxKeyCertPath' : getParameter('pfxKeyCertPath'),
-            'port' : getParameter('port'),
-            'rawBytes' : getParameter('rawBytes'),
-            'receiveBufferSize' : getParameter('receiveBufferSize'),
-            'receiveType' : getParameter('receiveType'),
-            'sendBufferSize' : getParameter('sendBufferSize'),
-            'sendType' : getParameter('sendType'),
-            'sslTls' : getParameter('sslTls'),
-            'trustedCACertPath' : getParameter('trustedCACertPath')
+            'clientAuth' : this.getParameter('clientAuth'),
+            'hostInterface' : this.getParameter('hostInterface'),
+            'idleTimeout' : this.getParameter('idleTimeout'),
+            'keepAlive' : this.getParameter('keepAlive'),
+            'noDelay' : this.getParameter('noDelay'),
+            'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
+            'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
+            'port' : this.getParameter('port'),
+            'rawBytes' : this.getParameter('rawBytes'),
+            'receiveBufferSize' : this.getParameter('receiveBufferSize'),
+            'receiveType' : this.getParameter('receiveType'),
+            'sendBufferSize' : this.getParameter('sendBufferSize'),
+            'sendType' : this.getParameter('sendType'),
+            'sslTls' : this.getParameter('sslTls'),
+            'trustedCACertPath' : this.getParameter('trustedCACertPath')
         }
     );
 
@@ -340,7 +340,7 @@ exports.initialize = function () {
     
     server.on('listening', function(port) {
         console.log('Server: Listening for socket connection requests.');
-        send('listening', port);
+        this.send('listening', port);
     });
     
     server.on('connection', function(serverSocket) {
@@ -351,20 +351,20 @@ exports.initialize = function () {
             'remotePort': serverSocket.remotePort(),
             'status': 'open'
         };
-        send('connection', socketID);
+        this.send('connection', socketID);
         
         sockets[connectionCount] = serverSocket;
 
         serverSocket.on('close', function() {
             serverSocket.removeAllListeners();
             socketID.status = 'closed';
-            send('connection', socketID);
+            this.send('connection', socketID);
             // Avoid a memory leak here.
             sockets[connectionCount] = null;
         });
         serverSocket.on('data', function(data) {
-            send('received', data);
-            send('receivedID', connectionCount);
+            this.send('received', data);
+            this.send('receivedID', connectionCount);
         });
         serverSocket.on('error', function(message) {
             error(message);

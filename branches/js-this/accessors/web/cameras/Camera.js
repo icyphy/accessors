@@ -57,29 +57,29 @@ var handle = null;
 
 /** Create the inputs, outputs, and parameters, and update the parameters for the selected camera. */
 exports.setup = function () {
-    input('trigger');
-    output('image');
-    parameter('triggered', {
+    this.input('trigger');
+    this.output('image');
+    this.parameter('triggered', {
         'type' : 'boolean',
         'value' : true
     });
     // NOTE: The following assumes that setup() is reinvoked whenever a parameter
     // value changes, since the camera will change and so will the available options.
-    parameter('camera', {
+    this.parameter('camera', {
         'type' : 'string',
         'value' : 'default camera',
     });
-    parameter('viewSize', {
+    this.parameter('viewSize', {
         'type' : 'JSON',
     });
     // This is in a try-catch so that this accessor can be instantiated even if the
     // host does not provide a cameras module.
     try {
-        parameter('camera', {
+        this.parameter('camera', {
             'options' : cameras.cameras()
         });
         camera = new cameras.Camera(getParameter('camera'));
-        parameter('viewSize', {
+        this.parameter('viewSize', {
             'value' : camera.getViewSize(),
             'options' : camera.viewSizes()
         });
@@ -97,11 +97,11 @@ exports.initialize = function () {
     camera.open();
     if (getParameter('triggered')) {
         handle = this.addInputHandler('trigger', function () {
-            send('image', camera.snapshot());
+            this.send('image', camera.snapshot());
         });
     } else {
         camera.on('image', function (image) {
-            send('image', image);
+            this.send('image', image);
         });
     }
 };
@@ -110,7 +110,7 @@ exports.initialize = function () {
 exports.wrapup = function () {
     camera.removeAllListeners('image');
     if (handle !== null) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
     camera.close();
 };

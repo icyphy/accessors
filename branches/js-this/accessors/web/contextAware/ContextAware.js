@@ -91,35 +91,35 @@ var selectedService;
  * adapt.
  */
 exports.setup = function() {
-    input('input');
+    this.input('input');
     // a simple UI interface to start the dialog with users to select a REST
     // service
-    parameter('RESTSource', {
+    this.parameter('RESTSource', {
 	'type' : 'string',
 	'value' : 'Make a selection',
 	'options' : contextAware.services()
     });
-    selectedService = getParameter('RESTSource');
+    selectedService = this.getParameter('RESTSource');
     // implement the selected service's input and output ports
     if (selectedService == 'GSN')
     {
-        implement("contextAware/GSNInterface.js");
-        input('dataType', 
+        this.implement("contextAware/GSNInterface.js");
+        this.input('dataType', 
    	      {'type': 'string',
      	       'value': 'all',
      	       'options':contextAware.gsnServices()}); 
     }
     else if (selectedService == 'Paraimpu') {
-        implement("contextAware/ParaimpuInterface.js");
-        input('dataType', {
+        this.implement("contextAware/ParaimpuInterface.js");
+        this.input('dataType', {
   	    type: 'string',
   	    value: 'all',
   	    'options':contextAware.paraimpuServices()
   	}); 
     }
     else if (selectedService == 'Firebase'){
-        implement("contextAware/FirebaseInterface.js");
-        input('dataType', {
+        this.implement("contextAware/FirebaseInterface.js");
+        this.input('dataType', {
      	    type: 'string',
      	    value: 'all',
      	    'options':contextAware.firebaseServices()
@@ -129,14 +129,14 @@ exports.setup = function() {
     else {
 	console.log("REST Service interface not available");
     }
-    extend("net/REST.js");
+    this.extend("net/REST.js");
     // hide the input and output ports of the inherited accessor
-    input('command', {'visibility':'expert'});
-    input('arguments', {'visibility':'expert'});
-    input('options',{'visibility':'expert'});
-    output('headers',{'visibility':'expert'});
-    input('body',{'visibility':'expert'});
-    input('trigger',{'visibility':'expert'});
+    this.input('command', {'visibility':'expert'});
+    this.input('arguments', {'visibility':'expert'});
+    this.input('options',{'visibility':'expert'});
+    this.output('headers',{'visibility':'expert'});
+    this.input('body',{'visibility':'expert'});
+    this.input('trigger',{'visibility':'expert'});
 };
 
 /**
@@ -154,30 +154,30 @@ exports.initialize = function() {
 	    // construct the URL for the selected service
 	    var serviceURL = {
 		"url" : {
-		    "host" : getParameter('host'),
-		    "port" : getParameter('port'),
-		    "protocol" : getParameter('protocol')
+		    "host" : this.getParameter('host'),
+		    "port" : this.getParameter('port'),
+		    "protocol" : this.getParameter('protocol')
 		}
 	    };
-	    send('options', serviceURL);
-	    send('command', getParameter('path'));
+	    this.send('options', serviceURL);
+	    this.send('command', this.getParameter('path'));
 	    if (selectedService == 'Paraimpu') {
 		// sample access token to use
 		// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-		var arg = {"access_token" : getParameter('accessToken')};
+		var arg = {"access_token" : this.getParameter('accessToken')};
 		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" +
 			    arg);
 		this.send('arguments', arg);
 	    }
 
 	    // ex. of valid json format for reference
-	    // send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
-	    // send('options',
+	    // this.send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
+	    // this.send('options',
 	    // {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
 	    
 
 	    // Cause the base class handler to issue the HTTP request.
-	    send('trigger', true);
+	    this.send('trigger', true);
 	});
 };
 
@@ -207,7 +207,7 @@ exports.filterResponse = function(response) {
  * reading and current status
  */
 function getFirebaseData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
@@ -237,7 +237,7 @@ function getFirebaseData(response) {
  * 
  */
 function getParaimpuData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
@@ -270,7 +270,7 @@ function getParaimpuData(response) {
  * 
  */
 function getGSNData(response) {
-    var type = get('dataType');
+    var type = this.get('dataType');
     var xmlJson={};
     xmlJson=contextAware.xmlToJson(response);
     var result = JSON.parse(xmlJson);
@@ -280,21 +280,21 @@ function getGSNData(response) {
         // This code has no tests because the GSN source on the web does not stay up.
         // http://stackoverflow.com/questions/19217365/missing-name-after-operator-yui-compressor-for-socket-io-js-files
         // suggests using ['..']
-	// send('sound', result."virtual-sensor"[2].field[2]);
-        send('sound', result['virtual-sensor'][2].field[2]);
+	// this.send('sound', result."virtual-sensor"[2].field[2]);
+        this.send('sound', result['virtual-sensor'][2].field[2]);
 	break;
     case "sensorName":
-	// send('sensorName', result."virtual-sensor"[2].name);
-        send('sensorName', result['virtual-sensor'][2].name);
+	// this.send('sensorName', result."virtual-sensor"[2].name);
+        this.send('sensorName', result['virtual-sensor'][2].name);
 	break;
     case "all":
 	//send('sound', result."virtual-sensor"[2].field[2]);
-        send('sound', result['virtual-sensor'][2].field[2]);
+        this.send('sound', result['virtual-sensor'][2].field[2]);
 	//send('sensorName', result."virtual-sensor"[2].name);
-        send('sensorName', result['virtual-sensor'][2].name);
+        this.send('sensorName', result['virtual-sensor'][2].name);
 	break;
     default:
 	//send('response', result."virtual-sensor");
-        send('response', result['virtual-sensor']);
+        this.send('response', result['virtual-sensor']);
     }
 }

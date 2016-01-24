@@ -37,11 +37,11 @@ var log = null;
 var handle = null;
 
 exports.setup = function() {
-    input('trigger');
-    output('data', {'type': 'string'});
-    parameter('logname', {'type': 'string'});
-    parameter('startrec', {'type': 'int', 'value': 0});
-    parameter('numrec', {'type': 'int', 'value':0});
+    this.input('trigger');
+    this.output('data', {'type': 'string'});
+    this.parameter('logname', {'type': 'string'});
+    this.parameter('startrec', {'type': 'int', 'value': 0});
+    this.parameter('numrec', {'type': 'int', 'value':0});
 };
 
 exports.get_next_data = function() {
@@ -49,21 +49,21 @@ exports.get_next_data = function() {
     while (true) {
         var data = log.get_next_data(100);
         if (data !== null) {
-            send('data', data); 
+            this.send('data', data); 
             break;
         }
     }
 };
 
 exports.initialize = function() {
-    var logname = getParameter('logname');
+    var logname = this.getParameter('logname');
     log = new GDP.GDP(logname, 1);
-    log.subscribe(getParameter('startrec'), getParameter('numrec'));
+    log.subscribe(getParameter('startrec'), this.getParameter('numrec'));
     handle = this.addInputHandler('trigger', this.get_next_data);
 };
 
 exports.wrapup = function() {
     if (handle !== null) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
 };

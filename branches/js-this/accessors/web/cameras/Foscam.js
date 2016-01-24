@@ -96,9 +96,9 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    extend('net/REST');
+    this.extend('net/REST');
     // Change the type of the input to select.
-    input('command', {
+    this.input('command', {
         'type':'select',
         'value':'snapshot',
         'options':[
@@ -119,8 +119,8 @@ exports.setup = function () {
 		    'stop horizontal patrol'
         ]});
     // Provide parameters for username and password.
-    parameter('username', {'value':'admin', 'type':'string'});
-    parameter('password', {'value':'', 'type':'string'});
+    this.parameter('username', {'value':'admin', 'type':'string'});
+    this.parameter('password', {'value':'', 'type':'string'});
 };
 
 // Alternate command to use, for example to stop the camera.
@@ -132,7 +132,7 @@ var alternateCommand;
 exports.encodePath = function() {
     var command;
     if (!alternateCommand) {
-        command = get('command');
+        command = this.get('command');
     }
     var code = -1;
     switch(command) {
@@ -153,7 +153,7 @@ exports.encodePath = function() {
 		case 'io output high':          code = 94; break;
     case 'io output low':           code = 95; break;
 	}
-	var encodedArgs = 'user=' + get('username') + '&pwd=' + get('password');
+	var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
 	if (code >= 0) {
 	    command = 'decoder_control';
 	    encodedArgs += '&command=' + code;

@@ -50,30 +50,30 @@ org/terraswarm/accessor/demo/ImageFilters.
 var imageFilters = require('imageFilters');
 
 exports.setup = function() {
-    input('input');
-    output('output');
-    input('options', {'value':'', 'type':'JSON'});
+    this.input('input');
+    this.output('output');
+    this.input('options', {'value':'', 'type':'JSON'});
     try {
-        input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
+        this.input('filter', {'type':'string', 'value':'Threshold', 'options':imageFilters.filters()});
     } catch(error) {
         // If the host does not support imageFilters, the above will fail.
         // Proceed anyway so the browser host can display the accessor.
-        input('filter', {'type':'string'});
+        this.input('filter', {'type':'string'});
     }
 };
 
 var handle = null;
 exports.initialize = function() {
     handle = this.addInputHandler('input', function() {
-        var options = get('options');
-        var image = get('input');
-        var result = imageFilters.filter(image, getParameter('filter'), options);
-        send('output', result);
+        var options = this.get('options');
+        var image = this.get('input');
+        var result = imageFilters.filter(image, this.getParameter('filter'), options);
+        this.send('output', result);
     });
 };
 
 exports.wrapup = function() {
     if (handle) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
 };

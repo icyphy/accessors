@@ -57,7 +57,7 @@ var handle = null;
 
 /** Define inputs and outputs. */
 exports.setup = function() {
-  input('HostIP', {
+  this.input('HostIP', {
     type: "string",
     value: ""
   });
@@ -65,21 +65,21 @@ exports.setup = function() {
     type: "string",
     value: ""
   });
-  input('dataType', {
+  this.input('dataType', {
     type: "string",
     value: "all"
   });  
-  output('iBeacon',{'type':'JSON'});
-  output('ALPS',{'type':'JSON'});
-  output('IMU',{'type':'JSON'});
-  output('WiFi',{'type':'JSON'});
-  output('Location',{'type':'JSON'});
+  this.output('iBeacon',{'type':'JSON'});
+  this.output('ALPS',{'type':'JSON'});
+  this.output('IMU',{'type':'JSON'});
+  this.output('WiFi',{'type':'JSON'});
+  this.output('Location',{'type':'JSON'});
 };
 
 /* Initialize connection.*/
 exports.initialize = function() {
-   var ipAddress = get('HostIP');
-   var port = get('HostPort');
+   var ipAddress = this.get('HostIP');
+   var port = this.get('HostPort');
 
    if (ipAddress === null|| ipAddress.trim() === "") {
       throw "No IP Address is given for the localization host.";
@@ -94,7 +94,7 @@ exports.initialize = function() {
 
 /* Get data over REST based on dataType input */
 function getData(){
-	var type = get('dataType');
+	var type = this.get('dataType');
 	switch(type){
 		case "ibeacon":
 			this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));

@@ -43,14 +43,14 @@
  *  is 'application/json', which allows sending and receiving anything that has
  *  a string representation in JSON. The types supported by this implementation
  *  include at least:
- *  * __application/json__: The send() function uses JSON.stringify() and sends the
+ *  * __application/json__: The this.send() function uses JSON.stringify() and sends the
  *    result with a UTF-8 encoding. An incoming byte stream will be parsed as JSON,
  *    and if the parsing fails, will be provided as a string interpretation of the byte
  *    stream.
  *  * __text/\*__: Any text type is sent as a string encoded in UTF-8.
  *  * __image/x__: Where __x__ is one of __json__, __png__, __gif__,
  *    and more.
- *    In this case, the data passed to send() is assumed to be an image, as encoded
+ *    In this case, the data passed to this.send() is assumed to be an image, as encoded
  *    on the host, and the image will be encoded as a byte stream in the specified
  *    format before sending.  A received byte stream will be decoded as an image,
  *    if possible.
@@ -94,34 +94,34 @@ var running = false;
 
 /** Sets up the accessor by defining inputs and outputs. */
 exports.setup = function() {
-    parameter('hostInterface', {
+    this.parameter('hostInterface', {
         value: "localhost",
         type: "string"
     });
-    parameter('port', {
+    this.parameter('port', {
         value: 8080,
         type: "int"
     });
-    parameter('receiveType', {
+    this.parameter('receiveType', {
         type : 'string',
         value : 'application/json',
     });
-    parameter('sendType', {
+    this.parameter('sendType', {
         type : 'string',
         value : 'application/json',
     });
-    input('toSend');
-    output('received');
-    output('listening', {'type':'int'});
-    output('connection');
+    this.input('toSend');
+    this.output('received');
+    this.output('listening', {'type':'int'});
+    this.output('connection');
     
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
-        parameter('receiveType', {
+        this.parameter('receiveType', {
             options : WebSocket.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
             options : WebSocket.supportedSendTypes()
         });
     } catch(err) {
@@ -152,7 +152,7 @@ exports.initialize = function() {
     running = true;
 
     handle = this.addInputHandler('toSend', function() {
-        var data = get('toSend');
+        var data = this.get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
 
@@ -195,7 +195,7 @@ exports.initialize = function() {
 
 function onListening() {
     console.log('Server: Listening for socket connection requests.');
-    send('listening', getParameter('port'));
+    this.send('listening', this.getParameter('port'));
 }
 
 /** Executes when a connection has been establised.<br>
@@ -205,12 +205,12 @@ function onConnection(socket) {
    //socketID is the index of the socket in the sockets array.
     var socketID = sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
-    send('connection', {'socketID':socketID, 'status':'open'});
+    this.send('connection', {'socketID':socketID, 'status':'open'});
     socket.on('message', function(message) {
-        send('received', {'socketID':socketID, 'message':message});
+        this.send('received', {'socketID':socketID, 'message':message});
     });
     socket.on('close', function(message) {
-        send('connection', {'socketID':socketID, 'status':'closed'});
+        this.send('connection', {'socketID':socketID, 'status':'closed'});
     });
     socket.on('error', function(message) {
         error(message);
@@ -229,7 +229,7 @@ exports.wrapup = function(){
     }
 
     sockets = [];
-    removeInputHandler(handle);
+    this.removeInputHandler(handle);
 
     if (server !== null) {
         server.removeAllListeners();
