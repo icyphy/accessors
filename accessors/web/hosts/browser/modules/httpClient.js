@@ -238,35 +238,37 @@ ClientRequest.prototype.end = function() {
 	// TODO:  Implement keep-alive and write a test case
 	// This is sent as a header field in jQuery
 	// TODO:  Implement body and write a test case
-	// TODO:  Implement POST and PUT and write test cases
 	/*
 	this.options.headers['Keep-Alive'] = this.options.keepAlive;
-	
-	if (typeof this.options.body === "undefined") {
-		this.options.body = "";
-	}
 	*/
 	
-	jQuery.ajax({
-		// Set properties provided by defaultOptions
-		headers : this.options.headers,
-		method : this.options.method,
-		timeout : this.options.timeout,
-		url : urlString,
-		
-		// Set optional body property, if present (how to?)
-		// TODO:  Make this optional
-		//data = this.options.body,
-		
-		// Set callbacks
-		success: function(data, status, xhr) {
-			// Anything data, String textStatus, jqXHR jqXHR
-		    self._response(xhr, data);
-		},
-		error: function() {
-			self._handleError("Error issuing request to " + urlString);
-		}
-	}); 
+	// Define an object so that body can be optionally added in ajax call
+	var ajaxObject = {
+			// Set properties provided by defaultOptions
+			headers : this.options.headers,
+			method : this.options.method,
+			timeout : this.options.timeout,
+			url : urlString,
+			
+			// Set optional body property, if present (how to?)
+			// TODO:  Make this optional
+			//data = this.options.body,
+			
+			// Set callbacks
+			success: function(data, status, xhr) {
+				// Anything data, String textStatus, jqXHR jqXHR
+			    self._response(xhr, data);
+			},
+			error: function() {
+				self._handleError("Error issuing request to " + urlString);
+			}
+	}
+	
+	if (typeof this.options.body != "undefined") {
+		ajaxObject.data = this.options.body;
+	}
+	
+	jQuery.ajax(ajaxObject);
 };
 
 /** Internal function used to handle an error.
