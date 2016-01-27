@@ -125,7 +125,6 @@ exports.request = function(options, responseCallback) {
 };
 
 // TODO:  
-// jsonp request method
 // get, post, put methods
 
 //NOTE: The following events are produced by ClientRequest in Node.js
@@ -242,33 +241,39 @@ ClientRequest.prototype.end = function() {
 	this.options.headers['Keep-Alive'] = this.options.keepAlive;
 	*/
 	
-	// Define an object so that body can be optionally added in ajax call
-	var ajaxObject = {
-			// Set properties provided by defaultOptions
-			headers : this.options.headers,
-			method : this.options.method,
-			timeout : this.options.timeout,
-			url : urlString,
-			
-			// Set optional body property, if present (how to?)
-			// TODO:  Make this optional
-			//data = this.options.body,
-			
-			// Set callbacks
-			success: function(data, status, xhr) {
-				// Anything data, String textStatus, jqXHR jqXHR
-			    self._response(xhr, data);
-			},
-			error: function() {
-				self._handleError("Error issuing request to " + urlString);
-			}
+	// Check for a JSONP request.  URL will end with ?callback=?
+	// TODO:  Support named callbacks (e.g. ?callback=myMethod) if needed.
+	// Named 
+	if (this.options.method === "GET" && urlString.length > 11 
+			&& urlString.substring(urlString.length - 11, urlString.length) === "?callback=?") {
+    	jQuery.getJSON(urlString, function(data, textStatus, xhr) {
+    		self._response(xhr, data);
+    	});
+	} else {
+		// Define an object so that body can be optionally added in ajax call
+		var ajaxObject = {
+				// Set properties provided by defaultOptions
+				headers : this.options.headers,
+				method : this.options.method,
+				timeout : this.options.timeout,
+				url : urlString,
+
+				// Set callbacks
+				success: function(data, status, xhr) {
+					// Anything data, String textStatus, jqXHR jqXHR
+				    self._response(xhr, data);
+				},
+				error: function() {
+					self._handleError("Error issuing request to " + urlString);
+				}
+		}
+		
+		if (typeof this.options.body != "undefined") {
+			ajaxObject.data = this.options.body;
+		}
+		
+		jQuery.ajax(ajaxObject);
 	}
-	
-	if (typeof this.options.body != "undefined") {
-		ajaxObject.data = this.options.body;
-	}
-	
-	jQuery.ajax(ajaxObject);
 };
 
 /** Internal function used to handle an error.
