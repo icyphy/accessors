@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for CORS request using REST accessor </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the 
+        // accessor definition since they're specific to this scenario.   
+        // browser.js looks for initialValues variable. 
+ 	    var initialValues = {};
+        initialValues["REST.options"] = "\"http://jsonplaceholder.typicode.com/posts/1?callback=?\"";
+        initialValues["REST.trigger"] = true;
+    </script>   
+    <script src="/accessors/hosts/browser/browser.js"></script>
+</head>
+<body>
+<div> <p> For this test, please enter inputs: </p> 
+<ul> <li> options: "http://jsonplaceholder.typicode.com/posts/1?callback=?" </li>
+     <li> trigger: true </li>
+</ul>
+<p> then click "react to inputs".  The output should be: </p>
+<ul> <li> response: {"userId":1,"id":1,"title":"sunt aut facere repellat provident occaecati excepturi optio reprehenderit","body":"quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"} </li>
+	 <li> status: Type string, Value 200: load </li>
+</ul>
+</div>
+<div class="accessor"
+   src="net/REST"
+   id="REST"></div>
+</body>
+</html>
