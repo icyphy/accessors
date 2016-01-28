@@ -176,13 +176,12 @@ exports.setup = function () {
             options : WebSocket.supportedSendTypes()
         });
     } catch(err) {
-        error(err);
+        this.error(err);
     }
 };
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function () {
-
 
     client = new WebSocket.Client(
         {
@@ -198,26 +197,22 @@ exports.initialize = function () {
         }
     );
 
-    client.on('open', this.onOpen);
-    client.on('message', this.onMessage);
+    client.on('open', exports.onOpen.bind(this));
+    client.on('message', exports.onMessage.bind(this));
+    client.on('close', onClose.bind(this));
 
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
-    // Bind onClose() to caller's object,
-    // so initialize() of caller's object is called if reconnect is true.
-    client.on('close', onClose.bind(callObj));
     client.on('error', function (message) {
         console.log(message);
     });
     //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
-        inputHandle = this.addInputHandler('toSend', this.toSendInputHandler);
+        inputHandle = this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     }
 };
 
 /** Handles input on 'toSend'. */
 exports.toSendInputHandler = function () {
-    exports.sendToWebSocket(get('toSend'));
+    exports.sendToWebSocket(this.get('toSend'));
 };
 
 /** Sends JSON data to the web socket. */

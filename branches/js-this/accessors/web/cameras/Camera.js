@@ -95,13 +95,14 @@ exports.setup = function () {
 exports.initialize = function () {
     camera.setViewSize(getParameter('viewSize'));
     camera.open();
+    var self = this;
     if (getParameter('triggered')) {
         handle = this.addInputHandler('trigger', function () {
-            this.send('image', camera.snapshot());
+            self.send('image', camera.snapshot());
         });
     } else {
         camera.on('image', function (image) {
-            this.send('image', image);
+            self.send('image', image);
         });
     }
 };

@@ -109,7 +109,7 @@ exports.initialize = function() {
             if (all) {
                 bus.publish(topic, msg);
             } else {
-                bus.send(topic, msg, replyHandler);
+                bus.send(topic, msg, replyHandler.bind(this));
             }
         }
     });
