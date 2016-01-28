@@ -95,39 +95,35 @@ exports.setup = function() {
     // a simple UI interface to start the dialog with users to select a REST
     // service
     this.parameter('RESTSource', {
-	'type' : 'string',
-	'value' : 'Make a selection',
-	'options' : contextAware.services()
+	    'type' : 'string',
+	    'value' : 'Make a selection',
+	    'options' : contextAware.services()
     });
     selectedService = this.getParameter('RESTSource');
     // implement the selected service's input and output ports
-    if (selectedService == 'GSN')
-    {
+    if (selectedService == 'GSN') {
         this.implement("contextAware/GSNInterface.js");
         this.input('dataType', 
-   	      {'type': 'string',
+   	            {'type': 'string',
      	       'value': 'all',
-     	       'options':contextAware.gsnServices()}); 
-    }
-    else if (selectedService == 'Paraimpu') {
+     	       'options':contextAware.gsnServices()
+     	}); 
+    } else if (selectedService == 'Paraimpu') {
         this.implement("contextAware/ParaimpuInterface.js");
         this.input('dataType', {
-  	    type: 'string',
-  	    value: 'all',
-  	    'options':contextAware.paraimpuServices()
-  	}); 
-    }
-    else if (selectedService == 'Firebase'){
+  	        'type': 'string',
+  	        'value': 'all',
+  	        'options':contextAware.paraimpuServices()
+  	    }); 
+    } else if (selectedService == 'Firebase'){
         this.implement("contextAware/FirebaseInterface.js");
         this.input('dataType', {
-     	    type: 'string',
-     	    value: 'all',
+     	    'type': 'string',
+     	    'value': 'all',
      	    'options':contextAware.firebaseServices()
      	}); 
-    }
-    
-    else {
-	console.log("REST Service interface not available");
+    } else {
+	    console.log("REST Service interface not available");
     }
     this.extend("net/REST.js");
     // hide the input and output ports of the inherited accessor
@@ -147,37 +143,39 @@ exports.initialize = function() {
     // The superclass registers a handler for the 'trigger' input
     // to issue an HTTP request based on the current inputs.
     this.ssuper.initialize();
+    
+    var self = this;
+    
     // Add a handler for the 'input' input.
     this.addInputHandler(
 	'input',
 	function() {
 	    // construct the URL for the selected service
 	    var serviceURL = {
-		"url" : {
-		    "host" : this.getParameter('host'),
-		    "port" : this.getParameter('port'),
-		    "protocol" : this.getParameter('protocol')
-		}
+            "url" : {
+                "host" : self.getParameter('host'),
+                "port" : self.getParameter('port'),
+                "protocol" : self.getParameter('protocol')
+            }
 	    };
-	    this.send('options', serviceURL);
-	    this.send('command', this.getParameter('path'));
+	    self.send('options', serviceURL);
+	    self.send('command', self.getParameter('path'));
 	    if (selectedService == 'Paraimpu') {
-		// sample access token to use
-		// "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-		var arg = {"access_token" : this.getParameter('accessToken')};
-		console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" +
-			    arg);
-		this.send('arguments', arg);
+            // sample access token to use
+            // "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
+            var arg = {"access_token" : self.getParameter('accessToken')};
+            console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAware.js: access_token:" +
+                    arg);
+            self.send('arguments', arg);
 	    }
 
 	    // ex. of valid json format for reference
-	    // this.send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
-	    // this.send('options',
+	    // self.send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
+	    // self.send('options',
 	    // {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
-	    
 
 	    // Cause the base class handler to issue the HTTP request.
-	    this.send('trigger', true);
+	    self.send('trigger', true);
 	});
 };
 
@@ -190,14 +188,14 @@ exports.filterResponse = function(response) {
 
     switch(selectedService) {
     case "GSN":
-	getGSNData(response);
-	break;
+	    getGSNData.call(this, response);
+	    break;
     case "Paraimpu":
-	getParaimpuData(response);
-	break;
+	    getParaimpuData.call(this, response);
+	    break;
     case "Firebase":
-	getFirebaseData(response);
-	break;
+	    getFirebaseData.call(this, response);
+	    break;
     }
     return response;
 };
@@ -211,23 +209,23 @@ function getFirebaseData(response) {
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
-	this.send('microwave', result.Microwave);
-	// console.log("ContextAwareTest filterResponse() " +
-	// JSON.stringify(result.Microwave));
-	break;
+	    this.send('microwave', result.Microwave);
+	    // console.log("ContextAwareTest filterResponse() " +
+	    // JSON.stringify(result.Microwave));
+	    break;
     case "microwaveStatus":
-	this.send('microwaveStatus',  result.Microwave.status);
-	break;
-    case "pastValues":
-	this.send('pastValues', result.Microwave.pastValues);
-	break;
+	    this.send('microwaveStatus',  result.Microwave.status);
+	    break;
+        case "pastValues":
+	    this.send('pastValues', result.Microwave.pastValues);
+	    break;
     case "all":
-	this.send('microwave', result.Microwave);
-	this.send('microwaveStatus',  result.Microwave.status);
-	this.send('pastValues', result.Microwave.pastValues);
-	break;
+	    this.send('microwave', result.Microwave);
+	    this.send('microwaveStatus',  result.Microwave.status);
+	    this.send('pastValues', result.Microwave.pastValues);
+	    break;
     default:
-	this.send('microwave', result.Microwave);
+	    this.send('microwave', result.Microwave);
     }
 }
 
@@ -241,23 +239,23 @@ function getParaimpuData(response) {
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
-	this.send('payload', result.payload);
-	// console.log("ContextAwareTest filterResponse() " +
-	// JSON.stringify(result.payload));
-	break;
+	    this.send('payload', result.payload);
+	    // console.log("ContextAwareTest filterResponse() " +
+	    // JSON.stringify(result.payload));
+	    break;
     case "sensorId":
-	this.send('sensorId', result.thingId);
-	break;
+	    this.send('sensorId', result.thingId);
+	    break;
     case "producer":
-	this.send('producer', result.producer);
-	break;
+	    this.send('producer', result.producer);
+	    break;
     case "all":
-	this.send('payload', result.payload);
-	this.send('sensorId', result.thingId);
-	this.send('producer', result.producer);
-	break;
+	    this.send('payload', result.payload);
+	    this.send('sensorId', result.thingId);
+	    this.send('producer', result.producer);
+	    break;
     default:
-	this.send('response', result);
+	    this.send('response', result);
     }
 }
 
@@ -280,21 +278,21 @@ function getGSNData(response) {
         // This code has no tests because the GSN source on the web does not stay up.
         // http://stackoverflow.com/questions/19217365/missing-name-after-operator-yui-compressor-for-socket-io-js-files
         // suggests using ['..']
-	// this.send('sound', result."virtual-sensor"[2].field[2]);
+	    // this.send('sound', result."virtual-sensor"[2].field[2]);
         this.send('sound', result['virtual-sensor'][2].field[2]);
-	break;
+	    break;
     case "sensorName":
-	// this.send('sensorName', result."virtual-sensor"[2].name);
+	    // this.send('sensorName', result."virtual-sensor"[2].name);
         this.send('sensorName', result['virtual-sensor'][2].name);
-	break;
+	    break;
     case "all":
-	//send('sound', result."virtual-sensor"[2].field[2]);
+	    //send('sound', result."virtual-sensor"[2].field[2]);
         this.send('sound', result['virtual-sensor'][2].field[2]);
-	//send('sensorName', result."virtual-sensor"[2].name);
+	    //send('sensorName', result."virtual-sensor"[2].name);
         this.send('sensorName', result['virtual-sensor'][2].name);
-	break;
+	    break;
     default:
-	//send('response', result."virtual-sensor");
+	    //send('response', result."virtual-sensor");
         this.send('response', result['virtual-sensor']);
     }
 }

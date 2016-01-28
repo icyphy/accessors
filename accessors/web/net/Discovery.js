@@ -76,11 +76,12 @@ var handle;
  *  local area network.
  */
 exports.initialize = function () {
+    var self = this;
     handle = this.addInputHandler('hostIP', function() {
 	if (get('useNmap')) {
-	    ds.discoverDevices(get('hostIP'), 'nmap');
+	    ds.discoverDevices(self.get('hostIP'), 'nmap');
 	} else {
-	    ds.discoverDevices(get('hostIP'));
+	    ds.discoverDevices(self.get('hostIP'));
 	}
     });
 };
@@ -92,11 +93,12 @@ exports.wrapup = function () {
 
 /** When discovery is finished, send a list of devices.  */
 if (ds) {
+    var self = this;
     ds.on('discovered', function(data) {
         if (data === "") {
-            this.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+            self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
         } else {
-            this.send('devices', data);
+            self.send('devices', data);
         }
     });
 }

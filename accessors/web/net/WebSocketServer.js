@@ -135,24 +135,25 @@ var sockets = [];
 /** Starts the web socket and attaches functions to inputs and outputs.
   * Adds an input handler on toSend that sends the input received to the right socket. */
 exports.initialize = function() {
+    var self = this;
     if (!server) {
         server = new WebSocket.Server({
-                'port':getParameter('port'),
-                'hostInterface':getParameter('hostInterface'),
-                'receiveType':getParameter('receiveType'),
-                'sendType':getParameter('sendType')
+                'port': this.getParameter('port'),
+                'hostInterface': this.getParameter('hostInterface'),
+                'receiveType': this.getParameter('receiveType'),
+                'sendType': this.getParameter('sendType')
         });
-        server.on('listening', onListening);
-        server.on('connection', onConnection);
+        server.on('listening', onListening.bind(this));
+        server.on('connection', onConnection.bind(this));
         server.on('error', function (message) {
-            error(message);
+            self.error(message);
         });
         server.start();
     }
     running = true;
 
     handle = this.addInputHandler('toSend', function() {
-        var data = this.get('toSend');
+        var data = self.get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
 
@@ -165,14 +166,16 @@ exports.initialize = function() {
                 // data has the right form for a point-to-point send.
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
+                    /*
                     console.log("Sending to socket id " +
                                 data.socketID +
                                 " message: " +
                                 data.message);
+                    */
                     sockets[data.socketID].send(data.message);
                 } else {
                     console.log('Socket with ID ' + data.socketID +
-                                ' is not open. Discarding message: ' + data.message);
+                                ' is not open. Discarding message.');
                 }
             } else {
                 // No socketID or message, so this is a broadcast message.
@@ -202,18 +205,19 @@ function onListening() {
  *  Triggers an output on <code>'connection'</code>.
  *  Adds an event listener to the socket. */
 function onConnection(socket) {
-   //socketID is the index of the socket in the sockets array.
+    var self = this;
+    //socketID is the index of the socket in the sockets array.
     var socketID = sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
     this.send('connection', {'socketID':socketID, 'status':'open'});
     socket.on('message', function(message) {
-        this.send('received', {'socketID':socketID, 'message':message});
+        self.send('received', {'socketID':socketID, 'message':message});
     });
     socket.on('close', function(message) {
-        this.send('connection', {'socketID':socketID, 'status':'closed'});
+        self.send('connection', {'socketID':socketID, 'status':'closed'});
     });
     socket.on('error', function(message) {
-        error(message);
+        self.error(message);
     });
 
     sockets.push(socket);
