@@ -100,7 +100,7 @@ exports.initialize = function() {
     bus = new eventbus.VertxBus({'port':port, 'host':host});
     currentAddress = this.get('address');
     bus.subscribe(currentAddress);
-    bus.on(get('address'), onReceived);
+    bus.on(this.get('address'), onReceived.bind(this));
     var replyText = this.get('reply');
     if (replyText !== null && replyText !== '') {
         bus.setReply(replyText);
