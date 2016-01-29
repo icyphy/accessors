@@ -1138,13 +1138,20 @@ Accessor.prototype.react = function(name) {
         invokeSpecificHandler(name);
     } else {
         // No specific input has been given.
-        for (var i = 0; i < this.extendedBy.inputList.length; i++) {
-            name = this.extendedBy.inputList[i];
-            if (this.extendedBy.inputs[name].pendingHandler) {
-                this.extendedBy.inputs[name].pendingHandler = false;
-                invokeSpecificHandler(name);
-            }
-        }
+    	// Invoke pending inputHandlers.  An accessor might send to its own 
+    	// inputs, so repeat until there are no more pending handlers.
+    	var moreInputsPossiblyAvailable = true;
+    	while (moreInputsPossiblyAvailable) {
+	        for (var i = 0; i < this.extendedBy.inputList.length; i++) {
+	        	moreInputsPossiblyAvailable = false;
+	            name = this.extendedBy.inputList[i];
+	            if (this.extendedBy.inputs[name].pendingHandler) {
+	                this.extendedBy.inputs[name].pendingHandler = false;
+	                moreInputsPossiblyAvailable = true;
+	                invokeSpecificHandler(name);
+	            }
+	        }
+    	}
     }
     // Next, invoke handlers registered to handle any input.
     if (this.extendedBy.anyInputHandlers.length > 0) {
