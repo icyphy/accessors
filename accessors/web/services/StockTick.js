@@ -99,7 +99,14 @@ exports.initialize = function() {
 exports.filterResponse = function(response) {
     if (response) {
         try {
-            var parsed = JSON.parse(response);
+        	// Check if response is JSON or stringified JSON.  If stringified, parse.
+        	var parsed;
+        	if (typeof response == "object") {
+        		parsed = response;
+        	} else {
+        		parsed = JSON.parse(response);
+        	}
+
            // Extract the last trade price from the JSON record.
             var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);
             // Send the price to the 'price' output.
