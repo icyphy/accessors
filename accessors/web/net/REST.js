@@ -143,7 +143,7 @@ exports.encodePath = function() {
     // Remove any leading slash that might be present.
     var command = this.get('command').replace(/^\//, '');
     // Encode any characters that are not allowed in a URL.
-    var encodedArgs = querystring.stringify(get('arguments'));
+    var encodedArgs = querystring.stringify(this.get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
     }
@@ -173,7 +173,7 @@ var request;
  *   the httpClient module).
  */
 exports.issueCommand = function(callback) {
-    var encodedPath = this.exports.encodePath();
+    var encodedPath = this.exports.encodePath.call(this);
     var options = this.get('options');
     var body = this.get('body');
     var command = options;
@@ -189,7 +189,7 @@ exports.issueCommand = function(callback) {
     }
     command.timeout = this.get('timeout');
 
-    if (get('outputCompleteResponseOnly') === false) {
+    if (this.get('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
     
@@ -201,11 +201,12 @@ exports.issueCommand = function(callback) {
     
     // To ensure that the callback is called with the same context
     // as this function, create a new function.
+    // FIXME: Probably not necessary.  Bound before being passed.
     var thiz = this;
     var contextCallback = function() {
         callback.apply(thiz, arguments);
     };
-    
+
     request = httpClient.request(command, contextCallback);
     request.on('error', function(message) {
         if (!message) {
@@ -228,9 +229,9 @@ exports.issueCommand = function(callback) {
 exports.handleResponse = function(message) {
     if (message !== null && message !== undefined) {
         if (message.body) {
-            this.send('response', this.filterResponse(message.body));
+            this.send('response', this.exports.filterResponse.call(this, message.body));
         } else {
-            this.send('response', this.filterResponse(message));
+            this.send('response', this.exports.filterResponse.call(this, message));
         }
         if (message.statusCode) {
             this.send('status', message.statusCode + ': ' + message.statusMessage);
@@ -240,7 +241,7 @@ exports.handleResponse = function(message) {
         }
     } else {
         // Send a null response.
-        this.send('response', this.filterResponse(null));
+        this.send('response', this.exports.filterResponse.call(this, null));
     }
 };
 
