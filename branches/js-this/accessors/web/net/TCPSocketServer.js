@@ -334,13 +334,15 @@ exports.initialize = function () {
         }
     );
 
+    var self = this;
+
     server.on('error', function(message) {
-        error(message);
+        self.error(message);
     });
-    
+        
     server.on('listening', function(port) {
         console.log('Server: Listening for socket connection requests.');
-        this.send('listening', port);
+        self.send('listening', port);
     });
     
     server.on('connection', function(serverSocket) {
@@ -351,7 +353,7 @@ exports.initialize = function () {
             'remotePort': serverSocket.remotePort(),
             'status': 'open'
         };
-        this.send('connection', socketID);
+        self.send('connection', socketID);
         
         sockets[connectionCount] = serverSocket;
 
@@ -363,19 +365,17 @@ exports.initialize = function () {
             sockets[connectionCount] = null;
         });
         serverSocket.on('data', function(data) {
-            this.send('received', data);
-            this.send('receivedID', connectionCount);
+            self.send('received', data);
+            self.send('receivedID', connectionCount);
         });
         serverSocket.on('error', function(message) {
-            error(message);
+            self.error(message);
         });
     });
     
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
     // Bind the input handler to caller's object so that when it is invoked,
     // it is invoked in the context of that object and not this one.
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Close all sockets, unregister event listeners, and close the server.

@@ -286,13 +286,13 @@ exports.setup = function () {
             options : socket.supportedSendTypes()
         });
     } catch(err) {
-        error(err);
+        this.error(err);
     }
 };
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-    client.send(get('toSend'));
+    client.send(this.get('toSend'));
 };
 
 /** Initiate a connection to the server using the current parameter values,
@@ -324,26 +324,25 @@ exports.initialize = function () {
             'trustedCACertPath' : this.getParameter('trustedCACertPath')
         }
     );
+    
+    var self = this;
 
     client.on('open', function() {
         console.log('Status: Connection established');
-        this.send('connected', true);
+        self.send('connected', true);
     });
     client.on('data', function(data) {
-        this.send('received', data);
+        self.send('received', data);
     });
-
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
 
     // Bind onClose() to caller's object, so that 'this' is defined
     // in onClose() to be the object on which this initialize() function
     // is called.
-    client.on('close', onClose.bind(callObj));
+    client.on('close', onClose.bind(this));
     client.on('error', function (message) {
-        error(message);
+        self.error(message);
     });
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Send false to 'connected' output, and if 'reconnectOnClose'
@@ -366,7 +365,7 @@ function onClose(message) {
         client = null;
 
         // Reconnect if reconnectOnClose is true.
-        if (getParameter('reconnectOnClose')) {
+        if (this.getParameter('reconnectOnClose')) {
             // Use 'this' rather than 'export' so initialize() can be overridden.
             this.initialize();
         }
