@@ -467,34 +467,52 @@ function generateAccessorHTML(path, id) {
         return result;
     }
     
-    // Send an output.  This implementation assumes that the document
-    // has an element with attribute 'id' equal to ```id.name```, where
+    // Send an output or to an input.  This implementation assumes that the 
+    // document has an element with attribute 'id' equal to ```id.name```, where
     // id is the id of the accessor and name is the name of the output.
     // Such an attribute is created by the generate() function.
     // This implementation also assumes that the window object has a field
     // ```accessors``` that contains a property with name equal to the
-    // whose value is an instance of the Accessor class of the common/commonHost.js
-    // module.
+    // whose value is an instance of the Accessor class of the 
+    // common/commonHost.js module.
     function send(name, value) {
+    	var isInput = false;
         var element = document.getElementById(id + '.' + name);
         if (!element) {
             alert('No output named ' + name + ' for accessor with id ' + id);
             return;
         }
-        // Handle data types
+        // Handle data types.  Check output ports.
         var options = window.accessors[id].outputs[name];
         if (!options) {
-            // This could only occur is somehow the document has an element
-            // with the right name, but there is no such input.
-            alert('No record of output named ' + name
+        	// Check input ports
+        	options = window.accessors[id].inputs[name];
+        	isInput = true;
+        	if (!options) {
+        		// This could only occur is somehow the document has an element
+        		// with the right name, but there is no such input.
+        		alert('No record of output or input named ' + name
                     + ' for accessor with id ' + id);
-            return null;
+        		return null;
+        	}
         }
         options.latestValue = value;
-        if (options.type === 'string') {
-            element.innerHTML = value;
+
+        
+        // Set value for HTML element.  Call provideInput() on inputs.
+        if (isInput) {
+            if (options.type === 'string') {
+            	element.setAttribute("value", value);
+            } else {
+                element.setAttribute("value", JSON.stringify(value));
+            }
+        	provideInput(id, name, value);
         } else {
-            element.innerHTML = JSON.stringify(value);
+            if (options.type === 'string') {
+                element.innerHTML = value;
+            } else {
+                element.innerHTML = JSON.stringify(value);
+            }
         }
     }
     
@@ -1003,8 +1021,9 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     	var valueInput = document.createElement("input")
     	
     	if (role === 'input') {
-		    // Invoke handlers, if there are any.  Only inputs may have handlers.
-		    valueInput.setAttribute('onchange', 'provideInput("' + id + '", name, value)');
+		    // Invoke handlers on change, if any handlers. 
+    		// Only inputs may have handlers. 
+    	    valueInput.setAttribute('onchange', 'provideInput("' + id + '", name, value)');
 		    valueInput.setAttribute('class', 'valueInputBox inputRole');
     	} else {
     		valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
@@ -1316,9 +1335,12 @@ function reactIfExecutable(id, suppress) {
         if (instance && instance.executable) {
             initializeIfNecessary(instance);
             try {
-            	// Call provideInput() on all inputs
-            	// This enables inputHandlers for all inputs even if the input's
-            	// value has not changed since last execution
+            	// Call provideInput() on all visible inputs.
+            	// This enables inputHandlers for all inputs even if an input's
+            	// value has not changed since last execution.
+            	// Non-visible inputs are not triggered from the UI, but an 
+            	// accessor might send to a non-visible input  
+            	// (see web/services/StockTick.js)
             	var id, period;         	
             	var inputs = document.getElementsByClassName('inputRole');
             	
@@ -1331,8 +1353,10 @@ function reactIfExecutable(id, suppress) {
             			id = id.substring(0,period);
             		}
             		
-            		provideInput(id, inputs[i].getAttribute('name'), 
-            				inputs[i].getAttribute('value'));
+            		if (!inputs[i].parentNode.classList.contains("invisible")) {
+            			provideInput(id, inputs[i].getAttribute('name'), 
+                				inputs[i].getAttribute('value'));
+            		}
             	}
             	
                 window.accessors[id].react();
