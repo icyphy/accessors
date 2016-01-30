@@ -181,7 +181,11 @@ exports.issueCommand = function(callback) {
         // In order to be able to include the outputCompleteResponseOnly
         // option, we have to switch styles here.
         command = {};
-        command.url = options + '/' + encodedPath;
+        if (encodedPath) {
+            command.url = options + '/' + encodedPath;
+        } else {
+            command.url = options;
+        }
     } else if (typeof options.url === 'string') {
         command.url = options.url + '/' + encodedPath;
     } else {
@@ -227,7 +231,8 @@ exports.issueCommand = function(callback) {
  *  @param message An incoming message.
  */
 exports.handleResponse = function(message) {
-    if (message !== null && message !== undefined) {
+    // Assume that if the response is null, an error will be signaled.
+    if (message !== null && typeof message !== 'undefined') {
         if (message.body) {
             this.send('response', this.exports.filterResponse.call(this, message.body));
         } else {
@@ -239,9 +244,6 @@ exports.handleResponse = function(message) {
         if (message.headers) {
             this.send('headers', message.headers);
         }
-    } else {
-        // Send a null response.
-        this.send('response', this.exports.filterResponse.call(this, null));
     }
 };
 

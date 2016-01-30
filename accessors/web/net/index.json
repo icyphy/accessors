@@ -1,7 +1,7 @@
 [
     "Discovery.js",
     "IPAddress.js",
-    "KeyValueStore.xml",
+    "KeyValueStore.js",
     "REST.js",
     "TCPSocketClient.js",
     "TCPSocketServer.js",

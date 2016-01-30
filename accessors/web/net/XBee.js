@@ -134,7 +134,7 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data over the radio. */
 exports.toSendInputHandler = function () {
-    port.send(get('toSend'));
+    port.send(this.get('toSend'));
 };
 
 /** Initiate a connection to the server using the current parameter values,
@@ -149,15 +149,14 @@ exports.initialize = function() {
 			'receiveType': this.getParameter('receiveType'),
 			'sendType': this.getParameter('sendType'),
 		});
-		
+	
+	var self = this;
+	
 	port.on('data', function(data) {
-		this.send('received', data);
+		self.send('received', data);
 	});
-		
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
 
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Close the web socket connection. */

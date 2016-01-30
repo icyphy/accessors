@@ -128,16 +128,18 @@ exports.initialize = function() {
 	// of a self-executing function.  This, in essence, creates a singleton
 	// object with a set of functions as its public API.
 	bridge = mockHueBridges.MockHueBridge;
-	connection = bridge.connect(get('bridgeID'));
+	connection = bridge.connect(this.get('bridgeID'));
 	connection.initializeToDefault();
+	
+	var self = this;
 	
 	/** React to a change in the bridge state by outputting the new state.  */
 	connection.on('change', function(data) {
-		this.send('state', data);
+		self.send('state', data);
 	});
   
 	// Register input handler
-	handle = this.addInputHandler('URI', inputHandler);
+	handle = this.addInputHandler('URI', inputHandler.bind(this));
 };
 
 /** Input HTTP request information and generate a response from the bridge.  */
