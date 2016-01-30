@@ -191,9 +191,9 @@ exports.issueCommand = function(callback) {
     } else {
         command.url.path = '/' + encodedPath;
     }
-    command.timeout = this.get('timeout');
+    command.timeout = this.getParameter('timeout');
 
-    if (this.get('outputCompleteResponseOnly') === false) {
+    if (this.getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
     

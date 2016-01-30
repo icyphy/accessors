@@ -466,34 +466,52 @@ function generateAccessorHTML(path, id) {
         return result;
     }
     
-    // Send an output.  This implementation assumes that the document
-    // has an element with attribute 'id' equal to ```id.name```, where
+    // Send an output or to an input.  This implementation assumes that the 
+    // document has an element with attribute 'id' equal to ```id.name```, where
     // id is the id of the accessor and name is the name of the output.
     // Such an attribute is created by the generate() function.
     // This implementation also assumes that the window object has a field
     // ```accessors``` that contains a property with name equal to the
-    // whose value is an instance of the Accessor class of the common/commonHost.js
-    // module.
+    // whose value is an instance of the Accessor class of the 
+    // common/commonHost.js module.
     function send(name, value) {
+    	var isInput = false;
         var element = document.getElementById(id + '.' + name);
         if (!element) {
             alert('No output named ' + name + ' for accessor with id ' + id);
             return;
         }
-        // Handle data types
+        // Handle data types.  Check output ports.
         var options = window.accessors[id].outputs[name];
         if (!options) {
-            // This could only occur is somehow the document has an element
-            // with the right name, but there is no such input.
-            alert('No record of output named ' + name
+        	// Check input ports
+        	options = window.accessors[id].inputs[name];
+        	isInput = true;
+        	if (!options) {
+        		// This could only occur is somehow the document has an element
+        		// with the right name, but there is no such input.
+        		alert('No record of output or input named ' + name
                     + ' for accessor with id ' + id);
-            return null;
+        		return null;
+        	}
         }
         options.latestValue = value;
-        if (options.type === 'string') {
-            element.innerHTML = value;
+
+        
+        // Set value for HTML element.  Call provideInput() on inputs.
+        if (isInput) {
+            if (options.type === 'string') {
+            	element.setAttribute("value", value);
+            } else {
+                element.setAttribute("value", JSON.stringify(value));
+            }
+        	provideInput(id, name, value);
         } else {
-            element.innerHTML = JSON.stringify(value);
+            if (options.type === 'string') {
+                element.innerHTML = value;
+            } else {
+                element.innerHTML = JSON.stringify(value);
+            }
         }
     }
     
@@ -908,14 +926,16 @@ function generateTable(title, names, contents, role, id) {
     }
     
     for (var i = 0; i < names.length; i++) {
+    	var visible = true;
         var item = contents[names[i]];
         if (item) {
             if (item.visibility) {
                 var visibility = item.visibility;
                 if (visibility == 'notEditable') {
                     editable = false;
-                } else if (visibility != 'full') {
-                    continue;
+                } 
+                if (visibility == 'expert') {
+                	visible = false;
                 }
             }
             generateTableRow(
@@ -923,31 +943,45 @@ function generateTable(title, names, contents, role, id) {
                     names[i],
                     id,
                     item,
-                    editable);
+                    editable,
+                    visible,
+                    role);
         }
     }
 }
 
 /** Generate a table row for an input, parameter, or output.
+ *  Table rows are still created for invisible items so that the content is 
+ *  available when the accessor is fired.  Invisible rows are tagged with the 
+ *  class "invisible" to instruct the CSS formatter not to show the row.  
  *  @param table The element into which to append the row.
  *  @param name The text to put in the name column.
  *  @param id The id of the accessor.
  *  @param options The options.
  *  @param editable True to make the value an editable input element.
+ *  @param visible True to make the table row visible.  
+ *  @param role Can be parameter, input or output.
  */
-function generateTableRow(table, name, id, options, editable) {    
+function generateTableRow(table, name, id, options, editable, visible, role) {    
     var row = document.createElement("tr");
     row.setAttribute('class', 'accessorTableRow');
-
+    var classTag;
+    
+    if (visible) {
+    	classTag = "accessorTableData";
+    } else {
+    	classTag = "accessorTableData invisible";
+    }
+    
     // Insert the name.
     var nameCell = document.createElement("td");
-    nameCell.setAttribute('class', 'accessorTableData');
+    nameCell.setAttribute('class', classTag);
     nameCell.innerHTML = name;
     row.appendChild(nameCell);
     
     // Insert the type.
     var typeCell = document.createElement("td");
-    typeCell.setAttribute('class', 'accessorTableData');
+    typeCell.setAttribute('class', classTag);
     var type = options['type'];
     if (!type) {
         type = '';
@@ -956,34 +990,52 @@ function generateTableRow(table, name, id, options, editable) {
     row.appendChild(typeCell);
     
     // Insert the value.
+    // Initial values are optional. There are two ways to specify initial values.
+    // To specify an initial value for all instances of an accessor, define a
+    // value in setup().  Please see
+    // /net/REST.js for example.
+    // To specify an initial value for a web page, add a script element to the
+    // page prior to browser.js defining an initialValues object.  Please see
+    // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
     var valueCell = document.createElement("td");
-    valueCell.setAttribute('class', 'accessorTableData');
+    valueCell.setAttribute('class', classTag);
+    var initialValue = (typeof initialValues != "undefined") ? 
+    						( (initialValues.hasOwnProperty(id + "." + name)) ?
+    								initialValues[id + "." + name] : '') : '';
+    
     var value = options['currentValue']
         || options['value']
         || options['latestOutput']
-        || '';
+    	|| initialValue;
     if (!editable) {
         valueCell.innerHTML = value;
         
         // Set a unique ID so that this input can be retrieved by the get()
         // or set by the send() function defined in local.js.
         valueCell.setAttribute('id', id + '.' + name);
+        
     } else {
-        var valueInput = document.createElement("input");
-        
-        // Set a unique ID so that this input can be retrieved by the get()
-        // function defined in local.js.
-        valueInput.setAttribute('id', id + '.' + name);
-
-        valueInput.setAttribute('type', 'text');
-        valueInput.setAttribute('name', name);
-        valueInput.setAttribute('value', value);
-        valueInput.setAttribute('class', 'valueInputBox');
-        
-        // Invoke handlers, if there are any.
-        valueInput.setAttribute('onchange', 'provideInput("' + id + '", name, value)');
-                
-        valueCell.appendChild(valueInput);
+    	// Either a parameter or input.  Outputs are not editable.
+    	var valueInput = document.createElement("input")
+    	
+    	if (role === 'input') {
+		    // Invoke handlers on change, if any handlers. 
+    		// Only inputs may have handlers. 
+    	    valueInput.setAttribute('onchange', 'provideInput("' + id + '", name, value)');
+		    valueInput.setAttribute('class', 'valueInputBox inputRole');
+    	} else {
+    		valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
+    		valueInput.setAttribute('class', 'valueInputBox parameterRole');
+    	}       
+	        
+	    // Set a unique ID so that this input can be retrieved by the get()
+	    // function defined in local.js.
+	    valueInput.setAttribute('id', id + '.' + name);
+	    valueInput.setAttribute('type', 'text');
+	    valueInput.setAttribute('name', name);
+	    valueInput.setAttribute('value', value);
+	    
+	    valueCell.appendChild(valueInput);
     }
     row.appendChild(valueCell);
     
@@ -1006,7 +1058,12 @@ function generateTableRow(table, name, id, options, editable) {
             if (doc) {
                 success = true;
                 var docCell = document.createElement("td");
-                docCell.className = 'accessorDocumentation accessorTableData';
+                if (visible) {
+                	docCell.className = 'accessorDocumentation accessorTableData';
+                } else {
+                	docCell.className = 'accessorDocumentation accessorTableData invisible';
+                }
+                
                 docCell.innerHTML = doc;
                 row.appendChild(docCell);
             }
@@ -1014,8 +1071,12 @@ function generateTableRow(table, name, id, options, editable) {
     }
     if (!success) {
         var docCell = document.createElement("td");
-        docCell.setAttribute('class', 'accessorDocumentation');
-        docCell.setAttribute('class', 'accessorWarning');
+        if (visible) {
+            docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
+        } else {
+            docCell.setAttribute('class', 'accessorDocumentation accessorWarning invisible');
+        }
+
         docCell.innerHTML = 'No description found';
         row.appendChild(docCell);
     }
@@ -1271,6 +1332,30 @@ function reactIfExecutable(id, suppress) {
         if (instance && instance.executable) {
             initializeIfNecessary(instance);
             try {
+            	// Call provideInput() on all visible inputs.
+            	// This enables inputHandlers for all inputs even if an input's
+            	// value has not changed since last execution.
+            	// Non-visible inputs are not triggered from the UI, but an 
+            	// accessor might send to a non-visible input  
+            	// (see web/services/StockTick.js)
+            	var id, period;         	
+            	var inputs = document.getElementsByClassName('inputRole');
+            	
+            	for (var i = 0; i < inputs.length; i++) {
+            		// id is accessorName.inputName - want only accessorName
+            		// for first argument to provideInput
+            		id = inputs[i].getAttribute('id');
+            		period = id.indexOf(".");
+            		if (period >= 0){
+            			id = id.substring(0,period);
+            		}
+            		
+            		if (!inputs[i].parentNode.classList.contains("invisible")) {
+            			provideInput(id, inputs[i].getAttribute('name'), 
+                				inputs[i].getAttribute('value'));
+            		}
+            	}
+            	
                 window.accessors[id].react();
             } catch (err) {
                 alert('Error executing accessor: ' + err);
@@ -1281,6 +1366,16 @@ function reactIfExecutable(id, suppress) {
     if (!suppress) {
         alert('Accessor is not executable.');
     }
+}
+
+/** Set a parameter of the accessor with the specified id.
+ *  @param id The id of the accessor.
+ *  @param name The name of the input.
+ *  @param value The value to provide.
+ */
+function setParameter(id, name, value) {
+	var instance = window.accessors[id];
+	instance.setParameter(name, value);
 }
 
 /** Toggle the visibility of an element on the web page.

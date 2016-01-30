@@ -48,6 +48,12 @@
 .accessorTableRow:hover {
     background-color: #ffffcc;
 }
+/* Used to hide table rows for parameters and inputs with "expert" visibility.  
+   These parameters and inputs still need to be defined on the HTML page so 
+   that their values are accessible to the browser host. */
+.invisible {
+	display : none;
+}
 /* Song and dance here required to get table cell to stretch, but not overrun the border. */
 .valueInputBox {
     font-size: 100%;

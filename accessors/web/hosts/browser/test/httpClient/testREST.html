@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for REST accessor using httpClient module </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the accessor
+        //  definition since they're specific to this scenario.  Wait until page
+        //  has loaded so that form fields exist.   
+ 	    var initialValues = {};
+        initialValues["REST.options"] = "{\"method\" : \"POST\", \"url\" : \"http://localhost:8088\"}";
+        initialValues["REST.command"] = "test";
+        initialValues["REST.trigger"] = true;
+        initialValues["REST.body"] = "{\"test\" : \"this is a test\"}";
+    </script>
+    
+    <script src="/accessors/hosts/browser/browser.js"></script>
+</head>
+<body>
+<div> <p> For this test, run testServer.js (see README.txt), then enter: </p>
+
+<p> POST test </p>
+<ul> <li> options: {"method" : "POST", "url" : "http://localhost:8088"} </li>
+	 <li> command: test </li>
+     <li> trigger: true </li>
+     <li> body: {"test" : "this is a test"} </li>
+</ul>
+<p> then click "react to inputs".  The output should be: </p>
+<ul> <li> response: "Request info: {\"method\":\"POST\"}, Request body: test=this+is+a+test" </li>
+	 <li> status: Type string, Value 200: OK </li>
+</ul>
+
+<p> PUT test </p>
+<ul> <li> options: {"method" : "PUT", "url" : "http://localhost:8088"} </li>
+	 <li> command: test </li>
+     <li> trigger: true </li>
+     <li> body: {"test" : "this is a test"} </li>
+</ul>
+<p> then click "react to inputs".  The output should be: </p>
+<ul> <li> response: "Request info: {\"method\":\"PUT\"}, Request body: test=this+is+a+test" </li>
+	 <li> status: Type string, Value 200: OK </li>
+</ul>
+
+<p> GET the value that was PUT </p> 
+<ul> <li> options: "http://localhost:8088/" </li>
+	 <li> command: test </li>	
+     <li> trigger: true </li>
+</ul>
+<p> then click "react to inputs".  The output should be: </p>
+<ul> <li> response: "test=this+is+a+test" </li>
+	 <li> status: Type string, Value 200: OK </li>
+</ul>
+
+</div>
+<div class="accessor"
+   src="net/REST"
+   id="REST"></div>
+</body>
+</html>
