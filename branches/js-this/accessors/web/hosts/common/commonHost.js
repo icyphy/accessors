@@ -1240,13 +1240,21 @@ Accessor.prototype.react = function(name) {
         invokeSpecificHandler(name);
     } else {
         // No specific input has been given.
-        for (var i = 0; i < thiz.inputList.length; i++) {
-            name = thiz.inputList[i];
-            if (thiz.inputs[name].pendingHandler) {
-                thiz.inputs[name].pendingHandler = false;
-                invokeSpecificHandler(name);
-            }
-        }
+    	// Invoke pending inputHandlers.  An accessor might send to its own 
+    	// inputs, so repeat until there are no more pending handlers.
+    	// FIXME: Creates an infinite loop in commonHost test.
+    	// var moreInputsPossiblyAvailable = true;
+    	// while (moreInputsPossiblyAvailable) {
+	        for (var i = 0; i < thiz.inputList.length; i++) {
+	        	// moreInputsPossiblyAvailable = false;
+	            name = thiz.inputList[i];
+	            if (thiz.inputs[name].pendingHandler) {
+	                thiz.inputs[name].pendingHandler = false;
+	                // moreInputsPossiblyAvailable = true;
+	                invokeSpecificHandler(name);
+	            }
+	        }
+    	// }
     }
     // Next, invoke handlers registered to handle any input.
     if (thiz.anyInputHandlers.length > 0) {
