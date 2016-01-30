@@ -173,7 +173,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, send, require*/
+/*global console, error, exports */
 /*jshint globalstrict: true */
 "use strict";
 

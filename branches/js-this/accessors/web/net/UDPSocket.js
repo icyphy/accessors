@@ -65,11 +65,12 @@ var socket = null;
 
 exports.initialize = function() {
     socket = UDPSocket.createSocket();
-    socket.on('message', onMessage);
+    socket.on('message', onMessage.bind(this));
     var port = this.get('port');
     socket.bind(port);
+    var self = this;
     this.addInputHandler('toSend', function() {
-        var message = this.get('toSend');
+        var message = self.get('toSend');
         socket.send(message);
     });
 };

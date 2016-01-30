@@ -295,8 +295,7 @@ exports.toSendInputHandler = function () {
         var discardSendToUnopenedSocket = this.getParameter('discardSendToUnopenedSocket');
         if (discardSendToUnopenedSocket) {
             console.log('Socket with ID ' + idToSendTo +
-                        ' is not open. Discarding data: ' +
-                        dataToSend);
+                        ' is not open. Discarding data.');
         } else {
             error('Attempting to send data over socket with id ' + idToSendTo +
                     ', but this socket is not open.');

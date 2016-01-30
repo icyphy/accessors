@@ -97,9 +97,8 @@ var querystring = require('querystring');
 /** Define inputs and outputs. */
 exports.setup = function () {
     this.extend('net/REST');
-    // Change the type of the input to select.
     this.input('command', {
-        'type':'select',
+        'type':'string',
         'value':'snapshot',
         'options':[
             'snapshot',
@@ -151,14 +150,14 @@ exports.encodePath = function() {
 		case 'stop horizontal patrol':  code = 29; break;
 		// FIXME: No idea what the following mean, so not offerred above.
 		case 'io output high':          code = 94; break;
-    case 'io output low':           code = 95; break;
+        case 'io output low':           code = 95; break;
 	}
 	var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
 	if (code >= 0) {
 	    command = 'decoder_control';
 	    encodedArgs += '&command=' + code;
 	}
-    var additionalArgs = querystring.stringify(get('arguments')).trim();
+    var additionalArgs = querystring.stringify(this.get('arguments')).trim();
     if (additionalArgs !== "") {
         encodedArgs += '&' + additionalArgs;
     }
@@ -169,7 +168,7 @@ exports.encodePath = function() {
 
 /** Upon wrapup, attempt to stop the camera videostream.  */
 exports.wrapup = function () {
-    this.ssuper.wrapup();
+    exports.ssuper.wrapup.call(this);
     // Assume any command will work to stop the stream.
     alternateCommand = 'stop up';
     // No need to specify a callback.

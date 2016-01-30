@@ -74,12 +74,14 @@ exports.setup = function() {
 
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
-    this.ssuper.initialize();
+    exports.ssuper.initialize.call(this);
     
     var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
     }
+    var self = this;
+    
     // Handle location information.
     this.addInputHandler('address', function() {
         var address = this.get('address');
@@ -89,11 +91,11 @@ exports.initialize = function() {
                 'address' : address,
                 'key' : key
             };
-            this.send('arguments', args);
-            this.send('trigger', true);
+            self.send('arguments', args);
+            self.send('trigger', true);
         } else {
             error('GeoCoder: No address.');
-            this.send('location', null);
+            self.send('location', null);
         }
     });
 };

@@ -77,13 +77,15 @@ exports.setup = function() {
 
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
-    this.ssuper.initialize();
+    exports.ssuper.initialize.call(this);
     
     var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "Weather:  You need a key, which you can obtain at http://openweathermap.org/appid.";
     }
 
+    var self = this;
+    
     // Handle location information.
     this.addInputHandler('location', function() {
         var location = this.get('location');
@@ -95,8 +97,8 @@ exports.initialize = function() {
                 'lon' : location.longitude,
                 'APPID' : key
             };
-            this.send('arguments', reformatted);
-            this.send('trigger', true);
+            self.send('arguments', reformatted);
+            self.send('trigger', true);
         } else {
             if (location ==- null) {
                 error('Weather: No location information.');
@@ -104,7 +106,7 @@ exports.initialize = function() {
                 error('Weather: Malformed location: ' + location +
                       '\nExpecting {"latitude":number, "longitude":number}');
             }
-            this.send('weather', null);
+            self.send('weather', null);
         }
     });
 };
