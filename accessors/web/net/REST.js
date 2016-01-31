@@ -116,16 +116,16 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('options', {'type':'JSON', 'value':''});
-    input('command', {'type':'string', 'value':''});
-    input('arguments', {'type':'JSON', 'value':''});
-    input('trigger');
-    input('body');
-    output('response');
-    output('status', {'type':'string'});
-    output('headers');
-    parameter('timeout', {'value': 5000, 'type': 'int'});
-    parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
+    this.input('options', {'type':'JSON', 'value':''});
+    this.input('command', {'type':'string', 'value':''});
+    this.input('arguments', {'type':'JSON', 'value':''});
+    this.input('trigger');
+    this.input('body');
+    this.output('response');
+    this.output('status', {'type':'string'});
+    this.output('headers');
+    this.parameter('timeout', {'value': 5000, 'type': 'int'});
+    this.parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
 };
 
 /** Build the path from the command and arguments.
@@ -141,9 +141,9 @@ exports.setup = function () {
  */
 exports.encodePath = function() {
     // Remove any leading slash that might be present.
-    var command = get('command').replace(/^\//, '');
+    var command = this.get('command').replace(/^\//, '');
     // Encode any characters that are not allowed in a URL.
-    var encodedArgs = querystring.stringify(get('arguments'));
+    var encodedArgs = querystring.stringify(this.get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
     }
@@ -173,23 +173,27 @@ var request;
  *   the httpClient module).
  */
 exports.issueCommand = function(callback) {
-    var encodedPath = this.encodePath();
-    var options = get('options');
-    var body = get('body');
+    var encodedPath = this.exports.encodePath.call(this);
+    var options = this.get('options');
+    var body = this.get('body');
     var command = options;
     if (typeof options === 'string') {
         // In order to be able to include the outputCompleteResponseOnly
         // option, we have to switch styles here.
         command = {};
-        command.url = options + '/' + encodedPath;
+        if (encodedPath) {
+            command.url = options + '/' + encodedPath;
+        } else {
+            command.url = options;
+        }
     } else if (typeof options.url === 'string') {
         command.url = options.url + '/' + encodedPath;
     } else {
         command.url.path = '/' + encodedPath;
     }
-    command.timeout = getParameter('timeout');
+    command.timeout = this.getParameter('timeout');
 
-    if (getParameter('outputCompleteResponseOnly') === false) {
+    if (this.getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
     
@@ -199,14 +203,7 @@ exports.issueCommand = function(callback) {
     
     // console.log("REST request to: " + JSON.stringify(command));
     
-    // To ensure that the callback is called with the same context
-    // as this function, create a new function.
-    var thiz = this;
-    var contextCallback = function() {
-        callback.apply(thiz, arguments);
-    };
-    
-    request = httpClient.request(command, contextCallback);
+    request = httpClient.request(command, callback);
     request.on('error', function(message) {
         if (!message) {
             message = 'Request failed. No further information.';
@@ -226,28 +223,28 @@ exports.issueCommand = function(callback) {
  *  @param message An incoming message.
  */
 exports.handleResponse = function(message) {
-    if (message !== null && message !== undefined) {
+    // Assume that if the response is null, an error will be signaled.
+    if (message !== null && typeof message !== 'undefined') {
         if (message.body) {
-            send('response', this.filterResponse(message.body));
+            this.send('response', this.exports.filterResponse.call(this, message.body));
         } else {
-            send('response', this.filterResponse(message));
+            this.send('response', this.exports.filterResponse.call(this, message));
         }
         if (message.statusCode) {
-            send('status', message.statusCode + ': ' + message.statusMessage);
+            this.send('status', message.statusCode + ': ' + message.statusMessage);
         }
         if (message.headers) {
-            send('headers', message.headers);
+            this.send('headers', message.headers);
         }
-    } else {
-        // Send a null response.
-        send('response', this.filterResponse(null));
     }
 };
 
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	addInputHandler('trigger', this.issueCommand, this.handleResponse);
+	this.addInputHandler('trigger',
+	        this.exports.issueCommand.bind(this),
+	        this.exports.handleResponse.bind(this));
 };
 
 /** Upon wrapup, stop handling new inputs.  */

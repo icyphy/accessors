@@ -96,10 +96,9 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    extend('net/REST');
-    // Change the type of the input to select.
-    input('command', {
-        'type':'select',
+    this.extend('net/REST');
+    this.input('command', {
+        'type':'string',
         'value':'snapshot',
         'options':[
             'snapshot',
@@ -119,8 +118,8 @@ exports.setup = function () {
 		    'stop horizontal patrol'
         ]});
     // Provide parameters for username and password.
-    parameter('username', {'value':'admin', 'type':'string'});
-    parameter('password', {'value':'', 'type':'string'});
+    this.parameter('username', {'value':'admin', 'type':'string'});
+    this.parameter('password', {'value':'', 'type':'string'});
 };
 
 // Alternate command to use, for example to stop the camera.
@@ -132,7 +131,7 @@ var alternateCommand;
 exports.encodePath = function() {
     var command;
     if (!alternateCommand) {
-        command = get('command');
+        command = this.get('command');
     }
     var code = -1;
     switch(command) {
@@ -151,14 +150,14 @@ exports.encodePath = function() {
 		case 'stop horizontal patrol':  code = 29; break;
 		// FIXME: No idea what the following mean, so not offerred above.
 		case 'io output high':          code = 94; break;
-    case 'io output low':           code = 95; break;
+        case 'io output low':           code = 95; break;
 	}
-	var encodedArgs = 'user=' + get('username') + '&pwd=' + get('password');
+	var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
 	if (code >= 0) {
 	    command = 'decoder_control';
 	    encodedArgs += '&command=' + code;
 	}
-    var additionalArgs = querystring.stringify(get('arguments')).trim();
+    var additionalArgs = querystring.stringify(this.get('arguments')).trim();
     if (additionalArgs !== "") {
         encodedArgs += '&' + additionalArgs;
     }
@@ -169,9 +168,9 @@ exports.encodePath = function() {
 
 /** Upon wrapup, attempt to stop the camera videostream.  */
 exports.wrapup = function () {
-    this.ssuper.wrapup();
+    exports.ssuper.wrapup.call(this);
     // Assume any command will work to stop the stream.
     alternateCommand = 'stop up';
     // No need to specify a callback.
-    this.issueCommand();
+    this.exports.issueCommand.call(this);
 };

@@ -190,7 +190,6 @@ function generateAccessorHTML(path, id) {
             if (accessor.initialized) {
                 accessor.wrapup();
             }
-            accessor.initialized = false;
         }
     }
 
@@ -557,7 +556,6 @@ function generateAccessorHTML(path, id) {
             // If an error occurred or a module was found missing during instantiation,
             // then executable will be false.
             instance.executable = executable;
-            instance.initialized = false;
         }
         // Record the accessor instance.
         // The following will define a global variable 'accessors'
@@ -738,13 +736,13 @@ function generateAccessorDocumentation(path, id) {
     if (window.accessors && window.accessors[id]) {
         var implemented = window.accessors[id].implementedInterfaces;
         for (var i = 0; i < implemented.length; i++) {
-            appendDoc(target, 'Implements', implemented[i]);
-            getBaseDocumentation(docs, implemented[i]);
+            appendDoc(target, 'Implements', implemented[i].accessorClass);
+            getBaseDocumentation(docs, implemented[i].accessorClass);
         }
     
-        if (window.accessors[id].baseAccessor) {
-            appendDoc(target, 'Extends', window.accessors[id].baseAccessor);
-            getBaseDocumentation(docs, window.accessors[id].baseAccessor);
+        if (window.accessors[id].extending) {
+            appendDoc(target, 'Extends', window.accessors[id].extending.accessorClass);
+            getBaseDocumentation(docs, window.accessors[id].extending.accessorClass);
         }
     }
 
@@ -1284,7 +1282,6 @@ function initializeIfNecessary(instance) {
             alert('Error initializing accessor: ' + err);
             return;
         }
-        instance.initialized = true;
     }
 }
 

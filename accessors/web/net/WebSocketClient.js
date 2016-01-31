@@ -54,14 +54,14 @@
  *  is 'application/json', which allows sending and receiving anything that has
  *  a string representation in JSON. The types supported by this implementation
  *  include at least:
- *  * __application/json__: The send() function uses JSON.stringify() and sends the
+ *  * __application/json__: The this.send() function uses JSON.stringify() and sends the
  *    result with a UTF-8 encoding. An incoming byte stream will be parsed as JSON,
  *    and if the parsing fails, will be provided as a string interpretation of the byte
  *    stream.
  *  * __text/\*__: Any text type is sent as a string encoded in UTF-8.
  *  * __image/x__: Where __x__ is one of __json__, __png__, __gif__,
  *    and more.
- *    In this case, the data passed to send() is assumed to be an image, as encoded
+ *    In this case, the data passed to this.send() is assumed to be an image, as encoded
  *    on the host, and the image will be encoded as a byte stream in the specified
  *    format before sending.  A received byte stream will be decoded as an image,
  *    if possible.
@@ -120,104 +120,99 @@ var inputHandle = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    parameter('server', {
+    this.parameter('server', {
         type : 'string',
         value : 'localhost'
     });
-    parameter('port', {
+    this.parameter('port', {
         type : 'int',
         value : 8080
     });
-    parameter('receiveType', {
+    this.parameter('receiveType', {
         type : 'string',
         value : 'application/json',
     });
-    parameter('sendType', {
+    this.parameter('sendType', {
         type : 'string',
         value : 'application/json',
     });
-    parameter('connectTimeout', {
+    this.parameter('connectTimeout', {
         value: 60000,
         type: "int"
     });
-    parameter('numberOfRetries', {
+    this.parameter('numberOfRetries', {
         type : 'int',
         value : 5
     });
-    parameter('timeBetweenRetries', {
+    this.parameter('timeBetweenRetries', {
         type : 'int',
         value : 100
     });
-    parameter('reconnectOnClose', {
+    this.parameter('reconnectOnClose', {
         type : 'boolean',
         value : true
     });
-    parameter('discardMessagesBeforeOpen', {
+    this.parameter('discardMessagesBeforeOpen', {
         type : 'boolean',
         value : false
     });
-    parameter('throttleFactor', {
+    this.parameter('throttleFactor', {
         type : 'int',
         value : 100
     });
-    input('toSend');
-    output('connected', {
+    this.input('toSend');
+    this.output('connected', {
         type : 'boolean'
     });
-    output('received');
+    this.output('received');
     
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
-        parameter('receiveType', {
+        this.parameter('receiveType', {
             options : WebSocket.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
             options : WebSocket.supportedSendTypes()
         });
     } catch(err) {
-        error(err);
+        this.error(err);
     }
 };
 
 /** Initializes accessor by attaching functions to inputs. */
 exports.initialize = function () {
 
-
     client = new WebSocket.Client(
         {
-            'host' : getParameter('server'),
-            'port' : getParameter('port'),
-            'receiveType' : getParameter('receiveType'),
-            'sendType' : getParameter('sendType'),
-            'connectTimeout' : getParameter('connectTimeout'),
-            'numberOfRetries' : getParameter('numberOfRetries'),
-            'timeBetweenRetries' : getParameter('timeBetweenRetries'),
-            'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),
-            'throttleFactor' : getParameter('throttleFactor')
+            'host' : this.getParameter('server'),
+            'port' : this.getParameter('port'),
+            'receiveType' : this.getParameter('receiveType'),
+            'sendType' : this.getParameter('sendType'),
+            'connectTimeout' : this.getParameter('connectTimeout'),
+            'numberOfRetries' : this.getParameter('numberOfRetries'),
+            'timeBetweenRetries' : this.getParameter('timeBetweenRetries'),
+            'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
+            'throttleFactor' : this.getParameter('throttleFactor')
         }
     );
 
-    client.on('open', this.onOpen);
-    client.on('message', this.onMessage);
+    client.on('open', exports.onOpen.bind(this));
+    client.on('message', exports.onMessage.bind(this));
+    client.on('close', onClose.bind(this));
 
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
-    // Bind onClose() to caller's object,
-    // so initialize() of caller's object is called if reconnect is true.
-    client.on('close', onClose.bind(callObj));
     client.on('error', function (message) {
         console.log(message);
     });
     //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
-        inputHandle = addInputHandler('toSend', this.toSendInputHandler);
+        inputHandle = this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     }
 };
 
 /** Handles input on 'toSend'. */
 exports.toSendInputHandler = function () {
-    exports.sendToWebSocket(get('toSend'));
+    exports.sendToWebSocket(this.get('toSend'));
 };
 
 /** Sends JSON data to the web socket. */
@@ -235,7 +230,7 @@ exports.sendToWebSocket = function (data) {
  */
 exports.onOpen = function () {
     console.log('Status: Connection established');
-    send('connected', true);
+    this.send('connected', true);
 };
 
 /** Send false to 'connected' output, and if 'reconnectOnClose'
@@ -249,7 +244,7 @@ function onClose(message) {
     if (inputHandle) {
         // wrapup() has not been called.
         // Probably the server closed the connection.
-        send('connected', false);
+        this.send('connected', false);
         
         // Close and unregister everything.
         client.removeAllListeners('open');
@@ -267,7 +262,7 @@ function onClose(message) {
 
 /** Send the message received from web socket to the 'received' output. */
 exports.onMessage = function (message) {
-    send('received', message);
+    this.send('received', message);
 };
 
 /** Export the isOpen() function */
@@ -278,7 +273,7 @@ exports.isOpen = function () {
 /** Close the web socket connection. */
 exports.wrapup = function () {
     if (inputHandle !== null) {
-        removeInputHandler(inputHandle);
+        this.removeInputHandler(inputHandle);
         inputHandle = null;
     }
     if (client) {

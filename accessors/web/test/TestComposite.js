@@ -34,15 +34,15 @@
  */
 
 exports.setup = function() {
-    input('input', {'type':'number', 'value':0});
-    output('output', {'type':'number'});
-    var gain = instantiate('TestGain', 'test/TestGain');
+    this.input('input', {'type':'number', 'value':0});
+    this.output('output', {'type':'number'});
+    var gain = this.instantiate('TestGain', 'test/TestGain');
     gain.setParameter('gain', 4);
-    var adder = instantiate('TestAdder', 'test/TestAdder');
-    connect('input', adder, 'inputLeft');
-    connect('input', gain, 'input');
-    connect(gain, 'scaled', adder, 'inputRight');
-    connect(adder, 'sum', 'output');
+    var adder = this.instantiate('TestAdder', 'test/TestAdder');
+    this.connect('input', adder, 'inputLeft');
+    this.connect('input', gain, 'input');
+    this.connect(gain, 'scaled', adder, 'inputRight');
+    this.connect(adder, 'sum', 'output');
 }
 
 // NOTE: If you provide a fire() function for a composite accessor,

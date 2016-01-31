@@ -84,18 +84,18 @@
  * to which to publish to.
  */ 
 exports.setup = function() {
-    extend('net/WebSocketClient');
-    parameter('topic', {
+    this.extend('net/WebSocketClient');
+    this.parameter('topic', {
         type: "string"
     });
-    parameter('ROStype', {
+    this.parameter('ROStype', {
         type: "string"
     });
-    parameter('addHeader', {
+    this.parameter('addHeader', {
         type: "boolean",
         value: false
     });
-    parameter('frame_id', {
+    this.parameter('frame_id', {
         type: "string",
         value: ""
     });
@@ -103,17 +103,17 @@ exports.setup = function() {
 
 /** Override inputHandler on 'toSend' from WebSocketClient. */
 exports.toSendInputHandler = function() {
-    var msg = get('toSend');
+    var msg = this.get('toSend');
     //add a header with a blank time and sequence info. This will be added by rosbridge.
     if (getParameter('addHeader')) {
         msg.header = {
-            "frame_id": getParameter('frame_id')
+            "frame_id": this.getParameter('frame_id')
         };
     }
     
     var data = {
         "op": "publish",
-        "topic": getParameter('topic'),
+        "topic": this.getParameter('topic'),
         "msg": msg 
     };
     
@@ -128,8 +128,8 @@ exports.initialize = function() {
 
     var advertise = {
         "op": "advertise",
-        "topic": getParameter('topic'),
-        "type": getParameter('ROStype')
+        "topic": this.getParameter('topic'),
+        "type": this.getParameter('ROStype')
     };
     exports.sendToWebSocket(advertise);
     
@@ -139,7 +139,7 @@ exports.initialize = function() {
 exports.wrapup = function() {
     var unadvertise = {
         "op": "unadvertise",
-        "topic": getParameter('topic')
+        "topic": this.getParameter('topic')
     };
     exports.sendToWebSocket(unadvertise);
     this.ssuper.wrapup();

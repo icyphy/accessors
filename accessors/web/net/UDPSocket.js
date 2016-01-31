@@ -45,12 +45,12 @@ var UDPSocket = require('udpSocket');
 // Set up the accessor. In an XML specification, this information would
 // be provided in XML syntax.
 exports.setup = function() {
-    input('port', {
+    this.input('port', {
         'value': 8084,
         'type':'int'
     });
-    input('toSend');
-    output('received', {
+    this.input('toSend');
+    this.output('received', {
         'type':'string'
     });
 };
@@ -58,18 +58,19 @@ exports.setup = function() {
 // Define the functionality.
 function onMessage(message) {
     console.log('Received a UDP packet: ' + message);
-    send('received', message);
+    this.send('received', message);
 }
 
 var socket = null;
 
 exports.initialize = function() {
     socket = UDPSocket.createSocket();
-    socket.on('message', onMessage);
-    var port = get('port');
+    socket.on('message', onMessage.bind(this));
+    var port = this.get('port');
     socket.bind(port);
-    addInputHandler('toSend', function() {
-        var message = get('toSend');
+    var self = this;
+    this.addInputHandler('toSend', function() {
+        var message = self.get('toSend');
         socket.send(message);
     });
 };

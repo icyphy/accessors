@@ -94,27 +94,27 @@ var handle;
 
 /** Define inputs and outputs. */
 exports.setup = function() {
-  input('URI', {
+  this.input('URI', {
     type: "string",
     value: ""
   });
-  input('method', {
+  this.input('method', {
     type: "string",
     value: "GET"
   });
-  input('body', {
+  this.input('body', {
 	  type: "JSON",
 	  value: ""
   });
-  output('response', {
+  this.output('response', {
 	    type: "string",
 	    value: ""
 	  });
-  output('state', {
+  this.output('state', {
 		  type: "JSON",
 		  value: ""
   });
-  parameter('bridgeID', {
+  this.parameter('bridgeID', {
 	  type: "string",
 	  value: "Bridge1"
   });
@@ -128,36 +128,38 @@ exports.initialize = function() {
 	// of a self-executing function.  This, in essence, creates a singleton
 	// object with a set of functions as its public API.
 	bridge = mockHueBridges.MockHueBridge;
-	connection = bridge.connect(get('bridgeID'));
+	connection = bridge.connect(this.get('bridgeID'));
 	connection.initializeToDefault();
+	
+	var self = this;
 	
 	/** React to a change in the bridge state by outputting the new state.  */
 	connection.on('change', function(data) {
-		send('state', data);
+		self.send('state', data);
 	});
   
 	// Register input handler
-	handle = addInputHandler('URI', inputHandler);
+	handle = this.addInputHandler('URI', inputHandler.bind(this));
 };
 
 /** Input HTTP request information and generate a response from the bridge.  */
 function inputHandler() {
-  var method = get('method').toString();
-  var uri = get('URI').toString();
+  var method = this.get('method').toString();
+  var uri = this.get('URI').toString();
   var output;
   
   // Check if body exists.  If so, include the body in the command.
-  var body = get('body');
+  var body = this.get('body');
   if (typeof body !== 'undefined') {
 	  output = connection.command(method, uri, body);
   } else {
 	  output = connection.command(method, uri);
   }
  
-  send('response', output);
+  this.send('response', output);
 }
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {
-    removeInputHandler(handle);
+    this.removeInputHandler(handle);
 };

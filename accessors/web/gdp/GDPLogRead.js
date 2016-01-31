@@ -37,27 +37,27 @@ var log = null;
 var handle = null;
 
 exports.setup = function() {
-    input('trigger');
-    input('recno', {'type': 'int'});
-    output('data', {'type': 'string'});
-    parameter('logname', {'type': 'string'});
+    this.input('trigger');
+    this.input('recno', {'type': 'int'});
+    this.output('data', {'type': 'string'});
+    this.parameter('logname', {'type': 'string'});
 };
 
 
 exports.read = function() {
-    var recno = get('recno');
+    var recno = this.get('recno');
     var data = log.read(recno);
-    send('data', data);
+    this.send('data', data);
 };
 
 exports.initialize = function() {
-    var logname = getParameter('logname');
+    var logname = this.getParameter('logname');
     log = GDP.GDP(logname, 1);
-    handle = addInputHandler('trigger', this.read);
+    handle = this.addInputHandler('trigger', this.read);
 };
 
 exports.wrapup = function() {
     if (handle !== null) {
-        removeInputHandler(handle);
+        this.removeInputHandler(handle);
     }
 };

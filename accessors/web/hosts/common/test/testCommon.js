@@ -58,20 +58,20 @@ function test(testName, expression, expectedValue) {
     }
 }
 
-// Check getParameter() with default value.
+// Check this.getParameter() with default value.
 test('TestAccessor: getParameter', instance.getParameter('p'), 42);
 
-// Check setParameter() and getParameter.
+// Check this.setParameter() and getParameter.
 instance.setParameter('p', 12);
 test('TestAccessor: setParameter', instance.getParameter('p'), 12);
 
-// Check get().
+// Check this.get().
 test('TestAccessor: get', instance.get('numeric'), 0);
 
-// Check get() with no input yet provided.
+// Check this.get() with no input yet provided.
 test('TestAccessor: get with undefined', instance.get('untyped'), null);
 
-// Check get() with no input yet provided but type being boolean.
+// Check this.get() with no input yet provided but type being boolean.
 test('TestAccessor: get with undefined', instance.get('boolean'), null);
 
 // Check provideInput().
@@ -84,7 +84,7 @@ test('TestAccessor: react, send, and latestOutput', instance.latestOutput('negat
 
 // Check composite accessors with manual and automatic scheduling.
 
-// Have to provide an implementation of instantiate(), which in this case will only
+// Have to provide an implementation of this.instantiate(), which in this case will only
 // instantiate accessors founds in the accessors repo directory.
 getAccessorCode = function(name) {
     return fs.readFileSync('../../../' + name + '.js', 'utf8');
@@ -140,7 +140,7 @@ setTimeout(function() {
     c.wrapup();
 }, 2500);
 
-// Test extend().
+// Test this.extend().
 var d = commonHost.instantiateAccessor(
         'TestInheritance', 'test/TestInheritance', getAccessorCode);
 d.initialize();
@@ -149,7 +149,7 @@ d.react();
 test('TestInheritance: inheritance, function overriding, and variable visibility',
         d.latestOutput('jsonOfUntyped'), 'hello');
 
-// Test implement().
+// Test this.implement().
 var e = commonHost.instantiateAccessor(
         'TestImplement', 'test/TestImplement', getAccessorCode);
 e.initialize();
@@ -174,4 +174,4 @@ g.initialize();
 g.provideInput('in1', 42);
 g.react();
 test('TestDerivedAgainA: two-level inheritance, out1', g.latestOutput('out1'), 2);
-test('TestDerivedAgainA: two-level inheritance, out2', g.latestOutput('out2'), 2);
+test('TestDerivedAgainA-2: two-level inheritance, out2', g.latestOutput('out2'), 2);
