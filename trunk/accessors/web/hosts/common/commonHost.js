@@ -1142,8 +1142,8 @@ Accessor.prototype.react = function(name) {
     	// inputs, so repeat until there are no more pending handlers.
     	var moreInputsPossiblyAvailable = true;
     	while (moreInputsPossiblyAvailable) {
+    		moreInputsPossiblyAvailable = false;
 	        for (var i = 0; i < this.extendedBy.inputList.length; i++) {
-	        	moreInputsPossiblyAvailable = false;
 	            name = this.extendedBy.inputList[i];
 	            if (this.extendedBy.inputs[name].pendingHandler) {
 	                this.extendedBy.inputs[name].pendingHandler = false;
