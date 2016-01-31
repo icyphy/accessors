@@ -67,7 +67,7 @@ function wrapup() {
  *  @return The elemeny in the document with the 
  *  Id input + "Input".
  */
-function this.get(input) {
+function get(input) {
     return document.getElementById(input + "Input").value;
 }
 
@@ -75,6 +75,6 @@ function this.get(input) {
  *  @param output
  *  @param value.
  */
-function this.send(output, value) {
+function send(output, value) {
     document.getElementById(output).innerHTML = JSON.stringify(value);
 }
