@@ -2,11 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Test Page for Browser Swarmlet Host</title>
+    <title>Test Page for Cross-Origin Resource Sharing </title>
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
     <script src="/accessors/hosts/browser/browser.js"></script>
 </head>
 <body>
+<div> <p> Accessors are subject to a browser's same-origin request policy.  
+Many sites will be blocked. </p> 
+<p> Please enter a URL that supports cross-origin requests, 
+e.g. "http://enable-cors.org/server.html" </p>
+</div>
 If you do not see an accessor below, then you should run the server in the accessors repository:
 <pre>
    cd accessors/web/hosts/browser/test
@@ -14,7 +19,7 @@ If you do not see an accessor below, then you should run the server in the acces
 </pre>
 where "accessors" is the root of your repository copy, and then point your browser to this page:
 <pre>
-   http://localhost:8088/hosts/browser/test/testWebPage.html
+   http://localhost:8088/hosts/browser/test/testCORS.html
 </pre>
 If you do not see documentation, you can create the documentation as follows:
 <pre>
@@ -23,7 +28,7 @@ If you do not see documentation, you can create the documentation as follows:
 </pre>
 <hr>
 <div class="accessor"
-   src="test/TestAccessor"
-   id="TestAccessor"></div>
+   src="test/TestCORS"
+   id="TestCORS"></div>
 </body>
 </html>

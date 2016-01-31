@@ -32,17 +32,20 @@
  */
 
 exports.setup = function() {
-    parameter('interval', {'type':'number', 'value':1000});
-    output('output', {'type': 'number'});
+    this.parameter('interval', {'type':'number', 'value':1000});
+    this.output('output', {'type': 'number'});
 }
+// These variables will not be visible to subclasses.
 var handle = null;
 var count = 0;
 
 exports.initialize = function() {
     count = 0;
+    // Need to record 'this' for use in the callback.
+    var thiz = this;
     handle = setInterval(function() {
-        send('output', count++);
-    }, getParameter('interval'));
+        thiz.send('output', count++);
+    }, this.getParameter('interval'));
 }
 
 exports.wrapup = function() {

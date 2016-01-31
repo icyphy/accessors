@@ -37,18 +37,18 @@ var httpClient = require('httpClient');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    input('trigger');
-    input('key', {'type':'string'});
-    input('ts', {'type':'string'});
-    output('value', {'type':'string'});
-    parameter('url', {'type':'string', 'value':''});
+    this.input('trigger');
+    this.input('key', {'type':'string'});
+    this.input('ts', {'type':'string'});
+    this.output('value', {'type':'string'});
+    this.parameter('url', {'type':'string', 'value':''});
 };
 
 exports.getRESTurl = function() {
 
-    var url = get('url');
-    var key = get('key');
-    var ts = get('ts');
+    var url = this.get('url');
+    var key = this.get('key');
+    var ts = this.get('ts');
     if (ts !== null) {
         var _ts = ts.replace("000000","");
         var e = Date.parse(_ts)/1000.0;
@@ -87,16 +87,16 @@ exports.issueCommand = function(callback) {
 
 exports.handleResponse = function(message) {
     if (message !== null && message !== undefined) {
-        send('value', JSON.parse(message.body).value);
+        this.send('value', JSON.parse(message.body).value);
     } else {
-        send('value', null);
+        this.send('value', null);
     }
 };
 
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	addInputHandler('trigger', this.issueCommand, this.handleResponse);
+	this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
 };
 
 /** Upon wrapup, stop handling new inputs.  */

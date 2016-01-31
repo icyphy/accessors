@@ -33,7 +33,7 @@
  */
 
 exports.setup = function() {
-    extend('test/TestAccessor');
+    this.extend('test/TestAccessor');
 }
 
 exports.initialize = function() {
@@ -44,5 +44,7 @@ exports.initialize = function() {
 /** Override the base class to use output a constant read from the base class. */
 exports.formatOutput = function(value) {
     // Variable 'variable' is defined in the base class.
+    // Note that the base class invokes this function with 'this' bound to the
+    // exports property, of which variable is a property.
     return this.variable;
 }

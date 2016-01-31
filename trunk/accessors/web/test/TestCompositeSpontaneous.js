@@ -32,12 +32,12 @@
  */
 
 exports.setup = function() {
-    output('output', {'type':'number'});
-    var gen = instantiate('TestSpontaneous', 'test/TestSpontaneous');
-    var gain = instantiate('TestGain', 'test/TestGain');
+    this.output('output', {'type':'number'});
+    var gen = this.instantiate('TestSpontaneous', 'test/TestSpontaneous');
+    var gain = this.instantiate('TestGain', 'test/TestGain');
     gain.setParameter('gain', 4);
-    connect(gen, 'output', gain, 'input');
-    connect(gain, 'scaled', 'output');
+    this.connect(gen, 'output', gain, 'input');
+    this.connect(gain, 'scaled', 'output');
 }
 
 // NOTE: If you provide a fire() function for a composite accessor,
