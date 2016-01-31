@@ -5,6 +5,8 @@
  *  @author Edward A. Lee
  */ 
 exports.setup = function() {
-	extend('test/TestBaseC');
+	this.extend('test/TestBaseC');
 }
+// This overrides the value of baseField for any function that accesses the
+// baseField using this.exports.baseField.
 exports.baseField = 2;

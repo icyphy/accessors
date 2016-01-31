@@ -58,13 +58,13 @@ try {
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    input('hostIP', {
+    this.input('hostIP', {
         type: 'string',
     });
     
-    output('devices');
+    this.output('devices');
     
-    parameter('useNmap', {
+    this.parameter('useNmap', {
         type: 'boolean',
         value: false,
     });
@@ -76,27 +76,29 @@ var handle;
  *  local area network.
  */
 exports.initialize = function () {
-    handle = addInputHandler('hostIP', function() {
+    var self = this;
+    handle = this.addInputHandler('hostIP', function() {
 	if (get('useNmap')) {
-	    ds.discoverDevices(get('hostIP'), 'nmap');
+	    ds.discoverDevices(self.get('hostIP'), 'nmap');
 	} else {
-	    ds.discoverDevices(get('hostIP'));
+	    ds.discoverDevices(self.get('hostIP'));
 	}
     });
 };
 
 /** Upon wrapup, stop handling new inputs.  */
 exports.wrapup = function () {
-    removeInputHandler(handle);
+    this.removeInputHandler(handle);
 };
 
 /** When discovery is finished, send a list of devices.  */
 if (ds) {
+    var self = this;
     ds.on('discovered', function(data) {
         if (data === "") {
-            send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+            self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
         } else {
-            send('devices', data);
+            self.send('devices', data);
         }
     });
 }

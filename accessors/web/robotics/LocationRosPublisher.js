@@ -56,11 +56,11 @@ var locations = {};
  * to publish to.
  */
 exports.setup = function() {
-   extend('net/WebSocketClient');
-   parameter('topic', {
+   this.extend('net/WebSocketClient');
+   this.parameter('topic', {
       type: "string"
    });
-   parameter('frame_id', {
+   this.parameter('frame_id', {
       type: "string",
       value: ""
    });
@@ -80,7 +80,7 @@ exports.onOpen = function() {
    // Advertise what we have when the websocket opens.
    var advertise = {
       "op": "advertise",
-      "topic": getParameter('topic'),
+      "topic": this.getParameter('topic'),
       "type": ROS_TYPE
    };
    exports.sendToWebSocket(advertise);
@@ -98,7 +98,7 @@ function random_color () {
 
 /** Override inputHandler on 'toSend' from WebSocketClient. */
 exports.toSendInputHandler = function() {
-   var msg = get('toSend');
+   var msg = this.get('toSend');
 
    // Update the current location map with this incoming packet
    var id = msg.id;
@@ -134,7 +134,7 @@ exports.toSendInputHandler = function() {
 
    var out = {
       header: {
-         frame_id: getParameter('frame_id')
+         frame_id: this.getParameter('frame_id')
       },
       points: location_points,
       channels: [
@@ -147,7 +147,7 @@ exports.toSendInputHandler = function() {
 
    var data = {
       "op": "publish",
-      "topic": getParameter('topic'),
+      "topic": this.getParameter('topic'),
       "msg": out
    };
 
@@ -161,7 +161,7 @@ exports.wrapup = function() {
    if (exports.isOpen()) {
       var unadvertise = {
          "op": "unadvertise",
-         "topic": getParameter('topic')
+         "topic": this.getParameter('topic')
       };
       exports.sendToWebSocket(unadvertise);
    }

@@ -53,40 +53,42 @@
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    extend('net/REST');
-    input('location', {'value': {"latitude": 37.85, "longitude": -122.26}});
-    output('weather');
-    parameter('temperature', {
+    this.extend('net/REST');
+    this.input('location', {'value': {"latitude": 37.85, "longitude": -122.26}});
+    this.output('weather');
+    this.parameter('temperature', {
         'type':'string',
         'options':['Fahrenheit', 'Celsius', 'Kelvin'],
         'value':'Fahrenheit'
     });
-    parameter('key', {'type':'string', 'value':'Enter Key Here'});
+    this.parameter('key', {'type':'string', 'value':'Enter Key Here'});
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    input('options', {'visibility':'expert', 'value':'"http://api.openweathermap.org"'});
-    input('command', {'visibility':'expert', 'value':'/data/2.5/weather'});
-    input('arguments', {'visibility':'expert', 'value':'{"lat":37.85, "lon":-122.26}'});
-    input('body', {'visibility':'expert'});
-    input('trigger', {'visibility':'expert'});
-    output('headers', {'visibility':'expert'});
-    output('status', {'visibility':'expert'});
-    parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('options', {'visibility':'expert', 'value':'"http://api.openweathermap.org"'});
+    this.input('command', {'visibility':'expert', 'value':'/data/2.5/weather'});
+    this.input('arguments', {'visibility':'expert', 'value':'{"lat":37.85, "lon":-122.26}'});
+    this.input('body', {'visibility':'expert'});
+    this.input('trigger', {'visibility':'expert'});
+    this.output('headers', {'visibility':'expert'});
+    this.output('status', {'visibility':'expert'});
+    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
-    this.ssuper.initialize();
+    exports.ssuper.initialize.call(this);
     
-    var key = getParameter('key');
+    var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "Weather:  You need a key, which you can obtain at http://openweathermap.org/appid.";
     }
 
+    var self = this;
+    
     // Handle location information.
-    addInputHandler('location', function() {
-        var location = get('location');
+    this.addInputHandler('location', function() {
+        var location = this.get('location');
         if (location &&
                 typeof location.latitude === 'number' &&
                 typeof location.longitude === 'number') {
@@ -95,8 +97,8 @@ exports.initialize = function() {
                 'lon' : location.longitude,
                 'APPID' : key
             };
-            send('arguments', reformatted);
-            send('trigger', true);
+            self.send('arguments', reformatted);
+            self.send('trigger', true);
         } else {
             if (location ==- null) {
                 error('Weather: No location information.');
@@ -104,7 +106,7 @@ exports.initialize = function() {
                 error('Weather: Malformed location: ' + location +
                       '\nExpecting {"latitude":number, "longitude":number}');
             }
-            send('weather', null);
+            self.send('weather', null);
         }
     });
 };
@@ -129,7 +131,9 @@ exports.filterResponse = function(response) {
             }
             if (parsed.main) {
                 if (parsed.main.temp) {
-                    weather.temperature = convertTemperature(parsed.main.temp);
+                    weather.temperature = convertTemperature(
+                            parsed.main.temp,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.pressure) {
                     weather['pressure (hPa)'] = parsed.main.pressure;
@@ -138,10 +142,14 @@ exports.filterResponse = function(response) {
                     weather['humidity (percent)'] = parsed.main.humidity;
                 }
                 if (parsed.main.temp_min) {
-                    weather['minimum temperature'] = convertTemperature(parsed.main.temp_min);
+                    weather['minimum temperature'] = convertTemperature(
+                            parsed.main.temp_min,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.temp_max) {
-                    weather['maximum temperature'] = convertTemperature(parsed.main.temp_max);
+                    weather['maximum temperature'] = convertTemperature(
+                            parsed.main.temp_max,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.wind) {
                     if (parsed.main.wind.speed) {
@@ -175,13 +183,13 @@ exports.filterResponse = function(response) {
             if (parsed.name) {
                 weather['place name'] = parsed.name;
             }
-            send('weather', weather);
+            this.send('weather', weather);
         } catch (err) {
             error('Weather: Unable to parse response: ' + err.message);
-            send('weather', null);
+            this.send('weather', null);
         }
     } else {
-        send('price', null);
+        this.send('price', null);
     }
     return response;
 };
@@ -190,10 +198,10 @@ exports.filterResponse = function(response) {
  *  temperature parameter. Also, round the result to a precision of
  *  0.01 degrees.
  *  @param kelvin The temperature in degrees Kelvin.
+ *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
  *  @return The temperature in the desired units.
  */
-function convertTemperature(kelvin) {
-    var units = getParameter('temperature');
+function convertTemperature(kelvin, units) {
     var result = kelvin;
     if (units == 'Fahrenheit') {
         result = (kelvin - 273.15) * 1.8 + 32.00;

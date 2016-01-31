@@ -62,7 +62,7 @@
  *  https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3 .
  *
  *  For numeric types, you can also send an array with a single call
- *  to send(). The elements of the array will be sent in sequence all
+ *  to this.send(). The elements of the array will be sent in sequence all
  *  at once, and may be received in one batch. If both ends have
  *  `rawBytes` set to false (specifying message framing), then these
  *  elements will be emitted at the receiving end all at once in a single
@@ -122,7 +122,7 @@
  *  @parameter {boolean} keepAlive Whether to keep a connection alive and reuse it. This
  *    defaults to true.
  *  @parameter {int} maxUnsentMessages The maximum number of unsent messages to queue before
- *    further calls to send() will fail. A value of 0 means no limit.
+ *    further calls to this.send() will fail. A value of 0 means no limit.
  *    This defaults to 100.
  *  @parameter {boolean} noDelay If true, data as sent as soon as it is available (the default).
  *    If false, data may be accumulated until a reasonable packet size is formed
@@ -136,10 +136,10 @@
  *    itself to the server. This path can be any of those understood by the Ptolemy host, 
  *    e.g. paths beginning with $CLASSPATH/.
  *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
- *    to send() without any header. If false, then prepend sent data with length
+ *    to this.send() without any header. If false, then prepend sent data with length
  *    information and assume receive data starts with length information.
  *    Setting this false on both ends will ensure that each data item passed to
- *    send() is emitted once in its entirety at the receiving end, as a single
+ *    this.send() is emitted once in its entirety at the receiving end, as a single
  *    message. When this is false, the receiving end can emit a partially received
  *    message or could concatenate two messages and emit them together.
  *  @parameter {int} receiveBufferSize The size of the receive buffer. Defaults to
@@ -173,7 +173,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, send, require*/
+/*global console, error, exports */
 /*jshint globalstrict: true */
 "use strict";
 
@@ -182,96 +182,96 @@ var client = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    input('toSend');
-    output('connected', {
+    this.input('toSend');
+    this.output('connected', {
         type : 'boolean'
     });
-    output('received');
+    this.output('received');
 
     // The most used parameters are listed first.
-    parameter('host', {
+    this.parameter('host', {
         type : 'string',
         value : 'localhost'
     });
-    parameter('port', {
+    this.parameter('port', {
         type : 'int',
         value : 4000
     });
     
     // The remaining parameters are in alphabetical order.
-    parameter('connectTimeout', {
+    this.parameter('connectTimeout', {
         value: 6000,
         type: "int"
     });
-    parameter('discardMessagesBeforeOpen', {
+    this.parameter('discardMessagesBeforeOpen', {
         type : 'boolean',
         value : false
     });
-    parameter('idleTimeout', {
+    this.parameter('idleTimeout', {
         value: 0,
         type: "int"
     });
-    parameter('keepAlive', {
+    this.parameter('keepAlive', {
         type : 'boolean',
         value : true
     });
-    parameter('maxUnsentMessages', {
+    this.parameter('maxUnsentMessages', {
         value: 100,
         type: "int"
     });
-    parameter('noDelay', {
+    this.parameter('noDelay', {
         type : 'boolean',
         value : true
     });
-    parameter('pfxKeyCertPassword', {
+    this.parameter('pfxKeyCertPassword', {
         type : 'string',
         value : ''
     });
-    parameter('pfxKeyCertPath', {
+    this.parameter('pfxKeyCertPath', {
         type : 'string',
         value : ''
     });
-    parameter('rawBytes', {
+    this.parameter('rawBytes', {
         type : 'boolean',
         value : false
     });
-    parameter('receiveBufferSize', {
+    this.parameter('receiveBufferSize', {
         value: 65536,
         type: "int"
     });
-    parameter('receiveType', {
+    this.parameter('receiveType', {
         type : 'string',
         value : 'string',
     });
-    parameter('reconnectAttempts', {
+    this.parameter('reconnectAttempts', {
         type : 'int',
         value : 10
     });
-    parameter('reconnectInterval', {
+    this.parameter('reconnectInterval', {
         type : 'int',
         value : 1000
     });
-    parameter('reconnectOnClose', {
+    this.parameter('reconnectOnClose', {
         type : 'boolean',
         value : true
     });
-    parameter('sendBufferSize', {
+    this.parameter('sendBufferSize', {
         value: 65536,
         type: "int"
     });
-    parameter('sendType', {
+    this.parameter('sendType', {
         type : 'string',
         value : 'string',
     });
-    parameter('sslTls', {
+    this.parameter('sslTls', {
         type : 'boolean',
         value : false
     });
-    parameter('trustAll', {
+    this.parameter('trustAll', {
         type : 'boolean',
         value : false
     });
-    parameter('trustedCACertPath', {
+    this.parameter('trustedCACertPath', {
         type : 'string',
         value : ''
     });
@@ -279,20 +279,20 @@ exports.setup = function () {
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
-        parameter('receiveType', {
+        this.parameter('receiveType', {
             options : socket.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
             options : socket.supportedSendTypes()
         });
     } catch(err) {
-        error(err);
+        this.error(err);
     }
 };
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-    client.send(get('toSend'));
+    client.send(this.get('toSend'));
 };
 
 /** Initiate a connection to the server using the current parameter values,
@@ -302,48 +302,47 @@ exports.toSendInputHandler = function () {
  */
 exports.initialize = function () {
 
-    client = new socket.SocketClient(getParameter('port'), getParameter('host'),
+    client = new socket.SocketClient(getParameter('port'), this.getParameter('host'),
         {
-            'connectTimeout' : getParameter('connectTimeout'),
-            'discardMessagesBeforeOpen' : getParameter('discardMessagesBeforeOpen'),
-            'idleTimeout' : getParameter('idleTimeout'),
-            'keepAlive' : getParameter('keepAlive'),
-            'maxUnsentMessages' : getParameter('maxUnsentMessages'),
-            'noDelay' : getParameter('noDelay'),
-            'pfxKeyCertPassword' : getParameter('pfxKeyCertPassword'),
-            'pfxKeyCertPath' : getParameter('pfxKeyCertPath'),
-            'rawBytes' : getParameter('rawBytes'),
-            'receiveBufferSize' : getParameter('receiveBufferSize'),
-            'receiveType' : getParameter('receiveType'),
-            'reconnectAttempts' : getParameter('reconnectAttempts'),
-            'reconnectInterval' : getParameter('reconnectInterval'),
-            'sendBufferSize' : getParameter('sendBufferSize'),
-            'sendType' : getParameter('sendType'),
-            'sslTls' : getParameter('sslTls'),
-            'trustAll' : getParameter('trustAll'),
-            'trustedCACertPath' : getParameter('trustedCACertPath')
+            'connectTimeout' : this.getParameter('connectTimeout'),
+            'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
+            'idleTimeout' : this.getParameter('idleTimeout'),
+            'keepAlive' : this.getParameter('keepAlive'),
+            'maxUnsentMessages' : this.getParameter('maxUnsentMessages'),
+            'noDelay' : this.getParameter('noDelay'),
+            'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
+            'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
+            'rawBytes' : this.getParameter('rawBytes'),
+            'receiveBufferSize' : this.getParameter('receiveBufferSize'),
+            'receiveType' : this.getParameter('receiveType'),
+            'reconnectAttempts' : this.getParameter('reconnectAttempts'),
+            'reconnectInterval' : this.getParameter('reconnectInterval'),
+            'sendBufferSize' : this.getParameter('sendBufferSize'),
+            'sendType' : this.getParameter('sendType'),
+            'sslTls' : this.getParameter('sslTls'),
+            'trustAll' : this.getParameter('trustAll'),
+            'trustedCACertPath' : this.getParameter('trustedCACertPath')
         }
     );
+    
+    var self = this;
 
     client.on('open', function() {
         console.log('Status: Connection established');
-        send('connected', true);
+        self.send('connected', true);
     });
     client.on('data', function(data) {
-        send('received', data);
+        self.send('received', data);
     });
-
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
 
     // Bind onClose() to caller's object, so that 'this' is defined
     // in onClose() to be the object on which this initialize() function
     // is called.
-    client.on('close', onClose.bind(callObj));
+    client.on('close', onClose.bind(this));
     client.on('error', function (message) {
-        error(message);
+        self.error(message);
     });
-    addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Send false to 'connected' output, and if 'reconnectOnClose'
@@ -357,7 +356,7 @@ function onClose(message) {
     if (client) {
         // wrapup() has not been called.
         // Probably the server closed the connection.
-        send('connected', false);
+        this.send('connected', false);
 
         // Close and unregister everything.
         client.removeAllListeners('open');
@@ -366,7 +365,7 @@ function onClose(message) {
         client = null;
 
         // Reconnect if reconnectOnClose is true.
-        if (getParameter('reconnectOnClose')) {
+        if (this.getParameter('reconnectOnClose')) {
             // Use 'this' rather than 'export' so initialize() can be overridden.
             this.initialize();
         }

@@ -61,7 +61,7 @@
  *  https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3 .
  *
  *  For numeric types, you can also send an array with a single call
- *  to send(). The elements of the array will be sent in sequence all
+ *  to this.send(). The elements of the array will be sent in sequence all
  *  at once, and will be received in one batch and emitted as an array.
  *
  *  Accessors that extend this one can override the `toSendInputHandler` function
@@ -95,21 +95,21 @@ var port = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    input('toSend');
-    output('received');
+    this.input('toSend');
+    this.output('received');
 
-	parameter('baudRate', {
+	this.parameter('baudRate', {
 		'type': 'int',
 		'value': 9600
 	});
-	parameter('port', {
+	this.parameter('port', {
 		'type':'string',
 	});
-	parameter('receiveType', {
+	this.parameter('receiveType', {
 		'type': 'string',
 		'value': 'string',
 	});
-	parameter('sendType', {
+	this.parameter('sendType', {
 		'type':'string',
 		'value': 'string',
 	});
@@ -117,14 +117,14 @@ exports.setup = function () {
     // if the socket module is not supported by the host.
     try {
         var serialPorts = xbee.hostSerialPorts();
-    	parameter('port', {
+    	this.parameter('port', {
     		'options': serialPorts,
 		    'value': serialPorts[serialPorts.length - 1]
 	    });
-        parameter('receiveType', {
+        this.parameter('receiveType', {
 		    'options': xbee.supportedReceiveTypes()
         });
-        parameter('sendType', {
+        this.parameter('sendType', {
 		    'options': xbee.supportedSendTypes()
         });
     } catch(err) {
@@ -134,7 +134,7 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data over the radio. */
 exports.toSendInputHandler = function () {
-    port.send(get('toSend'));
+    port.send(this.get('toSend'));
 };
 
 /** Initiate a connection to the server using the current parameter values,
@@ -144,20 +144,19 @@ exports.toSendInputHandler = function () {
  */
 exports.initialize = function() {
 	port = new xbee.XBee(
-		get('port'), {
-		    'baudRate': getParameter('baudRate'),
-			'receiveType': getParameter('receiveType'),
-			'sendType': getParameter('sendType'),
+		this.get('port'), {
+		    'baudRate': this.getParameter('baudRate'),
+			'receiveType': this.getParameter('receiveType'),
+			'sendType': this.getParameter('sendType'),
 		});
-		
+	
+	var self = this;
+	
 	port.on('data', function(data) {
-		send('received', data);
+		self.send('received', data);
 	});
-		
-    // Record the object that calls it (could be a derived accessor).
-    var callObj = this;
 
-    addInputHandler('toSend', exports.toSendInputHandler.bind(callObj));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Close the web socket connection. */

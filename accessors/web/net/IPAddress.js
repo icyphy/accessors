@@ -46,11 +46,11 @@ try {
 /** Define inputs and outputs. */
 exports.setup = function () {
     
-    input('trigger', {
+    this.input('trigger', {
         type: 'boolean',
       });
     
-    output('IPAddress', {
+    this.output('IPAddress', {
         type: 'string',
       });
 };
@@ -58,7 +58,8 @@ exports.setup = function () {
 /** Upon receiving a trigger input, output the host machine's IP address.
  */
 exports.initialize = function () {
-	addInputHandler('trigger', function() {
-		send('IPAddress', ds.getHostAddress());
+    var self = this;
+	this.addInputHandler('trigger', function() {
+		self.send('IPAddress', ds.getHostAddress());
 	});
 };

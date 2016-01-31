@@ -27,16 +27,16 @@
  *  @accessor test/TestAdder
  *  @input inputLeft The left input, a number with default 0.
  *  @input inputRight The right input, a number with default 0.
- *  @output output The sum of the two inputs.
+ *  @output sum The sum of the two inputs.
  *  @author Edward A. Lee
  */
 
 exports.setup = function() {
-    input('inputLeft', {'type':'number', 'value':0});
-    input('inputRight', {'type':'number', 'value':0});
-    output('sum', {'type':'number'});
+    this.input('inputLeft', {'type':'number', 'value':0});
+    this.input('inputRight', {'type':'number', 'value':0});
+    this.output('sum', {'type':'number'});
 }
 
 exports.fire = function() {
-    send('sum', get('inputLeft') + get('inputRight'));
+    this.send('sum', this.get('inputLeft') + this.get('inputRight'));
 }

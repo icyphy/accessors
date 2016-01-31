@@ -54,41 +54,44 @@ var http = require('httpClient');
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-    extend('net/REST');
-    input('symbol', {
+    this.extend('net/REST');
+    this.input('symbol', {
         'value':'YHOO',
         'type':'string'
     });
-    output('price', {
+    this.output('price', {
         'type':'number'
     });
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    input('options', {'visibility':'expert', 'value':'"http://query.yahooapis.com"'});
-    input('command', {'visibility':'expert', 'value':'/v1/public/yql'});
-    input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
-    input('body', {'visibility':'expert'});
-    input('trigger', {'visibility':'expert'});
-    output('headers', {'visibility':'expert'});
-    output('status', {'visibility':'expert'});
-    parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('options', {'visibility':'expert', 'value':'"http://query.yahooapis.com"'});
+    this.input('command', {'visibility':'expert', 'value':'/v1/public/yql'});
+    this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
+    this.input('body', {'visibility':'expert'});
+    this.input('trigger', {'visibility':'expert'});
+    this.output('headers', {'visibility':'expert'});
+    this.output('status', {'visibility':'expert'});
+    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
-    this.ssuper.initialize();
+    this.exports.ssuper.initialize.call(this);
+    
+    // Capture 'this' for use in callback.
+    var self = this;
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    addInputHandler('symbol', function() {
+    this.addInputHandler('symbol', function() {
         // Read the current value of the 'symbol' input.
-        var stock = get('symbol');        
-        var args = get('arguments');
+        var stock = self.get('symbol');        
+        var args = self.get('arguments');
         args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
             stock +
             '")';
-        send('arguments', args);
-        send('trigger', true);
+        self.send('arguments', args);
+        self.send('trigger', true);
     });
 };
 
@@ -107,16 +110,16 @@ exports.filterResponse = function(response) {
         		parsed = JSON.parse(response);
         	}
 
-           // Extract the last trade price from the JSON record.
+            // Extract the last trade price from the JSON record.
             var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);
             // Send the price to the 'price' output.
-            send('price', price);
+            this.send('price', price);
         } catch (err) {
             error('StockTick: Unable to parse response: ' + err.message);
-            send('price', null);
+            this.send('price', null);
         }
     } else {
-        send('price', null);
+        this.send('price', null);
     }
     return response;
 };

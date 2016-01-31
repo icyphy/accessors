@@ -1,4 +1,4 @@
-// Accessor that connects with a browser on the local host.
+// Test accessor for cross-origin requests using the jQuery module.
 //
 // Copyright (c) 2015 The Regents of the University of California.
 // All rights reserved.
@@ -22,24 +22,38 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Accessor that connects with a browser on the local host.
- *  This is intended to be used by a swarmlet to interact with users,
- *  for example by providing forms to be filled in.
- *  For now, however, it simply displays HTML provided to its input.
+/** Test accessor for cross-origin requests using the jQuery module.
+ *  Note that accessors (as with other scripts) are subject to the same-origin
+ *  policy in a browser host.  Therefore sites will be blocked unless the 
+ *  server supports cross-origin requests or supports JSON with padding.
+ *  For more details please see: 
+ *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
  *
- *  @accessor utilities/Browser
- *  @input {string} html An HTML document to render in the browser.
- *  @author Edward A. Lee (eal@eecs.berkeley.edu)
+ *  @accessor test/TestCORS
+ *  @author Elizabeth Osyk
  */
-var browser = require('browser');
+
+var jQuery = require('jquery');
 
 exports.setup = function() {
-    this.input('html', {'type':'string'});
+    this.input('URL');                               
+    this.output('response');        
 }
-function display() {
-	var toDisplay = this.get('html');
-	browser.display(toDisplay);
+
+exports.fire = function() {
+    console.log('TestCORS fired.');
 }
+
 exports.initialize = function() {
-	this.addInputHandler('html', display);
+    var self = this;
+    this.addInputHandler('URL', function() {
+    	jQuery.ajax(self.get('URL'), {
+    		success: function(data) {
+    			self.send('response', data);
+    		},
+    		error: function() {
+    			self.send('response', 'error');
+    		}
+    	});
+    });
 }

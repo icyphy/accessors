@@ -39,8 +39,8 @@
 "use strict";
 
 exports.setup = function() {
-    input('trigger');
-    output('signal',{'type':'number'});  
+    this.input('trigger');
+    this.output('signal',{'type':'number'});  
 };
 
 var recorder = null; 
@@ -51,18 +51,18 @@ var cacheLength = 128;
 function record() {
     var data = recorder.get(), i; 
     for (i = 0; i < data.length; i++) {
-        send('signal', data[i]);
+        this.send('signal', data[i]);
     }
 }
 
 exports.initialize = function() { 
-    handle = addInputHandler("trigger",record); 
+    handle = this.addInputHandler("trigger",record); 
     recorder = new audio.Capture(); 
 };
 
 exports.wrapup = function() {
     if (recorder !== null) { 
         recorder.stop();
-        removeInputHandler('trigger',handle);
+        this.removeInputHandler('trigger',handle);
     } 
 };
