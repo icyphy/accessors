@@ -104,8 +104,8 @@ exports.setup = function() {
 /** Override inputHandler on 'toSend' from WebSocketClient. */
 exports.toSendInputHandler = function() {
     var msg = this.get('toSend');
-    //add a header with a blank time and sequence info. This will be added by rosbridge.
-    if (getParameter('addHeader')) {
+    // Add a header with a blank time and sequence info. This will be added by rosbridge.
+    if (this.getParameter('addHeader')) {
         msg.header = {
             "frame_id": this.getParameter('frame_id')
         };
@@ -117,21 +117,21 @@ exports.toSendInputHandler = function() {
         "msg": msg 
     };
     
-    exports.sendToWebSocket(data);
+    this.exports.sendToWebSocket.call(this, data);
 };
 
 /**  Inherits initialize from WebSocketClient. 
  *   Advertise the topic we are publishing to.
  */ 
 exports.initialize = function() {
-    this.ssuper.initialize.apply(this);
+    this.exports.ssuper.initialize.call(this);
 
     var advertise = {
         "op": "advertise",
         "topic": this.getParameter('topic'),
         "type": this.getParameter('ROStype')
     };
-    exports.sendToWebSocket(advertise);
+    this.exports.sendToWebSocket.call(this, advertise);
     
 };
 
@@ -141,8 +141,6 @@ exports.wrapup = function() {
         "op": "unadvertise",
         "topic": this.getParameter('topic')
     };
-    exports.sendToWebSocket(unadvertise);
+    this.exports.sendToWebSocket.call(this, unadvertise);
     this.ssuper.wrapup();
 };
-
-

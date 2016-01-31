@@ -100,9 +100,9 @@ exports.toSendInputHandler = function() {
  *  Sends a message to rosbridge to start subscribing to the topic on input 'topic'.
  */ 
 exports.initialize = function() {
-    this.ssuper.initialize.apply(this);
+    this.exports.ssuper.initialize.call(this);
 
-    exports.sendToWebSocket({
+    this.exports.sendToWebSocket.call(this, {
         "op": "subscribe",
         "topic": this.getParameter('topic'),
         "throttle_rate": this.getParameter('throttleRate'),
@@ -118,8 +118,8 @@ exports.wrapup = function() {
         "op": "unsubscribe",
         "topic": this.getParameter('topic')
     };
-    exports.sendToWebSocket(unsubscribe);
-    this.ssuper.wrapup();
+    this.exports.sendToWebSocket.call(this, unsubscribe);
+    this.exports.ssuper.wrapup.call(this);
 };
 
 //Combines fragments into the original message. If the message is incomplete this function
@@ -134,7 +134,10 @@ exports.defragmentMessage = (function() {
 
         //Check for missing fragment
         if (fragmentCount != message.num){
-            console.error("Fragment " + fragmentCount + " of message is missing. Instead received fragment number " + message.num);
+            console.error("Fragment "
+                + fragmentCount
+                + " of message is missing. Instead received fragment number "
+                + message.num);
         }
 
         //Accumulate data from fragment.

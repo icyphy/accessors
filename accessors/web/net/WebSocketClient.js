@@ -197,16 +197,18 @@ exports.initialize = function () {
         }
     );
 
-    client.on('open', exports.onOpen.bind(this));
-    client.on('message', exports.onMessage.bind(this));
-    client.on('close', onClose.bind(this));
+    // Using 'this.exports' rather than just 'exports' below allows these
+    // functions to be overridden in derived accessors.
+    client.on('open', this.exports.onOpen.bind(this));
+    client.on('message', this.exports.onMessage.bind(this));
+    client.on('close', this.onClose.bind(this));
 
     client.on('error', function (message) {
         console.log(message);
     });
     //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
-        inputHandle = this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+        inputHandle = this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
     }
 };
 
