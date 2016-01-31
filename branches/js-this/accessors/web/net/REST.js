@@ -203,15 +203,7 @@ exports.issueCommand = function(callback) {
     
     // console.log("REST request to: " + JSON.stringify(command));
     
-    // To ensure that the callback is called with the same context
-    // as this function, create a new function.
-    // FIXME: Probably not necessary.  Bound before being passed.
-    var thiz = this;
-    var contextCallback = function() {
-        callback.apply(thiz, arguments);
-    };
-
-    request = httpClient.request(command, contextCallback);
+    request = httpClient.request(command, callback);
     request.on('error', function(message) {
         if (!message) {
             message = 'Request failed. No further information.';
