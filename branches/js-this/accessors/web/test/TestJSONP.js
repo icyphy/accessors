@@ -48,12 +48,13 @@ exports.fire = function() {
 }
 
 exports.initialize = function() {
+    var self = this;
     this.addInputHandler('URL', function() {
     	// If a URL ends in ?callback=? then the .getJSON function will issue
     	// a JSON with padding (JSONP) dataType request.  This allows 
     	// cross-domain data transfer.
-    	jQuery.getJSON(get('URL'), function(data) {
-    		this.send('response', JSON.stringify(data));
+    	jQuery.getJSON(self.get('URL'), function(data) {
+    		self.send('response', JSON.stringify(data));
     	});
     });
 }
