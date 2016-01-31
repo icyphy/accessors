@@ -21,6 +21,13 @@ point your browser to:
   
 The test library there is particularly useful for testing.
 
+Other tests in this directory:
+  http://localhost:8088/hosts/browser/test/testCORS.html
+  http://localhost:8088/hosts/browser/test/testJSONP.html
+
+Documentation
+=============
+
 To get the documentation for the accessors, you may need to generate the documentation
 in your local copy of the accessors repo:
 

@@ -45,13 +45,14 @@ exports.fire = function() {
 }
 
 exports.initialize = function() {
+    var self = this;
     this.addInputHandler('URL', function() {
-    	jQuery.ajax(get('URL'), {
+    	jQuery.ajax(self.get('URL'), {
     		success: function(data) {
-    			this.send('response', data);
+    			self.send('response', data);
     		},
     		error: function() {
-    			this.send('response', 'error');
+    			self.send('response', 'error');
     		}
     	});
     });
