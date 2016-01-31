@@ -172,5 +172,5 @@ exports.wrapup = function () {
     // Assume any command will work to stop the stream.
     alternateCommand = 'stop up';
     // No need to specify a callback.
-    this.issueCommand();
+    this.exports.issueCommand.call(this);
 };

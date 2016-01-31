@@ -131,7 +131,9 @@ exports.filterResponse = function(response) {
             }
             if (parsed.main) {
                 if (parsed.main.temp) {
-                    weather.temperature = convertTemperature(parsed.main.temp);
+                    weather.temperature = convertTemperature(
+                            parsed.main.temp,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.pressure) {
                     weather['pressure (hPa)'] = parsed.main.pressure;
@@ -140,10 +142,14 @@ exports.filterResponse = function(response) {
                     weather['humidity (percent)'] = parsed.main.humidity;
                 }
                 if (parsed.main.temp_min) {
-                    weather['minimum temperature'] = convertTemperature(parsed.main.temp_min);
+                    weather['minimum temperature'] = convertTemperature(
+                            parsed.main.temp_min,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.temp_max) {
-                    weather['maximum temperature'] = convertTemperature(parsed.main.temp_max);
+                    weather['maximum temperature'] = convertTemperature(
+                            parsed.main.temp_max,
+                            this.getParameter('temperature'));
                 }
                 if (parsed.main.wind) {
                     if (parsed.main.wind.speed) {
@@ -192,10 +198,10 @@ exports.filterResponse = function(response) {
  *  temperature parameter. Also, round the result to a precision of
  *  0.01 degrees.
  *  @param kelvin The temperature in degrees Kelvin.
+ *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
  *  @return The temperature in the desired units.
  */
-function convertTemperature(kelvin) {
-    var units = this.getParameter('temperature');
+function convertTemperature(kelvin, units) {
     var result = kelvin;
     if (units == 'Fahrenheit') {
         result = (kelvin - 273.15) * 1.8 + 32.00;

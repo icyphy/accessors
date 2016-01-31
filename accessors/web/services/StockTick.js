@@ -77,18 +77,21 @@ exports.setup = function() {
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
-    this.ssuper.initialize();
+    this.exports.ssuper.initialize.call(this);
+    
+    // Capture 'this' for use in callback.
+    var self = this;
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
     this.addInputHandler('symbol', function() {
         // Read the current value of the 'symbol' input.
-        var stock = this.get('symbol');        
-        var args = this.get('arguments');
+        var stock = self.get('symbol');        
+        var args = self.get('arguments');
         args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
             stock +
             '")';
-        this.send('arguments', args);
-        this.send('trigger', true);
+        self.send('arguments', args);
+        self.send('trigger', true);
     });
 };
 
@@ -107,7 +110,7 @@ exports.filterResponse = function(response) {
         		parsed = JSON.parse(response);
         	}
 
-           // Extract the last trade price from the JSON record.
+            // Extract the last trade price from the JSON record.
             var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);
             // Send the price to the 'price' output.
             this.send('price', price);
