@@ -143,8 +143,10 @@ exports.initialize = function() {
                 'receiveType': this.getParameter('receiveType'),
                 'sendType': this.getParameter('sendType')
         });
-        server.on('listening', onListening.bind(this));
-        server.on('connection', onConnection.bind(this));
+        // Using 'this.exports' rather than just 'exports' in the following allows
+        // these functions to be overridden in derived accessors.
+        server.on('listening', this.exports.onListening.bind(this));
+        server.on('connection', this.exports.onConnection.bind(this));
         server.on('error', function (message) {
             self.error(message);
         });
@@ -196,7 +198,7 @@ exports.initialize = function() {
     });
 };
 
-function onListening() {
+exports.onListening = function() {
     console.log('Server: Listening for socket connection requests.');
     this.send('listening', this.getParameter('port'));
 }
@@ -204,7 +206,7 @@ function onListening() {
 /** Executes when a connection has been establised.<br>
  *  Triggers an output on <code>'connection'</code>.
  *  Adds an event listener to the socket. */
-function onConnection(socket) {
+exports.onConnection = function(socket) {
     var self = this;
     //socketID is the index of the socket in the sockets array.
     var socketID = sockets.length;

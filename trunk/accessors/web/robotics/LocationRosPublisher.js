@@ -70,12 +70,12 @@ exports.setup = function() {
  *   Advertise the topic we are publishing to.
  */
 exports.initialize = function() {
-   this.ssuper.initialize.apply(this);
+   this.exports.ssuper.initialize.call(this);
 };
 
 /** Override onOpen from WebSocketClient */
 exports.onOpen = function() {
-   this.ssuper.onOpen.apply(this);
+   this.exports.ssuper.onOpen.call(this);
 
    // Advertise what we have when the websocket opens.
    var advertise = {
@@ -83,7 +83,7 @@ exports.onOpen = function() {
       "topic": this.getParameter('topic'),
       "type": ROS_TYPE
    };
-   exports.sendToWebSocket(advertise);
+   this.exports.sendToWebSocket.call(this, advertise);
 };
 
 function random_color () {
@@ -93,7 +93,6 @@ function random_color () {
       color += letters[Math.floor(Math.random() * 16)];
    }
    return parseInt(color, 16);
-
 }
 
 /** Override inputHandler on 'toSend' from WebSocketClient. */
@@ -154,16 +153,14 @@ exports.toSendInputHandler = function() {
    exports.sendToWebSocket(data);
 };
 
-
-
 /** Unadvertise the topic and inherit wrapup from WebSocketClient. */
 exports.wrapup = function() {
-   if (exports.isOpen()) {
+   if (this.exports.isOpen()) {
       var unadvertise = {
          "op": "unadvertise",
          "topic": this.getParameter('topic')
       };
-      exports.sendToWebSocket(unadvertise);
+      this.exports.sendToWebSocket.call(this, unadvertise);
    }
-   this.ssuper.wrapup();
+   this.exports.ssuper.wrapup.call(this);
 };
