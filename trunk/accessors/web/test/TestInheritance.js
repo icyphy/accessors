@@ -22,7 +22,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Test inheritance (extend() function and overrides).
+/** Test inheritance (this.extend() function and overrides).
  *  This modifies the base class so that on the 'jsonOfUntyped' output it produces
  *  the string 'hello', a string defined in a variable defined in the base class.
  *  This tests the ability to access variables defined in the base class and the

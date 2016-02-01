@@ -302,7 +302,7 @@ exports.toSendInputHandler = function () {
  */
 exports.initialize = function () {
 
-    client = new socket.SocketClient(getParameter('port'), this.getParameter('host'),
+    client = new socket.SocketClient(this.getParameter('port'), this.getParameter('host'),
         {
             'connectTimeout' : this.getParameter('connectTimeout'),
             'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),

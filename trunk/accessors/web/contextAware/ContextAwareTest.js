@@ -122,7 +122,7 @@ exports.initialize = function () {
         // Cause the base class handler to issue the HTTP request.
         this.send('trigger', true);
         //send('response', this.issueCommand(handleResponse))
-        // console.log(get('response'));
+        // console.log(this.get('response'));
         console.log("ContextAwareTest.js input handler end");
     }); 
 };
