@@ -1007,6 +1007,9 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
         || options['value']
         || options['latestOutput']
     	|| initialValue;
+    if (typeof value === 'object') {
+        value = JSON.stringify(value);
+    }
     if (!editable) {
         valueCell.innerHTML = value;
         
