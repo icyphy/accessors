@@ -64,7 +64,7 @@ exports.setup = function() {
     });
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"http://query.yahooapis.com"'});
+    this.input('options', {'visibility':'expert', 'value':'"https://query.yahooapis.com"'});
     this.input('command', {'visibility':'expert', 'value':'/v1/public/yql'});
     this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
     this.input('body', {'visibility':'expert'});
