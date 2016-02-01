@@ -52,7 +52,7 @@
  *  in a host-independent way. For example, ```getAccessorCode('net/REST')```
  *  should return the JavaScript  code defining the REST accessor.
  *  This function must also be provided if the host is to support accessor
- *  subclassing (extend()) or interface implementation (implement()).
+ *  subclassing (this.extend()) or interface implementation (this.implement()).
  *
  *  The constructor and instantiate functions return an object that is an instance of an
  *  accessor. A specific host will typically use this by invoking the following
@@ -112,8 +112,8 @@
  *  -------------------
  *
  *  If a getAccessorCode() function is provided, then this implementation supports
- *  composite accessors, which can instantiate other accessors (instantiate()) and
- *  connect them (connect()).  That is, an accessor may be defined as a hierarchical
+ *  composite accessors, which can instantiate other accessors (this.instantiate()) and
+ *  connect them (this.connect()).  That is, an accessor may be defined as a hierarchical
  *  composition of other accessors.
  *
  *  If C is a composite accessor and you invoke C.provideInput(name, value) to

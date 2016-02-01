@@ -54,8 +54,8 @@ exports.makeRequest = function() {
     var ts = this.get('ts');
     var key = this.get('key');
     var url = this.get('url');
-    console.log(get('write'));
-    if (get('write') === true) {
+    console.log(this.get('write'));
+    if (this.get('write') === true) {
         request.method = "PUT";
         request.body = this.get('value');
         request.url = url + key;

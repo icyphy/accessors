@@ -76,7 +76,7 @@ exports.clearInputHandler = function(){
 
 //Todo: What happens if mapData comes the same time as a clearRepo signal?
 exports.mapDataInputHandler = function(){
-	mapManager.replaceRepo(get("mapData"));
+	mapManager.replaceRepo(this.get("mapData"));
 };
 
 
