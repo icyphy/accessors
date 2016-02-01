@@ -58,7 +58,7 @@ exports.get_next_data = function() {
 exports.initialize = function() {
     var logname = this.getParameter('logname');
     log = new GDP.GDP(logname, 1);
-    log.subscribe(getParameter('startrec'), this.getParameter('numrec'));
+    log.subscribe(this.getParameter('startrec'), this.getParameter('numrec'));
     handle = this.addInputHandler('trigger', this.get_next_data);
 };
 

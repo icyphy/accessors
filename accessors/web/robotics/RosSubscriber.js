@@ -165,7 +165,7 @@ exports.defragmentMessage = (function() {
 exports.onMessage = function(message){
     
     var messageToSend;
-    if (getParameter('outputCompleteResponseOnly') && message.op == "fragment"){
+    if (this.getParameter('outputCompleteResponseOnly') && message.op == "fragment"){
         messageToSend = this.defragmentMessage(message);
         if (messageToSend === null){
             return;

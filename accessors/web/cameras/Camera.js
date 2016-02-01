@@ -78,7 +78,7 @@ exports.setup = function () {
         this.parameter('camera', {
             'options' : cameras.cameras()
         });
-        camera = new cameras.Camera(getParameter('camera'));
+        camera = new cameras.Camera(this.getParameter('camera'));
         this.parameter('viewSize', {
             'value' : camera.getViewSize(),
             'options' : camera.viewSizes()
@@ -93,10 +93,10 @@ exports.setup = function () {
  *  event notification from the camera.
  */
 exports.initialize = function () {
-    camera.setViewSize(getParameter('viewSize'));
+    camera.setViewSize(this.getParameter('viewSize'));
     camera.open();
     var self = this;
-    if (getParameter('triggered')) {
+    if (this.getParameter('triggered')) {
         handle = this.addInputHandler('trigger', function () {
             self.send('image', camera.snapshot());
         });

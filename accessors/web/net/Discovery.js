@@ -78,7 +78,7 @@ var handle;
 exports.initialize = function () {
     var self = this;
     handle = this.addInputHandler('hostIP', function() {
-	if (get('useNmap')) {
+	if (self.get('useNmap')) {
 	    ds.discoverDevices(self.get('hostIP'), 'nmap');
 	} else {
 	    ds.discoverDevices(self.get('hostIP'));
