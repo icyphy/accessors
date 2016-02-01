@@ -201,7 +201,7 @@ exports.initialize = function () {
     // functions to be overridden in derived accessors.
     client.on('open', this.exports.onOpen.bind(this));
     client.on('message', this.exports.onMessage.bind(this));
-    client.on('close', this.onClose.bind(this));
+    client.on('close', this.exports.onClose.bind(this));
 
     client.on('error', function (message) {
         console.log(message);
@@ -241,7 +241,7 @@ exports.onOpen = function () {
  *  This will be called if either side closes the connection.
  *  @param message Possible message about the closure.
  */
-function onClose(message) {
+exports.onClose = function(message) {
     console.log('Status: Connection closed: ' + message);
     if (inputHandle) {
         // wrapup() has not been called.
@@ -255,7 +255,7 @@ function onClose(message) {
         client = null;
 
         // Reconnect if reconnectOnClose is true.
-        if (getParameter('reconnectOnClose')) {
+        if (this.getParameter('reconnectOnClose')) {
             // Use 'this' rather than 'export' so initialize() can be overridden.
             this.initialize();
         }
