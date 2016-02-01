@@ -38,7 +38,9 @@
  *  @accessor services/GeoCoder
  *  @author Edward A. Lee
  *  @version $$Id$#
- *  @input {string} address The address, which defaults to "Berkeley, CA".
+ *  @input {string} address The address, for example "Berkeley, CA".
+ *  @output location The location, as an object with a 'latitude' and 'longitude'
+ *   property.
  *  @parameter {string} key The key for the Google geocoding API.
  *  @output response An object containing the location information.
  */
@@ -94,8 +96,7 @@ exports.initialize = function() {
             self.send('arguments', args);
             self.send('trigger', true);
         } else {
-            error('GeoCoder: No address.');
-            self.send('location', null);
+            throw 'GeoCoder: No address.';
         }
     });
 };
@@ -105,30 +106,37 @@ exports.initialize = function() {
  */
 exports.filterResponse = function(response) {
     if (response) {
-        try {
-            // NOTE: All of the following should be replaced with a generic
-            // schema transformation utility.
-            var parsed = JSON.parse(response);
-            // FIXME: Just taking the first result if there are multiple matches.
-            if (parsed.results &&
-                parsed.results[0] &&
-                parsed.results[0].geometry &&
-                parsed.results[0].geometry.location &&
-                parsed.results[0].geometry.location.lat &&
-                parsed.results[0].geometry.location.lng) {
-                this.send('location', {
-                        "latitude": parsed.results[0].geometry.location.lat,
-                        "longitude": parsed.results[0].geometry.location.lng
-                });
-            } else {
-                error('GeoCoder: No matching location.');
+        // Note that for some hosts, the response is a string, needing to parsed,
+        // and for some, its already been parsed.
+        var parsed = response;
+        if (typeof parsed === 'string') {
+            try {
+                parsed = JSON.parse(response);
+            } catch (err) {
+                error('GeoCoder: Unable to parse response: ' + err.message
+                        + '\nResponse was: ' + response);
+                // So that downstream actors don't just a previous location, send null.
                 this.send('location', null);
             }
-        } catch (err) {
-            error('GeoCoder: Unable to parse response: ' + err.message);
         }
-    } else {
-        this.send('price', null);
+        // NOTE: All of the following should be replaced with a generic
+        // schema transformation utility.
+        // FIXME: Just taking the first result if there are multiple matches.
+        if (parsed.results &&
+            parsed.results[0] &&
+            parsed.results[0].geometry &&
+            parsed.results[0].geometry.location &&
+            parsed.results[0].geometry.location.lat &&
+            parsed.results[0].geometry.location.lng) {
+            this.send('location', {
+                    "latitude": parsed.results[0].geometry.location.lat,
+                    "longitude": parsed.results[0].geometry.location.lng
+            });
+        } else {
+            error('GeoCoder: No matching location.');
+            // So that downstream actors don't just a previous location, send null.
+            this.send('location', null);
+        }
     }
     return response;
 };
