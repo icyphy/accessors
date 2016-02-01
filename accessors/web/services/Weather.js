@@ -40,7 +40,10 @@
  *  @author Edward A. Lee
  *  @version $$Id$$
  *  @input location The location, an object with two fields (default is Berkeley).
- *  @output response An object containing current weather data.
+ *  @parameter {string} temperature One of 'Fahrenheit', 'Celsius', or 'Kelvin'.
+ *  @parameter {string} key The key for the openweathermap.org service.
+ *  @output response An object containing the raw response from the service.
+ *  @output weather An object containing more readable weather data.
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -117,79 +120,82 @@ exports.initialize = function() {
  */
 exports.filterResponse = function(response) {
     if (response) {
-        try {
-            // NOTE: All of the following should be replaced with a generic
-            // schema transformation utility.
-            var parsed = JSON.parse(response);
-            var weather = {};
-            // Look for a description field.
-            if (parsed.weather &&
-                    Array.isArray(parsed.weather) &&
-                    parsed.weather[0] &&
-                    parsed.weather[0].description) {
-                weather.description = parsed.weather[0].description;
+        // Note that for some hosts, the response is a string, needing to parsed,
+        // and for some, its already been parsed.
+        var parsed = response;
+        if (typeof parsed === 'string') {
+            try {
+                parsed = JSON.parse(response);
+            } catch (err) {
+                error('Weather: Unable to parse response: ' + err.message
+                        + '\nResponse was: ' + response);
+                // So that downstream actors don't just a previous location, send null.
+                this.send('weather', null);
             }
-            if (parsed.main) {
-                if (parsed.main.temp) {
-                    weather.temperature = convertTemperature(
-                            parsed.main.temp,
-                            this.getParameter('temperature'));
+        }
+        var weather = {};
+        // Look for a description field.
+        if (parsed.weather &&
+                Array.isArray(parsed.weather) &&
+                parsed.weather[0] &&
+                parsed.weather[0].description) {
+            weather.description = parsed.weather[0].description;
+        }
+        if (parsed.main) {
+            if (parsed.main.temp) {
+                weather.temperature = convertTemperature(
+                        parsed.main.temp,
+                        this.getParameter('temperature'));
+            }
+            if (parsed.main.pressure) {
+                weather['pressure (hPa)'] = parsed.main.pressure;
+            }
+            if (parsed.main.humidity) {
+                weather['humidity (percent)'] = parsed.main.humidity;
+            }
+            if (parsed.main.temp_min) {
+                weather['minimum temperature'] = convertTemperature(
+                        parsed.main.temp_min,
+                        this.getParameter('temperature'));
+            }
+            if (parsed.main.temp_max) {
+                weather['maximum temperature'] = convertTemperature(
+                        parsed.main.temp_max,
+                        this.getParameter('temperature'));
+            }
+            if (parsed.main.wind) {
+                if (parsed.main.wind.speed) {
+                    weather['wind speed (meters/second)'] = parsed.main.wind.speed;
                 }
-                if (parsed.main.pressure) {
-                    weather['pressure (hPa)'] = parsed.main.pressure;
-                }
-                if (parsed.main.humidity) {
-                    weather['humidity (percent)'] = parsed.main.humidity;
-                }
-                if (parsed.main.temp_min) {
-                    weather['minimum temperature'] = convertTemperature(
-                            parsed.main.temp_min,
-                            this.getParameter('temperature'));
-                }
-                if (parsed.main.temp_max) {
-                    weather['maximum temperature'] = convertTemperature(
-                            parsed.main.temp_max,
-                            this.getParameter('temperature'));
-                }
-                if (parsed.main.wind) {
-                    if (parsed.main.wind.speed) {
-                        weather['wind speed (meters/second)'] = parsed.main.wind.speed;
-                    }
-                    if (parsed.main.wind.deg) {
-                        var deg = parsed.main.wind.deg;
-                        var directions = [
-                            "North",
-                            "North Northeast",
-                            "Northeast",
-                            "East Northeast",
-                            "East",
-                            "East Southeast",
-                            "Southeast",
-                            "South Southeast",
-                            "South",
-                            "South Southwest",
-                            "Southwest",
-                            "West Southwest",
-                            "West",
-                            "West Northwest",
-                            "Northwest",
-                            "North Northwest"
-                        ];
-                        var index = Math.floor(((deg + 11.25) % 360)/22.5);
-                        weather['wind direction'] = directions[index];
-                    }
+                if (parsed.main.wind.deg) {
+                    var deg = parsed.main.wind.deg;
+                    var directions = [
+                        "North",
+                        "North Northeast",
+                        "Northeast",
+                        "East Northeast",
+                        "East",
+                        "East Southeast",
+                        "Southeast",
+                        "South Southeast",
+                        "South",
+                        "South Southwest",
+                        "Southwest",
+                        "West Southwest",
+                        "West",
+                        "West Northwest",
+                        "Northwest",
+                        "North Northwest"
+                    ];
+                    var index = Math.floor(((deg + 11.25) % 360)/22.5);
+                    weather['wind direction'] = directions[index];
                 }
             }
             if (parsed.name) {
                 weather['place name'] = parsed.name;
             }
-            this.send('weather', weather);
-        } catch (err) {
-            error('Weather: Unable to parse response: ' + err.message);
-            this.send('weather', null);
         }
-    } else {
-        this.send('price', null);
+        this.send('weather', weather);
     }
     return response;
 };
