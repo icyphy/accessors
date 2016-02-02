@@ -72,7 +72,7 @@
 //////////////////////////////////////////////////////////////////////////
 //// Web page setup
 
-<!-- Note that the following will not work in IE 8 or older. -->
+// Note that the following will not work in IE 8 or older.
 window.addEventListener('DOMContentLoaded', function() {
     window.generate();
 });
@@ -891,7 +891,7 @@ function generateTable(title, names, contents, role, id) {
     
     var column = document.createElement('th');
     column.setAttribute('class', 'accessorTableHeader');
-    <!-- To not expand, use 1%. -->
+    // To not expand, use 1%.
     column.setAttribute('width', '1%');
     column.innerHTML = 'Name';
     titleRow.appendChild(column);
