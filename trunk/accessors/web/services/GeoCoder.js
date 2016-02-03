@@ -37,7 +37,7 @@
  *
  *  @accessor services/GeoCoder
  *  @author Edward A. Lee
- *  @version $$Id$#
+ *  @version $$Id$$
  *  @input {string} address The address, for example "Berkeley, CA".
  *  @output location The location, as an object with a 'latitude' and 'longitude'
  *   property.
