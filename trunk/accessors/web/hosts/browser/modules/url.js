@@ -663,7 +663,9 @@ Url.prototype.resolveObject = function(relative) {
 
   // if the path is allowed to go above the root, restore leading ..s
   if (!mustEndAbs && !removeAllDots) {
-    for (; up--; up) {
+      // Coverity Scan stated: "CID 30693 (#1 of 2): Expression with no effect (NO_EFFECT)"
+      // "unused_expr: Expression up has no side effects and is unused."
+    for (; up--; /*up*/) {
       srcPath.unshift('..');
     }
   }
