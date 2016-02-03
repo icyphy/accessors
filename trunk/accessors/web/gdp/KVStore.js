@@ -23,8 +23,10 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Accessor for GDP Key-Value Store.
+
  *  @accessor gdp/KVStore
  *  @version $$Id$$ 
+ *  @author Edward A. Lee, Nitesh Mor, Contributor: Christopher Brooks
  */
 
 // Stop extra messages from jslint.  Note that there should be no

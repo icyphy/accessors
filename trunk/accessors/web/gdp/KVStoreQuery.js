@@ -23,8 +23,10 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Query a Key/Value store.
+ *
  *  @accessor gdp/KVStoreQuery
  *  @version $$Id$$ 
+ *  @author Edward A. Lee, Nitesh Mor, Contributor: Christopher Brooks
  */
 
 // Stop extra messages from jslint.  Note that there should be no
