@@ -43,14 +43,14 @@ var util = require('util');
 
 exports.setup = function() {
     this.extend('test/TestAccessor');
-}
+};
 
 exports.initialize = function() {
     // Test ability to invoke superclass function from overridden function.
     this.ssuper.initialize();
-}
+};
 
 /** Override the base class to use util. */
 exports.formatOutput = function(value) {
     return util.format('JSON for untyped input using util.format(): %j', value);
-}
+};

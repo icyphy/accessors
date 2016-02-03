@@ -134,10 +134,10 @@ exports.defragmentMessage = (function() {
 
         //Check for missing fragment
         if (fragmentCount != message.num){
-            console.error("Fragment "
-                + fragmentCount
-                + " of message is missing. Instead received fragment number "
-                + message.num);
+            console.error("Fragment " +
+                fragmentCount +
+                " of message is missing. Instead received fragment number " +
+                message.num);
         }
 
         //Accumulate data from fragment.

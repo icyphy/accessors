@@ -35,11 +35,13 @@ var browser = require('browser');
 
 exports.setup = function() {
     this.input('html', {'type':'string'});
-}
+};
+
 function display() {
 	var toDisplay = this.get('html');
 	browser.display(toDisplay);
 }
+
 exports.initialize = function() {
 	this.addInputHandler('html', display);
-}
+};

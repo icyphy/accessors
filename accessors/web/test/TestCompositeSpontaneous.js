@@ -39,7 +39,7 @@ exports.setup = function() {
     gain.setParameter('gain', 4);
     this.connect(gen, 'output', gain, 'input');
     this.connect(gain, 'scaled', 'output');
-}
+};
 
 // NOTE: If you provide a fire() function for a composite accessor,
 // then it is up to you to invoke react() on the contained accessors.

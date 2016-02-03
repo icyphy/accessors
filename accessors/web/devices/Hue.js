@@ -154,7 +154,7 @@ exports.initialize = function(retry) {
     
     // First make sure the bridge is actually there and responding.
     var bridgeRequest = http.get(url, function (response) {
-    	if (response != null) {
+    	if (response !== null) {
     	    // NOTE: null response is handled by the error handler registered below.
 	        if (response.statusCode != 200) {
 	            // Response is other than OK.
@@ -164,7 +164,7 @@ exports.initialize = function(retry) {
 	            // provided username is valid.
 	            url = url + "api/";
 	            http.get(url + userName + '/', function (response) {
-	            	if (response != null) {
+	            	if (response !== null) {
 		                if (response.statusCode == 200) {
 		                    var lights = JSON.parse(response.body);
 		
@@ -214,9 +214,9 @@ function bridgeRequestErrorHandler(err) {
             exports.initialize.call(self, true);
         }, 1000);
     } else {
-        error('Could not reach the Hue basestation at '
-                + this.get('bridgeIPAddress')
-                + ' after ' + retryCount + ' attempts.');
+        error('Could not reach the Hue basestation at ' +
+                this.get('bridgeIPAddress') +
+                ' after ' + retryCount + ' attempts.');
     }
 }
 

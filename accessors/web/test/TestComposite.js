@@ -44,7 +44,7 @@ exports.setup = function() {
     this.connect('input', gain, 'input');
     this.connect(gain, 'scaled', adder, 'inputRight');
     this.connect(adder, 'sum', 'output');
-}
+};
 
 // NOTE: If you provide a fire() function for a composite accessor,
 // then it is up to you to invoke react() on the contained accessors.

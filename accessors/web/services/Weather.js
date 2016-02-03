@@ -127,8 +127,8 @@ exports.filterResponse = function(response) {
             try {
                 parsed = JSON.parse(response);
             } catch (err) {
-                error('Weather: Unable to parse response: ' + err.message
-                        + '\nResponse was: ' + response);
+                error('Weather: Unable to parse response: ' + err.message +
+                        '\nResponse was: ' + response);
                 // So that downstream actors don't just a previous location, send null.
                 this.send('weather', null);
             }

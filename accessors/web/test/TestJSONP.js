@@ -42,11 +42,11 @@ var jQuery = require('jquery');
 exports.setup = function() {
     this.input('URL');        
     this.output('response');        
-}
+};
 
 exports.fire = function() {
     console.log('TestJSONP fired.');
-}
+};
 
 exports.initialize = function() {
     var self = this;
@@ -58,5 +58,5 @@ exports.initialize = function() {
     		self.send('response', JSON.stringify(data));
     	});
     });
-}
+};
 
