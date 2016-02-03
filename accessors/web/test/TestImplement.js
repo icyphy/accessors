@@ -30,7 +30,7 @@
  *
  *  @accessor test/TestImplement
  *  @author Edward A. Lee
- *  @version $$Id$
+ *  @version $$Id$$
  */
 
 exports.setup = function() {

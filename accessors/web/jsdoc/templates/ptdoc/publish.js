@@ -36,7 +36,7 @@
  * https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#ModifyJSDocsTemplateFiles
  *
  *   @author Christopher Brooks
- *   @version $Id$
+ *   @version $$Id$$
  *   @example
  *       jsdoc StockTick.js -t templates/ptdoc
  */
