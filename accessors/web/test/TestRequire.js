@@ -36,6 +36,7 @@
  *  @output numericPlusP Produces the value of the 'numeric' input plus 'p'.
  *  @output negation Produces the negation of the 'boolean' input.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 var util = require('util');

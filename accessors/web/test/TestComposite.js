@@ -31,6 +31,7 @@
  *  @input input A numeric input with default value 0.
  *  @output output The result of x + 4x, where x is the value of the input.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {

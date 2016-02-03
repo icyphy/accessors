@@ -31,6 +31,7 @@
  *
  *  @accessor test/TestCORS
  *  @author Elizabeth Osyk
+ *  @version $$Id$$
  */
 
 var jQuery = require('jquery');

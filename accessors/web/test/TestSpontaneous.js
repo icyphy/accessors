@@ -29,6 +29,7 @@
  *  @parameter interval The interval between outputs in milliseconds.
  *  @output output Output for the counting sequence, of type number.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {
