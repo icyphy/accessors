@@ -136,13 +136,13 @@ exports.filterResponse = function(response) {
     
     switch(selectedService) {
     case "GSN":
-	getGSNData(response);
+	getGSNData.call(this, response);
 	break;
     case "Paraimpu":
-	getParaimpuData(response);
+	getParaimpuData.call(this, response);
 	break;
     case "Firebase":
-	getFirebaseData(response);
+	getFirebaseData.call(this, response);
 	break;
     }
     console.log("Response" + response);
