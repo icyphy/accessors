@@ -35,10 +35,10 @@
 
 exports.setup = function() {
     this.implement('test/TestAccessor');
-}
+};
 
 exports.initialize = function() {
     this.addInputHandler('numeric', function() {
         this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
     });
-}
+};

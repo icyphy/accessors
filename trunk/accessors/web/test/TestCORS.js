@@ -39,11 +39,11 @@ var jQuery = require('jquery');
 exports.setup = function() {
     this.input('URL');                               
     this.output('response');        
-}
+};
 
 exports.fire = function() {
     console.log('TestCORS fired.');
-}
+};
 
 exports.initialize = function() {
     var self = this;
@@ -57,4 +57,4 @@ exports.initialize = function() {
     		}
     	});
     });
-}
+};

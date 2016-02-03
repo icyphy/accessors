@@ -36,10 +36,10 @@ exports.setup = function() {
     this.input('input', {'type':'number', 'value':0});
     this.output('scaled', {'type':'number'});
     this.parameter('gain', {'type':'number', 'value':2});
-}
+};
 
 exports.initialize = function() {
     this.addInputHandler('input', function() {
         this.send('scaled', this.get('input') * this.getParameter('gain'));
     });
-}
+};
