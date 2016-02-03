@@ -40,7 +40,7 @@
  * acquired by the location host.</p>
  *
  *  @accessor localization/Location
- *  @version $$Id: Hue.js 268 2015-08-21 21:58:32Z eal $$ 
+ *  @version $$Id$$ 
  *  @author Patrick Lazik, Contributor: Edward A. Lee
  */
 
