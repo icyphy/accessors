@@ -113,10 +113,10 @@ function getData(){
 			this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
 			break;
 		case "all":
-			getAll();
+	                getAll.call(this);
 			break;
 		default:
-			getAll();
+			getAll.call(this);
 	}
 }
 
