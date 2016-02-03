@@ -35,7 +35,8 @@
 exports.setup = function() {
     this.parameter('interval', {'type':'number', 'value':1000});
     this.output('output', {'type': 'number'});
-}
+};
+
 // These variables will not be visible to subclasses.
 var handle = null;
 var count = 0;
@@ -47,11 +48,11 @@ exports.initialize = function() {
     handle = setInterval(function() {
         thiz.send('output', count++);
     }, this.getParameter('interval'));
-}
+};
 
 exports.wrapup = function() {
     if (handle) {
         clearInterval(handle);
         handle = null;
     }
-}
+};

@@ -36,13 +36,13 @@
  *  produced in the same order as the input requests.
  *
  *  @accessor services/GeoCoder
- *  @author Edward A. Lee
- *  @version $$Id$$
  *  @input {string} address The address, for example "Berkeley, CA".
  *  @output location The location, as an object with a 'latitude' and 'longitude'
  *   property.
  *  @parameter {string} key The key for the Google geocoding API.
  *  @output response An object containing the location information.
+ *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -113,8 +113,8 @@ exports.filterResponse = function(response) {
             try {
                 parsed = JSON.parse(response);
             } catch (err) {
-                error('GeoCoder: Unable to parse response: ' + err.message
-                        + '\nResponse was: ' + response);
+                error('GeoCoder: Unable to parse response: ' + err.message +
+                        '\nResponse was: ' + response);
                 // So that downstream actors don't just a previous location, send null.
                 this.send('location', null);
             }

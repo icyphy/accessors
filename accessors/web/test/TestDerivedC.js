@@ -30,7 +30,8 @@
  */ 
 exports.setup = function() {
 	this.extend('test/TestBaseC');
-}
+};
+
 // This overrides the value of baseField for any function that accesses the
 // baseField using this.exports.baseField.
 exports.baseField = 2;

@@ -30,7 +30,7 @@
 exports.setup = function() {
    this.extend('test/TestDerivedC');
    this.output('out2');
-}
+};
 
 // Override input Handler of base.
 // Access a field defined in TestBaseC and overridden in TestDerivedC.
@@ -40,7 +40,7 @@ exports.inputHandler = function() {
    // 'this' will be the superclass exports property.
    this.exports.ssuper.inputHandler.call(this);
    this.send('out2', this.exports.baseField);
-}
+};
 
 
 

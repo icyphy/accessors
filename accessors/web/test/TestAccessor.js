@@ -50,7 +50,7 @@ exports.setup = function() {
     this.output('numericPlusP', {'type':'number'});      // Numeric input plus p.
     this.output('negation', {'type':'boolean'});         // Negation of boolean input.
     this.parameter('p', {'value':42});                   // Untyped, with numeric value.
-}
+};
 
 // Base class variable that is visible to subclasses through inheritance.
 exports.variable = 'hello';
@@ -70,12 +70,13 @@ exports.initialize = function() {
     this.addInputHandler('boolean', function() {
         this.send('negation', !this.get('boolean'));
     });
-}
+};
 
 /** Define a function that can be overridden in subclasses. */
 exports.formatOutput = function(value) {
     return 'JSON for untyped input: ' + JSON.stringify(value);
-}
+};
+
 exports.fire = function() {
     console.log('TestAccessor.fire() invoked.');
-}
+};
