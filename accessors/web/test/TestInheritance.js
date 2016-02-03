@@ -30,6 +30,7 @@
  *
  *  @accessor test/TestInheritance
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {

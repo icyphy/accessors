@@ -29,6 +29,7 @@
  *  @accessor test/TestCompositeSpontaneous
  *  @output output A counting sequence with increments of 4.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {

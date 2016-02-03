@@ -29,6 +29,7 @@
  *  @param input The input, a number with default 0.
  *  @param scaled The output, the result of input * gain.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {

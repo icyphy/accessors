@@ -29,6 +29,7 @@
  *  @input inputRight The right input, a number with default 0.
  *  @output sum The sum of the two inputs.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {
