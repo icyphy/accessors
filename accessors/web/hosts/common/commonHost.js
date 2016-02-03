@@ -766,7 +766,7 @@ Accessor.prototype.connect = function(a, b, c, d) {
         if (typeof c === 'string') {
             // form 3.
             if (!thiz.outputs[c]) {
-                throw('connect(): No such output: ' + b);
+                throw('connect(): No such output: ' + c);
             }
             myOutput.destinations.push(c);
             thiz.outputs[c].source = {'accessor': a, 'outputName': b};
