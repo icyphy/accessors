@@ -36,7 +36,7 @@
  * Running "cd accessors/web; ant jsdoc" will clone the above repo for you.
  *
  * @author Christopher Brooks
- * @version $Id$
+ * @version $$Id$$
  * @since Ptolemy II 11.0
  */
 
