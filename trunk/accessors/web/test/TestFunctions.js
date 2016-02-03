@@ -32,6 +32,7 @@
  *  @output readURL Outputs the contents of index.html if the host implements
  *   readURL() and can serve contents given 'index.html' as the URL.
  *  @author Edward A. Lee
+ *  @version $$Id$$
  */
 
 exports.setup = function() {
