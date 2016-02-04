@@ -372,12 +372,15 @@ exports.initialize = function () {
         });
     });
     
+    // Open the server after setting up all the handlers.
+    server.start();
+    
     // Bind the input handler to caller's object so that when it is invoked,
     // it is invoked in the context of that object and not this one.
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
-/** Close all sockets, unregister event listeners, and close the server.
+/** Close all sockets, unregister event listeners, and stop the server.
  */
 exports.wrapup = function(){
     for (var i = 0; i < sockets.length; i++) {
@@ -391,7 +394,7 @@ exports.wrapup = function(){
 
     if (server !== null) {
         server.removeAllListeners();
-        server.close();
+        server.stop();
         server = null;
     }
 };
