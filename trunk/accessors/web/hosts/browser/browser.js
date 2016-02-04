@@ -67,6 +67,14 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+// initialValues is provided by HTML pages that desire initial form field values
+// that are different from a particular accessor's default values
+/*globals alert, clearTimeout, console, document, initialValues, setTimeout, window, XMLHttpRequest */
+/*jshint globalstrict: true*/
+
 'use strict';
 
 //////////////////////////////////////////////////////////////////////////
@@ -125,11 +133,12 @@ function appendPlaceholder(target, id, element) {
  *  with class 'accessorDirectory' and insert an accessory directory.
  */
 function generate() {
+	var i, element;
     var accessorCount = 0;
     var acessorElements = document.getElementsByClassName('accessor');
     if (acessorElements && acessorElements.length > 0) {
-        for (var i = 0; i < acessorElements.length; i++) {
-            var element = acessorElements[i];
+        for (i = 0; i < acessorElements.length; i++) {
+            element = acessorElements[i];
             var src = element.getAttribute('src');
             if (src) {
                 accessorCount++;
@@ -145,8 +154,8 @@ function generate() {
     }
     var elements = document.getElementsByClassName('accessorDirectory');
     if (elements && elements.length > 0) {
-        for (var i = 0; i < elements.length; i++) {
-            var element = elements[i];
+        for (i = 0; i < elements.length; i++) {
+            element = elements[i];
             generateAccessorDirectory(element);
         }
     }
@@ -200,7 +209,7 @@ function generateAccessorHTML(path, id) {
     var code = getAccessorCode(path);
         
     // Create a header.
-    var target = document.getElementById(id);
+    target = document.getElementById(id);
     var h1 = document.createElement('h1');
     h1.setAttribute('id', 'accessorTitle');
     // Extract the class name from the path.
@@ -240,16 +249,16 @@ function generateAccessorHTML(path, id) {
         if (!detail) {
             detail = 'from accessor';
         }
-        pp.innerHTML = 'Error '
-                + detail
-                + ' at '
-                + path
-                + ': '
-                + err;
+        pp.innerHTML = 'Error ' + 
+        		detail + 
+        		' at ' + 
+        		path + 
+                ': ' + 
+                err;
         var target = document.getElementById(id + 'Error');      
         target.appendChild(pp);
         executable = false;
-    };
+    }
 
     // Get data from an input. This implementation assumes that the document
     // has an element with attribute 'id' equal to ```id.name```,
@@ -293,7 +302,7 @@ function generateAccessorHTML(path, id) {
         function handleTimeout() {
             request.abort();
             error("getResource timed out at URI: " + uri);
-        };
+        }
         // Null argument says there is no body.
         request.send(null);
         clearTimeout(timeoutHandler);
@@ -397,7 +406,7 @@ function generateAccessorHTML(path, id) {
             // Populate the exports field.
             wrapper(module.exports);
             return module.exports;
-        }
+        };
         if (callback) {
             // The third argument states that unless the path starts with '/'
             // or './', then the path should be searched for in the modules directory.
@@ -407,8 +416,8 @@ function generateAccessorHTML(path, id) {
                 } else {
                     try {
                         callback(null, evaluate(code));
-                    } catch (err) {
-                        callback(err, null);
+                    } catch (err2) {
+                        callback(err2, null);
                     }
                 }
             }, true);
@@ -456,7 +465,7 @@ function generateAccessorHTML(path, id) {
         // page. It's just that execution will fail.
         try {
             // The third argument (null) indicates synchronous load.
-            var result = loadFromServer(path, id, null);
+            result = loadFromServer(path, id, null);
             // If successful, add the module name to the text of the modules list.
         } catch (err) {
             executable = false;
@@ -490,8 +499,8 @@ function generateAccessorHTML(path, id) {
         	if (!options) {
         		// This could only occur is somehow the document has an element
         		// with the right name, but there is no such input.
-        		alert('No record of output or input named ' + name
-                    + ' for accessor with id ' + id);
+        		alert('No record of output or input named ' + name + 
+        				' for accessor with id ' + id);
         		return null;
         	}
         }
@@ -544,8 +553,8 @@ function generateAccessorHTML(path, id) {
             try {
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
-            } catch(err) {
-                error(err, 'instantiating accessor');
+            } catch(err2) {
+                error(err2, 'instantiating accessor');
                 executable = false;
                 // Failed to instantiate the accessor. Can't generate very much.
                 // Generate docs and button to view the accessor code.
@@ -602,7 +611,7 @@ function generateAccessorCodeElement(code, id) {
             pre.style.display = 'block';
             button.innerHTML = 'hide code';
         }
-    }
+    };
     target.appendChild(button);
     
     // Include Google's pretty printer, if possible.
@@ -716,6 +725,8 @@ function generateAccessorDirectory(element) {
  *  @param id The id of the accessor.
  */
 function generateAccessorDocumentation(path, id) {
+	var i;
+	
     // Attempt to read the PtDoc file.
     path = normalizePath(path);
     path = path + 'PtDoc.xml';
@@ -735,7 +746,7 @@ function generateAccessorDocumentation(path, id) {
     // those. Make sure the instance exists before getting this info.
     if (window.accessors && window.accessors[id]) {
         var implemented = window.accessors[id].implementedInterfaces;
-        for (var i = 0; i < implemented.length; i++) {
+        for (i = 0; i < implemented.length; i++) {
             appendDoc(target, 'Implements', implemented[i].accessorClass);
             getBaseDocumentation(docs, implemented[i].accessorClass);
         }
@@ -748,27 +759,27 @@ function generateAccessorDocumentation(path, id) {
 
     // If the request was unsuccessful.
     if (request.status !== 200) {
-        docs['description'] = 
+        docs.description = 
                 '<p class="accessorWarning">No documentation found for \
                 the accessor (tried ' + path + ').';
     } else {
         // Request was successful. Parsed DOM is in responseXML.
         var properties = request.responseXML.getElementsByTagName('property');
-        for (var i = 0; i < properties.length; i++) {
+        for (i = 0; i < properties.length; i++) {
             var property = properties[i];
             var name = property.getAttribute('name');
             docs[name] = property.getAttribute('value');
         }
     }
     // Now write contents to the web page.
-    if (docs['description']) {
-        appendDoc(target, null, docs['description']);
+    if (docs.description) {
+        appendDoc(target, null, docs.description);
     }
-    if (docs['author']) {
-        appendDoc(target, 'Author', docs['author']);
+    if (docs.author) {
+        appendDoc(target, 'Author', docs.author);
     }
-    if (docs['version']) {
-        appendDoc(target, 'Version', docs['version']);
+    if (docs.version) {
+        appendDoc(target, 'Version', docs.version);
     }
     // Record the docs for future use in generating input/output/parameter
     // documentation.
@@ -869,7 +880,7 @@ function generateTable(title, names, contents, role, id) {
     
     // Create header line.
     var header = document.createElement('h2');
-    header.innerHTML = title
+    header.innerHTML = title;
     header.setAttribute('class', 'accessorTableTitle');
     target.appendChild(header);
     
@@ -982,7 +993,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     // Insert the type.
     var typeCell = document.createElement("td");
     typeCell.setAttribute('class', classTag);
-    var type = options['type'];
+    var type = options.type;
     if (!type) {
         type = '';
     }
@@ -1003,10 +1014,10 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     						( (initialValues.hasOwnProperty(id + "." + name)) ?
     								initialValues[id + "." + name] : '') : '';
     
-    var value = options['currentValue']
-        || options['value']
-        || options['latestOutput']
-    	|| initialValue;
+    var value = options.currentValue || 
+        options.value || 
+        options.latestOutput || 
+        initialValue;
     if (typeof value === 'object') {
         value = JSON.stringify(value);
     }
@@ -1019,7 +1030,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
         
     } else {
     	// Either a parameter or input.  Outputs are not editable.
-    	var valueInput = document.createElement("input")
+    	var valueInput = document.createElement("input");
     	
     	if (role === 'input') {
 		    // Invoke handlers on change, if any handlers. 
@@ -1044,6 +1055,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     
     // Insert the documentation, if any is found.
     var success = false;
+    var docCell;
     if (window.accessorDocs) {
         var docs = window.accessorDocs[id];
         if (docs) {
@@ -1060,7 +1072,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
             }
             if (doc) {
                 success = true;
-                var docCell = document.createElement("td");
+                docCell = document.createElement("td");
                 if (visible) {
                 	docCell.className = 'accessorDocumentation accessorTableData';
                 } else {
@@ -1073,7 +1085,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
         }
     }
     if (!success) {
-        var docCell = document.createElement("td");
+        docCell = document.createElement("td");
         if (visible) {
             docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
         } else {
@@ -1120,9 +1132,9 @@ function getBaseDocumentation(docs, path) {
         for (var i = 0; i < properties.length; i++) {
             var property = properties[i];
             var name = property.getAttribute('name');
-            if (name !== 'description'
-                    && name !== 'author'
-                    && name !== 'version') {
+            if (name !== 'description' && 
+            		name !== 'author' && 
+            		name !== 'version') {
                 docs[name] = property.getAttribute('value');
             }
         }
@@ -1138,8 +1150,8 @@ function getBaseDocumentation(docs, path) {
 function getInputOrParameter(name, role, id) {
     var element = document.getElementById(id + '.' + name);
     if (!element) {
-        alert('No ' + role + ' named ' + name
-                + ' for accessor with id ' + id);
+        alert('No ' + role + ' named ' + name + 
+        		' for accessor with id ' + id);
         return null;
     }
     // Depending on the type, we should parse the input or parameter.
@@ -1152,8 +1164,8 @@ function getInputOrParameter(name, role, id) {
         if (!options) {
             // This could only occur is somehow the document has an element
             // with the right name, but there is no such input or parameter.
-            alert('No record of ' + role + ' named ' + name
-                    + ' for accessor with id ' + id);
+            alert('No record of ' + role + ' named ' + name + 
+            		' for accessor with id ' + id);
             return null;
         }
         if (!options.type) {
@@ -1178,8 +1190,8 @@ function getInputOrParameter(name, role, id) {
             try {
                 return JSON.parse(element.value);
             } catch(err) {
-                alert('Invalid JSON on ' + role + ' named ' + name +': ' + element.value
-                        + ' for accessor with id ' + id);
+                alert('Invalid JSON on ' + role + ' named ' + name +': ' + 
+                		element.value + ' for accessor with id ' + id);
                 return null;
             }
         }
@@ -1196,7 +1208,7 @@ function getInputOrParameter(name, role, id) {
  */
 function getAccessorCode(path) {
     // Strip off a leading '/' if provided.
-    while (path.indexOf('/') == 0) {
+    while (path.indexOf('/') === 0) {
         path = path.substring(1);
     }
     // The second argument indicates a blocking call, and the third indicates
@@ -1234,7 +1246,7 @@ function getJavaScript(path, callback, module) {
         // Convert this to an absolute path for either a module or an accessor.
         if (module) {
             path = '/accessors/hosts/browser/modules/' + path;
-        } else if (path.indexOf('accessors/') != 0) {
+        } else if (path.indexOf('accessors/') !== 0) {
             path = '/accessors/' + path;
         } else {
             path = '/' + path;
@@ -1248,8 +1260,7 @@ function getJavaScript(path, callback, module) {
         request.send();                     // Send the request now
         // Throw an error if the request was not 200 OK 
         if (request.status !== 200) {
-            throw 'Failed to get '
-                    + path + ': ' + request.statusText;
+            throw 'Failed to get ' + path + ': ' + request.statusText;
         }
         return request.responseText;
     } else {
@@ -1262,9 +1273,9 @@ function getJavaScript(path, callback, module) {
                 if (request.status === 200) {
                     callback(null, request.responseText);
                 } else {
-                    callback('Failed to get '
-                            + path
-                            + ': ' + request.statusText,
+                    callback('Failed to get ' + 
+                    		path + 
+                    		': ' + request.statusText,
                             null);
                 }
             }
@@ -1341,18 +1352,10 @@ function reactIfExecutable(id, suppress) {
             	// Non-visible inputs are not triggered from the UI, but an 
             	// accessor might send to a non-visible input  
             	// (see web/services/StockTick.js)
-            	var id, period;         	
+            	var period;         	
             	var inputs = document.getElementsByClassName('inputRole');
             	
-            	for (var i = 0; i < inputs.length; i++) {
-            		// id is accessorName.inputName - want only accessorName
-            		// for first argument to provideInput
-            		id = inputs[i].getAttribute('id');
-            		period = id.indexOf(".");
-            		if (period >= 0){
-            			id = id.substring(0,period);
-            		}
-            		
+            	for (var i = 0; i < inputs.length; i++) {           		
             		if (!inputs[i].parentNode.classList.contains("invisible")) {
             			provideInput(id, inputs[i].getAttribute('name'), 
                 				inputs[i].getAttribute('value'));
