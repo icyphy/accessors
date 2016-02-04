@@ -179,6 +179,7 @@
 
 var socket = require('socket');
 var client = null;
+var running = false;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
@@ -343,6 +344,10 @@ exports.initialize = function () {
         self.error(message);
     });
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    
+    client.open();
+    
+    running = true;
 };
 
 /** Send false to 'connected' output, and if 'reconnectOnClose'
@@ -362,10 +367,13 @@ function onClose(message) {
         client.removeAllListeners('open');
         client.removeAllListeners('message');
         client.removeAllListeners('close');
-        client = null;
 
         // Reconnect if reconnectOnClose is true.
-        if (this.getParameter('reconnectOnClose')) {
+        // FIXME: Is there a potential race condition here?
+        // If the server closes the connection in wrapup, then this onClose()
+        // function might be invoked before wrapup() of this accessor is invoked.
+        // In this case, we could be simultaneously opening and closing the connection!
+        if (running && this.getParameter('reconnectOnClose')) {
             // Use 'this' rather than 'export' so initialize() can be overridden.
             this.initialize();
         }
@@ -379,12 +387,9 @@ exports.isOpen = function () {
 
 /** Close the web socket connection. */
 exports.wrapup = function () {
+    running = false;
     if (client) {
-        client.removeAllListeners('open');
-        client.removeAllListeners('message');
-        client.removeAllListeners('close');
         client.close();
         console.log('Status: Connection closed in wrapup.');
-        client = null;
     }
 };
