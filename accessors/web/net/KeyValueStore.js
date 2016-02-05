@@ -78,7 +78,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*global console, error, exports */
+/*global console, error, exports, readURL */
 /*jshint globalstrict: true */
 "use strict";
 
@@ -101,7 +101,7 @@ exports.setup = function() {
     this.output('result', {
         'type': 'string'
     });
-}
+};
 
 exports.fire = function() {
     var store = this.get('storeLocation');
@@ -111,20 +111,20 @@ exports.fire = function() {
     var url = store + '/get?id=' + theKey;
     var produce;
     if (toRemove) {
-       if (theKey != "") {
+       if (theKey !== "") {
            produce = readURL(url);
            url = store + '/delete?id=' + theKey;
            readURL(url);
-           if (produce != "") {
+           if (produce !== "") {
                this.send('result', produce);
            }
         }
     } else {
         // toRemove == false. If there is a value, use it to set.
-        if (theValue != "" && theValue != null) {
+        if (theValue !== "" && theValue !== null) {
             // FIXME: encodeURIComponent is not defined as a top-level accessor function.
-            url = store + '/set?id=' + encodeURIComponent(theKey)
-                    + '&value=' + encodeURIComponent(theValue);
+            url = store + '/set?id=' + encodeURIComponent(theKey) +
+                '&value=' + encodeURIComponent(theValue);
             readURL(url);
             this.send('result', theValue);
         } else {
@@ -132,4 +132,4 @@ exports.fire = function() {
             this.send('result', valueFromStore);
         }
     }
-}
+};
