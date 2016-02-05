@@ -47,7 +47,7 @@
 
 // Stop extra messages from jslint and jshint.  Note that there should be no
 // space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*global addInputHandler, exports, getParameter, input, output, parameter, removeInputHandler, require, send */
+/*global addInputHandler, error, exports, getParameter, input, output, parameter, removeInputHandler, require, send */
 /*jshint globalstrict: true*/
 "use strict";
 
