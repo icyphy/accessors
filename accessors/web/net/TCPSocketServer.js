@@ -382,14 +382,7 @@ exports.initialize = function () {
 
 /** Close all sockets, unregister event listeners, and stop the server.
  */
-exports.wrapup = function(){
-    for (var i = 0; i < sockets.length; i++) {
-        if (sockets[i]) {
-            sockets[i].close();
-            sockets[i].removeAllListeners();
-        }
-    }
-
+exports.wrapup = function() {
     sockets = [];
 
     if (server !== null) {
