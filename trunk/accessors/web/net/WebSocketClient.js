@@ -94,7 +94,7 @@
  *  @parameter {int} port The port on the server to connect to. Defaults to 8080.
  *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
- *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 60000).
+ *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 1000).
  *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
  *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
  *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
@@ -137,7 +137,7 @@ exports.setup = function () {
         value : 'application/json',
     });
     this.parameter('connectTimeout', {
-        value: 60000,
+        value: 1000,
         type: "int"
     });
     this.parameter('numberOfRetries', {
@@ -206,6 +206,9 @@ exports.initialize = function () {
     client.on('error', function (message) {
         console.log(message);
     });
+    
+    client.open();
+    
     //only execute once, and not when trying to reconnect.
     if (inputHandle === null) {
         inputHandle = this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
