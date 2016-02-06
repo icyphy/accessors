@@ -239,7 +239,7 @@ exports.wrapup = function(){
 
     if (server !== null) {
         server.removeAllListeners();
-        server.close();
+        server.stop();
         server = null;
     }
 };
