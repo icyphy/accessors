@@ -110,13 +110,12 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*global addInputHandler, console, error, exports, get, getParameter, input, onClose, output, parameter, removeInputHandler, require, send */
+/*global console, error, exports, require */
 /*jshint globalstrict: true*/
 'use strict';
 
 var WebSocket = require('webSocket');
 var client = null;
-var inputHandle = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
@@ -209,10 +208,7 @@ exports.initialize = function () {
     
     client.open();
     
-    //only execute once, and not when trying to reconnect.
-    if (inputHandle === null) {
-        inputHandle = this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
-    }
+    this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
 };
 
 /** Handles input on 'toSend'. */
@@ -246,21 +242,15 @@ exports.onOpen = function () {
  */
 exports.onClose = function(message) {
     console.log('Status: Connection closed: ' + message);
-    if (inputHandle) {
-        // wrapup() has not been called.
-        // Probably the server closed the connection.
+    // FIXME: Race condition. This is called in vert.x event loop,
+    // but wrapup, which sets client = null, is called in DE thread.
+    if (client) {
         this.send('connected', false);
         
-        // Close and unregister everything.
-        client.removeAllListeners('open');
-        client.removeAllListeners('message');
-        client.removeAllListeners('close');
-        client = null;
-
         // Reconnect if reconnectOnClose is true.
         if (this.getParameter('reconnectOnClose')) {
-            // Use 'this' rather than 'export' so initialize() can be overridden.
-            this.initialize();
+            // Use 'this.exports' rather than 'exports' so initialize() can be overridden.
+        	client.open();
         }
     }
 }
@@ -277,14 +267,7 @@ exports.isOpen = function () {
 
 /** Close the web socket connection. */
 exports.wrapup = function () {
-    if (inputHandle !== null) {
-        this.removeInputHandler(inputHandle);
-        inputHandle = null;
-    }
     if (client) {
-        client.removeAllListeners('open');
-        client.removeAllListeners('message');
-        client.removeAllListeners('close');
         client.close();
         console.log('Status: Connection closed in wrapup.');
         client = null;
