@@ -84,7 +84,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals addInputHandler, console, get, getParameter, error, exports, input, output, removeInputHandler, require, parameter, send */
+/*globals console, error, exports, require */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -129,7 +129,6 @@ exports.setup = function() {
     }
 };
 
-var handle;
 var sockets = [];
 
 /** Starts the web socket and attaches functions to inputs and outputs.
@@ -154,7 +153,7 @@ exports.initialize = function() {
     }
     running = true;
 
-    handle = this.addInputHandler('toSend', function() {
+    this.addInputHandler('toSend', function() {
         var data = self.get('toSend');
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
@@ -230,15 +229,9 @@ exports.onConnection = function(socket) {
  * Closes server.
  */
 exports.wrapup = function(){
-    for (var i = 0; i < sockets.length; i++) {
-        sockets[i].removeAllListeners();
-    }
-
     sockets = [];
-    this.removeInputHandler(handle);
 
     if (server !== null) {
-        server.removeAllListeners();
         server.stop();
         server = null;
     }
