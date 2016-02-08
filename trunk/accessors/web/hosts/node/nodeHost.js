@@ -86,12 +86,12 @@ instantiate = function(accessorName, accessorClass) {
     // function that searches first for local modules.
     var bindings = {
         'require': require,
-    }
+    };
     var result = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return result;
-}
+};
 
 /** Start an interactive version of this host.
  *  This will produce a prompt on stdout that accepts JavaScript statements
@@ -117,10 +117,10 @@ startHost = function() {
         ];
         var hits = completions.filter(function(candidate) {
             // FIXME: need a better filter.
-            return candidate.indexOf(line) == 0;
+            return candidate.indexOf(line) === 0;
         });
         // show all completions if none found
-        return [hits.length ? hits : completions, line]
+        return [hits.length ? hits : completions, line];
     }
     // FIXME: make options passable to startHost()?
     var rl = readline.createInterface({
@@ -137,8 +137,8 @@ startHost = function() {
         // exit and quit functions.
         // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
         // Also, tolerate trailing semicolon.
-        if (command.match(/^\s*quit\s*$/i)
-                || command.match(/^\s*exit\s*$/i)) {
+        if (command.match(/^\s*quit\s*$/i) ||
+                command.match(/^\s*exit\s*$/i)) {
             console.log('exit');
             interactiveHostRunning = false;
             rl.close();
@@ -181,7 +181,7 @@ startHost = function() {
     console.log('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
     rl.setPrompt('nsh> ');
     rl.prompt();
-}
+};
 
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
