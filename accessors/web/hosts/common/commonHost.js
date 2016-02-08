@@ -187,7 +187,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should be no
 // space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
 /*global console, exports, instance, setTimeout*/
-/*jshint globalstrict: true*/
+/*jshint globalstrict: true, multistr: true */
 'use strict';
 
 
