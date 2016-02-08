@@ -1,0 +1,30 @@
+{
+  "name": "accessors",
+  "version": "1.0.0",
+  "description": "Actor-oriented proxies for IoT",
+  "main": "index.js",
+  "author": {
+    "name": "Edward A. Lee and others",
+    "email": "eal@berkeley.edu",
+    "url": "http://ptolemy.eecs.berkeley.edu/~eal"
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "homepage": "https://www.terraswarm.org/accessors/",
+  "keywords": [
+    "actor",
+    "IoT"
+  ],
+  "repository": {
+    "type": "svn",
+    "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+
+  "license": "SEE LICENSE IN accessors-license.htm"
+}
