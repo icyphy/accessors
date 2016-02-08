@@ -73,7 +73,7 @@
 // initialValues is provided by HTML pages that desire initial form field values
 // that are different from a particular accessor's default values
 /*globals alert, clearTimeout, console, document, initialValues, setTimeout, window, XMLHttpRequest */
-/*jshint globalstrict: true*/
+/*jshint globalstrict: true, multistr: true */
 
 'use strict';
 
