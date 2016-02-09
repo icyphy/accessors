@@ -21,13 +21,23 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor sends and/or receives messages from a TCP socket at
- *  the specified host and port. Upon initialization, it initiates a connection to the
- *  specified server. When the connection is established, a `true` boolean is sent to
- *  the `connected` output.
- *
+ *  the specified host and port. If the value of the `port` input is initially
+ *  negative, then this accessor waits until it receives a non-negative `port`
+ *  input before making a connection. Otherwise,
+ *  upon initialization, it initiates a connection to the
+ *  specified server. If at any time during execution it receives
+ *  a 'port' input, then it will close any open socket and, if the new
+ *  'port' value is non-negative, open
+ *  a new socket to the current 'host' and 'port'.
+ *  
+ *  When the connection is established, a `true` boolean is sent to
+ *  the `connected` output. If the connection is broken during execution, then a `false`
+ *  boolean is sent to the `connected` output. The swarmlet could respond to this by
+ *  retrying to connect (send an event to either the `port` or `host` input).
+ *  
  *  Whenever an input is received on the `toSend` input,
  *  the data on that input is sent to the socket. If the socket is not yet open,
- *  this accessor will, by default, queue the message to send when the socket opens,
+ *  this accessor will, by default, queue the message to send when a socket next opens,
  *  unless the `discardMessagesBeforeOpen` parameter is true, in which case,
  *  input messages that are received before the socket is opened will be
  *  discarded.
@@ -35,11 +45,7 @@
  *  Whenever a message is received from the socket, that message is
  *  produced on the `received` output.
  *
- *  When `wrapup()` is invoked, this accessor closes the
- *  connection.
- *
- *  If the connection is dropped midway, the client will attempt to reconnect if
- *  `reconnectOnClose` is true. This does not apply after the accessor wraps up.
+ *  When `wrapup()` is invoked, this accessor closes the  connection.
  *
  *  The send and receive types can be any of those supported by the host.
  *  The list of supported types will be provided as options for the `sendType`
@@ -104,11 +110,11 @@
  *  @accessor net/TCPSocketClient
  *
  *  @input toSend The data to be sent over the socket.
+ *  @input {string} host The IP address or domain name of server. Defaults to 'localhost'.
+ *  @input {int} port The port on the server to connect to. Defaults to -1, which means
+ *   wait for a non-negative input before connecting.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
- *
- *  @parameter {string} host The IP address or domain name of server. Defaults to 'localhost'.
- *  @parameter {int} port The port on the server to connect to. Defaults to 4000.
  *
  *  @parameter {int} connectTimeout The time to wait (in milliseconds) before declaring
  *    a connection attempt to have failed. This defaults to 6000.
@@ -150,8 +156,6 @@
  *    additional attempts. This defaults to 10.
  *  @parameter {int} reconnectInterval The time between reconnect attempts, in
  *    milliseconds. This defaults to 1000 (1 second).
- *  @parameter {boolean} reconnectOnClose If true, then if the connection is closed
- *    before this accessor is wrapped up, then attempt to reconnect.
  *  @parameter {int} sendBufferSize The size of the receive buffer. Defaults to
  *    65536.
  *  @parameter {string} sendType See above.
@@ -180,26 +184,29 @@
 var socket = require('socket');
 var client = null;
 var running = false;
+var pendingSends = [];
+var previousHost, previousPort;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
+    this.input('host', {
+        type : 'string',
+        value : 'localhost'
+    });
+    this.input('port', {
+        type : 'int',
+        value : -1
+    });
+    // This input is added after host and port so that if there are
+    // simultaneous inputs, host and port are handled first.
     this.input('toSend');
+    
     this.output('connected', {
         type : 'boolean'
     });
     this.output('received');
-
-    // The most used parameters are listed first.
-    this.parameter('host', {
-        type : 'string',
-        value : 'localhost'
-    });
-    this.parameter('port', {
-        type : 'int',
-        value : 4000
-    });
     
-    // The remaining parameters are in alphabetical order.
+    // The parameters are in alphabetical order.
     this.parameter('connectTimeout', {
         value: 6000,
         type: "int"
@@ -252,10 +259,6 @@ exports.setup = function () {
         type : 'int',
         value : 1000
     });
-    this.parameter('reconnectOnClose', {
-        type : 'boolean',
-        value : true
-    });
     this.parameter('sendBufferSize', {
         value: 65536,
         type: "int"
@@ -293,7 +296,37 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-    client.send(this.get('toSend'));
+	// May be receiving inputs before client has been set.
+	if (client) {
+    	client.send(this.get('toSend'));
+	} else {
+        if (!this.getParameter('discardMessagesBeforeOpen')) {
+            var maxUnsentMessages = this.getParameter('maxUnsentMessages');
+            if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
+                this.error("Maximum number of unsent messages has been exceeded: " +
+                    maxUnsentMessages +
+                    ". Consider setting discardMessagesBeforeOpen to true.");
+                return;
+            }
+            pendingSends.push(data);
+        } else {
+            console.log('Discarding data because socket is not open.');
+        }
+	}
+};
+
+/** Set up input handlers, and if the current value of the 'port' input is
+ *  non-negative, initiate a connection to the server using the
+ *  current parameter values, and
+ *  set up handlers for for establishment of the connection, incoming data,
+ *  errors, and closing from the server.
+ */
+exports.initialize = function () {
+	this.addInputHandler('host', this.exports.connect.bind(this));
+	this.addInputHandler('port', this.exports.connect.bind(this));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    this.exports.connect.call(this);
+    running = true;
 };
 
 /** Initiate a connection to the server using the current parameter values,
@@ -301,9 +334,39 @@ exports.toSendInputHandler = function () {
  *  errors, and closing from the server, and set up a handler for inputs
  *  on the toSend() input port.
  */
-exports.initialize = function () {
-
-    client = new socket.SocketClient(this.getParameter('port'), this.getParameter('host'),
+exports.connect = function () {
+	// Note that if 'host' and 'port' both receive new data in the same
+	// reaction, then this will be invoked twice. But we only want to open
+	// the socket once.  This is fairly tricky.
+	
+	var portValue = this.get('port');
+	if (portValue < 0) {
+		// No port is specified. This could be a signal to close a previously
+		// open socket.
+		if (client && client.isOpen()) {
+			client.close();
+		}
+		previousPort = null;
+		previousHost = null;
+		return;
+	}
+	
+	var hostValue = this.get('host');
+	if (previousHost === hostValue && previousPort === portValue) {
+		// A request to open a client for this host/port pair has already
+		// been made and has not yet been closed or failed with an error.
+		return;
+	}
+	// Record the host/port pair that we are now opening.
+	previousHost = hostValue;
+	previousPort = portValue;
+	
+	if (client && client.isOpen()) {
+		// Either the host or the port has changed. Close the previous socket.
+		client.close();
+	}
+	// Create a new SocketClient.
+    client = new socket.SocketClient(portValue, hostValue,
         {
             'connectTimeout' : this.getParameter('connectTimeout'),
             'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
@@ -331,54 +394,38 @@ exports.initialize = function () {
     client.on('open', function() {
         console.log('Status: Connection established');
         self.send('connected', true);
+        
+        // If there are pending sends, send them now.
+        // Note this implementation requires that the host invoke
+        // this callback function atomically w.r.t. the input handler
+        // that adds messages to the pendingSends queue.
+        for (var i = 0; i < pendingSends.length; i++) {
+        	client.send(pendingSends[i]);
+        }
+        pendingSends = [];
     });
     client.on('data', function(data) {
         self.send('received', data);
     });
-
-    // Bind onClose() to caller's object, so that 'this' is defined
-    // in onClose() to be the object on which this initialize() function
-    // is called.
-    client.on('close', onClose.bind(this));
+    client.on('close', function() {
+    	previousHost = null;
+    	previousPort = null;
+        console.log('Connection closed.');
+        // NOTE: Even if running is true, it can occur that it is too late
+        // to send the message (the wrapup process has been started), in which case
+        // the message may not be received.
+        if (running) {
+            self.send('connected', false);
+        }
+    });
     client.on('error', function (message) {
+    	previousHost = null;
+    	previousPort = null;
         self.error(message);
     });
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     
     client.open();
-    
-    running = true;
 };
-
-/** Send false to 'connected' output, and if 'reconnectOnClose'
- *  parameter evaluates to true and wrapup() has not been called,
- *  then invoke initialize().
- *  This will be called if either side closes the connection.
- *  @param message Possible message about the closure.
- */
-function onClose(message) {
-    console.log('Status: Connection closed: ' + message);
-    if (client) {
-        // wrapup() has not been called.
-        // Probably the server closed the connection.
-        this.send('connected', false);
-
-        // Close and unregister everything.
-        client.removeAllListeners('open');
-        client.removeAllListeners('message');
-        client.removeAllListeners('close');
-
-        // Reconnect if reconnectOnClose is true.
-        // FIXME: Is there a potential race condition here?
-        // If the server closes the connection in wrapup, then this onClose()
-        // function might be invoked before wrapup() of this accessor is invoked.
-        // In this case, we could be simultaneously opening and closing the connection!
-        if (running && this.getParameter('reconnectOnClose')) {
-            // Use 'this' rather than 'export' so initialize() can be overridden.
-            this.initialize();
-        }
-    }
-}
 
 /** Return true if this client has an open connection to the server. */
 exports.isOpen = function () {
