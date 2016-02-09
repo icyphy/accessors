@@ -28,7 +28,7 @@
  *  listening is emitted on the `listening` output port.
  *
  *  When a connection is established, this accessor outputs on the `connection` output
- *  an object with the following fields:
+ *  an object with the following properties:
  *
  *  * **id**: A unique ID identifying the connection (a positive integer).
  *  * **remoteHost**: The IP address of the remote host for the socket (a string).
@@ -114,7 +114,7 @@
  *  @output {int} listening When the server is listening for connections, this output
  *    will produce the port number that the server is listening on
  *    (this is useful if the port is specified to be 0).
- *  @output connection Output an object with the fields specified above when a
+ *  @output connection Output an object with the properties specified above when a
  *     connection is established.
  *  @output received The data received from the web socket server.
  *  @output receivedID The ID of the connection over which data produced on the received
@@ -340,28 +340,30 @@ exports.initialize = function () {
     });
         
     server.on('listening', function(port) {
-        console.log('Server: Listening for socket connection requests.');
+        console.log('Server: Listening for socket connection requests on port ' + port);
         self.send('listening', port);
     });
     
     server.on('connection', function(serverSocket) {
-        connectionCount++;
+    	// serverSocket is an instance of the Socket class defined
+    	// in the socket module.
+    	connectionCount++;
+        var socketInstance = connectionCount;
         var socketID = {
-            'id': connectionCount,
+            'id': socketInstance,
             'remoteHost': serverSocket.remoteHost(),
             'remotePort': serverSocket.remotePort(),
             'status': 'open'
         };
         self.send('connection', socketID);
         
-        sockets[connectionCount] = serverSocket;
+        sockets[socketInstance] = serverSocket;
 
         serverSocket.on('close', function() {
-            serverSocket.removeAllListeners();
             socketID.status = 'closed';
             this.send('connection', socketID);
             // Avoid a memory leak here.
-            sockets[connectionCount] = null;
+            sockets[socketInstance] = null;
         });
         serverSocket.on('data', function(data) {
             self.send('received', data);
@@ -386,7 +388,6 @@ exports.wrapup = function() {
     sockets = [];
 
     if (server !== null) {
-        server.removeAllListeners();
         server.stop();
         server = null;
     }
