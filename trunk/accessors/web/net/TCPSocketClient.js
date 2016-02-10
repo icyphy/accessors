@@ -109,10 +109,10 @@
  *
  *  @accessor net/TCPSocketClient
  *
- *  @input toSend The data to be sent over the socket.
  *  @input {string} host The IP address or domain name of server. Defaults to 'localhost'.
  *  @input {int} port The port on the server to connect to. Defaults to -1, which means
  *   wait for a non-negative input before connecting.
+ *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
  *
