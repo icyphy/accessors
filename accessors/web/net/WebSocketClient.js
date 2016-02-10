@@ -47,8 +47,9 @@
  *  When `wrapup()` is invoked, this accessor closes the
  *  connection.
  *
- *  If the connection is dropped midway, the client will attempt to reconnect if
- *  (reconnectOnClose) is true. This does not apply when the accessor wraps up.
+ *  If the connection is dropped midway, the swarmlet may monitor the 'connected'
+ *  output for a value 'false' and attempt a reconnection by providing either a
+ *  port or server input.
  *
  *  The default type for both sending and receiving
  *  is 'application/json', which allows sending and receiving anything that has
@@ -90,19 +91,33 @@
  *  This accessor requires the 'webSocket' module.
  *
  *  @accessor net/WebSocketClient
- *  @parameter {string} server The IP address or domain name of server. Defaults to 'localhost'.
- *  @parameter {int} port The port on the server to connect to. Defaults to 8080.
- *  @parameter {string} receiveType The MIME type for incoming messages, which defaults to 'application/json'.
- *  @parameter {string} sendType The MIME type for outgoing messages, which defaults to 'application/json'.
- *  @parameter {int} connectTimeout The time in milliseconds to wait before giving up on a connection (default is 1000).
- *  @parameter {int} numberOfRetries The number of times to retry if a connection fails. Defaults to 5.
- *  @parameter {int} timeBetweenRetries The time between retries in milliseconds. Defaults to 100.
- *  @parameter {boolean} reconnectOnClose The option of whether or not to reconnect when disconnected.
- *  @parameter {boolean} discardMessagesBeforeOpen If true, then any messages received on `toSend` before the socket is open will be discarded. This defaults to false.
- *  @parameter {int} throttleFactor If non-zero, specifies a time (in milliseconds) to stall when a message is queued because the socket is not yet open. The time of the stall will be the queue size (after adding the message) times the throttleFactor. This defaults to 100. Making it non-zero causes the input handler to take time if there are pending unsent messages.
+ *  @input {string} server The IP address or domain name of server. Defaults to 'localhost'.
+ *  @input {int} port The port on the server to connect to. Defaults to -1, which means
+ *   wait for a non-negative input before connecting.
  *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
+ *  
+ *  @parameter {string} receiveType The MIME type for incoming messages,
+ *   which defaults to 'application/json'.
+ *  @parameter {string} sendType The MIME type for outgoing messages,
+ *   which defaults to 'application/json'.
+ *  @parameter {int} connectTimeout The time in milliseconds to wait
+ *   before giving up on a connection (default is 1000).
+ *  @parameter {int} numberOfRetries The number of times to retry if
+ *   a connection fails. Defaults to 5.
+ *  @parameter {int} timeBetweenRetries The time between retries in milliseconds.
+ *   Defaults to 500.
+ *  @parameter {boolean} discardMessagesBeforeOpen If true,
+ *   then any messages received on `toSend` before the socket
+ *   is open will be discarded. This defaults to false.
+ *  @parameter {int} throttleFactor If non-zero, specifies a
+ *   time (in milliseconds) to stall when a message is queued
+ *   because the socket is not yet open. The time of the stall
+ *   will be the queue size (after adding the message) times
+ *   the throttleFactor. This defaults to 100. Making it non-zero
+ *   causes the input handler to take time if there are pending unsent messages.
+
  *  @author Hokeun Kim, Marcus Pan, Edward A. Lee, Matt Weber
  *  @version $$Id$$
  */
@@ -116,17 +131,26 @@
 
 var WebSocket = require('webSocket');
 var client = null;
+var pendingSends = [];
+var previousServer, previousPort;
+var running = false;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    this.parameter('server', {
+    this.input('server', {
         type : 'string',
         value : 'localhost'
     });
-    this.parameter('port', {
+    this.input('port', {
         type : 'int',
-        value : 8080
+        value : -1
     });
+    this.input('toSend');
+    this.output('connected', {
+        type : 'boolean'
+    });
+    this.output('received');
+    
     this.parameter('receiveType', {
         type : 'string',
         value : 'application/json',
@@ -145,11 +169,7 @@ exports.setup = function () {
     });
     this.parameter('timeBetweenRetries', {
         type : 'int',
-        value : 100
-    });
-    this.parameter('reconnectOnClose', {
-        type : 'boolean',
-        value : true
+        value : 500
     });
     this.parameter('discardMessagesBeforeOpen', {
         type : 'boolean',
@@ -159,11 +179,6 @@ exports.setup = function () {
         type : 'int',
         value : 100
     });
-    this.input('toSend');
-    this.output('connected', {
-        type : 'boolean'
-    });
-    this.output('received');
     
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
@@ -179,9 +194,57 @@ exports.setup = function () {
     }
 };
 
-/** Initializes accessor by attaching functions to inputs. */
+/** Set up input handlers, and if the current value of the 'port' input is
+ *  non-negative, initiate a connection to the server using the
+ *  current parameter values, and
+ *  set up handlers for for establishment of the connection, incoming data,
+ *  errors, and closing from the server.
+ */
 exports.initialize = function () {
+	this.addInputHandler('server', this.exports.connect.bind(this));
+	this.addInputHandler('port', this.exports.connect.bind(this));
+    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    this.exports.connect.call(this);
+    running = true;
+};
 
+/** Initiate a connection to the server using the current parameter values,
+ *  set up handlers for for establishment of the connection, incoming data,
+ *  errors, and closing from the server, and set up a handler for inputs
+ *  on the toSend() input port.
+ */
+exports.connect = function () {
+	// Note that if 'server' and 'port' both receive new data in the same
+	// reaction, then this will be invoked twice. But we only want to open
+	// the socket once.  This is fairly tricky.
+	
+	var portValue = this.get('port');
+	if (portValue < 0) {
+		// No port is specified. This could be a signal to close a previously
+		// open socket.
+		if (client && client.isOpen()) {
+			client.close();
+		}
+		previousPort = null;
+		previousServer = null;
+		return;
+	}
+	
+	var serverValue = this.get('server');
+	if (previousServer === serverValue && previousPort === portValue) {
+		// A request to open a client for this server/port pair has already
+		// been made and has not yet been closed or failed with an error.
+		return;
+	}
+	// Record the host/port pair that we are now opening.
+	previousServer = serverValue;
+	previousPort = portValue;
+	
+	if (client && client.isOpen()) {
+		// Either the host or the port has changed. Close the previous socket.
+		client.close();
+	}
+	
     client = new WebSocket.Client(
         {
             'host' : this.getParameter('server'),
@@ -203,27 +266,31 @@ exports.initialize = function () {
     client.on('close', this.exports.onClose.bind(this));
 
     client.on('error', function (message) {
-        console.log(message);
+    	previousServer = null;
+    	previousPort = null;
+        console.log('Error: ' + message);
     });
     
     client.open();
-    
-    this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
 };
 
 /** Handles input on 'toSend'. */
 exports.toSendInputHandler = function () {
-    exports.sendToWebSocket(this.get('toSend'));
+    this.exports.sendToWebSocket.call(this, this.get('toSend'));
 };
 
 /** Sends JSON data to the web socket. */
 exports.sendToWebSocket = function (data) {
-    if (client !== null) {
-        client.send(data);
-        // console.log("Sending to web socket: " + data);
-    } else {
-        console.log("Client is null. Could not send message: " + data);
-    }
+	// May be receiving inputs before client has been set.
+	if (client) {
+    	client.send(data);
+	} else {
+        if (!this.getParameter('discardMessagesBeforeOpen')) {
+            pendingSends.push(data);
+        } else {
+            console.log('Discarding data because socket is not open.');
+        }
+	}
 };
 
 /** Executes once  web socket establishes a connection.
@@ -232,26 +299,31 @@ exports.sendToWebSocket = function (data) {
 exports.onOpen = function () {
     console.log('Status: Connection established');
     this.send('connected', true);
+    
+    // If there are pending sends, send them now.
+    // Note this implementation requires that the host invoke
+    // this callback function atomically w.r.t. the input handler
+    // that adds messages to the pendingSends queue.
+    for (var i = 0; i < pendingSends.length; i++) {
+    	client.send(pendingSends[i]);
+    }
+    pendingSends = [];
 };
 
-/** Send false to 'connected' output, and if 'reconnectOnClose'
- *  parameter evaluates to true and wrapup() has not been called,
- *  then invoke initialize().
+/** Send false to 'connected' output.
  *  This will be called if either side closes the connection.
- *  @param message Possible message about the closure.
  */
-exports.onClose = function(message) {
-    console.log('Status: Connection closed: ' + message);
-    // FIXME: Race condition. This is called in vert.x event loop,
-    // but wrapup, which sets client = null, is called in DE thread.
-    if (client) {
+exports.onClose = function() {
+	previousServer = null;
+	previousPort = null;
+
+	console.log('Status: Connection closed.');
+	
+    // NOTE: Even if running is true, it can occur that it is too late
+    // to send the message (the wrapup process has been started), in which case
+    // the message may not be received.
+    if (running) {
         this.send('connected', false);
-        
-        // Reconnect if reconnectOnClose is true.
-        if (this.getParameter('reconnectOnClose')) {
-            // Use 'this.exports' rather than 'exports' so initialize() can be overridden.
-        	client.open();
-        }
     }
 }
 
@@ -267,9 +339,9 @@ exports.isOpen = function () {
 
 /** Close the web socket connection. */
 exports.wrapup = function () {
+    running = false;
     if (client) {
         client.close();
         console.log('Status: Connection closed in wrapup.');
-        client = null;
     }
 };
