@@ -1,4 +1,5 @@
 [
     "AudioCapture.js",
-    "AudioPlayer.js"
+    "AudioPlayer.js",
+    "ClipPlayer.js"
 ]
