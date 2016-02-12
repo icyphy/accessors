@@ -2,9 +2,23 @@
 
 ## Scarab
 
+### Minimum Setup
+
+Power up the Scarab and ssh to it.
+
+Run the following programs to prepare the Scarab to take websocket commands:
+
+```
+$ roscore
+$ roslaunch rosbridge_server rosbridge_websocket.launch
+$ roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
+```
+
+### Typical Setup
+
 Note: the IP addresses below are from the Scarab setup in DOP center.
 
-### Architecture
+#### Architecture
 
     +----------+             +-----------+      +---------+       +--------+
     |          |  websocket  |           |      |         |       |        |
@@ -14,8 +28,6 @@ Note: the IP addresses below are from the Scarab setup in DOP center.
 
                              ------------------------------     -------------
                                 ROS_MASTER 192.168.0.111        192.168.0.103
-
-### Instructions
 
 #### Swarmbox
 
