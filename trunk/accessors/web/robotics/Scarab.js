@@ -35,7 +35,7 @@
  *     DOI: 10.1109/ROBOT.2008.4543197
  *
  *  @accessor robotics/Scarab
- *  @author Brad Campbell, Pat Pannuto, Edward A. Lee
+ *  @author Brad Campbell, Pat Pannuto
  *  @version $$Id$$
  */
 
