@@ -1,5 +1,6 @@
 [
     "RosPublisher.js",
     "RosSubscriber.js",
-    "LocationRosPublisher.js"
+    "LocationRosPublisher.js",
+    "Scarab.js"
 ]

@@ -1,0 +1,31 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<property name="ScarabIcon" class="ptolemy.vergil.icon.EditorIcon">
+    <property name="rectangle" class="ptolemy.vergil.kernel.attributes.RectangleAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-36.0, -44.0]">
+        </property>
+        <property name="width" class="ptolemy.data.expr.Parameter" value="68.0">
+        </property>
+        <property name="height" class="ptolemy.data.expr.Parameter" value="82.0">
+        </property>
+        <property name="fillColor" class="ptolemy.actor.gui.ColorAttribute" value="{0.6,0.6,0.6,0.0}">
+        </property>
+    </property>
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 524]">
+    </property>
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="3.2000000000000006">
+    </property>
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{2.8421709430404007E-14, 0.0}">
+    </property>
+    <property name="image6" class="ptolemy.vergil.kernel.attributes.ImageAttribute">
+        <property name="source" class="ptolemy.data.expr.FileParameter" value="./scarab_418x500.gif">
+        </property>
+        <property name="scale" class="ptolemy.data.expr.Parameter" value="15">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-33.0, -41.0]">
+        </property>
+    </property>
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={373, 208, 934, 634}, maximized=false}">
+    </property>
+</property>
