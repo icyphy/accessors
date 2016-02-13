@@ -100,6 +100,30 @@
     </exec>
   </target>
 
+    <target name="tests.coverage"
+          description="Use istanbul and mocha to generate code coverage for JavaScript tests.">
+    <echo>
+      ==test.istanbul==
+      This target uses istanbul and mocha to generate code coverage for JavaScript tests
+      This target requires setup:
+        sudo npm install -g mocha
+        sudo npm install -g istanbul
+      The output will generated in the coverage/ directory.
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <exec executable="istanbul">
+      <arg value="cover"/>
+      <arg value="_mocha"/>
+      <arg value="--"/>
+      <arg line="${converted}"/>
+    </exec>
+  </target>
+
     <target name="tests.mocha.xml"
           description="Use mocha to test JavaScript and generate JUnit-compatible output.">
     <echo>
