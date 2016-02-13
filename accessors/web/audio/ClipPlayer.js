@@ -56,3 +56,9 @@ exports.initialize = function() {
 		self.send('output', false);
 	});
 };
+
+exports.wrapup = function() {
+	if (this.player != null) {
+		this.player.stop();
+	}
+}
