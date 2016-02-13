@@ -1033,11 +1033,12 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     	var valueInput = document.createElement("input");
     	
     	if (role === 'input') {
-		    // Invoke handlers on change, if any handlers. 
-    		// Only inputs may have handlers. 
-    	    valueInput.setAttribute('onchange', 'provideInput("' + id + '", name, value)');
+		    // Do not invoke any handlers on input change.  The user must
+    		// initiate invoctaion with the "react to inputs" button.
 		    valueInput.setAttribute('class', 'valueInputBox inputRole');
     	} else {
+    		// Invoke setParameter() on change.  Note onchange() also fires when 
+    		// the user deletes a form field value.
     		valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
     		valueInput.setAttribute('class', 'valueInputBox parameterRole');
     	}       
@@ -1357,8 +1358,12 @@ function reactIfExecutable(id, suppress) {
             	
             	for (var i = 0; i < inputs.length; i++) {           		
             		if (!inputs[i].parentNode.classList.contains("invisible")) {
-            			provideInput(id, inputs[i].getAttribute('name'), 
-                				inputs[i].getAttribute('value'));
+            			if (inputs[i].value != null && inputs[i].value != "") {
+                			// Do not call provideInput for blank fields.
+                			// Use "" in a form field to send an empty string as input.
+            				provideInput(id, inputs[i].getAttribute('name'), 
+            						inputs[i].value);
+            			}
             		}
             	}
             	
