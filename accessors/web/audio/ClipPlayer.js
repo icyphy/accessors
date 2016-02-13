@@ -44,7 +44,7 @@ exports.setup = function() {
 exports.initialize = function() {
 	var self = this;
 	self.player = new audio.ClipPlayer();
-	self.player.load(getParameter('clipURL'));
+	self.player.load(this.getParameter('clipURL'));
 	
 	this.addInputHandler('start', function () {
         self.player.play();
@@ -53,6 +53,7 @@ exports.initialize = function() {
 	
 	this.addInputHandler('stop', function() {
 		self.player.stop();
+		console.log("stopped");
 		self.send('output', false);
 	});
 };
