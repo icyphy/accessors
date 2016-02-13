@@ -25,8 +25,30 @@
 // Require the filesystem module to read the accessor source code.
 var fs = require('fs');
 
+// Search for a .js file in a search path.
+getAccessorCode = function (name) {
+    // We need this so that we can run the test from ant using mocha.
+    // See test/mocha/testCommon.js.
+
+    // The path elements should end with a slash.
+    var searchPath = ['./', '../', '../../', '../../../', '../../../../', 'web/', 'org/terraswarm/accessor/accessors/web/'];
+    for (i = 0; i < searchPath.length; i++) {
+        var pathName = searchPath[i] + name + '.js';
+        //console.log("testCommon.js: pathName: " + pathName);
+        try {
+            if (fs.statSync(pathName).isFile()) {
+                return fs.readFileSync(pathName, 'utf8');
+            }
+        } catch (e) {
+            // Ignored
+        }
+    }
+    throw ('Failed to find ' + name + ". Looked in " + searchPath);
+}
+
+
 // Read the accessor source code.
-var code = fs.readFileSync('../../../test/TestAccessor.js', 'utf8');
+var code = getAccessorCode('test/TestAccessor');
 
 // Require the accessor module to turn the source code into an accessor instance.
 var commonHost = require('../commonHost.js');
@@ -86,9 +108,6 @@ test('TestAccessor: react, send, and latestOutput', instance.latestOutput('negat
 
 // Have to provide an implementation of this.instantiate(), which in this case will only
 // instantiate accessors founds in the accessors repo directory.
-getAccessorCode = function(name) {
-    return fs.readFileSync('../../../' + name + '.js', 'utf8');
-}
 var code = getAccessorCode('test/TestComposite');
 var a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
 a.initialize();
