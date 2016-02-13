@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for CORS request using REST accessor </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the 
+        // accessor definition since they're specific to this scenario.   
+        // browser.js looks for initialValues variable. 
+ 	    var initialValues = {};
+        initialValues["ClipPlayer.clipURL"] = "\"http://c0026106.cdn1.cloudfiles.rackspacecloud.com/2fbc94686ceb434a864c0691906bd144_dog.mp3\"";
+        initialValues["ClipPlayer.start"] = true; 
+    </script> 
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script>
+    	// Hide the stop input for browser host only.  Otherwise, "react to 
+    	// inputs" will send an input to both start and stop, and the clip 
+    	// will not play.
+    	// TODO:  Custom interface with separate start and stop buttons.
+    	// Or, have a toggle input instead of start/stop.
+    	setTimeout(function() {
+    		document.getElementById("ClipPlayer.stop").parentNode.className += " invisible";
+    		document.getElementById("ClipPlayer.stop").parentNode.parentNode.style.display = "none";
+    	}, 200);
+    	
+    </script>
+</head>
+<body>
+<div> <p> Please turn on your speakers and click "react to inputs".  You should 
+ hear a dog barking.  </p>
+</div>
+<div class="accessor"
+   src="audio/ClipPlayer"
+   id="ClipPlayer"></div>
+</body>
+</html>
