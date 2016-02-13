@@ -53,7 +53,6 @@ exports.initialize = function() {
 	
 	this.addInputHandler('stop', function() {
 		self.player.stop();
-		console.log("stopped");
 		self.send('output', false);
 	});
 };
