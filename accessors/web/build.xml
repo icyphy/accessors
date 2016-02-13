@@ -100,6 +100,30 @@
     </exec>
   </target>
 
+    <target name="tests.mocha.xml"
+          description="Use mocha to test JavaScript and generate JUnit-compatible output.">
+    <echo>
+      ==test.mocha==
+      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      This target requires setup:
+        sudo npm install -g mocha
+        sudo npm install -g mocha-junit-reporter
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <exec executable="mocha">
+      <arg value="--reporter"/>
+      <arg value="mocha-junit-reporter"/>
+      <arg value="--reporter-options"/>
+      <arg value="mochaFile=reports/junit/mochaJUnit.xml"/>
+      <arg line="${converted}"/>
+    </exec>
+  </target>
+
   <target name="vendors-jsdoc"
 	  depends="-check-vendors-jsdoc"
 	  description="Check out jsdoc using git to create vendors/jsdoc."
