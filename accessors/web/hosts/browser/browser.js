@@ -1347,7 +1347,7 @@ function reactIfExecutable(id, suppress) {
         if (instance && instance.executable) {
             initializeIfNecessary(instance);
             try {
-            	// Call provideInput() on all visible inputs.
+            	// Call provideInput() on all visible inputs for this accessor.
             	// This enables inputHandlers for all inputs even if an input's
             	// value has not changed since last execution.
             	// Non-visible inputs are not triggered from the UI, but an 
@@ -1355,9 +1355,13 @@ function reactIfExecutable(id, suppress) {
             	// (see web/services/StockTick.js)
             	var period;         	
             	var inputs = document.getElementsByClassName('inputRole');
+            	// 6 parents up is the <div id="GeoCoder">
             	
-            	for (var i = 0; i < inputs.length; i++) {           		
-            		if (!inputs[i].parentNode.classList.contains("invisible")) {
+            	for (var i = 0; i < inputs.length; i++) {
+            		// Element at 6 parents up has accessor name.
+            		// (No ancestor function in plain Javascript.)
+            		if (inputs[i].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id === id &&
+            			!inputs[i].parentNode.classList.contains("invisible")) {
             			if (inputs[i].value != null && inputs[i].value != "") {
                 			// Do not call provideInput for blank fields.
                 			// Use "" in a form field to send an empty string as input.
