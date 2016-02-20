@@ -1010,14 +1010,19 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
     var valueCell = document.createElement("td");
     valueCell.setAttribute('class', classTag);
-    var initialValue = (typeof initialValues != "undefined") ? 
-    						( (initialValues.hasOwnProperty(id + "." + name)) ?
-    								initialValues[id + "." + name] : '') : '';
+    
+    if ( (typeof initialValues != "undefined") && 
+    		(initialValues.hasOwnProperty(id + "." + name))) {
+    	options.initialValue = initialValues[id + "." + name];
+    }
     
     var value = options.currentValue || 
+    	options.initialValue ||	// Page-specific initial value takes precedence 
+    							// over accessor default value (options.value)
         options.value || 
-        options.latestOutput || 
-        initialValue;
+        options.latestOutput ||
+        '';
+    
     if (typeof value === 'object') {
         value = JSON.stringify(value);
     }

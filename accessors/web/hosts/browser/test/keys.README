@@ -1,0 +1,34 @@
+Instructions for key management in the browser host
+
+Some web services require authentication information such as an API key or 
+a username and a password.  This information should NOT be checked in to the
+repository.  Instead, please create a local file called "keys.json" in this
+directory (/web/hosts/browser/test) which contains the key information in the 
+format below.  
+
+Then, an HTML page can issue a request to the server for the key information.
+Please see /web/hosts/browser/test/httpClient/testWeather.html for an example. 
+
+Note that this single-file format makes all keys available to all accessors.
+
+The file should contain a JSON object where the {name : value} pairs are
+{
+	accessor1Name : {parameter1Name : parameter1Value, parameter2Name : parameter2Value, ... },
+ 	accessor2Name ... 
+ }
+ 
+ For example:
+ 
+{
+	"GeoCoder" : {
+		"key" : "EnterKeyHere"
+	}, 
+	"Weather" : {
+		"key" : "EnterKeyHere"
+	}
+}
+
+Note that JSON files do not allow comments.
+
+This format assumes there is a single key for all instances of an accessor.
+   
