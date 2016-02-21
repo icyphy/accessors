@@ -16,6 +16,23 @@
     <div id="contentcol">
         <div id="accessorDirectoryTarget">
         Select an accessor from the library on the left to view and interact with it.
+        <p>
+        If you do not see an accessor library on the left, then you should run the server in the accessors repository:
+<pre>
+   cd accessors/web/hosts/browser/test
+   node testServer &
+</pre>
+where "accessors" is the root of your repository copy, and then point your browser to this page:
+<pre>
+   http://localhost:8088/hosts/browser/test/testAccessorDirectory.html
+</pre>
+If you do not see documentation for the accessors, you can create the documentation as follows:
+<pre>
+   cd accessors/web
+   ant
+</pre>
+<hr>
+
         </div>
     </div>
 </div>

@@ -2,10 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"></meta>
-    <title>Browser Swarmlet Host Test Directory</title>
+    <title>Browser Swarmlet Host Tests</title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorPageStyle.css">
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
 </head>
 <body>
-<p>Browser Swarmlet Host Test Directory</p>
-<p>See <a href="README.txt">README.txt</a>.</p>
+<div class="header"><h1 class="header">Browser Swarmlet Host Tests</h1></div>
+<div id="container">
+    <div id="navcol" class="header">
+        <a href="/accessors/index.html">Accessors Home</a><br>
+        <a href="/accessors/hosts/browser/test/index.html">Browser Tests Home</a><br>
+        <a href="/accessors/hosts/browser/test/testAccessorDirectory.html">Accessor Directory</a><br>
+        <hr>
+        <a href="/accessors/hosts/browser/test/testWebPage.html">TestAccessor</a><br>
+        <hr>
+        <a href="/accessors/hosts/browser/test/httpClient/testCORS.html">CORS</a><br>
+        <a href="/accessors/hosts/browser/test/httpClient/testJSONP.html">JSONP</a><br>
+        <a href="/accessors/hosts/browser/test/httpClient/testREST.html">REST</a><br>
+        <a href="/accessors/hosts/browser/test/httpClient/testStockTick.html">StockTick</a><br>
+        <a href="/accessors/hosts/browser/test/httpClient/testWeather.html">Weather</a><br>
+    </div>
+    <div id="contentcol">
+    <div>
+<h1 style="margin:0">Browser Swarmlet Host Tests</h1>
+<hr>
+Click on the left to view test pages for the browser swarmlet host.
+<p>
+If you do not see accessors in the tests, then you are viewing this page on a server that does
+not include the browser swarmlet host. You can either point your browser to a server
+that does at <a href="http://accessors.org/hosts/browser/test/index.html">https://accessors.org/hosts/browser/test/index.html</a>,
+or you can run your own test server, provided in the accessors <a href="http://www.terraswarm.org/accessors/svn.html">SVN repository</a>, on your local host:
+<pre>
+   cd accessors/web/hosts/browser/test
+   node testServer &
+</pre>
+where "accessors" is the root of your repository copy. Then point your browser to this page:
+<quote>
+   <a href="http://localhost:8088/hosts/browser/test/index.html">http://localhost:8088/hosts/browser/test/index.html</a>
+</quote>
+If you do not see documentation for the accessors, you can create the documentation as follows:
+<pre>
+   cd accessors/web
+   ant
+</pre>
+<hr>
+<p>See also <a href="README.txt">README.txt</a>.</p>
+    </div>
+</div>
 </body>
 </html>
