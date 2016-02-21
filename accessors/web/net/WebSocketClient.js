@@ -26,7 +26,7 @@
  *  Once the connection is established, a `true` boolean is sent to
  *  the `connected` output.
  *  If connection is not established immediately, the accessor will attempt to
- *  reconnect (numberOfRetries) times at an interval of (reconnectInterval)
+ *  reconnect _numberOfRetries_ times at an interval of _reconnectInterval_.
  *
  *  Whenever an input is received on the `toSend`
  *  input, the message is sent to the socket. If the socket is not yet open,
@@ -204,8 +204,8 @@ exports.initialize = function () {
 	this.addInputHandler('server', this.exports.connect.bind(this));
 	this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
-    this.exports.connect.call(this);
     running = true;
+    this.exports.connect.call(this);
 };
 
 /** Initiate a connection to the server using the current parameter values,
