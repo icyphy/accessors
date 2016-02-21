@@ -36,7 +36,10 @@
     <script src="/accessors/hosts/browser/browser.js"></script>
 </head>
 <body>
-<div> <p> The GeoCoder and Weather accessors together provide the local weather.  
+<div>
+<h1> GeoCoder and Weather</h1>
+ <p> The GeoCoder and Weather accessors together provide the local weather.
+ Both accessors are displayed on this page.
 			<ul> <li> Use GeoCoder to look up the latitude and longitude of an address.  Enter a city or address in "address" and click "react to inputs". </li>
 				 <li> Use Weather to look up the local weather for a latitude and longitude.  Copy the "location" output from GeoCoder, enter into "location", and click "react to inputs". </li>
 		   </ul>
@@ -48,12 +51,14 @@
 		<ul> <li> https://developers.google.com/maps/documentation/geocoding/intro </li>
 			 <li> http://openweathermap.org/appid </li>
 	    </ul>
-	    Then, set up a key file on the server (see /web/hosts/browser/test/keys.README) or enter the keys directly into the 'key' parameters of the GeoCoder and Weather accessors. 
+	    Then, set up a key file on the server (see <a href="/accessors/hosts/browser/test/keys.README.txt">keys.README.txt</a>) or enter the keys directly into the 'key' parameters of the GeoCoder and Weather accessors. 
    </p>
 </div>
+<hr>
 <div class="accessor"
    src="services/GeoCoder"
    id="GeoCoder"></div>
+<hr>
 <div class="accessor"
    src="services/Weather"
    id="Weather"></div>

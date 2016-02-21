@@ -1,12 +1,10 @@
 $Id$
 
-This directory contains a test server and a test web page for the browser swarmlet host.
+This directory contains a test server and some test web pages for the browser
+swarmlet host.
 
-To run the test, first run the test server.
-This test server will serve any files in the accessors repo that are referenced
-using '/accessors/...'.  You can also reference accessors by their standard names,
-e.g. 'net/REST'. Start the server in this directory, so that it can find the root
-accessors directory at ../../../
+To run the test, first run the test server on your local host. Then point your
+browser to test HTML files on the localhost, as detailed below.
 
 > node testServer.js &
 
@@ -22,8 +20,20 @@ point your browser to:
 The test library there is particularly useful for testing.
 
 Other tests in this directory:
-  http://localhost:8088/hosts/browser/test/testCORS.html
-  http://localhost:8088/hosts/browser/test/testJSONP.html
+
+  http://localhost:8088/hosts/browser/test/httpClient/testCORS.html
+  http://localhost:8088/hosts/browser/test/httpClient/testJSONP.html
+  http://localhost:8088/hosts/browser/test/httpClient/testREST.html
+  http://localhost:8088/hosts/browser/test/httpClient/testStockTick.html
+  http://localhost:8088/hosts/browser/test/httpClient/testWeather.html
+  
+The testWeather.html page requires keys to access online geocoder and weather
+services.  See keys.README.txt.
+
+This test server will serve any files in the accessors repo that are referenced
+using '/accessors/...'.  You can also reference accessors by their standard names,
+e.g. 'net/REST'. Start the server in this directory, so that it can find the root
+accessors directory at ../../../
 
 Documentation
 =============
