@@ -241,7 +241,7 @@ function registerUser() {
     var self = this;
     
     http.post(options, function(response) {
-    	console.log(JSON.stringify(response));
+    	console.log('Request: ' + JSON.stringify(options) + '\nResponse: ' + JSON.stringify(response));
         if (isNonEmptyArray(response) && response[0].error) {
             var description = response[0].error.description;
 
