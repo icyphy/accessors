@@ -23,6 +23,54 @@
 /** This accessor exposes a subset of commands and sensor data
  *  for a type of robot called a "Scarab" created by Prof. Vijay Kumar's
  *  group at the University of Pennsylvannia (see [1]).
+ *  This accessor communicates with the robot through a websocket connection
+ *  to ROS, the Robotic Operating System, using a websocket interface
+ *  for ROS called ROSBridge.
+ *  
+ *  Scarab: 
+Get on the SwarmMaster network
+pwd: Terraswarm1234!
+
+Connect to the Swarmbox at 192.168.0.111
+ssh -l sbuser 192.168.0.111
+pwd: terraswarm
+
+Start screen.
+roscore
+Ctrl-A C
+roslaunch rosbridge_server rosbridge_websocket.launch
+Ctrl-A D
+
+ROSBridge on Swarmbox will be running at IP 192.168.0.111, port 9090.
+
+
+Connect to Scarab:
+Need it's IP address: For Lucy, mac = "4:f0:21:3:6:9", e.g. 192.168.0.105
+power up
+ssh 192.168.0.105 -l terraswarm
+pwd: terraswarm
+
+Run on the Scarab (also using screen):
+
+screen
+export ROS_IP=192.168.0.105
+roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
+Ctrl-A D
+
+Prefix: /scarab/lucy
+
+
+Use screen to keep the process running on the scarab.
+screen commands:
+screen: start a new screen process
+Ctrl-A C: new (virtual) window
+Ctrl-A N: next window
+Ctrl-A D: detach from window
+screen -r: reattach
+Ctrl-D: end a screen
+
+screen -list: list screen processes
+
  *  
  *
  *  References
@@ -276,6 +324,26 @@ exports.wrapup = function() {
 		poseClient.close();
 	}
 	if (cmdvelClient) {
+		// Stop the robot, then unadvertise.
+		var zeroVelocity = {
+	    	linear: {
+	            x: 0,
+	            y: 0,
+	            z: 0
+	    	},
+	    	angular: {
+	    		x: 0,
+	    		y: 0,
+	    		z: 0
+	    	}
+		};
+		var out = {
+			op: 'publish',
+			topic: this.getParameter('topicPrefix') + '/cmd_vel',
+			msg: zeroVelocity
+		};
+		cmdvelClient.send(out);
+		
 		cmdvelClient.send({
 			op: 'unadvertise',
 			topic: this.getParameter('topicPrefix') + '/cmd_vel'
@@ -288,5 +356,5 @@ exports.wrapup = function() {
 			topic: this.getParameter('topicPrefix') + '/cancel'
 		});
 		cancelClient.close();
-	}
+	}	
 }
