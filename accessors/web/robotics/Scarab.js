@@ -27,50 +27,63 @@
  *  to ROS, the Robotic Operating System, using a websocket interface
  *  for ROS called ROSBridge.
  *  
- *  Scarab: 
-Get on the SwarmMaster network
-pwd: Terraswarm1234!
-
-Connect to the Swarmbox at 192.168.0.111
-ssh -l sbuser 192.168.0.111
-pwd: terraswarm
-
-Start screen.
-roscore
-Ctrl-A C
-roslaunch rosbridge_server rosbridge_websocket.launch
-Ctrl-A D
-
-ROSBridge on Swarmbox will be running at IP 192.168.0.111, port 9090.
-
-
-Connect to Scarab:
-Need it's IP address: For Lucy, mac = "4:f0:21:3:6:9", e.g. 192.168.0.105
-power up
-ssh 192.168.0.105 -l terraswarm
-pwd: terraswarm
-
-Run on the Scarab (also using screen):
-
-screen
-export ROS_IP=192.168.0.105
-roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
-Ctrl-A D
-
-Prefix: /scarab/lucy
-
-
-Use screen to keep the process running on the scarab.
-screen commands:
-screen: start a new screen process
-Ctrl-A C: new (virtual) window
-Ctrl-A N: next window
-Ctrl-A D: detach from window
-screen -r: reattach
-Ctrl-D: end a screen
-
-screen -list: list screen processes
-
+ *  This accessor requires very specific hardware. In the usual configuration,
+ *  the ROS core and ROS bridge are executed on a SwarmBox, and robot itself
+ *  operates as a ROS client.  The ROS bridge provides a websocket that can
+ *  be used to publish and subscribe to ROS events.
+ *
+ *  Following are instructions for running this accessor in the DOP Center
+ *  setup at Berkeley:
+ *
+ *  1. Get your laptop on the SwarmMaster network, hosted by a SwarmBox.
+ *  2. Connect to the Swarmbox using ssh.  E.g.:
+ *        ssh -l sbuser 192.168.0.111
+ *     You will need a password.
+ *  3. Start screen on the swarmbox:
+ *        screen
+ *  4. Run the ROS core:
+ *        roscore
+ *  5. Create a new "window" in screen:
+ *        Ctrl-A C
+ *  6. Run the ROS bridge:
+ *        roslaunch rosbridge_server rosbridge_websocket.launch
+ *  7. Detach from screen:
+ *        Ctrl-A D
+ *
+ *
+ *  ROSBridge on Swarmbox will be running at IP 192.168.0.111, port 9090.
+ *
+ *  You can now log off from the swarmbox.  To stop the ROS core and bridge
+ *  on the SwarmBox later, you can:
+ *
+ *  1. Connect to the Swarmbox using ssh, as above.
+ *  2. Resume screen on the swarmbox:
+ *        screen -r
+ *  3. Stop the program:
+ *        Ctrl-C
+ *  4. End the "window":
+ *        Ctrl-D
+ *  5. Repeat for all screen windows.
+ *
+ *
+ *  Next, set up the robot. The DOP center robot is Lucy, and the ROS prefix
+ *  for pub/sub is "/scarab/lucy".
+ *
+ *  1. Power on the robot (all switches and one push button).
+ *  2. Find the robot's IP address. You can use the Discovery swarmlet or
+ *     command-line tools. The DOP center robot Lucy has mac address
+ *     "4:f0:21:3:6:9". 
+ *  3. Connect to the robot using ssh: e.g., assuming the IP address is 192.168.0.105,
+ *        ssh 192.168.0.105 -l terraswarm
+ *  4. Enter the password.
+ *  5. Start screen:
+ *        screen
+ *  6. Tell the robot it's IP address:
+ *        export ROS_IP=192.168.0.105
+ *  7. Launch the ROS client:
+ *        roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
+ *  8. Detach from screen and log off (if you like):
+ *       Ctrl-A D
  *  
  *
  *  References
@@ -83,7 +96,19 @@ screen -list: list screen processes
  *     DOI: 10.1109/ROBOT.2008.4543197
  *
  *  @accessor robotics/Scarab
- *  @author Brad Campbell, Pat Pannuto
+ *  @input pose FIXME documentation needed here.
+ *  @input cmdvel Low-level control for the wheel motors. This accepts an object
+ *   of the form {linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}.
+ *   The 'linear' property controls the wheel speed via the 'x' and 'y' properties
+ *   (FIXME: what is 'z'? What are the units?).
+ *   The 'angular' property controls rotation on the robot via the 'z' property
+ *   (FIXME: what is 'x' and 'y'? What are the units?).
+ *  @input cancel Upon receiving any message, cancel any cmdvel inputs that have been
+ *   previously provided and stop the robot.
+ *  @output battery The percentage of battery remaining.
+ *  @output state One of 'idle', 'navigating', or 'stuck'.
+ *  @output location The "pose" type of where the robot currently is.
+ *  @author Brad Campbell, Pat Pannuto. Contributor: Edward A. Lee
  *  @version $$Id$$
  */
 
