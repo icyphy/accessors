@@ -85,7 +85,7 @@ window.addEventListener('DOMContentLoaded', function() {
     window.generate();
 });
 
-window.onunload = function() {
+window.addEventListener('unload', function(event) {
     if (window.accessors) {
         for (var accessor in window.accessors) {
             if (accessor.initialized) {
@@ -93,7 +93,7 @@ window.onunload = function() {
             }
         }
     }
-};
+});
 
 //////////////////////////////////////////////////////////////////////////
 //// Functions
@@ -524,6 +524,8 @@ function generateAccessorHTML(path, id) {
         }
     }
     
+    var util = require('util');
+    
     ////////////////////////////////////////////////////////////////////
     //// Instantiate the accessor and generate page contents.
 
@@ -549,6 +551,7 @@ function generateAccessorHTML(path, id) {
                 'readURL': readURL,
                 'require': require,
                 'send': send,
+                'util': util
             };
             try {
                 instance = new commonHost.Accessor(

@@ -131,7 +131,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var WebSocket = require('webSocket');
+var WebSocket = require('webSocketClient');
 var client = null;
 var pendingSends = [];
 var previousServer, previousPort;
@@ -249,8 +249,8 @@ exports.connect = function () {
 	
     client = new WebSocket.Client(
         {
-            'host' : this.getParameter('server'),
-            'port' : this.getParameter('port'),
+            'host' : this.get('server'),
+            'port' : this.get('port'),
             'receiveType' : this.getParameter('receiveType'),
             'sendType' : this.getParameter('sendType'),
             'connectTimeout' : this.getParameter('connectTimeout'),

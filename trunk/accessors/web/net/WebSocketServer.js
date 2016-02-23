@@ -88,7 +88,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var WebSocket = require('webSocket');
+var WebSocket = require('webSocketServer');
 var server = null;
 var running = false;
 
