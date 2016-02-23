@@ -105,9 +105,15 @@
  *   (FIXME: what is 'x' and 'y'? What are the units?).
  *  @input cancel Upon receiving any message, cancel any cmdvel inputs that have been
  *   previously provided and stop the robot.
+ *
  *  @output battery The percentage of battery remaining.
  *  @output state One of 'idle', 'navigating', or 'stuck'.
  *  @output location The "pose" type of where the robot currently is.
+ *
+ *  @parameter server The IP address of the ROS bridge, e.g. '192.168.0.111'.
+ *  @parameter port The port used by the ROS bridge web socket, e.g. 9090.
+ *  @parameter topicPrefix The identifier for the robot, e.g. '/scarab/lucy'.
+ *
  *  @author Brad Campbell, Pat Pannuto. Contributor: Edward A. Lee
  *  @version $$Id$$
  */
