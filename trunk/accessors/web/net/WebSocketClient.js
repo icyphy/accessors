@@ -21,8 +21,10 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor sends and/or receives messages from a web socket at
- *  the specified host and port. In `initialize()`, it
- *  begins connecting to the web socket server.
+ *  the specified host and port. 
+ *  <a href="https://en.wikipedia.org/wiki/WebSocket">WebSockets</a> 
+ *  provide full-duplex communication channels over a single TCP/IP connection.
+ *  In `initialize()`, it  begins connecting to the web socket server.
  *  Once the connection is established, a `true` boolean is sent to
  *  the `connected` output.
  *  If connection is not established immediately, the accessor will attempt to
@@ -332,7 +334,7 @@ exports.onMessage = function (message) {
     this.send('received', message);
 };
 
-/** Export the isOpen() function */
+/** Return true if the socket is open. */
 exports.isOpen = function () {
     return client.isOpen();
 };
