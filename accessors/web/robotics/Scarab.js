@@ -26,7 +26,7 @@
  *  This accessor communicates with the robot through a websocket connection
  *  to ROS, the Robotic Operating System, using a websocket interface
  *  for ROS called ROSBridge.
- *  
+ *
  *  This accessor requires very specific hardware. In the usual configuration,
  *  the ROS core and ROS bridge are executed on a SwarmBox, and robot itself
  *  operates as a ROS client.  The ROS bridge provides a websocket that can
@@ -72,7 +72,7 @@
  *  1. Power on the robot (all switches and one push button).
  *  2. Find the robot's IP address. You can use the Discovery swarmlet or
  *     command-line tools. The DOP center robot Lucy has mac address
- *     "4:f0:21:3:6:9". 
+ *     "4:f0:21:3:6:9".
  *  3. Connect to the robot using ssh: e.g., assuming the IP address is 192.168.0.105,
  *        ssh 192.168.0.105 -l terraswarm
  *  4. Enter the password.
@@ -84,11 +84,11 @@
  *        roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
  *  8. Detach from screen and log off (if you like):
  *       Ctrl-A D
- *  
+ *
  *
  *  References
  *  ----------
- *  
+ *
  *  1. Nathan Michael, Michael M. Zavlanos, Vijay Kumar, and George J. Pappas,
  *     Distributed Multi-Robot Task Assignment and Formation Control,
  *     IEEE International Conference on Robotics and Automation (ICRA),
@@ -96,19 +96,31 @@
  *     DOI: 10.1109/ROBOT.2008.4543197
  *
  *  @accessor robotics/Scarab
- *  @input pose FIXME documentation needed here.
+ *  @input pose Send the robot to a location with a given orientation. This
+ *   accepts an object of the form
+ *   {position: {x: 0, y: 0, z: 0}, orientation: {x: 0, y: 0, z: 0, w: 0}},
+ *   where orientation is a quaternion.
  *  @input cmdvel Low-level control for the wheel motors. This accepts an object
  *   of the form {linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}.
- *   The 'linear' property controls the wheel speed via the 'x' and 'y' properties
- *   (FIXME: what is 'z'? What are the units?).
- *   The 'angular' property controls rotation on the robot via the 'z' property
- *   (FIXME: what is 'x' and 'y'? What are the units?).
- *  @input cancel Upon receiving any message, cancel any cmdvel inputs that have been
- *   previously provided and stop the robot.
+ *   To drive the robot straight forward and backward, set the linear.x property
+ *   to a value between -1.0 (backwards) and 1.0 (forwards). To turn the robot,
+ *   set the angular.z property to a value between -1.0 and 1.0. Both can be
+ *   to steer the robot while it drives forward or backward. The other properties
+ *   are ignored. Note that this interface is not recommended for normal
+ *   operation. In the general case, only `pose` should be used to direct the
+ *   robot.
+ *  @input cancel Upon receiving any message, cancel the robot's current
+ *   navigation goal. This will cause the robot to stop.
  *
  *  @output battery The percentage of battery remaining.
- *  @output state One of 'idle', 'navigating', or 'stuck'.
- *  @output location The "pose" type of where the robot currently is.
+ *  @output state The current state of the robot's navigation algorithm. It can
+ *   be one of 'idle', 'navigating', or 'stuck'. If the robot is 'idle' it
+ *   is currently not trying to navigate to any pose. In 'navigating' state,
+ *   the robot is actively trying to reach a desired pose goal. If the robot
+ *   is unable to find a path to the goal (beacuse there were obsticals in the
+ *   way), it will enter the 'stuck' state.
+ *  @output location The "pose" type of where the robot currently is. See the
+ *   input "pose" for a description of the format.
  *
  *  @parameter server The IP address of the ROS bridge, e.g. '192.168.0.111'.
  *  @parameter port The port used by the ROS bridge web socket, e.g. 9090.
@@ -176,7 +188,7 @@ exports.initialize = function() {
 			op: "subscribe",
 			topic: self.getParameter('topicPrefix') + '/diagnostics'
 		});
-	});  
+	});
 	batteryClient.on('message', function (msg) {
 		// Quick hack to find the charge of the battery.
 		// Ideally this would be done in some better way, but this is all we
@@ -288,7 +300,7 @@ exports.initialize = function() {
 	});
 	self.addInputHandler('cancel', cancel_in.bind(this));
 	cancelClient.open();
-} 
+}
 
 var pose_in = function () {
 	var v = this.get('pose');
@@ -374,7 +386,7 @@ exports.wrapup = function() {
 			msg: zeroVelocity
 		};
 		cmdvelClient.send(out);
-		
+
 		cmdvelClient.send({
 			op: 'unadvertise',
 			topic: this.getParameter('topicPrefix') + '/cmd_vel'
@@ -387,5 +399,5 @@ exports.wrapup = function() {
 			topic: this.getParameter('topicPrefix') + '/cancel'
 		});
 		cancelClient.close();
-	}	
+	}
 }
