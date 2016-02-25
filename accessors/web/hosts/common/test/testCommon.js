@@ -22,8 +22,12 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-// Require the filesystem module to read the accessor source code.
-var fs = require('fs');
+
+// The file system module 'fs', is not available under Duktape.
+if (typeof Duktape !== 'object') {
+    // Require the filesystem module to read the accessor source code.
+    var fs = require('fs');
+}
 
 // Search for a .js file in a search path.
 getAccessorCode = function (name) {
@@ -33,11 +37,21 @@ getAccessorCode = function (name) {
     // The path elements should end with a slash.
     var searchPath = ['./', '../', '../../', '../../../', '../../../../', 'web/', 'org/terraswarm/accessor/accessors/web/'];
     for (i = 0; i < searchPath.length; i++) {
-        var pathName = searchPath[i] + name + '.js';
-        //console.log("testCommon.js: pathName: " + pathName);
         try {
-            if (fs.statSync(pathName).isFile()) {
-                return fs.readFileSync(pathName, 'utf8');
+            if (typeof Duktape !== 'object') {
+                var pathName = searchPath[i] + name + '.js';
+                // console.log("testCommon.js: pathName: " + pathName);
+                if (fs.statSync(pathName).isFile()) {
+                    return fs.readFileSync(pathName, 'utf8');
+                }
+            } else {
+                var pathName = searchPath[i] + name + '.js';
+                print("testCommon.js: pathName: " + pathName);
+                var src = FileIo.readfile(pathName);
+                if (typeof src === 'buffer') {
+                    print("testCommon.js: returning contents of " + pathName);
+                    return src;
+                }
             }
         } catch (e) {
             // Ignored
