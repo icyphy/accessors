@@ -238,11 +238,60 @@ exports = {
     'startHost': startHost,
 };
 
+require('duktape/duktape/examples/eventloop/ecma_eventloop');
+
+/*
+ *  Timer API
+ *
+ *  These interface with the singleton EventLoop.
+ *  FIXME: This is from duktape examples/eventloop/ecma_eventloop.js
+ *  The above require should work.
+ */
+
+function setTimeout(func, delay) {
+    var cb_func;
+    var bind_args;
+    var timer_id;
+    var evloop = EventLoop;
+
+    if (typeof delay !== 'number') {
+        throw new TypeError('delay is not a number');
+    }
+    delay = Math.max(evloop.minimumDelay, delay);
+
+    if (typeof func === 'string') {
+        // Legacy case: callback is a string.
+        cb_func = eval.bind(this, func);
+    } else if (typeof func !== 'function') {
+        throw new TypeError('callback is not a function/string');
+    } else if (arguments.length > 2) {
+        // Special case: callback arguments are provided.
+        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
+        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
+        cb_func = func.bind.apply(func, bind_args);
+    } else {
+        // Normal case: callback given as a function without arguments.
+        cb_func = func;
+    }
+
+    timer_id = evloop.nextTimerId++;
+
+    evloop.insertTimer({
+        id: timer_id,
+        oneshot: true,
+        cb: cb_func,
+        delay: delay,
+        target: Date.now() + delay
+    });
+
+    return timer_id;
+}
+
 var a = this.instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);
 a.react();
-a.latestOutput('output');  // Should return 50
+print("Should be 50: ", a.latestOutput('output'));  // Should return 50
 a.wrapup();
 
 // FIXME: This should be in a separate file so that these functions can be used
