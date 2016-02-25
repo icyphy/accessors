@@ -47,7 +47,7 @@ Duktape.modSearch = function (id, require, exports, module) {
 
     print('loading module:', id);
 
-        /* DLL check.  DLL init function is platform specific.  It gets 'exports'
+    /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
      */
     // name = '/modules/' + id + '.so';
@@ -88,5 +88,17 @@ var a = this.instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);
 a.react();
-print("Should be 50: " + a.latestOutput('output'));  // Should return 50
+var latestOutput = a.latestOutput('output')
+if (latestOutput != 50) {
+    throw new Error("duktape/test/testComposite.js: output was " + latestOutput + ", it should have been 50.");
+} else {
+    print ("duktape/test/testComposite.js: OK: output was " + latestOutput + ", which is equal to 50.");
+}
 a.wrapup();
+
+// function sleepFor( sleepDuration ){
+//     var now = new Date().getTime();
+//     while(new Date().getTime() < now + sleepDuration){ /* do nothing */ }
+// }
+
+// sleepFor(20000);
