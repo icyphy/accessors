@@ -5,8 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "duktape.h"
+
+// Undefine DEBUG_FILEIO and recompile for more verbose debugging.
+//#define DEBUG_FILEIO
 
 static int fileio_readfile(duk_context *ctx) {
 	const char *filename = duk_to_string(ctx, 0);
@@ -16,25 +20,41 @@ static int fileio_readfile(duk_context *ctx) {
 	size_t got;
 
 	if (!filename) {
-                // fprintf(stderr, "%s:%d filename was null?", __FILE__, __LINE__);
+                fprintf(stderr, "%s:%d filename was null?\n", __FILE__, __LINE__);
 		goto error;
 	}
+
+#ifdef DEBUG_FILEIO
+        fprintf(stderr, "%s:%d filename is %s\n", __FILE__, __LINE__, filename);
+#endif
 
 	f = fopen(filename, "rb");
 	if (!f) {
-                // fprintf(stderr, "%s:%d failed to open?", __FILE__, __LINE__);
-		goto error;
+#ifdef DEBUG_FILEIO
+            fprintf(stderr, "%s:%d failed to open %s.\n", __FILE__, __LINE__, filename);
+            char cwd[1024];
+            if (getcwd(cwd, sizeof(cwd)) != NULL) {
+                fprintf(stderr, "Current working directory is %s\n", cwd);
+            } else {
+                perror("Could not get current working directory?");
+            }
+#endif
+            goto error;
 	}
 
 	if (fseek(f, 0, SEEK_END) != 0) {
-                // fprintf(stderr, "%s:%d failed to seek to the end?", __FILE__, __LINE__);
+#ifdef DEBUG_FILEIO
+                fprintf(stderr, "%s:%d failed to seek to the end?\n", __FILE__, __LINE__);
+#endif
 		goto error;
 	}
 
 	len = ftell(f);
 
 	if (fseek(f, 0, SEEK_SET) != 0) {
-                // fprintf(stderr, "%s:%d failed to seek_set?", __FILE__, __LINE__);
+#ifdef DEBUG_FILEIO
+                fprintf(stderr, "%s:%d failed to seek_set?", __FILE__, __LINE__);
+#endif
 		goto error;
 	}
 
@@ -42,7 +62,9 @@ static int fileio_readfile(duk_context *ctx) {
 
 	got = fread(buf, 1, len, f);
 	if (got != (size_t) len) {
-                // fprintf(stderr, "%s:%d read %ld, expected %ld", __FILE__, __LINE__, (long)got, len);
+#ifdef DEBUG_FILEIO
+                fprintf(stderr, "%s:%d read %ld, expected %ld", __FILE__, __LINE__, (long)got, len);
+#endif
 		goto error;
 	}
 
@@ -52,6 +74,9 @@ static int fileio_readfile(duk_context *ctx) {
 	return 1;
 
  error:
+#ifdef DEBUG_FILEIO
+        perror("Error was");
+#endif
 	if (f) {
 		fclose(f);
 	}
