@@ -48,7 +48,12 @@ Duktape.modSearch = function (id, require, exports, module) {
 
     /* Ecmascript check. */
     //name = 'modules/' + id + '.js';
-    name = id + '.js';
+    if (id.indexOf(".js", id.length - 3) !== -1) {
+        name = id;
+    } else {
+        name = id + '.js';
+    }
+
     print('loading module:', name);
     src = FileIo.readfile(name);
     //print('readFile returned', src);
@@ -237,10 +242,8 @@ require('duktape/duktape/examples/eventloop/ecma_eventloop');
  *  Timer API
  *
  *  These interface with the singleton EventLoop.
- *  FIXME: This is from duktape examples/eventloop/ecma_eventloop.js
- *  The above require should work.
  */
-
+// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
 setTimeout = function(func, delay) {
     var cb_func;
     var bind_args;
@@ -280,12 +283,64 @@ setTimeout = function(func, delay) {
     return timer_id;
 }
 
+// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
+function setInterval(func, delay) {
+    var cb_func;
+    var bind_args;
+    var timer_id;
+    var evloop = EventLoop;
+
+    if (typeof delay !== 'number') {
+        throw new TypeError('delay is not a number');
+    }
+    delay = Math.max(evloop.minimumDelay, delay);
+
+    if (typeof func === 'string') {
+        // Legacy case: callback is a string.
+        cb_func = eval.bind(this, func);
+    } else if (typeof func !== 'function') {
+        throw new TypeError('callback is not a function/string');
+    } else if (arguments.length > 2) {
+        // Special case: callback arguments are provided.
+        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
+        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
+        cb_func = func.bind.apply(func, bind_args);
+    } else {
+        // Normal case: callback given as a function without arguments.
+        cb_func = func;
+    }
+
+    timer_id = evloop.nextTimerId++;
+
+    evloop.insertTimer({
+        id: timer_id,
+        oneshot: false,
+        cb: cb_func,
+        delay: delay,
+        target: Date.now() + delay
+    });
+
+    return timer_id;
+}
+
+// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
+function clearInterval(timer_id) {
+    var evloop = EventLoop;
+
+    if (typeof timer_id !== 'number') {
+        throw new TypeError('timer ID is not a number');
+    }
+    evloop.removeTimerById(timer_id);
+}
+
 // In case this gets used a module, create an exports object.
 exports = {
+    'clearInterval': clearInterval,
     'instantiate': instantiate,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
     'startHost': startHost,
+    'setInterval': setInterval,
     'setTimeout': setTimeout,
 };
 
