@@ -6,6 +6,9 @@
   <!-- We can refer to any environment variable FOO as ${env.FOO} -->
   <property environment="env" />
 
+  <!-- Location of the Duktape sources -->
+  <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
+
   <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
   <property name="jsdoc.home" value="vendors/jsdoc" />
 
@@ -14,6 +17,12 @@
     <exclude name="vendors/"/>
   </patternset>
   
+  <!-- Path of JavaScript tests that are run by Duktape. -->
+  <fileset id="test.duktape.files" dir="${basedir}/hosts">
+    <include name="**/duktape/test/*.js"/>
+    <patternset refid="accessors.excludes" />
+  </fileset>
+
   <!-- Path of JavaScript tests that are run by mocha. -->
   <fileset id="test.mocha.files" dir="${basedir}">
     <include name="**/mocha/test*.js"/>
@@ -35,6 +44,13 @@
       <fileset dir="${basedir}" includes="reports/**" defaultexcludes="false"/>
       <fileset dir="${basedir}" includes="doc/jsdoc/**" defaultexcludes="false"/>
     </delete>
+  </target>
+
+  <target name="duktape"
+          description="Build the duk binary.  Requires make and a C compiler.">
+    <exec dir="${duktape.source}"
+          executable="make">
+    </exec>
   </target>
 
   <target name="jsdoc"
@@ -124,7 +140,19 @@
     </exec>
   </target>
 
-    <target name="tests.mocha.xml"
+  <target name="tests.duktape"
+          depends="duktape"
+          description="Execute the duktape tests.">
+    <apply dir="hosts"
+           executable="duktape/duktape/duk">
+      <fileset dir="hosts">
+        <include name="duktape/test/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+  </target>
+
+  <target name="tests.mocha.xml"
           description="Use mocha to test JavaScript and generate JUnit-compatible output.">
     <echo>
       ==test.mocha==
