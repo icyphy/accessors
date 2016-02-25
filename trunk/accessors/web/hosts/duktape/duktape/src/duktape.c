@@ -279,6 +279,9 @@ struct duk_strcache;
 struct duk_ljstate;
 struct duk_strtab_entry;
 
+//#define DUK_USE_DEBUG 1
+//#define DUK_USE_DDPRINT 1
+//#define DUK_USE_DDDPRINT 1
 #ifdef DUK_USE_DEBUG
 struct duk_fixedbuffer;
 #endif

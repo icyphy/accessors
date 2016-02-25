@@ -52,7 +52,7 @@ Duktape.modSearch = function (id, require, exports, module) {
     print('loading module:', name);
     src = FileIo.readfile(name);
     //print('readFile returned', src);
-    print('src is of type', typeof src);
+    //print('src is of type', typeof src);
     if (typeof src === 'string') {
         print('loaded Ecmascript:', name);
         return src;
@@ -72,7 +72,7 @@ Duktape.modSearch = function (id, require, exports, module) {
     return src;
 }
 
-var commonHost = require('common/commonHost');
+var commonHost = require("common/commonHost");
 
 // Indicator of whether the interactive host is already running.
 var interactiveHostRunning = false;
@@ -102,12 +102,12 @@ function getAccessorCode(name) {
         //var location = path.join(accessorPath[i], name);
         var location = accessorPath[i] + "/" + name;
         try {
-            print('Reading accessor at: ' + location);
+            //print('Reading accessor at: ' + location);
             //code = fs.readFileSync(location, 'utf8');
             code = FileIo.readfile(location);
             break;
         } catch(error) {
-            print(error);
+            //print("duktapeHost.js getAccessorCode(\"" + name + "\"): error reading " + location + ": " + error);
             continue;
         }
     }
@@ -230,15 +230,8 @@ startHost = function() {
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
 
-// In case this gets used a module, create an exports object.
-exports = {
-    'instantiate': instantiate,
-    'provideInput': commonHost.provideInput,
-    'setParameter': commonHost.setParameter,
-    'startHost': startHost,
-};
-
 require('duktape/duktape/examples/eventloop/ecma_eventloop');
+
 
 /*
  *  Timer API
@@ -248,7 +241,7 @@ require('duktape/duktape/examples/eventloop/ecma_eventloop');
  *  The above require should work.
  */
 
-function setTimeout(func, delay) {
+setTimeout = function(func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
@@ -287,12 +280,15 @@ function setTimeout(func, delay) {
     return timer_id;
 }
 
-var a = this.instantiate('TestComposite', 'test/TestComposite');
-a.initialize();
-a.provideInput('input', 10);
-a.react();
-print("Should be 50: ", a.latestOutput('output'));  // Should return 50
-a.wrapup();
+// In case this gets used a module, create an exports object.
+exports = {
+    'instantiate': instantiate,
+    'provideInput': commonHost.provideInput,
+    'setParameter': commonHost.setParameter,
+    'startHost': startHost,
+    'setTimeout': setTimeout,
+};
+
 
 // FIXME: This should be in a separate file so that these functions can be used
 // without starting an interactive host.
