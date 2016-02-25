@@ -333,6 +333,10 @@ function clearInterval(timer_id) {
     evloop.removeTimerById(timer_id);
 }
 
+// Define console.log for our use.
+// Copied from http://duktape.org/guide.html#compatibility
+console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); } };
+
 // In case this gets used a module, create an exports object.
 exports = {
     'clearInterval': clearInterval,
