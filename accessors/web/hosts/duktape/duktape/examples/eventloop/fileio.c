@@ -16,25 +16,25 @@ static int fileio_readfile(duk_context *ctx) {
 	size_t got;
 
 	if (!filename) {
-            fprintf(stderr, "%s:%d filename was null?", __FILE__, __LINE__);
+                // fprintf(stderr, "%s:%d filename was null?", __FILE__, __LINE__);
 		goto error;
 	}
 
 	f = fopen(filename, "rb");
 	if (!f) {
-            fprintf(stderr, "%s:%d failed to open?", __FILE__, __LINE__);
+                // fprintf(stderr, "%s:%d failed to open?", __FILE__, __LINE__);
 		goto error;
 	}
 
 	if (fseek(f, 0, SEEK_END) != 0) {
-            fprintf(stderr, "%s:%d failed to seek to the end?", __FILE__, __LINE__);
+                // fprintf(stderr, "%s:%d failed to seek to the end?", __FILE__, __LINE__);
 		goto error;
 	}
 
 	len = ftell(f);
 
 	if (fseek(f, 0, SEEK_SET) != 0) {
-            fprintf(stderr, "%s:%d failed to seek_set?", __FILE__, __LINE__);
+                // fprintf(stderr, "%s:%d failed to seek_set?", __FILE__, __LINE__);
 		goto error;
 	}
 
@@ -42,7 +42,7 @@ static int fileio_readfile(duk_context *ctx) {
 
 	got = fread(buf, 1, len, f);
 	if (got != (size_t) len) {
-            fprintf(stderr, "%s:%d read %ld, expected %ld", __FILE__, __LINE__, (long)got, len);
+                // fprintf(stderr, "%s:%d read %ld, expected %ld", __FILE__, __LINE__, (long)got, len);
 		goto error;
 	}
 
