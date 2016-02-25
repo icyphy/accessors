@@ -97,26 +97,11 @@
   </target>
 
   <target name="tests"
-          description="Use mocha to test JavaScript and generate output on stdout.">
-    <echo>
-      ==test.mocha==
-      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
-      This target requires setup:
-        sudo npm install -g mocha
-        sudo npm install -g mocha-junit-reporter
-      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
-    </echo>
-
-    <pathconvert refid="test.mocha.files"
-		 pathsep=" "
-		 property="converted"/>
-
-    <exec executable="mocha">
-      <arg line="${converted}"/>
-    </exec>
+          depends="tests.mocha, tests.duktape"
+          description="Run the mocha and duktape tests">
   </target>
 
-    <target name="tests.coverage"
+  <target name="tests.coverage"
           description="Use istanbul and mocha to generate code coverage for JavaScript tests.">
     <echo>
       ==test.istanbul==
@@ -144,12 +129,34 @@
           depends="duktape"
           description="Execute the duktape tests.">
     <apply dir="hosts"
-           executable="duktape/duktape/duk">
+           executable="duktape/duktape/duk"
+           failonerror="true">
       <fileset dir="hosts">
         <include name="duktape/test/*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+  </target>
+
+  <target name="tests.mocha"
+          description="Use mocha to test JavaScript and generate output on stdout.">
+    <echo>
+      ==test.mocha==
+      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      This target requires setup:
+        sudo npm install -g mocha
+        sudo npm install -g mocha-junit-reporter
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <exec executable="mocha">
+      <arg line="--bail"/>
+      <arg line="${converted}"/>
+    </exec>
   </target>
 
   <target name="tests.mocha.xml"
