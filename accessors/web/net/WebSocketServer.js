@@ -102,6 +102,14 @@ exports.setup = function() {
         value: 8080,
         type: "int"
     });
+    this.parameter('pfxKeyCertPassword', {
+        value: '',
+        type: 'string'
+    });
+    this.parameter('pfxKeyCertPath', {
+        value: '',
+        type: 'string'
+    });
     this.parameter('receiveType', {
         type : 'string',
         value : 'application/json',
@@ -109,6 +117,10 @@ exports.setup = function() {
     this.parameter('sendType', {
         type : 'string',
         value : 'application/json',
+    });
+    this.parameter('sslTls', {
+        type: 'boolean',
+        value: false
     });
     this.input('toSend');
     this.output('received');
@@ -139,8 +151,11 @@ exports.initialize = function() {
         server = new WebSocket.Server({
                 'port': this.getParameter('port'),
                 'hostInterface': this.getParameter('hostInterface'),
+                'pfxKeyCertPassword': this.getParameter('pfxKeyCertPassword'),
+                'pfxKeyCertPath': this.getParameter('pfxKeyCertPath'),
                 'receiveType': this.getParameter('receiveType'),
-                'sendType': this.getParameter('sendType')
+                'sendType': this.getParameter('sendType'),
+                'sslTls': this.getParameter('sslTls')
         });
         // Using 'this.exports' rather than just 'exports' in the following allows
         // these functions to be overridden in derived accessors.

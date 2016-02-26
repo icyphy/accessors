@@ -173,6 +173,18 @@ exports.setup = function () {
         type : 'int',
         value : 500
     });
+    this.parameter('trustAll', {
+        type : 'boolean',
+        value : false
+    });
+    this.parameter('trustedCACertPath', {
+        type : 'string',
+        value : ''
+    });
+    this.parameter('sslTls', {
+        type : 'boolean',
+        value : false
+    });
     this.parameter('discardMessagesBeforeOpen', {
         type : 'boolean',
         value : false
@@ -256,6 +268,9 @@ exports.connect = function () {
             'connectTimeout' : this.getParameter('connectTimeout'),
             'numberOfRetries' : this.getParameter('numberOfRetries'),
             'timeBetweenRetries' : this.getParameter('timeBetweenRetries'),
+            'trustAll' : this.getParameter('trustAll'),
+            'trustedCACertPath' : this.getParameter('trustedCACertPath'),
+            'sslTls' : this.getParameter('sslTls'),
             'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
             'throttleFactor' : this.getParameter('throttleFactor')
         }
