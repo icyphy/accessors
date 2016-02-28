@@ -1,4 +1,5 @@
 [
     "Hue.js",
-    "MockHueBridge.js"
+    "MockHueBridge.js",
+    "AdsB.js"
 ]
