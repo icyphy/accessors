@@ -49,11 +49,7 @@ var http = require('httpClient');
  */
 exports.setup = function() {
     this.extend('net/REST');
-    this.input('trigger', {
-        'value':true,
-        'type':'boolean'
-    });
-    
+
     this.parameter('dump1090Server', { // address of the web server created by dump1090
 	type: 'string',
 	value: 'localhost'
@@ -68,8 +64,8 @@ exports.setup = function() {
 	value: 20000
     });
 
-    var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
-    this.input('options', {'visibility':'expert', 'value':JSON.stringify(serverUrl)});
+    
+    this.input('options', {'visibility':'expert'});
     this.input('command', {'visibility':'expert', 'value':'/dump1090/data.json'});
     this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
     this.input('body', {'visibility':'expert'});
@@ -78,6 +74,17 @@ exports.setup = function() {
     this.output('response', {'visibility':'expert'});
     this.output('aircrafts');
     this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+};
+
+/** Initialize the accessor. */
+exports.initialize = function() {
+    // Be sure to call the superclass so that the trigger input handler gets registered.
+    this.exports.ssuper.initialize.call(this);
+    
+    var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
+
+    this.input('options', {'value':JSON.stringify(serverUrl)});
+    this.send('trigger', true);
 };
 
 var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
