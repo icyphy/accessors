@@ -33,7 +33,7 @@
  *  @parameter {dump1090Server} address of the web server created by dump1090
  *  @parameter {port} port of the web server created by dump1090
  *  @parameter {timeToLiveIfNotUpdated} time in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device
- *  @output an array of objects containing the aircraft information 
+ *  @output {aircrafts} an object mapping aircraft flight IDs to aircraft state
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -67,7 +67,7 @@ exports.setup = function() {
     
     this.input('options', {'visibility':'expert'});
     this.input('command', {'visibility':'expert', 'value':'/dump1090/data.json'});
-    this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
+    this.input('arguments', {'visibility':'expert'});
     this.input('body', {'visibility':'expert'});
     this.output('headers', {'visibility':'expert'});
     this.output('status', {'visibility':'expert'});

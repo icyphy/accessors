@@ -5,7 +5,7 @@
     </property>
     <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" type="trigger" value="undefined">
     </property>
-    <property name="an (port)" class="ptolemy.kernel.util.StringAttribute" type="undefined" value="array of objects containing the aircraft information">
+    <property name="an (port)" class="ptolemy.kernel.util.StringAttribute" type="aircrafts" value="object mapping aircraft flight IDs to aircraft state">
     </property>
     <property name="address (parameter)" class="ptolemy.kernel.util.StringAttribute" type="dump1090Server" value="of the web server created by dump1090">
     </property>
