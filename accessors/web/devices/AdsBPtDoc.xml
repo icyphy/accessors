@@ -5,13 +5,13 @@
     </property>
     <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" type="trigger" value="undefined">
     </property>
-    <property name="an (port)" class="ptolemy.kernel.util.StringAttribute" type="aircrafts" value="object mapping aircraft flight IDs to aircraft state">
+    <property name="aircrafts (port)" class="ptolemy.kernel.util.StringAttribute" type="object" value="An object mapping aircraft flight IDs to aircraft state">
     </property>
-    <property name="address (parameter)" class="ptolemy.kernel.util.StringAttribute" type="dump1090Server" value="of the web server created by dump1090">
+    <property name="dump1090Server (parameter)" class="ptolemy.kernel.util.StringAttribute" type="string" value="The address of the web server created by dump1090">
     </property>
-    <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" type="port" value="of the web server created by dump1090">
+    <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" type="int" value="The port of the web server created by dump1090">
     </property>
-    <property name="time (parameter)" class="ptolemy.kernel.util.StringAttribute" type="timeToLiveIfNotUpdated" value="in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
+    <property name="timeToLiveIfNotUpdated (parameter)" class="ptolemy.kernel.util.StringAttribute" type="int" value="The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
     </property>
     <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$">
     </property>
