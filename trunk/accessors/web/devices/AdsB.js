@@ -30,10 +30,10 @@
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$
  *  @input {trigger}  
- *  @parameter {dump1090Server} address of the web server created by dump1090
- *  @parameter {port} port of the web server created by dump1090
- *  @parameter {timeToLiveIfNotUpdated} time in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device
- *  @output {aircrafts} an object mapping aircraft flight IDs to aircraft state
+ *  @parameter {string} dump1090Server The address of the web server created by dump1090
+ *  @parameter {int} port The port of the web server created by dump1090
+ *  @parameter {int} timeToLiveIfNotUpdated The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device
+ *  @output {object} aircrafts An object mapping aircraft flight IDs to aircraft state
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -64,9 +64,8 @@ exports.setup = function() {
 	value: 20000
     });
 
-    
-    this.input('options', {'visibility':'expert'});
-    this.input('command', {'visibility':'expert', 'value':'/dump1090/data.json'});
+    this.input('options', {'visibility':'expert','value': '"http://localhost:8080"'});
+    this.input('command', {'visibility':'expert','value':'/dump1090/data.json'});
     this.input('arguments', {'visibility':'expert'});
     this.input('body', {'visibility':'expert'});
     this.output('headers', {'visibility':'expert'});
@@ -76,15 +75,10 @@ exports.setup = function() {
     this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
-/** Initialize the accessor. */
-exports.initialize = function() {
-    // Be sure to call the superclass so that the trigger input handler gets registered.
+exports.initialize = function(){
     this.exports.ssuper.initialize.call(this);
-    
     var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
-
-    this.input('options', {'value':JSON.stringify(serverUrl)});
-    this.send('trigger', true);
+    this.send('options',{"url": serverUrl})
 };
 
 var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
