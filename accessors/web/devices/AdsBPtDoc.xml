@@ -1,11 +1,17 @@
 <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
     <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
     </property>
-    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an &#10;aircraft determines its position via satellite navigation and periodically broadcasts it, enabling it to be tracked.&lt;/p&gt;">
+    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an &#10;aircraft periodically broadcasts its state such as location, altitude, heading, etc.&#10;In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090, &#10;plug your SDR USB dongle, and run ./dump1090 --net --interactive&lt;/p&gt;">
     </property>
     <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" type="trigger" value="undefined">
     </property>
     <property name="an (port)" class="ptolemy.kernel.util.StringAttribute" type="undefined" value="array of objects containing the aircraft information">
+    </property>
+    <property name="address (parameter)" class="ptolemy.kernel.util.StringAttribute" type="dump1090Server" value="of the web server created by dump1090">
+    </property>
+    <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" type="port" value="of the web server created by dump1090">
+    </property>
+    <property name="time (parameter)" class="ptolemy.kernel.util.StringAttribute" type="timeToLiveIfNotUpdated" value="in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
     </property>
     <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$">
     </property>
