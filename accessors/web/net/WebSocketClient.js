@@ -236,7 +236,7 @@ exports.connect = function () {
 	if (portValue < 0) {
 		// No port is specified. This could be a signal to close a previously
 		// open socket.
-		if (client && client.isOpen()) {
+		if (client) {
 			client.close();
 		}
 		previousPort = null;
@@ -254,7 +254,7 @@ exports.connect = function () {
 	previousServer = serverValue;
 	previousPort = portValue;
 	
-	if (client && client.isOpen()) {
+	if (client) {
 		// Either the host or the port has changed. Close the previous socket.
 		client.close();
 	}
@@ -347,11 +347,6 @@ exports.onClose = function() {
 /** Send the message received from web socket to the 'received' output. */
 exports.onMessage = function (message) {
     this.send('received', message);
-};
-
-/** Return true if the socket is open. */
-exports.isOpen = function () {
-    return client.isOpen();
 };
 
 /** Close the web socket connection. */
