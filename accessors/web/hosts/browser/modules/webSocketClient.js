@@ -182,10 +182,11 @@ exports.Client.prototype.open = function () {
             });
             reader.readAsText(message.data);
         };
-        this.webSocket.onerror = function(message) {
-            self.emit('error', message);
+        this.webSocket.onerror = function(error) {
+            self.emit('error', error);
         };
-        this.webSocket.onclose = function() {
+        this.webSocket.onclose = function(close, reason) {
+            console.log('closeEvent code:  ' + close.code + ', reason: ' + close.reason);
             self.emit('close');
         };
     }
