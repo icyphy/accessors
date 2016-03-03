@@ -119,7 +119,7 @@
  *   certificates. This path can be any of those understood by the Ptolemy host, e.g. paths
  *   beginning with $CLASSPATH/. 
  *   FIXME: Need to be a list of paths for certificates rather than a single path.
- *  @parameter {boolean} Whether SSL/TLS is enabled. This defaults to false.
+ *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
  *  @parameter {boolean} discardMessagesBeforeOpen If true,
  *   then any messages received on `toSend` before the socket
  *   is open will be discarded. This defaults to false.
