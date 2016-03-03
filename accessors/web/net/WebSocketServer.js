@@ -61,10 +61,17 @@
  *  @parameter {string} hostInterface The IP address or domain name of the
  *    network interface to listen to.
  *  @parameter {int} port The port to listen to for connections.
+ *  @parameter {string} pfxKeyCertPassword If sslTls is set to true, then this option needs
+ *   to specify the password for the pfx key-cert file specified by pfxKeyCertPath.
+ *  @parameter {string} pfxKeyCertPath If sslTls is set to true, then this option needs to
+ *   specify the fully qualified filename for the file that stores the private key and certificate 
+ *   that this server will use to identify itself. This path can be any of those understood by the
+ *   Ptolemy host, e.g. paths beginning with $CLASSPATH/.
  *  @parameter {string} receiveType The MIME type for incoming messages, 
  *    which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages,
  *    which defaults to 'application/json'.
+ *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
  *  @input toSend The data to be sent to open sockets. 
  *    If this is an object with 'socketID' field and a 'message' field,
  *    then send the value of the message field to the socket identified
