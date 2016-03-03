@@ -36,7 +36,7 @@
  * are passed to send() or emitted as a 'message' event.
  *
  * @module webSocketClient
- * @author Edward A. Lee
+ * @author Edward A. Lee, Hokeun Kim
  * @version $$Id$$
  */
 
@@ -145,6 +145,7 @@ exports.Client = function (options) {
     this.timeBetweenRetries = options.timeBetweenRetries || 500;
     this.discardMessagesBeforeOpen = options.discardMessagesBeforeOpen || false;
     this.throttleFactor = options.throttleFactor || 0;
+    this.sslTls = options.sslTls || false;
     
     this.webSocket = null;
 };
@@ -155,9 +156,12 @@ util.inherits(exports.Client, EventEmitter);
  */
 exports.Client.prototype.open = function () {
     if(!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
-        // FIXME: Need to support SSL/TLS to allow 'wss' instead of 'ws'.
         // FIXME: Need to support retries.
-        this.webSocket = new WebSocket('ws://' + this.host + ':' + this.port);
+        var protocol = 'ws://';
+        if (this.sslTls) {
+            protocol = 'wss://';
+        }
+        this.webSocket = new WebSocket(protocol + this.host + ':' + this.port);
         var self = this;
         this.webSocket.onopen = function() {
             self.emit('open');
