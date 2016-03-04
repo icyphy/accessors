@@ -23,6 +23,13 @@
  *  
  *  It sets the parameters of the specified light according to the input values.
  *  
+ *  IP Address input:  Hue checks the value of the "bridgeIPAddress" input in 
+ *  initialize().  If a default value is present, Hue initiates a connection to 
+ *  the bridge.  Otherwise, Hue waits for an IP address input to arrive.  
+ *  Note that no commands can be sent until after an IP address has been given.  
+ *  The "trigger" input is not enabled until after the Hue has connected to the
+ *  bridge and verified that the user is authorized.
+ *  
  *  Logging on: This script attempts to access the bridge as a user with
  *  name given by <i>userName</i>, which defaults to "ptolemyuser". 
  *  If there is no such user on the bridge, the script registers such a user and
@@ -360,7 +367,8 @@ function Hue() {
 /** Define inputs and outputs. */
 exports.setup = function() {
     this.input('bridgeIPAddress', {
-        type: "string"
+        type: "string",
+        value: ""
     });
     this.parameter('userName', {
         type: "string",
@@ -406,6 +414,14 @@ exports.setup = function() {
 
 exports.initialize = function() {
 	this.addInputHandler('bridgeIPAddress', this.hue.connect);
+	
+	// Check to see if a default input value for bridgeIPAddress is present.
+	// If so, 'send' this to the bridgeIPAddress input to trigger handler.
+	// This way, models that use a static IP address do not need to add extra
+	// actors to send the bridgeIPAddress.
+	if (this.get('bridgeIPAddress') != null && this.get('bridgeIPAddress') != "") {
+		send('bridgeIPAddress', this.get('bridgeIPAddress'));
+	} 
 }
 
 /** Turn off changed lights on wrapup. */
