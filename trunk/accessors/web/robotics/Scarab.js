@@ -96,12 +96,11 @@
  *     DOI: 10.1109/ROBOT.2008.4543197
  *
  *  @accessor robotics/Scarab
- *  @input pose Send the robot to a location with a given orientation. This
- *   accepts an object of the form
- *   {position: {x: 0, y: 0, z: 0}, orientation: {x: 0, y: 0, z: 0, w: 0}},
+ *  @input {array<{position: {x: 0, y: 0, z: 0}, orientation: {x: 0, y: 0, z: 0, w: 0}}>} pose
+ *   Send the robot to a location with a given orientation,
  *   where orientation is a quaternion.
- *  @input cmdvel Low-level control for the wheel motors. This accepts an object
- *   of the form {linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}.
+ *  @input {array<{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}>} cmdvel
+ *   Low-level control for the wheel motors. 
  *   To drive the robot straight forward and backward, set the linear.x property
  *   to a value between -1.0 (backwards) and 1.0 (forwards). To turn the robot,
  *   set the angular.z property to a value between -1.0 and 1.0. Both can be
