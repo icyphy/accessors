@@ -61,7 +61,7 @@
     The output appears in doc/jsdoc/index.html
     </echo>
     <exec executable="${jsdoc.home}/jsdoc"
-          timeout="10000"
+          timeout="60000"
           >
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
