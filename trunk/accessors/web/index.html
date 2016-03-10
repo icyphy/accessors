@@ -21,6 +21,9 @@ An <b>accessor</b> is an actor that wraps a (possibly remote) device or
 service in an actor interface.
 </div>
 </p><p>
+Accessors embrace <b>concurrency</b>, <b>atomicity</b>, and <b>asynchrony</b>.
+The actor model, which governs interaction between accessors, permits accessors to execute concurrently with segregated private data and a message-passing interface for interaction. Internally, many accessors use <b>asynchronous atomic callbacks</b> (<b>AAC</b>) to invoke remote services and handle responses asynchronously and atomically. See <a href="https://www.terraswarm.org/accessors/wiki/Main/ComparisonsToRelatedTechnologies">comparisons with related technologies</a> for insight into how accessors work.
+</p><p>
 Accessors are defined in a JavaScript file that includes a specification of the
 <b>interface</b> (inputs, outputs, and parameters) and an implementation of the
 <b>functionality</b> (reactions to inputs and/or production of outputs).
