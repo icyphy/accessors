@@ -5,27 +5,6 @@
     <title>Test Page for StockTick accessor </title>
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
     
-    <!-- Load browser.js, if not already loaded.  The TerraSwarm website automatically loads browser.js.
-	     To check if loaded, look for one of the global functions defined by browser.js - here, generate() -->
-    <script>
-    	if (typeof generate === "undefined") {
-    		function loadScript(callback) {
-        		var browserScript = document.createElement('script');
-        		browserScript.src = '/accessors/hosts/browser/browser.js';
-        		
-        	    // Different browsers have different loading events - bind to all.
-        	    browserScript.onreadystatechange = callback;
-        	    browserScript.onload = callback;
-        	    
-                var head = document.getElementsByTagName('head')[0];
-                head.appendChild(browserScript);
-    		}
-    		
-    		loadScript(function callGenerate() {
-    			generate();
-    		});
-    	}
-    </script>
 </head>
 <body>
 If you do not see an accessor below, then see the
@@ -34,5 +13,29 @@ If you do not see an accessor below, then see the
 <div class="accessor"
    src="services/StockTick"
    id="StockTick"></div>
+   
+   <!-- Load browser.js, if not already loaded.  The TerraSwarm website automatically loads browser.js.
+	 To check if loaded, look for one of the global functions defined by browser.js - here, generate() -->
+<div>
+	<script>
+		if (typeof generate === "undefined") {
+			function loadScript(callback) {
+				var browserScript = document.createElement('script');
+				browserScript.src = '/accessors/hosts/browser/browser.js';
+				        		
+				// Different browsers have different loading events - bind to all.
+				browserScript.onreadystatechange = callback;
+				browserScript.onload = callback;
+				        	    
+				var head = document.getElementsByTagName('head')[0];
+				head.appendChild(browserScript);
+			}
+				    		
+		loadScript(function callGenerate() {
+			generate();
+		});
+	}
+	</script>
+</div>
 </body>
 </html>
