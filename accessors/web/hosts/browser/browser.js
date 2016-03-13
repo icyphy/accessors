@@ -603,7 +603,7 @@ function generateAccessorCodeElement(code, id) {
     var target = document.getElementById(id + 'RevealCode');
     
     var button = document.createElement('button');
-    button.setAttribute('class', 'accessorButton');
+    button.setAttribute('class', 'accessorButton ui-btn ui-corner-all');
     button.innerHTML = 'reveal code';
     button.id = 'revealCode';
     button.onclick = function() {
@@ -859,7 +859,7 @@ function generateReactButton(id) {
     pp.appendChild(button);
     
     button.innerHTML = 'react to inputs';
-    button.setAttribute('class', 'accessorButton');
+    button.setAttribute('class', 'accessorButton ui-btn ui-corner-all');
     button.setAttribute('name', 'react');
     button.setAttribute('type', 'button');
     button.setAttribute('autofocus', 'true');
@@ -893,8 +893,9 @@ function generateTable(title, names, contents, role, id) {
     }
     
     var table = document.createElement('table');
-    table.setAttribute('class', 'accessorTable');
+    table.setAttribute('class', 'accessorTable ui-responsive table-stroke');
     table.setAttribute('width', '100%');
+    table.setAttribute('data-role', 'table');
     
     var head = document.createElement('thead');
     table.appendChild(head);
@@ -978,24 +979,25 @@ function generateTable(title, names, contents, role, id) {
  */
 function generateTableRow(table, name, id, options, editable, visible, role) {    
     var row = document.createElement("tr");
-    row.setAttribute('class', 'accessorTableRow');
     var classTag;
     
     if (visible) {
-    	classTag = "accessorTableData";
+    	classTag = "accessorTableRow";
     } else {
-    	classTag = "accessorTableData invisible";
+    	classTag = "accessorTableRow invisible";
     }
     
+    row.setAttribute('class', classTag);
+
     // Insert the name.
     var nameCell = document.createElement("td");
-    nameCell.setAttribute('class', classTag);
+    nameCell.setAttribute('class', 'accessorTableData');
     nameCell.innerHTML = name;
     row.appendChild(nameCell);
     
     // Insert the type.
     var typeCell = document.createElement("td");
-    typeCell.setAttribute('class', classTag);
+    typeCell.setAttribute('class', 'accessorTableData');
     var type = options.type;
     if (!type) {
         type = '';
@@ -1012,7 +1014,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     // page prior to browser.js defining an initialValues object.  Please see
     // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
     var valueCell = document.createElement("td");
-    valueCell.setAttribute('class', classTag);
+    valueCell.setAttribute('class', 'accessorTableData');
     
     if ( (typeof initialValues != "undefined") && 
     		(initialValues.hasOwnProperty(id + "." + name))) {
@@ -1082,12 +1084,8 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
             if (doc) {
                 success = true;
                 docCell = document.createElement("td");
-                if (visible) {
-                	docCell.className = 'accessorDocumentation accessorTableData';
-                } else {
-                	docCell.className = 'accessorDocumentation accessorTableData invisible';
-                }
                 
+                docCell.className = 'accessorDocumentation accessorTableData';
                 docCell.innerHTML = doc;
                 row.appendChild(docCell);
             }
@@ -1095,12 +1093,8 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
     }
     if (!success) {
         docCell = document.createElement("td");
-        if (visible) {
-            docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
-        } else {
-            docCell.setAttribute('class', 'accessorDocumentation accessorWarning invisible');
-        }
-
+        
+        docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
         docCell.innerHTML = 'No description found';
         row.appendChild(docCell);
     }
@@ -1363,13 +1357,38 @@ function reactIfExecutable(id, suppress) {
             	// (see web/services/StockTick.js)
             	var period;         	
             	var inputs = document.getElementsByClassName('inputRole');
+            	var element;
+            	var found, visible;
             	// 6 parents up is the <div id="GeoCoder">
             	
             	for (var i = 0; i < inputs.length; i++) {
             		// Element at 6 parents up has accessor name.
             		// (No ancestor function in plain Javascript.)
-            		if (inputs[i].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id === id &&
-            			!inputs[i].parentNode.classList.contains("invisible")) {
+            		
+            		// Check that this input belongs to the accessor that the
+            		// "react to inputs" button was clicked for.  I.e., the
+            		// element should have an ancestor with the accessor id.
+            		// Also, check if this input is visible.  I.e., does not 
+            		// have an ancestor with class "invisible".
+            		element = inputs[i];
+            		found = false;
+            		visible = true;
+            		
+            		while (element.parentNode != null) {
+            			//if (element.nodeName.toLowerCase() === "td" &&
+            			if (element.classList.contains("invisible")) {
+            				visible = false;
+            			}
+            			if (element.parentNode.id === id) {
+            				found = true;
+            				break;
+            			}
+            			element = element.parentNode;
+            		}
+            		
+            		// if (inputs[i].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id === id &&
+            		if (found && visible) {
+            			//!inputs[i].parentNode.classList.contains("invisible")) {
             			if (inputs[i].value != null && inputs[i].value != "") {
                 			// Do not call provideInput for blank fields.
                 			// Use "" in a form field to send an empty string as input.
