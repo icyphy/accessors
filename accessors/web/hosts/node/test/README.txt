@@ -2,11 +2,14 @@ $Id$
 
 This directory contains an implementation of a Node.js swarmlet host.
 
-To start the interactive version of the Node.js host:
+To start the interactive version of the Node.js host, invoke:
 
-> node nodeHost.js
-Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
-nsh> 
+  node nodeHostShell.js
+
+which should display:
+
+  Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
+  nsh> 
 
 At the prompt (nsh>), you can enter JavaScript statements or expressions.
 
@@ -17,7 +20,7 @@ nsh> var a = instantiate('myAccessorName', 'test/TestAccessor');
 Below is an example of a complete session, to give you an idea of what can be done:
 
 ---------------------start
-> node nodeHost.js 
+> node nodeHostShell.js 
 Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.
 
 nsh> var a = instantiate('myAccessorName', 'test/TestAccessor');
