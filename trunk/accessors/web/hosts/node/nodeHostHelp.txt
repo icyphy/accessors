@@ -23,5 +23,11 @@ Accessor Functions:
 > a.setParameter(name, value)        set the value of a parameter.
 > a.wrapup()                         accessor wrapup function, if defined.
 
+Accessor Events:
+> a.on('initialize', callback())            Emitted when the accessor is initialized.
+> a.on('output', callback(name, value))     Emitted when an output is produced.
+> a.on('react', callback())                 Emitted when the accessor reacts.
+> a.on('wrapup', callback())                Emitted when the accessor wraps up.
+
 There are additional accessor fields that are not intended for interactive use.
 See documentation for the commonHost module for details.
