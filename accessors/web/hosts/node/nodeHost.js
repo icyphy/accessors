@@ -93,6 +93,57 @@ instantiate = function(accessorName, accessorClass) {
     return result;
 };
 
+/** If there are one or more arguments after nodeHostInvoke.js, then
+ * assume that each argument names a file defining an accessor.  Each
+ * accessor is instantiated and initialized.
+ *
+ * See nodeHostInvoke.js for a file that requires nodeHost.js
+ * and then invokes this method.
+ *
+ * Sample usage:
+ *
+ * nodeHostInvoke.js contains:
+ * <pre>
+ * var commonHost = require('./nodeHost.js');
+ * instantiateAndInitialize(process.argv);
+ * </pre>
+ *
+ * To invoke:
+ * <pre>
+ *   node nodeHostInvoke.js test/testComposite
+ * </pre>
+ *
+ * @param args An array of arguments, the 3 and subsequent elements of
+ * the array should name accessors.  Typically, process.argv is passed
+ * in.
+ */
+instantiateAndInitialize = function(args) {
+    args.forEach((accessorClass, index, array) => {
+        if (index >= 2) {
+            // The name of the accessor is basename of the accessorClass.
+
+            // For example, if the accessorClass is
+            // test/testComposite, then the accessorName will be
+            // testComposite.
+
+
+            var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+            var accessorName = accessorClass.substring(startIndex);
+            if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
+                accessorName = accessorName.substring(1);
+            }
+            // If the same accessorClass appears more than once in the
+            // list of arguments, then use different names.
+            // To replicate: node nodeHostInvoke.js test/testComposite test/testComposite
+            if (index > 2) {
+                accessorName += "_" + (index - 2);
+            }
+            var accessor = instantiate(accessorName, accessorClass);
+            accessor.initialize();
+        }
+    });
+}
+
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
 provideInput = commonHost.provideInput;
@@ -101,7 +152,7 @@ setParameter = commonHost.setParameter;
 // In case this gets used a module, create an exports object.
 exports = {
     'instantiate': instantiate,
+    'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
 };
-
