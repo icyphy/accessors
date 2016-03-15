@@ -118,10 +118,13 @@ instantiate = function(accessorName, accessorClass) {
  * in.
  */
 instantiateAndInitialize = function(args) {
-    args.forEach((accessorClass, index, array) => {
+    var length = args.length
+    for (index = 2; index < length; ++index) {
         if (index >= 2) {
+     
             // The name of the accessor is basename of the accessorClass.
-
+            var accessorClass = args[index];
+            
             // For example, if the accessorClass is
             // test/testComposite, then the accessorName will be
             // testComposite.
@@ -141,7 +144,7 @@ instantiateAndInitialize = function(args) {
             var accessor = instantiate(accessorName, accessorClass);
             accessor.initialize();
         }
-    });
+    }
 }
 
 // Define additional functions that should appear in the global scope
