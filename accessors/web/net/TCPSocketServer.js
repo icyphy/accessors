@@ -362,7 +362,7 @@ exports.initialize = function () {
 
         serverSocket.on('close', function() {
             socketID.status = 'closed';
-            this.send('connection', socketID);
+            self.send('connection', socketID);
             // Avoid a memory leak here.
             sockets[socketInstance] = null;
         });
