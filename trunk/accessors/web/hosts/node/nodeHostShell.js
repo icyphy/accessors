@@ -38,7 +38,6 @@
 var path = require('path');
 var fs = require('fs');
 
-// Locally defined modules.
 var commonHost = require('./nodeHost.js');
 
 // Indicator of whether the interactive host is already running.
