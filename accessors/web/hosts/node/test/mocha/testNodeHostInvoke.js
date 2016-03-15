@@ -7,7 +7,7 @@
 var nodeHost = require('../../nodeHost.js');
 describe('nodeHost instantiateAndInitialize()', function () {
     it('load testCommon', function () {
-        var testArguments = ["Usually node", "Usually nodeHostInvoke.js", "test/testComposite"];
+        var testArguments = ["Usually node", "Usually nodeHostInvoke.js", "test/TestComposite"];
         instantiateAndInitialize(testArguments)
     });
 });
