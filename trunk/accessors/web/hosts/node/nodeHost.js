@@ -110,7 +110,7 @@ instantiate = function(accessorName, accessorClass) {
  *
  * To invoke:
  * <pre>
- *   node nodeHostInvoke.js test/testComposite
+ *   node nodeHostInvoke.js test/TestComposite
  * </pre>
  *
  * @param args An array of arguments, the 3 and subsequent elements of
@@ -126,8 +126,8 @@ instantiateAndInitialize = function(args) {
             var accessorClass = args[index];
             
             // For example, if the accessorClass is
-            // test/testComposite, then the accessorName will be
-            // testComposite.
+            // test/TestComposite, then the accessorName will be
+            // TestComposite.
 
 
             var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
@@ -137,7 +137,7 @@ instantiateAndInitialize = function(args) {
             }
             // If the same accessorClass appears more than once in the
             // list of arguments, then use different names.
-            // To replicate: node nodeHostInvoke.js test/testComposite test/testComposite
+            // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
             if (index > 2) {
                 accessorName += "_" + (index - 2);
             }
