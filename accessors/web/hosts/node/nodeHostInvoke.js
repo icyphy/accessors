@@ -27,7 +27,6 @@
  *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
- *  @module nodeHostInvoke
  *  @authors Christopher Brooks
  *  @version $$Id$$
  */
