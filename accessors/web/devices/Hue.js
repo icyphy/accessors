@@ -420,7 +420,7 @@ exports.initialize = function() {
 	// This way, models that use a static IP address do not need to add extra
 	// actors to send the bridgeIPAddress.
 	if (this.get('bridgeIPAddress') != null && this.get('bridgeIPAddress') != "") {
-		send('bridgeIPAddress', this.get('bridgeIPAddress'));
+		this.send('bridgeIPAddress', this.get('bridgeIPAddress'));
 	} 
 }
 
@@ -435,7 +435,7 @@ exports.wrapup = function() {
             body : cmd,
             timeout : 10000, 
             url : "http://" + this.get("bridgeIPAddress") + "/api/" + 
-            	getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
+            	this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
             	"/state/"
         };
         
