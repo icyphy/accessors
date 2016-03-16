@@ -25,6 +25,11 @@
 /** Instantiate and initialize the accessors named by the command line
  *  arguments.
  *
+ *  Example:
+    <pre>
+ *  node nodeHostInvoke.js test/TestComposite
+ *  </pre>
+ *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
  *  @authors Christopher Brooks
@@ -34,3 +39,8 @@
 var commonHost = require('./nodeHost.js');
 
 instantiateAndInitialize(process.argv);
+
+// Wait for approximately 25 days.
+setTimeout(function () {
+    console.log('done');
+}, 2147483647)
