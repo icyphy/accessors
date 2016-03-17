@@ -190,6 +190,9 @@ function generateAccessorHTML(path, id) {
     // Unless an error occurs or required modules are missing,
     // assume the accessor is executable.
     var executable = true;
+    
+    // Cache modules loaded by require().
+    var loadedModules = {};
 
     // Need to ensure the wrapup method of any
     // previous accessor at this target is invoked.
@@ -448,31 +451,39 @@ function generateAccessorHTML(path, id) {
 
     // Load the specified module.
     function require(path) {
-        // Indicate required modules in the docs.
-        var modules = document.getElementById(id + 'Modules');
-        var text = modules.innerHTML;
-        if (!text) {
-            text = '<p><b>Modules required:</b> ' + path;
-        } else {
-            // Remove the trailing '</p>'
-            text = text.replace('</p>', '');
-            text += ', ' + path;
-        }
-        // Default return value.
-        var result = 'Module failed to load';
-        // Load the module synchronously because the calling function needs the returned
-        // value. If a module fails to load, however, we will still want to display a web
-        // page. It's just that execution will fail.
-        try {
-            // The third argument (null) indicates synchronous load.
-            result = loadFromServer(path, id, null);
-            // If successful, add the module name to the text of the modules list.
-        } catch (err) {
-            executable = false;
-            text += '<span class="accessorError"> (Not supported by this host)</span>';
-        }
-        modules.innerHTML = text + '</p>';
-        return result;
+    	
+    	// If module already loaded, return the cached copy.
+    	if (loadedModules.hasOwnProperty(path)) {
+    		return(loadedModules[path]);
+    	} else {
+	    	// Otherwise, load the module.
+	        // Indicate required modules in the docs.
+	        var modules = document.getElementById(id + 'Modules');
+	        var text = modules.innerHTML;
+	        if (!text) {
+	            text = '<p><b>Modules required:</b> ' + path;
+	        } else {
+	            // Remove the trailing '</p>'
+	            text = text.replace('</p>', '');
+	            text += ', ' + path;
+	        }
+	        // Default return value.
+	        var result = 'Module failed to load';
+	        // Load the module synchronously because the calling function needs the returned
+	        // value. If a module fails to load, however, we will still want to display a web
+	        // page. It's just that execution will fail.
+	        try {
+	            // The third argument (null) indicates synchronous load.
+	            result = loadFromServer(path, id, null);
+	            loadedModules[path] = result;
+	            // If successful, add the module name to the text of the modules list.
+	        } catch (err) {
+	            executable = false;
+	            text += '<span class="accessorError"> (Not supported by this host)</span>';
+	        }
+	        modules.innerHTML = text + '</p>';
+	        return result;
+    	}
     }
     
     // Send an output or to an input.  This implementation assumes that the 
