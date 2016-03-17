@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -61,7 +61,7 @@
  * dataType to output or leave it as 'all'. </li>
  * </ul>
  * 
- * @accessor contextAware
+ * @accessor contextAware/contextAware
  * @author Anne H. Ngu (angu@txstate.edu)
  * @input {number} input to the accessor
  * @parameter{string} the name of the REST service that context aware tries to
