@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -23,7 +23,6 @@
 /** This is the interface specification of a global sensor network service (GSN)
  *  
  * 
- *  @accessor contextAware
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @parameter {string} host is the ip address of the server hosting the service 
  *  @parameter {int} port is the port number of host

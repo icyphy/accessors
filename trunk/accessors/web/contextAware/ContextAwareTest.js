@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -24,7 +24,7 @@
  *  It requires the contextAware module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
  * 
- *  @accessor contextAwareTest
+ *  @accessor contextAware/contextAwareTest
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} input to the accessor
  *	@parameter {{string} the name of the REST service that context aware tries
