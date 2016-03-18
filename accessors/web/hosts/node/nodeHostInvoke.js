@@ -26,7 +26,7 @@
  *  arguments.
  *
  *  Example:
-    <pre>
+ *  <pre>
  *  node nodeHostInvoke.js test/TestComposite
  *  </pre>
  *
@@ -40,7 +40,6 @@ var commonHost = require('./nodeHost.js');
 
 instantiateAndInitialize(process.argv);
 
-// Wait for approximately 25 days.
-setTimeout(function () {
-    console.log('done');
-}, 2147483647)
+// Prevent the script from exiting by repeating the empty function
+// every ~25 days.
+setInterval(function () {}, 2147483647)
