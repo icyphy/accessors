@@ -25,9 +25,24 @@
 /** Instantiate and initialize the accessors named by the command line
  *  arguments.
  *
- *  Example:
+ *  Usage:
+ *  <pre>
+ *  node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]
+ *  </pre>
+ *
+ *  To run an accessor forever, use:
  *  <pre>
  *  node nodeHostInvoke.js test/TestComposite
+ *  </pre>
+ *
+ *  To run two instances of the same accessor forever, use:
+ *  <pre>
+ *  node nodeHostInvoke.js test/TestComposite test/testComposite.js
+ *  </pre>
+ *
+ *  To run an accessor for 2 seconds, use:
+ *  <pre>
+ *  node nodeHostInvoke.js -timeout 2000 test/TestComposite
  *  </pre>
  *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
@@ -38,8 +53,33 @@
 
 var commonHost = require('./nodeHost.js');
 
-instantiateAndInitialize(process.argv);
+// Remove "node.js" from the array of command line arguments.
+process.argv.shift();
+// Remove "nodeHostInvoke.js" from the array of command line arguments.
+process.argv.shift();
 
-// Prevent the script from exiting by repeating the empty function
-// every ~25 days.
-setInterval(function () {}, 2147483647)
+if (process.argv.length == 0) {
+    console.error("nodeHostInvoke.js: Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
+    process.exit(3);
+}
+
+if (process.argv.length > 1) {
+    if (process.argv[0] === "-timeout") {
+        timeout = process.argv[1];
+        // Remove -timeout and the value.
+        process.argv.shift();
+        process.argv.shift();
+        instantiateAndInitialize(process.argv);
+        setTimeout(function () {process.exit(0)}, timeout);
+    } else {
+        instantiateAndInitialize(process.argv);
+        // Prevent the script from exiting by repeating the empty function
+        // every ~25 days.
+        setInterval(function () {}, 2147483647)
+    }
+} else {
+    instantiateAndInitialize(process.argv);
+    // Prevent the script from exiting by repeating the empty function
+    // every ~25 days.
+    setInterval(function () {}, 2147483647)
+}
