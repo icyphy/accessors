@@ -680,6 +680,7 @@ function generateAccessorDirectory(element) {
                     for (var i = 0; i < response.length; i++) {
                         var item = response[i];
                         var content = document.createElement('div');
+                        content.setAttribute('class', 'accessorDirectoryItem');
                         content.style.marginLeft = indent + 'px';
                         docElement.appendChild(content);
                         if (item.indexOf('.js') === item.length - 3) {
