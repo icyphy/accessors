@@ -48,6 +48,11 @@
 .accessorTableRow:hover {
     background-color: #ffffcc;
 }
+/* Boldface items in accessor menu on hover-over. Show a hand cursor.  */
+.accessorDirectoryItem:hover {
+	font-weight:bold;
+	cursor: pointer;
+}
 /* Used to hide table rows for parameters and inputs with "expert" visibility.  
    These parameters and inputs still need to be defined on the HTML page so 
    that their values are accessible to the browser host. */
