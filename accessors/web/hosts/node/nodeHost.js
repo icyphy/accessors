@@ -105,6 +105,10 @@ instantiate = function(accessorName, accessorClass) {
  * nodeHostInvoke.js contains:
  * <pre>
  * var commonHost = require('./nodeHost.js');
+ * // Remove "node.js" from the array of command line arguments.
+ * process.argv.shift(); 
+ * // Remove "nodeHostInvoke.js" from the array of command line arguments.
+ * process.argv.shift(); 
  * instantiateAndInitialize(process.argv);
  * </pre>
  *
@@ -113,37 +117,31 @@ instantiate = function(accessorName, accessorClass) {
  *   node nodeHostInvoke.js test/TestComposite
  * </pre>
  *
- * @param args An array of arguments, the 3 and subsequent elements of
- * the array should name accessors.  Typically, process.argv is passed
- * in.
+ * @param accessorNames An array of accessor names in a format suitable
+ * for getAccessorCode(name).
  */
-instantiateAndInitialize = function(args) {
-    var length = args.length
-    for (index = 2; index < length; ++index) {
-        if (index >= 2) {
-     
-            // The name of the accessor is basename of the accessorClass.
-            var accessorClass = args[index];
-            
-            // For example, if the accessorClass is
-            // test/TestComposite, then the accessorName will be
-            // TestComposite.
+instantiateAndInitialize = function(accessorNames) {
+    var length = accessorNames.length
+    for (index = 0; index < length; ++index) {
+        // The name of the accessor is basename of the accessorClass.
+        var accessorClass = accessorNames[index];
+        // For example, if the accessorClass is
+        // test/TestComposite, then the accessorName will be
+        // TestComposite.
 
-
-            var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
-            var accessorName = accessorClass.substring(startIndex);
-            if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
-                accessorName = accessorName.substring(1);
-            }
-            // If the same accessorClass appears more than once in the
-            // list of arguments, then use different names.
-            // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
-            if (index > 2) {
-                accessorName += "_" + (index - 2);
-            }
-            var accessor = instantiate(accessorName, accessorClass);
-            accessor.initialize();
+        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        var accessorName = accessorClass.substring(startIndex);
+        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
+            accessorName = accessorName.substring(1);
         }
+        // If the same accessorClass appears more than once in the
+        // list of arguments, then use different names.
+        // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
+        if (index > 0) {
+            accessorName += "_" + (index - 1);
+        }
+        var accessor = instantiate(accessorName, accessorClass);
+        accessor.initialize();
     }
 }
 
