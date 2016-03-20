@@ -16,12 +16,13 @@
 	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
    
+    <script src="/accessors/hosts/browser/browser.js"></script>
+   
+	<!-- Reapply jQueryMobile styling once accessor table has been created. -->
     <script>
-    	// Refresh page styling after dynamic content is added.
-    	// FIXME:  Ideally browser.js should generate an event when it's done.
-    	// This code would go in an event listener.
-    	setTimeout( function() {
-			$('#content').enhanceWithin(); }, 500);
+    	window.addEventListener('accessorTableDone', function() {
+    		$('#content').enhanceWithin();
+    	})
     </script>
 </head>
 <body>
