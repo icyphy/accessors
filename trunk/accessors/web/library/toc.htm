@@ -7,25 +7,5 @@
   <h2 class="sectionhead">Accessors:</h2>
   <div class="accessorDirectory"></div>
 </div><!-- /#menu -->
-<!-- Load browser.js, if not already loaded.  The TerraSwarm website automatically loads browser.js.
-     To check if loaded, look for one of the global functions defined by browser.js - here, generate() -->
-<script>
-if (typeof generate === "undefined") {
-    function loadScript(callback) {
-        var browserScript = document.createElement('script');
-        browserScript.src = '/accessors/hosts/browser/browser.js';
-        
-        // Different browsers have different loading events - bind to all.
-        browserScript.onreadystatechange = callback;
-        browserScript.onload = callback;
-        
-        var head = document.getElementsByTagName('head')[0];
-        head.appendChild(browserScript);
-    }
-    
-    loadScript(function callGenerate() {
-        generate();
-    });
-}
-</script>
+<script src="/accessors/hosts/browser/browser.js"></script>
 <!--/margin-->
