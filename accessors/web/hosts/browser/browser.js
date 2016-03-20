@@ -80,20 +80,28 @@
 //////////////////////////////////////////////////////////////////////////
 //// Web page setup
 
-// Note that the following will not work in IE 8 or older.
-window.addEventListener('DOMContentLoaded', function() {
-    window.generate();
-});
+// Only add event listeners the first time the library is loaded.
+// (Otherwise, duplicate event listeners will generate duplicate accessor HTML).
 
-window.addEventListener('unload', function(event) {
-    if (window.accessors) {
-        for (var accessor in window.accessors) {
-            if (accessor.initialized) {
-                accessor.wrapup();
-            }
-        }
-    }
-});
+if (!window.hasOwnProperty('browserJSLoaded')) {
+	
+	// Note that the following will not work in IE 8 or older.
+	window.addEventListener('DOMContentLoaded', function() {
+	    window.generate();
+	});
+	
+	window.addEventListener('unload', function(event) {
+	    if (window.accessors) {
+	        for (var accessor in window.accessors) {
+	            if (accessor.initialized) {
+	                accessor.wrapup();
+	            }
+	        }
+	    }
+	});
+	
+	window.browserJSLoaded = true;
+} 
 
 //////////////////////////////////////////////////////////////////////////
 //// Functions
@@ -812,20 +820,30 @@ function generateAccessorDocumentation(path, id) {
  *  @param id The id of the accessor.
  */
 function generateTables(instance, id) {
+	var promises = [];
+	
     // Generate a table for parameters.
     if (instance.parameterList && instance.parameterList.length > 0) {
-        generateTable("Parameters", 
-                instance.parameterList, instance.parameters, "parameter", id);
+        promises.push(generateTable("Parameters", 
+                instance.parameterList, instance.parameters, "parameter", id));
     }
     // Generate a table for inputs.
     if (instance.inputList && instance.inputList.length > 0) {
-        generateTable("Inputs", instance.inputList, instance.inputs, "input", id);
+        promises.push(generateTable("Inputs", instance.inputList, instance.inputs, "input", id));
     }
     
     // Generate a table for outputs.
     if (instance.outputList && instance.outputList.length > 0) {
-        generateTable("Outputs", instance.outputList, instance.outputs, "output", id);
+        promises.push(generateTable("Outputs", instance.outputList, instance.outputs, "output", id));
     }
+    
+    // Generate an event when the table is done.
+    // TODO:  It would be even better to generate an event when all content
+    // is done.  This would probably require Promises everywhere...
+    Promise.all(promises).then(function() {
+    	window.dispatchEvent(new Event('accessorTableDone'));
+    });
+    
     // Generate a list of contained accessors, if any.
     generateListOfContainedAccessors(instance, id);
 }
@@ -891,90 +909,100 @@ function generateReactButton(id) {
  *  @param id The id of the accessor.
  */
 function generateTable(title, names, contents, role, id) {
-    var target = document.getElementById(id + 'Tables');
-    
-    // Create header line.
-    var header = document.createElement('h2');
-    header.innerHTML = title;
-    header.setAttribute('class', 'accessorTableTitle');
-    target.appendChild(header);
-    
-    if (role === 'input') {
-        // Generate a react button.
-        generateReactButton(id);
-    }
-    
-    var table = document.createElement('table');
-    table.setAttribute('class', 'accessorTable ui-responsive table-stroke');
-    table.setAttribute('width', '100%');
-    table.setAttribute('data-role', 'table');
-    
-    var head = document.createElement('thead');
-    table.appendChild(head);
-    
-    var titleRow = document.createElement('tr');
-    titleRow.setAttribute('class', 'accessorTableRow');
-    head.appendChild(titleRow);
-    
-    var column = document.createElement('th');
-    column.setAttribute('class', 'accessorTableHeader');
-    // To not expand, use 1%.
-    column.setAttribute('width', '1%');
-    column.innerHTML = 'Name';
-    titleRow.appendChild(column);
-    
-    column = document.createElement('th');
-    column.setAttribute('class', 'accessorTableHeader');
-    column.setAttribute('width', '1%');
-    column.innerHTML = 'Type';
-    titleRow.appendChild(column);
-
-    column = document.createElement('th');
-    column.setAttribute('class', 'accessorTableHeader');
-    column.innerHTML = 'Value';
-    titleRow.appendChild(column);
-    
-    column = document.createElement('th');
-    column.setAttribute('class', 'accessorTableHeader');
-    column.innerHTML = 'Documentation';
-    titleRow.appendChild(column);
-
-    var tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-
-    target.appendChild(table);
-    
-    var editable = true;
-    if (role === 'output') {
-        editable = false;
-    }
-    if (target.getAttribute('class') === 'containedAccessor') {
-        editable = false;
-    }
-    
-    for (var i = 0; i < names.length; i++) {
-    	var visible = true;
-        var item = contents[names[i]];
-        if (item) {
-            if (item.visibility) {
-                var visibility = item.visibility;
-                if (visibility == 'notEditable') {
-                    editable = false;
-                } 
-                if (visibility == 'expert') {
-                	visible = false;
-                }
-            }
-            generateTableRow(
-                    tbody,
-                    names[i],
-                    id,
-                    item,
-                    editable,
-                    visible,
-                    role);
-        }
-    }
+	return new Promise(function (resolve, reject) {
+		var promises= [];
+	    var target = document.getElementById(id + 'Tables');
+	    
+	    // Create header line.
+	    var header = document.createElement('h2');
+	    header.innerHTML = title;
+	    header.setAttribute('class', 'accessorTableTitle');
+	    target.appendChild(header);
+	    
+	    if (role === 'input') {
+	        // Generate a react button.
+	        generateReactButton(id);
+	    }
+	    
+	    var table = document.createElement('table');
+	    table.setAttribute('class', 'accessorTable ui-responsive table-stroke');
+	    table.setAttribute('width', '100%');
+	    table.setAttribute('data-role', 'table');
+	    
+	    var head = document.createElement('thead');
+	    table.appendChild(head);
+	    
+	    var titleRow = document.createElement('tr');
+	    titleRow.setAttribute('class', 'accessorTableRow');
+	    head.appendChild(titleRow);
+	    
+	    var column = document.createElement('th');
+	    column.setAttribute('class', 'accessorTableHeader');
+	    // To not expand, use 1%.
+	    column.setAttribute('width', '1%');
+	    column.innerHTML = 'Name';
+	    titleRow.appendChild(column);
+	    
+	    column = document.createElement('th');
+	    column.setAttribute('class', 'accessorTableHeader');
+	    column.setAttribute('width', '1%');
+	    column.innerHTML = 'Type';
+	    titleRow.appendChild(column);
+	
+	    column = document.createElement('th');
+	    column.setAttribute('class', 'accessorTableHeader');
+	    column.innerHTML = 'Value';
+	    titleRow.appendChild(column);
+	    
+	    column = document.createElement('th');
+	    column.setAttribute('class', 'accessorTableHeader');
+	    column.innerHTML = 'Documentation';
+	    titleRow.appendChild(column);
+	
+	    var tbody = document.createElement('tbody');
+	    table.appendChild(tbody);
+	
+	    target.appendChild(table);
+	    
+	    var editable = true;
+	    if (role === 'output') {
+	        editable = false;
+	    }
+	    if (target.getAttribute('class') === 'containedAccessor') {
+	        editable = false;
+	    }
+	    
+	    for (var i = 0; i < names.length; i++) {
+	    	var visible = true;
+	        var item = contents[names[i]];
+	        if (item) {
+	            if (item.visibility) {
+	                var visibility = item.visibility;
+	                if (visibility == 'notEditable') {
+	                    editable = false;
+	                } 
+	                if (visibility == 'expert') {
+	                	visible = false;
+	                }
+	            }
+	            promises.push(generateTableRow(
+	                    tbody,
+	                    names[i],
+	                    id,
+	                    item,
+	                    editable,
+	                    visible,
+	                    role));
+	        }
+	    }
+	    
+	    // Resolve promise once all rows are created.
+	    Promise.all(promises).then(function() {
+	    	return resolve(true);
+	    }, function() {
+	    	return reject(true);
+	    });
+	});
 }
 
 /** Generate a table row for an input, parameter, or output.
@@ -989,129 +1017,132 @@ function generateTable(title, names, contents, role, id) {
  *  @param visible True to make the table row visible.  
  *  @param role Can be parameter, input or output.
  */
-function generateTableRow(table, name, id, options, editable, visible, role) {    
-    var row = document.createElement("tr");
-    var classTag;
-    
-    if (visible) {
-    	classTag = "accessorTableRow";
-    } else {
-    	classTag = "accessorTableRow invisible";
-    }
-    
-    row.setAttribute('class', classTag);
-
-    // Insert the name.
-    var nameCell = document.createElement("td");
-    nameCell.setAttribute('class', 'accessorTableData');
-    nameCell.innerHTML = name;
-    row.appendChild(nameCell);
-    
-    // Insert the type.
-    var typeCell = document.createElement("td");
-    typeCell.setAttribute('class', 'accessorTableData');
-    var type = options.type;
-    if (!type) {
-        type = '';
-    }
-    typeCell.innerHTML = type;
-    row.appendChild(typeCell);
-    
-    // Insert the value.
-    // Initial values are optional. There are two ways to specify initial values.
-    // To specify an initial value for all instances of an accessor, define a
-    // value in setup().  Please see
-    // /net/REST.js for example.
-    // To specify an initial value for a web page, add a script element to the
-    // page prior to browser.js defining an initialValues object.  Please see
-    // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
-    var valueCell = document.createElement("td");
-    valueCell.setAttribute('class', 'accessorTableData');
-    
-    if ( (typeof initialValues != "undefined") && 
-    		(initialValues.hasOwnProperty(id + "." + name))) {
-    	options.initialValue = initialValues[id + "." + name];
-    }
-    
-    var value = options.currentValue || 
-    	options.initialValue ||	// Page-specific initial value takes precedence 
-    							// over accessor default value (options.value)
-        options.value || 
-        options.latestOutput ||
-        '';
-    
-    if (typeof value === 'object') {
-        value = JSON.stringify(value);
-    }
-    if (!editable) {
-        valueCell.innerHTML = value;
-        
-        // Set a unique ID so that this input can be retrieved by the get()
-        // or set by the send() function defined in local.js.
-        valueCell.setAttribute('id', id + '.' + name);
-        
-    } else {
-    	// Either a parameter or input.  Outputs are not editable.
-    	var valueInput = document.createElement("input");
-    	
-    	if (role === 'input') {
-		    // Do not invoke any handlers on input change.  The user must
-    		// initiate invoctaion with the "react to inputs" button.
-		    valueInput.setAttribute('class', 'valueInputBox inputRole');
-    	} else {
-    		// Invoke setParameter() on change.  Note onchange() also fires when 
-    		// the user deletes a form field value.
-    		valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
-    		valueInput.setAttribute('class', 'valueInputBox parameterRole');
-    	}       
-	        
-	    // Set a unique ID so that this input can be retrieved by the get()
-	    // function defined in local.js.
-	    valueInput.setAttribute('id', id + '.' + name);
-	    valueInput.setAttribute('type', 'text');
-	    valueInput.setAttribute('name', name);
-	    valueInput.setAttribute('value', value);
+function generateTableRow(table, name, id, options, editable, visible, role) {  
+	return new Promise(function (resolve, reject) {
+	    var row = document.createElement("tr");
+	    var classTag;
 	    
-	    valueCell.appendChild(valueInput);
-    }
-    row.appendChild(valueCell);
-    
-    // Insert the documentation, if any is found.
-    var success = false;
-    var docCell;
-    if (window.accessorDocs) {
-        var docs = window.accessorDocs[id];
-        if (docs) {
-            // Try with various suffixes.
-            var doc = docs[name];
-            if (!doc) {
-                doc = docs[name + ' (parameter)'];
-            }
-            if (!doc) {
-                doc = docs[name + ' (port)'];
-            }
-            if (!doc) {
-                doc = docs[name + ' (port-parameter)'];
-            }
-            if (doc) {
-                success = true;
-                docCell = document.createElement("td");
-                
-                docCell.className = 'accessorDocumentation accessorTableData';
-                docCell.innerHTML = doc;
-                row.appendChild(docCell);
-            }
-        }
-    }
-    if (!success) {
-        docCell = document.createElement("td");
-        
-        docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
-        docCell.innerHTML = 'No description found';
-        row.appendChild(docCell);
-    }
-
-    table.appendChild(row);
+	    if (visible) {
+	    	classTag = "accessorTableRow";
+	    } else {
+	    	classTag = "accessorTableRow invisible";
+	    }
+	    
+	    row.setAttribute('class', classTag);
+	
+	    // Insert the name.
+	    var nameCell = document.createElement("td");
+	    nameCell.setAttribute('class', 'accessorTableData');
+	    nameCell.innerHTML = name;
+	    row.appendChild(nameCell);
+	    
+	    // Insert the type.
+	    var typeCell = document.createElement("td");
+	    typeCell.setAttribute('class', 'accessorTableData');
+	    var type = options.type;
+	    if (!type) {
+	        type = '';
+	    }
+	    typeCell.innerHTML = type;
+	    row.appendChild(typeCell);
+	    
+	    // Insert the value.
+	    // Initial values are optional. There are two ways to specify initial values.
+	    // To specify an initial value for all instances of an accessor, define a
+	    // value in setup().  Please see
+	    // /net/REST.js for example.
+	    // To specify an initial value for a web page, add a script element to the
+	    // page prior to browser.js defining an initialValues object.  Please see
+	    // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
+	    var valueCell = document.createElement("td");
+	    valueCell.setAttribute('class', 'accessorTableData');
+	    
+	    if ( (typeof initialValues != "undefined") && 
+	    		(initialValues.hasOwnProperty(id + "." + name))) {
+	    	options.initialValue = initialValues[id + "." + name];
+	    }
+	    
+	    var value = options.currentValue || 
+	    	options.initialValue ||	// Page-specific initial value takes precedence 
+	    							// over accessor default value (options.value)
+	        options.value || 
+	        options.latestOutput ||
+	        '';
+	    
+	    if (typeof value === 'object') {
+	        value = JSON.stringify(value);
+	    }
+	    if (!editable) {
+	        valueCell.innerHTML = value;
+	        
+	        // Set a unique ID so that this input can be retrieved by the get()
+	        // or set by the send() function defined in local.js.
+	        valueCell.setAttribute('id', id + '.' + name);
+	        
+	    } else {
+	    	// Either a parameter or input.  Outputs are not editable.
+	    	var valueInput = document.createElement("input");
+	    	
+	    	if (role === 'input') {
+			    // Do not invoke any handlers on input change.  The user must
+	    		// initiate invoctaion with the "react to inputs" button.
+			    valueInput.setAttribute('class', 'valueInputBox inputRole');
+	    	} else {
+	    		// Invoke setParameter() on change.  Note onchange() also fires when 
+	    		// the user deletes a form field value.
+	    		valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
+	    		valueInput.setAttribute('class', 'valueInputBox parameterRole');
+	    	}       
+		        
+		    // Set a unique ID so that this input can be retrieved by the get()
+		    // function defined in local.js.
+		    valueInput.setAttribute('id', id + '.' + name);
+		    valueInput.setAttribute('type', 'text');
+		    valueInput.setAttribute('name', name);
+		    valueInput.setAttribute('value', value);
+		    
+		    valueCell.appendChild(valueInput);
+	    }
+	    row.appendChild(valueCell);
+	    
+	    // Insert the documentation, if any is found.
+	    var success = false;
+	    var docCell;
+	    if (window.accessorDocs) {
+	        var docs = window.accessorDocs[id];
+	        if (docs) {
+	            // Try with various suffixes.
+	            var doc = docs[name];
+	            if (!doc) {
+	                doc = docs[name + ' (parameter)'];
+	            }
+	            if (!doc) {
+	                doc = docs[name + ' (port)'];
+	            }
+	            if (!doc) {
+	                doc = docs[name + ' (port-parameter)'];
+	            }
+	            if (doc) {
+	                success = true;
+	                docCell = document.createElement("td");
+	                
+	                docCell.className = 'accessorDocumentation accessorTableData';
+	                docCell.innerHTML = doc;
+	                row.appendChild(docCell);
+	            }
+	        }
+	    }
+	    if (!success) {
+	        docCell = document.createElement("td");
+	        
+	        docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
+	        docCell.innerHTML = 'No description found';
+	        row.appendChild(docCell);
+	    }
+	
+	    table.appendChild(row);
+	    return resolve(true);
+	})
 }
 
 /** Get default documentation from a base accessor or implemented interface.

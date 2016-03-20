@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for Browser Swarmlet Host</title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    
+    <!-- Test including browser.js multiple times.  Check that accessor content
+         is only generated once. -->
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    
+</head>
+<body>
+If you do not see an accessor below, then see the
+<a href="/accessors/hosts/browser/test/index.html">instructions for running a browser host</a>.
+<hr>
+<div class="accessor"
+   src="test/TestAccessor"
+   id="TestAccessor"></div>
+   
+</body>
+</html>
