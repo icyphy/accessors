@@ -27,12 +27,12 @@
  *  @accessor robotics/Lla2Ecef.js
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: Lla2Ecef.js 1 2016-03-06 16:00:00Z eloi $$
- *  @input {lat} latitude
- *  @input {lon} longitude
- *  @input {alt} altitude
- *  @output {x} x
- *  @output {y} y
- *  @output {z} z
+ *  @input {double} lat latitude
+ *  @input {double} lon longitude
+ *  @input {double} alt altitude
+ *  @output {double} x ecef x coordinate
+ *  @output {double} y ecef y coordinate
+ *  @output {double} z ecef z coordinate
  *  
  */
 
