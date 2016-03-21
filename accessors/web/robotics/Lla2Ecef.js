@@ -20,15 +20,20 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor takes a mavros global_position/global message and retrieves the corresponding Latitude, Longitude, and Altitude
+/** This accessor takes a WG-84 location (latitude, longitude, and altitude) 
+ * and converts it to ECEF (Earth-Centered, Earth-Fixed) cartesian coordinates.
+ *  Based on http://danceswithcode.net/engineeringnotes/geodetic_to_ecef/geodetic_to_ecef.html
  * 
- *  @accessor robotics/GlobalPosition2LatLonAlt.js
+ *  @accessor robotics/Lla2Ecef.js
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: GlobalPosition2LatLonAlt.js 1 2016-03-06 16:00:00Z eloi $$
- *  @input {global} global maveros message 
- *  @output {lat} latitude
- *  @output {lon} longitude
- *  @output {alt} altitude
+ *  @version $$Id: Lla2Ecef.js 1 2016-03-06 16:00:00Z eloi $$
+ *  @input {lat} latitude
+ *  @input {lon} longitude
+ *  @input {alt} altitude
+ *  @output {x} x
+ *  @output {y} y
+ *  @output {z} z
+ *  
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -40,19 +45,32 @@
 
 /** Set up the accessor by defining the inputs and outputs.
  */
+
 exports.setup = function() {
-    this.input('global');
-    this.output('lat');
-    this.output('lon');
-    this.output('alt');
+    this.input('lat');
+    this.input('lon');
+    this.input('alt');
+    this.output('x');
+    this.output('y');
+    this.output('z');
 };
 
 exports.initialize = function() {
+    // WGS-84 parameters
+    var a = 6378137.0; //WGS-84 semi-major axis (meters)
+    var e2 = 6.6943799901377997e-3;  //WGS-84 first eccentricity squared
+
     var self = this;
-    this.addInputHandler('global', function () {
-	var raw = self.get('global');
-	self.send('lat',raw.msg.latitude);
-	self.send('lon',raw.msg.longitude);
-	self.send('alt',raw.msg.altitude);
+    this.addInputHandler(function () {
+	var lat = this.get('lat')*Math.PI/180;
+	var lon = this.get('lon')*Math.PI/180;
+	var alt = this.get('alt');
+	var n = a/Math.sqrt(1 - e2*Math.sin( lat )*Math.sin( lat ) );
+	var x = ( n + alt )*Math.cos( lat )*Math.cos( lon );
+	var y = ( n + alt )*Math.cos( lat )*Math.sin( lon );
+	var z = ( n*(1 - e2 ) + alt )*Math.sin( lat );
+	self.send('x',x);
+	self.send('y',y);
+	self.send('z',z);
     });
 };
