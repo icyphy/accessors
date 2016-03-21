@@ -1,0 +1,124 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="testDroneLocation" class="ptolemy.actor.TypedCompositeActor">
+    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.0.devel">
+    </property>
+    <property name="DE Director" class="ptolemy.domains.de.kernel.DEDirector">
+        <property name="stopWhenQueueIsEmpty" class="ptolemy.data.expr.Parameter" value="false">
+        </property>
+        <property name="synchronizeToRealTime" class="ptolemy.data.expr.Parameter" value="true">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="68.0, 32.0">
+        </property>
+    </property>
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={268, 125, 921, 612}, maximized=false}">
+    </property>
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 500]">
+    </property>
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.0">
+    </property>
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{355.0, 243.703125}">
+    </property>
+    <entity name="DroneLocation" class="org.terraswarm.accessor.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Copyright (c) 2015-2016 The Regents of the University of California.&#10;// All rights reserved.&#10;&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;&#10;/** This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10; * such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10; * In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10; * Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &quot;rosed mavros apm2.launch&quot;&#10; * and launch the node using the command &quot;roslaunch mavros apm2.launch&quot;. The accessor uses a websocket to access ros.&#10; * Thus, you need also to install rosbridge_server and launch &quot;roslaunch rosbridge_server rosbridge_websocket.launch&quot;.&#10; * &#10; *  @accessor robotics/DroneLocation.js&#10; *  @author Eloi T. Pereira (eloi@berkeley.edu)&#10; *  @version $$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$&#10; *  @input {trigger}  &#10; *  @parameter {string} dump1090Server The address of the web server created by dump1090&#10; *  @parameter {int} port The port of the web server created by dump1090&#10; *  @parameter {int} timeToLiveIfNotUpdated The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device&#10; *  @output {object} aircrafts An object mapping aircraft flight IDs to aircraft state&#10; */&#10;&#10;// Stop extra messages from jslint and jshint.  Note that there should&#10;// be no space between the / and the * and global. See&#10;// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */&#10;/*globals addInputHandler, get, error, exports, extend, get, input, output, parameter, require, send */&#10;/*jshint globalstrict: true*/&#10;'use strict';&#10;&#10;/** Set up the accessor by defining the inputs and outputs.&#10; */&#10;&#10;&#10;exports.setup = function() {&#10;    var sub = this.instantiate('RosSubscriber','robotics/RosSubscriber');&#10;    var g = this.instantiate('Global2LatLonAlt','robotics/Global2LatLonAlt');&#10;&#10;    sub.setParameter('topic',&quot;/mavros/global_position/global&quot;);&#10;    this.parameter('rosbridgeServer',{&#10;	type: 'string', &#10;	value: 'localhost'&#10;    });&#10;    this.parameter('rosbridgePort',{&#10;	type: 'int', &#10;	value: 9090&#10;    });&#10;    &#10;    this.input('server',{'visibility': 'expert'});&#10;    this.input('port',{'visibility': 'expert'});&#10;    this.output('lat');&#10;    this.output('lon');&#10;    this.output('alt');&#10;    this.connect('server',sub,'server');&#10;    this.connect('port',sub,'port');&#10;    this.connect(sub, 'received', g, 'global');&#10;    this.connect(g, 'lat','lat');&#10;    this.connect(g, 'lon','lon');&#10;    this.connect(g, 'alt','alt');&#10;};&#10;&#10;exports.initialize = function() {&#10;    var server = this.getParameter('rosbridgeServer').toString();&#10;    var port = this.getParameter('rosbridgePort');&#10;    this.send('server',server);&#10;    this.send('port', port);&#10;};&#10;">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.terraswarm.org/accessors/robotics/DroneLocation.js">
+        </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10;such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10;In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10;Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &amp;quot;rosed mavros apm2.launch&amp;quot;&#10;and launch the node using the command &amp;quot;roslaunch mavros apm2.launch&amp;quot;. The accessor uses a websocket to access ros.&#10;Thus, you need also to install rosbridge_server and launch &amp;quot;roslaunch rosbridge_server rosbridge_websocket.launch&amp;quot;.&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$">
+            </property>
+            <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            </property>
+            <property name="aircrafts (port)" class="ptolemy.kernel.util.StringAttribute" value="An object mapping aircraft flight IDs to aircraft state">
+            </property>
+            <property name="dump1090Server (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The address of the web server created by dump1090">
+            </property>
+            <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The port of the web server created by dump1090">
+            </property>
+            <property name="timeToLiveIfNotUpdated (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[140.0, 225.0]">
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="rosbridgeServer" class="ptolemy.data.expr.Parameter" value="localhost">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <port name="server" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="port" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="lat" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="lon" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="alt" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+    </entity>
+    <entity name="Display" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={449, 282, 462, 205}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{300, 160}">
+        </property>
+    </entity>
+    <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={889, 127, 462, 205}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[300.0, 215.0]">
+        </property>
+    </entity>
+    <entity name="Display3" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={859, 420, 462, 205}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[300.0, 280.0]">
+        </property>
+    </entity>
+    <relation name="relation" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation2" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation3" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <link port="DroneLocation.lat" relation="relation"/>
+    <link port="DroneLocation.lon" relation="relation2"/>
+    <link port="DroneLocation.alt" relation="relation3"/>
+    <link port="Display.input" relation="relation"/>
+    <link port="Display2.input" relation="relation2"/>
+    <link port="Display3.input" relation="relation3"/>
+</entity>
