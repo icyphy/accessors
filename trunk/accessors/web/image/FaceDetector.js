@@ -78,7 +78,7 @@ exports.initialize = function() {
         var image = this.get('input');
         var result = faceDetector.filter(image, options);
         this.send('output', result);
-        var numFaces = faceDetector.getFaceCount();
+        var numFaces = faceDetector.numberOfFaces();
         this.send('faceCount', numFaces);
     });
 };
