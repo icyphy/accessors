@@ -61,38 +61,24 @@
         </property>
         <port name="lat1" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="lon1" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="alt1" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="lat2" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="lon2" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="alt2" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="dist" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
     </entity>
     <entity name="Const" class="ptolemy.actor.lib.Const">
@@ -168,11 +154,15 @@
         </property>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={449, 282, 462, 205}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[480.0, 295.0]">
+        </property>
+    </entity>
+    <entity name="DiscreteClock" class="ptolemy.actor.lib.DiscreteClock">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{50, 205}">
         </property>
     </entity>
     <relation name="relation" class="ptolemy.actor.TypedIORelation">
@@ -189,6 +179,8 @@
     </relation>
     <relation name="relation7" class="ptolemy.actor.TypedIORelation">
     </relation>
+    <relation name="relation8" class="ptolemy.actor.TypedIORelation">
+    </relation>
     <link port="LlaDist.lat1" relation="relation"/>
     <link port="LlaDist.lon1" relation="relation3"/>
     <link port="LlaDist.alt1" relation="relation5"/>
@@ -197,10 +189,12 @@
     <link port="LlaDist.alt2" relation="relation6"/>
     <link port="LlaDist.dist" relation="relation7"/>
     <link port="Const.output" relation="relation"/>
+    <link port="Const.trigger" relation="relation8"/>
     <link port="Const2.output" relation="relation2"/>
     <link port="Const3.output" relation="relation3"/>
     <link port="Const4.output" relation="relation4"/>
     <link port="Const5.output" relation="relation5"/>
     <link port="Const6.output" relation="relation6"/>
     <link port="Display.input" relation="relation7"/>
+    <link port="DiscreteClock.output" relation="relation8"/>
 </entity>
