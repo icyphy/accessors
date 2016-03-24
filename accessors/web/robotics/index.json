@@ -4,8 +4,5 @@
     "LocationRosPublisher.js",
     "Scarab.js",
     "DroneLocation.js",
-    "Global2LatLonAlt.js",
-    "Lla2Ecef.js",
-    "LlaDist.js",
-    "EuclideanDist.js"
+    "Global2LatLonAlt.js"
 ]
