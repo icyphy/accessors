@@ -30,11 +30,11 @@
  *  @accessor robotics/DroneLocation.js
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$
- *  @input {trigger}  
- *  @parameter {string} dump1090Server The address of the web server created by dump1090
- *  @parameter {int} port The port of the web server created by dump1090
- *  @parameter {int} timeToLiveIfNotUpdated The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device
- *  @output {object} aircrafts An object mapping aircraft flight IDs to aircraft state
+ *  @parameter {string} rosbridgeServer RosBridge server address  
+ *  @parameter {int} rosbridgePort RosBridge server port  
+ *  @output {double} lat Latitude of the drone
+ *  @output {double} lon Longitude of the drone
+ *  @output {double} alt Altitude of the drone
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should

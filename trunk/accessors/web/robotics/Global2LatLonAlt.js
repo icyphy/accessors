@@ -25,10 +25,10 @@
  *  @accessor robotics/GlobalPosition2LatLonAlt.js
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: GlobalPosition2LatLonAlt.js 1 2016-03-06 16:00:00Z eloi $$
- *  @input {global} global maveros message 
- *  @output {lat} latitude
- *  @output {lon} longitude
- *  @output {alt} altitude
+ *  @input {object} global maveros message 
+ *  @output {double} lat latitude
+ *  @output {double} lon longitude
+ *  @output {double} alt altitude
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
