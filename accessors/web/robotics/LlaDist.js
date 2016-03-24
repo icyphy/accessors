@@ -48,13 +48,13 @@
  */
 
 exports.setup = function() {
-    this.input('lat1');
-    this.input('lon1');
-    this.input('alt1');
-    this.input('lat2');
-    this.input('lon2');
-    this.input('alt2');
-    this.output('dist');
+    this.input('lat1', {'type':'number', 'value':0.0});
+    this.input('lon1', {'type':'number', 'value':0.0});
+    this.input('alt1', {'type':'number', 'value':0.0});
+    this.input('lat2', {'type':'number', 'value':0.0});
+    this.input('lon2', {'type':'number', 'value':0.0});
+    this.input('alt2', {'type':'number', 'value':0.0});
+    this.output('dist', {'type':'number'});
     var lla2ecef1 = this.instantiate('Lla2Ecef','robotics/Lla2Ecef');
     var lla2ecef2 = this.instantiate('Lla2Ecef','robotics/Lla2Ecef');
     var dist = this.instantiate('EuclideanDist','robotics/EuclideanDist');
@@ -70,6 +70,6 @@ exports.setup = function() {
     this.connect(lla2ecef2, 'x', dist, 'x2');
     this.connect(lla2ecef2, 'y', dist, 'y2');
     this.connect(lla2ecef2, 'z', dist, 'z2');
-    this.connect(dist,'dist','dist');
+    this.connect(dist,'dist', 'dist');
  };
 
