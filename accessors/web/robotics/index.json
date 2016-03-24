@@ -5,5 +5,7 @@
     "Scarab.js",
     "DroneLocation.js",
     "Global2LatLonAlt.js",
-    "Lla2Ecef.js"
+    "Lla2Ecef.js",
+    "LlaDist.js",
+    "EuclideanDist.js"
 ]
