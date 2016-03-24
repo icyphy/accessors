@@ -64,9 +64,18 @@ exports.setup = function() {
     
     this.input('server',{'visibility': 'expert'});
     this.input('port',{'visibility': 'expert'});
-    this.output('lat');
-    this.output('lon');
-    this.output('alt');
+    this.output('lat', {
+	type: 'double',
+	value: 0.0
+    });
+    this.output('lon', {
+	type: 'double',
+	value: 0.0
+    });
+    this.output('alt', {
+	type: 'double',
+	value: 0.0
+    });
     this.connect('server',sub,'server');
     this.connect('port',sub,'port');
     this.connect(sub, 'received', g, 'global');
