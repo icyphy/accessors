@@ -1402,7 +1402,6 @@ function reactIfExecutable(id, suppress) {
             	var inputs = document.getElementsByClassName('inputRole');
             	var element;
             	var found, visible;
-            	// 6 parents up is the <div id="GeoCoder">
             	
             	for (var i = 0; i < inputs.length; i++) {
             		// Element at 6 parents up has accessor name.
@@ -1418,7 +1417,6 @@ function reactIfExecutable(id, suppress) {
             		visible = true;
             		
             		while (element.parentNode != null) {
-            			//if (element.nodeName.toLowerCase() === "td" &&
             			if (element.classList.contains("invisible")) {
             				visible = false;
             			}
@@ -1429,9 +1427,7 @@ function reactIfExecutable(id, suppress) {
             			element = element.parentNode;
             		}
             		
-            		// if (inputs[i].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id === id &&
             		if (found && visible) {
-            			//!inputs[i].parentNode.classList.contains("invisible")) {
             			if (inputs[i].value != null && inputs[i].value != "") {
                 			// Do not call provideInput for blank fields.
                 			// Use "" in a form field to send an empty string as input.
