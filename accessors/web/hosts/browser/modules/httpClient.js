@@ -231,7 +231,7 @@ function ClientRequest(options, responseCallback) {
 	}
 
 	// Set the Content-Length header
-	if (options.body !== null && options.body !== undefined) {
+	if (options.body !== null && options.body !== undefined && options.body != "") {
 		var headers;
 		if (typeof options.headers == "undefined") {
 			headers = {};
@@ -288,7 +288,7 @@ ClientRequest.prototype.end = function() {
 					// Anything data, String textStatus, jqXHR jqXHR
 					self._response(xhr, data);
 				},
-				error: function() {
+				error: function(xhr, textStatus, errorThrown) {
 					self._handleError("Error issuing request to " + urlString);
 				}
 		}
