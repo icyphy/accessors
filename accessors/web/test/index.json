@@ -4,12 +4,14 @@
     "TestBaseC.js",
     "TestComposite.js",
     "TestCompositeSpontaneous.js",
+    "TestDisplay.js",
     "TestDerivedAgainA.js",
     "TestDerivedC.js",
     "TestFunctions.js",
     "TestGain.js",
     "TestImplement.js",
     "TestInheritance.js",
+    "TestRamp.js",
     "TestRequire.js",
     "TestSpontaneous.js"
 ]
