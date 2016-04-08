@@ -1255,9 +1255,10 @@ Accessor.prototype.react = function(name) {
                         // Remove the input handler.
                         thiz.removeInputHandler(
                                 thiz.inputHandlers[name][i].handle);
-                        thiz.error('Exception occurred in input handler.' +
-                                ' Handler has been removed: ' +
-                                exception);
+                        thiz.error('commonHost.js, react(), invoking a specific handler for \"' +
+                                   name + '\": Exception occurred in input handler,' +
+                                   ' which has now has been removed.  Exception was: ' +
+                                   exception);
                     }
                 }
             }
@@ -1295,9 +1296,9 @@ Accessor.prototype.react = function(name) {
                     // Remove the input handler.
                     thiz.removeInputHandler(
                             thiz.anyInputHandlers[j].handle);
-                    thiz.error('Exception occurred in input handler.' +
-                            ' Handler has been removed: ' +
-                            exception);
+                    thiz.error('commonHost.js, react() invoking handlers registered to handle any input: Exception occurred in input handler,' +
+                               ' which has now has been removed.  Exception was: ' +
+                               exception);
                 }
             }
         }
