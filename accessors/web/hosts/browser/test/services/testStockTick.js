@@ -27,9 +27,6 @@ describe('Test StockTick results', function () {
 		         JSON.stringify(fakeData)
 		]);	
 		
-		// For some reason, declaring instance outside of the "it" block
-		// does not seem to work.  So, declare it here.
-		var instance = window.accessors['TestREST'];
 		reactIfExecutable('StockTick');
 		
 		// Wait a bit for request to complete.

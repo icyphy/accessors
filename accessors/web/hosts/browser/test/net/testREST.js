@@ -5,10 +5,6 @@ var expect = chai.expect;
 
 describe('Test REST results', function () {
 	it('Should eventually POST a JSON value', function(done) {
-		// For some reason, declaring instance outside of the "it" block
-		// does not seem to work.  So, declare it here.
-		var instance = window.accessors['TestREST'];
-			
 		document.getElementById("REST.options").value = 
 			"{\"method\" : \"POST\", \"url\" : \"http://localhost:8088\"}";
 		document.getElementById("REST.command").value = "test";
@@ -26,8 +22,6 @@ describe('Test REST results', function () {
 	});
 		
 	it('Should eventually PUT a JSON value', function(done) {
-		var instance = window.accessors['TestREST'];
-			
 		document.getElementById("REST.options").value = 
 			"{\"method\" : \"PUT\", \"url\" : \"http://localhost:8088\"}";
 		document.getElementById("REST.command").value = "test";
@@ -45,8 +39,6 @@ describe('Test REST results', function () {
 	});
 		
 	it('Should eventually GET the value that was PUT', function(done) {
-		var instance = window.accessors['TestREST'];
-			
 		document.getElementById("REST.options").value = 
 			"{\"method\" : \"GET\", \"url\" : \"http://localhost:8088\"}";
 		document.getElementById("REST.body").value = "";
