@@ -1153,7 +1153,7 @@ function getIndex(baseDirectory, docElement, indent) {
                     	content = document.createElement('a');
                     	
                     	// Remove .accessors/ from baseDirectory.
-                    	var querystring = "index2.html?accessor=" + 
+                    	var querystring = "index.html?accessor=" + 
                     		baseDirectory.substring(11, baseDirectory.length) + 
                     		item.substring(0, item.length - 3);
                     	querystring = querystring.replace('/', '.');
