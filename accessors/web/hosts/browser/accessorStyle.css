@@ -7,6 +7,28 @@
     background-color: #252c58;
     color: #f8da73;
 }
+
+/* Accessor menu links are styled a little differently than other menu links. 
+   The #accessorMenu gets its own ID since the #menu styling in UCB.css 
+   overrides any sub-divs if it is loaded after accessorStyle.css. */ 
+#accessorMenu {
+	font-size:85%;
+	text-align:left;
+}
+
+#acceesorMenu ul {
+	list-style-type:none;
+}
+
+#accessorMenu a {
+	display:block; 
+	width:170px;
+	text-indent: 10px;
+	color:#e7c254;
+	background:#252c58;
+	text-decoration:none;
+}
+
 /* Consistency with buttons. */
 .accessorButton {
     font-size: 100%;
