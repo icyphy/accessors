@@ -21,9 +21,19 @@ var server = http.createServer();
 server.on('request', function(request, response) {
     
     var url = request.url;
+    var querystring = "";
+    
     // Strip any leading slashes.
     while (url.substring(0,1) == '/') {
         url = url.substring(1);
+    }
+    
+    var index = url.lastIndexOf('?');
+    
+    // Extract any querystring parameters
+    if (index >= 0) {
+    	querystring = url.substring(index, url.length);
+    	url = url.substring(0, index);
     }
     
     if (request.method === 'GET') { 
@@ -36,13 +46,9 @@ server.on('request', function(request, response) {
         } else {
             // Otherwise, look for a file
             
-            // Strip leading 'accessors/'.
-            // This is because the terraswarm.org server serves pages with paths like:
-            //    '/accessors/hosts/common/test/TestAccessor.js'
-            // but the actual file location is:
-            //    '/accessors/web/hosts/common/test/TestAccessor
-            // and hence the path should not include any leading '/accessors/'.
-            if (url.indexOf('accessors/') == 0) {
+        	// This test server may be used to test pages for terraswarm.org.
+        	// The URLS for these pages have a leading 'accessors/'. Remove it.
+            if (url.indexOf('accessors/') === 0) {
                 url = url.substring(10);
             }
 

@@ -670,73 +670,7 @@ function generateAccessorDirectory(element) {
     }
     element.populating = true;
     
-    // Fetch the top-level index.json file and puts its contents in the specified
-    // docElement.
-    // This inner function will be invoked recursively to populate subdirectories.
-    function getIndex(baseDirectory, docElement, indent) {
-        var request = new XMLHttpRequest();
-        request.overrideMimeType("application/json");
-        var path = baseDirectory + 'index.json';
-        request.open('GET', path, true);    // Pass true for asynchronous
-        request.onreadystatechange = function() {
-            // If the request is complete (state is 4)
-            if (request.readyState === 4) {
-                // If the request was successful.
-                if (request.status === 200) {
-                    var response = JSON.parse(request.responseText);
-                    // Expected response is a list of directories and/or .js files.
-                    for (var i = 0; i < response.length; i++) {
-                        var item = response[i];
-                        var content = document.createElement('div');
-                        content.setAttribute('class', 'accessorDirectoryItem');
-                        content.style.marginLeft = indent + 'px';
-                        docElement.appendChild(content);
-                        if (item.indexOf('.js') === item.length - 3) {
-                            // Accessor reference.
-                            // Strip off the .js
-                            content.innerHTML = item.substring(0, item.length - 3);
-                            // If the document has an element with id =
-                            // accessorDirectoryTarget, then create a reaction to a
-                            // click.
-                            if (document.getElementById('accessorDirectoryTarget')) {
-                                content.onclick = (function(baseDirectory, item) {
-                                    return function() {
-                                        generateAccessorHTML(baseDirectory + item,
-                                                'accessorDirectoryTarget');
-                                    };
-                                })(baseDirectory, item);
-                            }
-                        } else if (item.indexOf('.xml') !== -1) {
-                            // Obsolete accessor reference.
-                            continue;
-                        } else {
-                            // Directory reference.
-                            // FIXME: + and - for expanded and not.
-                            content.innerHTML = item;
-                            var id = (baseDirectory + item);
-                            // Create an element for the subdirectory.
-                            var subElement = document.createElement('div');
-                            // Start it hidden.
-                            subElement.style.display = 'none';
-                            subElement.id = id;
-                            docElement.appendChild(subElement);
-                            content.onclick = (function(id, indent, getIndex) {
-                                return function() {
-                                    toggleVisibility(id, indent, getIndex);
-                                };
-                            })(id, indent + 10, getIndex);
-                        }
-                    }
-                } else {
-                    var pp = document.createElement('p');
-                    pp.setAttribute('class', 'accessorError');
-                    pp.innerHTML = 'No index.json file';
-                    docElement.appendChild(pp);
-                }
-            }
-        };
-        request.send();
-    }
+
     // Fetch the top-level index.json file.
     getIndex('/accessors/', element, 0);
 }
@@ -1187,6 +1121,85 @@ function getBaseDocumentation(docs, path) {
     }
 }
 
+/** Fetch the top-level index.json file and puts its contents in the specified
+ *  docElement.  This function will be invoked recursively to populate 
+ *  subdirectories.
+ * @param baseDirectory The directory to fetch; for example, net for the 
+ *  net/REST accessor.
+ * @param docElement The HTML document element to add content to.
+ * @param indent The amount of left indentation, in pixels.
+ */
+
+function getIndex(baseDirectory, docElement, indent) {
+    var request = new XMLHttpRequest();
+    request.overrideMimeType("application/json");
+    var path = baseDirectory + 'index.json';
+    request.open('GET', path, true);    // Pass true for asynchronous
+    request.onreadystatechange = function() {
+        // If the request is complete (state is 4)
+        if (request.readyState === 4) {
+            // If the request was successful.
+            if (request.status === 200) {
+                var response = JSON.parse(request.responseText);
+                // Expected response is a list of directories and/or .js files.
+                for (var i = 0; i < response.length; i++) {
+                    var item = response[i];
+                    var content;
+                    
+                    if (item.indexOf('.js') === item.length - 3) {
+                        // Accessor reference.
+                        // Strip off the .js
+                    	
+                    	content = document.createElement('a');
+                    	
+                    	// Remove .accessors/ from baseDirectory.
+                    	var querystring = "index2.html?accessor=" + 
+                    		baseDirectory.substring(11, baseDirectory.length) + 
+                    		item.substring(0, item.length - 3);
+                    	querystring = querystring.replace('/', '.');
+                    	content.href = querystring;
+                    	
+                    	content.setAttribute('class', 'accessorDirectoryItem');
+                    	docElement.appendChild(content);
+                        content.innerHTML = item.substring(0, item.length - 3);
+                        
+                    } else if (item.indexOf('.xml') !== -1) {
+                        // Obsolete accessor reference.
+                        continue;
+                    } else {
+                        // Directory reference.
+                        // FIXME: + and - for expanded and not.
+                        content = document.createElement('div');
+                        content.setAttribute('class', 'accessorDirectoryItem');
+                        content.style.marginLeft = indent + 'px';
+                        docElement.appendChild(content);
+                        
+                        content.innerHTML = item;
+                        var id = (baseDirectory + item);
+                        // Create an element for the subdirectory.
+                        var subElement = document.createElement('div');
+                        // Start it hidden.
+                        subElement.style.display = 'none';
+                        subElement.id = id;
+                        docElement.appendChild(subElement);
+                        content.onclick = (function(id, indent, getIndex) {
+                            return function() {
+                                toggleVisibility(id, indent, getIndex);
+                            };
+                        })(id, indent + 10, getIndex);
+                    }
+                }
+            } else {
+                var pp = document.createElement('p');
+                pp.setAttribute('class', 'accessorError');
+                pp.innerHTML = 'No index.json file';
+                docElement.appendChild(pp);
+            }
+        }
+    };
+    request.send();
+}
+
 /** Get data from an input or parameter. This is used by get() and getParameter().
  *  @param name The name of the input (a string).
  *  @param role One of 'input' or 'parameter'.
@@ -1428,7 +1441,7 @@ function reactIfExecutable(id, suppress) {
             		}
             		
             		if (found && visible) {
-            			if (inputs[i].value != null && inputs[i].value != "") {
+            			if (inputs[i].value !== null && inputs[i].value !== "") {
                 			// Do not call provideInput for blank fields.
                 			// Use "" in a form field to send an empty string as input.
             				provideInput(id, inputs[i].getAttribute('name'), 
