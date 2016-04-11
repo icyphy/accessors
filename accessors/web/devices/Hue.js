@@ -145,33 +145,36 @@ function Hue() {
 	/** Get light settings from input and issue a command to the bridge. */	
 	hue.issueCommand = function() {
     	var commands = self.get('commands');
-		
+		console.log("Issuing command.");
+
 		// (Re)connect with the bridge
     	if (ipAddress !== self.getParameter('bridgeIP') || userName !== self.getParameter('userName')) {
+    		console.log("New bridge parameters detected.");
     		hue.connect();
     	}
 
     	// No connection to the bridge, ignore request.
     	if (!authenticated) {
+   			console.log("Not authenticated, ignoring command.");
     		return;
     	}
     	
     	// FIXME: Type check input
-		//console.log(JSON.stringify(commands));
+		console.log(JSON.stringify(commands));
+
+		// FIXME: If only one record, also accept input!!!
 
     	// Iterate over commands (assuming input is an array of commands)
 		for (var i = 0; i < commands.length; i++) {
     		var command = {};
     		var lightID = commands[i].id;
     		
+console.log("In loop.");
+
     		// Check whether input is valid
     		if (typeof lightID === 'undefined') {
     			self.error("Invalid command (" + i + "): please specify light id.");
     		} else {
-    			// Check whether light is reacheable
-			    if (hue.reachableLights.indexOf(lightID) == -1) {
-	        		console.log('Light ' + lightID + ' may not be reachable.');
-	    		}
 
 	    		// Keep track of changed lights to turn off during wrap up.
 	    		if (hue.changedLights.indexOf(lightID) == -1) {
@@ -197,6 +200,7 @@ function Hue() {
     		}
 
     		if (Object.keys(command).length < 1) {
+    			console.log("ERROR");
     			self.error("Invalid command (" + i + "): please specify at least one property.");
     		}
     		else {
@@ -206,7 +210,7 @@ function Hue() {
 	    			timeout : 10000,
 	    			url : url + "/" + userName + "/lights/" + lightID + "/state/"
 	    		};
-	    		console.log("PUT request that is not responding:" + JSON.stringify(options));
+	    		console.log("PUT request:" + JSON.stringify(options));
 	    		http.put(options, function(response) {
 	    			console.log(JSON.stringify(response));
 	        		if (isNonEmptyArray(response) && response[0].error) {
@@ -257,7 +261,8 @@ function Hue() {
     	            console.log("Got a response from the bridge...");
     	            
     		        var lights = JSON.parse(response.body);
-    		
+    				console.log("Reponse: " + response.body);
+
     		        if (isNonEmptyArray(lights) && lights[0].error) {
     		            var description = lights[0].error.description;
     		
@@ -274,12 +279,13 @@ function Hue() {
     		                self.error(description);
     		            }
     		        } else if (lights) {
+    		        	console.log("Authenticated!");
     		        	authenticated = true;
     		            hue.lights = lights;
     		        }
     		    }
     		} else {
-    			self.error("Received a NULL response from the bridge.");
+    			self.error("Unable to connect to bridge.");
     		}
     	}).on('error', bridgeRequestErrorHandler);
         bridgeRequest.on('error', bridgeRequestErrorHandler);
