@@ -169,8 +169,6 @@ function Hue() {
     		var command = {};
     		var lightID = commands[i].id;
     		
-console.log("In loop.");
-
     		// Check whether input is valid
     		if (typeof lightID === 'undefined') {
     			self.error("Invalid command (" + i + "): please specify light id.");
@@ -200,17 +198,17 @@ console.log("In loop.");
     		}
 
     		if (Object.keys(command).length < 1) {
-    			console.log("ERROR");
+    			//console.log("ERROR");
     			self.error("Invalid command (" + i + "): please specify at least one property.");
     		}
     		else {
-    			console.log("Command: " + JSON.stringify(command));
+    			//console.log("Command: " + JSON.stringify(command));
     			var options = {
 	    			body : JSON.stringify(command),
 	    			timeout : 10000,
 	    			url : url + "/" + userName + "/lights/" + lightID + "/state/"
 	    		};
-	    		console.log("PUT request:" + JSON.stringify(options));
+	    		//console.log("PUT request:" + JSON.stringify(options));
 	    		http.put(options, function(response) {
 	    			console.log(JSON.stringify(response));
 	        		if (isNonEmptyArray(response) && response[0].error) {
@@ -272,8 +270,7 @@ console.log("In loop.");
     		            	"Push the link button on the Hue bridge to register.");
     		            	//self.error(userName + " is not a registered user.\n" +
     		            	//" Push the link button on the Hue bridge to register.");
-    		                console.log("Printing my shizzle");           
-    		            	handleRegisterUser = setTimeout(registerUser, registerInterval);
+    		                handleRegisterUser = setTimeout(registerUser, registerInterval);
     		            } else {
     		            	console.error('Error occurred when trying to get Hue light status.');
     		                self.error(description);
@@ -429,7 +426,7 @@ exports.wrapup = function() {
         var self = this;
         
         http.put(options, function(response) {
-        	console.log(JSON.stringify(response));
+        	//console.log(JSON.stringify(response));
             if (isNonEmptyArray(response) && response[0].error) {
                 var lightID = self.get('lightID').toString();
                 errorLights.push(lightID);
