@@ -145,6 +145,10 @@ instantiateAndInitialize = function(accessorNames) {
     }
 }
 
+// Make the Accessor constructor visible so that we may use it in the
+// Cape Code Accessor Code Generator.
+Accessor = commonHost.Accessor;
+
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
 provideInput = commonHost.provideInput;
@@ -152,6 +156,7 @@ setParameter = commonHost.setParameter;
 
 // In case this gets used a module, create an exports object.
 exports = {
+    'Accessor': Accessor,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
