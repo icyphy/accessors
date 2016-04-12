@@ -145,7 +145,7 @@ function Hue() {
 	/** Get light settings from input and issue a command to the bridge. */	
 	hue.issueCommand = function() {
     	var commands = self.get('commands');
-		console.log("Issuing command.");
+		//console.log("Issuing command.");
 
 		// (Re)connect with the bridge
     	if (ipAddress !== self.getParameter('bridgeIP') || userName !== self.getParameter('userName')) {
@@ -160,7 +160,7 @@ function Hue() {
     	}
     	
     	// FIXME: Type check input
-		console.log(JSON.stringify(commands));
+		//console.log(JSON.stringify(commands));
 
 		// FIXME: If only one record, also accept input!!!
 
@@ -210,7 +210,7 @@ function Hue() {
 	    		};
 	    		//console.log("PUT request:" + JSON.stringify(options));
 	    		http.put(options, function(response) {
-	    			console.log(JSON.stringify(response));
+	    			//console.log(JSON.stringify(response));
 	        		if (isNonEmptyArray(response) && response[0].error) {
 	            		self.error("Server responds with error: " + 
 	            		response[0].error.description);
@@ -304,9 +304,14 @@ function Hue() {
 	 */
 	function limit(value, low, high) {
 	    var parsed = parseInt(value);
-	    if (!parsed) {
-	        self.error("Expected a number between " + low + " and " + high + ", but got " + value);
-	        return 0;
+	    if (typeof parsed === 'undefined') {
+	    	parsed = parseFloat(value);
+	    	if (typeof parsed === 'undefined') {
+	        	self.error("Expected a number between " + low + " and " + high + ", but got " + value);
+	        	return 0;
+	        } else {
+	        	parsed = Math.floor(parsed);
+	        }
 	    }
 	    if (parsed < low) {
 	        return low;
@@ -362,7 +367,7 @@ function Hue() {
 				// contact the bridge and find the available lights
 				contactBridge();
 	        } else {
-	        	console.log("Response " + JSON.stringify(response));
+	        	//console.log("Response " + JSON.stringify(response));
 	        	console.log(JSON.stringify(JSON.parse(response.body)[0].success));
 	            throw "Unknown error registering new user";
 	        }
