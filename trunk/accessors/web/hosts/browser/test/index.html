@@ -5,30 +5,50 @@
     <title>Browser Swarmlet Host Tests</title>
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorPageStyle.css">
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    
+    <!-- Check the URL for a querystring specifying an accessor to load (optional).
+    	 E.g. https://www.terraswarm.org/accessors/library/index.html?accessor=services.StockTick 
+    	 The querystring uses . instead of / since / is a special character in URLs. -->
+    <script>
+    	window.onload = function() {
+	    	var url = window.location.href;
+	    	var index = url.lastIndexOf('?');
+	    	var querystring = "", accessor = "";
+	    	var slashIndex = -1;
+	    	
+	    	if (index >= 0){
+	    		querystring = url.substring(index + 1, url.length);
+	    		
+	    		// This code assumes that "accessor" is the only querystring 
+	    		// parameter passed.  Multiple parameters are not supported.
+	    		if (querystring.startsWith("accessor=")){
+	    			querystring = querystring.substring(9, querystring.length);
+	    			
+	    			// Querystring uses . instead of / which is a special character.
+	    			// Replace . with /
+	    			querystring = querystring.replace('.', '/');
+	    			generateAccessorHTML(querystring, 'accessorDirectoryTarget');
+	    			
+	    			// Call toggleVisbility() to expand the directory that this
+	    			// this accessor is located in.  For example, expand "net"
+	    			// for "net/REST".
+	    			slashIndex = querystring.indexOf("/");
+	    			if (slashIndex > 0) {
+	    				toggleVisibility("/accessors/" + querystring.substring(0, slashIndex), 0, getIndex);
+	    			}
+	    		}
+	    	}
+    	}
+   
+    </script>
 </head>
 <body>
-<div class="header"><h1 class="header">Browser Swarmlet Host Tests</h1></div>
+<h1 class="header">Browser Swarmlet Host Tests </h1>
 <div id="container">
-    <div id="navcol" class="header">
-        <a href="/accessors/index.html">Accessors Home</a><br>
-        <a href="/accessors/hosts/browser/test/index.html">Browser Tests Home</a><br>
-        <a href="/accessors/hosts/browser/test/testAccessorDirectory.html">Accessor Directory</a><br>
-        <hr>
-        <a href="/accessors/hosts/browser/test/testWebPage.html">TestAccessor</a><br>
-        <hr>
-        <a href="/accessors/hosts/browser/test/httpClient/testCORS.html">CORS</a><br>
-        <a href="/accessors/hosts/browser/test/httpClient/testJSONP.html">JSONP</a><br>
-        <a href="/accessors/hosts/browser/test/httpClient/testREST.html">REST</a><br>
-        <a href="/accessors/hosts/browser/test/httpClient/testStockTick.html">StockTick</a><br>
-        <a href="/accessors/hosts/browser/test/httpClient/testWeather.html">Weather</a><br>
-    </div>
-    <div id="contentcol">
-    <div>
-<h1 style="margin:0">Browser Swarmlet Host Tests</h1>
 <hr>
-Click on the left to view test pages for the browser swarmlet host.
+The browser swarmlet host is included on accessors.org and terraswarm.org pages.  Please click on the left menu to try accessors.
 <p>
-If you do not see accessors in the tests, then you are viewing this page on a server that does
+If you do not see accessors, then you are viewing this page on a server that does
 not include the browser swarmlet host. You can either point your browser to a server
 that does at <a href="http://www.terraswarm.org/accessors/hosts/browser/test/index.html">http://accessors.org/hosts/browser/test/index.html</a>,
 or you can run your own test server, provided in the accessors <a href="http://www.terraswarm.org/accessors/svn.html">SVN repository</a>, on your local host:
@@ -40,6 +60,15 @@ where "accessors" is the root of your repository copy. Then point your browser t
 <quote>
    <a href="http://localhost:8088/hosts/browser/test/index.html">http://localhost:8088/hosts/browser/test/index.html</a>
 </quote>
+<p>
+Try some standalone test pages.  These pages have all necessary scripts, but without the terraswarm.org formatting:
+<ul>
+	<li> <a href="/accessors/hosts/browser/test/httpClient/testCORS.html">CORS</a> </li>
+    <li> <a href="/accessors/hosts/browser/test/httpClient/testJSONP.html">JSONP</a> </li>
+    <li> <a href="/accessors/hosts/browser/test/httpClient/testREST.html">REST</a></li>
+    <li> <a href="/accessors/hosts/browser/test/httpClient/testStockTick.html">StockTick</a> </li>
+    <li> <a href="/accessors/hosts/browser/test/httpClient/testWeather.html">Weather</a> </li>
+</ul>
 If you do not see documentation for the accessors, you can create the documentation as follows:
 <pre>
    cd accessors/web
@@ -47,7 +76,6 @@ If you do not see documentation for the accessors, you can create the documentat
 </pre>
 <hr>
 <p>See also <a href="README.txt">README.txt</a>.</p>
-    </div>
 </div>
 </body>
 </html>
