@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8"></meta>
     <title>Browser Swarmlet Host Tests</title>
-    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorPageStyle.css">
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
     
     <!-- Check the URL for a querystring specifying an accessor to load (optional).
@@ -60,6 +59,14 @@ where "accessors" is the root of your repository copy. Then point your browser t
 <quote>
    <a href="http://localhost:8088/hosts/browser/test/index.html">http://localhost:8088/hosts/browser/test/index.html</a>
 </quote>
+</p>
+<p>
+If you do not see documentation for the accessors, you can create the documentation as follows:
+<pre>
+   cd accessors/web
+   ant
+</pre>
+</p>
 <p>
 Try some standalone test pages.  These pages have all necessary scripts, but without the terraswarm.org formatting:
 <ul>
@@ -69,13 +76,9 @@ Try some standalone test pages.  These pages have all necessary scripts, but wit
     <li> <a href="/accessors/hosts/browser/test/httpClient/testStockTick.html">StockTick</a> </li>
     <li> <a href="/accessors/hosts/browser/test/httpClient/testWeather.html">Weather</a> </li>
 </ul>
-If you do not see documentation for the accessors, you can create the documentation as follows:
-<pre>
-   cd accessors/web
-   ant
-</pre>
-<hr>
+</p>
 <p>See also <a href="README.txt">README.txt</a>.</p>
+<hr>
 </div>
 <div id="accessorDirectoryTarget"></div>
 </body>
