@@ -103,6 +103,40 @@ if (!window.hasOwnProperty('browserJSLoaded')) {
 	window.browserJSLoaded = true;
 } 
 
+// Check the URL for a querystring specifying an accessor to load (optional).
+// This code assumes that "accessor" is the only querystring parameter passed.
+// Multiple parameters are not supported.
+// E.g. https://www.terraswarm.org/accessors/library/index.html?accessor=services.StockTick 
+// The querystring uses . instead of / since / is a special character in URLs. -->
+window.onload = function() {
+	var url = window.location.href;
+	var index = url.lastIndexOf('?');
+	var querystring = "", accessor = "";
+	var slashIndex = -1;
+	
+	if (index >= 0){
+		querystring = url.substring(index + 1, url.length);
+		
+		// This code assumes that "accessor" is the only querystring parameter passed.
+		if (querystring.startsWith("accessor=")){
+			querystring = querystring.substring(9, querystring.length);
+			
+			// Querystring uses . instead of / which is a special character.
+			// Replace . with /
+			querystring = querystring.replace('.', '/');
+			generateAccessorHTML(querystring, 'accessorDirectoryTarget');
+			
+			// Call toggleVisbility() to expand the directory that this
+			// this accessor is located in.  For example, expand "net"
+			// for "net/REST".
+			slashIndex = querystring.indexOf("/");
+			if (slashIndex > 0) {
+				toggleVisibility("/accessors/" + querystring.substring(0, slashIndex), 0, getIndex);
+			}
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 //// Functions
 
