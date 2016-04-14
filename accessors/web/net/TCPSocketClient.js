@@ -308,7 +308,7 @@ exports.toSendInputHandler = function () {
                     ". Consider setting discardMessagesBeforeOpen to true.");
                 return;
             }
-            pendingSends.push(data);
+            pendingSends.push(this.get('toSend'));
         } else {
             console.log('Discarding data because socket is not open.');
         }
