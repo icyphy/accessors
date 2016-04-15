@@ -27,8 +27,10 @@
 // THE SOFTWARE
  
 // FIXME: Move the Duktape code elsewhere so as to avoid copyright issues.
+/** Search for a module.
+ */
 Duktape.modSearch = function (id, require, exports, module) {
-        /* readFile(): as above.
+    /* readFile(): as above.
      * loadAndInitDll(): load DLL, call its init function, return true/false.
      */
     var name;
@@ -37,7 +39,7 @@ Duktape.modSearch = function (id, require, exports, module) {
 
     print('loading module:', id);
 
-        /* DLL check.  DLL init function is platform specific.  It gets 'exports'
+    /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
      */
     // name = '/modules/' + id + '.so';
@@ -77,11 +79,12 @@ Duktape.modSearch = function (id, require, exports, module) {
     return src;
 }
 
+// We expect to run duk from the hosts directory.  See
+// https://www.terraswarm.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
+
 var commonHost = require("common/commonHost");
 
-// Indicator of whether the interactive host is already running.
-var interactiveHostRunning = false;
-
+// Duktape does not have path nor fs modules.
 //var path = require('path');
 //var fs = require('fs');
 
@@ -140,103 +143,76 @@ instantiate = function(accessorName, accessorClass) {
     return result;
 };
 
-/** Start an interactive version of this host.
- *  This will produce a prompt on stdout that accepts JavaScript statements
- *  and executes them.
- */ 
-startHost = function() {
-    if (interactiveHostRunning) {
-        print('Interactive host is already running.');
-        return;
-    }
-    interactiveHostRunning = true;
-    var readline = require('readline');
-    
-    // Support auto completion for common commands.
-    function completer(line) {
-        var completions = [
-            'exit',
-            'help',
-            'instantiate(',
-            'provideInput(',
-            'setParameter(',
-            'quit',
-        ];
-        var hits = completions.filter(function(candidate) {
-            // FIXME: need a better filter.
-            return candidate.indexOf(line) === 0;
-        });
-        // show all completions if none found
-        return [hits.length ? hits : completions, line];
-    }
-    // FIXME: make options passable to startHost()?
-    var rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      completer: completer,
-    });
-    // Emitted whenever a command is entered.
-    rl.on('line', function(command) {
-        // Remove any trailing semicolon.
-        command = command.replace(/;$/, '');
-        
-        ///////////////
-        // exit and quit functions.
-        // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
-        // Also, tolerate trailing semicolon.
-        if (command.match(/^\s*quit\s*$/i) ||
-                command.match(/^\s*exit\s*$/i)) {
-            print('exit');
-            interactiveHostRunning = false;
-            rl.close();
-            return;
-        }
-        if (command.match(/^\s*help\s*$/i)) {
-            var helpFile = path.join(__dirname, 'nodeHostHelp.txt');
-            var helpText = fs.readFileSync(helpFile, 'utf8');
-            print(helpText);
-            rl.prompt();
-            return;
-        }
+/** If there are one or more arguments after duktapeHostInvoke.js, then
+ * assume that each argument names a file defining an accessor.  Each
+ * accessor is instantiated and initialized.
+ *
+ * See duktapeHostInvoke.js for a file that requires duktapeHost.js
+ * and then invokes this method.
+ *
+ * Sample usage:
+ *
+ * duktapeHostInvoke.js contains:
+ * <pre>
+ * var commonHost = require('./duktapeHost.js');
+ * // Remove "node.js" from the array of command line arguments.
+ * process.argv.shift(); 
+ * // Remove "duktapeHostInvoke.js" from the array of command line arguments.
+ * process.argv.shift(); 
+ * instantiateAndInitialize(process.argv);
+ * </pre>
+ *
+ * To invoke:
+ * <pre>
+ *   node duktapeHostInvoke.js test/TestComposite
+ * </pre>
+ *
+ * @param accessorNames An array of accessor names in a format suitable
+ * for getAccessorCode(name).
+ */
+instantiateAndInitialize = function(accessorNames) {
 
-        ///////////////
-        // Evaluate anything else.
-        try {
-            // Using eval.call evaluates in the context 'this', which is presumably
-            // the global scope.
-            print(eval.call(this, command));
-        } catch(error) {
-            print(error);
-        }
-        rl.prompt();
-    });
-    // Emitted whenever the input stream receives a ^C.
-    rl.on('SIGINT', function() {
-        rl.question('Are you sure you want to exit?', function(answer) {
-            if (answer.match(/^y(es)?$/i)) {
-                rl.close();
-            }
-        });
-    });
-    // Emitted whenever the input stream is sent to the background with ^Z
-    // and then continued with fg. Does not work on Windows.
-    rl.on('SIGCONT', function() {
-        // `prompt` will automatically resume the stream
-        rl.prompt();
-    });
+    // FIXME: This method is not yet completely implemented.
+
     
-    print('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
-    rl.setPrompt('nsh> ');
-    rl.prompt();
-};
+    var length = accessorNames.length
+    for (index = 0; index < length; ++index) {
+        // The name of the accessor is basename of the accessorClass.
+        var accessorClass = accessorNames[index];
+        // For example, if the accessorClass is
+        // test/TestComposite, then the accessorName will be
+        // TestComposite.
+
+        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        var accessorName = accessorClass.substring(startIndex);
+        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
+            accessorName = accessorName.substring(1);
+        }
+        // If the same accessorClass appears more than once in the
+        // list of arguments, then use different names.
+        // To replicate: duk duktape/duktapeHostInvoke.js test/TestComposite test/TestComposite
+        if (index > 0) {
+            accessorName += "_" + (index - 1);
+        }
+        var accessor = instantiate(accessorName, accessorClass);
+        accessor.initialize();
+    }
+}
+
+// Make the Accessor constructor visible so that we may use it in the
+// Cape Code Accessor Code Generator.
+// See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#ExportAccessor
+Accessor = commonHost.Accessor;
 
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
 
-require('duktape/duktape/examples/eventloop/ecma_eventloop');
+////////////////////////////////////////
+// Duktape host-specific require() calls and functions should go below here.
 
+require('duktape/duktape/examples/eventloop/ecma_eventloop');
 
 /*
  *  Timer API
@@ -339,16 +315,12 @@ console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); 
 
 // In case this gets used a module, create an exports object.
 exports = {
+    'Accessor': Accessor,
     'clearInterval': clearInterval,
     'instantiate': instantiate,
+    'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
-    'startHost': startHost,
     'setInterval': setInterval,
     'setTimeout': setTimeout,
 };
-
-
-// FIXME: This should be in a separate file so that these functions can be used
-// without starting an interactive host.
-//startHost();
