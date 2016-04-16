@@ -41,7 +41,7 @@
  
 // FIXME: Move the Duktape code elsewhere so as to avoid copyright issues.
 Duktape.modSearch = function (id, require, exports, module) {
-        /* readFile(): as above.
+    /* readFile(): as above.
      * loadAndInitDll(): load DLL, call its init function, return true/false.
      */
     var name;
@@ -86,4 +86,6 @@ Duktape.modSearch = function (id, require, exports, module) {
 }
 
 var duktapeHost = require("duktape/duktapeHost");
-var duktapeHost = require("common/test/testCommon");
+var testCommon = require("common/test/testCommon");
+
+
