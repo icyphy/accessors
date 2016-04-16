@@ -212,7 +212,7 @@ setParameter = commonHost.setParameter;
 ////////////////////////////////////////
 // Duktape host-specific require() calls and functions should go below here.
 
-require('duktape/duktape/examples/eventloop/ecma_eventloop');
+var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');
 
 /*
  *  Timer API
@@ -300,7 +300,7 @@ function setInterval(func, delay) {
 }
 
 // FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
-function clearInterval(timer_id) {
+var clearInterval = function (timer_id) {
     var evloop = EventLoop;
 
     if (typeof timer_id !== 'number') {
@@ -312,6 +312,19 @@ function clearInterval(timer_id) {
 // Define console.log for our use.
 // Copied from http://duktape.org/guide.html#compatibility
 console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); } };
+
+// To print the contents of an object in Duktape, download json2.js
+//   cd hosts/duktape
+//   wget https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json2.js
+// and then uncomment the code below:
+// var json = require("duktape/json2");
+// console.log("commonHost is: " + JSON.stringify(commonHost));
+
+// If we don't define clearInterval(), setInterval() and setTimeout()
+// above, then uncomment these lines:
+//clearInterval = ecma_eventloop.clearInterval;
+//setInterval = ecma_eventloop.setInterval;
+//setTimeout = ecma_eventloop.setTimeout;
 
 // In case this gets used a module, create an exports object.
 exports = {
