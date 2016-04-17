@@ -140,6 +140,10 @@ window.onload = function() {
 //////////////////////////////////////////////////////////////////////////
 //// Functions
 
+// These will be defined when commonHost.js is loaded.  Used by Test accessor.
+var Accessor;	
+var instantiateAccessor;
+
 /** Local function controlling how standard elements are rendered in the
  *  document with an optional label.
  *  @param target The target document element id.
@@ -607,6 +611,10 @@ function generateAccessorHTML(path, id) {
                 'util': util
             };
             try {
+            	// Make these globally visible.
+            	Accessor = commonHost.Accessor;	
+            	instantiateAccessor = commonHost.instantiateAccessor;
+            	
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
             } catch(err2) {
@@ -832,10 +840,10 @@ function generateListOfContainedAccessors(instance, id) {
         
         for (var i = 0; i < instance.containedAccessors.length; i++) {
             var containedInstance = instance.containedAccessors[i];
-            var className = containedInstance.className;
+            var accessorClass = containedInstance.accessorClass;
             var listElement = document.createElement('li');
             list.appendChild(listElement);
-            listElement.innerHTML = 'Instance of: ' + className;
+            listElement.innerHTML = 'Instance of: ' + accessorClass;
         }
     }
 }
