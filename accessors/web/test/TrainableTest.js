@@ -37,8 +37,8 @@ exports.initialize = function() {
  *  correctValues.
  */
 exports.fire = function() {
-    ;
     var inputValue = this.get('input');
+    // If the input is not connected, then inputValue will be null.
     if (this.getParameter('trainingMode')) {
         _trainingTokens.push(inputValue);
         return;
@@ -50,6 +50,12 @@ exports.fire = function() {
         //console.log("Test: " + _numberOfInputTokensSeen + ", input: " + inputValue
         //+ ", referenceToken: " + referenceToken);
         if (typeof inputValue !== 'number') {
+            if (inputValue === null) {
+                throw new Error('After seeing ' + _numberOfInputTokensSeen +
+                                ' tokens, the value of the input was null?  ' +
+                                'Perhaps the input is not connected?'
+                               );
+            }
             throw new Error('After seeing ' + _numberOfInputTokensSeen +
                             ' tokens, the input "' + inputValue + '" is not a number, it is a ' +
                             typeof input);
