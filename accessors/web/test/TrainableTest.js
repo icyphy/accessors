@@ -12,7 +12,7 @@
 exports.setup = function() {
     // FIXME: this only supports numbers, unlike the Cape Code Test
     // actor, which supports many types.
-    this.parameter('correctValues', {'type':'JSON', 'value':'[0]'});
+    this.parameter('correctValues', {'type':'JSON', 'value':'{0}'});
     this.input('input');
     this.output('output', {'type':'number'});
     this.parameter('tolerance', {'type':'number', 'value': 0.000000001});
