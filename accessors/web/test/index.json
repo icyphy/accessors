@@ -13,5 +13,6 @@
     "TestImplement.js",
     "TestInheritance.js",
     "TestRequire.js",
-    "TestSpontaneous.js"
+    "TestSpontaneous.js",
+    "TrainableTest.js"
 ]
