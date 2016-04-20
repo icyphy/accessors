@@ -3,6 +3,7 @@
  *  This actor is based on the NonStrictTest actor, but currently only
  *  handles numeric input.
  *  
+ *  @accessor test/TrainableTest
  *  @input input The input value
  *  @param correctValues a JSON array of the correct values.
  *  @param trainingMode true if the input is being trained.
