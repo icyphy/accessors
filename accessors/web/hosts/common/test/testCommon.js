@@ -146,9 +146,7 @@ test('TestComposite: composite accessor with automatic scheduling',
 // Note that the following two tests will run concurrently (!)
 
 // Test spontaneous accessor.
-//var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
-//        getAccessorCode);
-var b = instantiate('TestSpontaneous', 'test/TestSpontaneous',
+var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
         getAccessorCode);
 
 b.initialize();
