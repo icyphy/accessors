@@ -78,6 +78,7 @@ startHost = function() {
       output: process.stdout,
       completer: completer,
     });
+    
     // Emitted whenever a command is entered.
     rl.on('line', function(command) {
         // Remove any trailing semicolon.
@@ -101,12 +102,18 @@ startHost = function() {
             rl.prompt();
             return;
         }
-
+        
         ///////////////
         // Evaluate anything else.
         try {
             // Using eval.call evaluates in the context 'this', which is presumably
-            // the global scope.
+            // the global scope. This is necessary so that commands like "var a = 10;"
+            // remember the value of a. In strict mode, eval() is not allowed to modify
+            // its calling context, so var a will not persist. But oddly, an indirect
+            // call using eval.call does allow it to modify its context.
+            // FIXME: A consequence of this approach is that 'require' is not defined.
+            // How to fix that? As a workaround, you can invoke a.require(), where
+            // a is an accessor instance.
             console.log(eval.call(this, command));
         } catch(error) {
             console.log(error);
