@@ -23,7 +23,34 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** A composite accessor that accepts a test file name and executes the tests.
- *  The test results are displayed to the console window.
+ *  Tests are written using the Mocha framework.  The test results are displayed 
+ *  to the console window.
+ *  
+ *  The Mocha framework allows developers to describe a test case, execute code, 
+ *  then check assertions.  Mocha tracks each assertion and reports if the 
+ *  assertion is satisfied or if it fails.  Add-on libraries extend Mocha's 
+ *  capabilities.  Chai is an assertion library offering "should", "expect", and 
+ *  "assert" styles.  Sinon is used for creating test spies, stubs and mocks; 
+ *  for example, mocking an HTTP response.   
+ *  Please see this page for instructions on installing Mocha, Chai and Sinon 
+ *  and writing tests.  
+ *  https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+ *  
+ *  Test output is currently logged to the console window.  In the browser host, 
+ *  please open a debugging pane to see the console.  A future improvement
+ *  would be to output results to a port and provide formatting options (JUnit).
+ *  For an overview of the testing capabilities of different hosts, please see:  
+ *  https://www.terraswarm.org/accessors/wiki/Main/Testing
+ *  
+ *  The Test accessor requires the following to be defined.  Currently, there
+ *  are some host dependencies.  Eventually, these functions will be refactored 
+ *  into a module.
+ *  - Accessor()
+ *  - getAccessorCode()
+ *  - instantiateAccessor()
+ *  - mocha
+ *  - chai
+ *  - sinon  
  *
  *  @accessor test/Test
  *  @input testFile The test file to execute.
@@ -33,17 +60,8 @@
 
 // TODO:  Add an output port for the results.
 // TODO:  Be able to load multiple test files.
-
-// TODO:  Refactor testing functions into a test module?
-//var test = require('test');
-
-// This accessor sssumes the following are defined:
-// Accessor
-// getAccessorCode
-// instantiateAccessor
-// mocha
-// chai
-// sinon
+// TODO:  Refactor testing functions into a module.
+// var test = require('test');
 
 exports.setup = function() {
     this.input('testFile', {'type':'string'});
