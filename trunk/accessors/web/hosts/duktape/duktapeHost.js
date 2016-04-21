@@ -136,6 +136,8 @@ instantiate = function(accessorName, accessorClass) {
     // function that searches first for local modules.
     var bindings = {
         'require': require,
+        'setInterval': setInterval,
+        'setTimeout': setTimeout,
     };
     var result = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
@@ -322,9 +324,9 @@ console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); 
 
 // If we don't define clearInterval(), setInterval() and setTimeout()
 // above, then uncomment these lines:
-//clearInterval = ecma_eventloop.clearInterval;
-//setInterval = ecma_eventloop.setInterval;
-//setTimeout = ecma_eventloop.setTimeout;
+// clearInterval = ecma_eventloop.clearInterval;
+// setInterval = ecma_eventloop.setInterval;
+// setTimeout = ecma_eventloop.setTimeout;
 
 // In case this gets used a module, create an exports object.
 exports = {
