@@ -329,9 +329,16 @@ function Accessor(
     // for this instance. Do this before creating other own properties in case
     // the caller accidentally tries to provide bindings whose names match key
     // properties of this instance.
+    if (typeof duktapeHost !== 'undefined') {
+        console.log(new Error("Here is where we are reading the bindings.").stack);
+    }
     for (var binding in bindings) {
+        if (typeof duktapeHost !== 'undefined') {
+            console.log("bindings[" + binding + "]: " + bindings[binding]);
+        }
         this[binding] = bindings[binding];
     }
+
 
     // If no extendedBy or implementedBy is given, then initialize the data structures
     // to be used by this accessor instance.  These data structures will be in the
@@ -405,13 +412,26 @@ function Accessor(
     // as top-level functions in the accessor specification.
     // FIXME: Probably need to include setInterval, clearInterval,
     // setTimeout, clearTimeout, because these will need to overridden.
+    if (typeof setInterval === 'undefined') {
+        this.setInterval = duktapeHost.setInterval;
+    } else {
+        this.setInterval = setInterval;
+    }
+    if (typeof setTimeout === 'undefined') {
+        this.setTimeout = duktapeHost.setTimeout;
+    } else {
+        this.setTimeout = setTimeout;
+    }
+
     var wrapper = new Function('\
             error, \
             exports, \
             getResource, \
             httpRequest, \
             readURL, \
-            require',
+            require, \
+            setInterval, \
+            setTimeout',
             code);
     wrapper.call(this,
             this.error,
@@ -419,7 +439,9 @@ function Accessor(
             this.getResource,
             this.httpRequest,
             this.readURL,
-            this.require);
+            this.require,
+            this.setInterval,
+            this.setTimeout);
     
     // Mark that the accessor has not been initialized
     this.initialized = false;
