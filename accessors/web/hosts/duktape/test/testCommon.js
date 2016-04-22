@@ -48,7 +48,10 @@ Duktape.modSearch = function (id, require, exports, module) {
     var src;
     var found = false;
 
-    print('loading module:', id);
+    var debug = false;
+    if (debug) {
+        print('loading module:', id);
+    }
 
     /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
@@ -62,17 +65,23 @@ Duktape.modSearch = function (id, require, exports, module) {
     /* Ecmascript check. */
     //name = 'modules/' + id + '.js';
     name = id + '.js';
-    print('loading module:', name);
+    if (debug) {
+        print('loading module:', name);
+    }
     src = FileIo.readfile(name);
     //print('readFile returned', src);
     //print('src is of type', typeof src);
     if (typeof src === 'string') {
-        print('loaded Ecmascript:', name);
+        if (debug) {
+            print('loaded Ecmascript:', name);
+        }
         return src;
     }
 
     if (typeof src === 'buffer') {
-        print('loaded Ecmascript:', name);
+        if (debug) {
+            print('loaded Ecmascript:', name);
+        }
         return src.toString();
     }
 
