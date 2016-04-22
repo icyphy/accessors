@@ -222,6 +222,7 @@ var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop'
  *  These interface with the singleton EventLoop.
  */
 // FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
+// Partial answer: here, we need to make setTimeout global so that in commonHost.js we can use it in the Accessor constructor to set the bindings[] array.
 setTimeout = function(func, delay) {
     var cb_func;
     var bind_args;
@@ -262,7 +263,8 @@ setTimeout = function(func, delay) {
 }
 
 // FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
-function setInterval(func, delay) {
+// Partial answer: here, we need to make setInterval global so that in commonHost.js we can use it in the Accessor constructor to set the bindings[] array.
+setInterval = function (func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
