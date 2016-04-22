@@ -49,8 +49,8 @@ Duktape.modSearch = function (id, require, exports, module) {
     var found = false;
 
     var debug = false;
-    if (debug) {
-        print('loading module:', id);
+    if (debug === true) {
+        print('duktape/test/testCommon.js: loading module:', id);
     }
 
     /* DLL check.  DLL init function is platform specific.  It gets 'exports'
@@ -58,29 +58,29 @@ Duktape.modSearch = function (id, require, exports, module) {
      */
     // name = '/modules/' + id + '.so';
     // if (loadAndInitDll(name, require, exports, module)) {
-    //     print('loaded DLL:', name);
+    //     print('duktape/test/testCommon.js: loaded DLL:', name);
     //     found = true;
     // }
 
     /* Ecmascript check. */
     //name = 'modules/' + id + '.js';
     name = id + '.js';
-    if (debug) {
-        print('loading module:', name);
+    if (debug === true) {
+        print('duktape/test/testCommon.js: loading module:', name);
     }
     src = FileIo.readfile(name);
-    //print('readFile returned', src);
-    //print('src is of type', typeof src);
+    //print('duktape/test/testCommon.js:readFile returned', src);
+    //print('duktape/test/testCommon.js:src is of type', typeof src);
     if (typeof src === 'string') {
-        if (debug) {
-            print('loaded Ecmascript:', name);
+        if (debug === true) {
+            print('duktape/test/testCommon.js: loaded Ecmascript:', name);
         }
         return src;
     }
 
     if (typeof src === 'buffer') {
-        if (debug) {
-            print('loaded Ecmascript:', name);
+        if (debug === true) {
+            print('duktape/test/testCommon.js: loaded Ecmascript:', name);
         }
         return src.toString();
     }
