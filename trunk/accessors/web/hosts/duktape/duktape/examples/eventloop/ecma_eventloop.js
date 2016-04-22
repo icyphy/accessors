@@ -366,6 +366,7 @@ EventLoop.write = function(fd, data) {
 // Accessor Fix: put setTimeout into the global scope.
 //function setTimeout(func, delay) {
 setTimeout = function(func, delay) {
+    console.log("ecmap_eventloop.js: setTimeout(): " + delay);
     var cb_func;
     var bind_args;
     var timer_id;
@@ -418,6 +419,7 @@ clearTimeout = function(timer_id) {
 // Accessor Fix: put setInterval into the global scope.
 //function setInterval(func, delay) {
 setInterval = function(func, delay) {
+    console.log("ecmap_eventloop.js: setInterval(): " + delay);
     var cb_func;
     var bind_args;
     var timer_id;
