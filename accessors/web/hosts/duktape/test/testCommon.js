@@ -97,4 +97,9 @@ Duktape.modSearch = function (id, require, exports, module) {
 var duktapeHost = require("duktape/duktapeHost");
 var testCommon = require("common/test/testCommon");
 
-
+console.log("duktape/test/testCommon.js: after require(\"common/test/testCommon\")");
+setInterval(function () {}, 2147483647)
+// Wait for the Spontaneous tests to complete.
+setInterval(function(){console.log("duktape/test/testCommon.js setInterval");}, 1000);
+setTimeout(function () { console.log("duktape/test/testCommon.js done");}, 3000);
+console.log("duktape/test/testCommon.js: exiting");
