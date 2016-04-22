@@ -196,10 +196,10 @@
  *  @version: $$Id$$
  */
 
-// Stop extra messages from jslint and jshint.  Note that there should be no
-// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*global console, exports, instance, setTimeout*/
-/*jshint globalstrict: true, multistr: true */
+// Stop extra messages from jslint and jshint.
+// See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint
+/* globals console, exports, instance, setInterval, setTimeout */
+/* jshint globalstrict: true, multistr: true */
 'use strict';
 
 // Determine which accessor host is in use.
@@ -329,13 +329,7 @@ function Accessor(
     // for this instance. Do this before creating other own properties in case
     // the caller accidentally tries to provide bindings whose names match key
     // properties of this instance.
-    if (typeof duktapeHost !== 'undefined') {
-        console.log(new Error("Here is where we are reading the bindings.").stack);
-    }
     for (var binding in bindings) {
-        if (typeof duktapeHost !== 'undefined') {
-            console.log("bindings[" + binding + "]: " + bindings[binding]);
-        }
         this[binding] = bindings[binding];
     }
 
@@ -412,15 +406,19 @@ function Accessor(
     // as top-level functions in the accessor specification.
     // FIXME: Probably need to include setInterval, clearInterval,
     // setTimeout, clearTimeout, because these will need to overridden.
-    if (typeof setInterval === 'undefined') {
-        this.setInterval = duktapeHost.setInterval;
-    } else {
+    if (bindings && bindings['setInterval']) {
+        this.setInterval = bindings['setInterval'];
+    } else if (typeof setInterval !== 'undefined') {
         this.setInterval = setInterval;
-    }
-    if (typeof setTimeout === 'undefined') {
-        this.setTimeout = duktapeHost.setTimeout;
     } else {
+        throw new Error('Host does not define required setInterval function.');
+    }
+    if (bindings && bindings['setTimeout']) {
+        this.setTimeout = bindings['setTimeout'];
+    } else if (typeof setTimeout !== 'undefined') {
         this.setTimeout = setTimeout;
+    } else {
+        throw new Error('Host does not define required setTimeout function.');
     }
 
     var wrapper = new Function('\
