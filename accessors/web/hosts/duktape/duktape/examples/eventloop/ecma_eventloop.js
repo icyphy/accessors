@@ -114,7 +114,7 @@ EventLoop.removeTimerById = function(timer_id) {
         }
     }
 
-   // no such ID, ignore
+    // no such ID, ignore
 }
 
 EventLoop.processTimers = function() {
@@ -363,8 +363,9 @@ EventLoop.write = function(fd, data) {
  *
  *  These interface with the singleton EventLoop.
  */
-
-function setTimeout(func, delay) {
+// Accessor Fix: put setTimeout into the global scope.
+//function setTimeout(func, delay) {
+setTimeout = function(func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
@@ -403,7 +404,9 @@ function setTimeout(func, delay) {
     return timer_id;
 }
 
-function clearTimeout(timer_id) {
+// Accessor Fix: put clearTimeout into the global scope.
+//function clearTimeout(timer_id) {
+clearTimeout = function(timer_id) {
     var evloop = EventLoop;
 
     if (typeof timer_id !== 'number') {
@@ -412,7 +415,9 @@ function clearTimeout(timer_id) {
     evloop.removeTimerById(timer_id);
 }
 
-function setInterval(func, delay) {
+// Accessor Fix: put setInterval into the global scope.
+//function setInterval(func, delay) {
+setInterval = function(func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
@@ -451,7 +456,9 @@ function setInterval(func, delay) {
     return timer_id;
 }
 
-function clearInterval(timer_id) {
+// Accessor Fix: put clearInterval into the global scope.
+//function clearInterval(timer_id) {
+clearInterval = function(timer_id) {
     var evloop = EventLoop;
 
     if (typeof timer_id !== 'number') {
@@ -464,3 +471,9 @@ function clearInterval(timer_id) {
 function requestEventLoopExit() {
     EventLoop.requestExit();
 }
+
+exports = {
+    'clearInterval': clearInterval,
+    'setInterval': setInterval,
+    'setTimeout': setTimeout
+};
