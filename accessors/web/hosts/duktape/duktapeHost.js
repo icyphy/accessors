@@ -136,6 +136,8 @@ instantiate = function(accessorName, accessorClass) {
     // function that searches first for local modules.
     var bindings = {
         'require': require,
+        'clearInterval': clearInterval,
+        'clearTimeout': clearTimeout,
         'setInterval': setInterval,
         'setTimeout': setTimeout,
     };
@@ -214,107 +216,16 @@ setParameter = commonHost.setParameter;
 ////////////////////////////////////////
 // Duktape host-specific require() calls and functions should go below here.
 
+// Note that the version of ecma_eventloop.js that ships with duktape
+// was modified so that clearInterval, clearTimer, setInterval and
+// setTimer are all in the global scope.
+//
+// FIXME: It would be nice if we could use the unmodified version of
+// ecma_eventloop.js.  How do we make functions declared in that file
+// visible in the global scope?
+//
 var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');
 
-/*
- *  Timer API
- *
- *  These interface with the singleton EventLoop.
- */
-// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
-// Partial answer: here, we need to make setTimeout global so that in commonHost.js we can use it in the Accessor constructor to set the bindings[] array.
-setTimeout = function(func, delay) {
-    var cb_func;
-    var bind_args;
-    var timer_id;
-    var evloop = EventLoop;
-
-    if (typeof delay !== 'number') {
-        throw new TypeError('delay is not a number');
-    }
-    delay = Math.max(evloop.minimumDelay, delay);
-
-    if (typeof func === 'string') {
-        // Legacy case: callback is a string.
-        cb_func = eval.bind(this, func);
-    } else if (typeof func !== 'function') {
-        throw new TypeError('callback is not a function/string');
-    } else if (arguments.length > 2) {
-        // Special case: callback arguments are provided.
-        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
-        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
-        cb_func = func.bind.apply(func, bind_args);
-    } else {
-        // Normal case: callback given as a function without arguments.
-        cb_func = func;
-    }
-
-    timer_id = evloop.nextTimerId++;
-
-    evloop.insertTimer({
-        id: timer_id,
-        oneshot: true,
-        cb: cb_func,
-        delay: delay,
-        target: Date.now() + delay
-    });
-
-    return timer_id;
-}
-
-// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
-// Partial answer: here, we need to make setInterval global so that in commonHost.js we can use it in the Accessor constructor to set the bindings[] array.
-setInterval = function (func, delay) {
-    var cb_func;
-    var bind_args;
-    var timer_id;
-    var evloop = EventLoop;
-
-    if (typeof delay !== 'number') {
-        throw new TypeError('delay is not a number');
-    }
-    delay = Math.max(evloop.minimumDelay, delay);
-
-    if (typeof func === 'string') {
-        // Legacy case: callback is a string.
-        cb_func = eval.bind(this, func);
-    } else if (typeof func !== 'function') {
-        throw new TypeError('callback is not a function/string');
-    } else if (arguments.length > 2) {
-        // Special case: callback arguments are provided.
-        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
-        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
-        cb_func = func.bind.apply(func, bind_args);
-    } else {
-        // Normal case: callback given as a function without arguments.
-        cb_func = func;
-    }
-
-    timer_id = evloop.nextTimerId++;
-
-    evloop.insertTimer({
-        id: timer_id,
-        oneshot: false,
-        cb: cb_func,
-        delay: delay,
-        target: Date.now() + delay
-    });
-
-    return timer_id;
-}
-
-// FIXME: This function is defined in duktape/examples/eventloop/ecma_eventloop.js.  Why do I need to define it here?
-var clearInterval = function (timer_id) {
-    var evloop = EventLoop;
-
-    if (typeof timer_id !== 'number') {
-        throw new TypeError('timer ID is not a number');
-    }
-    evloop.removeTimerById(timer_id);
-}
-
-// Define console.log for our use.
-// Copied from http://duktape.org/guide.html#compatibility
 console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); } };
 
 // To print the contents of an object in Duktape, download json2.js
@@ -323,12 +234,6 @@ console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); 
 // and then uncomment the code below:
 // var json = require("duktape/json2");
 // console.log("commonHost is: " + JSON.stringify(commonHost));
-
-// If we don't define clearInterval(), setInterval() and setTimeout()
-// above, then uncomment these lines:
-// clearInterval = ecma_eventloop.clearInterval;
-// setInterval = ecma_eventloop.setInterval;
-// setTimeout = ecma_eventloop.setTimeout;
 
 // In case this gets used a module, create an exports object.
 exports = {
