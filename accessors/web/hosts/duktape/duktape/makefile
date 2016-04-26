@@ -14,6 +14,6 @@ duk: $(CFILES) $(HFILES)
 	$(MAKE) -f Makefile.cmdline
 
 duktapeHost.h: ../duktapeHost.js
-	xxd -i ../duktapeHost.js > duktapeHost.h
+	xxd -i ../duktapeHost.js | sed 's/unsigned //' > duktapeHost.h
 clean:
 	rm -f duk
