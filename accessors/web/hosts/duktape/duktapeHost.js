@@ -175,19 +175,20 @@ instantiate = function(accessorName, accessorClass) {
  * for getAccessorCode(name).
  */
 instantiateAndInitialize = function(accessorNames) {
+    console.log("duktapeHost.js: instantiateAndInitialize() start: " + accessorNames + " " + accessorNames.length);
 
-    // FIXME: This method is not yet completely implemented.
-
-    
     var length = accessorNames.length
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
         var accessorClass = accessorNames[index];
+        console.log("duktapeHost.js: instantiateAndInitialize(): " + accessorClass);
+
         // For example, if the accessorClass is
         // test/TestComposite, then the accessorName will be
         // TestComposite.
 
-        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        // var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        var startIndex = accessorClass.lastIndexOf('/');
         var accessorName = accessorClass.substring(startIndex);
         if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
             accessorName = accessorName.substring(1);
