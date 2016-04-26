@@ -271,6 +271,7 @@ EventLoop.run = function() {
         try {
             Poll.poll(poll_set, wait);
         } catch (e) {
+            print('poll callback failed, ignored: ' + e);
             // Eat errors silently.  When resizing curses window an EINTR
             // happens now.
         }
