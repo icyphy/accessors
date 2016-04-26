@@ -15,7 +15,7 @@ CC	= gcc
 CCOPTS	= -Os -pedantic -std=c99 -Wall -fstrict-aliasing -fomit-frame-pointer
 
 # Uncomment the next line to compile with debugging
-CCOPTS	= -ggdb -pedantic -std=c99 -Wall
+#CCOPTS	= -ggdb -pedantic -std=c99 -Wall
 
 # Accessors: Include duktapeHost.h in ..
 CCOPTS += -I. -I./src   # duktape.h and duk_config.h must be in include path
