@@ -808,6 +808,8 @@ int main(int argc, char *argv[]) {
 	int run_stdin = 0;
 	const char *compile_filename = NULL;
 	int i;
+	int accessor = 0;
+        int timeout = 0;
 
 #if defined(EMSCRIPTEN)
 	/* Try to use NODEFS to provide access to local files.  Mount the
@@ -897,6 +899,14 @@ int main(int argc, char *argv[]) {
 				goto usage;
 			}
 			i++;  /* skip code */
+		} else if (strcmp(arg, "--accessor") == 0) {
+                    accessor = 1;
+		} else if (strcmp(arg, "--timeout") == 0) {
+                    if (i == argc - 1) {
+                        goto usage;
+                    }
+                    i++;
+                    timeout = atoi(argv[i]);
 		} else if (strcmp(arg, "--alloc-default") == 0) {
 			alloc_provider = ALLOC_DEFAULT;
 		} else if (strcmp(arg, "--alloc-logging") == 0) {
@@ -989,6 +999,10 @@ int main(int argc, char *argv[]) {
 			i++;  /* skip filename */
 			continue;
 		} else if (strlen(arg) >= 1 && arg[0] == '-') {
+                        if (strcmp(arg, "--timeout") == 0) {
+                            // Skip the value of timeout.
+                            i++;
+                        }
 			continue;
 		}
 
@@ -997,10 +1011,29 @@ int main(int argc, char *argv[]) {
 			fflush(stderr);
 		}
 
-		if (handle_file(ctx, arg, compile_filename) != 0) {
+                if (accessor == 1) {
+                    int length = strlen(arg) + 200;
+                    char buf[length];
+                    if (timeout > 0) {
+                        // Timeout.  requestEventLoopExit() is defined in ecma_eventloop.js
+                        snprintf(buf, length, "var args = ['%s'];instantiateAndInitialize(args); setTimeout(function () {requestEventLoopExit()}, %d);", arg, timeout);
+                    } else {
+                        // Prevent the script from exiting by repeating the empty function
+                        // every ~25 days.
+                        snprintf(buf, length, "var args = ['%s'];instantiateAndInitialize(args); setInterval(function () {}, 2147483647);", arg);
+                    }
+                    if (duk_peval_string(ctx, buf) != 0) {
+                        fprintf(stderr, "%s:%d: Failed to invoke accessor.  Command was:%s\n Error was:\n", __FILE__, __LINE__, buf);
+                        print_pop_error(ctx, stderr);
+                    } else {
+                        duk_pop(ctx);
+                    }
+                } else {
+                    if (handle_file(ctx, arg, compile_filename) != 0) {
 			retval = 1;
 			goto cleanup;
-		}
+                    }
+                }
 
 		if (recreate_heap) {
 			if (verbose) {
@@ -1084,6 +1117,7 @@ int main(int argc, char *argv[]) {
 			"   --run-stdin        treat stdin like a file, i.e. compile full input (not line by line)\n"
 			"   --verbose          verbose messages to stderr\n"
 	                "   --restrict-memory  use lower memory limit (used by test runner)\n"
+                        "   --accessor         run the files as accessors\n"
 	                "   --alloc-default    use Duktape default allocator\n"
 #if defined(DUK_CMDLINE_ALLOC_LOGGING)
 	                "   --alloc-logging    use logging allocator (writes to /tmp)\n"
@@ -1103,6 +1137,7 @@ int main(int argc, char *argv[]) {
 #endif
 			"   --recreate-heap    recreate heap after every file\n"
 			"   --no-heap-destroy  force GC, but don't destroy heap at end (leak testing)\n"
+                        "   --timeout time     valid only with --accessors\n"
 	                "\n"
 	                "If <filename> is omitted, interactive mode is started automatically.\n");
 	fflush(stderr);

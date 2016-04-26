@@ -471,7 +471,7 @@ clearInterval = function(timer_id) {
 }
 
 /* custom call */
-function requestEventLoopExit() {
+requestEventLoopExit = function requestEventLoopExit() {
     EventLoop.requestExit();
 }
 
