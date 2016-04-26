@@ -964,7 +964,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
 
         // Use duk_peval_string_noresult() and avoid interning the string.  Good
-        // for low memoroy, see
+        // for low memoryf, see
         // http://duktape.org/api.html#duk_peval_string_noresult
         if (duk_peval_string(ctx, ___duktapeHost_js) != 0) {
             fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
