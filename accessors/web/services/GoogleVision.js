@@ -66,7 +66,7 @@ exports.setup = function() {
     this.input('options', {'visibility':'expert', 'value':{"headers":{"Content-Type":"application/json"}, "method":"POST", "url":"https://vision.googleapis.com"}});
     this.input('command', {'visibility':'expert', 'value':'/v1/images:annotate/'});
     // NOTE: The value can be given as a JSON string or a JavaScript object.
-    this.input('arguments', {'visibility':'expert', 'value':{"alt" : "json", "key":"AIzaSyAzP2bzs3PG0SXB2TdpA563hARZWfGU-1A"}});
+    this.input('arguments', {'visibility':'expert'});
     this.input('body', {'visibility':'expert'});
     this.input('trigger', {'visibility':'expert'});
     this.output('headers', {'visibility':'expert'});
@@ -78,10 +78,15 @@ exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
     
-    //var key = this.getParameter('key');
-    //if (key == "Enter Key Here") {
-    //    throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
-    //}
+    var key = this.getParameter('key');
+    if (key == "Enter Key Here") {
+        throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
+    } else {
+        var args = {"alt" : "json"};
+        args.key = key;
+        this.send('arguments', args);
+    }
+    
     var self = this;
     
     // Handle location information.
