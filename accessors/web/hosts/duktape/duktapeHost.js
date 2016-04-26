@@ -246,3 +246,5 @@ exports = {
     'setInterval': setInterval,
     'setTimeout': setTimeout,
 };
+
+console.log("Loaded duktapeHost.js");

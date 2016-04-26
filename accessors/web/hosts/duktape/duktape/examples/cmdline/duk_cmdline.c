@@ -6,6 +6,10 @@
  *  support for example allocators, grep for DUK_CMDLINE_*.
  */
 
+// Accessors: ___duktapeHost_js is declared in duktapeHost.h. duktapeHost.h is
+// created by running xxd -i ../duktapeHost.js duktapeHost.h
+#include "duktapeHost.h"
+
 #if !defined(DUK_CMDLINE_FANCY)
 #define NO_READLINE
 #define NO_RLIMIT
@@ -944,6 +948,18 @@ int main(int argc, char *argv[]) {
 
 	ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
 
+        // Accessors:
+        // duktapeHost.h is created by running
+        // xxd -i ../duktapeHost.js duktapeHost.h
+        fprintf(stderr, "Loading C verison of duktapeHost\n");
+
+        // Use duk_eval_string() and avoid interning the string.  Good
+        // for low memoroy, see
+        // http://duktape.org/api.html#duk_eval_string
+        duk_eval_string(ctx, ___duktapeHost_js);
+        duk_pop(ctx);
+        fprintf(stderr, "Done loading C verison of duktapeHost\n");
+        
 	/*
 	 *  Execute any argument file(s)
 	 */
@@ -1017,6 +1033,7 @@ int main(int argc, char *argv[]) {
         fflush(stderr);
         duk_eval_string(ctx, "EventLoop.run();");
         duk_pop(ctx);
+
 
 	/*
 	 *  Enter interactive mode if options indicate it
