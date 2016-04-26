@@ -951,14 +951,19 @@ int main(int argc, char *argv[]) {
         // Accessors:
         // duktapeHost.h is created by running
         // xxd -i ../duktapeHost.js duktapeHost.h
-        fprintf(stderr, "Loading C verison of duktapeHost\n");
+        fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
 
-        // Use duk_eval_string() and avoid interning the string.  Good
+        // Use duk_peval_string_noresult() and avoid interning the string.  Good
         // for low memoroy, see
-        // http://duktape.org/api.html#duk_eval_string
-        duk_eval_string(ctx, ___duktapeHost_js);
-        duk_pop(ctx);
-        fprintf(stderr, "Done loading C verison of duktapeHost\n");
+        // http://duktape.org/api.html#duk_peval_string_noresult
+        if (duk_peval_string(ctx, ___duktapeHost_js) != 0) {
+            fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        } else {
+            printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+            duk_pop(ctx);
+        }
+
         
 	/*
 	 *  Execute any argument file(s)
