@@ -11,8 +11,14 @@ DUKTAPE_CMDLINE_SOURCES = \
         examples/eventloop/poll.c
 
 CC	= gcc
+
 CCOPTS	= -Os -pedantic -std=c99 -Wall -fstrict-aliasing -fomit-frame-pointer
-CCOPTS += -I./src   # duktape.h and duk_config.h must be in include path
+
+# Uncomment the next line to compile with debugging
+CCOPTS	= -ggdb -pedantic -std=c99 -Wall
+
+# Accessors: Include duktapeHost.h in ..
+CCOPTS += -I. -I./src   # duktape.h and duk_config.h must be in include path
 CCLIBS	= -lm
 
 # If you have readline, you may want to enable these.  On some platforms
@@ -28,5 +34,5 @@ CCOPTS += -DDUK_OPT_SELF_TESTS
 #CCOPTS += -DDUK_OPT_DPRINT
 # ...
 
-duk:	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES)
+duk:	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) duktapeHost.h
 	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) $(CCLIBS)
