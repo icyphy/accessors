@@ -62,6 +62,7 @@
 
 // cxh
 extern void fileio_register(duk_context *ctx);
+extern void poll_register(duk_context *ctx);
 
 
 #if defined(DUK_CMDLINE_AJSHEAP)
@@ -756,6 +757,7 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 
         // cxh
 	fileio_register(ctx);
+	poll_register(ctx);
 	return ctx;
 }
 
@@ -1010,6 +1012,11 @@ int main(int argc, char *argv[]) {
 			ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
 		}
 	}
+
+        fprintf(stderr, "calling EventLoop.run()\n");
+        fflush(stderr);
+        duk_eval_string(ctx, "EventLoop.run();");
+        duk_pop(ctx);
 
 	/*
 	 *  Enter interactive mode if options indicate it
