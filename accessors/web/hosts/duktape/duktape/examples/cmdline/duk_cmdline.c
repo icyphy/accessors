@@ -971,10 +971,17 @@ int main(int argc, char *argv[]) {
             print_pop_error(ctx, stderr);
         } else {
             printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+            //duk_pop(ctx);
+        }
+
+        if (duk_peval_string(ctx, "var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');") != 0) {
+            fprintf(stderr, "%s:%d: Failed to require ecma_eventloop.js.  Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        } else {
+            printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
             duk_pop(ctx);
         }
 
-        
 	/*
 	 *  Execute any argument file(s)
 	 */
