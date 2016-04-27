@@ -1,3 +1,33 @@
+// setTimeout() etc. defined using the C eventloop.
+// Copied from https://github.com/svaarala/duktape/blob/master/examples/eventloop/c_eventloop.js
+// Accessor-specific changes are marked with "Accessor:"
+
+/* =============== */
+/* Duktape license */
+/* =============== */
+
+/* (http://opensource.org/licenses/MIT) */
+
+/* Copyright (c) 2013-2016 by Duktape authors (see AUTHORS.rst) */
+
+/* Permission is hereby granted, free of charge, to any person obtaining a copy */
+/* of this software and associated documentation files (the "Software"), to deal */
+/* in the Software without restriction, including without limitation the rights */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell */
+/* copies of the Software, and to permit persons to whom the Software is */
+/* furnished to do so, subject to the following conditions: */
+
+/* The above copyright notice and this permission notice shall be included in */
+/* all copies or substantial portions of the Software. */
+
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN */
+/* THE SOFTWARE. */
+
 /*
  *  C eventloop example (c_eventloop.c).
  *
@@ -5,16 +35,15 @@
  *  using the C eventloop.
  *
  *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Timers
+ *  $Id$
  */
 
 /*
  *  Timer API
  */
 
-console.log("c_eventloop.js start");
-
-
-function setTimeout(func, delay) {
+// Accessors: make setTimeout() global.
+setTimeout = function(func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
@@ -43,16 +72,16 @@ function setTimeout(func, delay) {
     return timer_id;
 }
 
-console.log("c_eventloop.js before clearTimeout");
-function clearTimeout(timer_id) {
+// Accessors: make clearTimeout() global.
+clearTimeout = function(timer_id) {
     if (typeof timer_id !== 'number') {
         throw new TypeError('timer ID is not a number');
     }
     var success = EventLoop.deleteTimer(timer_id);  /* retval ignored */
 }
 
-console.log("c_eventloop.js before setInterval");
-function setInterval(func, delay) {
+// Accessors: make setInterval() global.
+setInterval = function(func, delay) {
     var cb_func;
     var bind_args;
     var timer_id;
@@ -81,17 +110,21 @@ function setInterval(func, delay) {
     return timer_id;
 }
 
-console.log("c_eventloop.js before clearInterval");
-function clearInterval(timer_id) {
+// Accessors: make clearInterval() global.
+clearInterval = function(timer_id) {
     if (typeof timer_id !== 'number') {
         throw new TypeError('timer ID is not a number');
     }
     EventLoop.deleteTimer(timer_id);
 }
 
-console.log("c_eventloop.js before requestEventLoopExit");
-function requestEventLoopExit() {
+// Accessors: make requestEventLoopExit() global.
+requestEventLoopExit = function() {
     EventLoop.requestExit();
 }
 
-console.log("c_eventloop.js done");
+exports = {
+    'clearInterval': clearInterval,
+    'setInterval': setInterval,
+    'setTimeout': setTimeout
+};

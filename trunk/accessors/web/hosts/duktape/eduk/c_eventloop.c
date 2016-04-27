@@ -35,6 +35,7 @@
  *  Timer management is similar to eventloop.js but implemented in C.
  *  In particular, timer insertion is an O(n) operation; in a real world
  *  eventloop based on a heap insertion would be O(log N).
+ *  $Id$
  */
 
 #include <stdio.h>
