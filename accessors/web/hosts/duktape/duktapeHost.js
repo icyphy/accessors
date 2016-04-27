@@ -143,7 +143,7 @@ instantiate = function(accessorName, accessorClass) {
     };
     var result = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
-    print('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    print('duktapeHost.js: instantiate() done: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return result;
 };
 
@@ -181,7 +181,7 @@ instantiateAndInitialize = function(accessorNames) {
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
         var accessorClass = accessorNames[index];
-        console.log("duktapeHost.js: instantiateAndInitialize(): " + accessorClass);
+        console.log("duktapeHost.js: instantiateAndInitialize(): about to handle " + accessorClass);
 
         // For example, if the accessorClass is
         // test/TestComposite, then the accessorName will be
@@ -200,8 +200,11 @@ instantiateAndInitialize = function(accessorNames) {
             accessorName += "_" + (index - 1);
         }
         var accessor = instantiate(accessorName, accessorClass);
+        console.log("duktapeHost.js: instantiateAndInitialize(): about to call initialize on " + accessor);
         accessor.initialize();
+        console.log("duktapeHost.js: instantiateAndInitialize(): done with " + accessorClass);
     }
+    console.log("duktapeHost.js: instantiateAndInitialize() done");
 }
 
 // Make the Accessor constructor visible so that we may use it in the
@@ -225,7 +228,9 @@ setParameter = commonHost.setParameter;
 // ecma_eventloop.js.  How do we make functions declared in that file
 // visible in the global scope?
 //
-var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');
+
+// If ecma_eventloop is required here, then using c_eventloop.js will fail.
+//var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');
 
 console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); } };
 
@@ -239,13 +244,15 @@ console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); 
 // In case this gets used a module, create an exports object.
 exports = {
     'Accessor': Accessor,
-    'clearInterval': clearInterval,
+    // Don't export clearInterval, setInterval and setTimeout here because
+    // we no longer require ecma_eventloop.js above.
+    //'clearInterval': clearInterval,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
-    'setInterval': setInterval,
-    'setTimeout': setTimeout,
+    //'setInterval': setInterval,
+    //'setTimeout': setTimeout,
 };
 
 console.log("Loaded duktapeHost.js");
