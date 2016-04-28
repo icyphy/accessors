@@ -1,6 +1,7 @@
 CFILES = ./examples/cmdline/duk_cmdline.c \
 	./examples/eventloop/fileio.c \
 	./examples/eventloop/poll.c \
+	../eduk/nofileio.c \
 	./src/duktape.c
 
 # .h files that contain the contents of .js files
