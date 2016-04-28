@@ -57,7 +57,12 @@ Duktape.modSearch = function (id, require, exports, module) {
     }
 
     print('loading module:', name);
-    src = FileIo.readfile(name);
+
+    // Use NoFileIo instead of FileIo because small embedded systems
+    // don't have file systems.
+
+    //src = FileIo.readfile(name);
+    src = NoFileIo.readfile(name);
     //print('readFile returned', src);
     //print('src is of type', typeof src);
     if (typeof src === 'string') {
@@ -112,6 +117,8 @@ function getAccessorCode(name) {
         try {
             //print('Reading accessor at: ' + location);
             //code = fs.readFileSync(location, 'utf8');
+            //print("duktapeHost.js getAccessorCode(\"" + name + "\"): Reading using NoFileIo" + location);
+            //code = NoFileIo.readfile(location);
             code = FileIo.readfile(location);
             break;
         } catch(error) {

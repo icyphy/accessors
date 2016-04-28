@@ -64,8 +64,10 @@
 #endif
 #include "duktape.h"
 
-// cxh
+// Accessors:
+// Eventually, fileio_register() should be removed.
 extern void fileio_register(duk_context *ctx);
+extern void nofileio_register(duk_context *ctx);
 extern void poll_register(duk_context *ctx);
 
 
@@ -759,8 +761,10 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 	}
 #endif
 
-        // cxh
+        // Accessors
+        // Eventually, fileio_register() should be removed.
 	fileio_register(ctx);
+        nofileio_register(ctx);
 	poll_register(ctx);
 	return ctx;
 }
@@ -1076,7 +1080,10 @@ int main(int argc, char *argv[]) {
 
         fprintf(stderr, "calling EventLoop.run()\n");
         fflush(stderr);
-        duk_eval_string(ctx, "EventLoop.run();");
+        if (duk_peval_string(ctx, "EventLoop.run();") != 0) {
+            fprintf(stderr, "%s:%d: Failed to invoke 'EventLoop.run();' Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        }
         duk_pop(ctx);
 
 

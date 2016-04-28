@@ -7,8 +7,9 @@ DUKTAPE_SOURCES = src/duktape.c
 
 DUKTAPE_CMDLINE_SOURCES = \
 	examples/cmdline/duk_cmdline.c \
+        examples/eventloop/poll.c \
+        ../eduk/nofileio.c \
         examples/eventloop/fileio.c \
-        examples/eventloop/poll.c
 
 CC	= gcc
 
