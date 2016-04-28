@@ -61,8 +61,8 @@ Duktape.modSearch = function (id, require, exports, module) {
     // Use NoFileIo instead of FileIo because small embedded systems
     // don't have file systems.
 
-    //src = FileIo.readfile(name);
-    src = NoFileIo.readfile(name);
+    src = FileIo.readfile(name);
+    //src = NoFileIo.readfile(name);
     //print('readFile returned', src);
     //print('src is of type', typeof src);
     if (typeof src === 'string') {
