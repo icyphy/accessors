@@ -22,10 +22,10 @@ extern int eventloop_run(duk_context *ctx);  /* Duktape/C function, safe called 
 
 // Use NoFileIo instead of FileIo because small embedded systems
 // don't have file systems.
-//extern int fileio_register(duk_context *ctx);
+extern int fileio_register(duk_context *ctx);
 
 extern void modSearch_register(duk_context *ctx);
-extern void nofileio_register(duk_context *ctx);
+//extern void nofileio_register(duk_context *ctx);
 extern void poll_register(duk_context *ctx);
 extern void print_pop_error(duk_context *ctx, FILE *f);
 
@@ -156,9 +156,9 @@ int main(int argc, char *argv[]) {
     // Register Modules
     eventloop_register(ctx);
     // FIXME: fileio_register() should go away eventually.
-    //fileio_register(ctx);
+    fileio_register(ctx);
     modSearch_register(ctx);
-    nofileio_register(ctx);
+    //nofileio_register(ctx);
     poll_register(ctx);
 
     for (i = 1; i < argc; i++) {
