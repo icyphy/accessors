@@ -130,7 +130,7 @@ void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout
  *    eduk [--timeout time] accessorFileName\n");
  *
  *  Sample usage:
- *  cd ../..; duktape/eduk/eduk --timeout 4000 node/RampJSDisplay.js
+ *  cd ../..; duktape/eduk/eduk --timeout 4000 ../test/auto/RampJSDisplay.js
  *
  *  @param argc The number of arguments.
  *  @param argv The arguments.
