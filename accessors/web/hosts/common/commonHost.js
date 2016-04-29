@@ -220,11 +220,11 @@ exports.accessorHost = accessorHost;
 // In alphabetical order
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
-} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector !== undefined) {
+} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
     accessorHost = accessorHostsEnum.CAPECODE;
 } else if (typeof Duktape === 'object') {
     accessorHost = accessorHostsEnum.DUKTAPE;
-} else if (typeof process !== 'undefined' && typeof process.version !== undefined) {
+} else if (typeof process !== 'undefined' && typeof process.version === 'string') {
     accessorHost = accessorHostsEnum.NODE;
 }
 
