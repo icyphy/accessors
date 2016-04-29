@@ -44,7 +44,8 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <poll.h>
-// Accessors:  Needed to include unistd.h for soime reason
+#define __USE_BSD
+// Accessors:  Needed to include unistd.h for usleep()
 #include <unistd.h>
 
 #include "duktape.h"
@@ -369,7 +370,7 @@ int eventloop_run(duk_context *ctx) {
 		fflush(stderr);
 #endif
 
-// Accessors: Use usleep() here instead of poll()
+// Accessors: Use usleep() here instead of poll().
 		//printf("timeout -> %d \n", timeout);
 		usleep(timeout*1000);
 		//rc = poll(poll_list, poll_count, timeout);
