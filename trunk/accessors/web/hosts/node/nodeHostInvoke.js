@@ -58,7 +58,7 @@ process.argv.shift();
 // Remove "nodeHostInvoke.js" from the array of command line arguments.
 process.argv.shift();
 
-if (process.argv.length == 0) {
+if (process.argv.length === 0) {
     console.error("nodeHostInvoke.js: Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
     process.exit(3);
 }
@@ -70,16 +70,16 @@ if (process.argv.length > 1) {
         process.argv.shift();
         process.argv.shift();
         instantiateAndInitialize(process.argv);
-        setTimeout(function () {process.exit(0)}, timeout);
+        setTimeout(function () { process.exit(0); }, timeout);
     } else {
         instantiateAndInitialize(process.argv);
         // Prevent the script from exiting by repeating the empty function
         // every ~25 days.
-        setInterval(function () {}, 2147483647)
+        setInterval(function () {}, 2147483647);
     }
 } else {
     instantiateAndInitialize(process.argv);
     // Prevent the script from exiting by repeating the empty function
     // every ~25 days.
-    setInterval(function () {}, 2147483647)
+    setInterval(function () {}, 2147483647);
 }
