@@ -61,7 +61,11 @@
   </target>
 
   <target name="duk"
+	  depends="eduk"
           description="Build the duk binary.  Requires make and a C compiler.">
+    <echo>The duk binary has more command line options that the eduk binary.
+      The duk binary would not be deployed on an embedded machine.
+    </echo>
     <exec dir="${duktape.source}"
           executable="make">
     </exec>
@@ -69,6 +73,10 @@
 
     <target name="eduk"
           description="Build the eduk binary.  Requires xxd, make and gcc.">
+    <echo>The eduk binary has fewer command line options than the duk binary.
+      The eduk binary is what would be deployed on an embedded machine.
+      The eduk binary can also be run from the command line.
+    </echo>
     <exec dir="${eduk.source}"
           executable="make">
     </exec>
@@ -118,7 +126,7 @@
   </target>
 
   <target name="tests"
-          depends="tests.duktape, tests.eduk, tests.mocha"
+          depends="tests.duk, tests.eduk, tests.mocha"
           description="Run the duktape, eduk and node host tests">
   </target>
 
@@ -146,8 +154,8 @@
     </exec>
   </target>
 
-  <target name="tests.duktape"
-          depends="duktape"
+  <target name="tests.duk"
+          depends="duk"
           description="Execute the duktape tests.">
     <apply dir="hosts"
            executable="duktape/duktape/duk"
@@ -162,14 +170,18 @@
   <target name="tests.eduk"
           depends="eduk"
           description="Execute the eduk tests.">
+    <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/eduk/eduk"
-           failonerror="true">
-      <fileset dir="hosts">
+           failonerror="true"
+	   relative="true">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
 	<!-- eduk does not have a separate eduk test directory, we just
 	     run the accessors in test/auto instead.
 	  --> 
-        <include name="../test/auto/RampJSDisplay.js"/>
+	<include name="test/auto/*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>

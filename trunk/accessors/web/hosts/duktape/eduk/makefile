@@ -25,6 +25,7 @@ JS_H_FILES = \
 	ecma_eventloop.h \
 	RampJSDisplay.h \
 	RampJSTest.h \
+	autoTestComposite.h \
 	testCommon.h \
 	TestAdder.h \
 	TestComposite.h \
@@ -84,6 +85,9 @@ RampJSDisplay.h: ../../../test/auto/RampJSDisplay.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 RampJSTest.h: ../../../test/auto/RampJSTest.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
+autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
+	xxd -i $< | sed -e 's/unsigned //'  > $@
+
 
 # Used by ../duktape/duktape tests
 testCommon.h: ../../common/test/testCommon.js makefile
