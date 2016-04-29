@@ -31,8 +31,8 @@
  */
 
 exports.setup = function() {
-    this.input('input')
-    this.output('output')
+    this.input('input');
+    this.output('output');
 };
 
 exports.initialize = function() {

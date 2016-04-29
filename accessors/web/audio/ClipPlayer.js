@@ -58,7 +58,7 @@ exports.initialize = function() {
 };
 
 exports.wrapup = function() {
-	if (this.player != null) {
+	if (this.player !== null) {
 		this.player.stop();
 	}
-}
+};
