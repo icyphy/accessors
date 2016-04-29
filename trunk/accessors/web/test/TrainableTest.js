@@ -32,7 +32,7 @@ exports.initialize = function() {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     _numberOfInputTokensSeen = 0;
     _trainingTokens = [];
-}
+};
 
 /** Get the input and compare it with the appropriate element from 
  *  correctValues.
@@ -80,4 +80,4 @@ exports.wrapup = function() {
     if (this.getParameter('trainingMode')) {
         this.setParameter('correctValues', _trainingTokens);
     }
-}
+};

@@ -158,7 +158,7 @@ exports.setup = function() {
 		type: 'string',
 		value: '/scarab/lucy'
 	});
-}
+};
 
 var batteryClient = null;
 var stateClient = null;
@@ -199,7 +199,7 @@ exports.initialize = function() {
 		}
 	});
 	batteryClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	batteryClient.open();
 
@@ -220,7 +220,7 @@ exports.initialize = function() {
 		self.send('state', msg.msg.state);
 	});
 	stateClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	stateClient.open();
 
@@ -240,7 +240,7 @@ exports.initialize = function() {
 		self.send('location', msg.msg.pose);
 	});
 	locationClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	locationClient.open();
 
@@ -257,7 +257,7 @@ exports.initialize = function() {
 		});
 	});
 	poseClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	self.addInputHandler('pose', pose_in.bind(self));
 	poseClient.open();
@@ -277,7 +277,7 @@ exports.initialize = function() {
 		console.log('Sending over socket: ' + JSON.stringify(advertise));
 	});
 	cmdvelClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	self.addInputHandler('cmdvel', cmdvel_in.bind(self));
 	cmdvelClient.open();
@@ -295,11 +295,11 @@ exports.initialize = function() {
 		});
 	});
 	cancelClient.on('error', function(message) {
-		error(message)
+	    error(message);
 	});
 	self.addInputHandler('cancel', cancel_in.bind(this));
 	cancelClient.open();
-}
+};
 
 var pose_in = function () {
 	var v = this.get('pose');
@@ -321,7 +321,7 @@ var pose_in = function () {
 	};
 
 	poseClient.send(out);
-}
+};
 
 var cmdvel_in = function () {
 	var c = this.get('cmdvel');
@@ -334,7 +334,7 @@ var cmdvel_in = function () {
 
 	console.log('Sending over socket: ' + JSON.stringify(out));
 	cmdvelClient.send(out);
-}
+};
 
 var cancel_in = function () {
 	var c = this.get('cancel');
@@ -346,7 +346,7 @@ var cancel_in = function () {
 	};
 
 	cancelClient.send(out);
-}
+};
 
 exports.wrapup = function() {
 	if (stateClient) {
@@ -399,4 +399,4 @@ exports.wrapup = function() {
 		});
 		cancelClient.close();
 	}
-}
+};
