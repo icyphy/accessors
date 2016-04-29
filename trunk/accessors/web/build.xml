@@ -52,8 +52,11 @@
     </delete>
   </target>
 
+  <!-- Build eduk first because it updates the .h files from the .js files
+       that are used by eduk and duk.
+    --> 
   <target name="duktape"
-          depends="duk, eduk"
+          depends="eduk, duk"
           description="Build the duktape binaries">
   </target>
 
@@ -115,8 +118,8 @@
   </target>
 
   <target name="tests"
-          depends="tests.mocha, tests.duktape"
-          description="Run the mocha and duktape tests">
+          depends="tests.duktape, tests.eduk, tests.mocha"
+          description="Run the duktape, eduk and node host tests">
   </target>
 
   <target name="tests.coverage"
@@ -163,7 +166,10 @@
            executable="duktape/eduk/eduk"
            failonerror="true">
       <fileset dir="hosts">
-        <include name="duktape/test/*.js"/>
+	<!-- eduk does not have a separate eduk test directory, we just
+	     run the accessors in test/auto instead.
+	  --> 
+        <include name="../test/auto/RampJSDisplay.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>

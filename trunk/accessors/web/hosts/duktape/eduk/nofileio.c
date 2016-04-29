@@ -71,7 +71,11 @@
 // These are used by the tests and would not be needed in production.
 #include "RampJSDisplay.h"
 #include "RampJSTest.h"
+#include "testCommon.h"
+#include "TestAdder.h"
+#include "TestComposite.h"
 #include "TestDisplay.h"
+#include "TestGain.h"
 #include "TestSpontaneous.h"
 #include "TrainableTest.h"
 
@@ -84,7 +88,7 @@ struct fileEntry {
     int length;
 };
 
-#define FILE_ENTRIES_SIZE 9
+#define FILE_ENTRIES_SIZE 13
 
 struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
@@ -117,7 +121,7 @@ static int nofileio_readfile(duk_context *ctx) {
     }
 
  error:
-    fprintf(stderr, "%s:%d Could not fine %s\n", __FILE__, __LINE__, filename);
+    fprintf(stderr, "%s:%d Could not find %s\n", __FILE__, __LINE__, filename);
     return DUK_RET_ERROR;
 }
 
@@ -159,13 +163,30 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
 
+    // Used by ../duktape/duktape tests.
+    fileEntries[++n].name = "common/test/testCommon.js";
+    fileEntries[n].contents = ______common_test_testCommon_js;
+    fileEntries[n].length = ______common_test_testCommon_js_len;
+
     // Accessors in test/.  Note that the name is relative to
     // accessors/web/hosts, but the name of the array have more
     // underscores because xxd was run in
     // accessors/web/hosts/duktape/eduk.
+    fileEntries[++n].name = "./test/TestAdder.js";
+    fileEntries[n].contents = _________test_TestAdder_js;
+    fileEntries[n].length = _________test_TestAdder_js_len;
+
+    fileEntries[++n].name = "./test/TestComposite.js";
+    fileEntries[n].contents = _________test_TestComposite_js;
+    fileEntries[n].length = _________test_TestComposite_js_len;
+
     fileEntries[++n].name = "./test/TestDisplay.js";
     fileEntries[n].contents = _________test_TestDisplay_js;
     fileEntries[n].length = _________test_TestDisplay_js_len;
+
+    fileEntries[++n].name = "./test/TestGain.js";
+    fileEntries[n].contents = _________test_TestGain_js;
+    fileEntries[n].length = _________test_TestGain_js_len;
 
     fileEntries[++n].name = "./test/TestSpontaneous.js";
     fileEntries[n].contents = _________test_TestSpontaneous_js;
