@@ -71,6 +71,7 @@
 // These are used by the tests and would not be needed in production.
 #include "RampJSDisplay.h"
 #include "RampJSTest.h"
+#include "autoTestComposite.h"
 #include "testCommon.h"
 #include "TestAdder.h"
 #include "TestComposite.h"
@@ -88,7 +89,7 @@ struct fileEntry {
     int length;
 };
 
-#define FILE_ENTRIES_SIZE 13
+#define FILE_ENTRIES_SIZE 14
 
 struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
@@ -156,12 +157,18 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].length = ___duktape_examples_eventloop_ecma_eventloop_js_len;
 
     // Composite accessors in test/auto/ that are used for testing
-    fileEntries[++n].name = "./../test/auto/RampJSDisplay.js";
+    fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
     fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
     fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
-    fileEntries[++n].name = "./../test/auto/RampJSTest.js";
+
+    fileEntries[++n].name = "./test/auto/RampJSTest.js";
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
+
+    fileEntries[++n].name = "./test/auto/TestComposite.js";
+    fileEntries[n].contents = _________test_auto_RampJSTest_js;
+    fileEntries[n].length = _________test_auto_RampJSTest_js_len;
+
 
     // Used by ../duktape/duktape tests.
     fileEntries[++n].name = "common/test/testCommon.js";
