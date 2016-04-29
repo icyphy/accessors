@@ -155,8 +155,34 @@
   </target>
 
   <target name="tests.duk"
+          depends="tests.duk.test, tests.duk.auto"
+          description="Execute the duktape tests in duktape/test and test/auto.">
+  </target>
+
+  <target name="tests.duk.auto"
           depends="duk"
-          description="Execute the duktape tests.">
+          description="Execute the duk tests in tests/auto.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="."
+           executable="hosts/duktape/duktape/duk"
+           failonerror="true"
+	   relative="true">
+      <arg value="--accessor"/>
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk does not have a separate eduk test directory, we just
+	     run the accessors in test/auto instead.
+	  --> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+  </target>
+  
+  <target name="tests.duk.test"
+          depends="duk"
+          description="Execute the duktape tests in duktape/test.">
     <apply dir="hosts"
            executable="duktape/duktape/duk"
            failonerror="true">
