@@ -54,7 +54,16 @@ setTimeout = function(func, delay) {
 
     if (typeof func === 'string') {
         // Legacy case: callback is a string.
-        cb_func = eval.bind(this, func);
+
+        // Coverity Scan reports "explicit_this_parameter: Explicit use of 'this'."
+        // if the next line is uncommented:
+        // cb_func = eval.bind(this, func);
+        // The issue is that in most hosts, setInterval() is a built-in
+        // function and does not explicitly use 'this'.  However, in Duktape,
+        // setInterval() is a function that explictly uses 'this'.
+        // So, we throw an error.
+        throw new TypeError('callback is string, which is not supported.');        
+
     } else if (typeof func !== 'function') {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
@@ -92,7 +101,16 @@ setInterval = function(func, delay) {
 
     if (typeof func === 'string') {
         // Legacy case: callback is a string.
-        cb_func = eval.bind(this, func);
+
+        // Coverity Scan reports "explicit_this_parameter: Explicit use of 'this'."
+        // if the next line is uncommented:
+        // cb_func = eval.bind(this, func);
+        // The issue is that in most hosts, setInterval() is a built-in
+        // function and does not explicitly use 'this'.  However, in Duktape,
+        // setInterval() is a function that explictly uses 'this'.
+        // So, we throw an error.
+        throw new TypeError('callback is string, which is not supported.');        
+
     } else if (typeof func !== 'function') {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
