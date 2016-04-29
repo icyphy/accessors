@@ -6,7 +6,13 @@
   <!-- We can refer to any environment variable FOO as ${env.FOO} -->
   <property environment="env" />
 
-  <!-- Location of the Duktape sources -->
+  <!-- Location of the eduk sources.  eduk is the embedded duktape
+       binary that does not use a file system.  Duktape is an embedded
+       JavaScript interpreter.
+  -->
+  <property name="eduk.source" value="${basedir}/hosts/duktape/eduk"/>
+
+  <!-- Location of the Duktape sources. -->
   <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
 
   <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
@@ -30,8 +36,8 @@
   </fileset>
 
   <target name="build"
-          depends="jsdoc, ptdoc"
-          description="Generate html and Ptdoc documentation.">
+          depends="duktape, jsdoc, ptdoc"
+          description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
   <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
@@ -47,8 +53,20 @@
   </target>
 
   <target name="duktape"
+          depends="duk, eduk"
+          description="Build the duktape binaries">
+  </target>
+
+  <target name="duk"
           description="Build the duk binary.  Requires make and a C compiler.">
     <exec dir="${duktape.source}"
+          executable="make">
+    </exec>
+  </target>
+
+    <target name="eduk"
+          description="Build the eduk binary.  Requires xxd, make and gcc.">
+    <exec dir="${eduk.source}"
           executable="make">
     </exec>
   </target>
@@ -138,8 +156,21 @@
     </apply>
   </target>
 
+  <target name="tests.eduk"
+          depends="eduk"
+          description="Execute the eduk tests.">
+    <apply dir="hosts"
+           executable="duktape/eduk/eduk"
+           failonerror="true">
+      <fileset dir="hosts">
+        <include name="duktape/test/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+  </target>
+
   <target name="tests.mocha"
-          description="Use mocha to test JavaScript and generate output on stdout.">
+          description="Use mocha to test the Node host and generate output on stdout.">
     <echo>
       ==test.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
@@ -160,7 +191,7 @@
   </target>
 
   <target name="tests.mocha.xml"
-          description="Use mocha to test JavaScript and generate JUnit-compatible output.">
+          description="Use mocha to test the Node Host and generate JUnit-compatible output.">
     <echo>
       ==test.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
