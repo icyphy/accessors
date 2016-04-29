@@ -11,9 +11,9 @@ C_FILES = \
 	duk_stack.c \
 	eduk.c \
 	modSearch.c \
+	nofileio.c \
 	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES)
 
-#	nofileio.c
 
 # .h files that contain the contents of .js files
 JS_H_FILES = \
@@ -50,37 +50,44 @@ CCLIBS	= -lm
 eduk: $(C_FILES) $(H_FILES)
 	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
+# .h files that contain the .js files.  
+# c_eventloop.h and duktapeHost.h are core files that are read in by
+# the eduk executable during start up.
 c_eventloop.h: c_eventloop.js  makefile
-	xxd -i $< | sed -e 's/unsigned //' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 
 duktapeHost.h: ../duktapeHost.js  makefile
-	xxd -i ../duktapeHost.js | sed -e 's/unsigned //' -e 's/^int/const int/' > duktapeHost.h
+	xxd -i ../duktapeHost.js | sed -e 's/unsigned //'  > duktapeHost.h
 
+# The .h files below here are read in by the nofileio_readfile()
+# function in nofileio.c, which is called by Duktape.modSearch() in
+# ../duktapeHost.js, which is converted to duktapeHost.h
 
-# Common Host
+# Common Host.  All duktape and eduk accessor hosts will need these files.
 commonHost.h: ../../common/commonHost.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 events.h: ../../common/modules/events.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 util.h: ../../common/modules/util.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 
 ecma_eventloop.h: ../duktape/examples/eventloop/ecma_eventloop.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 
-# Composite Accessors
+# Composite Accessors used for testing.  Production duktape accessor
+# hosts will not include these files.
 RampJSDisplay.h: ../../../test/auto/RampJSDisplay.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 RampJSTest.h: ../../../test/auto/RampJSTest.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 
 # Accessors
 TestDisplay.h: ../../../test/TestDisplay.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 TestSpontaneous.h: ../../../test/TestSpontaneous.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 TrainableTest.h: ../../../test/TrainableTest.js makefile
-	xxd -i $< | sed -e 's/unsigned /const /' -e 's/^int/const int/' > $@
+	xxd -i $< | sed -e 's/unsigned //'  > $@
 
 clean:
-	rm -f eduk
+	rm -f eduk $(JS_H_FILES)

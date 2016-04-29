@@ -86,50 +86,7 @@ struct fileEntry {
 
 #define FILE_ENTRIES_SIZE 9
 
-struct fileEntry fileEntries [FILE_ENTRIES_SIZE] = {
-
-    // Common Host
-    { .name = "common/commonHost.js",
-      .contents = ______common_commonHost_js,
-      .length = ______common_commonHost_js_len},
-    { .name = "common/modules/events.js",
-      .contents = ______common_modules_events_js,
-      .length = ______common_modules_events_js_len},
-    { .name = "common/modules/util.js",
-      .contents = ______common_modules_util_js,
-      .length = ______common_modules_util_js_len},
-
-    // The duktape binary needs this because it uses the JavaScript eventloop.
-    // The eduk binary does not need this.
-    { .name = "duktape/duktape/examples/eventloop/ecma_eventloop.js",
-      .contents = ___duktape_examples_eventloop_ecma_eventloop_js,
-      .length = ___duktape_examples_eventloop_ecma_eventloop_js_len},
-
-    // Composite accessors in test/auto/.
-    { .name = "./../test/auto/RampJSDisplay.js",
-      .contents = _________test_auto_RampJSDisplay_js,
-      .length = _________test_auto_RampJSDisplay_js_len},
-    { .name = "./../test/auto/RampJSTest.js",
-      .contents = _________test_auto_RampJSTest_js,
-      .length = _________test_auto_RampJSTest_js_len},
-
-    // Accessors in test/.  Note that the name is relative to
-    // accessors/web/hosts, but the name of the array have more
-    // underscores because xxd was run in
-    // accessors/web/hosts/duktape/eduk.
-    { .name = "./test/TestDisplay.js",
-      .contents = _________test_TestDisplay_js,
-      .length = _________test_TestDisplay_js_len},
-
-    { .name = "./test/TestSpontaneous.js",
-      .contents = _________test_TestSpontaneous_js,
-      .length = _________test_TestSpontaneous_js_len},
-
-    { .name = "./test/TrainableTest.js",
-      .contents = _________test_TrainableTest_js,
-      .length = _________test_TrainableTest_js_len}
-    
-};
+struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
 static int nofileio_readfile(duk_context *ctx) {
     const char *filename = duk_to_string(ctx, 0);
@@ -170,6 +127,54 @@ static duk_function_list_entry nofileio_funcs[] = {
 };
 
 void nofileio_register(duk_context *ctx) {
+    // We initialize the fileEntries structure here, using an older 
+    // method of initialization so that the code is more portable.
+    // In theory, we could use fileEntries[] = {.name = "xx", .contents = yy...
+
+    int n = 0;
+
+    // Files necessary for the common host.  All Duktape accessors
+    // will need these files.
+    fileEntries[n].name = "common/commonHost.js"; 
+    fileEntries[n].contents = ______common_commonHost_js;
+    fileEntries[n].length = ______common_commonHost_js_len;
+    fileEntries[++n].name = "common/modules/events.js";
+    fileEntries[n].contents = ______common_modules_events_js;
+    fileEntries[n].length = ______common_modules_events_js_len;
+    fileEntries[++n].name = "common/modules/util.js";
+    fileEntries[n].contents = ______common_modules_util_js;
+    fileEntries[n].length = ______common_modules_util_js_len;
+
+    // The duktape binary needs this because it uses the JavaScript eventloop.
+    // The eduk binary does not need this.
+    fileEntries[++n].name = "duktape/duktape/examples/eventloop/ecma_eventloop.js";
+    fileEntries[n].contents = ___duktape_examples_eventloop_ecma_eventloop_js;
+    fileEntries[n].length = ___duktape_examples_eventloop_ecma_eventloop_js_len;
+
+    // Composite accessors in test/auto/ that are used for testing
+    fileEntries[++n].name = "./../test/auto/RampJSDisplay.js";
+    fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
+    fileEntries[++n].name = "./../test/auto/RampJSTest.js";
+    fileEntries[n].contents = _________test_auto_RampJSTest_js;
+    fileEntries[n].length = _________test_auto_RampJSTest_js_len;
+
+    // Accessors in test/.  Note that the name is relative to
+    // accessors/web/hosts, but the name of the array have more
+    // underscores because xxd was run in
+    // accessors/web/hosts/duktape/eduk.
+    fileEntries[++n].name = "./test/TestDisplay.js";
+    fileEntries[n].contents = _________test_TestDisplay_js;
+    fileEntries[n].length = _________test_TestDisplay_js_len;
+
+    fileEntries[++n].name = "./test/TestSpontaneous.js";
+    fileEntries[n].contents = _________test_TestSpontaneous_js;
+    fileEntries[n].length = _________test_TestSpontaneous_js_len;
+
+    fileEntries[++n].name = "./test/TrainableTest.js";
+    fileEntries[n].contents = _________test_TrainableTest_js;
+    fileEntries[n].length = _________test_TrainableTest_js_len;
+
     /* Set global 'NoFileIo'. */
     duk_push_global_object(ctx);
     duk_push_object(ctx);
