@@ -29,7 +29,7 @@ var _numberOfInputTokensSeen = 0;
 var _trainingTokens = [];
 
 exports.initialize = function() {
-    console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
+    //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     _numberOfInputTokensSeen = 0;
     _trainingTokens = [];
 }

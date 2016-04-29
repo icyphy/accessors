@@ -36,8 +36,11 @@ Duktape.modSearch = function (id, require, exports, module) {
     var name;
     var src;
     var found = false;
+    var debug = false
 
-    print('loading module:', id);
+    if (debug) {
+        print('loading module:', id);
+    }
 
     /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
@@ -56,7 +59,9 @@ Duktape.modSearch = function (id, require, exports, module) {
         name = id + '.js';
     }
 
-    print('loading module:', name);
+    if (debug) {
+        print('loading module:', name);
+    }
 
     // Use NoFileIo instead of FileIo because small embedded systems
     // don't have file systems.
@@ -67,12 +72,16 @@ Duktape.modSearch = function (id, require, exports, module) {
     //print('readFile returned', src);
     //print('src is of type', typeof src);
     if (typeof src === 'string') {
-        print('loaded Ecmascript:', name);
+        if (debug) {
+            print('loaded Ecmascript:', name);
+        }
         return src;
     }
 
     if (typeof src === 'buffer') {
-        print('loaded Ecmascript:', name);
+        if (debug) {
+            print('loaded Ecmascript:', name);
+        }
         return src.toString();
     }
 
@@ -83,7 +92,7 @@ Duktape.modSearch = function (id, require, exports, module) {
 
     /* For pure C modules, 'src' may be undefined which is OK. */
     return src;
-}
+};
 
 // We expect to run duk from the hosts directory.  See
 // https://www.terraswarm.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
@@ -151,7 +160,7 @@ instantiate = function(accessorName, accessorClass) {
     };
     var result = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
-    print('duktapeHost.js: instantiate() done: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    //print('duktapeHost.js: instantiate() done: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return result;
 };
 
@@ -183,19 +192,19 @@ instantiate = function(accessorName, accessorClass) {
  * for getAccessorCode(name).
  */
 instantiateAndInitialize = function(accessorNames) {
-    console.log("duktapeHost.js: instantiateAndInitialize() start: " + accessorNames + " " + accessorNames.length);
+    // console.log("duktapeHost.js: instantiateAndInitialize() start: " + accessorNames + " " + accessorNames.length);
 
-    var length = accessorNames.length
+    var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
         var accessorClass = accessorNames[index];
-        console.log("duktapeHost.js: instantiateAndInitialize(): about to handle " + accessorClass);
+        // print("duktapeHost.js: instantiateAndInitialize(): about to handle " + accessorClass);
 
         // For example, if the accessorClass is
         // test/TestComposite, then the accessorName will be
         // TestComposite.
 
-        // var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        // FIXME: this will cause problems under Windows
         var startIndex = accessorClass.lastIndexOf('/');
         var accessorName = accessorClass.substring(startIndex);
         if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
@@ -208,11 +217,11 @@ instantiateAndInitialize = function(accessorNames) {
             accessorName += "_" + (index - 1);
         }
         var accessor = instantiate(accessorName, accessorClass);
-        console.log("duktapeHost.js: instantiateAndInitialize(): about to call initialize on " + accessor);
+        // print("duktapeHost.js: instantiateAndInitialize(): about to call initialize on " + accessor);
         accessor.initialize();
-        console.log("duktapeHost.js: instantiateAndInitialize(): done with " + accessorClass);
+        // print("duktapeHost.js: instantiateAndInitialize(): done with " + accessorClass);
     }
-    console.log("duktapeHost.js: instantiateAndInitialize() done");
+    // print("duktapeHost.js: instantiateAndInitialize() done");
 }
 
 // Make the Accessor constructor visible so that we may use it in the
@@ -262,5 +271,3 @@ exports = {
     //'setInterval': setInterval,
     //'setTimeout': setTimeout,
 };
-
-console.log("Loaded duktapeHost.js");

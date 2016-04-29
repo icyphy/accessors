@@ -406,15 +406,15 @@ function Accessor(
     // as top-level functions in the accessor specification.
     // FIXME: Probably need to include setInterval, clearInterval,
     // setTimeout, clearTimeout, because these will need to overridden.
-    if (bindings && bindings['setInterval']) {
-        this.setInterval = bindings['setInterval'];
+    if (bindings && bindings.setInterval) {
+        this.setInterval = bindings.setInterval;
     } else if (typeof setInterval !== 'undefined') {
         this.setInterval = setInterval;
     } else {
         throw new Error('Host does not define required setInterval function.');
     }
-    if (bindings && bindings['setTimeout']) {
-        this.setTimeout = bindings['setTimeout'];
+    if (bindings && bindings.setTimeout) {
+        this.setTimeout = bindings.setTimeout;
     } else if (typeof setTimeout !== 'undefined') {
         this.setTimeout = setTimeout;
     } else {

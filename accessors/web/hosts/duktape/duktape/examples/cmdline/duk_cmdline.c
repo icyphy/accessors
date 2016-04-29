@@ -965,7 +965,7 @@ int main(int argc, char *argv[]) {
         // Accessors:
         // duktapeHost.h is created by running
         // xxd -i ../duktapeHost.js duktapeHost.h
-        fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
+        //fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
 
         // Use duk_peval_string_noresult() and avoid interning the string.  Good
         // for low memory, see
@@ -974,7 +974,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
             print_pop_error(ctx, stderr);
         } else {
-            printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+            //printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
             //duk_pop(ctx);
         }
 
@@ -982,7 +982,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "%s:%d: Failed to require ecma_eventloop.js.  Error was:\n", __FILE__, __LINE__);
             print_pop_error(ctx, stderr);
         } else {
-            printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
+            //printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
             duk_pop(ctx);
         }
 
@@ -1025,6 +1025,8 @@ int main(int argc, char *argv[]) {
                 if (accessor == 1) {
                     int length = strlen(arg) + 200;
                     char buf[length];
+                    fprintf(stderr, "duk: About to instantiate %s\n", arg);
+                    fflush(stderr);
                     if (timeout > 0) {
                         // Timeout.  requestEventLoopExit() is defined in ecma_eventloop.js
                         snprintf(buf, length, "var args = ['%s'];instantiateAndInitialize(args); setTimeout(function () {requestEventLoopExit()}, %d);", arg, timeout);
@@ -1036,10 +1038,14 @@ int main(int argc, char *argv[]) {
                     if (duk_peval_string(ctx, buf) != 0) {
                         fprintf(stderr, "%s:%d: Failed to invoke accessor.  Command was:%s\n Error was:\n", __FILE__, __LINE__, buf);
                         print_pop_error(ctx, stderr);
+                        retval = 1;
+                        goto cleanup;
                     } else {
                         duk_pop(ctx);
                     }
                 } else {
+                    fprintf(stderr, "duk: About to eval %s\n", arg);
+                    fflush(stderr);
                     if (handle_file(ctx, arg, compile_filename) != 0) {
 			retval = 1;
 			goto cleanup;
@@ -1078,8 +1084,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-        fprintf(stderr, "calling EventLoop.run()\n");
-        fflush(stderr);
+        //fprintf(stderr, "calling EventLoop.run()\n");
         if (duk_peval_string(ctx, "EventLoop.run();") != 0) {
             fprintf(stderr, "%s:%d: Failed to invoke 'EventLoop.run();' Error was:\n", __FILE__, __LINE__);
             print_pop_error(ctx, stderr);

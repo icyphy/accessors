@@ -71,6 +71,7 @@
 // These are used by the tests and would not be needed in production.
 #include "RampJSDisplay.h"
 #include "RampJSTest.h"
+#include "RampJSTestDisplay.h"
 #include "autoTestComposite.h"
 #include "testCommon.h"
 #include "TestAdder.h"
@@ -89,7 +90,7 @@ struct fileEntry {
     int length;
 };
 
-#define FILE_ENTRIES_SIZE 14
+#define FILE_ENTRIES_SIZE 15
 
 struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
@@ -165,9 +166,13 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
 
+    fileEntries[++n].name = "./test/auto/RampJSTestDisplay.js";
+    fileEntries[n].contents = _________test_auto_RampJSTestDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSTestDisplay_js_len;
+
     fileEntries[++n].name = "./test/auto/TestComposite.js";
-    fileEntries[n].contents = _________test_auto_RampJSTest_js;
-    fileEntries[n].length = _________test_auto_RampJSTest_js_len;
+    fileEntries[n].contents = _________test_auto_TestComposite_js;
+    fileEntries[n].length = _________test_auto_TestComposite_js_len;
 
 
     // Used by ../duktape/duktape tests.

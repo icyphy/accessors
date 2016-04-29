@@ -46,10 +46,10 @@ getAccessorCode = function (name) {
                 }
             } else {
                 var pathName = searchPath[i] + name + '.js';
-                print("testCommon.js: pathName: " + pathName);
+                //print("testCommon.js: pathName: " + pathName);
                 var src = FileIo.readfile(pathName);
                 if (typeof src === 'buffer') {
-                    print("testCommon.js: returning contents of " + pathName);
+                    //print("testCommon.js: returning contents of " + pathName);
                     return src;
                 }
             }
