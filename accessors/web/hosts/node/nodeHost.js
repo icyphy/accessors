@@ -121,7 +121,7 @@ instantiate = function(accessorName, accessorClass) {
  * for getAccessorCode(name).
  */
 instantiateAndInitialize = function(accessorNames) {
-    var length = accessorNames.length
+    var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
         var accessorClass = accessorNames[index];
@@ -143,7 +143,7 @@ instantiateAndInitialize = function(accessorNames) {
         var accessor = instantiate(accessorName, accessorClass);
         accessor.initialize();
     }
-}
+};
 
 // Make the Accessor constructor visible so that we may use it in the
 // Cape Code Accessor Code Generator.

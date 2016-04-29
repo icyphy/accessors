@@ -59,8 +59,8 @@ setTimeout = function(func, delay) {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
         // Special case: callback arguments are provided.
-        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
-        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
+        bind_args = Array.prototype.slice.call(arguments, 2);
+        bind_args.unshift(this);
         cb_func = func.bind.apply(func, bind_args);
     } else {
         // Normal case: callback given as a function without arguments.
@@ -70,7 +70,7 @@ setTimeout = function(func, delay) {
     timer_id = EventLoop.createTimer(cb_func, delay, true /*oneshot*/);
 
     return timer_id;
-}
+};
 
 // Accessors: make clearTimeout() global.
 clearTimeout = function(timer_id) {
@@ -78,7 +78,7 @@ clearTimeout = function(timer_id) {
         throw new TypeError('timer ID is not a number');
     }
     var success = EventLoop.deleteTimer(timer_id);  /* retval ignored */
-}
+};
 
 // Accessors: make setInterval() global.
 setInterval = function(func, delay) {
@@ -97,8 +97,8 @@ setInterval = function(func, delay) {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
         // Special case: callback arguments are provided.
-        bind_args = Array.prototype.slice.call(arguments, 2);  // [ arg1, arg2, ... ]
-        bind_args.unshift(this);  // [ global(this), arg1, arg2, ... ]
+        bind_args = Array.prototype.slice.call(arguments, 2);
+        bind_args.unshift(this);
         cb_func = func.bind.apply(func, bind_args);
     } else {
         // Normal case: callback given as a function without arguments.
@@ -108,7 +108,7 @@ setInterval = function(func, delay) {
     timer_id = EventLoop.createTimer(cb_func, delay, false /*oneshot*/);
 
     return timer_id;
-}
+};
 
 // Accessors: make clearInterval() global.
 clearInterval = function(timer_id) {
@@ -116,15 +116,16 @@ clearInterval = function(timer_id) {
         throw new TypeError('timer ID is not a number');
     }
     EventLoop.deleteTimer(timer_id);
-}
+};
 
 // Accessors: make requestEventLoopExit() global.
 requestEventLoopExit = function() {
     EventLoop.requestExit();
-}
+};
 
 exports = {
     'clearInterval': clearInterval,
     'setInterval': setInterval,
+    'clearTimeout': clearTimeout,
     'setTimeout': setTimeout
 };
