@@ -19,9 +19,11 @@ describe('nodeHost run tests in accessors/web/test/auto', function () {
     }
 
     accessors.forEach(function(accessor) {
-        it('NodeHost run accessors/web/test/auto/' + accessor, function () {
-            var testAccessor = [ "test/auto/" + accessor ];
-            instantiateAndInitialize(testAccessor);
-        });
+        if (accessor.substring(0,4) != '.svn') {
+            it('NodeHost run accessors/web/test/auto/' + accessor, function () {
+                var testAccessor = [ "test/auto/" + accessor ];
+                instantiateAndInitialize(testAccessor);
+            });
+        }
     });
 });
