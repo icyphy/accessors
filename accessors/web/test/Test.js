@@ -1,6 +1,6 @@
 // A composite accessor that accepts a test file name and executes the tests.
 //
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -58,21 +58,28 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals exports, require*/
+/*jshint globalstrict: true*/
+'use strict';
+
 // TODO:  Add an output port for the results.
 // TODO:  Be able to load multiple test files.
 // TODO:  Refactor testing functions into a module.
 // var test = require('test');
 
-exports.setup = function() {
-    this.input('testFile', {'type':'string'});
+exports.setup = function () {
+    this.input('testFile', {'type': 'string'});
 };
 
-exports.initialize = function() {
-    this.addInputHandler('testFile', function() {
+exports.initialize = function () {
+    this.addInputHandler('testFile', function () {
         var fileName = this.get('testFile');
         if (fileName !== null && fileName !== "") {
-        	require(fileName);
-        	mocha.run();
+            require(fileName);
+            mocha.run();
         }
     });
 };
