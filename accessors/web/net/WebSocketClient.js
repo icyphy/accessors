@@ -352,7 +352,7 @@ exports.onClose = function() {
     if (running) {
         this.send('connected', false);
     }
-}
+};
 
 /** Send the message received from web socket to the 'received' output. */
 exports.onMessage = function (message) {

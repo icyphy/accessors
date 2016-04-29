@@ -70,7 +70,7 @@ exports.setup = function() {
 exports.initialize = function() {
     this.addInputHandler('testFile', function() {
         var fileName = this.get('testFile');
-        if (fileName != null && fileName != "") {
+        if (fileName !== null && fileName !== "") {
         	require(fileName);
         	mocha.run();
         }

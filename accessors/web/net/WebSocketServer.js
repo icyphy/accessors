@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2014-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -222,7 +222,7 @@ exports.initialize = function() {
 exports.onListening = function() {
     console.log('Server: Listening for socket connection requests.');
     this.send('listening', this.getParameter('port'));
-}
+};
 
 /** Executes when a connection has been establised.<br>
  *  Triggers an output on <code>'connection'</code>.
@@ -244,7 +244,7 @@ exports.onConnection = function(socket) {
     });
 
     sockets.push(socket);
-}
+};
 
 /** Removes all inputHandlers from sockets.<br>
  * Unregisters event listeners from sockets.<br>
