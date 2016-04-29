@@ -59,11 +59,12 @@ int readandPushFile(duk_context *ctx, const char *fileName) {
  * @param timeout The number of milliseconds to wait after the
  * accessor is instantiated and initialized.  If the timeout is less than zero,
  * then the timeout will be forever.
+ * @return 0 if successfully, non-zero if there is an error.
  */
-void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout) {
+int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout) {
     int  rc;
 
-    fprintf(stderr, "%s:%d: About to load C version of c_eventloop.\n", __FILE__, __LINE__);
+    //fprintf(stderr, "%s:%d: About to load C version of c_eventloop.\n", __FILE__, __LINE__);
 
     // Use duk_peval_string_noresult() and avoid interning the string.  Good
     // for low memory, see
@@ -71,8 +72,10 @@ void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout
     if (duk_peval_string(ctx, c_eventloop_js) != 0) {
         fprintf(stderr, "%s:%d: Loading C version of c_eventloop failed.  Error was:\n", __FILE__, __LINE__);
         print_pop_error(ctx, stderr);
+        return 1;
     } else {
-        printf("%s: Loading C version of c_eventloop worked\n", __FILE__);
+        //printf("%s: Loading C version of c_eventloop worked\n", __FILE__);
+        duk_pop(ctx);
     }
 
     // Use duk_peval_string_noresult() and avoid interning the string.  Good
@@ -81,8 +84,9 @@ void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout
     if (duk_peval_string(ctx, ___duktapeHost_js) != 0) {
         fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
         print_pop_error(ctx, stderr);
+        return 2;
     } else {
-        printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+        //printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
         duk_pop(ctx);
     }
 
@@ -106,6 +110,7 @@ void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout
     if (duk_peval_string(ctx, buf) != 0) {
         fprintf(stderr, "%s:%d: Failed to invoke accessor %s.  Command was:\n%s\nError was:\n", __FILE__, __LINE__, accessorFileName, buf);
         print_pop_error(ctx, stderr);
+        return 3;
     } else {
         duk_pop(ctx);
     }
@@ -124,9 +129,11 @@ void runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout
 
     rc = duk_safe_call(ctx, eventloop_run, 0 /*nargs*/, 1 /*nrets*/);
     if (rc != 0) {
-        printf("Problem 1!!!!\n");
+        fprintf(stderr, "%s:%d: %s: Failed invoke eventloop_run()\n", __FILE__, __LINE__, accessorFileName);
+        return 4;
     }
-    fprintf(stderr, "runAccessorHost() done.\n");
+    //fprintf(stderr, "runAccessorHost() done.\n");
+    return 0;
 }
 
 /** Run an accessor.
@@ -179,13 +186,15 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    int returnValue = 0;
     if (foundFile == 1) {
-        runAccessorHost(ctx, accessorFileName, timeout);
+        fprintf(stderr, "eduk: About to run %s\n", accessorFileName);
+        returnValue = runAccessorHost(ctx, accessorFileName, timeout);
     } else {
         fprintf(stderr, "eduk: No file passed as a command line argument?");
-        return 1;
+        returnValue = 1;
     }
-    return 0;
+    return returnValue;
 
  usage: 
     fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
