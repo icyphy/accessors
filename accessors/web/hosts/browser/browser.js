@@ -140,6 +140,9 @@ window.onload = function() {
 //////////////////////////////////////////////////////////////////////////
 //// Functions
 
+// Export commonHost after it is loaded.  Used by Test accessor.
+var commonHost;
+
 // These will be defined when commonHost.js is loaded.  Used by Test accessor.
 var Accessor;	
 var instantiateAccessor;
@@ -451,9 +454,10 @@ function generateAccessorHTML(path, id) {
             // Hence, we wrap the code in the function, and will pass in the
             // exports object that we want the code to modify.
             var wrapper = eval('(function(exports) {' + code + '})');
-        
+
             // Populate the exports field.
             wrapper(module.exports);
+            
             return module.exports;
         };
         if (callback) {
@@ -524,6 +528,8 @@ function generateAccessorHTML(path, id) {
 	            loadedModules[path] = result;
 	            // If successful, add the module name to the text of the modules list.
 	        } catch (err) {
+	        	console.log("path " + path);
+	        	console.log("err " + err);
 	            executable = false;
 	            text += '<span class="accessorError"> (Not supported by this host)</span>';
 	        }
@@ -592,7 +598,7 @@ function generateAccessorHTML(path, id) {
 
     // Load common/commonHost.js code asynchronously.
     loadFromServer('/accessors/hosts/common/commonHost.js',
-            id, function(err, commonHost) {
+            id, function(err, theCommonHost) {
         var instance;
         if (err) {
             error(err, 'loading commonHost.js');
@@ -611,9 +617,10 @@ function generateAccessorHTML(path, id) {
                 'util': util
             };
             try {
-            	// Make these globally visible.
-            	Accessor = commonHost.Accessor;	
-            	instantiateAccessor = commonHost.instantiateAccessor;
+            	// Make the commonHost globally visible.  Used by Test accessor.
+            	commonHost = theCommonHost;
+            	// Accessor = commonHost.Accessor;	
+            	// instantiateAccessor = commonHost.instantiateAccessor;
             	
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);

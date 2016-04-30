@@ -67,11 +67,26 @@
 
 // TODO:  Add an output port for the results.
 // TODO:  Be able to load multiple test files.
-// TODO:  Refactor testing functions into a module.
-// var test = require('test');
+
+//For some reason, the mocha library loads itself into window.mocha.  
+//TODO:  Figure out why and change to load similar to other libraries.
+//TODO:  Module for node and duktape
+// https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically
+var mocha = require('mocha');
+if (Object.keys(mocha).length === 0 && 
+		JSON.stringify(mocha) === JSON.stringify({}) && 
+		typeof window !== "undefined") {
+	mocha = window.mocha;
+}
+
+var chai = require('chai');
 
 exports.setup = function () {
-    this.input('testFile', {'type': 'string'});
+	mocha.setup('bdd');
+    this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
+    
+	// browser.js loads commonHost already.  Load for other hosts.
+	commonHost = commonHost || require('hosts/common/commonHost.js');
 };
 
 exports.initialize = function () {
