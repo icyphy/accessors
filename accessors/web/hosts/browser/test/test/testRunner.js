@@ -1,15 +1,14 @@
 // Based on /accessors/hosts/common/test/testCommon.js 
 // TODO:  Merge these two into one file.
 
-var expect = chai.expect;
-
-describe('Load and run the accessor common host tests', function () {
-	it('Should load and run the accessor common host tests', function(done) {
+describe('CommonTests', function () {
+	it('Load and run the accessor common host tests', function(done) {
 		this.timeout(5000);	// Increase the default timeout.
 		
 		// Read the accessor source code.
 		var code = getAccessorCode('test/TestAccessor');
-		var instance = new Accessor('TestAccessor', code);
+		
+		var instance = new commonHost.Accessor('TestAccessor', code);
 		
 		function test(testName, expression, expectedValue) {
 		    if (expression != expectedValue) {
@@ -64,7 +63,7 @@ describe('Load and run the accessor common host tests', function () {
 		// Have to provide an implementation of this.instantiate(), which in this case will only
 		// instantiate accessors founds in the accessors repo directory.
 		var code = getAccessorCode('test/TestComposite');
-		var a = new Accessor('TestComposite', code, getAccessorCode);
+		var a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
 		a.initialize();
 
 		// Check assigned priorities.
@@ -87,7 +86,7 @@ describe('Load and run the accessor common host tests', function () {
 		// Note that the following two tests will run concurrently (!)
 
 		// Test spontaneous accessor.
-		var b = instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
+		var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
 		        getAccessorCode);
 		b.initialize();
 		setTimeout(function() {
@@ -101,7 +100,7 @@ describe('Load and run the accessor common host tests', function () {
 		}, 2500);
 
 		// Test composite spontaneous accessor.
-		var c = instantiateAccessor(
+		var c = commonHost.instantiateAccessor(
 		        'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
 		c.initialize();
 		setTimeout(function() {
@@ -115,7 +114,7 @@ describe('Load and run the accessor common host tests', function () {
 		}, 2500);
 
 		// Test this.extend().
-		var d = instantiateAccessor(
+		var d = commonHost.instantiateAccessor(
 		        'TestInheritance', 'test/TestInheritance', getAccessorCode);
 		d.initialize();
 		d.provideInput('untyped', 'foo');
@@ -124,7 +123,7 @@ describe('Load and run the accessor common host tests', function () {
 		        d.latestOutput('jsonOfUntyped'), 'hello');
 
 		// Test this.implement().
-		var e = instantiateAccessor(
+		var e = commonHost.instantiateAccessor(
 		        'TestImplement', 'test/TestImplement', getAccessorCode);
 		e.initialize();
 		e.provideInput('numeric', '42');
@@ -133,7 +132,7 @@ describe('Load and run the accessor common host tests', function () {
 		        e.latestOutput('numericPlusP'), 84);
 
 		// Test access to exported fields of base classes an proper scoping of initialize().
-		var f = instantiateAccessor(
+		var f = commonHost.instantiateAccessor(
 		        'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
 		f.initialize();
 		f.provideInput('in1', '42');
@@ -142,7 +141,7 @@ describe('Load and run the accessor common host tests', function () {
 		        f.latestOutput('out1'), 2);
 
 		// Test two-level inheritance.
-		var g = instantiateAccessor(
+		var g = commonHost.instantiateAccessor(
 		        'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
 		g.initialize();
 		g.provideInput('in1', 42);
@@ -157,7 +156,6 @@ describe('Load and run the accessor common host tests', function () {
         // See https://mochajs.org/#timeouts
         this.timeout(4000);
         setTimeout(function () {done(); console.log("mocha/testCommon.js done");}, 3000);
-
-    });
-		
+    });	
+    
 });
