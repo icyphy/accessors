@@ -57,6 +57,38 @@
 #include <string.h>
 #include <unistd.h>
 
+// If EDUK_FULL is defined, then the files used by the test harness are 
+// included in the eduk binary.
+// To create an eduk binary with only the necessary files, it would
+// be necessary to move the declarations that set fileEntries[] out of the
+// #ifdef EDUK_FULL section and update FILE_ENTRIES_SIZE
+
+// For example, if we were going to create a version of eduk that
+// included test/auto/RampJSDisplay.js, then we would include that file,
+// TestSpontaneous.js and TrainableTest.js
+
+// Undefine EDUK_RAMPJSDISPLAY to get just the Duktape accessor,
+// RampJSTest.js and the two Accessors used by RampJSTest.js
+
+#define EDUK_RAMPJSDISPLAY
+
+// To run RampJSDisplay.js:
+//   ./hosts/duktape/eduk/eduk --timeout 4000 test/auto/RampJSDisplay.js
+
+// Define EDUK_FULL to get the test harness.
+// #define EDUK_FULL
+
+#ifdef EDUK_FULL
+#define EDUK_RAMPJSDISPLAY
+#define FILE_ENTRIES_SIZE 15
+#else 
+#ifdef EDUK_RAMPJSDISPLAY 
+#define FILE_ENTRIES_SIZE 6
+#else // EDUK_RAMPJSDISPLAY 
+#define FILE_ENTRIES_SIZE 3
+#endif // EDUK_RAMPJSDISPLAY 
+#endif //EDUK_FULL
+
 
 // These are required for any duktape host.
 #include "duktape.h"
@@ -64,33 +96,36 @@
 #include "events.h"
 #include "util.h"
 
+#ifdef EDUK_RAMPJSDISPLAY
+#include "RampJSDisplay.h"
+#include "TestDisplay.h"
+#include "TestSpontaneous.h"
+#endif // EDUK_RAMPJSDISPLAY
+
+#ifdef EDUK_FULL
 // This is used by the duktape/duk binary, which uses the JavaScript eventloop code.
 // For production use, this would not need to be shipped.
 #include "ecma_eventloop.h"
 
 // These are used by the tests and would not be needed in production.
-#include "RampJSDisplay.h"
 #include "RampJSTest.h"
 #include "RampJSTestDisplay.h"
 #include "autoTestComposite.h"
 #include "testCommon.h"
 #include "TestAdder.h"
 #include "TestComposite.h"
-#include "TestDisplay.h"
 #include "TestGain.h"
-#include "TestSpontaneous.h"
 #include "TrainableTest.h"
+#endif // EDUK_FULL
 
-// Undefine DEBUG_NOFILEIO and recompile for more verbose debugging.
-//#define DEBUG_NOFILEIO
+// Define DEBUG_NOFILEIO and recompile for more verbose debugging.
+// #define DEBUG_NOFILEIO
 
 struct fileEntry {
     char * name;
     char * contents;
     int length;
 };
-
-#define FILE_ENTRIES_SIZE 15
 
 struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
@@ -151,6 +186,24 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = ______common_modules_util_js;
     fileEntries[n].length = ______common_modules_util_js_len;
 
+#ifdef EDUK_RAMPJSDISPLAY
+    fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
+    fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
+
+    // Accessors used by RampJSDisplay.js
+    fileEntries[++n].name = "./test/TestDisplay.js";
+    fileEntries[n].contents = _________test_TestDisplay_js;
+    fileEntries[n].length = _________test_TestDisplay_js_len;
+
+    fileEntries[++n].name = "./test/TestSpontaneous.js";
+    fileEntries[n].contents = _________test_TestSpontaneous_js;
+    fileEntries[n].length = _________test_TestSpontaneous_js_len;
+
+#endif
+
+
+#ifdef EDUK_FULL
     // The duktape binary needs this because it uses the JavaScript eventloop.
     // The eduk binary does not need this.
     fileEntries[++n].name = "duktape/duktape/examples/eventloop/ecma_eventloop.js";
@@ -158,10 +211,6 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].length = ___duktape_examples_eventloop_ecma_eventloop_js_len;
 
     // Composite accessors in test/auto/ that are used for testing
-    fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
-    fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
-    fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
-
     fileEntries[++n].name = "./test/auto/RampJSTest.js";
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
@@ -192,21 +241,14 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = _________test_TestComposite_js;
     fileEntries[n].length = _________test_TestComposite_js_len;
 
-    fileEntries[++n].name = "./test/TestDisplay.js";
-    fileEntries[n].contents = _________test_TestDisplay_js;
-    fileEntries[n].length = _________test_TestDisplay_js_len;
-
     fileEntries[++n].name = "./test/TestGain.js";
     fileEntries[n].contents = _________test_TestGain_js;
     fileEntries[n].length = _________test_TestGain_js_len;
 
-    fileEntries[++n].name = "./test/TestSpontaneous.js";
-    fileEntries[n].contents = _________test_TestSpontaneous_js;
-    fileEntries[n].length = _________test_TestSpontaneous_js_len;
-
     fileEntries[++n].name = "./test/TrainableTest.js";
     fileEntries[n].contents = _________test_TrainableTest_js;
     fileEntries[n].length = _________test_TrainableTest_js_len;
+#endif
 
     /* Set global 'NoFileIo'. */
     duk_push_global_object(ctx);
