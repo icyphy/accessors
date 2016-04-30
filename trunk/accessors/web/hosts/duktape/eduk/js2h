@@ -1,0 +1,27 @@
+#!/bin/sh
+# $Id$
+# Minimize a .js file and then create a .h file
+# Usage: js2h inputfile outputfile
+
+UGLIFYJS=node_modules/uglify-js/bin/uglifyjs
+
+if [ ! -f $UGLIFYJS ]; then
+    if [ ! -d node_modules ]; then
+	mkdir node_modules;
+    fi
+    echo "$0: Installing uglify-js"
+    npm install uglify-js
+fi
+
+if [ $# -ne 2 ]; then
+    echo "$0: Usage: $0 inputFile outputFile"
+    exit 3
+fi
+
+$UGLIFYJS --compress --output $1.min -- $1 
+if [ ! -f $1.tmp ]; then
+    mv $1 $1.tmp
+fi
+mv $1.min $1
+xxd -i $1 | sed -e 's/unsigned //'  > $2
+cp $1.tmp $1

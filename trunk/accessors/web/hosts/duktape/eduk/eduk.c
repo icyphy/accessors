@@ -29,31 +29,6 @@ extern void nofileio_register(duk_context *ctx);
 extern void poll_register(duk_context *ctx);
 extern void print_pop_error(duk_context *ctx, FILE *f);
 
-int readandPushFile(duk_context *ctx, const char *fileName) {
-    FILE *f  = NULL;
-    char *buf  = NULL;
-    int   len, got;
-
-    f =  fopen(fileName, "rb");
-    if(!f) {
-        printf(" File does not exist, please check \n");
-        return -1;
-    }
-    fseek(f, 0, SEEK_END);
-    len   = (int) ftell(f);
-    buf   = (char *) malloc(len);
-    fseek(f, 0, SEEK_SET);
-    got = fread((void *) buf, (size_t) 1, (size_t) len, f);
-    fclose(f);
-
-    duk_push_lstring(ctx, buf, got);
-    duk_push_string(ctx, fileName);
-    free(buf);
-
-    return 1;
-
-}
-
 /** Run the accessor.
  * @param accessorFileName The file name of the accessor, suitable getAccessorCode()
  * @param timeout The number of milliseconds to wait after the

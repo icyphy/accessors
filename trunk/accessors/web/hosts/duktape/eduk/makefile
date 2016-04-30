@@ -3,8 +3,9 @@ DUKTAPE = ../duktape
 DUKTAPE_SOURCES = $(DUKTAPE)/src/duktape.c
 
 DUKTAPE_CMDLINE_SOURCES = \
-	$(DUKTAPE)/examples/eventloop/fileio.c \
 	$(DUKTAPE)/examples/eventloop/poll.c
+
+#	$(DUKTAPE)/examples/eventloop/fileio.c
 
 C_FILES = \
 	c_eventloop.c \
@@ -71,19 +72,26 @@ duktapeHost.h: ../duktapeHost.js  makefile
 
 # Common Host.  All duktape and eduk accessor hosts will need these files.
 commonHost.h: ../../common/commonHost.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
-events.h: ../../common/modules/events.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
-util.h: ../../common/modules/util.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
 
+events.h: ../../common/modules/events.js makefile
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
+
+util.h: ../../common/modules/util.js makefile
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
+
+# ecma_eventloop.h is used in hosts/duktape/duktape and not hosts/duketape/eduk/eduk
 ecma_eventloop.h: ../duktape/examples/eventloop/ecma_eventloop.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 
 # Composite Accessors used for testing.  Production duktape accessor
 # hosts will not include these files.
 RampJSDisplay.h: ../../../test/auto/RampJSDisplay.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
 RampJSTest.h: ../../../test/auto/RampJSTest.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 RampJSTestDisplay.h: ../../../test/auto/RampJSTestDisplay.js makefile
@@ -102,11 +110,14 @@ TestAdder.h: ../../../test/TestAdder.js makefile
 TestComposite.h: ../../../test/TestComposite.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 TestDisplay.h: ../../../test/TestDisplay.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
+
 TestGain.h: ../../../test/TestGain.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 TestSpontaneous.h: ../../../test/TestSpontaneous.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
+	#xxd -i $< | sed -e 's/unsigned //'  > $@
 TrainableTest.h: ../../../test/TrainableTest.js makefile
 	xxd -i $< | sed -e 's/unsigned //'  > $@
 
