@@ -62,15 +62,21 @@ setTimeout = function(func, delay) {
         // function and does not explicitly use 'this'.  However, in Duktape,
         // setInterval() is a function that explictly uses 'this'.
         // So, we throw an error.
-        throw new TypeError('callback is string, which is not supported.');        
-
+        throw new TypeError('callback is string, which is not supported because of this issues.');
+        
     } else if (typeof func !== 'function') {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
         // Special case: callback arguments are provided.
-        bind_args = Array.prototype.slice.call(arguments, 2);
-        bind_args.unshift(this);
-        cb_func = func.bind.apply(func, bind_args);
+
+        // Coverity Scan reports "explicit_this_parameter: Explicit use of 'this'."
+        // if the next lines are uncommented:
+        // bind_args = Array.prototype.slice.call(arguments, 2);
+        // bind_args.unshift(this);
+        // cb_func = func.bind.apply(func, bind_args);
+
+        // So, we throw an error.
+        throw new TypeError('callback arguments are provided, which is not supported because of this issues.');
     } else {
         // Normal case: callback given as a function without arguments.
         cb_func = func;
