@@ -1,10 +1,11 @@
 /** Compare the input with a known good input.
  *
  *  This actor is based on the NonStrictTest actor, but currently only
- *  handles numeric input.
+ *  handles numeric and string input.
  *  
  *  @accessor test/TrainableTest
  *  @input input The input value
+ *  @output output False as long as there is data to compare against the input
  *  @param correctValues a JSON array of the correct values.
  *  @param trainingMode true if the input is being trained.
  *  @author Christopher Brooks based on the Ptolemy NonStrictTest actor by Paul Whitaker, Christopher Hylands, Edward A. Lee
@@ -20,16 +21,23 @@
 'use strict';
 
 exports.setup = function () {
-    // FIXME: this only supports numbers, unlike the Cape Code Test
+    // FIXME: this only supports numbers and strings, unlike the Cape Code Test
     // actor, which supports many types.
     this.parameter('correctValues', {'type': 'JSON', 'value': '{0}'});
     this.input('input');
-    this.output('output', {'type': 'number'});
+    this.output('output', {'type': 'boolean'});
     this.parameter('tolerance', {'type': 'number', 'value': 0.000000001});
     this.parameter('trainingMode', {'type': 'boolean', 'value': false});
 };
 
 // Input, parameter and variable names match those in $PTII/ptolemy/actor/lib/NonStrictTest.java
+
+// Set to true if fire is called once.  If fire() is not called at all,
+// then throw an exception in wrapup().
+var firedOnce = false;
+
+// Set to true when initialized() is called.
+var initialized = false;
 
 // The number of input tokens that have been read in.
 var numberOfInputTokensSeen = 0;
@@ -39,6 +47,8 @@ var trainingTokens = [];
 
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
+    firedOnce = false;
+    initialized = true;
     numberOfInputTokensSeen = 0;
     trainingTokens = [];
 };
@@ -48,9 +58,11 @@ exports.initialize = function () {
  */
 exports.fire = function () {
     var inputValue = this.get('input');
+    firedOnce = true;
     // If the input is not connected, then inputValue will be null.
     if (this.getParameter('trainingMode')) {
         trainingTokens.push(inputValue);
+        this.send('output', false);
         return;
     }
     var correctValuesValues = this.getParameter('correctValues');
@@ -58,7 +70,7 @@ exports.fire = function () {
         var referenceToken = correctValuesValues[numberOfInputTokensSeen];
         //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
         //+ ", referenceToken: " + referenceToken);
-        if (typeof inputValue !== 'number') {
+        if (typeof inputValue !== 'number' && typeof inputValue !== 'string') {
             if (inputValue === null) {
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
                                 ' tokens, the value of the input was null?  ' +
@@ -67,22 +79,32 @@ exports.fire = function () {
             }
             throw new Error('After seeing ' + numberOfInputTokensSeen +
                             ' tokens, the input "' + inputValue +
-                            '" is not a number, it is a ' +
+                            '" is neither a number nor a string, it is a ' +
                             typeof inputValue);
         }
-        if (typeof referenceToken !== 'number') {
+        if (typeof referenceToken === 'number') {
+            if (Math.abs(inputValue - referenceToken) > this.getParameter('tolerance')) {
+                throw new Error('The input "' + inputValue + '" is not within "' +
+                                this.getParameter('tolerance') +
+                                '" of the expected value "' +
+                                referenceToken + '"');
+            }
+        } else if (typeof referenceToken === 'string') {
+            if (inputValue !== referenceToken) {
+                throw new Error('The input "' + inputValue + '" is !== "' +
+                                '" to the expected value "' +
+                                referenceToken + '"');
+            }
+        } else {
             throw new Error('After seeing ' + numberOfInputTokensSeen +
                             ' tokens, the referenceToken "' + referenceToken +
                             '" is not a number, it is a ' +
                             typeof referenceToken);
         }
-        if (Math.abs(inputValue - referenceToken) > this.getParameter('tolerance')) {
-            throw new Error('The input "' + inputValue + '" is not within "' +
-                            this.getParameter('tolerance') +
-                            '" of the expected value "' +
-                            referenceToken + '"');
-        }
         numberOfInputTokensSeen++;
+        this.send('output', false);
+    } else {
+        this.send('output', true);
     }
 };
 
@@ -90,5 +112,24 @@ exports.fire = function () {
 exports.wrapup = function () {
     if (this.getParameter('trainingMode')) {
         this.setParameter('correctValues', trainingTokens);
+    } else {
+        if (initialized) {
+            if (!firedOnce) {
+                initialized = false;
+                throw new Error('The fire() function of this accessor was never called. ' +
+                                'Usually, this is an error indicating that ' +
+                                'starvation is occurring.');
+            }
+            var correctValuesValues = this.getParameter('correctValues');
+            if (numberOfInputTokensSeen < correctValuesValues.length) {
+                throw new Error('The test produced only ' +
+                                numberOfInputTokensSeen +
+                                ' tokens, yet the correctValues parameter was ' +
+                                'expecting ' +
+                                correctValuesValues.length +
+                                ' tokens');
+            }
+        }
+        initialized = false;
     }
 };
