@@ -36,11 +36,8 @@ Duktape.modSearch = function (id, require, exports, module) {
     var name;
     var src;
     var found = false;
-    var debug = false
 
-    if (debug) {
-        print('loading module:', id);
-    }
+    // print('loading module:', id);
 
     /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
@@ -59,29 +56,21 @@ Duktape.modSearch = function (id, require, exports, module) {
         name = id + '.js';
     }
 
-    if (debug) {
-        print('loading module:', name);
-    }
-
     // Use NoFileIo instead of FileIo because small embedded systems
     // don't have file systems.
 
     //src = FileIo.readfile(name);
     src = NoFileIo.readfile(name);
 
-    //print('readFile returned', src);
-    //print('src is of type', typeof src);
+    // print('readFile returned', src);
+    // print('src is of type', typeof src);
     if (typeof src === 'string') {
-        if (debug) {
-            print('loaded Ecmascript:', name);
-        }
+        // print('loaded Ecmascript:', name);
         return src;
     }
 
     if (typeof src === 'buffer') {
-        if (debug) {
-            print('loaded Ecmascript:', name);
-        }
+        // print('loaded Ecmascript:', name);
         return src.toString();
     }
 
