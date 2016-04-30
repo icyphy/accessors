@@ -70,13 +70,15 @@
 // Undefine EDUK_RAMPJSDISPLAY to get just the Duktape accessor,
 // RampJSTest.js and the two Accessors used by RampJSTest.js
 
+
 #define EDUK_RAMPJSDISPLAY
 
 // To run RampJSDisplay.js:
 //   ./hosts/duktape/eduk/eduk --timeout 4000 test/auto/RampJSDisplay.js
 
 // Define EDUK_FULL to get the test harness.
-// #define EDUK_FULL
+// If EDUK_FULL is not defined, then the ../duktape/duk tests will fail.
+#define EDUK_FULL
 
 #ifdef EDUK_FULL
 #define EDUK_RAMPJSDISPLAY

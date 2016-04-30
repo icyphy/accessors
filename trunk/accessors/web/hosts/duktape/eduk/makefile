@@ -61,10 +61,10 @@ eduk: $(C_FILES) $(H_FILES)
 # c_eventloop.h and duktapeHost.h are core files that are read in by
 # the eduk executable during start up.
 c_eventloop.h: c_eventloop.js  makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 
 duktapeHost.h: ../duktapeHost.js  makefile
-	xxd -i ../duktapeHost.js | sed -e 's/unsigned //'  > duktapeHost.h
+	./js2h $< $@
 
 # The .h files below here are read in by the nofileio_readfile()
 # function in nofileio.c, which is called by Duktape.modSearch() in
@@ -73,53 +73,44 @@ duktapeHost.h: ../duktapeHost.js  makefile
 # Common Host.  All duktape and eduk accessor hosts will need these files.
 commonHost.h: ../../common/commonHost.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
 
 events.h: ../../common/modules/events.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
 
 util.h: ../../common/modules/util.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
 
 # ecma_eventloop.h is used in hosts/duktape/duktape and not hosts/duketape/eduk/eduk
 ecma_eventloop.h: ../duktape/examples/eventloop/ecma_eventloop.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 
 # Composite Accessors used for testing.  Production duktape accessor
 # hosts will not include these files.
 RampJSDisplay.h: ../../../test/auto/RampJSDisplay.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
 RampJSTest.h: ../../../test/auto/RampJSTest.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 RampJSTestDisplay.h: ../../../test/auto/RampJSTestDisplay.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
-
+	./js2h $< $@
 
 # Used by ../duktape/duktape tests
 testCommon.h: ../../common/test/testCommon.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
-
+	./js2h $< $@
 # Accessors
 TestAdder.h: ../../../test/TestAdder.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 TestComposite.h: ../../../test/TestComposite.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 TestDisplay.h: ../../../test/TestDisplay.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
-
 TestGain.h: ../../../test/TestGain.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 TestSpontaneous.h: ../../../test/TestSpontaneous.js makefile
 	./js2h $< $@
-	#xxd -i $< | sed -e 's/unsigned //'  > $@
 TrainableTest.h: ../../../test/TrainableTest.js makefile
-	xxd -i $< | sed -e 's/unsigned //'  > $@
+	./js2h $< $@
 
 clean:
 	rm -f eduk $(JS_H_FILES)
