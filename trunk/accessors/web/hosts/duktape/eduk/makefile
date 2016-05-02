@@ -2,11 +2,6 @@
 DUKTAPE = ../duktape
 DUKTAPE_SOURCES = $(DUKTAPE)/src/duktape.c
 
-DUKTAPE_CMDLINE_SOURCES = \
-	$(DUKTAPE)/examples/eventloop/poll.c
-
-#	$(DUKTAPE)/examples/eventloop/fileio.c
-
 C_FILES = \
 	c_eventloop.c \
 	duk_stack.c \
