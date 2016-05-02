@@ -132,7 +132,7 @@ exports.setup = function() {
     this.input('toSend');
     this.output('received');
     this.output('listening', {'type':'int'});
-    this.output('connection');
+    this.output('connection', {'spontaneous': true});
     
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
