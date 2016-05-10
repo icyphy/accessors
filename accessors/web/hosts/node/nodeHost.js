@@ -53,7 +53,7 @@ var accessorPath = [path.join(__dirname, '..', '..')];
  *  search path.
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
-function getAccessorCode(name) {
+getAccessorCode = function(name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
@@ -157,6 +157,7 @@ setParameter = commonHost.setParameter;
 // In case this gets used a module, create an exports object.
 exports = {
     'Accessor': Accessor,
+    'getAccessorCode': getAccessorCode,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,

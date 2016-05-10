@@ -26,6 +26,20 @@
  *  Tests are written using the Mocha framework.  The test results are displayed 
  *  to the console window.
  *  
+ *  To run:
+ *  For the browser, first, start the test server.  Please see:
+ *  /accessors/web/hosts/browser/test/README.txt
+ *  Open a browser window and point to:
+ *  http://localhost:8088/hosts/browser/test/test/testRunner.html
+ *  Click "react to inputs".  The test output will appear at the top of the 
+ *  page, and also in the browser console window.  You may need to open a 
+ *  debugging pane to see the console window.  
+ *  
+ *  In node, from the command prompt, change to the directory:
+ *  /accessors/web/hosts/node/test/mocha
+ *  Execute:
+ *  node ../../nodeHostShell.js < ./testCommon.js
+ *  
  *  The Mocha framework allows developers to describe a test case, execute code, 
  *  then check assertions.  Mocha tracks each assertion and reports if the 
  *  assertion is satisfied or if it fails.  Add-on libraries extend Mocha's 
@@ -36,12 +50,12 @@
  *  and writing tests.  
  *  https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
  *  
- *  Test output is currently logged to the console window.  In the browser host, 
- *  please open a debugging pane to see the console.  A future improvement
- *  would be to output results to a port and provide formatting options (JUnit).
  *  For an overview of the testing capabilities of different hosts, please see:  
  *  https://www.terraswarm.org/accessors/wiki/Main/Testing
- *  
+ *
+ *  Test output is currently logged to the console window.  A future improvement
+ *  would be to output results to a port and provide formatting options (JUnit).
+ *
  *  The Test accessor requires the following to be defined.  Currently, there
  *  are some host dependencies.  Eventually, these functions will be refactored 
  *  into a module.
@@ -65,37 +79,74 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-// TODO:  Add an output port for the results.
 // TODO:  Be able to load multiple test files.
 
-//For some reason, the mocha library loads itself into window.mocha.  
-//TODO:  Figure out why and change to load similar to other libraries.
-//TODO:  Module for node and duktape
+// In the browser, the mocha library loads itself into window.mocha.
+// TODO:  Figure out why and change to load similar to other libraries.
+
+// In node, instantiate a new mocha interface. 
 // https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically
-var mocha = require('mocha');
-if (Object.keys(mocha).length === 0 && 
-		JSON.stringify(mocha) === JSON.stringify({}) && 
-		typeof window !== "undefined") {
+// TODO:  Module for duktape and Cape Code.
+
+var mocha;
+commonHost = commonHost || require('../../../common/commonHost.js');
+
+if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
+	require('mocha');
 	mocha = window.mocha;
+	mocha.setup('bdd');
+} else {
+	var Mocha = require('mocha');
+	mocha = new Mocha({
+		ui: 'bdd'
+	});
 }
 
-var chai = require('chai');
-
 exports.setup = function () {
-	mocha.setup('bdd');
     this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
-    
-	// browser.js loads commonHost already.  Load for other hosts.
-	commonHost = commonHost || require('hosts/common/commonHost.js');
+    this.output('result', {'type': 'string'});
 };
 
 exports.initialize = function () {
+    // Capture 'this' for use in callback.
+    var self = this;
+	
     this.addInputHandler('testFile', function () {
         var fileName = this.get('testFile');
         if (fileName !== null && fileName !== "") {
-            require(fileName);
-            mocha.run();
-        }
+        	// In browser, just require the file. 
+        	// In node, use mocha's addFile() method.
+        	// TODO:  Refactor this stuff into a module.
+        	if (typeof window !== 'undefined') {
+        		require(fileName);
+        	} else {
+        		mocha.addFile("../../../browser/test/test/testRunner.js");
+        	}
+        	
+        	// Register for mocha events and report test outcomes to the console.
+        	// TODO:  Refactor this into a separate reporter.  Report in JUnit format.
+        	// http://stackoverflow.com/questions/29050720/run-mocha-programatically-and-pass-results-to-variable-or-function
+            mocha.run()
+            .on('test', function(test) {
+                console.log('Test started: '+ test.title);
+            })
+            .on('test end', function(test) {
+                console.log('Test done: '+ test.title);
+            })
+            .on('pass', function(test) {
+                console.log('Test passed: ' + test.title);
+            })
+            .on('fail', function(test, err) {
+                console.log('Test failed: ' + test.title);
+                console.log(err);
+            })
+            .on('end', function() {
+                console.log('All done.');
+                // TODO:  Send complete results.
+                self.send('result', 'tests finished');
+            });
+            
+        }	// end if
     });
 };
 
