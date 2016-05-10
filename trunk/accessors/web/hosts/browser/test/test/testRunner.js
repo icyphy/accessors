@@ -1,161 +1,171 @@
 // Based on /accessors/hosts/common/test/testCommon.js 
 // TODO:  Merge these two into one file.
 
-describe('CommonTests', function () {
-	it('Load and run the accessor common host tests', function(done) {
-		this.timeout(5000);	// Increase the default timeout.
-		
+// This file requires mocha and chai.  The Test accessor handles the requires().
+// Note that chai's expect() does not work in strict mode; assert and should do.
+var code, instance, a, b, c, d, e, f, g;
+var chai = require('chai');
+var assert = chai.assert;	
+var should = chai.should();
+
+commonHost = commonHost || require('../../../common/commonHost.js');
+
+describe('Common host: Basic', function () {
+	before(function() {
 		// Read the accessor source code.
-		var code = getAccessorCode('test/TestAccessor');
+		code = getAccessorCode('test/TestAccessor');
 		
-		var instance = new commonHost.Accessor('TestAccessor', code);
-		
-		function test(testName, expression, expectedValue) {
-		    if (expression != expectedValue) {
-		        // Print a stack trace.
-		        var e = new Error('dummy');
-		        var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-		                .replace(/^\s+at\s+/gm, '')
-		                .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-		                .split('\n');
-		        console.log(stack);
-		        
-		        throw('Test failed: ' + testName
-		                + '. Expected: ' + expectedValue
-		                + ', but got: ' + expression);
-		    } else {
-		        console.log('Test passed: ' + testName);
-		    }
-		}
+		instance = new commonHost.Accessor('TestAccessor', code);
 		
 		// Invoke the initialize function.
 		instance.initialize();
 		
 		// Examine the instance in JSON format.
 		console.log('Instance of TestAccessor: %j\nTests:', instance);
+	});
 
-		// Check this.getParameter() with default value.
-		test('TestAccessor: getParameter', instance.getParameter('p'), 42);
-		
-		// Check this.setParameter() and getParameter.
+	
+	it('this.getParameter() returns default value.', function(){
+		instance.getParameter('p').should.equal(42);
+	});
+	
+	it('this.getParameter() returns value set by this.setParameter().', function(){
 		instance.setParameter('p', 12);
-		test('TestAccessor: setParameter', instance.getParameter('p'), 12);
+		instance.getParameter('p').should.equal(12);
+	});
+	
+	it('this.get() returns default value.', function(){
+		instance.get('numeric').should.equal(0);
+	});
 
-		// Check this.get().
-		test('TestAccessor: get', instance.get('numeric'), 0);
-
-		// Check this.get() with no input yet provided.
-		test('TestAccessor: get with undefined', instance.get('untyped'), null);
-
-		// Check this.get() with no input yet provided but type being boolean.
-		test('TestAccessor: get with undefined', instance.get('boolean'), null);
-
-		// Check provideInput().
+	it('this.get() returns null if no input yet provided.', function(){
+		// Use asset for null check.  Can't use object.should since object
+		// is null and null.should is an error. 
+		assert(instance.get('untyped') === null);
+	});
+	
+	it('this.get() returns null if no input yet provided but type being boolean.', function(){
+		assert(instance.get('boolean') === null);
+	});
+	
+	it('this.get() returns value provided by provideInput().', function(){
 		instance.provideInput('boolean', true);
-		test('TestAccessor: provideInput()', instance.get('boolean'), true);
-
-		// Check inputHandlers, send, and latestOutput.
+		instance.get('boolean').should.equal(true);
+	});
+	
+	it('latestOutput contains value provided by inputHandlers and send().', function(){
 		instance.react();
-		test('TestAccessor: react, send, and latestOutput', instance.latestOutput('negation'), false);
-		
-		// Check composite accessors with manual and automatic scheduling.
+		instance.latestOutput('negation').should.equal(false);
+	});
+});
 
+describe('Common host: Composite accessors', function(){
+	before(function() {
 		// Have to provide an implementation of this.instantiate(), which in this case will only
 		// instantiate accessors founds in the accessors repo directory.
-		var code = getAccessorCode('test/TestComposite');
-		var a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
+		code = getAccessorCode('test/TestComposite');
+		a = new commonHost.Accessor('TestComposite', code, getAccessorCode);
+	});
+	
+	it('Composite accessor produces correct output when manually scheduled.', function(){
 		a.initialize();
-
-		// Check assigned priorities.
-		test('TestComposite: priority number of destination is higher than source',
-		        a.containedAccessors[0].priority < a.containedAccessors[1].priority,
-		        true);
-
-		a.provideInput('input', 10)
-		a.containedAccessors[0].react()
-		a.containedAccessors[1].react()
-		test('TestComposite: composite accessor with manual scheduling',
-		        a.latestOutput('output'), 50);
-		
+		a.provideInput('input', 10);
+		a.containedAccessors[0].react();
+		a.containedAccessors[1].react();
+		a.latestOutput('output').should.equal(50);
+	});
+	
+	it('Composite accessor produces correct output when automatically scheduled.', function(){
 		a.initialize();
-		a.provideInput('input', 5)
+		a.provideInput('input', 5);
 		a.react();
-		test('TestComposite: composite accessor with automatic scheduling',
-		        a.latestOutput('output'), 25);
+		a.latestOutput('output').should.equal(25);
+	});
+});
 
-		// Note that the following two tests will run concurrently (!)
-
-		// Test spontaneous accessor.
-		var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
+describe('Common host: Spontaneous accessors', function(){
+	// Increase default mocha timeout (originally 2000).  See https://mochajs.org/#timeouts
+    this.timeout(3000);
+    
+	before(function() {
+		b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
 		        getAccessorCode);
+		c = commonHost.instantiateAccessor(
+		        'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
+		
+	});
+	
+	it('Spontaneous accessor produces correct outputs after 1 and 2 seconds.', function(done){
+		// Note that the following two tests will run concurrently (!)
+		// initialize() must go in the test case, not in before(), since a 
+		// spontaneous accessor will start producing inputs after initialize().
 		b.initialize();
 		setTimeout(function() {
-		    test('TestSpontaneous: spontaneous accessor produces 0 after 1 second',
-		            b.latestOutput('output'), 0);
+			b.latestOutput('output').should.equal(0);
 		}, 1500);
+		
 		setTimeout(function() {
-		    test('TestSpontaneous: spontaneous accessor produces 1 after 2 seconds',
-		            b.latestOutput('output'), 1);
+			b.latestOutput('output').should.equal(1);
 		    b.wrapup();
+		    done();
 		}, 2500);
-
-		// Test composite spontaneous accessor.
-		var c = commonHost.instantiateAccessor(
-		        'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
+	});
+	
+	it('Composite spontaneous accessor produces correct outputs after 1 and 2 seconds.', function(done){
+		// Note that the following two tests will run concurrently (!)
+		// initialize() must go in the test case, not in before(), since a 
+		// spontaneous accessor will start producing inputs after initialize().
 		c.initialize();
 		setTimeout(function() {
-		    test('TestCompositeSpontaneous: composite spontaneous accessor produces 0 after 1 second',
-		            c.latestOutput('output'), 0);
+			c.latestOutput('output').should.equal(0);
 		}, 1500);
 		setTimeout(function() {
-		    test('TestCompositeSpontaneous: composite spontaneous accessor produces 4 after 2 seconds',
-		            c.latestOutput('output'), 4);
+			c.latestOutput('output').should.equal(4);
 		    c.wrapup();
+		    done();
 		}, 2500);
-
-		// Test this.extend().
-		var d = commonHost.instantiateAccessor(
+	});
+});
+	
+describe('Common host: Inheritance', function(){
+	before(function(){
+		d = commonHost.instantiateAccessor(
 		        'TestInheritance', 'test/TestInheritance', getAccessorCode);
 		d.initialize();
-		d.provideInput('untyped', 'foo');
-		d.react();
-		test('TestInheritance: inheritance, function overriding, and variable visibility',
-		        d.latestOutput('jsonOfUntyped'), 'hello');
-
-		// Test this.implement().
-		var e = commonHost.instantiateAccessor(
+		e = commonHost.instantiateAccessor(
 		        'TestImplement', 'test/TestImplement', getAccessorCode);
 		e.initialize();
+		f = commonHost.instantiateAccessor(
+		        'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
+		f.initialize();
+		g = commonHost.instantiateAccessor(
+		        'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
+		g.initialize();
+	});
+		
+	it('Inheritance, function overriding, and variable visiility should work properly.', function(){
+		d.provideInput('untyped', 'foo');
+		d.react();
+		d.latestOutput('jsonOfUntyped').should.equal('hello');
+	});
+		
+	it('Implementing an interface should work properly.', function(){
 		e.provideInput('numeric', '42');
 		e.react();
-		test('TestImplement: implementing an interface',
-		        e.latestOutput('numericPlusP'), 84);
-
-		// Test access to exported fields of base classes an proper scoping of initialize().
-		var f = commonHost.instantiateAccessor(
-		        'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
+		e.latestOutput('numericPlusP').should.equal(84);
+	});
+		
+	it('Exported fields of base classes can be accessed and initialize() is properly scoped.', function(){
 		f.initialize();
 		f.provideInput('in1', '42');
 		f.react();
-		test('TestDerivedC: access to base class exports properties',
-		        f.latestOutput('out1'), 2);
-
-		// Test two-level inheritance.
-		var g = commonHost.instantiateAccessor(
-		        'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
-		g.initialize();
+		f.latestOutput('out1').should.equal(2);
+	});
+		
+	it('Two-level inheritance should work properly.', function(){
 		g.provideInput('in1', 42);
 		g.react();
-		test('TestDerivedAgainA: two-level inheritance, out1', g.latestOutput('out1'), 2);
-		test('TestDerivedAgainA-2: two-level inheritance, out2', g.latestOutput('out2'), 2);
-
-        done();
+		g.latestOutput('out1').should.equal(2);
+		g.latestOutput('out2').should.equal(2);
 	});
-	
-    it('Wait 3 seconds until the Spontaneous tests complete', function(done) {
-        // See https://mochajs.org/#timeouts
-        this.timeout(4000);
-        setTimeout(function () {done(); console.log("mocha/testCommon.js done");}, 3000);
-    });	
-    
 });
