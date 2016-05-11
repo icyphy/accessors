@@ -52,6 +52,10 @@ CCLIBS	= -lm
 eduk: $(C_FILES) $(H_FILES)
 	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
+TCMALLOC_FLAGS = -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
+eduk.tcmalloc: $(C_FILES) $(H_FILES)
+	$(CC) -o $@ $(DEFINES) $(TCMALLOC_FLAGS) $(CCOPTS) $(C_FILES) $(CCLIBS) -ltcmalloc
+
 # .h files that contain the .js files.  
 # c_eventloop.h and duktapeHost.h are core files that are read in by
 # the eduk executable during start up.
