@@ -11,9 +11,14 @@
 // Output:
 //   mocha testCommon.js
 
+var nodeHost = require('../../nodeHost.js');
 var a = instantiate('Test', 'test/Test');
 a.initialize();
 a.provideInput('testFile', '/accessors/hosts/browser/test/test/testRunner.js');
 a.react();
 a.wrapup();
-quit;
+try {
+    quit;
+} catch (error) {
+    console.log("testCommon.js: quit failed, this is expected under Node.");
+}
