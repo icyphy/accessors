@@ -56,6 +56,15 @@ TCMALLOC_FLAGS = -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -f
 eduk.tcmalloc: $(C_FILES) $(H_FILES)
 	$(CC) -o $@ $(DEFINES) $(TCMALLOC_FLAGS) $(CCOPTS) $(C_FILES) $(CCLIBS) -ltcmalloc
 
+# Options for a smaller eduk
+# See https://www.terraswarm.org/accessors/wiki/Main/DuktapeForSmallProcessors#CompilerOptionsforDuktape
+TINY_EDUK_FLAGS = -DDUK_OPT_NO_FILE_IO -DDUK_OPT_LIGHTFUNC_BUILTINS -DDUK_OPT_BUFLEN16 -DDUK_OPT_OBJSIZES16 -DDUK_OPT_REFCOUNT16 -DDUK_OPT_STRHASH16 -DDUK_OPT_STRLEN16 -DDUK_OPT_SELF_TESTS
+eduk.tiny: $(C_FILES) $(H_FILES)
+	$(CC) -o $@ $(DEFINES) $(TINY_EDUK_FLAGS) $(CCOPTS) $(C_FILES) $(CCLIBS)
+
+eduk.tiny.tcmalloc: $(C_FILES) $(H_FILES)
+	$(CC) -o $@ $(DEFINES) $(TINY_EDUK_FLAGS) $(TCMALLOC_FLAGS) $(CCOPTS) $(C_FILES) $(CCLIBS) -ltcmalloc
+
 # .h files that contain the .js files.  
 # c_eventloop.h and duktapeHost.h are core files that are read in by
 # the eduk executable during start up.
