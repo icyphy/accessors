@@ -1310,7 +1310,8 @@ Accessor.prototype.react = function(name) {
                         thiz.error('commonHost.js, react(), invoking a specific handler for \"' +
                                    name + '\": Exception occurred in input handler,' +
                                    ' which has now has been removed.  Exception was: ' +
-                                   exception);
+                                   exception +
+                                   ' Stacktrace was: ' + exception.stack);
                     }
                 }
             }
