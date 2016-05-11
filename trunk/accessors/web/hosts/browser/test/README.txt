@@ -3,23 +3,26 @@ $Id$
 This directory contains a test server and some test web pages for the browser
 swarmlet host.
 
-To run the test, first run the test server on your local host. Then point your
-browser to test HTML files on the localhost, as detailed below.
+To run the test, first run the test server on your local host from
+this directory (accessors/web/hosts/browser/test):
 
-> node testServer.js &
+  node testServer.js &
 
-For a simple test web page, point your favorite browser to
+Then point your browser to test HTML files on the localhost, as
+detailed below.
+
+1) For a simple test web page, point your favorite browser to
 
   http://localhost:8088/hosts/browser/test/testWebPage.html
   
-For a more elaborate page where you can instantiate all accessors in the library,
+2) For a more elaborate page where you can instantiate all accessors in the library,
 point your browser to:
 
   http://localhost:8088/hosts/browser/test/testAccessorDirectory.html
   
 The test library there is particularly useful for testing.
 
-Other tests in this directory:
+3) Other tests in this directory:
 
   http://localhost:8088/hosts/browser/test/httpClient/testCORS.html
   http://localhost:8088/hosts/browser/test/httpClient/testJSONP.html
