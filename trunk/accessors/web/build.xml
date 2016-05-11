@@ -71,7 +71,7 @@
     </exec>
   </target>
 
-    <target name="eduk"
+  <target name="eduk"
           description="Build the eduk binary.  Requires xxd, make and gcc.">
     <echo>The eduk binary has fewer command line options than the duk binary.
       The eduk binary is what would be deployed on an embedded machine.
@@ -79,6 +79,14 @@
     </echo>
     <exec dir="${eduk.source}"
           executable="make">
+    </exec>
+  </target>
+
+  <target name="eduk.tcmalloc"
+          description="Build the eduk with tcmalloc for heap profiling">
+    <exec dir="${eduk.source}"
+          executable="make">
+      <arg value="eduk.tcmalloc"/>
     </exec>
   </target>
 
