@@ -167,9 +167,11 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "eduk: No file passed as a command line argument?");
         returnValue = 1;
     }
+    duk_destroy_heap(ctx);
     return returnValue;
 
  usage: 
+    duk_destroy_heap(ctx);
     fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
     return 1;
 }
