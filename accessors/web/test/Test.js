@@ -89,8 +89,12 @@
 // TODO:  Module for duktape and Cape Code.
 
 var mocha;
-commonHost = commonHost || require('../../../common/commonHost.js');
-
+try {
+    commonHost = commonHost || require('../../../common/commonHost.js');
+} catch (error) {
+    // Needed for nodeHost
+    var commonHost = require('../common/commonHost.js');
+}
 if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
 	require('mocha');
 	mocha = window.mocha;
