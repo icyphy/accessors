@@ -8,7 +8,12 @@ var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
 
-commonHost = commonHost || require('../../../common/commonHost.js');
+try {
+    commonHost = commonHost || require('../../../common/commonHost.js');
+} catch (error) {
+    // Needed for nodeHost
+    var commonHost = require('../common/commonHost.js');
+}
 
 describe('Common host: Basic', function () {
 	before(function() {

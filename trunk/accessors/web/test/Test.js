@@ -124,7 +124,7 @@ exports.initialize = function () {
         	if (typeof window !== 'undefined') {
         		require(fileName);
         	} else {
-        		mocha.addFile("../../../browser/test/test/testRunner.js");
+        		mocha.addFile("hosts/browser/test/test/testRunner.js");
         	}
         	
         	// Register for mocha events and report test outcomes to the console.
