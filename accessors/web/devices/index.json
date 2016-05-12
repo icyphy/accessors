@@ -1,6 +1,5 @@
 [
     "AdsB.js",
     "Hue.js",
-    "MockHueBridge.js",
-    "SensorTag.js"
+    "MockHueBridge.js"
 ]
