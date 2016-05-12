@@ -107,7 +107,7 @@ if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
 }
 
 exports.setup = function () {
-    this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
+    this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/browser/test/test/testsRunner.js"});
     this.output('result', {'type': 'string'});
 };
 
@@ -124,7 +124,7 @@ exports.initialize = function () {
         	if (typeof window !== 'undefined') {
         		require(fileName);
         	} else {
-        		mocha.addFile("hosts/browser/test/test/testRunner.js");
+        		mocha.addFile(fileName);
         	}
         	
         	// Register for mocha events and report test outcomes to the console.
@@ -146,7 +146,7 @@ exports.initialize = function () {
             })
             .on('end', function() {
                 console.log('All done.');
-                // TODO:  Send complete results.
+                // TODO:  Send complete results to the output port.
                 self.send('result', 'tests finished');
             });
             
