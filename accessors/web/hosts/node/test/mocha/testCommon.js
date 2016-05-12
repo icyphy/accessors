@@ -11,10 +11,12 @@
 // Output:
 //   mocha testCommon.js
 
+// Is nodeHost used anywhere?  nodeHostInvoke loads nodeHost as commonHost.
 var nodeHost = require('../../nodeHost.js');
+
 var a = instantiate('Test', 'test/Test');
 a.initialize();
-a.provideInput('testFile', '/accessors/hosts/browser/test/test/testRunner.js');
+a.provideInput('testFile', '../../../browser/test/test/testRunner.js');
 a.react();
 a.wrapup();
 // try {
