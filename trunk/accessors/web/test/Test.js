@@ -92,8 +92,15 @@ var mocha;
 try {
     commonHost = commonHost || require('../../../common/commonHost.js');
 } catch (error) {
-    // Needed for nodeHost
-    var commonHost = require('../common/commonHost.js');
+    try {
+        // Needed for nodeHost
+        var commonHost = require('../common/commonHost.js');
+    } catch (error) {
+        // We will get to here in the CapeCode host.
+        // To test this, run $PTII/bin/vergil -capecode, then File -> New -> Cape Code Model,
+        // then expand the Accessors tab, then the Test tab.
+        var commonHost = require('commonHost.js');
+    }
 }
 if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
 	require('mocha');
@@ -107,7 +114,7 @@ if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
 }
 
 exports.setup = function () {
-    this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/browser/test/test/testsRunner.js"});
+    this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
     this.output('result', {'type': 'string'});
 };
 
