@@ -107,10 +107,13 @@ if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
 	mocha = window.mocha;
 	mocha.setup('bdd');
 } else {
-	var Mocha = require('mocha');
-	mocha = new Mocha({
+        // The Cape Code host does not define process.
+        if (typeof process !== 'undefined') {
+	    var Mocha = require('mocha');
+	    mocha = new Mocha({
 		ui: 'bdd'
-	});
+	    });
+        }
 }
 
 exports.setup = function () {
@@ -131,7 +134,11 @@ exports.initialize = function () {
         	if (typeof window !== 'undefined') {
         		require(fileName);
         	} else {
-        		mocha.addFile(fileName);
+	                if (typeof mocha !== 'undefined') {
+        		    mocha.addFile(fileName);
+                        } else {
+                            throw new Error('Test.js: mocha was not defined.  This is a known problem with the Cape Code host and the Test accessor.');
+                        }
         	}
         	
         	// Register for mocha events and report test outcomes to the console.
