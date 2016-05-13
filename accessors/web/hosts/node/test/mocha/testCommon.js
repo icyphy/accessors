@@ -11,8 +11,21 @@
 // Output:
 //   mocha testCommon.js
 
-// Is nodeHost used anywhere?  nodeHostInvoke loads nodeHost as commonHost.
-var nodeHost = require('../../nodeHost.js');
+// FIXME: we should not need to require nodeHost.js here.
+// We must require nodeHost here if running mocha from the command
+// line and running mocha from within ant is to work.
+//
+// From the command line:
+//    cd accessors/web; mocha hosts/node/test/mocha/testCommon.js
+// From ant:
+//    cd accessors/web; ant tests.mocha
+//
+// Solution: use something similar to what is in accessors/web/hosts/common/commonHost.js
+// and conditionally require nodeHost.js.
+//
+if (typeof process !== 'undefined' && typeof process.version === 'string') {
+    var nodeHost = require('../../nodeHost.js');
+}
 
 var a = instantiate('Test', 'test/Test');
 a.initialize();
