@@ -36,20 +36,31 @@ getAccessorCode = function (name) {
 
     // The path elements should end with a slash.
     var searchPath = ['./', '../', '../../', '../../../', '../../../../', 'web/', 'org/terraswarm/accessor/accessors/web/'];
+
+    // For node, add _dirname.  If this is not done, then if this test
+    // is run before node/tests/mocha/testNodeAuto.js, then
+    // testNodeAuto.js will fail.
+    if (typeof __dirname !== 'undefined') {
+        searchPath.splice(0, 0, __dirname + '/');
+    }
     for (i = 0; i < searchPath.length; i++) {
+        // Append a '.js' to the name, if needed.
+        if (name.indexOf('.js') !== name.length - 3) {
+            name += '.js';
+        }
         try {
             if (typeof Duktape !== 'object') {
-                var pathName = searchPath[i] + name + '.js';
-                // console.log("testCommon.js: pathName: " + pathName);
+                var pathName = searchPath[i] + name;
+                console.log("testCommon.js: pathName: " + pathName);
                 if (fs.statSync(pathName).isFile()) {
                     return fs.readFileSync(pathName, 'utf8');
                 }
             } else {
-                var pathName = searchPath[i] + name + '.js';
-                //print("testCommon.js: pathName: " + pathName);
+                var pathName = searchPath[i] + name;
+                // print("testCommon.js: pathName: " + pathName);
                 var src = FileIo.readfile(pathName);
                 if (typeof src === 'buffer') {
-                    //print("testCommon.js: returning contents of " + pathName);
+                    // print("testCommon.js: returning contents of " + pathName);
                     return src;
                 }
             }
