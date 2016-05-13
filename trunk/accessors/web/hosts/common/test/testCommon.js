@@ -51,7 +51,7 @@ getAccessorCode = function (name) {
         try {
             if (typeof Duktape !== 'object') {
                 var pathName = searchPath[i] + name;
-                console.log("testCommon.js: pathName: " + pathName);
+                // console.log("testCommon.js: pathName: " + pathName);
                 if (fs.statSync(pathName).isFile()) {
                     return fs.readFileSync(pathName, 'utf8');
                 }
