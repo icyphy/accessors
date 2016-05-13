@@ -6,7 +6,7 @@
 
 var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
-describe('AccessorTests', function () {
+describe('hosts/node/test/mocha/testNodeHost.js: testComposite', function () {
     describe('test/TestComposite()', function () {
         it('Create a test composite and run it', function () {
             var a = /*this.*/instantiate('TestComposite', 'test/TestComposite');

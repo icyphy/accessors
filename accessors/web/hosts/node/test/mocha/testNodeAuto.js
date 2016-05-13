@@ -8,7 +8,7 @@
 
 var nodeHost = require('../../nodeHost.js');
 var fs = require('fs');
-describe('nodeHost run tests in accessors/web/test/auto', function () {
+describe('hosts/node/test/mocha/testNodeAuto.js: run tests in accessors/web/test/auto', function () {
     var accessors;
     try {
         // If run in accessors/web/hosts/node/test/mocha/

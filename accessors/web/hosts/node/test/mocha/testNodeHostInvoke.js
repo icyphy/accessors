@@ -5,8 +5,8 @@
 //   mocha testNodeHostInvoke.js
 
 var nodeHost = require('../../nodeHost.js');
-describe('nodeHost instantiateAndInitialize()', function () {
-    it('load testCommon', function () {
+describe('hosts/node/test/mocha/testNodeHostInvoke.js: nodeHost instantiateAndInitialize()', function () {
+    it('instantiateAndInitialize(["test/TestComposite"])', function () {
         var testArguments = ["test/TestComposite"];
         instantiateAndInitialize(testArguments)
     });
