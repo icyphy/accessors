@@ -237,7 +237,6 @@
 		 property="converted"/>
 
     <exec executable="mocha">
-      <arg line="--bail"/>
       <arg line="${converted}"/>
     </exec>
   </target>
@@ -258,6 +257,7 @@
 		 property="converted"/>
 
     <exec executable="mocha">
+      <arg line="--bail"/>
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
