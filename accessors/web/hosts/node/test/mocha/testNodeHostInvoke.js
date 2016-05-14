@@ -8,6 +8,6 @@ var nodeHost = require('../../nodeHost.js');
 describe('hosts/node/test/mocha/testNodeHostInvoke.js: nodeHost instantiateAndInitialize()', function () {
     it('instantiateAndInitialize(["test/TestComposite"])', function () {
         var testArguments = ["test/TestComposite"];
-        instantiateAndInitialize(testArguments)
+        instantiateAndInitialize(testArguments);
     });
 });

@@ -40,8 +40,8 @@ a.provideInput('testFile', 'hosts/browser/test/test/testRunner.js');
 
 a.react();
 a.wrapup();
-// try {
-//     quit;
-// } catch (error) {
-//     console.log("testCommon.js: quit failed, this is expected under Node.");
-// }
+//try {
+//    quit();
+//} catch (error) {
+//    console.log("testCommon.js: quit failed, this is expected under Node.");
+//}
