@@ -73,7 +73,7 @@ getAccessorCode = function(name) {
         throw('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
-}
+};
 
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
