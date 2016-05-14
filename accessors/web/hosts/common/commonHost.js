@@ -198,7 +198,7 @@
 
 // Stop extra messages from jslint and jshint.
 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint
-/* globals console, exports, instance, setInterval, setTimeout */
+/* globals console, exports, instance, Packages, process, require, setInterval, setTimeout, window */
 /* jshint globalstrict: true, multistr: true */
 'use strict';
 

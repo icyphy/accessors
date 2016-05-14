@@ -211,7 +211,7 @@ instantiateAndInitialize = function(accessorNames) {
         // print("duktapeHost.js: instantiateAndInitialize(): done with " + accessorClass);
     }
     // print("duktapeHost.js: instantiateAndInitialize() done");
-}
+};
 
 // Make the Accessor constructor visible so that we may use it in the
 // Cape Code Accessor Code Generator.

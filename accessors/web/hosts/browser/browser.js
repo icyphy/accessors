@@ -72,7 +72,7 @@
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
 // initialValues is provided by HTML pages that desire initial form field values
 // that are different from a particular accessor's default values
-/*globals alert, clearTimeout, console, document, initialValues, setTimeout, window, XMLHttpRequest */
+/*globals alert, clearTimeout, console, document, Event, initialValues, Promise, setTimeout, window, XMLHttpRequest */
 /*jshint globalstrict: true, multistr: true */
 
 'use strict';
@@ -135,7 +135,7 @@ window.onload = function() {
 			}
 		}
 	}
-}
+};
 
 //////////////////////////////////////////////////////////////////////////
 //// Functions
@@ -1125,7 +1125,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
 	
 	    table.appendChild(row);
 	    return resolve(true);
-	})
+	});
 }
 
 /** Get default documentation from a base accessor or implemented interface.
@@ -1478,7 +1478,7 @@ function reactIfExecutable(id, suppress) {
             		found = false;
             		visible = true;
             		
-            		while (element.parentNode != null) {
+            		while (element.parentNode !== null) {
             			if (element.classList.contains("invisible")) {
             				visible = false;
             			}
