@@ -29,7 +29,15 @@ if (typeof process !== 'undefined' && typeof process.version === 'string') {
 
 var a = instantiate('Test', 'test/Test');
 a.initialize();
-a.provideInput('testFile', '../../../browser/test/test/testRunner.js');
+
+// FIXME: We can't use try catch here because the the error happens in the input handler.
+// This works for the node host:
+a.provideInput('testFile', 'hosts/browser/test/test/testRunner.js');
+
+// This works for the browser host:
+// FIXME: Why would the browser host be running tests in hosts/node/test/mocha?
+//a.provideInput('testFile', '../../../browser/test/test/testRunner.js');
+
 a.react();
 a.wrapup();
 // try {
