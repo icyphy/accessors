@@ -40,6 +40,16 @@ a.provideInput('testFile', 'hosts/browser/test/test/testRunner.js');
 
 a.react();
 a.wrapup();
+
+// This test causes all the error output to be generated before
+// proceeding, which makes it much easier to read the output of 'ant
+// tests.mocha'.
+it('Wait 1 second for error output to complete', function(done) {
+    // See https://mochajs.org/#timeouts
+    this.timeout(2000);
+    setTimeout(function () {done(); console.log("node/test/mocha/testRunner.js done");}, 1000);
+});
+
 //try {
 //    quit();
 //} catch (error) {
