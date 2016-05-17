@@ -225,8 +225,9 @@ exports.setup = function () {
  *  errors, and closing from the server.
  */
 exports.initialize = function () {
-	this.addInputHandler('server', this.exports.connect.bind(this));
-	this.addInputHandler('port', this.exports.connect.bind(this));
+    console.log("WebSocketClient.js: initialize()");
+    this.addInputHandler('server', this.exports.connect.bind(this));
+    this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     running = true;
     this.exports.connect.call(this);
@@ -238,37 +239,37 @@ exports.initialize = function () {
  *  on the toSend() input port.
  */
 exports.connect = function () {
-	// Note that if 'server' and 'port' both receive new data in the same
-	// reaction, then this will be invoked twice. But we only want to open
-	// the socket once.  This is fairly tricky.
-	
-	var portValue = this.get('port');
-	if (portValue < 0) {
-		// No port is specified. This could be a signal to close a previously
-		// open socket.
-		if (client) {
-			client.close();
-		}
-		previousPort = null;
-		previousServer = null;
-		return;
-	}
-	
-	var serverValue = this.get('server');
-	if (previousServer === serverValue && previousPort === portValue) {
-		// A request to open a client for this server/port pair has already
-		// been made and has not yet been closed or failed with an error.
-		return;
-	}
-	// Record the host/port pair that we are now opening.
-	previousServer = serverValue;
-	previousPort = portValue;
-	
+    // Note that if 'server' and 'port' both receive new data in the same
+    // reaction, then this will be invoked twice. But we only want to open
+    // the socket once.  This is fairly tricky.
+    
+    var portValue = this.get('port');
+    if (portValue < 0) {
+	// No port is specified. This could be a signal to close a previously
+	// open socket.
 	if (client) {
-		// Either the host or the port has changed. Close the previous socket.
-		client.close();
+	    client.close();
 	}
-	
+	previousPort = null;
+	previousServer = null;
+	return;
+    }
+    
+    var serverValue = this.get('server');
+    if (previousServer === serverValue && previousPort === portValue) {
+	// A request to open a client for this server/port pair has already
+	// been made and has not yet been closed or failed with an error.
+	return;
+    }
+    // Record the host/port pair that we are now opening.
+    previousServer = serverValue;
+    previousPort = portValue;
+    
+    if (client) {
+	// Either the host or the port has changed. Close the previous socket.
+	client.close();
+    }
+    
     client = new WebSocket.Client(
         {
             'host' : this.get('server'),
@@ -308,16 +309,16 @@ exports.toSendInputHandler = function () {
 
 /** Sends JSON data to the web socket. */
 exports.sendToWebSocket = function (data) {
-	// May be receiving inputs before client has been set.
-	if (client) {
+    // May be receiving inputs before client has been set.
+    if (client) {
     	client.send(data);
-	} else {
+    } else {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             pendingSends.push(data);
         } else {
             console.log('Discarding data because socket is not open.');
         }
-	}
+    }
 };
 
 /** Executes once  web socket establishes a connection.
@@ -341,11 +342,11 @@ exports.onOpen = function () {
  *  This will be called if either side closes the connection.
  */
 exports.onClose = function() {
-	previousServer = null;
-	previousPort = null;
+    previousServer = null;
+    previousPort = null;
 
-	console.log('Status: Connection closed.');
-	
+    console.log('Status: Connection closed.');
+    
     // NOTE: Even if running is true, it can occur that it is too late
     // to send the message (the wrapup process has been started), in which case
     // the message may not be received.
