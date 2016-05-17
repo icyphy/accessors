@@ -69,8 +69,16 @@ if (process.argv.length > 1) {
         // Remove -timeout and the value.
         process.argv.shift();
         process.argv.shift();
-        instantiateAndInitialize(process.argv);
-        setTimeout(function () { process.exit(0); }, timeout);
+        var thiz = this
+        thiz.accessors = instantiateAndInitialize(process.argv);
+        setTimeout(function () {
+            if (thiz.accessors && thiz.accessors.length > 0) {
+                for (var i in thiz.accessors) {
+                    thiz.accessors[i].wrapup();
+                }
+            }
+            process.exit(0);
+        }, timeout);
     } else {
         instantiateAndInitialize(process.argv);
         // Prevent the script from exiting by repeating the empty function
