@@ -48,6 +48,9 @@ var commonHost = require('../common/commonHost.js');
  */
 var accessorPath = [path.join(__dirname, '..', '..')];
 
+// All the accessors that were instantiated.
+var accessors;
+
 /** Return the source code for an accessor from its fully qualified name.
  *  This will throw an exception if there is no such accessor on the accessor
  *  search path.
@@ -87,10 +90,10 @@ instantiate = function(accessorName, accessorClass) {
     var bindings = {
         'require': require,
     };
-    var result = new commonHost.instantiateAccessor(
+    var instance = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
-    return result;
+    return instance;
 };
 
 /** If there are one or more arguments after nodeHostInvoke.js, then
@@ -121,6 +124,7 @@ instantiate = function(accessorName, accessorClass) {
  * for getAccessorCode(name).
  */
 instantiateAndInitialize = function(accessorNames) {
+    var accessors = [];
     var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
@@ -141,8 +145,11 @@ instantiateAndInitialize = function(accessorNames) {
             accessorName += "_" + (index - 1);
         }
         var accessor = instantiate(accessorName, accessorClass);
+        // Push the top level accessor so that we can call wrapup later.
+        accessors.push(accessor);
         accessor.initialize();
     }
+    return accessors;
 };
 
 // Make the Accessor constructor visible so that we may use it in the
