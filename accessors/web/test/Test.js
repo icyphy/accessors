@@ -88,9 +88,13 @@ try {
     var Testing = require('testing');
     var testing = new Testing.Testing();
 } catch (err) {
-    // Needed for node host.
-    // Do not remove this unless (cd accessors/web; ant test.mocha) works.
-    console.error("require('testing') failed.  This happens under node.");
+    if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+        // Needed for node host.
+        // Do not remove this unless (cd accessors/web; ant test.mocha) works.
+        console.error("require('testing') failed.  This happens under node.");
+    } else {
+        throw err;
+    }
 }
 
 exports.setup = function () {
@@ -117,8 +121,12 @@ exports.initialize = function () {
     	    self.send('result', result);
         });
     } catch (err) {
-        // Needed for node host.
-        // Do not remove this unless (cd accessors/web; ant test.mocha) works.
-        console.error("testing.on failed.  This happens under node.");
+        if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+            // Needed for node host.
+            // Do not remove this unless (cd accessors/web; ant test.mocha) works.
+            console.error("testing.on failed.  This happens under node.");
+        } else {
+            throw err;
+        }
     }
 };
