@@ -215,9 +215,8 @@ var accessorHostsEnum = {
 exports.accessorHostsEnum = accessorHostsEnum;
 
 var accessorHost = accessorHostsEnum.DEFAULT;
-exports.accessorHost = accessorHost;
 
-// In alphabetical order
+// In alphabetical order.
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
 } else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
@@ -227,6 +226,8 @@ if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
 } else if (typeof process !== 'undefined' && typeof process.version === 'string') {
     accessorHost = accessorHostsEnum.NODE;
 }
+
+exports.accessorHost = accessorHost;
 
 if (accessorHost === accessorHostsEnum.DUKTAPE) {
     var util = require('../common/modules/util.js');
