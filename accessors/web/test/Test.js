@@ -77,9 +77,21 @@ if (typeof window === 'undefined') {
 	var window = {};
 }
 
-var commonHost = require('commonHost.js');
-var Testing = require('testing');
-var testing = new Testing.Testing();
+try {
+    var commonHost = require('commonHost.js');
+} catch (err) {
+    // Needed for node host.
+    // Do not remove this unless (cd accessors/web; ant test.mocha) works.
+    var commonHost = require('../common/commonHost.js');
+}
+try {
+    var Testing = require('testing');
+    var testing = new Testing.Testing();
+} catch (err) {
+    // Needed for node host.
+    // Do not remove this unless (cd accessors/web; ant test.mocha) works.
+    console.error("require('testing') failed.  This happens under node.");
+}
 
 exports.setup = function () {
 	// TODO:  Same file for all.  Put in common?  Or in test/Test?
@@ -99,8 +111,14 @@ exports.initialize = function () {
         }
     });
     
-    // Register an event listener for the test results.
-    testing.on('end', function(result) {
-    	self.send('result', result);
-    });
+    try {
+        // Register an event listener for the test results.
+        testing.on('end', function(result) {
+    	    self.send('result', result);
+        });
+    } catch (err) {
+        // Needed for node host.
+        // Do not remove this unless (cd accessors/web; ant test.mocha) works.
+        console.error("testing.on failed.  This happens under node.");
+    }
 };
