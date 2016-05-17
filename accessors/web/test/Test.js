@@ -40,6 +40,9 @@
  *  Execute:
  *  node ../../nodeHostShell.js < ./testCommon.js
  *  
+ *  In Cape Code, there is a demo available at:
+ *  $PTII/ptolemy/actor/lib/jjs/modules/testing/demo/Testing/Testing.xml
+ *  
  *  The Mocha framework allows developers to describe a test case, execute code, 
  *  then check assertions.  Mocha tracks each assertion and reports if the 
  *  assertion is satisfied or if it fails.  Add-on libraries extend Mocha's 
@@ -53,18 +56,8 @@
  *  For an overview of the testing capabilities of different hosts, please see:  
  *  https://www.terraswarm.org/accessors/wiki/Main/Testing
  *
- *  Test output is currently logged to the console window.  A future improvement
- *  would be to output results to a port and provide formatting options (JUnit).
- *
- *  The Test accessor requires the following to be defined.  Currently, there
- *  are some host dependencies.  Eventually, these functions will be refactored 
- *  into a module.
- *  - Accessor()
- *  - getAccessorCode()
- *  - instantiateAccessor()
- *  - mocha
- *  - chai
- *  - sinon  
+ *  Test results are send to the output port and logged to the console.  
+ *  A future improvement is to format results JUnit-style.
  *
  *  @accessor test/Test
  *  @input testFile The test file to execute.
@@ -79,50 +72,17 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-// TODO:  Be able to load multiple test files.
-
-// In the browser, the mocha library loads itself into window.mocha.
-// TODO:  Figure out why and change to load similar to other libraries.
-
-// In node, instantiate a new mocha interface. 
-// https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically
-// TODO:  Module for duktape and Cape Code.
-
-var mocha;
-//if (typeof commonHost === 'undefined') {
-//    var commonHost = require('common/commonHost.js');
-//}
-
-try {
-    commonHost = commonHost || require('../../../common/commonHost.js');
-} catch (error) {
-    try {
-        // Needed for nodeHost
-        var commonHost = require('../common/commonHost.js');
-    } catch (error) {
-        // We will get to here in the CapeCode host.
-        // To test this, run $PTII/bin/vergil -capecode, then File -> New -> Cape Code Model,
-        // then expand the Accessors tab, then the Test tab.
-        var commonHost = require('commonHost.js');
-    }
+// FIXME:  Why does this not work if defined in testing.js vs. here??
+if (typeof window === 'undefined') {
+	var window = {};
 }
 
-
-if (typeof window !== 'undefined' && typeof window.mocha !== 'undefined'){
-	require('mocha');
-	mocha = window.mocha;
-	mocha.setup('bdd');
-} else {
-        // The Cape Code host does not define process.
-        if (typeof process !== 'undefined') {
-	    var Mocha = require('mocha');
-	    mocha = new Mocha({
-		ui: 'bdd'
-	    });
-        }
-}
+var commonHost = require('commonHost.js');
+var Testing = require('testing');
+var testing = new Testing.Testing();
 
 exports.setup = function () {
+	// TODO:  Same file for all.  Put in common?  Or in test/Test?
     this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
     this.output('result', {'type': 'string'});
 };
@@ -134,44 +94,13 @@ exports.initialize = function () {
     this.addInputHandler('testFile', function () {
         var fileName = this.get('testFile');
         if (fileName !== null && fileName !== "") {
-        	// In browser, just require the file. 
-        	// In node, use mocha's addFile() method.
-        	// TODO:  Refactor this stuff into a module.
-        	if (typeof window !== 'undefined') {
-        		require(fileName);
-        	} else {
-	                if (typeof mocha !== 'undefined') {
-        		    mocha.addFile(fileName);
-                        } else {
-                            throw new Error('Test.js: mocha was not defined.  This is a known problem with the Cape Code host and the Test accessor.');
-                        }
-        	}
-        	
-        	// Register for mocha events and report test outcomes to the console.
-        	// TODO:  Refactor this into a separate reporter.  Report in JUnit format.
-        	// http://stackoverflow.com/questions/29050720/run-mocha-programatically-and-pass-results-to-variable-or-function
-            mocha.run()
-            .on('test', function(test) {
-                console.log('Test started: '+ test.title);
-            })
-            .on('test end', function(test) {
-                console.log('Test done: '+ test.title);
-            })
-            .on('pass', function(test) {
-                console.log('Test passed: ' + test.title);
-            })
-            .on('fail', function(test, err) {
-                console.log('Test failed: ' + test.title);
-                console.log(err);
-            })
-            .on('end', function() {
-                console.log('All done.');
-                // TODO:  Send complete results to the output port.
-                self.send('result', 'tests finished');
-            });
-            
-        }	// end if
+        	testing.loadTestFile(fileName);
+        	testing.run();
+        }
+    });
+    
+    // Register an event listener for the test results.
+    testing.on('end', function(result) {
+    	self.send('result', result);
     });
 };
-
-
