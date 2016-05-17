@@ -151,18 +151,18 @@ exports.setup = function() {
 var sockets = [];
 
 /** Starts the web socket and attaches functions to inputs and outputs.
-  * Adds an input handler on toSend that sends the input received to the right socket. */
+ * Adds an input handler on toSend that sends the input received to the right socket. */
 exports.initialize = function() {
     var self = this;
     if (!server) {
         server = new WebSocket.Server({
-                'port': this.getParameter('port'),
-                'hostInterface': this.getParameter('hostInterface'),
-                'pfxKeyCertPassword': this.getParameter('pfxKeyCertPassword'),
-                'pfxKeyCertPath': this.getParameter('pfxKeyCertPath'),
-                'receiveType': this.getParameter('receiveType'),
-                'sendType': this.getParameter('sendType'),
-                'sslTls': this.getParameter('sslTls')
+            'port': this.getParameter('port'),
+            'hostInterface': this.getParameter('hostInterface'),
+            'pfxKeyCertPassword': this.getParameter('pfxKeyCertPassword'),
+            'pfxKeyCertPath': this.getParameter('pfxKeyCertPath'),
+            'receiveType': this.getParameter('receiveType'),
+            'sendType': this.getParameter('sendType'),
+            'sslTls': this.getParameter('sslTls')
         });
         // Using 'this.exports' rather than just 'exports' in the following allows
         // these functions to be overridden in derived accessors.
@@ -190,10 +190,10 @@ exports.initialize = function() {
                 if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
                     // id matches this socket.
                     /*
-                    console.log("Sending to socket id " +
-                                data.socketID +
-                                " message: " +
-                                data.message);
+                      console.log("Sending to socket id " +
+                      data.socketID +
+                      " message: " +
+                      data.message);
                     */
                     sockets[data.socketID].send(data.message);
                 } else {
