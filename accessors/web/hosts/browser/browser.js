@@ -501,6 +501,10 @@ function generateAccessorHTML(path, id) {
 
     // Load the specified module.
     function require(path) {
+    	// If the commonHost is required, return it.
+    	if (path.contains("commonHost")) {
+    		return commonHost;
+    	}
     	
     	// If module already loaded, return the cached copy.
     	if (loadedModules.hasOwnProperty(path)) {
