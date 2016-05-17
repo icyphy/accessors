@@ -16,8 +16,8 @@ exports.setup = function() {
     WebSocketClient.setParameter('receiveType', "application/json");
     WebSocketClient.setParameter('sendType', "application/json");
     WebSocketClient.setParameter('connectTimeout', 1000);
-    // WebSocketClient.setParameter('server', "localhost");
-    // WebSocketClient.setParameter('port', 8087);
+    WebSocketClient.setDefault('server', "localhost");
+    WebSocketClient.setDefault('port', 8087);
     WebSocketClient.setParameter('trustedCACertPath', "");
     WebSocketClient.setParameter('trustAll', false);
     WebSocketClient.setParameter('sslTls', false);
