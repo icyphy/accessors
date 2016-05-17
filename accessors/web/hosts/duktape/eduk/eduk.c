@@ -64,20 +64,39 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
         duk_pop(ctx);
     }
 
-    
-
     // Call instantiateAndInitialize() on the accessorFileName, then timeout.
 
     // Build the command to be evaled.
-    int length = strlen(accessorFileName) + 200;
-    char buf[length];
+    // FIXME: Note that for deployment, we could save memory and
+    // choose one or the other at compile time.
+    int length = strlen(accessorFileName);
     if (timeout >= 0) {
-        // Timeout.  requestEventLoopExit() is defined in ecma_eventloop.js.
-        snprintf(buf, length, "var args = ['%s'];\ninstantiateAndInitialize(args);\nsetTimeout(function () {requestEventLoopExit()}, %d);", accessorFileName, timeout);
+        // Increase 136 if the first snprintf string changes
+        length += 136 + 8 /* Approximate Length of timeout value as a string */;
+    } else {
+        // Increase 79 if the second snprintf string changes.
+        length += 79;
+    }
+    char buf[length];
+
+    if (timeout >= 0) {
+        // Timeout.
+
+        // While exiting, invoke wrapup() on any accessors that were
+        // created.  The TrainableTest accessor expects wrapup to be
+        // called so that it can report an error if fire() was never
+        // called.
+
+        // requestEventLoopExit() is defined in ecma_eventloop.js
+        snprintf(buf, length,
+                "var a=['%s'],t=this;t.b=instantiateAndInitialize(a),setTimeout(function(){for(var i in t.b)t.b[i].wrapup();requestEventLoopExit()},%d);",
+                accessorFileName, timeout);
     } else {
         // Prevent the script from exiting by repeating the empty function
         // every ~25 days.
-        snprintf(buf, length, "var args = ['%s'];\ninstantiateAndInitialize(args);\nsetInterval(function () {}, 2147483647);", accessorFileName);
+        snprintf(buf, length,
+                "var a=['%s'];instantiateAndInitialize(a);setInterval(function(){},2147483647);",
+                accessorFileName);
     }
 
     // Eval the command, avoid interning the string.

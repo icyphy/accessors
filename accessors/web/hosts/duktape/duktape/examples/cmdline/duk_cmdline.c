@@ -1023,13 +1023,23 @@ int main(int argc, char *argv[]) {
 		}
 
                 if (accessor == 1) {
-                    int length = strlen(arg) + 200;
+                    // Increase 300 if the snprintf gets changed.
+                    int length = strlen(arg) + 300;
                     char buf[length];
                     fprintf(stderr, "duk: About to instantiate %s\n", arg);
                     fflush(stderr);
                     if (timeout > 0) {
-                        // Timeout.  requestEventLoopExit() is defined in ecma_eventloop.js
-                        snprintf(buf, length, "var args = ['%s'];instantiateAndInitialize(args); setTimeout(function () {requestEventLoopExit()}, %d);", arg, timeout);
+                        // Timeout.
+
+                        // While exiting, invoke wrapup() on any accessors that were
+                        // created.  The TrainableTest accessor expects wrapup to be
+                        // called so that it can report an error if fire() was never
+                        // called.
+
+                        // requestEventLoopExit() is defined in ecma_eventloop.js
+                        snprintf(buf, length,
+                                "var args = ['%s'];\n var thiz=this;\n thiz.accessors = instantiateAndInitialize(args);\n setTimeout(function () {\n  if (thiz.accessors && thiz.accessors.length > 0) {\n   for (var i in thiz.accessors) {\n    thiz.accessors[i].wrapup();\n   }\n  }\n  requestEventLoopExit()}, %d);",
+                                arg, timeout);
                     } else {
                         // Prevent the script from exiting by repeating the empty function
                         // every ~25 days.
