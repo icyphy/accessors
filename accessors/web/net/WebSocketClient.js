@@ -239,6 +239,7 @@ exports.initialize = function () {
  *  on the toSend() input port.
  */
 exports.connect = function () {
+    console.log("WebSocketClient.js: connect()");
     // Note that if 'server' and 'port' both receive new data in the same
     // reaction, then this will be invoked twice. But we only want to open
     // the socket once.  This is fairly tricky.
@@ -252,6 +253,10 @@ exports.connect = function () {
 	}
 	previousPort = null;
 	previousServer = null;
+        // 
+        console.log("WebSocketClient.js: connect(): portValue: " + portValue +
+                    ", which is less than 0. This could be a signal to close a previously open socket." +
+                    "  Returning.");
 	return;
     }
     
@@ -270,6 +275,7 @@ exports.connect = function () {
 	client.close();
     }
     
+    console.log("WebSocketClient.js: connect() calling new WebSocket.Client()");
     client = new WebSocket.Client(
         {
             'host' : this.get('server'),
@@ -300,15 +306,18 @@ exports.connect = function () {
     });
     
     client.open();
+    console.log("WebSocketClient.js: connect() done");
 };
 
 /** Handles input on 'toSend'. */
 exports.toSendInputHandler = function () {
+    console.log("WebSocketClient.js: toSendInputHandler()");
     this.exports.sendToWebSocket.call(this, this.get('toSend'));
 };
 
 /** Sends JSON data to the web socket. */
 exports.sendToWebSocket = function (data) {
+    console.log("WebSocketClient.js: sendToWebSocket()");
     // May be receiving inputs before client has been set.
     if (client) {
     	client.send(data);
@@ -325,7 +334,7 @@ exports.sendToWebSocket = function (data) {
  *  Sets 'connected' output to true.
  */
 exports.onOpen = function () {
-    console.log('Status: Connection established');
+    console.log('WebSocketClient.js: onOpen(): Status: Connection established');
     this.send('connected', true);
     
     // If there are pending sends, send them now.
@@ -345,7 +354,7 @@ exports.onClose = function() {
     previousServer = null;
     previousPort = null;
 
-    console.log('Status: Connection closed.');
+    console.log('WebSocketClient.js onClose(): Status: Connection closed.');
     
     // NOTE: Even if running is true, it can occur that it is too late
     // to send the message (the wrapup process has been started), in which case
