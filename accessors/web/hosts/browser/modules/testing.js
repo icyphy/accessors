@@ -60,8 +60,8 @@ exports.Testing.prototype.run = function() {
 	var results = "";
 	
 	// Register for mocha events and report test outcomes to the console.
-	// TODO:  Refactor this into a separate reporter.  Report in JUnit format.
-	// http://stackoverflow.com/questions/29050720/run-mocha-programatically-and-pass-results-to-variable-or-function
+	// TODO:  Figure out how to combine reporters or use multiple reporters.
+	// Want text and HTML here, or JUnit and HTML.
 	
 	this.mocha.run()
 		.on('test', function(test) {
@@ -85,6 +85,5 @@ exports.Testing.prototype.run = function() {
 			results = results + "\nAll done.";
 		    console.log('All done.');
 		    self.emit('end', results);
-		    // TODO:  Create a reporter to format results in Junit format.
 		});
 };
