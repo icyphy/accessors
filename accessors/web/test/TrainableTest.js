@@ -66,6 +66,7 @@ exports.fire = function () {
         return;
     }
     var correctValuesValues = this.getParameter('correctValues');
+
     if (numberOfInputTokensSeen < correctValuesValues.length) {
         var referenceToken = correctValuesValues[numberOfInputTokensSeen];
         //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
@@ -102,7 +103,12 @@ exports.fire = function () {
                             typeof referenceToken);
         }
         numberOfInputTokensSeen++;
-        this.send('output', false);
+        // If we are past the end of the expected inputs, then read
+        if (numberOfInputTokensSeen >= correctValuesValues.length) {
+            this.send('output', true);
+        } else {
+            this.send('output', false);
+        }
     } else {
         this.send('output', true);
     }
