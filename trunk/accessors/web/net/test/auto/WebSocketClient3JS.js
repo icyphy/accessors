@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClientJS.xml
+    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketClientJS.xml
+    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
 
-    // Ports: WebSocketClientJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    // Ports: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
     // Start: WebSocketClient: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketClient = this.instantiate('WebSocketClient', 'net/WebSocketClient.js');
@@ -17,7 +17,7 @@ exports.setup = function() {
     WebSocketClient.setParameter('sendType', "application/json");
     WebSocketClient.setParameter('connectTimeout', 1000);
     WebSocketClient.setDefault('server', "localhost");
-    WebSocketClient.setDefault('port', 8087);
+    WebSocketClient.setDefault('port', -1);
     WebSocketClient.setParameter('trustedCACertPath', "");
     WebSocketClient.setParameter('trustAll', false);
     WebSocketClient.setParameter('sslTls', false);
@@ -52,7 +52,8 @@ exports.setup = function() {
     JavaScriptStop.container = this;
     this.containedAccessors.push(JavaScriptStop);
 
-    // Connections: WebSocketClientJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    // Connections: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    this.connect(WebSocketServer, 'listening', WebSocketClient, 'port');
     this.connect(JavaScript2, 'toSend', WebSocketServer, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript2, 'connectionReady');
     this.connect(WebSocketClient, 'received', TrainableTest, 'input');
