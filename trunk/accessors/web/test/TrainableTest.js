@@ -71,17 +71,35 @@ exports.fire = function () {
         var referenceToken = correctValuesValues[numberOfInputTokensSeen];
         //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
         //+ ", referenceToken: " + referenceToken);
-        if (typeof inputValue !== 'number' && typeof inputValue !== 'string') {
+        if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
             if (inputValue === null) {
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
                                 ' tokens, the value of the input was null?  ' +
                                 'Perhaps the input is not connected?'
                                );
             }
+            var cache = [];
+            var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        // Circular reference found, discard key
+                        return;
+                    }
+                    // Store value in our collection
+                    cache.push(value);
+                }
+                return value;
+            });
+            if (inputValueValue.length > 100) {
+                inputValueValue = inputValueValue.substring(0,100) + '...';
+            }
+            cache = null; // Enable garbage collection
+
+
             throw new Error('After seeing ' + numberOfInputTokensSeen +
                             ' tokens, the input "' + inputValue +
                             '" is neither a number nor a string, it is a ' +
-                            typeof inputValue);
+                            typeof inputValue  + ' with value ' + inputValueValue);
         }
         if (typeof referenceToken === 'number') {
             if (Math.abs(inputValue - referenceToken) > this.getParameter('tolerance')) {
@@ -95,6 +113,44 @@ exports.fire = function () {
                 throw new Error('The input "' + inputValue + '" is !== "' +
                                 '" to the expected value "' +
                                 referenceToken + '"');
+            }
+        } else if (typeof referenceToken === 'object') {
+            var cache = [];
+            var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        // Circular reference found, discard key
+                        return;
+                    }
+                    // Store value in our collection
+                    cache.push(value);
+                }
+                return value;
+            });
+            var cache = [];
+            var referenceTokenValue = JSON.stringify(referenceToken, function(key, value) {
+                if (typeof value === 'object' && value !== null) {
+                    if (cache.indexOf(value) !== -1) {
+                        // Circular reference found, discard key
+                        return;
+                    }
+                    // Store value in our collection
+                    cache.push(value);
+                }
+                return value;
+            });
+
+            cache = null; // Enable garbage collection
+            if (inputValueValue.length > 100) {
+                inputValueValue = inputValueValue.substring(0,100) + '...';
+            }
+            if (referenceTokenValue.length > 100) {
+                referenceTokenValue = referenceTokenValue.substring(0,100) + '...';
+            }
+            if (inputValueValue !== referenceTokenValue) {
+                throw new Error('The input "' + inputValueValue + '" is !== "' +
+                                '" to the expected value "' +
+                                referenceTokenValue + '"');
             }
         } else {
             throw new Error('After seeing ' + numberOfInputTokensSeen +
