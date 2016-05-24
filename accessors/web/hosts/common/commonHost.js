@@ -1580,6 +1580,14 @@ Accessor.prototype.setParameter = function(name, value) {
     parameter.currentValue = value;
 };
 
+/** Stop execution of the composite accessor.  In the commonHost, do
+ *  nothing.  Other hosts may invoke wrapup() on adjacent accessors
+ *  and stop execution.
+ */
+function stop() {
+    console.log("commonHost.js: stop() invoked, stop() does nothing.");
+}
+
 ////////////////////////////////////////////////////////////////////
 //// Module variables.
 

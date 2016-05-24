@@ -152,6 +152,14 @@ instantiateAndInitialize = function(accessorNames) {
     return accessors;
 };
 
+// Stop execution.
+// In nodeHostInvoke.js, exit() is caught
+// and wrapup() is invoked.
+stop = function() {
+    console.log("nodeHost.js: stop() invoked");
+    process.exit();
+}
+
 // Make the Accessor constructor visible so that we may use it in the
 // Cape Code Accessor Code Generator.
 Accessor = commonHost.Accessor;
