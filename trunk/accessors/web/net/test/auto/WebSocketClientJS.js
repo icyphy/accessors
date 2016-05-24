@@ -45,8 +45,16 @@ exports.setup = function() {
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
+    // Start: JavaScriptStop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
+    // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
+    // We probably need to do something with the bindings.
+    var JavaScriptStop = new Accessor('JavaScriptStop', 'exports.setup = function() {\n  this.input(\'input\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'input\', handler.bind(this));\n}\n\n// From https://stackoverflow.com/questions/9382167/serializing-object-that-contains-cyclic-object-value\nvar jsonify=function(o){\n    var seen=[];\n    var jso=JSON.stringify(o, function(k,v){\n        if (typeof v ==\'object\') {\n            if ( !seen.indexOf(v) ) { return \'__cycle__\'; }\n            seen.push(v);\n        } return v;\n    });\n    return jso;\n};\n\nfunction handler() {\n    var value = this.get(\'input\');\n    if (value === true) {\n        console.log(\"JavaScriptStop: about to call stop().\");\n        stop();\n\n        //console.log(\"JavaScriptStop: this: \" + jsonify(this));\n         //seen = [];\n       // console.log(\"JavaScriptStop: this: \" + JSON.stringify(this, function(key, val) {\n   //if (val != null && typeof val == \"object\") {\n    //    if (seen.indexOf(val) >= 0) {\n    //       return;\n    //   }\n   //    seen.push(val);\n  // }\n  // return val;\n //}));\n\n        console.log(\"JavaScriptStop: done calling stop() on container\");\n    }\n}\n \nexports.wrapup = function() {\n    console.log(\"JavaScriptStop.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
+    JavaScriptStop.container = this;
+    this.containedAccessors.push(JavaScriptStop);
+
     // Connections: WebSocketClientJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScript2, 'toSend', WebSocketServer, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript2, 'connectionReady');
     this.connect(WebSocketClient, 'received', TrainableTest, 'input');
+    this.connect(TrainableTest, 'output', JavaScriptStop, 'input');
 }
