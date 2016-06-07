@@ -94,6 +94,8 @@ server.on('request', function(request, response) {
         	response.write("Request body: " + data);
         	response.end();
         	
+        	console.log("Handled " + request.method + " request: ");
+        	console.log(data);
     	});
     }
 });
