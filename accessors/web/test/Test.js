@@ -61,6 +61,7 @@
  *
  *  @accessor test/Test
  *  @input testFile The test file to execute.
+ *  @output result The test result.
  *  @author Elizabeth Osyk
  *  @version $$Id$$
  */
@@ -108,7 +109,7 @@ exports.initialize = function () {
     var self = this;
 	
     this.addInputHandler('testFile', function () {
-        var fileName = this.get('testFile');
+        var fileName = self.get('testFile');
         if (fileName !== null && fileName !== "") {
         	testing.loadTestFile(fileName);
         	testing.run();
