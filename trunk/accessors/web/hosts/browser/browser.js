@@ -584,9 +584,9 @@ function generateAccessorHTML(path, id) {
         	provideInput(id, name, value);
         } else {
             if (options.type === 'string') {
-                element.innerHTML = value;
+            	element.textContent = value;
             } else {
-                element.innerHTML = JSON.stringify(value);
+                element.textContent = JSON.stringify(value);
             }
         }
     }
