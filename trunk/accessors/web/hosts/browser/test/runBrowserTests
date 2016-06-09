@@ -1,0 +1,41 @@
+#!/bin/sh
+# $Id$
+
+# runBrowserTests - run the browser tests and generate the output in
+# ../../../reports/junit/browserJUnit.xml
+
+# See https://www.terraswarm.org/accessors/wiki/Version0/RegressionTesting
+
+if [ ! -f testServer.js ]; then
+    echo "$0: testServer.js not found in `pwd`.  $0 must be run in accessors/web/hosts/browser/tes"
+    exit 2
+fi    
+
+node testServer.js &
+testServerPID=$!
+
+# If we kill this shell script, then kill the test server
+trap "kill -9 $testServerPID" INT
+
+#echo "The traps are:"
+#trap
+
+reports=../../../reports/junit
+if [ ! -d $reports ]; then
+    mkdir -p $reports
+fi
+
+# Tests to run without the .js appended.
+browserTests="regressionTestScript"
+for browserTest in $browserTests
+do
+    echo "Running $browserTest"
+    # FIXME: When we invoke the browser, we need to catch the output somehow.
+    (node $browserTest) >& $reports/$browserTest.xml
+    echo "There might be a delay before the browser browser automatically exits."
+done    
+
+echo "Done. JUnit XML output is in $reports."
+
+kill -9 $testServerPID
+
