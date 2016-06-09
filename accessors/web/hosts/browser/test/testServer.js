@@ -22,7 +22,7 @@ server.on('request', function(request, response) {
     
     var url = request.url;
     var querystring = "";
-    
+    console.log("original url "+ url);
     // Strip any leading slashes.
     while (url.substring(0,1) == '/') {
         url = url.substring(1);
@@ -73,7 +73,8 @@ server.on('request', function(request, response) {
         
 
     } else {
-    	// POST and PUT echo the request body
+    	// POST and PUT echo the request body.
+    	// POSTs to /regressiontest will write contents to ../../../reports/junit/
     	// TODO:  Add support for JSONP  
     	response.statusCode = 200;
     	var data = "";
@@ -96,6 +97,16 @@ server.on('request', function(request, response) {
         	
         	console.log("Handled " + request.method + " request: ");
         	console.log(data);
+        	
+        	if (url.endsWith('regressiontest')) {
+        		// Overwrite any prior results.
+        		fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
+        			if (err) {
+        				console.log("Error writing regression test results: " + err);
+        			}
+        		});
+        	}
+        	
     	});
     }
 });
