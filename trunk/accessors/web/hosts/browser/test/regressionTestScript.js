@@ -53,35 +53,9 @@ driver.wait(function() {
 	driver.findElement(By.id('reactToInputs')).click();
 });
 
-// Post results 
-// Connect output of Test accessor to REST accessor
-// Intermediate formatting?
-// How to tell when mocha is done running?
-
+// Quit after some time.  
+// TODO:  Would be better to use an event listener for when REST accessor 
+// receives a response.  Possible?
 
 setTimeout(function() { driver.quit()}, 20000);
 
-
-/*
-driver.get('http://www.google.com/ncr');
-driver.findElement(By.name('q')).sendKeys('webdriver');
-driver.findElement(By.name('btnG')).click();
-driver.wait(until.titleIs('webdriver - Google Search'), 3000);
-driver.quit();
-*/
-
-// Save the output someplace?  Post back to server?  Authentication?  
-// How to store username / password?  Pass in on command line?  
-// But would be able to see server check - unless, read from local file?
-// Reading from file would probably work.
-// Need SSL connection?  https:?
-// Add IP address check?  Must come from local
-// host?
-
-// Generate an event when the table is done.
-// TODO:  It would be even better to generate an event when all content
-// is done.  This would probably require Promises everywhere...
-/* Promise.all(promises).then(function() {
-	window.dispatchEvent(new Event('accessorTableDone'));
-});
-*/
