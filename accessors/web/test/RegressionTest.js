@@ -30,7 +30,7 @@
  *  @input testFile The regression test file to execute.
  *  @input url The URL to post the test result to.
  *  @output result The test result.  It is also posted to the server.
- *  @author Edward A. Lee
+ *  @author Elizabeth Osyk
  *  @version $$Id$$
  */
 
@@ -43,29 +43,22 @@ exports.setup = function() {
     testAccessor = this.instantiate('Test', 'test/Test');
     restAccessor = this.instantiate('REST', 'net/REST');
     
+    this.connect('testFile', testAccessor, 'testFile');
     this.connect(testAccessor, 'result', restAccessor, 'body');
 };
 
 exports.initialize = function(){
-	testAccessor.initialize();
-	restAccessor.initialize();
+	
+	// initialize() is automatically called on contained accessors, i.e. 
+	// testAccessor.initialize() and restAccessor.initialize().
 	var self = this;
 	
-	// Could use either input as a trigger.
-	// Perhaps use URL parameters to send the name of the test file?
-	this.addInputHandler('testFile', function(){
+	// TODO:  For multiple tests, perhaps use URL parameters to send the name 
+	// of the test file?
+
+	restAccessor.addInputHandler('body', function(){
 		var options = {'method' : 'POST', 'url' : self.get('url')};
 		restAccessor.send('options', options);
-		restAccessor.send('command', 'regressiontest');
-	    testAccessor.send('testFile', self.get('testFile'));
-	});
-	
-	restAccessor.addInputHandler('body', function(){
 		restAccessor.send('trigger', true);
 	});
-};
-
-exports.wrapup = function(){
-	testAccessor.wrapup();
-	restAccessor.wrapup();
 };

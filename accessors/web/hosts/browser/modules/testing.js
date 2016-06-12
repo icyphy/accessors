@@ -174,6 +174,10 @@ exports.Testing.prototype.run = function() {
 	this.xmlOutput.push("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	this.xmlOutput.push("<testsuites>\n");
 	
+	// The Root Suite does not seem to generate a suite event in the browser
+	// (it does in the Ptolemy version of mocha).  Print root suite opening tag.
+	self.xmlOutput.push("<testsuite " + 
+			"name=\"Root Suite\" tests=\"0\">\n");
 	
 	/** Run mocha and create a report in text and JUnit format.
 	// Portions of the code are copied and modified from mocha-junit-reporter.
@@ -219,6 +223,7 @@ exports.Testing.prototype.run = function() {
 			if ( (!suite.hasOwnProperty("tests") || suite.tests.length < 1) &&
 				 (!suite.hasOwnProperty("suites") || suite.suites.length < 1)) {
 				suite.complete = true;
+				console.log('suite with no tests and no subsuites');
 				self.xmlOutput.push("</testsuite>\n");
 			}
 		})
