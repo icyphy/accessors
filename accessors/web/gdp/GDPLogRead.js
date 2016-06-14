@@ -1,6 +1,6 @@
 /* Read a log. */
 
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -51,9 +51,14 @@ exports.read = function() {
 };
 
 exports.initialize = function() {
+    console.log("GDPLogRead.initialize()");
     var logname = this.getParameter('logname');
+    if (logname === '') {
+        throw new Error('The logname parameter cannot be empty');
+    }
     log = GDP.GDP(logname, 1);
-    handle = this.addInputHandler('trigger', this.read);
+    handle = this.addInputHandler('trigger', this.exports.read.bind(this));
+    console.log("GDPLogRead.initialize() done");
 };
 
 exports.wrapup = function() {

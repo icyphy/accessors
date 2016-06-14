@@ -45,19 +45,25 @@ exports.setup = function() {
 
 
 exports.append = function(data) {
-    console.log("Okay, inside append");
+    console.log("GDPLogAppend.append()");
     console.log(typeof(log));
     var dataValues = this.get('data');
+    console.log('GDPLogAppend.js.append(): ' + dataValues);
     log.append(dataValues);
 };
 
 exports.initialize = function() {
+    console.log("GDPLogAppend.initialize()");
     var logname = this.getParameter('logname');
+    if (logname === '') {
+        throw new Error('The logname parameter cannot be empty.');
+    }
     log = GDP.GDP(logname, 2);
-    handle = this.addInputHandler('trigger', this.append);
+    handle = this.addInputHandler('trigger', this.exports.append.bind(this));
 };
 
 exports.wrapup = function() {
+    console.log("GDPLogAppend.wrapup()");
     if (handle !== null) {
         this.removeInputHandler(handle);
     }
