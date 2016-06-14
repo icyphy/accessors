@@ -1,6 +1,6 @@
 /* Subscribe to a log. */
 
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -42,12 +42,15 @@ exports.setup = function() {
     this.parameter('logname', {'type': 'string'});
     this.parameter('startrec', {'type': 'int', 'value': 0});
     this.parameter('numrec', {'type': 'int', 'value':0});
+    this.parameter('timeout', {'type': 'int', 'value':0});
 };
 
-exports.get_next_data = function() {
+exports.getNextData = function() {
+    console.log("GDPLogSubscribe.getNextData()");
     // this blocks
     while (true) {
-        var data = log.get_next_data(100);
+        var data = log.getNextData(100);
+        console.log("GDPLogSubscribe.getNextData() data: " + data);
         if (data !== null) {
             this.send('data', data); 
             break;
@@ -56,10 +59,16 @@ exports.get_next_data = function() {
 };
 
 exports.initialize = function() {
+    console.log("GDPLogSubscribe.initialize()");
     var logname = this.getParameter('logname');
+    if (logname === '') {
+        throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
+    }
     log = new GDP.GDP(logname, 1);
-    log.subscribe(this.getParameter('startrec'), this.getParameter('numrec'));
-    handle = this.addInputHandler('trigger', this.get_next_data);
+    
+    log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
+    console.log("GDPLogSubscribe.initialize() after subscribe()");
+    handle = this.addInputHandler('trigger', this.exports.getNextData.bind(this));
 };
 
 exports.wrapup = function() {
