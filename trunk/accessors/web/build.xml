@@ -134,14 +134,21 @@
   </target>
 
   <target name="tests"
-          depends="tests.duk, tests.eduk, tests.mocha"
+          depends="tests.browser, tests.duk, tests.eduk, tests.mocha"
           description="Run the duktape, eduk and node host tests">
+  </target>
+
+  <target name="tests.browser"
+          description="Test the browser host.">
+    <exec dir="hosts/browser/test"
+	  executable="./runBrowserTests">
+    </exec>
   </target>
 
   <target name="tests.coverage"
           description="Use istanbul and mocha to generate code coverage for JavaScript tests.">
     <echo>
-      ==test.istanbul==
+      ==tests.coverage==
       This target uses istanbul and mocha to generate code coverage for JavaScript tests
       This target requires setup:
         sudo npm install -g mocha
