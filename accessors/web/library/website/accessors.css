@@ -1,0 +1,123 @@
+/* Colors:
+   Sather Gate: #B9D3B6, R: 185 G: 211 B: 182
+   Lawrence: #00B0DA, R: 0 G: 176 B: 218
+   Web Lap Lane:  #00A598
+   Web Bay Fog: #DDD5C7, R: 221 G: 213 B: 199
+   Web Pacific: #46535E, R: 70 G: 83 B: 94
+   */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: #EEEEEE;
+} 
+
+
+.page  {
+	height: 1000px;
+	font-size: 2em;
+	color: #46535E;	/* R: 70 G: 83 B: 94 */
+}
+
+#page3{
+	font-size: 1em;
+}
+
+.backgroundpage {
+	font-weight: bold;
+	color: white;
+	text-align: center;
+	height: 100%;
+}
+
+#slogan1 {
+	padding-top: 2em;
+	font-size: 4em;
+}
+
+#slogan2 {
+	font-size: 3em
+}
+
+#slogan3 {
+	font-size: 1.5em
+}
+
+.multiple-items {
+	width: 70%;
+	margin: 0 auto;
+}
+
+.buttontable{
+	padding: 1em;
+	margin: 1em auto;
+}
+
+.buttontable td {
+	padding: 1em;
+}
+
+.background {
+   
+	height:100%;
+	width:100%; 
+	background-image: url("images/DSC_0231.jpg");
+	background-size: cover;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+}
+.keyword {
+	font-size: 1em;
+	color: #3B7EA1;
+}
+
+.description {
+	font-size: 0.7em;
+	color: #46535E;
+}
+
+.icontable {
+	padding: 0.5em;
+	font-size: 1em;
+	width: 100%;
+}
+
+.icontable td {
+	padding: 0.5em;
+}
+
+.iconimage {
+	width: 100%;
+}
+
+.iconcontainer {
+	width: 30%;
+}
+
+/*  Generated using http://css3buttongenerator.com/ */
+.btn {
+  background: #00B0DA;
+  background-image: -webkit-linear-gradient(top, #00B0DA, #003262);
+  background-image: -moz-linear-gradient(top, #00B0DA, #003262);
+  background-image: -ms-linear-gradient(top, #00B0DA, #003262);
+  background-image: -o-linear-gradient(top, #00B0DA, #003262);
+  background-image: linear-gradient(to bottom, #00B0DA, #003262);
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 8px 20px 8px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #B9D3B6;
+  background-image: -webkit-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -moz-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -ms-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -o-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: linear-gradient(to bottom, #B9D3B6, #00A598);
+  text-decoration: none;
+}
