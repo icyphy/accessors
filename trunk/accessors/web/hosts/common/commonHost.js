@@ -378,7 +378,7 @@ function Accessor(
         // List of contained accessors.
         this.containedAccessors = [];
     }
-    
+
     // Define the exports object to be populated by the accessor code.
     // Even if there is an object extending this one, this one has its own
     // exports property. If this object is being extended (rather than
@@ -396,6 +396,21 @@ function Accessor(
     // define it explicitly to be null.
     this.ssuper = null;
     this.exports.ssuper = null;
+
+    // Define an object to be populated with monitoring data active accessors, whose react() has been invoked. 
+    // A mapping from accessor class to statistics capturing the execution time (in milliseconds) of react() is stored.
+    // ************************FORMAT of output sample array***************************
+    // {<Accessor class> : [<count of sample>, <mean of react execution duration>, 
+    // <standard deviation of react execution duration>]}
+    // ********************************************************************************
+    // NOTE: We can use a different strategy for storing execution times, like a fixed window of recent durations that 
+    // can later be processed by monitoring components downstream. Should be an easy change, if needed.
+    // FIXME: It is possible a callback is created in react(), the execution time of callback is not accounted for  
+    // with current monitoring implementation
+    if(typeof Accessor.activeAccessors == 'undefined')
+    {
+        Accessor.activeAccessors = {};
+    }
     
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code.
@@ -1279,7 +1294,16 @@ function pushIfNotPresent(item, list) {
         }
     }
     list.push(item);
-}
+};
+
+/** Test function to query the accessor execution time statistics
+ *  @return A mapping from accessor class to duration statistics for 
+ *          execution time of the accessor instance react function
+ */
+//Accessor.prototype.queryActiveAccessors = function() {
+Accessor.queryActiveAccessors = function() {
+    return Accessor.activeAccessors;    
+};
 
 /** Invoke any registered handlers for all inputs or for a specified input.
  *  Also invoke any handlers that have been registered to respond to any input,
@@ -1293,6 +1317,8 @@ function pushIfNotPresent(item, list) {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function(name) {
+    // For monitoring, we want to time execution of this function. 
+    var startTime = Date.now();
     var thiz = this.root;
     // Allow further reactions to be scheduled by this reaction.
     thiz.reactRequestedAlready = false;
@@ -1375,7 +1401,28 @@ Accessor.prototype.react = function(name) {
     if (typeof this.exports.fire === 'function') {
         this.exports.fire.call(this);
     }
-    
+
+    // Duration is in milliseconds
+    var duration = Date.now() - startTime;   
+    if(this.accessorClass in Accessor.activeAccessors)
+    {
+        // Update mean and variance for duration of react execution
+        var newCount = Accessor.activeAccessors[this.accessorClass][0] + 1;
+        var currentMean = Accessor.activeAccessors[this.accessorClass][1];
+        var currentStdDev =  Accessor.activeAccessors[this.accessorClass][2];
+        Accessor.activeAccessors[this.accessorClass][0] = newCount;
+        Accessor.activeAccessors[this.accessorClass][1] = currentMean + ((duration - currentMean)/newCount);
+        if(newCount > 1)
+        {
+            var nextVar = (((newCount - 2)/(newCount - 1)) * Math.pow(currentStdDev , 2)) + ((1/newCount) * Math.pow(duration - currentMean, 2));
+            Accessor.activeAccessors[this.accessorClass][2] = Math.sqrt(nextVar);
+        }        
+    }
+    else 
+    {
+        Accessor.activeAccessors[this.accessorClass] = [1, duration, 0];
+    }
+
     this.emit('react');
 };
 
