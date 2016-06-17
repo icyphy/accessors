@@ -1300,7 +1300,6 @@ function pushIfNotPresent(item, list) {
  *  @return A mapping from accessor class to duration statistics for 
  *          execution time of the accessor instance react function
  */
-//Accessor.prototype.queryActiveAccessors = function() {
 Accessor.queryActiveAccessors = function() {
     return Accessor.activeAccessors;    
 };
