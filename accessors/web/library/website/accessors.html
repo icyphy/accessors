@@ -1,0 +1,115 @@
+<html>
+<head>
+
+
+
+<!-- Slick library for image carousel, by Ken Wheeler.
+     https://github.com/kenwheeler/slick/
+
+The MIT License (MIT)
+
+Copyright (c) 2013-2016
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  
+-->
+
+<!-- TODO:  Run with webserver so these links will work.
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+-->
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+
+
+<script type="text/javascript" src="accessors.js"></script>
+<link rel="stylesheet" type="text/css" href="accessors.css" />
+
+
+
+</head>
+<body>
+
+<div id="page1" class="backgroundpage">
+    <div class="background">
+		<div id="slogan1"> accessors.js </div>
+		<div id="slogan2"> Command your world </div>
+		<div id="slogan3"> A lightweight, predictable interface for anything, anywhere.  </div>
+		<div id="tablecontainer"> 
+			<table class="buttontable"> 
+				<tr> <td> <a class="btn" href="https://www.terraswarm.org/accessors/hosts/browser/index.html?accessor=services.StockTick"> Try in browser </a> </td>
+					 <td> <a class="btn" href="https://www.terraswarm.org/accessors/wiki/Main/Repositories"> Get repository </a> </td> 
+					 <td> <a class="btn" href="https://www.terraswarm.org/accessors/"> Contribute to accessors </a> </td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+ 
+<div id="page2" class="page">
+
+    <table class="icontable"> 
+		<tr>
+			<td> <div class="keyword"> <strong> Heterogeneous </strong> </div> 
+			<div class="description">Say goodbye to proprietary hubs. Code once. Host on node.js, Java, or in the browser.  </div> </td>
+						<td> <div class="keyword"> <strong> Composable </strong> </div> 
+			<div class="description"> Actor semantics support your data flow compositions - single token, streaming, event handling and more. </div> </td>
+
+						 <td> <div class="keyword"> <strong> Disciplined </strong> </div> 
+			<div class="description"> We introduce horizontal and vertical contracts to ensure the right behavior at the right time. </div> </td>
+		</tr>
+		<tr>
+			<td class="iconcontainer"> <img class="iconimage" src="images/DSC_3692.jpg" /> </td> 
+			<td class="iconcontainer"> <img class="iconimage" src="images/rabago_012.jpg" /> </td>
+			<td class="iconcontainer"> <img class="iconimage" src="images/solar.jpg" /> </td>
+			
+		</tr>
+
+	</table>
+ 
+<div id="page3" class="page">
+	Examples. (Get slider working; add pictures.)
+	<!-- TODO:  Get slider working 
+	<div class="slider multiple-items"> 
+		<div> Basic example. </div>
+		<div> Monitoring - server room. </div>
+		<div> Control - robot. </div>
+		<div> Immersion - conference room. </div>
+	</div>
+	-->
+	<ul> <li> Basic example </li> 
+		 <li> Monitoring - server room. </li>
+		 <li> Control - robot. </li>
+		 <li> Immersion - conference room. </li>
+	</ul>
+	
+	<!-- TODO:  Use separate page here? -->
+	Future work. Ideas?
+	<ul> <li> Provenance (history of accessor activity) </li>
+	     <li> App Synthesis. </li>
+	</ul>
+</div>
+
+</body>
+</html>
