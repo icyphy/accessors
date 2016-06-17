@@ -79,6 +79,9 @@ startHost = function() {
       completer: completer,
     });
     
+    // Setup monitoring accessor for host before accepting commands
+    eval.call(this, 'var monitoringInstance = setupMonitoring()');
+
     // Emitted whenever a command is entered.
     rl.on('line', function(command) {
         // Remove any trailing semicolon.
