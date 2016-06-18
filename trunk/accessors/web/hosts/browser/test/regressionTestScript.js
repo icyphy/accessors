@@ -44,7 +44,7 @@ var driver = new webdriver.Builder()
     .forBrowser('firefox')
     .build();
 
-driver.get("http://localhost:8088/accessors/hosts/browser/test/test/regressionTest.html");
+driver.get("http://localhost:8089/accessors/hosts/browser/test/test/regressionTest.html");
 
 // Wait until page has loaded
 driver.wait(function() {
