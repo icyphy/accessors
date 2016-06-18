@@ -26,13 +26,14 @@
  *  This accessor is designed to periodically collect monitoring data that captures the 
  *  react() function execution times of different accessors running on the accessor host.
  *
+ *  Note that the output array has the following format:
+ *
+ *  {<Accessor class> : [<count of sample>, <mean of react execution duration>, 
+ *   <standard deviation of react execution duration>]}
+ *
  *  @accessor hosts/node/nodeMonitoringAccessor
  *  @input samplePeriodInMs A numeric input which provides sampling period for monitoring data.
  *  @output sample String which provides duration statistics for react() function execution on host.
- *  ************************FORMAT of output sample array***************************
- *  {<Accessor class> : [<count of sample>, <mean of react execution duration>, 
- *   <standard deviation of react execution duration>]}
- *  ********************************************************************************
  *  @author Atul Sandur
  *  @version $$Id: nodeMonitoringAccessor.js 546 2016-06-01 02:07:57Z cxh $$
  */
