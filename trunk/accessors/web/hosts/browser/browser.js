@@ -502,7 +502,7 @@ function generateAccessorHTML(path, id) {
     // Load the specified module.
     function require(path) {
     	// If the commonHost is required, return it.
-    	if (path.indexOf("commonHost") > 0) {
+    	if (path.indexOf("commonHost") >= 0) {
     		return commonHost;
     	}
     	
