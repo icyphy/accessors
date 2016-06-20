@@ -1,6 +1,6 @@
-/* Accessor for a log */
+/* Append to a Global Data Plane (GDP) log. */
 
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -22,8 +22,22 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Accessor for a log.
- *  @author Edward A. Lee, Nitesh Mor
+/** Append to a Global Data Plane (GDP) log.
+ *
+ *  @parameter {string} debugLevel The value of the GDP debug flag.  See
+ *  gdp/README.md for a complete summary.  The value is typically
+ *  "pattern=level", for example "gdplogd.physlog=39".  To see the
+ *  patterns, use the "what" command or strings $PTII/lib/libgdp* |
+ *  grep '@(#)'.  Use "*=40" to set the debug level to 40 for all
+ *  components. The value of level is not usually over 127.  Values
+ *  over 100 may modify the behavior.
+ *  @param {string} logname The GDP logname.  By convention, use 
+ *  a reverse fully qualified name like
+ *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
+ *  @input {string} data The data to be written
+ *  @input trigger An input that triggers firing the reading of the data
+
+ *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
  *  @version $$Id$$ 
  */
 
@@ -38,11 +52,11 @@ var log = null;
 var handle = null;
 
 exports.setup = function() {
-    this.input('trigger');
     this.input('data', {'type': 'string'});
+    this.parameter('debugLevel', {'type': 'string'});
     this.parameter('logname', {'type': 'string'});
+    this.input('trigger');
 };
-
 
 exports.append = function(data) {
     console.log("GDPLogAppend.append()");
@@ -53,12 +67,12 @@ exports.append = function(data) {
 };
 
 exports.initialize = function() {
-    console.log("GDPLogAppend.initialize()");
     var logname = this.getParameter('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
     log = GDP.GDP(logname, 2);
+    log.setDebugLevel(this.getParameter('debugLevel'));
     handle = this.addInputHandler('trigger', this.exports.append.bind(this));
 };
 
