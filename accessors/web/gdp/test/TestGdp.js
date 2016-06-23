@@ -25,8 +25,8 @@
 /** Test Gdp
 *
 *  @accessor gdp/test/TestGdp
-*  @author 
-*  @version 33556Id: TestWebSocketClient.js 663 2016-04-05 00:10:46Z cxh 33556
+*  @author Christopher Brooks
+*  @version $$Id$$
 */
 
 exports.setup = function() {
