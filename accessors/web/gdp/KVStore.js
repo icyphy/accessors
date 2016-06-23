@@ -1,6 +1,6 @@
 /* Accessor for GDP Key-Value Store. */
 
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -42,7 +42,7 @@ exports.setup = function () {
     this.input('trigger');
     this.input('write', {'type': 'boolean', 'value': false});
     this.input('key', {'type':'string'});
-    this.input('ts', {'type':'string'});
+    this.input('timestamp', {'type':'string'});
     this.input('value', {'type': 'string'});
     this.output('output', {'type':'string'});
     this.parameter('url', {'type':'string', 'value':''});
@@ -53,7 +53,7 @@ exports.setup = function () {
 exports.makeRequest = function() {
 
     var request = {};
-    var ts = this.get('ts');
+    var timestamp = this.get('timestamp');
     var key = this.get('key');
     var url = this.get('url');
     console.log(this.get('write'));
