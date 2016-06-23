@@ -44,12 +44,12 @@ Documentation
 To get the documentation for the accessors, you may need to generate the documentation
 in your local copy of the accessors repo:
 
-> cd ../../..
-> ant
+ cd ../../..
+ ant
 
 If you don't have a copy of the accessors repo (then you probably can't see this file),
 you can get it using:
 
-> svn co https://repo.eecs.berkeley.edu/svn/projects/terraswarm/accessors/trunk/accessors
+ svn co https://repo.eecs.berkeley.edu/svn/projects/terraswarm/accessors/trunk/accessors
   
 Comments and suggestions to eal@eecs.berkeley.edu.
