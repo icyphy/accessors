@@ -311,13 +311,11 @@ exports.connect = function () {
 
 /** Handles input on 'toSend'. */
 exports.toSendInputHandler = function () {
-    console.log("WebSocketClient.js: toSendInputHandler()");
     this.exports.sendToWebSocket.call(this, this.get('toSend'));
 };
 
 /** Sends JSON data to the web socket. */
 exports.sendToWebSocket = function (data) {
-    console.log("WebSocketClient.js: sendToWebSocket()");
     // May be receiving inputs before client has been set.
     if (client) {
     	client.send(data);
