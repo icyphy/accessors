@@ -41,7 +41,7 @@ var httpClient = require('httpClient');
 exports.setup = function () {
     this.input('trigger');
     this.input('key', {'type':'string'});
-    this.input('ts', {'type':'string'});
+    this.input('timestamp', {'type':'string'});
     this.output('value', {'type':'string'});
     this.parameter('url', {'type':'string', 'value':''});
 };
@@ -50,12 +50,12 @@ exports.getRESTurl = function() {
 
     var url = this.get('url');
     var key = this.get('key');
-    var ts = this.get('ts');
-    if (ts !== null) {
-        var _ts = ts.replace("000000","");
-        var e = Date.parse(_ts)/1000.0;
+    var timestamp = this.get('timestamp');
+    if (timestamp !== null) {
+        var _timestamp = timestamp.replace("000000","");
+        var e = Date.parse(_timestamp)/1000.0;
         console.log(e);
-        return url + "key=" + key + "&ts=" + e;
+        return url + "key=" + key + "&timestamp=" + e;
     } else {
         return url + "key=" + key;
     }
