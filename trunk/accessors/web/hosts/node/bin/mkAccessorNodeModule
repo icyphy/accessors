@@ -37,7 +37,7 @@ fi
 module=$1
 
 binDirectory=`dirname $0`
-accessors=`cd $binDirectory/..; pwd`
+accessors=`cd $binDirectory/../../..; pwd`
 
 if [ ! -d $accessors ]; then
     echo "$0: could not find the accessors directory at $accessors? Exiting."
@@ -88,7 +88,7 @@ $copyright
  *
  * @module $module
  * @author $firstNameLastName
- * @version $$Id: webSocketClient.js 812 2016-05-24 17:10:59Z cxh $$
+ * @version \$\$Id: webSocketClient.js 812 2016-05-24 17:10:59Z cxh \$\$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -135,8 +135,8 @@ $copyright
 /** Test $capitalizedModule
 *
 *  @accessor $module/test/Test$capitalizedModule
-*  @author $FirstNameLastName
-*  @version $$Id: TestWebSocketClient.js 663 2016-04-05 00:10:46Z cxh $$
+*  @author $firstNameLastName
+*  @version \$\$Id: TestWebSocketClient.js 663 2016-04-05 00:10:46Z cxh \$\$
 */
 
 exports.setup = function() {
