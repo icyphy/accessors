@@ -134,8 +134,30 @@
   </target>
 
   <target name="tests"
-          depends="tests.browser, tests.duk, tests.eduk, tests.mocha"
-          description="Run the duktape, eduk and node host tests">
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha"
+          description="Run the CapeCode, Browser, Duktape, eduk and node host tests">
+  </target>
+
+  <target name="-ptII-exists" unless="ptII.exists">
+    <available property="ptII.exists" file="${env.PTII}"/>
+  </target>
+
+  <target name="tests.capecode"
+          depends="-ptII-exists"
+          description="Run the Cape Code tests."
+          if="${ptII.exists}">
+    <echo>
+      == tests.capecode ==
+      These tests are only run if $PTII exists.
+    </echo>
+    <exec dir="${env.PTII}/ptolemy/actor/lib/jjs"
+          executable="make">
+      <arg value="tests" />
+    </exec>
+    <exec dir="${env.PTII}/org/terraswarm/accessor"
+          executable="make">
+      <arg value="tests" />
+    </exec>
   </target>
 
   <target name="tests.browser"
