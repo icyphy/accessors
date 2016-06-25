@@ -10,6 +10,9 @@
 
 // Only utf-8 encoded files will be served.
 
+// Optionally, specify a port number, for example:
+// node testServer.js 8082
+
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
@@ -17,12 +20,20 @@ var path = require('path');
 // Create an object to hold {path : value} pairs from put requests
 var putTable = {};
 
+var port = 8089;
+
+//Check for an optional port number.
+//The first element will be 'node', the second element will be the name of the JavaScript file.
+//The third element (if present) will be the port number.
+if (process.argv.length > 2) {
+	port = process.argv[2];
+}
+
 var server = http.createServer();
 server.on('request', function(request, response) {
     
     var url = request.url;
     var querystring = "";
-    console.log("original url "+ url);
     // Strip any leading slashes.
     while (url.substring(0,1) == '/') {
         url = url.substring(1);
@@ -101,6 +112,9 @@ server.on('request', function(request, response) {
         	if (url.endsWith('regressiontest')) {
         		// Overwrite any prior results.
         		fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
+        			// Signal that a parent regression testing process may exit.
+        			process.send('done');
+        			
         			if (err) {
         				console.log("Error writing regression test results: " + err);
         			}
@@ -113,10 +127,14 @@ server.on('request', function(request, response) {
 
 server.on('error', function(message) {
     console.error(message);
+    // Signal a port error to the parent process (if any).  
+    // Used in regressionTestScript.
+    process.send('portError');
 });
 
-console.log('Starting server.');
-server.listen(8089, function() {
+console.log('Starting server on port ' + port + '.');
+server.listen(port, function() {
     console.log('Server listening.');
+    process.send('listening');
 });
 
