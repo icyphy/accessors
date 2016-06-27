@@ -162,8 +162,15 @@
 
   <target name="tests.browser"
           description="Test the browser host.">
+    <echo>
+      ==tests.browser==
+      Run the Browser Accessor Host Tests.
+      The output will appear in reports/junit/browserTestResults.xml
+      See https://www.terraswarm.org/accessors/wiki/VersionCurrent/RegressionTesting
+    </echo>
     <exec dir="hosts/browser/test"
-	  executable="./runBrowserTests">
+	  executable="/usr/local/bin/node">
+      <arg value="regressionTestScript.js"/>
     </exec>
   </target>
 
