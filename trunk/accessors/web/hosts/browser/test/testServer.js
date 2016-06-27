@@ -110,13 +110,22 @@ server.on('request', function(request, response) {
         	console.log(data);
         	
         	if (url.endsWith('regressiontest')) {
-        		// Overwrite any prior results.
-        		fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
+
+                                if (!fs.existsSync('../../../reports')) {
+                                    fs.mkdirSync('../../../reports');
+                                }
+                                if (!fs.existsSync('../../../reports/junit')) {
+                                    fs.mkdirSync('../../../reports/junit');
+                                }
+
+                                // Overwrite any prior results.
+                                fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
+
         			// Signal that a parent regression testing process may exit.
         			process.send('done');
         			
         			if (err) {
-        				console.log("Error writing regression test results: " + err);
+                                    console.log("In " + process.cwd() + ": Error writing regression test results: " + err);
         			}
         		});
         	}
