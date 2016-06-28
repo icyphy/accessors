@@ -32,6 +32,8 @@
   <!-- Path of JavaScript tests that are run by mocha. -->
   <fileset id="test.mocha.files" dir="${basedir}">
     <include name="**/mocha/test*.js"/>
+    <!-- hosts/browser/common is a symbolic link -->
+    <exclude name="hosts/browser/common/test/mocha/test*.js"/>
     <patternset refid="accessors.excludes" />
   </fileset>
 
@@ -291,7 +293,6 @@
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
-
     <exec executable="mocha">
       <arg line="--bail"/>
       <arg value="--reporter"/>
