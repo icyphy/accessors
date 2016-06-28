@@ -297,7 +297,7 @@
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
-      <arg value="mochaFile=reports/junit/mochaJUnit.xml"/>
+      <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
       <arg line="${converted}"/>
     </exec>
   </target>
