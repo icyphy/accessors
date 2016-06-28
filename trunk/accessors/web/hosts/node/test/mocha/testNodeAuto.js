@@ -8,22 +8,28 @@
 
 var nodeHost = require('../../nodeHost.js');
 var fs = require('fs');
-describe('hosts/node/test/mocha/testNodeAuto.js: run tests in accessors/web/test/auto', function () {
-    var accessors;
-    try {
+describe('hosts/node/test/mocha/testNodeAuto.js: run auto tests', function () {
+    var autos = ["test/auto", "net/test/auto"];
+    autos.forEach(function(auto) {
+        var accessors;
+        try {
         // If run in accessors/web/hosts/node/test/mocha/
-        accessors = fs.readdirSync('../../../../test/auto');
-    } catch (e) {
-        // If run in accessors/web/
-        accessors = fs.readdirSync('test/auto');
-    }
-
-    accessors.forEach(function(accessor) {
-        if (accessor.substring(0,4) != '.svn') {
-            it('NodeHost run accessors/web/test/auto/' + accessor + '\n', function () {
-                var testAccessor = [ "test/auto/" + accessor ];
-                instantiateAndInitialize(testAccessor);
-            });
+            accessors = fs.readdirSync('../../../../' + auto);
+        } catch (e) {
+            // If run in accessors/web/
+            accessors = fs.readdirSync(auto);
         }
+
+        describe('hosts/node/test/mocha/testNodeAuto.js: run ' + auto + ' tests', function () {
+            accessors.forEach(function(accessor) {
+                if (accessor.substring(0,4) != '.svn' &&
+                    accessor.substring(0,4) != '.log') {
+                    it('NodeHost run accessors/web/' + auto + '/' + accessor + '\n', function () {
+                        var testAccessor = [ auto +'/' + accessor ];
+                        instantiateAndInitialize(testAccessor);
+                    });
+                }
+            });
+        });
     });
 });
