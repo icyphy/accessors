@@ -8,7 +8,7 @@
 
 var nodeHost = require('../../nodeHost.js');
 var fs = require('fs');
-describe('hosts/node/test/mocha/testNodeAuto.js: run auto tests', function () {
+describe('hosts.node.test.mocha.testNodeAuto', function () {
     var autos = ["test/auto", "net/test/auto"];
     autos.forEach(function(auto) {
         var accessors;
@@ -20,7 +20,7 @@ describe('hosts/node/test/mocha/testNodeAuto.js: run auto tests', function () {
             accessors = fs.readdirSync(auto);
         }
 
-        describe('hosts/node/test/mocha/testNodeAuto.js: run ' + auto + ' tests', function () {
+        describe(auto.replace('/','.'), function () {
             accessors.forEach(function(accessor) {
                 if (accessor.substring(0,4) != '.svn' &&
                     accessor.substring(0,4) != '.log') {
