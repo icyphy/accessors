@@ -175,9 +175,10 @@ exports.Testing.prototype.run = function() {
 	this.xmlOutput.push("<testsuites>\n");
 	
 	// The Root Suite does not seem to generate a suite event in the browser
-	// (it does in the Ptolemy version of mocha).  Print root suite opening tag.
+	// (it does in the Ptolemy version of mocha).  Print opening tag, using
+	// "BrowserHost" as the root name. 
 	self.xmlOutput.push("<testsuite " + 
-			"name=\"Root Suite\" tests=\"0\">\n");
+			"name=\"BrowserHost\" tests=\"0\">\n");
 	
 	/** Run mocha and create a report in text and JUnit format.
 	// Portions of the code are copied and modified from mocha-junit-reporter.
