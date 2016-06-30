@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/athuls89/Desktop/OSL/terraswarm/accessors/trunk/accessors/web/hosts/cordova/DemoApp/platforms/android/libs/sqlite-connector.jar"
+        jumboMode="false"
+        revision="23.0.3"
+        sha1="76169ab23a4f939925491c6fe186749da5a56ee9">
+        <dex dex="/home/athuls89/Desktop/OSL/terraswarm/accessors/trunk/accessors/web/hosts/cordova/DemoApp/platforms/android/build/intermediates/pre-dexed/debug/sqlite-connector_01652d1ad3000d9dc56e349fcf6b7d23c3c90df2.jar" />
+    </item>
+    <item
+        jar="/home/athuls89/Desktop/OSL/terraswarm/accessors/trunk/accessors/web/hosts/cordova/DemoApp/platforms/android/build/intermediates/exploded-aar/android/CordovaLib/unspecified/debug/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.3"
+        sha1="301f867efb9fb1566b7324a1a1c88ad59d8fd088">
+        <dex dex="/home/athuls89/Desktop/OSL/terraswarm/accessors/trunk/accessors/web/hosts/cordova/DemoApp/platforms/android/build/intermediates/pre-dexed/debug/CordovaLib-unspecified-debug_ed5389386a64ec904b6952a423d9e3a80d0a8ad9.jar" />
+    </item>
+
+</items>

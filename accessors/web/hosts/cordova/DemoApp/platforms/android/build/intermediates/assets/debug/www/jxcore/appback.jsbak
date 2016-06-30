@@ -1,0 +1,102 @@
+var fs = require('fs');
+
+Mobile('log').call("JXcore is up and running!");
+
+Mobile('getBuffer').registerSync(function() {
+  console.log("getBuffer is called!!!");
+  var buffer = new Buffer(25000);
+  buffer.fill(58);
+
+  // send back a buffer
+  return buffer;
+});
+
+Mobile('asyncPing').registerAsync(function(message, callback){
+  setTimeout(function() {
+    callback("Pong:" + message);
+  }, 500);
+});
+
+try {
+// requiring a node module
+  var jsnice = require('json-nice');
+
+//using it
+  var obj = {a: 1, b: 2};
+  console.log(jsnice(obj));
+} catch(e) {
+  console.error("Seems like you didn't copy node_modules folder from sample/jxcore");
+}
+
+// execpath
+console.log("execPath", process.execPath);
+
+// cwd
+console.log("process.cwd", process.cwd());
+
+// iOS user directory
+console.log("userPath", fs.readdirSync(process.userPath));
+
+Mobile('fromJXcore').registerToNative(function(param1, param2){
+  // this method is reachable from Java or ObjectiveC
+  // OBJ-C : [JXcore callEventCallback:@"fromJXcore" withParams:arr_parms];
+  // Java  : jxcore.CallJSMethod("fromJXcore", arr_params);
+});
+
+// calling this custom native method from JXcoreExtension.m / .java
+Mobile('ScreenInfo').callNative(function(width, height){
+  console.log("Size", width, height);
+});
+
+Mobile('ScreenBrightness').callNative(function(br){
+  console.log("Screen Brightness", br);
+});
+
+Mobile('log').call("Done with app.js");
+
+var path = require('path');
+var accessorPath;
+try{
+	accessorPath = [path.join(__dirname)];
+	Mobile('log').call('path module is not present or installed');
+}
+catch(e){
+	Mobile('log').call('path module is not present or installed');
+}
+
+getAccessorCode = function(name) {
+    var code;
+    // Append a '.js' to the name, if needed.
+    if (name.indexOf('.js') !== name.length - 3) {
+        name += '.js';
+    }
+    for (var i = 0; i < accessorPath.length; i++) {
+        var location = path.join(accessorPath[i], name);
+        try {
+            if(typeof fs == 'undefined')
+	    {
+		Mobile('log').call('fs is undefined');
+   	    }
+	    else
+	    {
+		Mobile('log').call('fs is defined with location ' + location);
+  	    }
+
+            Mobile('log').call('Writing reading accessor at: ' + location);
+            code = fs.readFileSync('./TestAccessor.js', 'utf8');
+	    fs.writeFile('atul-js-temp.txt', 'test data');
+            Mobile('log').call('Reading accessor at: ' + location);
+        } catch(error) {
+            Mobile('log').call('Reading didn\'t work ' + location);
+            Mobile('log').call(error);
+            continue;
+        }
+    }
+    if (!code) {
+	Mobile('log').call('Exception because code not found');
+        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+    }
+    return code;
+};
+
+getAccessorCode('TestAccessor');
