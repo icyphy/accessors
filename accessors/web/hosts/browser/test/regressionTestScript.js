@@ -86,7 +86,7 @@ function runServer(scriptPath, port) {
 			process.kill('SIGINT');
 			
 		} else if (message === 'listening') {
-			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/test/regressionTest.html");
+			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/regressionTest.html");
 			
 			// Wait until page has loaded
 			driver.wait(function() {
