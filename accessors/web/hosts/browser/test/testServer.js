@@ -121,8 +121,11 @@ server.on('request', function(request, response) {
                                 // Overwrite any prior results.
                                 fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
 
-        			// Signal that a parent regression testing process may exit.
-        			process.send('done');
+        			// Check for a parent process and, if one exists, signal 
+                    // that a parent regression testing process may exit.
+        			if (process.hasOwnProperty('send')) {
+        				process.send('done');
+        			}
         			
         			if (err) {
                                     console.log("In " + process.cwd() + ": Error writing regression test results: " + err);
@@ -138,12 +141,16 @@ server.on('error', function(message) {
     console.error(message);
     // Signal a port error to the parent process (if any).  
     // Used in regressionTestScript.
-    process.send('portError');
+    if (process.hasOwnProperty('send')) {
+    	process.send('portError');
+    }
 });
 
 console.log('Starting server on port ' + port + '.');
 server.listen(port, function() {
     console.log('Server listening.');
-    process.send('listening');
+    if (process.hasOwnProperty('send')) {
+    	process.send('listening');
+    }
 });
 
