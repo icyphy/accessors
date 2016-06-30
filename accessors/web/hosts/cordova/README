@@ -1,0 +1,2 @@
+This folder contains the accessor host based on Apache Cordova with JXCore plugin (https://github.com/jxcore/jxcore-cordova). 
+Please refer to the DemoApp folder along with README in the folder to understand how to modify this host as needed, and run your own accessors.
