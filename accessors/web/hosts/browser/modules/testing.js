@@ -160,7 +160,6 @@ exports.Testing.prototype.removeTest = function(suite, fullTitle){
  */ 
 exports.Testing.prototype.run = function() {
 	var self = this;
-	var results = "";
 	
 	// Register for mocha events and report test outcomes to the console.
 	// Output results in JUnit format in addition to default HTML format.
@@ -205,7 +204,7 @@ exports.Testing.prototype.run = function() {
 		})
 		.on('suite', function(suite) {
 		    if (suite.root) {
-		    	suite.title = 'Root Suite';
+		    	suite.title = 'BrowserHost';
 			}
 		    
 		    // If this suite is at the top level of the hierarchy, remember it.
@@ -224,20 +223,16 @@ exports.Testing.prototype.run = function() {
 			if ( (!suite.hasOwnProperty("tests") || suite.tests.length < 1) &&
 				 (!suite.hasOwnProperty("suites") || suite.suites.length < 1)) {
 				suite.complete = true;
-				console.log('suite with no tests and no subsuites');
 				self.xmlOutput.push("</testsuite>\n");
 			}
 		})
 		.on('test', function(test) {
-			results = results + '\nTest started: '+ test.title;
 		    console.log('Test started: '+ test.title);
 		})
 		.on('test end', function(test) {
-			results = results + '\nTest done: '+ test.title;
 		    console.log('Test done: '+ test.title);
 		})
 		.on('pass', function(test) {
-			results = results + '\nTest passed: '+ test.title;
 		    console.log('Test passed: ' + test.title);
 		    
 			self.xmlOutput.push("<testcase");
@@ -249,7 +244,6 @@ exports.Testing.prototype.run = function() {
 			self.removeTest(self.currentSuite, test.fullTitle());
 		})
 		.on('fail', function(test, err) {
-			results = results + '\nTest failed: ' + test.title;
 		    console.log('Test failed: ' + test.title);
 		    console.log(err);
 		    
@@ -267,7 +261,6 @@ exports.Testing.prototype.run = function() {
 			self.removeTest(self.currentSuite, test.fullTitle());
 		})
 		.on('end', function() {
-			results = results + "\nAll done.";
 		    console.log('All done.');
 			self.xmlOutput.push("</testsuites>\n");
 			var xmlString = self.xmlOutput.join(' ');

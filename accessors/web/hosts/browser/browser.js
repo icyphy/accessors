@@ -145,7 +145,6 @@ var commonHost;
 
 // These will be defined when commonHost.js is loaded.  Used by Test accessor.
 var Accessor;	
-var instantiateAccessor;
 
 /** Local function controlling how standard elements are rendered in the
  *  document with an optional label.
@@ -623,8 +622,7 @@ function generateAccessorHTML(path, id) {
             try {
             	// Make the commonHost globally visible.  Used by Test accessor.
             	commonHost = theCommonHost;
-            	// Accessor = commonHost.Accessor;	
-            	// instantiateAccessor = commonHost.instantiateAccessor;
+            	Accessor = commonHost.Accessor;	
             	
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);

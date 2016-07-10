@@ -105,34 +105,6 @@ server.on('request', function(request, response) {
         	response.write("Request info: " + JSON.stringify(info) + ", ");
         	response.write("Request body: " + data);
         	response.end();
-        	
-        	console.log("Handled " + request.method + " request: ");
-        	console.log(data);
-        	
-        	if (url.endsWith('regressiontest')) {
-
-                                if (!fs.existsSync('../../../reports')) {
-                                    fs.mkdirSync('../../../reports');
-                                }
-                                if (!fs.existsSync('../../../reports/junit')) {
-                                    fs.mkdirSync('../../../reports/junit');
-                                }
-
-                                // Overwrite any prior results.
-                                fs.writeFile("../../../reports/junit/browserTestResults.xml", data, function(err){
-
-        			// Check for a parent process and, if one exists, signal 
-                    // that a parent regression testing process may exit.
-        			if (process.hasOwnProperty('send')) {
-        				process.send('done');
-        			}
-        			
-        			if (err) {
-                                    console.log("In " + process.cwd() + ": Error writing regression test results: " + err);
-        			}
-        		});
-        	}
-        	
     	});
     }
 });
