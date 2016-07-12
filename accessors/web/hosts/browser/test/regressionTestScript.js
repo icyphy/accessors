@@ -95,7 +95,7 @@ var RegressionTester = (function() {
     until = require('selenium-webdriver').until;
 
     var driver = new webdriver.Builder()
-    	    .forBrowser('chrome')
+    	    .forBrowser('firefox')
     	    .build();
     
     var compositeTester; 
