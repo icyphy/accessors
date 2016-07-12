@@ -95,7 +95,7 @@ var RegressionTester = (function() {
     until = require('selenium-webdriver').until;
 
     var driver = new webdriver.Builder()
-    	    .forBrowser('firefox')
+    	    .forBrowser('chrome')
     	    .build();
     
     var compositeTester; 
@@ -220,7 +220,15 @@ var RegressionTester = (function() {
     	}).then(function(){
     		if (count < accessors.length - 1) {
     			self.runNextTest(count + 1, port);
-    		} else {                          
+    		} else {        
+    			// Delete the temporary file.
+    			 fs.stat('compositeTest.html', function (err) {
+    				   if (err) {
+    				       // OK.  Might not be any composite tests.
+    				   } else {
+    					   fs.unlink('compositeTest.html');
+    				   }
+    				});
     	    	self.emit('complete');
     		}
     	}).catch(function(err) {
@@ -270,7 +278,7 @@ var RegressionTester = (function() {
 	    	var testName = testNames[count];
 	    	console.log('Testing ' + testName);
 	    	
-			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/mochaTest.html");
+			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/regressionTest.html");
 			
 			// Wait until page has loaded.
 			driver.wait(function() {
@@ -278,8 +286,8 @@ var RegressionTester = (function() {
 			}, 10000).then(function() {
 				// Set test file name and output URL, including the port.
 				
-				driver.findElement(By.id('Test.testFile')).clear();
-				driver.findElement(By.id('Test.testFile')).sendKeys('/accessors/' + testName);
+				driver.findElement(By.id('MochaTest.testFile')).clear();
+				driver.findElement(By.id('MochaTest.testFile')).sendKeys('/accessors/' + testName);
 				driver.findElement(By.id('reactToInputs')).click();
 				
 				// Wait for output, by checking if output text box contains 
@@ -287,9 +295,9 @@ var RegressionTester = (function() {
 				// part of the result).
 				
 				driver.wait(function() {
-					return until.elementTextContains(By.id('Test.result'), 'xml')
+					return until.elementTextContains(By.id('MochaTest.result'), 'xml')
 				}, 10000).then(function() {
-					driver.findElement(By.id('Test.result')).getText()
+					driver.findElement(By.id('MochaTest.result')).getText()
 						.then(function(text) {
 							console.log(text);
 							mochaResults.push({'testName':testName, 'result':text});
