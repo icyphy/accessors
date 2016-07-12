@@ -1,5 +1,5 @@
 [
-    "Test.js",
+    "MochaTest.js",
     "TestAccessor.js",
     "TestAdder.js",
     "TestBaseC.js",
