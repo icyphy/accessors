@@ -1,12 +1,12 @@
 // To run, start the test server (see /web/hosts/browser/test/README.txt) and
-// point your browser to http://localhost:8088/hosts/browser/test/net/testREST.html
+// point your browser to http://localhost:8089/hosts/browser/test/net/testREST.html
 
 var expect = chai.expect;
 
 describe('Test REST results', function () {
 	it('Should eventually POST a JSON value', function(done) {
 		document.getElementById("REST.options").value = 
-			"{\"method\" : \"POST\", \"url\" : \"http://localhost:8088\"}";
+			"{\"method\" : \"POST\", \"url\" : \"http://localhost:8089\"}";
 		document.getElementById("REST.command").value = "test";
 		document.getElementById("REST.trigger").value = true; 
 		document.getElementById("REST.body").value = 
@@ -23,7 +23,7 @@ describe('Test REST results', function () {
 		
 	it('Should eventually PUT a JSON value', function(done) {
 		document.getElementById("REST.options").value = 
-			"{\"method\" : \"PUT\", \"url\" : \"http://localhost:8088\"}";
+			"{\"method\" : \"PUT\", \"url\" : \"http://localhost:8089\"}";
 		document.getElementById("REST.command").value = "test";
 		document.getElementById("REST.trigger").value = true; 
 		document.getElementById("REST.body").value = 
@@ -40,7 +40,7 @@ describe('Test REST results', function () {
 		
 	it('Should eventually GET the value that was PUT', function(done) {
 		document.getElementById("REST.options").value = 
-			"{\"method\" : \"GET\", \"url\" : \"http://localhost:8088\"}";
+			"{\"method\" : \"GET\", \"url\" : \"http://localhost:8089\"}";
 		document.getElementById("REST.body").value = "";
 		document.getElementById("REST.trigger").value = true; 
 		reactIfExecutable('REST');  
