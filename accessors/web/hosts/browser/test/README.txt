@@ -13,22 +13,22 @@ detailed below.
 
 1) For a simple test web page, point your favorite browser to
 
-  http://localhost:8088/hosts/browser/test/testWebPage.html
+  http://localhost:8089/hosts/browser/test/testWebPage.html
   
 2) For a more elaborate page where you can instantiate all accessors in the library,
 point your browser to:
 
-  http://localhost:8088/hosts/browser/test/testAccessorDirectory.html
+  http://localhost:8089/hosts/browser/test/testAccessorDirectory.html
   
 The test library there is particularly useful for testing.
 
 3) Other tests in this directory:
 
-  http://localhost:8088/hosts/browser/test/httpClient/testCORS.html
-  http://localhost:8088/hosts/browser/test/httpClient/testJSONP.html
-  http://localhost:8088/hosts/browser/test/httpClient/testREST.html
-  http://localhost:8088/hosts/browser/test/httpClient/testStockTick.html
-  http://localhost:8088/hosts/browser/test/httpClient/testWeather.html
+  http://localhost:8089/hosts/browser/test/httpClient/testCORS.html
+  http://localhost:8089/hosts/browser/test/httpClient/testJSONP.html
+  http://localhost:8089/hosts/browser/test/httpClient/testREST.html
+  http://localhost:8089/hosts/browser/test/httpClient/testStockTick.html
+  http://localhost:8089/hosts/browser/test/httpClient/testWeather.html
   
 The testWeather.html page requires keys to access online geocoder and weather
 services.  See keys.README.txt.

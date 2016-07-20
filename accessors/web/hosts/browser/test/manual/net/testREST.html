@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- Test REST accessor using Mocha and Chai in the browser. 
      To run, start the test server (see /web/hosts/browser/test/README.txt) and
-     point your browser to http://localhost:8088/hosts/browser/test/net/testREST.html -->
+     point your browser to http://localhost:8089/hosts/browser/test/net/testREST.html -->
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -15,12 +15,12 @@
     <script src="/accessors/hosts/browser/browser.js"></script>
     
      <!-- Load Mocha and an assertion library (here, Chai). -->
-  	<script src="/accessors/hosts/browser/test/lib/mocha/mocha.js"> </script>
-  	<script src="/accessors/hosts/browser/test/lib/chai/chai.js"> </script>  
+  	<script src="/accessors/hosts/browser/modules/mocha.js"> </script>
+  	<script src="/accessors/hosts/browser/modules/chai.js"> </script>  
   	<script>mocha.setup('bdd');</script>
   
   	<!-- Load your test. -->
-  	<script src="/accessors/hosts/browser/test/net/testREST.js"> </script>
+  	<script src="/accessors/hosts/browser/test/manual/net/testREST.js"> </script>
 </head>
 <body>
 
