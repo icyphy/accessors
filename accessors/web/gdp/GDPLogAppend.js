@@ -44,7 +44,7 @@
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*globals addInputHandler, addInputParameter, console, exports, get, getParameter, input, parameter, removeInputHandler, require */
-/*jshint globalstrict: true*/
+/*jshint globalstrict: true */
 "use strict";
 
 var GDP = require('gdp');
@@ -71,13 +71,12 @@ exports.initialize = function() {
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
-    log = GDP.GDP(logname, 2);
+    log = new GDP.GDP(logname, 2);
     log.setDebugLevel(this.getParameter('debugLevel'));
     handle = this.addInputHandler('trigger', this.exports.append.bind(this));
 };
 
 exports.wrapup = function() {
-    console.log("GDPLogAppend.wrapup()");
     if (handle !== null) {
         this.removeInputHandler(handle);
     }
