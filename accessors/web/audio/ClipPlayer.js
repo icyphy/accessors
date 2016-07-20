@@ -34,11 +34,13 @@
 
 var audio = require("audio");
 
+this.output('signal',{'type':'number'});
+
 exports.setup = function() {
-    this.input('start');
+    this.input('start', {'value': true});
     this.input('stop');
     this.output('output');
-    this.parameter('clipURL');
+    this.parameter('clipURL', {'type':'string', 'value':'http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3'});
 };
 
 exports.initialize = function() {
