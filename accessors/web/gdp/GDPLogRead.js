@@ -54,9 +54,9 @@ exports.initialize = function() {
     console.log("GDPLogRead.initialize()");
     var logname = this.getParameter('logname');
     if (logname === '') {
-        throw new Error('The logname parameter cannot be empty');
+        throw new Error('The logname parameter cannot be empty.');
     }
-    log = GDP.GDP(logname, 1);
+    log = new GDP.GDP(logname, 1);
     handle = this.addInputHandler('trigger', this.exports.read.bind(this));
     console.log("GDPLogRead.initialize() done");
 };
