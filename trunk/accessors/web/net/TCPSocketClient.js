@@ -67,8 +67,9 @@
  *  then a "primitive narrowing conversion" will be applied, as specified here:
  *  https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3 .
  *
- *  For numeric types, you can also send an array with a single call
- *  to this.send(). The elements of the array will be sent in sequence all
+ *  For numeric types, you can also send an array all at once by providing an
+ *  array to the `toSend` input port.
+ *  The elements of the array will be sent in sequence all
  *  at once, and may be received in one batch. If both ends have
  *  `rawBytes` set to false (specifying message framing), then these
  *  elements will be emitted at the receiving end all at once in a single
