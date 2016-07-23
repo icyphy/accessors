@@ -40,11 +40,15 @@ var util = require('util');
 exports.Testing = function() {
 	EventEmitter.call(this);
 	
-	// Think this will create separate instances of mocha - not really what I want?
-	// In the browser, the mocha library loads itself into window.mocha.  Not sure why.
+	// In the browser, the mocha library loads itself into window.mocha.  
 	require('mocha');
 	this.mocha = window.mocha;
 	mocha.setup('bdd');
+	
+	// Record the port number of the test server serving accessors.
+	// FIXME:  Better way to do this?  'testing' module is not visible in Mocha file.
+	commonHost.testing = {};
+	commonHost.testing.port = location.port;
 };
 util.inherits(exports.Testing, EventEmitter);
 
