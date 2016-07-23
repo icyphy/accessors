@@ -63,7 +63,7 @@ var startPort = 8089;
  *  https://www.terraswarm.org/accessors/wiki/Version0/RegressionTesting
  */
 var RegressionTester = (function() {
-	
+		
 	// /test/auto/mocha directories contain Mocha test files.
 	// For these, a Test accessor is instantiated to load the file.
 	
@@ -75,7 +75,7 @@ var RegressionTester = (function() {
 	var resultsFilePath = "../../../reports/junit/browserTestResults.xml";
 	
 	var compositeDirs = ["test/auto", "net/test/auto"];
-	var mochaDirs = ["hosts/browser/test/auto/mocha"];
+	var mochaDirs = ["hosts/browser/test/auto/mocha", "net/test/auto/mocha"];
 	var accessors = [];
 	var filenames = [], testNames = [];
 	
@@ -193,7 +193,7 @@ var RegressionTester = (function() {
                         			if (found) {
                             			compositeFailureCount ++;
                             			console.log(testAccessor + ' failed');
-                            			// driver.findElement(By.id('Test.result')).getText()
+                            			
                             			driver.findElement(By.className('accessorError')).getText().then(function(text){
                             				compositeResults.push({accessor: testAccessor, message : text, passed : false});
                             				resolve(testAccessor + ' failed');
@@ -281,49 +281,57 @@ var RegressionTester = (function() {
 			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/regressionTest.html");
 			
 			// Wait until page has loaded.
-			driver.wait(function() {
-				return driver.isElementPresent(By.id('reactToInputs'));
-			}, 10000).then(function() {
-				// Set test file name and output URL, including the port.
+			// TODO:  Does .get() return a promise?  Could remove this wait.
+			driver.wait(until.elementLocated(By.id('reactToInputs')), 
+					10000).then(function(){
 				
+				// Set test file name and output URL, including the port.
 				driver.findElement(By.id('MochaTest.testFile')).clear();
 				driver.findElement(By.id('MochaTest.testFile')).sendKeys('/accessors/' + testName);
 				driver.findElement(By.id('reactToInputs')).click();
 				
-				// Wait for output, by checking if output text box contains 
-				// contains something (here, check for 'xml' which is always 
-				// part of the result).
-				
-				driver.wait(function() {
-					return until.elementTextContains(By.id('MochaTest.result'), 'xml')
-				}, 10000).then(function() {
-					driver.findElement(By.id('MochaTest.result')).getText()
-						.then(function(text) {
-							console.log(text);
+
+				driver.wait(until.elementLocated(By.id('MochaTest.result')), 
+						10000).then(function(element){
+					
+					driver.wait(until.elementTextContains(element, 'xml'), 10000)
+							.then(function(element) {
+						
+						element.getText().then(function(text) {
 							mochaResults.push({'testName':testName, 'result':text});
 							resolve('done');
 						}).catch(function(err){
 							reject('Error: Result text not found.');
 						});
+						
+
 					}).catch(function(err){
-						reject('Error: Result element not found.');
+						console.log(err);
+						reject('Error: No result produced by test.');
 					});
 				}).catch(function(err){
-					// Mocha tests should always have a react to inputs button, for
-					// the file name input.
-					reject('Error: No react to inputs button.');
-				});	// end wait until page has loaded
-		
-	    	}).then(function(outcome){
-	    		if (count < testNames.length - 1){
-	    			self.runNextTest(count + 1, port);
-	    		} else {
-	    			self.emit('complete');
-	    		}
-	    	}).catch(function(err){
-	    		console.log(err);
-	    		self.emit('error');
-	    	});
+					console.log(err);
+					reject('Error: Result element not found.');
+				});
+						
+						
+			}).catch(function(err){
+				// Mocha tests should always have a react to inputs button, for
+				// the file name input.
+				reject('Error: No react to inputs button.');
+			});	// end wait until page has loaded
+
+    	
+    	}).then(function(outcome){
+    		if (count < testNames.length - 1){
+    			self.runNextTest(count + 1, port);
+    		} else {
+    			self.emit('complete');
+    		}
+    	}).catch(function(err){
+    		console.log(err);
+    		self.emit('error');
+    	});
 	
     };
     
@@ -402,7 +410,8 @@ var RegressionTester = (function() {
 		// composite accessor tests.
 		compositeTester.on('complete', function() {
 			mochaTester.run(mochaDirs);
-		}).on('error', function(){
+		}).on('error', function(err){
+			console.log(err);
 	        driver.quit();
 	        process.kill('SIGINT');
 		});
@@ -412,7 +421,8 @@ var RegressionTester = (function() {
 	        driver.quit();
 	        process.kill('SIGINT');
 	        writeResults(resultsFilePath);
-	    }).on('error', function(){
+	    }).on('error', function(err){
+	    	console.log(err);
 	        driver.quit();
 	        process.kill('SIGINT');
 	    });
@@ -465,7 +475,7 @@ var RegressionTester = (function() {
 				var beginIndex = 0;
 				var endIndex = 0;
 				mochaResults.forEach(function(resultObject){
-					
+			
 					// Write to file everything in between
 					// <testsuite name="BrowserHost" ... > and last instance of
 					// </testsuite>
