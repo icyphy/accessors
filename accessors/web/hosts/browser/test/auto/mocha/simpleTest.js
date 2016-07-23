@@ -1,14 +1,12 @@
-// Based on /accessors/hosts/common/test/testCommon.js 
-// TODO:  Merge these two into one file.
+// A simple Mocha test to test the regression test framework.
+// See also /accessors/hosts/common/test/testCommon.js 
 
-// This file requires mocha and chai.  The Test accessor handles the requires().
+// This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance, a, b, c, d, e, f, g;
 var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
-
-
 
 describe('Common host: Basic', function () {
 	before(function() {
