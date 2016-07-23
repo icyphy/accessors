@@ -587,7 +587,7 @@ function generateAccessorHTML(path, id) {
             } else {
                 element.textContent = JSON.stringify(value);
             }
-        }
+        }    
     }
     
     var util = require('util');
@@ -623,6 +623,10 @@ function generateAccessorHTML(path, id) {
             	// Make the commonHost globally visible.  Used by Test accessor.
             	commonHost = theCommonHost;
             	Accessor = commonHost.Accessor;	
+            	
+            	// Override commonHost's require with browser's require.
+            	// 'Accessor' constructor is used in Mocha tests.
+            	commonHost.Accessor.prototype.require = require;
             	
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
