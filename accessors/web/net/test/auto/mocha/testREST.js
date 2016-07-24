@@ -8,14 +8,6 @@ var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
 
-// FIXME:  Figure out a better way to determine the port number.
-// Currently, the testing module will set commonHost.testing.port.
-var port = 8089;
-if (typeof commonHost.testing != 'undefined' && 
-		typeof commonHost.testing.port != 'undefined') {
-	port = commonHost.testing.port;
-}
-
 describe('net/REST', function () {
 	before(function() {
 
@@ -30,42 +22,6 @@ describe('net/REST', function () {
 		// Invoke the initialize function.
 		instance.initialize();
 		
-	});
-	
-	it('Should eventually PUT a JSON value', function(done) {
-		
-		instance.provideInput('options', 
-				"{\"method\" : \"PUT\", \"url\" : \"http://localhost:" + port + "\"}");
-		instance.provideInput('command', 'test');
-		instance.provideInput('body',"{\"test\" : \"this is a test\"}");
-		instance.provideInput('trigger', true);
-		instance.react();
-			
-		// Wait a bit for request to complete.
-		// FIXME:  Possible to add listener to send()?  Or callback to react()?		
-		setTimeout(function() {
-			instance.latestOutput('response').should
-				.equal("Request info: {\"method\":\"PUT\"}, Request body: {\"test\" : \"this is a test\"}");
-			done();
-		}, 1000);
-	});
-	
-	it('Should eventually GET the value that was PUT', function(done) {
-		
-		instance.provideInput('options',  
-			"{\"method\" : \"GET\", \"url\" : \"http://localhost:"  + port + "\"}");
-		instance.provideInput('command', 'test');
-		instance.provideInput('body', "");
-		instance.provideInput('trigger', true);
-		instance.react();
-			
-		// Wait a bit for request to complete.
-		// FIXME:  Possible to add listener to send()?  Or callback to react()?				
-		setTimeout(function() {
-			instance.latestOutput('response').should
-				.equal("{\"test\" : \"this is a test\"}");
-			done();
-		}, 1000);
 	});
 	
 	it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done){
