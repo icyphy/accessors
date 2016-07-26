@@ -115,17 +115,20 @@ exports.initialize = function() {
 exports.closeAndOpen = function() {
     var self = this;
     if (socket) {
+    	
     	// Close any previously open socket and make the connection
     	// once the close is complete.
     	socket.on('close', function() {
+    		socket = null;
     		self.exports.closeAndOpen.call(self);
     	});
     	socket.close();
-    	socket = null;
+    	
     } else {
     	var port = this.get('listeningPort');
     	if (port >= 0) {
     		socket = UDPSocket.createSocket();
+        	
     		socket.on('error', function(message) {
     			self.error(message);
     		});
@@ -144,6 +147,7 @@ exports.closeAndOpen = function() {
     		socket.on('close', function() {
     			if (running) {
     				self.send('listening', false);
+    				
     			}
     		});
     		socket.bind(port, this.get('listeningAddress'));
