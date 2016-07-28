@@ -84,25 +84,24 @@ getAccessorCode = function(name) {
     return code;
 };
 
-/** Instantiates and initializes monitoring accessor that periodically collects
- *  monitoring data for accessors running on the host 
+/** Instantiates and initializes monitoring accessor that periodically 
+ *  collects monitoring data for accessors running on the host 
  */
 setupMonitoring = function() {
     // Setup monitoring accessor, if it has not been already for this host
-    if(!monitoringSetup)
-    {
-        try{
-            monitoringAccessor = instantiate('monitoringAccessor', 'hosts/node/nodeMonitoringAccessor');
+    if (!monitoringSetup) {
+        try {
+            monitoringAccessor = instantiate('monitoringAccessor', 
+					     'hosts/node/nodeMonitoringAccessor');
             monitoringAccessor.initialize();
 
-            // FIXME: Need to remove hardcoding of sampling period for monitoring, which is currently 
-            // at 5 seconds
+            // FIXME: Need to remove hardcoding of sampling period for monitoring, 
+	    // which is currently at 5 seconds
             monitoringAccessor.provideInput('samplePeriodInMs', 5000);
             monitoringAccessor.react();
             monitoringSetup = true;
         }
-        catch (ex)
-        {
+        catch (ex) {
             // Monitoring setup failure shouldn't interfere with accessor setup
             // Will simply retry next time an accessor is instantiated
             console.error("Monitoring setup failure ", ex.message);
