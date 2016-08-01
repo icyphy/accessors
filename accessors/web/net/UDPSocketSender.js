@@ -100,5 +100,8 @@ exports.initialize = function() {
 };
 
 exports.wrapup = function() {
-    socket.close();
+	// This null check avoids an error in code generation.
+	if (socket !== null) {
+		socket.close();
+	}
 };
