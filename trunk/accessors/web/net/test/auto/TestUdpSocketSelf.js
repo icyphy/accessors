@@ -1,9 +1,9 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/org/terraswarm/accessor/demo/UDPSocket/TestUDPSocketSelf.xml
+    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode file:/C:/workspaceluna/ptII/org/terraswarm/accessor/demo/UDPSocket/TestUDPSocketSelf.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
 
     // Ports: TestUDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
