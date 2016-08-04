@@ -110,8 +110,10 @@ exports.fire = function () {
             }
         } else if (typeof referenceToken === 'string') {
             if (inputValue !== referenceToken) {
-                throw new Error('The input "' + inputValue + '" is !== "' +
-                                '" to the expected value "' +
+            	console.log('typeof inputValue ' + typeof inputValue);
+            	console.log('typeof referenceToken ' + typeof referenceToken);
+                throw new Error('The input "' + inputValue + '" is !== ' +
+                                ' to the expected value "' +
                                 referenceToken + '"');
             }
         } else if (typeof referenceToken === 'object') {
