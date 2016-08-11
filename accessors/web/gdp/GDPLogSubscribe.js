@@ -23,6 +23,34 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Subscribe to a log.
+ *
+ *  @output {string} data The data that is read from the log
+ *
+ *  @parameter {string} debugLevel The value of the GDP debug flag.
+ *  See gdp/README-developers.md for a complete summary.  The value is
+ *  typically "pattern=level", for example "gdplogd.physlog=39".  To
+ *  see the patterns, use the "what" command or strings
+ *  $PTII/lib/libgdp* | grep '@(#)'.  Use "*=40" to set the debug
+ *  level to 40 for all components. The value of level is not usually
+ *  over 127.  Values over 100 may modify the behavior.
+ *
+ *  @param {string} logname The GDP logname.  By convention, use 
+ *  a reverse fully qualified name like
+ *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
+ *
+ *  @param {string} logdname The name of the logd server.  If empty,
+ *  then the hostname of the local machine is used.
+ *
+ *  @input {int} numrec The number of records to read.
+
+ *  @input {int} startrec The record number to be read.  In the GDP,
+ *  the first record is record 1.
+ *
+ *  @input {int} timeout The timeout in milliseconds.
+ *
+ *  @input trigger An input that triggers firing the subscription.
+ *
+ *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
  *  @version $$Id$$ 
  */
 
@@ -35,19 +63,38 @@
 var GDP = require('gdp');
 var log = null;
 var handle = null;
+var oldLogname = null;
 
+/** Setup the parameters and ports. */
 exports.setup = function() {
-    this.input('trigger');
     this.output('data', {'type': 'string'});
-    this.parameter('logname', {'type': 'string'});
-    this.parameter('startrec', {'type': 'int', 'value': 0});
+    this.parameter('debugLevel', {'type': 'string'});
+    this.input('logname', {'type': 'string', 'value': 'myLog'});
+    this.input('logdname', {'type': 'string', 'value': ''});
     this.parameter('numrec', {'type': 'int', 'value':0});
+    this.parameter('startrec', {'type': 'int', 'value': 0});
     this.parameter('timeout', {'type': 'int', 'value':0});
+    this.input('trigger');
 };
 
+/** Append data to the log.
+ *  If necessary create the log.
+ */
 exports.getNextData = function() {
-    console.log("GDPLogSubscribe.getNextData()");
-    // this blocks
+    var logname = this.getParameter('logname');
+    if (logname === '') {
+        throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
+    }
+    if (logname != oldLogname) {
+	// console.log("GDPLogSubscribe.read(): About to call new GDP.GDP()");
+	var logdname = this.getParameter('logdname');
+	log = new GDP.GDP(logname, 1, logdname);
+	log.setDebugLevel(this.getParameter('debugLevel'));
+	oldLogname = logname;
+    }
+    log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
+
+    // This blocks.
     while (true) {
         var data = log.getNextData(100);
         console.log("GDPLogSubscribe.getNextData() data: " + data);
@@ -58,19 +105,13 @@ exports.getNextData = function() {
     }
 };
 
+/** Add an input handler that will subscribe to a log. */
 exports.initialize = function() {
-    console.log("GDPLogSubscribe.initialize()");
-    var logname = this.getParameter('logname');
-    if (logname === '') {
-        throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
-    }
-    log = new GDP.GDP(logname, 1);
-    
-    log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
-    console.log("GDPLogSubscribe.initialize() after subscribe()");
+    var oldLogname = null;
     handle = this.addInputHandler('trigger', this.exports.getNextData.bind(this));
 };
 
+/** Remove the input handler. */
 exports.wrapup = function() {
     if (handle !== null) {
         this.removeInputHandler(handle);
