@@ -24,19 +24,25 @@
 
 /** Append to a Global Data Plane (GDP) log.
  *
- *  @parameter {string} debugLevel The value of the GDP debug flag.  See
- *  gdp/README.md for a complete summary.  The value is typically
- *  "pattern=level", for example "gdplogd.physlog=39".  To see the
- *  patterns, use the "what" command or strings $PTII/lib/libgdp* |
- *  grep '@(#)'.  Use "*=40" to set the debug level to 40 for all
- *  components. The value of level is not usually over 127.  Values
- *  over 100 may modify the behavior.
+ *  @input {string} data The data to be written.
+ *
+ *  @parameter {string} debugLevel The value of the GDP debug flag.
+ *  See gdp/README-developers.md for a complete summary.  The value is
+ *  typically "pattern=level", for example "gdplogd.physlog=39".  To
+ *  see the patterns, use the "what" command or strings
+ *  $PTII/lib/libgdp* | grep '@(#)'.  Use "*=40" to set the debug
+ *  level to 40 for all components. The value of level is not usually
+ *  over 127.  Values over 100 may modify the behavior.
+ *
  *  @param {string} logname The GDP logname.  By convention, use 
  *  a reverse fully qualified name like
  *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
- *  @input {string} data The data to be written
- *  @input trigger An input that triggers firing the reading of the data
-
+ *
+ *  @param {string} logdname The name of the logd server.  If empty,
+ *  then the hostname of the local machine is used.
+ *
+ *  @input trigger An input that triggers firing the reading of the data.
+ *
  *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
  *  @version $$Id$$ 
  */
@@ -48,34 +54,45 @@
 "use strict";
 
 var GDP = require('gdp');
-var log = null;
 var handle = null;
+var log = null;
+var oldLogname = null;
 
 exports.setup = function() {
     this.input('data', {'type': 'string'});
     this.parameter('debugLevel', {'type': 'string'});
-    this.parameter('logname', {'type': 'string'});
+    this.input('logname', {'type': 'string', 'value': 'myLog'});
+    this.input('logdname', {'type': 'string', 'value': ''});
     this.input('trigger');
 };
 
+/** Append data to the log.
+ *  If necessary create the log.
+ *  @param {string} data The data to be appended.
+ */
 exports.append = function(data) {
-    console.log("GDPLogAppend.append()");
-    console.log(typeof(log));
+    var logname = this.getParameter('logname');
+    if (logname === '') {
+        throw new Error('The logname parameter cannot be empty.');
+    }
+    if (logname != oldLogname) {
+	var logdname = this.getParameter('logdname');
+	log = new GDP.GDP(logname, 2, logdname);
+	log.setDebugLevel(this.getParameter('debugLevel'));
+	oldLogname = logname;
+    }
     var dataValues = this.get('data');
     console.log('GDPLogAppend.js.append(): ' + dataValues);
     log.append(dataValues);
 };
 
+/** Add an input handler that will append data. */
 exports.initialize = function() {
-    var logname = this.getParameter('logname');
-    if (logname === '') {
-        throw new Error('The logname parameter cannot be empty.');
-    }
-    log = new GDP.GDP(logname, 2);
-    log.setDebugLevel(this.getParameter('debugLevel'));
+    oldLogname = null;
     handle = this.addInputHandler('trigger', this.exports.append.bind(this));
 };
 
+/** Remove the input handler. */
 exports.wrapup = function() {
     if (handle !== null) {
         this.removeInputHandler(handle);
