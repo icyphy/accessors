@@ -1,5 +1,6 @@
 [
     "GDPLogAppend.js",
+    "GDPLogCreate.js",
     "GDPLogRead.js",
     "GDPLogSubscribe.js",
     "KVStore.js",
