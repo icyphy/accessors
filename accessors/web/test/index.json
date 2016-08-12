@@ -14,5 +14,6 @@
     "TestInheritance.js",
     "TestRequire.js",
     "TestSpontaneous.js",
+    "TestSpontaneousOnce.js",
     "TrainableTest.js"
 ]
