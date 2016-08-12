@@ -68,18 +68,21 @@ exports.setup = function() {
 /** If the log is not present, then create it.
  */
 exports.create = function() {
-    var logname = this.getParameter('logname');
+    console.log("GDPLogCreate.js: create() Start.");
+    var logname = this.get('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
-    var logdname = this.getParameter('logdname');
+    var logdname = this.get('logdname');
     log = new GDP.GDP(logname, 3, logdname);
     log.setDebugLevel(this.getParameter('debugLevel'));
     this.send('output', logname);
+    console.log("GDPLogCreate.js: create() Done!");
 };
 
 /** Add an input handler that will create the log. */
 exports.initialize = function() {
+    console.log("GDPLogCreate.js: initialize()");
     handle = this.addInputHandler('trigger', this.exports.create.bind(this));
 };
 
