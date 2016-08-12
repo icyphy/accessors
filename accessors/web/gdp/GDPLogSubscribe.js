@@ -81,13 +81,14 @@ exports.setup = function() {
  *  If necessary create the log.
  */
 exports.getNextData = function() {
-    var logname = this.getParameter('logname');
+    console.log("GDPLogSubscribe.js: getNextData()");
+    var logname = this.get('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
     }
     if (logname != oldLogname) {
 	// console.log("GDPLogSubscribe.read(): About to call new GDP.GDP()");
-	var logdname = this.getParameter('logdname');
+	var logdname = this.get('logdname');
 	log = new GDP.GDP(logname, 1, logdname);
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
@@ -107,6 +108,7 @@ exports.getNextData = function() {
 
 /** Add an input handler that will subscribe to a log. */
 exports.initialize = function() {
+    console.log("GDPLogSubscribe.js: initialize()");
     var oldLogname = null;
     handle = this.addInputHandler('trigger', this.exports.getNextData.bind(this));
 };

@@ -59,6 +59,7 @@ var log = null;
 var oldLogname = null;
 
 exports.setup = function() {
+    console.log("GDPLogAppend.js: setup()");
     this.input('data', {'type': 'string'});
     this.parameter('debugLevel', {'type': 'string'});
     this.input('logname', {'type': 'string', 'value': 'myLog'});
@@ -71,12 +72,14 @@ exports.setup = function() {
  *  @param {string} data The data to be appended.
  */
 exports.append = function(data) {
-    var logname = this.getParameter('logname');
+    console.log("GDPLogAppend.js: append()");
+    var logname = this.get('logname');
+    console.log("GDPLogAppend.js: append(): logname");
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
     if (logname != oldLogname) {
-	var logdname = this.getParameter('logdname');
+	var logdname = this.get('logdname');
 	log = new GDP.GDP(logname, 2, logdname);
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
@@ -88,6 +91,7 @@ exports.append = function(data) {
 
 /** Add an input handler that will append data. */
 exports.initialize = function() {
+    console.log("GDPLogAppend.js: initialize()");
     oldLogname = null;
     handle = this.addInputHandler('trigger', this.exports.append.bind(this));
 };

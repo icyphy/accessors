@@ -78,21 +78,20 @@ exports.setup = function() {
  */
 exports.read = function() {
     var recno = this.get('recno');
-    var logname = this.getParameter('logname');
+    var logname = this.get('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
     if (logname != oldLogname) {
-	// console.log("GDPLogRead.read(): About to call new GDP.GDP()");
-	var logdname = this.getParameter('logdname');
+	console.log("GDPLogRead.read(): About to call new GDP.GDP()");
+	var logdname = this.get('logdname');
 	log = new GDP.GDP(logname, 1, logdname);
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
 	this.send('data', null);
-    } else {
-	var data = log.read(recno);
-	this.send('data', data);
     }
+    var data = log.read(recno);
+    this.send('data', data);
 };
 
 /** Add an input handler that will read data. */
