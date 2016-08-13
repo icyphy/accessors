@@ -93,7 +93,7 @@ exports.getNextData = function() {
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
     }
-    log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
+    log.subscribe(this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
 
     // This blocks.
     while (true) {
