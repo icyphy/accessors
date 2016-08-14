@@ -273,11 +273,10 @@ var RegressionTester = (function() {
 	 */
 	MochaTester.prototype.runNextTest = function(count, port) {
 		var self = this;
+		var testName = testNames[count];
+		
     	var testPromise = new Promise(function(resolve, reject) {
-        	
-	    	var testName = testNames[count];
-	    	console.log('Testing ' + testName);
-	    	
+
 			driver.get("http://localhost:" + port + "/accessors/hosts/browser/test/regressionTest.html");
 			
 			// Wait until page has loaded.
@@ -299,8 +298,10 @@ var RegressionTester = (function() {
 						
 						element.getText().then(function(text) {
 							mochaResults.push({'testName':testName, 'result':text});
-							resolve('done');
+							resolve('passed');
 						}).catch(function(err){
+							console.log(testName + ' failed');
+							console.log('Error: Result text not found.');
 							reject('Error: Result text not found.');
 						});
 						
@@ -310,6 +311,7 @@ var RegressionTester = (function() {
 						reject('Error: No result produced by test.');
 					});
 				}).catch(function(err){
+					console.log(testName + ' failed');
 					console.log(err);
 					reject('Error: Result element not found.');
 				});
@@ -318,17 +320,25 @@ var RegressionTester = (function() {
 			}).catch(function(err){
 				// Mocha tests should always have a react to inputs button, for
 				// the file name input.
+				console.log(testName + ' failed');
 				reject('Error: No react to inputs button.');
 			});	// end wait until page has loaded
 
     	
     	}).then(function(outcome){
+    		if (outcome.indexOf('passed') >= 0) {
+    			console.log(testName + ' passed');
+    		} else {
+    			console.log(testName + ' failed');
+    		}
+    		
     		if (count < testNames.length - 1){
     			self.runNextTest(count + 1, port);
     		} else {
     			self.emit('complete');
     		}
     	}).catch(function(err){
+    		console.log(testName + ' failed');
     		console.log(err);
     		self.emit('error');
     	});
@@ -346,24 +356,18 @@ var RegressionTester = (function() {
 	    dirs.forEach(function(directory) {
 	        
 	        try {
-	        // If run in accessors/web/hosts/browser/test
+	        // Assumes run from accessors/web/hosts/browser/test
 	        	fileNames = fs.readdirSync('../../../' + directory);		        	
 	        	fileNames.forEach(function(name) {
-	        		if (name.length > 3 && name.substring(0,4) != '.svn' &&
+	        		if (name.length > 3 && name.indexOf('.') > 0 && 
+	        				name.substring(0,4) != '.svn' &&
 	    	    			name.substring(0,4) != '.log') {
 	        			validNames.push(directory + "/" + name);
 	        		}	
 	        	});
 	        	
 	        } catch (e) {
-	            // If run in accessors/web/
-	        	fileNames = fs.readdirSync('../../../' + directory);		        	
-	        	fileNames.forEach(function(name) {
-	        		if (name.length > 3 && name.substring(0,4) != '.svn' &&
-	    	    			name.substring(0,4) != '.log') {
-	        			validNames.push(directory + "/" + name);
-	        		}	
-	        	});
+	            console.log('Error reading directory ' + directory + '. Please run from accessors/web/hosts/browser/test');
 	        }
 	    });
 	        return validNames;
