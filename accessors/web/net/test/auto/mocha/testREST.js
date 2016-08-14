@@ -3,7 +3,7 @@
 
 // This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
-var code, instance, a, b, c, d, e, f, g;
+var code, instance;
 var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
