@@ -72,7 +72,8 @@ var RegressionTester = (function() {
 	// exception means pass.
 	
 	// TODO:  Search for matching directories instead of hardcoding names.
-	var resultsFilePath = "../../../reports/junit/browserTestResults.xml";
+	//var resultsFilePath = "../../../reports/junit/browserTestResults.xml";
+	var resultsFilePath = "./reports/junit/browserTestResults.xml";
 	
 	var run = function(scriptPath, desiredPort) {
 		
@@ -87,7 +88,10 @@ var RegressionTester = (function() {
 	var writeResults = function(filepath) {
 		try {
 			var writeStream = fs.createWriteStream(filepath);
-			writeStream.write("This is a test.");
+			writeStream.on('open', function(){
+				writeStream.write("This is a test.");
+			});
+			
 		}
 		catch(err){
 			console.log("Error writing test results to " + filepath);
