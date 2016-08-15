@@ -72,7 +72,7 @@ var RegressionTester = (function() {
 	// exception means pass.
 	
 	// TODO:  Search for matching directories instead of hardcoding names.
-	var resultsFilePath = "./browserTestResults.xml";
+	var resultsFilePath = "../../../reports/junit/browserTestResults.xml";
 	
 	var run = function(scriptPath, desiredPort) {
 		
