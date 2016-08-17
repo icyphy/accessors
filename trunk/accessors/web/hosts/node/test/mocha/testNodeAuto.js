@@ -4,7 +4,7 @@
 //   sudo npm install -g mocha
 //   mocha testNodeAuto.js
 // or
-//   cd accessors/web; ant tests.mocha
+//   cd accessors/web; ant tests.mocha.composites
 
 var nodeHost = require('../../nodeHost.js');
 var fs = require('fs');
