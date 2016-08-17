@@ -264,6 +264,7 @@
     <echo>
       ==test.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      To run just the composites, use "ant tests.mocha.composites"
       This target requires setup:
         sudo npm install -g mocha
         sudo npm install -g mocha-junit-reporter
@@ -276,6 +277,23 @@
 
     <exec executable="mocha">
       <arg line="${converted}"/>
+    </exec>
+  </target>
+
+  <target name="tests.mocha.composites"
+          description="Use mocha to test just the composite accessors and write to stdout.">
+    <echo>
+      ==test.mocha.composite==
+      This target uses mocha to run the composite accessors via
+          hosts/node/test/mocha/testNodeAuto.js
+      To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
+      This target requires setup:
+        sudo npm install -g mocha
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+    </echo>
+
+    <exec executable="mocha">
+      <arg line="hosts/node/test/mocha/testNodeAuto.js"/>
     </exec>
   </target>
 
