@@ -275,6 +275,8 @@
 		 pathsep=" "
 		 property="converted"/>
 
+    <echo> tests.mocha: running on ${converted}</echo>
+
     <exec executable="mocha">
       <arg line="${converted}"/>
     </exec>
