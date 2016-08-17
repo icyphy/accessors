@@ -1,9 +1,9 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/GDPLogCreateAppendReadJS.xml
+    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/GDPLogCreateAppendReadJS.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
 
     // Ports: GDPLogCreateAppendReadJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -53,7 +53,7 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', [null,"2","3","4","5"]);
+    TrainableTest.setParameter('correctValues', ["1","2","3","4","5"]);
     TrainableTest.setParameter('trainingMode', true);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
