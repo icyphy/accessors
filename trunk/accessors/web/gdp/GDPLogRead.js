@@ -78,20 +78,28 @@ exports.setup = function() {
  */
 exports.read = function() {
     var recno = this.get('recno');
+    console.log("GDPLogRead.read(" + recno + "): start");
     var logname = this.get('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
     if (logname != oldLogname) {
-	console.log("GDPLogRead.read(): About to call new GDP.GDP()");
+	console.log("GDPLogRead.read(" + recno + "): About to call new GDP.GDP()");
 	var logdname = this.get('logdname');
 	log = new GDP.GDP(logname, 1, logdname);
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
-	this.send('data', null);
     }
-    var data = log.read(recno);
-    this.send('data', data);
+    // FIXME: If recno == 0, then calling new GDP.GDP() and then trying to read results in 'ERROR: 404 not found [Berkeley:Swarm-GDP:404]'
+    if (recno == 0) {
+	console.log("GDPLogRead.read(" + recno + "): recno was 0, sending nil");
+	this.send('data', 'nil');
+    } else {
+	var data = log.read(recno);
+	console.log("GDPLogRead.read(" + recno + "): sending " + data);
+	this.send('data', data);
+    }
+
 };
 
 /** Add an input handler that will read data. */
