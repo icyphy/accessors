@@ -32,11 +32,15 @@
  *  The script will search for an open port to start the test server on.
  *  This script currently requires the Firefox browser.
  *  
- *  To run, first install the selenium-webdriver module:
- *  npm install -g selenium-webdriver
+ *  To run:
+ *  1. Install the selenium-webdriver module:
+ *     npm install -g selenium-webdriver
  *  
- *  Then,
- *  node regressionTestScript.js
+ *  2. Create the ../../../reports/junit directory:
+ *     mkdir -p ../../../reports/junit
+ *
+ *  3. Run the tests:
+ *     node regressionTestScript.js
  *  
  *  The Firefox driver is installed by default.  For other browsers, install
  *  the driver and edit the script to refer to your preferred browser.
