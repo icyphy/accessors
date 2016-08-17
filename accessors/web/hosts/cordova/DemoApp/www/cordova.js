@@ -1738,8 +1738,7 @@ module.exports = {
     /**
     * Load the url into the webview or into new browser instance.
     *
-    * @param url           The URL to load
-    * @param props         Properties that can be passed in to the activity:
+    * The props parameter can have the following values.
     *      wait: int                           => wait msec before loading URL
     *      loadingDialog: "Title,Message"      => display a native loading dialog
     *      loadUrlTimeoutValue: int            => time in msec to wait before triggering a timeout error
@@ -1748,6 +1747,9 @@ module.exports = {
     *
     * Example:
     *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
+
+    * @param url           The URL to load
+    * @param props         Properties that can be passed in to the activity.
     */
     loadUrl:function(url, props) {
         exec(null, null, APP_PLUGIN_NAME, "loadUrl", [url, props]);
