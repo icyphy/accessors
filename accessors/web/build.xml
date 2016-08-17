@@ -18,6 +18,9 @@
   <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
   <property name="jsdoc.home" value="vendors/jsdoc" />
 
+  <!-- The location of the Node.js binary. -->
+  <property name="node.executable" value="/usr/local/bin/node" />
+
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
     <exclude name="vendors/"/>
@@ -166,12 +169,14 @@
           description="Test the browser host.">
     <echo>
       ==tests.browser==
-      Run the Browser Accessor Host Tests.
+      Run the Browser Accessor Host test
       The output will appear in reports/junit/browserTestResults.xml
       See https://www.terraswarm.org/accessors/wiki/VersionCurrent/RegressionTesting
     </echo>
+    <mkdir dir="${basedir}/reports/junit"/>
+    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
     <exec dir="hosts/browser/test"
-	  executable="/usr/local/bin/node">
+	  executable="${node.executable}">
       <arg value="regressionTestScript.js"/>
     </exec>
   </target>
