@@ -95,6 +95,8 @@ exports.getNextData = function() {
     }
     log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
 
+    console.log("GDPLogSubscribe.getNextData(): Call to log.subscribe() ended, about to loop");
+
     // This blocks.
     while (true) {
         var data = log.getNextData(100);
