@@ -77,7 +77,7 @@ exports.setup = function() {
     this.input('trigger');
 };
 
-/** Append data to the log.
+/** Get the next data.
  *  If necessary create the log.
  */
 exports.getNextData = function() {
@@ -95,17 +95,17 @@ exports.getNextData = function() {
     }
     log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
 
-    console.log("GDPLogSubscribe.getNextData(): Call to log.subscribe() ended, about to loop");
+    console.log("GDPLogSubscribe.getNextData(): About to loop");
 
     // This blocks.
-    while (true) {
+    //while (true) {
         var data = log.getNextData(100);
         console.log("GDPLogSubscribe.getNextData() data: " + data);
-        if (data !== null) {
+        //if (data !== null) {
             this.send('data', data); 
-            break;
-        }
-    }
+            //break;
+    //}
+    //}
 };
 
 /** Add an input handler that will subscribe to a log. */
