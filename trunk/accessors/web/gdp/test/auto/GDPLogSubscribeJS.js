@@ -18,11 +18,11 @@ exports.setup = function() {
 
     // Start: TestSpontaneous3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous3 = this.instantiate('TestSpontaneous3', 'test/TestSpontaneous.js');
-    TestSpontaneous3.setParameter('interval', 1500.0);
+    TestSpontaneous3.setParameter('interval', 900.0);
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', ["datum was null?","2","3"]);
+    TrainableTest2.setParameter('correctValues', ["datum was null?","1","2","3","4"]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
