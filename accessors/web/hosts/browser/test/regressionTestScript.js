@@ -465,7 +465,7 @@ var RegressionTester = (function() {
 			if (compositeResults.length > 0) {
 				writeStream.write("<testsuite name=\"Composite Accessor Tests\">\n");
 				compositeResults.forEach(function(result){
-					writeStream.write("<testcase name=\"" + result.accessor + "\>\n");
+					writeStream.write("<testcase name=\"" + result.accessor + "\">\n");
 					if (!result.passed) {
 						writeStream.write("<failure message=\"" + result.message +
 								"\"/>\n");
