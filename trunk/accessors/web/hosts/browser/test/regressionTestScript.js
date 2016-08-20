@@ -456,14 +456,15 @@ var RegressionTester = (function() {
 			testCount += compositeResults.length;
 			failureCount += compositeFailureCount;
 			
+			// Write as a single test suite.  It appears Jenkins can't handle
+			// nested test suites, though JUnit allows nesting.
 			writeStream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			writeStream.write("<testsuites>\n");
 			writeStream.write("<testsuite name=\"BrowserHost\" tests=\"" + 
 					testCount + "\" failed=\"" + 
 					failureCount + "\">\n");
 			
 			if (compositeResults.length > 0) {
-				writeStream.write("<testsuite name=\"Composite Accessor Tests\">\n");
+				//writeStream.write("<testsuite name=\"Composite Accessor Tests\">\n");
 				compositeResults.forEach(function(result){
 					writeStream.write("<testcase name=\"" + result.accessor + "\">\n");
 					if (!result.passed) {
@@ -472,11 +473,11 @@ var RegressionTester = (function() {
 					}
 					writeStream.write("</testcase>\n");
 				});
-				writeStream.write("</testsuite>\n");
+				//writeStream.write("</testsuite>\n");
 			}
 			
 			if (mochaResults.length > 0) {
-				writeStream.write("<testsuite name=\"Mocha Tests\">\n");
+				//writeStream.write("<testsuite name=\"Mocha Tests\">\n");
 				
 				
 				// Mocha results are already in XML format.  Extract needed portion.
@@ -500,12 +501,11 @@ var RegressionTester = (function() {
 						}
 					}
 				});
-				writeStream.write("</testsuite>");	// Closing tag Mocha Tests
+				//writeStream.write("</testsuite>");	// Closing tag Mocha Tests
 			}
 			
 			writeStream.write("</testsuite>\n");	// Closing tag BrowserHost
-			writeStream.write("</testsuites>\n");
-			
+			//writeStream.write("</testsuites>\n");
 			
 		}
 		catch(err){
