@@ -25,6 +25,7 @@ var fs = require('fs');
             accessors.forEach(function(accessor) {
 
                 if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
+		                accessor.indexOf('~') == -1 &&
                 		accessor.substring(0,4) != '.svn' &&
                 		accessor.substring(0,4) != '.log') {
                 	// mocha-junit-reporter creates a "classname" attribute 
