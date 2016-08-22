@@ -57,6 +57,10 @@ var monitoringSetup = false;
 // Stores instance of monitoring accessor that is setup for the host
 var monitoringAccessor; 
 
+/////////////////////////////////////////////////
+// Functions are defined below here. 
+// Please keep them alphabetical.
+
 /** Return the source code for an accessor from its fully qualified name.
  *  This will throw an exception if there is no such accessor on the accessor
  *  search path.
@@ -82,33 +86,6 @@ getAccessorCode = function(name) {
         throw('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
-};
-
-/** Instantiates and initializes monitoring accessor that periodically 
- *  collects monitoring data for accessors running on the host 
- */
-setupMonitoring = function() {
-    // Setup monitoring accessor, if it has not been already for this host
-    if (!monitoringSetup) {
-        try {
-            monitoringAccessor = instantiate('monitoringAccessor', 
-					     'hosts/node/nodeMonitoringAccessor');
-            monitoringAccessor.initialize();
-
-            // FIXME: Need to remove hardcoding of sampling period for monitoring, 
-	    // which is currently at 5 seconds
-            monitoringAccessor.provideInput('samplePeriodInMs', 5000);
-            monitoringAccessor.react();
-            monitoringSetup = true;
-        }
-        catch (ex) {
-            // Monitoring setup failure shouldn't interfere with accessor setup
-            // Will simply retry next time an accessor is instantiated
-            console.error("Monitoring setup failure ", ex.message);
-        }
-    }
-
-    return monitoringAccessor;
 };
 
 /** Instantiate and return an accessor.
@@ -185,13 +162,45 @@ instantiateAndInitialize = function(accessorNames) {
     return accessors;
 };
 
-// Stop execution.
-// In nodeHostInvoke.js, exit() is caught
-// and wrapup() is invoked.
+/** Instantiates and initializes monitoring accessor that periodically 
+ *  collects monitoring data for accessors running on the host 
+ */
+setupMonitoring = function() {
+    // Setup monitoring accessor, if it has not been already for this host
+    if (!monitoringSetup) {
+        try {
+            monitoringAccessor = instantiate('monitoringAccessor', 
+					     'hosts/node/nodeMonitoringAccessor');
+            monitoringAccessor.initialize();
+
+            // FIXME: Need to remove hardcoding of sampling period for monitoring, 
+	    // which is currently at 5 seconds
+            monitoringAccessor.provideInput('samplePeriodInMs', 5000);
+            monitoringAccessor.react();
+            monitoringSetup = true;
+        }
+        catch (ex) {
+            // Monitoring setup failure shouldn't interfere with accessor setup
+            // Will simply retry next time an accessor is instantiated
+            console.error("Monitoring setup failure ", ex.message);
+        }
+    }
+
+    return monitoringAccessor;
+};
+
+
+/** Stop execution.
+ *
+ *  In nodeHostInvoke.js, exit() is caught and wrapup() is invoked.
+ */
 stop = function() {
     console.log("nodeHost.js: stop() invoked");
     process.exit();
 }
+
+//////////////////////////////////////////////
+// Visibility and exports below here.
 
 // Make the Accessor constructor visible so that we may use it in the
 // Cape Code Accessor Code Generator.
