@@ -1,5 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
+    //  To run the code, run: 
+    //  (cd /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 12000 gdp/test/auto/GDPLogSubscribeJS)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
     //  to edit the model, run:
@@ -10,7 +12,7 @@ exports.setup = function() {
     // Start: GDPLogSubscribe: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogSubscribe = this.instantiate('GDPLogSubscribe', 'gdp/GDPLogSubscribe.js');
     GDPLogSubscribe.setParameter('debugLevel', "");
-    GDPLogSubscribe.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
+    GDPLogSubscribe.setDefault('logdname', "edu.berkeley.eecs.gdp-03.gdplogd");
     GDPLogSubscribe.setDefault('logname', "myLog");
     GDPLogSubscribe.setParameter('numrec', 0);
     GDPLogSubscribe.setParameter('startrec', 0);
