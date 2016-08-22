@@ -65,6 +65,9 @@ var log = null;
 var handle = null;
 var oldLogname = null;
 
+// If getNextData() returns null data, then set sawNull to true.
+var sawNull = false;
+
 /** Setup the parameters and ports. */
 exports.setup = function() {
     this.output('data', {'type': 'string'});
@@ -86,32 +89,36 @@ exports.getNextData = function() {
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
     }
+
+    // The logname may change between initialization trigger getting
+    // the input.
     if (logname != oldLogname) {
 	// console.log("GDPLogSubscribe.read(): About to call new GDP.GDP()");
 	var logdname = this.get('logdname');
 	log = new GDP.GDP(logname, 1, logdname);
 	log.setDebugLevel(this.getParameter('debugLevel'));
 	oldLogname = logname;
+	log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
+
     }
-    log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
 
-    console.log("GDPLogSubscribe.getNextData(): About to loop");
-
-    // This blocks.
-    //while (true) {
-        var data = log.getNextData(100);
-        console.log("GDPLogSubscribe.getNextData() data: " + data);
-        //if (data !== null) {
-            this.send('data', data); 
-            //break;
-    //}
-    //}
+    var data = log.getNextData(100);
+    if (data !== null) {
+	sawNull = false;
+	this.send('data', data); 
+    } else {
+	if (!sawNull) {
+	    this.send('data', 'datum was null?'); 
+	}
+	sawNull = true;
+    }
 };
 
 /** Add an input handler that will subscribe to a log. */
 exports.initialize = function() {
     console.log("GDPLogSubscribe.js: initialize()");
-    var oldLogname = null;
+    oldLogname = null;
+    sawNull = false;
     handle = this.addInputHandler('trigger', this.exports.getNextData.bind(this));
 };
 
