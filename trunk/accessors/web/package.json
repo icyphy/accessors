@@ -1,17 +1,64 @@
 {
-  "name": "accessors",
-  "version": "1.0.0",
+  "name": "@terraswarm/accessors",
+  "version": "0.0.1",
   "description": "Actor-oriented proxies for IoT",
-  "main": "index.js",
+  "main": "hosts/node/nodeHost.js",
   "author": {
     "name": "Edward A. Lee and others",
     "email": "eal@berkeley.edu",
     "url": "http://ptolemy.eecs.berkeley.edu/~eal"
   },
-  "directories": {
-    "doc": "doc",
-    "test": "test"
-  },
+    "contributors": [
+        {
+            "email": "ilgea@eecs.berkeley.edu",
+            "name": "Ilge Akkaya"
+        },
+        {
+            "email": "cxh@eecs.berkeley.edu",
+            "name": "Christopher Brooks"
+        },
+        {
+            "email": "longle1@illinois.edu",
+            "name": "Long Le"
+        },
+        {
+            "email": "eal@eecs.berkeley.edu",
+            "name": "Edward A. Lee"
+        },
+        {
+            "email": "marten@.berkeley.edu",
+            "name": "Marten Lohstroh"
+        },        
+        {
+            "email": "hokeunkim@eecs.berkeley.edu",
+            "name": "Hokeun Kim"
+        },        
+        {
+            "email": "beth@berkeley.edu",
+            "name": "Beth Osyk"
+        },        
+        {
+            "email": "mpanj@seas.upenn.edu",
+            "name": "Marcus Pan"
+        },        
+        {
+            "email": "eloi@berkeley.edu",
+            "name": "Eloi Pereira"
+        },        
+        {
+            "email": "sandur2@illinois.edu",
+            "name": "Atul Sandur"
+        },        
+        {
+            "email": "matt.weber@berkeley.edu",
+            "name": "Matt Weber"
+        }
+    ],
+  "files": [
+        "hosts/common",
+        "hosts/node",
+        "test"
+    ],
   "homepage": "https://www.terraswarm.org/accessors/",
   "keywords": [
     "actor",
@@ -24,7 +71,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
-
   "license": "SEE LICENSE IN accessors-license.htm"
 }
