@@ -292,15 +292,17 @@
     <echo>
       ==test.mocha.composite==
       This target uses mocha to run the composite accessors via
-          hosts/node/test/mocha/testNodeAuto.js
-      To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
+          hosts/node/test/mocha/testNodeAllAuto.js
       This target requires setup:
         sudo npm install -g mocha
+      To run only the composite accessors in one directory:
+        mocha hosts/node/test/mocha/testNodeOneAuto.js --Dauto=XXX/test/auto
+      To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
 
     <exec executable="mocha">
-      <arg line="hosts/node/test/mocha/testNodeAuto.js"/>
+      <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
   </target>
 
