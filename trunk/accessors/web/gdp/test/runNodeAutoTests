@@ -2,4 +2,4 @@
 # $Id$
 # Run the composite accessors in just this directory using the Node Accessor Host
 
-(cd ../..; mocha hosts/node/test/mocha/testNodeOneAuto.js --Dauto=gdp/test/auto)
+(cd ../..; mocha hosts/node/test/testNodeOneAuto.js --Dauto=gdp/test/auto)
