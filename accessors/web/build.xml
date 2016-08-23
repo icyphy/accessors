@@ -296,7 +296,7 @@
       This target requires setup:
         sudo npm install -g mocha
       To run only the composite accessors in one directory:
-        mocha hosts/node/test/mocha/testNodeOneAuto.js --Dauto=XXX/test/auto
+        mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>

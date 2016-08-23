@@ -6,7 +6,7 @@
 // or
 //   cd accessors/web; ant tests.mocha.composites
 
-var nodeHost = require('../../nodeHost.js');
+var nodeHost = require('../nodeHost.js');
 var fs = require('fs');
 
 /** Run all the .js tests in a directory using mocha.
