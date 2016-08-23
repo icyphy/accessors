@@ -11,7 +11,7 @@ exports.setup = function() {
 
     // Start: GDPLogSubscribe: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogSubscribe = this.instantiate('GDPLogSubscribe', 'gdp/GDPLogSubscribe.js');
-    GDPLogSubscribe.setParameter('debugLevel', "");
+    GDPLogSubscribe.setParameter('debugLevel', "*=50");
     GDPLogSubscribe.setDefault('logdname', "edu.berkeley.eecs.gdp-03.gdplogd");
     GDPLogSubscribe.setDefault('logname', "myLog");
     GDPLogSubscribe.setParameter('numrec', 0);
@@ -42,7 +42,7 @@ exports.setup = function() {
 
     // Start: GDPLogCreate: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogCreate = this.instantiate('GDPLogCreate', 'gdp/GDPLogCreate.js');
-    GDPLogCreate.setParameter('debugLevel', "*=1");
+    GDPLogCreate.setParameter('debugLevel', "");
     GDPLogCreate.setDefault('logname', "mylog1");
     GDPLogCreate.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
 
