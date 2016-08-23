@@ -6,7 +6,7 @@
 // or
 //   (cd ../../..; ant tests.mocha.composites)
 
-var testNodeAuto = require('./testNodeAuto.js');
+var testNodeAuto = require('../testNodeAuto.js');
 
 var fs = require('fs');
 
@@ -22,7 +22,7 @@ var findNodeAutoDirectories = function(dir) {
 	    file = dir + '/' + file;
 	    try {
 		var stat = fs.statSync(file)
-		    if (stat && stat.isDirectory()) {
+		    if (stat && stat.isDirectory() && basefile != 'node_modules') {
 			// Add auto directories, but skip certain directories.
 			if (basefile == 'auto') {
 			    var skipIt = false;
@@ -50,13 +50,20 @@ var findNodeAutoDirectories = function(dir) {
 
 var autos = [];
 try {
-    fs.accessSync('../../nodeHost.js', fs.F_OK);
     // If we run this in accessors/web/hosts/node/test/mocha, then
     // search accessors/web for auto directories.
+    fs.accessSync('../../nodeHost.js', fs.F_OK);
+
     autos = findNodeAutoDirectories('../../../..');
 } catch (e) {
-    // Otherwise, search in the current directory.
-    autos = findNodeAutoDirectories('.');
+    try {
+	// Otherwise, if we run this from $PTII, search in the accessors repo.
+	fs.accessSync('./org/terraswarm/accessor/accessors/web/hosts/node/nodeHost.js', fs.F_OK);
+	autos = findNodeAutoDirectories('./org/terraswarm/accessor/accessors/web');
+    } catch (e) {
+	// Otherwise, search in the current directory.
+	autos = findNodeAutoDirectories('.');
+    }
 }
 
 autos.forEach(testNodeAuto.testNodeAuto);
