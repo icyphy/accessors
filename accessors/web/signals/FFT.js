@@ -50,7 +50,7 @@ exports.initialize = function() {
     dspEngine = new dsp.Signal();   
 };
 
-function processSignal() {
+var processSignal = function() {
     var signalValue = this.get('signalIn');  
     var fftLength = signalValue.length; 
     var fftResult = dspEngine.fft(signalValue); 
