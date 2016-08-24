@@ -67,10 +67,10 @@ exports.setup = function () {
     // value changes, since the camera will change and so will the available options.
     this.parameter('camera', {
         'type' : 'string',
-        'value' : 'default camera',
+        'value' : 'default camera'
     });
     this.parameter('viewSize', {
-        'type' : 'JSON',
+        'type' : 'JSON'
     });
     // This is in a try-catch so that this accessor can be instantiated even if the
     // host does not provide a cameras module.

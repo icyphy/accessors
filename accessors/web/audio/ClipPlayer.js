@@ -32,6 +32,13 @@
  *  @version $$Id$$ 
  */
 
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals exports, output, require, send */
+/*jshint globalstrict: true*/
+'use strict';
+
 var audio = require("audio");
 
 this.output('signal',{'type':'number'});

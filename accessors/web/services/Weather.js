@@ -207,7 +207,7 @@ exports.filterResponse = function(response) {
  *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
  *  @return The temperature in the desired units.
  */
-function convertTemperature(kelvin, units) {
+var convertTemperature = function(kelvin, units) {
     var result = kelvin;
     if (units == 'Fahrenheit') {
         result = (kelvin - 273.15) * 1.8 + 32.00;
