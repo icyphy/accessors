@@ -49,7 +49,7 @@ var commonHost = require('../common/commonHost.js');
 var accessorPath = [path.join(__dirname, '..', '..')];
 
 // All the accessors that were instantiated.
-var accessors;
+var accessors = [];
 
 // Flag to check if monitoring accessor has been setup or not
 var monitoringSetup = false;
@@ -103,6 +103,8 @@ instantiate = function(accessorName, accessorClass) {
     var instance = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    
+    accessors.push(instance);
     return instance;
 };
 
@@ -196,7 +198,22 @@ setupMonitoring = function() {
  */
 stop = function() {
     console.log("nodeHost.js: stop() invoked");
-    process.exit();
+    
+    // Call wrapup() on any contained accessors.  These accessors should
+    // wrapup() themselves, and ideally emit a 'stopped' event.
+    // TODO:  Listen for all 'stopped' events for a given time before exit.
+    // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
+    // TODO:  Figure out how accessors should signal a stop().  Should probably
+    // not call it directly.  Also, it should probably apply to a swarmlet 
+    // (i.e. composite accessor) and not the whole host.    
+    for (var i = 0; i < accessors.length; i++) {
+    	accessors[i].wrapup();
+    }
+    
+    // TODO:  Improve on arbitrary timeout.
+    setTimeout(function() {
+    	process.exit();
+    }, 2000);
 }
 
 //////////////////////////////////////////////
