@@ -29,7 +29,7 @@ exports.testNodeAuto = function(auto) {
 	    //describe('testNodeAuto ' + auto.replace('/','.'), function () {
 		    accessors.forEach(function(accessor) {
 			    if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
-				accessor.endsWith('.js') &&
+			    accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
 				accessor.indexOf('~') == -1 &&
 				accessor.substring(0,4) != '.svn' &&
 				accessor.substring(0,4) != '.log') {
