@@ -12,7 +12,10 @@
 <h1>Accessors</h1>
 <h2>What are Accessors?</h2>
 <p>
-<b>Accessors</b> are a technology,developed by the <a href="http://terraswarm.org">TerraSwarm Research Center</a>, for composing heterogeneous devices and services in the Internet of Things (IoT).
+<b>Accessors</b> are a technology for making the Internet of Things accessible
+to a broader community of citizens, inventors, and service providers through open
+interfaces, an open community of developers, and an open repository of technology.
+Developed by the <a href="http://terraswarm.org">TerraSwarm Research Center</a>, accessors enable composing heterogeneous devices and services in the Internet of Things (IoT).
 </p><p>
 <div class="boxed">
 An <b>actor</b> is a software component
@@ -20,6 +23,12 @@ that reacts to streaming input events and produces streaming output events.
 An <b>accessor</b> is an actor that wraps a (possibly remote) device or
 service in an actor interface.
 </div>
+</p><p>
+An <b>accessor host</b> is a service running in the network or on a client platform
+that hosts applications built as a composition of accessors that stream data to
+each other.
+The architecture encourages composition of heterogeneous and multi-vendor devices
+and services.
 </p><p>
 Accessors embrace <b>concurrency</b>, <b>atomicity</b>, and <b>asynchrony</b>.
 The actor model, which governs interaction between accessors, permits accessors to execute concurrently with segregated private data and a message-passing interface for interaction. Internally, many accessors use <b>asynchronous atomic callbacks</b> (<b>AAC</b>) to invoke remote services and handle responses asynchronously and atomically. See <a href="https://www.terraswarm.org/accessors/wiki/Main/ComparisonsToRelatedTechnologies">comparisons with related technologies</a> for insight into how accessors work.
