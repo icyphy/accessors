@@ -511,7 +511,7 @@ var RegressionTester = (function() {
 					}
 					
 					writeStream.write("<testcase name=\"" + result.accessor + 
-							"\ classname=\"BrowserHost\">\n");
+							"\" classname=\"BrowserHost\">\n");
 					if (!result.passed) {
 						writeStream.write("<failure message=\"" + result.message +
 								"\"/>\n");
