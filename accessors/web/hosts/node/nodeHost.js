@@ -194,26 +194,41 @@ setupMonitoring = function() {
 
 /** Stop execution.
  *
+ *  Accessors such as JavaScriptStop would invoke stop as
+ *  <pre>
+ *  stop.call(this);
+ *  </pre>
  *  In nodeHostInvoke.js, exit() is caught and wrapup() is invoked.
  */
 stop = function() {
-    console.log("nodeHost.js: stop() invoked");
+    var thiz = this.root;
+    console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName +  ": stop() invoked");
     
-    // Call wrapup() on any contained accessors.  These accessors should
+    // Call wrapup() on any accessors in the container.  These accessors should
     // wrapup() themselves, and ideally emit a 'stopped' event.
     // TODO:  Listen for all 'stopped' events for a given time before exit.
     // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
     // TODO:  Figure out how accessors should signal a stop().  Should probably
-    // not call it directly.  Also, it should probably apply to a swarmlet 
-    // (i.e. composite accessor) and not the whole host.    
-    for (var i = 0; i < accessors.length; i++) {
-    	accessors[i].wrapup();
+    // not call it directly.  
+    
+    // Not all Accessors host have container, see 
+    // https://www.terraswarm.org/accessors/wiki/Version1/Container
+    if (thiz.container) {
+	for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
+	    console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
+	    thiz.container.containedAccessors[i].wrapup();
+	}
     }
+
+    // If you want to wrapup all the accessors:
+    // for (var i = 0; i < accessors.length; i++) {
+    //	accessors[i].wrapup();
+    //}
     
     // TODO:  Improve on arbitrary timeout.
-    setTimeout(function() {
-    	process.exit();
-    }, 2000);
+    //setTimeout(function() {
+    //	process.exit();
+    //}, 2000);
 }
 
 //////////////////////////////////////////////
@@ -237,3 +252,40 @@ exports = {
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
 };
+
+
+// Handle calls to exit, Control-C, errors and uncaught exceptions.
+function exitHandler(options, err) {
+    console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
+    console.log(options);
+    var myError = new Error("nodeHost.js: In exitHandler()");
+    console.log(myError.stack);
+    if (options.cleanup) {
+        try {
+            console.log('About to invoke wrapup().');
+            if (this.accessors && this.accessors.length > 0) {
+                for (var i in this.accessors) {
+                    this.accessors[i].wrapup();
+                }
+            }
+        } catch (wrapupError) {
+            console.log("nodeHost.js: wrapup() failed: " + wrapupError);
+        }
+    }
+    if (err) {
+        console.log(err.stack);
+    }
+
+    if (options.exit) {
+        process.exit();
+    }
+}
+
+// If the node host is exiting, then cleanup, which includes invoking wrapup();
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+// Catch the Control-C event, which calls exit, which is caught in the line above.
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+// Catch any uncaughtExceptions.  If an uncaughtException is caught, is it still uncaught? :-)
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

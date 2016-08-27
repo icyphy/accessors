@@ -63,38 +63,6 @@ if (process.argv.length === 0) {
     process.exit(3);
 }
 
-// Handle calls to exit, Control-C, errors and uncaught exceptions.
-function exitHandler(options, err) {
-    if (options.cleanup) {
-        try {
-            console.log('About to invoke wrapup().');
-            if (this.accessors && this.accessors.length > 0) {
-                for (var i in this.accessors) {
-                    this.accessors[i].wrapup();
-                }
-            }
-        } catch (wrapupError) {
-            console.log("nodeHostInvoke.js: wrapup() failed: " + wrapupError);
-        }
-    }
-    if (err) {
-        console.log(err.stack);
-    }
-
-    if (options.exit) {
-        process.exit();
-    }
-}
-
-// If the node host is exiting, then cleanup, which includes invoking wrapup();
-process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-// Catch the Control-C event, which calls exit, which is caught in the line above.
-process.on('SIGINT', exitHandler.bind(null, {exit:true}));
-
-// Catch any uncaughtExceptions.  If an uncaughtException is caught, is it still uncaught? :-)
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
-
 // Process the -timeout argument.
 if (process.argv.length > 1) {
     if (process.argv[0] === "-timeout") {
@@ -104,9 +72,10 @@ if (process.argv.length > 1) {
         process.argv.shift();
         this.accessors = instantiateAndInitialize(process.argv);
         setTimeout(function () {
-            console.log('nodeHostInvoke.js: Timeout of ' + timeout + ' ms. has occurred.');
-            process.exit(0);
-        }, timeout);
+		// process.exit gets caught by exitHandler() in
+		// nodeHost.js and invokes wrapup().
+		process.exit(0);
+	    }, timeout);
     } else {
         // Handle multiple composite accessors on the command line.
         this.accessors = instantiateAndInitialize(process.argv);
