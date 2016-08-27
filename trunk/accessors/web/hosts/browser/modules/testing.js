@@ -217,10 +217,17 @@ exports.Testing.prototype.run = function() {
 		    }
 		    
 		    // Print opening tag for this suite.
+		    // FIXME:  Not able to print number of failures this way.  
+		    // Would need to wait until all tests are complete.
 			self.xmlOutput.push("<testsuite " + 
 					"name=\"" + suite.title + "\" tests=\"" + 
 					suite.tests.length + "\"" + ">\n");
-		    
+			
+			console.log('printing suite properties ');
+			for (var prop in suite){
+				console.log("suite prop " + prop);
+			}
+			
 			// If suite has no tests or suites, print closing tag.
 			// NOTE: A "suite" event does not seem to be generated in this case.
 			// Check just in case.
@@ -240,7 +247,7 @@ exports.Testing.prototype.run = function() {
 		    console.log('Test passed: ' + test.title);
 		    
 			self.xmlOutput.push("<testcase");
-			self.xmlOutput.push("name=\"" + test.title + "\" >");
+			self.xmlOutput.push("name=\"" + test.fullTitle() + "\" classname=\"BrowserHost\">");
 			self.xmlOutput.push("</testcase>\n");
 			
 			// Remove this test case from the current suite.  If there are no
