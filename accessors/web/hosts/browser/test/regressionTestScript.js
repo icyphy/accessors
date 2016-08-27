@@ -78,7 +78,8 @@ var RegressionTester = (function() {
 	// TODO:  Search for matching directories instead of hardcoding names.
 	var resultsFilePath = "../../../reports/junit/browserTestResults.xml";
 	
-	var compositeDirs = ["test/auto", "net/test/auto"];
+	var completedDirs = [];
+	var compositeDirs = ["test/auto"];
 	var mochaDirs = ["hosts/browser/test/auto/mocha", "net/test/auto/mocha"];
 	var accessors = [];
 	var filenames = [], testNames = [];
@@ -142,12 +143,12 @@ var RegressionTester = (function() {
     	var self = this;
     	
     	var testPromise = new Promise(function(resolve, reject) {
-    		var testAccessor = accessors[count];
                
 	        if (accessors.length < 1) {
 	        	resolve('No accessors');
 	        } else {
-
+	        	var testAccessor = accessors[count].name;
+	        	
             	// Write an HTML file that instantiates the accessor.
     			// Reloading the page for each accessor will wrapup any 
 	        	// previously instantiated accessors.
@@ -199,22 +200,22 @@ var RegressionTester = (function() {
                             			console.log(testAccessor + ' failed');
                             			
                             			driver.findElement(By.className('accessorError')).getText().then(function(text){
-                            				compositeResults.push({accessor: testAccessor, message : text, passed : false});
+                            				compositeResults.push({accessor: testAccessor, directory: accessors[count].directory, message : text, passed : false});
                             				resolve(testAccessor + ' failed');
                             			}).catch(function(err) {
                             				console.log(err);
-                            				compositeResults.push({accessor: testAccessor, message : 'Unknown failure', passed : false});
+                            				compositeResults.push({accessor: testAccessor, directory: accessors[count].directory, message : 'Unknown failure', passed : false});
                             				resolve(testAccessor + ' failed');
                             			});
                                     
                         			} else {
 	                                	console.log(testAccessor + " passed");
-	                                	compositeResults.push({accessor : testAccessor, message : 'passed', passed : true});
+	                                	compositeResults.push({accessor : testAccessor, directory: accessors[count].directory, message : 'passed', passed : true});
 	                                	resolve(testAccessor + ' passed');
                         			}
                         	}, function() {
                                 		console.log(testAccessor + " passed");
-                                		compositeResults.push({accessor : testAccessor, message : 'passed', passed : true});
+                                		compositeResults.push({accessor : testAccessor, directory: accessors[count].directory, message : 'passed', passed : true});
                                 		resolve(testAccessor + ' passed');
                         		});                 		
                         	}, runTimeLimit);
@@ -277,7 +278,7 @@ var RegressionTester = (function() {
 	 */
 	MochaTester.prototype.runNextTest = function(count, port) {
 		var self = this;
-		var testName = testNames[count];
+		var testName = testNames[count].name;
 		
     	var testPromise = new Promise(function(resolve, reject) {
 
@@ -301,7 +302,7 @@ var RegressionTester = (function() {
 							.then(function(element) {
 						
 						element.getText().then(function(text) {
-							mochaResults.push({'testName':testName, 'result':text});
+							mochaResults.push({'testName':testName, 'directory' : testNames[count].directory, 'result':text});
 							resolve('passed');
 						}).catch(function(err){
 							console.log(testName + ' failed');
@@ -354,6 +355,7 @@ var RegressionTester = (function() {
 	 * @param dirs The directories to return filenames from.
 	 */
 	function getFileNames(dirs) {
+
     	var fileNames = [];
     	var validNames = [];
 
@@ -366,7 +368,7 @@ var RegressionTester = (function() {
 	        		if (name.length > 3 && name.indexOf('.') > 0 && 
 	        				name.substring(0,4) != '.svn' &&
 	    	    			name.substring(0,4) != '.log') {
-	        			validNames.push(directory + "/" + name);
+	        			validNames.push({'directory' : directory, 'name' : directory + "/" + name});
 	        		}	
 	        	});
 	        	
@@ -447,10 +449,35 @@ var RegressionTester = (function() {
 			var testCount = 0;
 			var failureCount = 0;
 			
-			// Count total number of tests and number of failed tests.
+			var compositeDirResults = {};
+			var mochaDirResults = {};
+			
+			// Count total number of tests and number of failed tests, 
+			// both overall and in each directory.
+			compositeResults.forEach(function(resultObject) {
+				if (!compositeDirResults.hasOwnProperty(resultObject.directory)) {
+					compositeDirResults[resultObject.directory] = {'total' : 0, 'failed' : 0};
+				}
+				
+				compositeDirResults[resultObject.directory].total += 1;
+				if (resultObject.message !== 'passed') {
+					compositeDirResults[resultObject.directory].failed += 1;
+				}
+			});
+			
 			mochaResults.forEach(function(resultObject){
-				testCount += (resultObject.result.match(/<testcase/g) || []).length;
-				failureCount += (resultObject.result.match(/<failure/g) || []).length;
+				var testIncrement =  (resultObject.result.match(/<testcase/g) || []).length;
+				var failureIncrement = (resultObject.result.match(/<failure/g) || []).length;
+				
+				testCount += testIncrement;
+				failureCount += failureIncrement;
+				
+				if (!mochaDirResults.hasOwnProperty(resultObject.directory)) {
+					mochaDirResults[resultObject.directory] = {'total' : 0, 'failed' : 0};
+				}
+				
+				mochaDirResults[resultObject.directory].total += testIncrement;
+				mochaDirResults[resultObject.directory].failed += failureIncrement;
 			});
 			
 			testCount += compositeResults.length;
@@ -459,32 +486,47 @@ var RegressionTester = (function() {
 			// Write as a single test suite.  It appears Jenkins can't handle
 			// nested test suites, though JUnit allows nesting.
 			writeStream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			writeStream.write("<testsuite name=\"BrowserHost\" tests=\"" + 
+			
+			writeStream.write("<testsuites name=\"BrowserHost\" tests=\"" + 
 					testCount + "\" failed=\"" + 
 					failureCount + "\">\n");
 			
 			if (compositeResults.length > 0) {
-				//writeStream.write("<testsuite name=\"Composite Accessor Tests\">\n");
+				var firstDirectory = true;
+				
 				compositeResults.forEach(function(result){
-					writeStream.write("<testcase name=\"" + result.accessor + "\">\n");
+					if (compositeDirResults.hasOwnProperty(result.directory)) {
+						if (!firstDirectory) {
+							writeStream.write("</testsuite>\n");
+						}
+						firstDirectory = false;
+						writeStream.write("<testsuite name=\"" + 
+								result.directory + "\" tests=\"" + 
+								compositeDirResults[result.directory].total + 
+								"\" failed=\"" + 
+								compositeDirResults[result.directory].failed +
+								"\">");
+						
+						delete compositeDirResults[result.directory];
+					}
+					
+					writeStream.write("<testcase name=\"" + result.accessor + 
+							"\ classname=\"BrowserHost\">\n");
 					if (!result.passed) {
 						writeStream.write("<failure message=\"" + result.message +
 								"\"/>\n");
 					}
 					writeStream.write("</testcase>\n");
 				});
-				//writeStream.write("</testsuite>\n");
+				writeStream.write("</testsuite>\n");
 			}
 			
 			if (mochaResults.length > 0) {
-				//writeStream.write("<testsuite name=\"Mocha Tests\">\n");
-				
-				
 				// Mocha results are already in XML format.  Extract needed portion.
 				var beginIndex = 0;
 				var endIndex = 0;
 				mochaResults.forEach(function(resultObject){
-			
+					
 					// Write to file everything in between
 					// <testsuite name="BrowserHost" ... > and last instance of
 					// </testsuite>
@@ -496,16 +538,16 @@ var RegressionTester = (function() {
 						if (beginIndex > 0) {
 							endIndex = resultObject.result.lastIndexOf("</testsuite>");
 							if (endIndex > 0) {
+								// TODO:  Add number of failures to first testsuite object.
+								// Number of failures is recorded in mochaDirResults[resultObject.directory].failed
 								writeStream.write(resultObject.result.substring(beginIndex + 1, endIndex));
 							}
 						}
 					}
 				});
-				//writeStream.write("</testsuite>");	// Closing tag Mocha Tests
 			}
 			
-			writeStream.write("</testsuite>\n");	// Closing tag BrowserHost
-			//writeStream.write("</testsuites>\n");
+			writeStream.write("</testsuites>\n");	// Closing tag BrowserHost
 			
 		}
 		catch(err){
