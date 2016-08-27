@@ -186,7 +186,7 @@ exports.wrapup = function () {
             }
             var correctValuesValues = this.getParameter('correctValues');
             if (numberOfInputTokensSeen < correctValuesValues.length) {
-                throw new Error('The test produced only ' +
+                throw new Error(this.accessorName + ': The test produced only ' +
                                 numberOfInputTokensSeen +
                                 ' tokens, yet the correctValues parameter was ' +
                                 'expecting ' +
@@ -196,4 +196,9 @@ exports.wrapup = function () {
         }
         initialized = false;
     }
+    var name = this.accessorName
+    if (this.container) {
+	name = this.container.accessorName + "." + name
+    }
+    console.log("TrainableTest.js: wrapup() finished: " + name);
 };
