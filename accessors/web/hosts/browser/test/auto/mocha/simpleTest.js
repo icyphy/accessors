@@ -8,7 +8,7 @@ var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
 
-describe('Common host: Basic', function () {
+describe('/hosts/browser', function () {
 	before(function() {
 		// Read the accessor source code.
 		code = getAccessorCode('test/TestAccessor');
@@ -23,16 +23,16 @@ describe('Common host: Basic', function () {
 	});
 
 	
-	it('this.getParameter() returns default value.', function(){
+	it('Common host this.getParameter() returns default value.', function(){
 		instance.getParameter('p').should.equal(42);
 	});
 	
-	it('this.getParameter() returns value set by this.setParameter().', function(){
+	it('Common host this.getParameter() returns value set by this.setParameter().', function(){
 		instance.setParameter('p', 12);
 		instance.getParameter('p').should.equal(12);
 	});
 	
-	it('this.get() returns default value.', function(){
+	it('Common host this.get() returns default value.', function(){
 		instance.get('numeric').should.equal(0);
 	});
 });
