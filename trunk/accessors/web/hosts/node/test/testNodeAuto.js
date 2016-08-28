@@ -17,16 +17,18 @@ exports.testNodeAuto = function(auto) {
     console.log("testNodeAuto.js: testNodeAuto(" + auto + ")");
     var accessors;
     try {
-	// If run in accessors/web/hosts/node/test/mocha/
-	accessors = fs.readdirSync('../../../../' + auto);
+    	// If run in accessors/web/hosts/node/test/mocha/
+    	accessors = fs.readdirSync('../../../../' + auto);
     } catch (e) {
-	// If run in accessors/web/
-	accessors = fs.readdirSync(auto);
+    	// If run in accessors/web/
+    	accessors = fs.readdirSync(auto);
     }
+    
+    process.removeAllListeners('exit');
+    process.removeAllListeners('uncaughtException');
 
     // describe() is a mocha function.
     describe('NodeHost' , function() {
-	    //describe('testNodeAuto ' + auto.replace('/','.'), function () {
 		    accessors.forEach(function(accessor) {
 			    if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
 			    accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
@@ -49,27 +51,35 @@ exports.testNodeAuto = function(auto) {
 						instantiateAndInitialize(testAccessor);
 	                        
 						var exception = null;
-						process.once('uncaughtException', function(error) { 
+						var exceptionHandler, exitHandler;
+						
+						// Treat exceptions and calls to 'exit' as errors.
+						process.once('uncaughtException', exceptionHandler = function(error) { 
 							exception = error;
 							done(error);
 						    });
-	                        
+						
+						process.once('exit', exitHandler = function(error) { 
+							exception = error;
+							done(error);
+						    });
+						
 						setTimeout(function(){
+							// A test is considered successful if no errors 
+							// occur within a given timeout.
+							// TODO:  Improve upon arbitrary timeout.
+							// TODO:  Any way to listen for a stop?
+							// Remove listeners at the end of a successful test
+							// to avoid having a potentially infinite number of 
+							// listeners.
+							process.removeListener('uncaughtException', exceptionHandler);
+							process.removeListener('exit', exitHandler);
 							if (exception === null) {
 							    done();
 							}
 						    }, 1000);
-	                        
-						// TODO:
-						// What is the success criteria?  Lack of exception
-						// e.g. from trainable test after certain amount of 
-						// time?  any way to listen for a stop?
-						// Node-host-specific solution here
-	                        
-						// Cancel timer in case of a stop?
 					    });
 			    }
-			//});
 	    });
 	});
 };
