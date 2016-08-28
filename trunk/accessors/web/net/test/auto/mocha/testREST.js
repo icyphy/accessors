@@ -8,7 +8,7 @@ var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
 
-describe('net/REST', function () {
+describe('net/REST.js', function () {
 	before(function() {
 
 		// Read the accessor source code.
