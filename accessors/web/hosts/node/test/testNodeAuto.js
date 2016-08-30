@@ -29,6 +29,8 @@ exports.testNodeAuto = function(auto) {
 
     // describe() is a mocha function.
     describe('NodeHost' , function() {
+		this.timeout(20000); // Increase default timeout.  Originally 2000ms.
+		
 		    accessors.forEach(function(accessor) {
 			    if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
 			    accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
@@ -47,8 +49,9 @@ exports.testNodeAuto = function(auto) {
 				// generate a results file when passed a file path.
 					// it() is a mocha function.
 					it ('run accessors/web/' + auto + '/' + accessor + '\n', function (done) {
-						var testAccessor = [ auto +'/' + accessor ];
-						instantiateAndInitialize(testAccessor);
+						var testAccessorName = [ auto +'/' + accessor ];
+						var testAccessor = 
+							instantiateAndInitialize(testAccessorName)[0];
 	                        
 						var exception = null;
 						var exceptionHandler, exitHandler;
@@ -75,9 +78,18 @@ exports.testNodeAuto = function(auto) {
 							process.removeListener('uncaughtException', exceptionHandler);
 							process.removeListener('exit', exitHandler);
 							if (exception === null) {
-							    done();
+								// Call wrapup() on the accessor.  
+								// If the accessor contains a TrainableTest
+								// that has not fired, the TrainableTest will
+								// (correctly) throw an exception. 
+								testAccessor.wrapup();
+								
+								// Wait to see if any exceptions occur in wrapup.
+								setTimeout(function() {
+									done();
+								}, 500);
 							}
-						    }, 1000);
+						    }, 11000);
 					    });
 			    }
 	    });
