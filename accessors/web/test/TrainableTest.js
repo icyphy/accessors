@@ -45,131 +45,133 @@ var numberOfInputTokensSeen = 0;
 // If trainingMode is true, then inputs that have been seen so far.
 var trainingTokens = [];
 
+/** Create an input handler to compare the input with the appropriate element(s) 
+ *  from correctValues.
+ */
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     firedOnce = false;
     initialized = true;
     numberOfInputTokensSeen = 0;
     trainingTokens = [];
-};
+    
+    var self = this;
+    
+    this.addInputHandler('input', function() {
+        var inputValue = self.get('input');
+        firedOnce = true;
+        // If the input is not connected, then inputValue will be null.
+        if (self.getParameter('trainingMode')) {
+            trainingTokens.push(inputValue);
+            self.send('output', false);
+            return;
+        }
+        var correctValuesValues = self.getParameter('correctValues');
 
-/** Get the input and compare it with the appropriate element from 
- *  correctValues.
- */
-exports.fire = function () {
-    var inputValue = this.get('input');
-    firedOnce = true;
-    // If the input is not connected, then inputValue will be null.
-    if (this.getParameter('trainingMode')) {
-        trainingTokens.push(inputValue);
-        this.send('output', false);
-        return;
-    }
-    var correctValuesValues = this.getParameter('correctValues');
+        if (numberOfInputTokensSeen < correctValuesValues.length) {
+            var referenceToken = correctValuesValues[numberOfInputTokensSeen];
+            //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
+            //+ ", referenceToken: " + referenceToken);
+            if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
+                if (inputValue === null) {
+                    throw new Error('After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the value of the input was null?  ' +
+                                    'Perhaps the input is not connected?'
+                                   );
+                }
+                var cache = [];
+                var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                    if (typeof value === 'object' && value !== null) {
+                        if (cache.indexOf(value) !== -1) {
+                            // Circular reference found, discard key
+                            return;
+                        }
+                        // Store value in our collection
+                        cache.push(value);
+                    }
+                    return value;
+                });
+                if (inputValueValue.length > 100) {
+                    inputValueValue = inputValueValue.substring(0,100) + '...';
+                }
+                cache = null; // Enable garbage collection
 
-    if (numberOfInputTokensSeen < correctValuesValues.length) {
-        var referenceToken = correctValuesValues[numberOfInputTokensSeen];
-        //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
-        //+ ", referenceToken: " + referenceToken);
-        if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
-            if (inputValue === null) {
+
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
-                                ' tokens, the value of the input was null?  ' +
-                                'Perhaps the input is not connected?'
-                               );
+                                ' tokens, the input "' + inputValue +
+                                '" is neither a number nor a string, it is a ' +
+                                typeof inputValue  + ' with value ' + inputValueValue);
             }
-            var cache = [];
-            var inputValueValue = JSON.stringify(inputValue, function(key, value) {
-                if (typeof value === 'object' && value !== null) {
-                    if (cache.indexOf(value) !== -1) {
-                        // Circular reference found, discard key
-                        return;
-                    }
-                    // Store value in our collection
-                    cache.push(value);
+            if (typeof referenceToken === 'number') {
+                if (Math.abs(inputValue - referenceToken) > self.getParameter('tolerance')) {
+                    throw new Error('The input "' + inputValue + '" is not within "' +
+                                    self.getParameter('tolerance') +
+                                    '" of the expected value "' +
+                                    referenceToken + '"');
                 }
-                return value;
-            });
-            if (inputValueValue.length > 100) {
-                inputValueValue = inputValueValue.substring(0,100) + '...';
-            }
-            cache = null; // Enable garbage collection
-
-
-            throw new Error('After seeing ' + numberOfInputTokensSeen +
-                            ' tokens, the input "' + inputValue +
-                            '" is neither a number nor a string, it is a ' +
-                            typeof inputValue  + ' with value ' + inputValueValue);
-        }
-        if (typeof referenceToken === 'number') {
-            if (Math.abs(inputValue - referenceToken) > this.getParameter('tolerance')) {
-                throw new Error('The input "' + inputValue + '" is not within "' +
-                                this.getParameter('tolerance') +
-                                '" of the expected value "' +
-                                referenceToken + '"');
-            }
-        } else if (typeof referenceToken === 'string') {
-            if (inputValue !== referenceToken) {
-            	console.log('typeof inputValue ' + typeof inputValue);
-            	console.log('typeof referenceToken ' + typeof referenceToken);
-                throw new Error('The input "' + inputValue + '" is !== ' +
-                                ' to the expected value "' +
-                                referenceToken + '"');
-            }
-        } else if (typeof referenceToken === 'object') {
-            var cache = [];
-            var inputValueValue = JSON.stringify(inputValue, function(key, value) {
-                if (typeof value === 'object' && value !== null) {
-                    if (cache.indexOf(value) !== -1) {
-                        // Circular reference found, discard key
-                        return;
-                    }
-                    // Store value in our collection
-                    cache.push(value);
+            } else if (typeof referenceToken === 'string') {
+                if (inputValue !== referenceToken) {
+                	console.log('typeof inputValue ' + typeof inputValue);
+                	console.log('typeof referenceToken ' + typeof referenceToken);
+                    throw new Error('The input "' + inputValue + '" is !== ' +
+                                    ' to the expected value "' +
+                                    referenceToken + '"');
                 }
-                return value;
-            });
-            var cache = [];
-            var referenceTokenValue = JSON.stringify(referenceToken, function(key, value) {
-                if (typeof value === 'object' && value !== null) {
-                    if (cache.indexOf(value) !== -1) {
-                        // Circular reference found, discard key
-                        return;
+            } else if (typeof referenceToken === 'object') {
+                var cache = [];
+                var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                    if (typeof value === 'object' && value !== null) {
+                        if (cache.indexOf(value) !== -1) {
+                            // Circular reference found, discard key
+                            return;
+                        }
+                        // Store value in our collection
+                        cache.push(value);
                     }
-                    // Store value in our collection
-                    cache.push(value);
-                }
-                return value;
-            });
+                    return value;
+                });
+                var cache = [];
+                var referenceTokenValue = JSON.stringify(referenceToken, function(key, value) {
+                    if (typeof value === 'object' && value !== null) {
+                        if (cache.indexOf(value) !== -1) {
+                            // Circular reference found, discard key
+                            return;
+                        }
+                        // Store value in our collection
+                        cache.push(value);
+                    }
+                    return value;
+                });
 
-            cache = null; // Enable garbage collection
-            if (inputValueValue.length > 100) {
-                inputValueValue = inputValueValue.substring(0,100) + '...';
+                cache = null; // Enable garbage collection
+                if (inputValueValue.length > 100) {
+                    inputValueValue = inputValueValue.substring(0,100) + '...';
+                }
+                if (referenceTokenValue.length > 100) {
+                    referenceTokenValue = referenceTokenValue.substring(0,100) + '...';
+                }
+                if (inputValueValue !== referenceTokenValue) {
+                    throw new Error('The input "' + inputValueValue + '" is !== "' +
+                                    '" to the expected value "' +
+                                    referenceTokenValue + '"');
+                }
+            } else {
+                throw new Error('After seeing ' + numberOfInputTokensSeen +
+                                ' tokens, the referenceToken "' + referenceToken +
+                                '" is not a number, it is a ' +
+                                typeof referenceToken);
             }
-            if (referenceTokenValue.length > 100) {
-                referenceTokenValue = referenceTokenValue.substring(0,100) + '...';
-            }
-            if (inputValueValue !== referenceTokenValue) {
-                throw new Error('The input "' + inputValueValue + '" is !== "' +
-                                '" to the expected value "' +
-                                referenceTokenValue + '"');
+            numberOfInputTokensSeen++;
+            // If we are past the end of the expected inputs, then read
+            if (numberOfInputTokensSeen >= correctValuesValues.length) {
+                self.send('output', true);
+            } else {
+                self.send('output', false);
             }
         } else {
-            throw new Error('After seeing ' + numberOfInputTokensSeen +
-                            ' tokens, the referenceToken "' + referenceToken +
-                            '" is not a number, it is a ' +
-                            typeof referenceToken);
+            self.send('output', true);
         }
-        numberOfInputTokensSeen++;
-        // If we are past the end of the expected inputs, then read
-        if (numberOfInputTokensSeen >= correctValuesValues.length) {
-            this.send('output', true);
-        } else {
-            this.send('output', false);
-        }
-    } else {
-        this.send('output', true);
-    }
+    });
 };
 
 /** If trainingMode is true, then updated the correctValues. */
