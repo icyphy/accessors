@@ -254,30 +254,70 @@ exports = {
 };
 
 
-// Handle calls to exit, Control-C, errors and uncaught exceptions.
+/** 
+ * Handle calls to exit, Control-C, errors and uncaught exceptions.
+ * The wrapup() method is invoked for all accessors.  The first
+ * exception is reported and process.exitCode is set to non-zero;
+ * @param options Properties for the call.  Properties include cleanup and exit.
+ */
 function exitHandler(options, err) {
-    console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
-    console.log(options);
-    var myError = new Error("nodeHost.js: In exitHandler()");
-    console.log(myError.stack);
+    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
+    // console.log(options);
+    //var myError = new Error("nodeHost.js: In exitHandler()");
+    //console.log(myError.stack);
+
+    var initialThrowable = null;
     if (options.cleanup) {
         try {
-            console.log('About to invoke wrapup().');
-            if (this.accessors && this.accessors.length > 0) {
-                for (var i in this.accessors) {
-                    this.accessors[i].wrapup();
-                }
+
+	    // Getting a list of all the accessors seems to be a bit convoluted.
+
+            // console.log('nodeHost.js: About to invoke wrapup().');
+//	    var util = require('util');
+// 	    //console.log(util.inspect(this, {depth: 10}));
+// 	    console.log('nodeHost.js: this.process.mainModule');
+// 	    console.log(this.process.mainModule);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports');
+// 	    console.log(this.process.mainModule.exports);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors');
+// 	    console.log(this.process.mainModule.exports.accessors);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
+// 	    console.log(this.process.mainModule.exports.accessors[0]);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
+// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
+// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
+	    for (var j in this.process.mainModule.exports.accessors) {
+		for (var i in this.process.mainModule.exports.accessors[j].containedAccessors) {
+		    var accessor = this.process.mainModule.exports.accessors[j].containedAccessors[i];
+		    try {
+			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+			if (accessor) {
+			    accessor.wrapup();
+			}
+		    } catch (error) {
+			if (initialThrowable == null) {
+			    initialThrowable = error;
+			}
+		    }
+		}
             }
+	    // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
+	    process.exitCode = 1;
         }
+	if (initialThrowable !== null) {
+	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable);
+	    process.exitCode = 1;
+	}
     }
     if (err) {
         console.log(err.stack);
     }
 
     if (options.exit) {
-        process.exit();
+        process.exit(process.exitCode);
     }
 }
 
