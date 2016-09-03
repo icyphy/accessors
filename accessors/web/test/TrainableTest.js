@@ -32,9 +32,9 @@ exports.setup = function () {
 
 // Input, parameter and variable names match those in $PTII/ptolemy/actor/lib/NonStrictTest.java
 
-// Set to true if fire is called once.  If fire() is not called at all,
-// then throw an exception in wrapup().
-var firedOnce = false;
+// Set to true if an input is handled.  If no inputs are handled, then
+// throw an exception in wrapup().
+var inputHandled = false;
 
 // Set to true when initialized() is called.
 var initialized = false;
@@ -50,7 +50,7 @@ var trainingTokens = [];
  */
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
-    firedOnce = false;
+    inputHandled = false;
     initialized = true;
     numberOfInputTokensSeen = 0;
     trainingTokens = [];
@@ -59,7 +59,7 @@ exports.initialize = function () {
     
     this.addInputHandler('input', function() {
         var inputValue = self.get('input');
-        firedOnce = true;
+        inputHandled = true;
         // If the input is not connected, then inputValue will be null.
         if (self.getParameter('trainingMode')) {
             trainingTokens.push(inputValue);
@@ -180,9 +180,9 @@ exports.wrapup = function () {
         this.setParameter('correctValues', trainingTokens);
     } else {
         if (initialized) {
-            if (!firedOnce) {
+            if (!inputHandled) {
                 initialized = false;
-                throw new Error('The fire() function of this accessor was never called. ' +
+                throw new Error(this.accessorName + 'The input handler of this accessor was never invoked. ' +
                                 'Usually, this is an error indicating that ' +
                                 'starvation is occurring.');
             }
