@@ -62,8 +62,18 @@ var monitoringAccessor;
 // Please keep them alphabetical.
 
 /** Return the source code for an accessor from its fully qualified name.
- *  This will throw an exception if there is no such accessor on the accessor
- *  search path.
+ *
+ *  A name can be an absolute pathname, a relative pathname or a fully
+ *  qualified accessor name such as 'net/REST'.
+ *
+ *  If name refers to a file that can be read, then the contents of that file
+ *  are returned.  If name does not refer to a file that can be read,
+ *  then each element of the accessorPath array is prepended to the name
+ *  and a file read is attempted.
+ *
+ *  If there is no such accessor on the accessor search path, then
+ *  an exception is thrown.
+ *
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
 getAccessorCode = function(name) {
@@ -72,18 +82,30 @@ getAccessorCode = function(name) {
     if (name.indexOf('.js') !== name.length - 3) {
         name += '.js';
     }
+    
+    // Look for the accessor as a regular file.
+    // See https://www.terraswarm.org/accessors/wiki/Main/DeploymentNotes#SSHScript
+    try {
+	console.log("Trying " + name);
+	code = fs.readFileSync(name, 'utf8');
+	return code;
+    } catch (error) {
+	// Ignore, we will look search the accessorPath.
+    }
+
     for (var i = 0; i < accessorPath.length; i++) {
         var location = path.join(accessorPath[i], name);
         try {
             code = fs.readFileSync(location, 'utf8');
             console.log('Reading accessor at: ' + location);
+	    break;
         } catch(error) {
             console.log(error);
             continue;
         }
     }
     if (!code) {
-        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+        throw new Error('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
 };
