@@ -108,23 +108,17 @@ instantiate = function(accessorName, accessorClass) {
     return instance;
 };
 
-/** If there are one or more arguments after nodeHostInvoke.js, then
- * assume that each argument names a file defining an accessor.  Each
- * accessor is instantiated and initialized.
+/** Instantiate and initialize the accessors named by the
+ *  accessorNames argument
  *
- * See nodeHostInvoke.js for a file that requires nodeHost.js
- * and then invokes this method.
+ * See invoke() for how this method is used.
  *
  * Sample usage:
  *
  * nodeHostInvoke.js contains:
  * <pre>
- * var commonHost = require('./nodeHost.js');
- * // Remove "node.js" from the array of command line arguments.
- * process.argv.shift(); 
- * // Remove "nodeHostInvoke.js" from the array of command line arguments.
- * process.argv.shift(); 
- * instantiateAndInitialize(process.argv);
+ * require('./nodeHost.js');
+ * invoke(process.argv);
  * </pre>
  *
  * To invoke:
@@ -164,6 +158,185 @@ instantiateAndInitialize = function(accessorNames) {
     return accessors;
 };
 
+/** Invoke a composite accessor.
+ *
+ *  nodeHostInvoke.js uses invoke() as follows:
+ *  <pre>
+ *  require('./nodeHost.js');
+ *  invoke(process.argv);
+ *  </pre>
+ *  
+ *  If the accessors module is installed using npm with 
+ *  <pre>
+ *  npm install @terraswarm/gdp
+ *  </pre>
+ *  then a composite accessor may be invoked if a file invoke.js contains:
+ *  <pre>
+ *  require('@terraswarm/accessors');
+ *  invoke(process.argv);
+ *  </pre>
+ *  Then a composite accessor may be invoked with
+ *  <pre>
+ *  node invoke.js -timeout 4000 test/auto/RampJSTest.js
+ *  </pre>
+ *
+ *  @param argv An array of arguments, were the first argument is
+ *  typically "node", the second argument is the name of the script
+ *  that is invoked.  If the third argument is "-timeout", then the
+ *  fourth argument will be the timeout in ms.  The following
+ *  argument(s) are one or more .js files that define a setup() function
+ *  that builds a composite accessor.
+ */
+invoke = function(argv) {
+    // This function is in nodeHost.js so that we can easily invoke a
+    // composite accessor with a very small file.  See the comment for how to do this.
+
+    // Remove "node.js" from the array of command line arguments.
+    argv.shift();
+    // Remove "nodeHostInvoke.js" from the array of command line arguments.
+    argv.shift();
+
+    if (argv.length === 0) {
+	console.error("nodeHost.invoke(): Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
+	process.exit(3);
+    }
+
+    // Process the -timeout argument.
+    if (argv.length > 1) {
+	if (argv[0] === "-timeout") {
+	    timeout = argv[1];
+	    // Remove -timeout and the value.
+	    argv.shift();
+	    argv.shift();
+	    this.accessors = instantiateAndInitialize(argv);
+	    setTimeout(function () {
+		    // process.exit gets caught by exitHandler() in
+		    // nodeHost.js and invokes wrapup().
+		    process.exit(0);
+		}, timeout);
+	} else {
+	    // Handle multiple composite accessors on the command line.
+	    this.accessors = instantiateAndInitialize(argv);
+	    // Prevent the script from exiting by repeating the empty function
+	    // every ~25 days.
+	    setInterval(function () {}, 2147483647);
+	}
+    } else {
+	this.accessors = instantiateAndInitialize(argv);
+	// Prevent the script from exiting by repeating the empty function
+	// every ~25 days.
+	setInterval(function () {}, 2147483647);
+    }
+};
+
+/** 
+ * Handle calls to exit, Control-C, errors and uncaught exceptions.
+ * The wrapup() method is invoked for all accessors.  The first
+ * exception is reported and process.exitCode is set to non-zero;
+ * @param options Properties for the call.  Properties include cleanup and exit.
+ */
+function exitHandler(options, err) {
+    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
+    // console.log(options);
+    //var myError = new Error("nodeHost.js: In exitHandler()");
+    //console.log(myError.stack);
+
+    var initialThrowable = null;
+    if (options.cleanup) {
+        try {
+
+	    // Getting a list of all the accessors seems to be a bit convoluted.
+
+            // console.log('nodeHost.js: About to invoke wrapup().');
+//	    var util = require('util');
+// 	    //console.log(util.inspect(this, {depth: 10}));
+// 	    console.log('nodeHost.js: this.process.mainModule');
+// 	    console.log(this.process.mainModule);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports');
+// 	    console.log(this.process.mainModule.exports);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors');
+// 	    console.log(this.process.mainModule.exports.accessors);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
+// 	    console.log(this.process.mainModule.exports.accessors[0]);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
+// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
+// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
+// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
+	    for (var composite in this.process.mainModule.exports.accessors) {
+		for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+		    var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+		    try {
+			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+			if (accessor) {
+			    accessor.wrapup();
+			}
+		    } catch (error) {
+			if (initialThrowable == null) {
+			    initialThrowable = error;
+			}
+		    }
+		}
+            }
+	    // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
+        } catch (wrapupError) {
+            console.log("nodeHost.js: wrapup() failed: " + wrapupError);
+	    process.exitCode = 1;
+        }
+	if (initialThrowable !== null) {
+	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable);
+	    process.exitCode = 1;
+	}
+    }
+    // Use kill -30 to display a stack
+    if (options.stack) {
+	var util = require('util');
+	console.log("nodeHost.js: SIGUSR1 was received.");
+	//console.log(util.inspect(this, {depth: 15}));
+	for (var composite in this.process.mainModule.exports.accessors) {
+	    for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+		var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+		console.log("accessor: " + accessor.accessorName);
+		//console.log(util.inspect(accessor, {depth: 2}));
+		console.log("accessor.outputs: ");
+		console.log(util.inspect(accessor.outputs, {depth: 2}));
+		for (var output in accessor.outputs) {
+		    console.log("accessor.outputs: output: ");
+		    console.log(output);
+		    console.log("accessor.outputs: outputs[output]: ");
+		    console.log(accessor.outputs[output]);
+		    var destinations = accessor.outputs[output];
+		    for (var destination in destinations['destinations']) {
+			console.log("output " + output + ", destination: " + destination);
+		    }
+		}
+            }
+	}
+	err = new Error("SIGUSR1 was received, here's the stack.");
+    }
+    if (err) {
+        console.log(err.stack);
+    }
+
+    if (options.exit) {
+        process.exit(process.exitCode);
+    }
+
+}
+
+// If the node host is exiting, then cleanup, which includes invoking wrapup();
+process.on('exit', exitHandler.bind(null, {cleanup:true}));
+
+// Catch the Control-C event, which calls exit, which is caught in the line above.
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+// Catch kill -30 and display a stack.  SIGUSR1 is reserved by node to
+// start the debugger, but we use it here anyway.
+process.on('SIGUSR1', exitHandler.bind(null, {stack:true}));
+
+// Catch any uncaughtExceptions.  If an uncaughtException is caught, is it still uncaught? :-)
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+
+
 /** Instantiates and initializes monitoring accessor that periodically 
  *  collects monitoring data for accessors running on the host 
  */
@@ -198,7 +371,7 @@ setupMonitoring = function() {
  *  <pre>
  *  stop.call(this);
  *  </pre>
- *  In nodeHostInvoke.js, exit() is caught and wrapup() is invoked.
+ *  In the exitHandler() function, exit() is caught and wrapup() is invoked.
  */
 stop = function() {
     var thiz = this.root;
@@ -249,83 +422,7 @@ exports = {
     'getAccessorCode': getAccessorCode,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
+    'invoke': invoke,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
 };
-
-
-/** 
- * Handle calls to exit, Control-C, errors and uncaught exceptions.
- * The wrapup() method is invoked for all accessors.  The first
- * exception is reported and process.exitCode is set to non-zero;
- * @param options Properties for the call.  Properties include cleanup and exit.
- */
-function exitHandler(options, err) {
-    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
-    // console.log(options);
-    //var myError = new Error("nodeHost.js: In exitHandler()");
-    //console.log(myError.stack);
-
-    var initialThrowable = null;
-    if (options.cleanup) {
-        try {
-
-	    // Getting a list of all the accessors seems to be a bit convoluted.
-
-            // console.log('nodeHost.js: About to invoke wrapup().');
-//	    var util = require('util');
-// 	    //console.log(util.inspect(this, {depth: 10}));
-// 	    console.log('nodeHost.js: this.process.mainModule');
-// 	    console.log(this.process.mainModule);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports');
-// 	    console.log(this.process.mainModule.exports);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors');
-// 	    console.log(this.process.mainModule.exports.accessors);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
-// 	    console.log(this.process.mainModule.exports.accessors[0]);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
-// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
-// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
-	    for (var j in this.process.mainModule.exports.accessors) {
-		for (var i in this.process.mainModule.exports.accessors[j].containedAccessors) {
-		    var accessor = this.process.mainModule.exports.accessors[j].containedAccessors[i];
-		    try {
-			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-			if (accessor) {
-			    accessor.wrapup();
-			}
-		    } catch (error) {
-			if (initialThrowable == null) {
-			    initialThrowable = error;
-			}
-		    }
-		}
-            }
-	    // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
-        } catch (wrapupError) {
-            console.log("nodeHost.js: wrapup() failed: " + wrapupError);
-	    process.exitCode = 1;
-        }
-	if (initialThrowable !== null) {
-	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable);
-	    process.exitCode = 1;
-	}
-    }
-    if (err) {
-        console.log(err.stack);
-    }
-
-    if (options.exit) {
-        process.exit(process.exitCode);
-    }
-}
-
-// If the node host is exiting, then cleanup, which includes invoking wrapup();
-process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-// Catch the Control-C event, which calls exit, which is caught in the line above.
-process.on('SIGINT', exitHandler.bind(null, {exit:true}));
-
-// Catch any uncaughtExceptions.  If an uncaughtException is caught, is it still uncaught? :-)
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
