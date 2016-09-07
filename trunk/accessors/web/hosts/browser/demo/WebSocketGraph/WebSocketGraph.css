@@ -1,0 +1,21 @@
+
+
+.axis {
+	font: 1em sans-serif;
+} 
+
+.circle {
+	fill: steelblue;
+	stroke: black;
+	stroke-width: 2px;
+}
+
+.line {
+  	fill: none;
+  	stroke: steelblue;
+  	stroke-width: 3px;
+}
+
+#graph {
+	margin: 10px;
+}
