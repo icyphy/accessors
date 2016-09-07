@@ -53,39 +53,4 @@
 
 var commonHost = require('./nodeHost.js');
 
-// Remove "node.js" from the array of command line arguments.
-process.argv.shift();
-// Remove "nodeHostInvoke.js" from the array of command line arguments.
-process.argv.shift();
-
-if (process.argv.length === 0) {
-    console.error("nodeHostInvoke.js: Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
-    process.exit(3);
-}
-
-// Process the -timeout argument.
-if (process.argv.length > 1) {
-    if (process.argv[0] === "-timeout") {
-        timeout = process.argv[1];
-        // Remove -timeout and the value.
-        process.argv.shift();
-        process.argv.shift();
-        this.accessors = instantiateAndInitialize(process.argv);
-        setTimeout(function () {
-		// process.exit gets caught by exitHandler() in
-		// nodeHost.js and invokes wrapup().
-		process.exit(0);
-	    }, timeout);
-    } else {
-        // Handle multiple composite accessors on the command line.
-        this.accessors = instantiateAndInitialize(process.argv);
-        // Prevent the script from exiting by repeating the empty function
-        // every ~25 days.
-        setInterval(function () {}, 2147483647);
-    }
-} else {
-    this.accessors = instantiateAndInitialize(process.argv);
-    // Prevent the script from exiting by repeating the empty function
-    // every ~25 days.
-    setInterval(function () {}, 2147483647);
-}
+invoke(process.argv);
