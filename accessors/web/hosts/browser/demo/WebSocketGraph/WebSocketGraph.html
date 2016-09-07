@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!-- A sample graph using the WebSocketClient.  
+     A WebSocketServer is available in Cape Code.
+     Please open the model at: $PTII/org/terraswarm/accessor/demo/WebSocketGraph/WebSocketGraph.xml
+     Run the model, 
+     Start the browser test server (see /accessors/host/browser/test/README.txt), 
+     Point your browser to http://localhost:8089/hosts/browser/demo/WebSocketGraph/WebSocketGraph.html,
+     Click 'react to inputs'.  Data should appear on the graph.   -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sample graph using WebSocketClient </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    
+    <!-- Graph styling. -->
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/WebSocketGraph/WebSocketGraph.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the accessor
+        //  definition since they're specific to this scenario.  Wait until page
+        //  has loaded so that form fields exist.   
+ 	    var initialValues = {};
+ 	    initialValues["WebSocketClient.server"] = "localhost";
+ 	    initialValues["WebSocketClient.port"] = 8070;
+ 	    initialValues["WebSocketClient.receiveType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sendType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sslTls"] = false;
+    </script>
+	
+  	<script src="http://visjs.org/dist/vis.js"></script>
+  	<link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" />
+    
+	<script type="text/javascript">
+	function createGraph() {
+	  
+	  // Watch for changes in the WebSocketClient.received output.
+	  // Wait a bit after onload to make sure accessors are fully loaded. 
+	  setTimeout(function() {
+		  document.getElementById('WebSocketClient.received')
+		  	.addEventListener('DOMSubtreeModified', function() {
+			  var value = 
+				  document.getElementById('WebSocketClient.received').innerText;
+			  
+			  // Remove any ' or " in the string.  These cause parseFloat() to fail.
+			  value = value.replace(/'/g, "");
+			  value = value.replace(/"/g, "");
+			  addDataPoint(parseFloat(value));
+		  });
+	  }, 500);
+
+	
+	  // Graph from: http://visjs.org/examples/graph2d/15_streaming_data.html
+	  // MIT license: http://visjs.org/#licenses
+		  
+	  var DELAY = 5000; // delay in ms to add new data points
+	
+	  // create a graph2d with an (currently empty) dataset
+	  var container = document.getElementById('graph');
+	  var dataset = new vis.DataSet();
+	  var yMin = 0, yMax = 10;
+	
+	  var options = {
+	    start: vis.moment().add(-30, 'seconds'), // changed so its faster
+	    end: vis.moment(),
+	    dataAxis: {
+	      left: {
+	        range: {
+	          min: yMin, max: yMax
+	        }
+	      }
+	    },
+	    drawPoints: {
+	      style: 'circle' // square, circle
+	    },
+	    shaded: {
+	      orientation: 'bottom' // top, bottom
+	    },
+	    width: '80%',
+	    height: '300px'
+	  };
+	  var graph2d = new vis.Graph2d(container, dataset, options);
+	
+	  function renderStep() {
+	    // move the window (you can think of different strategies).
+	    var now = vis.moment();
+	    var range = graph2d.getWindow();
+	    var interval = range.end - range.start;
+
+	    // continuously move the window
+	    graph2d.setWindow(now - interval, now, {animation: false});
+	    requestAnimationFrame(renderStep);
+	  }
+	  renderStep();
+	
+	  /**
+	   * Add a new datapoint to the graph
+	   */
+	   
+	   // Need to set y range?
+	  function addDataPoint(value) {
+	    // add a new data point to the dataset
+	    var now = vis.moment();
+	    
+	    // Rescale the y axis, if needed.
+	    if (value < yMin) {
+	    	yMin = value;
+	    	graph2d.setOptions({
+	    		dataAxis: {
+	      			left: {
+	        			range: {
+	        				// Make the min a little lower than last data point
+	        				// so the point isn't on the edge of the graph.
+	          				min: yMin - ((yMax - yMin) / 20)
+	        			}
+	      			}
+	    		}
+	    	});
+	    	// dataAxis.left.range.min
+	    } else if (value > yMax) {
+	    	yMax = value;
+	    	graph2d.setOptions({
+	    		dataAxis: {
+	      			left: {
+	        			range: {
+	          				max: yMax + ((yMax - yMin) / 20)
+	        			}
+	      			}
+	    		}
+	    	});
+	    	// dataAxis.left.range.max
+	    }
+	    
+	    dataset.add({
+	      x: now + Math.random()*1000,
+	      y: value
+	    });
+	
+	    // remove all data points which are no longer visible
+	    var range = graph2d.getWindow();
+	    var interval = range.end - range.start;
+	    var oldIds = dataset.getIds({
+	      filter: function (item) {
+	        return item.x < range.start - interval;
+	      }
+	    });
+	    dataset.remove(oldIds);
+	  }
+	}
+	</script>
+
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    
+</head>
+<body onload="createGraph()">
+<div id="graph">
+</div>
+
+If you do not see an accessor below, then see the
+<a href="/accessors/hosts/browser/test/index.html">instructions for running a browser host</a>.
+
+<div class="accessor"
+   src="net/WebSocketClient"
+   id="WebSocketClient"></div>
+  
+</body>
+</html>	
