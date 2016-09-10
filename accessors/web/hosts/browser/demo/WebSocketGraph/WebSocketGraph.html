@@ -26,15 +26,16 @@
  	    initialValues["WebSocketClient.sslTls"] = false;
     </script>
 	
-  	<script src="http://visjs.org/dist/vis.js"></script>
-  	<link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css" />
+  	<script src="//visjs.org/dist/vis.js"></script>
+  	<link href="//visjs.org/dist/vis.css" rel="stylesheet" type="text/css" />
     
 	<script type="text/javascript">
 	function createGraph() {
 	  
 	  // Watch for changes in the WebSocketClient.received output.
-	  // Wait a bit after onload to make sure accessors are fully loaded. 
+	  // Wait a bit after onload to make sure accessors are fully loaded.
 	  setTimeout(function() {
+		  
 		  document.getElementById('WebSocketClient.received')
 		  	.addEventListener('DOMSubtreeModified', function() {
 			  var value = 
@@ -45,6 +46,9 @@
 			  value = value.replace(/"/g, "");
 			  addDataPoint(parseFloat(value));
 		  });
+		  
+		  // React accessor so graph will update automatically.
+		  reactIfExecutable('WebSocketClient');
 	  }, 500);
 
 	
@@ -114,7 +118,6 @@
 	      			}
 	    		}
 	    	});
-	    	// dataAxis.left.range.min
 	    } else if (value > yMax) {
 	    	yMax = value;
 	    	graph2d.setOptions({
@@ -126,7 +129,6 @@
 	      			}
 	    		}
 	    	});
-	    	// dataAxis.left.range.max
 	    }
 	    
 	    dataset.add({
