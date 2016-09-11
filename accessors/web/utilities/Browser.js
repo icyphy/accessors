@@ -31,7 +31,8 @@
  *  @input {string} html An HTML document to render in the browser.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  */
-var browser = require('browser');
+var Browser = require('browser');
+var browser = new Browser.Browser();
 
 exports.setup = function() {
     this.input('html', {'type':'string'});
@@ -44,4 +45,8 @@ function display() {
 
 exports.initialize = function() {
 	this.addInputHandler('html', display);
+};
+
+exports.wrapup = function(){
+	browser.shutdown();
 };
