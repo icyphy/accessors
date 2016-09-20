@@ -52,7 +52,7 @@ exports.initialize = function() {
 
 exports.wrapup = function() {
     if (handle) {
-        clearTimeoutInterval(handle);
+        clearTimeout(handle);
         handle = null;
     }
 };
