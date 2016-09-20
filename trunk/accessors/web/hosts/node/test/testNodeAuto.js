@@ -24,13 +24,21 @@ exports.testNodeAuto = function(auto) {
     	accessors = fs.readdirSync(auto);
     }
     
-    process.removeAllListeners('exit');
-    process.removeAllListeners('uncaughtException');
-
+    var mochaListener;
+    
     // describe() is a mocha function.
     describe('NodeHost' , function() {
-		this.timeout(20000); // Increase default timeout.  Originally 2000ms.
-		
+    	this.timeout(20000); // Increase default timeout.  Originally 2000ms.
+    	
+    	before(function() {	
+			// Remove the mocha listener (restore later) and 
+			// use our own handlers.
+			mochaListener = process.listeners('uncaughtException').pop();
+			
+		    process.removeAllListeners('exit');
+		    process.removeAllListeners('uncaughtException');
+    	});
+    
 		    accessors.forEach(function(accessor) {
 			    if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
 			    accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
@@ -56,7 +64,7 @@ exports.testNodeAuto = function(auto) {
 						var exception = null;
 						var exceptionHandler, exitHandler;
 						
-						// Treat exceptions and calls to 'exit' as errors.
+						// Treat exceptions and calls to 'exit' as failures.
 						process.once('uncaughtException', exceptionHandler = function(error) { 
 							exception = error;
 							done(error);
@@ -75,8 +83,7 @@ exports.testNodeAuto = function(auto) {
 							// Remove listeners at the end of a successful test
 							// to avoid having a potentially infinite number of 
 							// listeners.
-							process.removeListener('uncaughtException', exceptionHandler);
-							process.removeListener('exit', exitHandler);
+
 							if (exception === null) {
 								// Call wrapup() on the accessor.  
 								// If the accessor contains a TrainableTest
@@ -86,12 +93,20 @@ exports.testNodeAuto = function(auto) {
 								
 								// Wait to see if any exceptions occur in wrapup.
 								setTimeout(function() {
+									process.removeListener('uncaughtException', exceptionHandler);
+									process.removeListener('exit', exitHandler);
+									
 									done();
 								}, 500);
 							}
 						    }, 11000);
 					    });
 			    }
-	    });
+		    });
+		
+		    after(function() {
+		    	process.listeners('uncaughtException').push(mochaListener);
+		    });
+		
 	});
 };
