@@ -57,12 +57,12 @@ exports.setup = function () {
     });
 }
 var self;
-var client;
+var mqttClient;
 exports.toPublishInputHandler = function () {
     var toPublish = this.get('toPublish');
 
-    if (client.connected) {
-        client.publish(this.getParameter('topic'), toPublish,
+    if (mqttClient.connected) {
+        mqttClient.publish(this.getParameter('topic'), toPublish,
             {qos: this.getParameter('qosLevel')});
     } else {
         console.log('MQTT client is not connected. Discarding data.');
@@ -72,10 +72,10 @@ exports.toPublishInputHandler = function () {
 exports.initialize = function() {
     self = this;
     this.addInputHandler('toPublish', exports.toPublishInputHandler.bind(this));
-    client = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
-    client.start();
+    mqttClient = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
+    mqttClient.start();
 }
 
 exports.wrapup = function() {
-    client.end();
+    mqttClient.end();
 }
