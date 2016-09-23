@@ -34,7 +34,6 @@
 "use strict";
 
 var mqtt = require('mqtt');
-var client;
 
 exports.setup = function () {
     // Inputs and outputs
@@ -62,9 +61,9 @@ exports.setup = function () {
     });
 }
 var self;
-var receivedCount = 0;
+var mqttClient;
 function onMessage(topic, data) {
-    self.send('received', data);
+    self.send('received', mqtt.byteArrayToString(data));
     self.send('receivedTopic', topic);
 }
 
@@ -74,8 +73,8 @@ function onConnect() {
 
 exports.subscribeInputHandler = function () {
     var topic = this.get('subscribe');
-    if (client.connected) {
-        client.subscribe(topic);
+    if (mqttClient.connected) {
+        mqttClient.subscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - subscribed');
     }
     else {
@@ -85,8 +84,8 @@ exports.subscribeInputHandler = function () {
 
 exports.unsubscribeInputHandler = function () {
     var topic = this.get('unsubscribe');
-    if (client.connected) {
-        client.unsubscribe(topic);
+    if (mqttClient.connected) {
+        mqttClient.unsubscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
     }
     else {
@@ -98,12 +97,12 @@ exports.initialize = function() {
     self = this;
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
-    client = mqtt.createClient(self.getParameter('brokerPort'), self.getParameter('brokerHost'));
-    client.on('connect', onConnect);
-    client.on('message', onMessage);
-    client.start();
+    mqttClient = mqtt.createClient(self.getParameter('brokerPort'), self.getParameter('brokerHost'));
+    mqttClient.on('connect', onConnect);
+    mqttClient.on('message', onMessage);
+    mqttClient.start();
 }
 
 exports.wrapup = function() {
-    client.end();
+    mqttClient.end();
 }
