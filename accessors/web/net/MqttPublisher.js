@@ -38,6 +38,9 @@ var mqtt = require('mqtt');
 exports.setup = function () {
     // Inputs and outputs
     this.input('toPublish');
+    this.output('connection', { 
+        spontaneous: true
+    });
     // Server information
     this.parameter('brokerHost', {
         type: 'string',
@@ -58,6 +61,11 @@ exports.setup = function () {
 }
 var self;
 var mqttClient;
+
+function onConnect() {
+    self.send('connection', 'connected to broker');
+}
+
 exports.toPublishInputHandler = function () {
     var toPublish = this.get('toPublish');
 
@@ -73,6 +81,7 @@ exports.initialize = function() {
     self = this;
     this.addInputHandler('toPublish', exports.toPublishInputHandler.bind(this));
     mqttClient = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
+    mqttClient.on('connect', onConnect);
     mqttClient.start();
 }
 
