@@ -63,7 +63,7 @@ exports.setup = function () {
 var self;
 var mqttClient;
 function onMessage(topic, data) {
-    self.send('received', mqtt.byteArrayToString(data));
+    self.send('received', data);
     self.send('receivedTopic', topic);
 }
 
@@ -78,7 +78,7 @@ exports.subscribeInputHandler = function () {
         self.send('subscription', 'Topic: ' + topic + ' - subscribed');
     }
     else {
-        self.send('error', 'Client is not connected to broker, subscribe failed. Topic: ' + topic);
+        self.error('Client is not connected to broker, subscribe failed. Topic: ' + topic);
     }
 };
 
@@ -89,7 +89,7 @@ exports.unsubscribeInputHandler = function () {
         self.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
     }
     else {
-        self.send('error', 'Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
+        self.error('Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
     }
 };
 

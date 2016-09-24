@@ -130,7 +130,7 @@ var currentState = clientCommState.IDLE;
 
 function outputError(errorMessage) {
     console.log(errorMessage);
-    self.send('error', errorMessage);
+    self.error(errorMessage);
 };
 
 // Event handlers for a secure client socket
@@ -163,7 +163,6 @@ function onData(data) {
 
 function initSecureCommWithSessionKey(sessionKey, serverHost, serverPort) {
     currentSessionKey = sessionKey;
-    console.log(currentSessionKey);
     if (currentSecureClient) {
         currentSecureClient.close();
         console.log('Status: Secure connection closed before starting a new connection.');
@@ -201,7 +200,6 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     if (distributionKey) {
         console.log('Updating to a new distribution key key');
         currentDistributionKey = distributionKey;
-        console.log(currentDistributionKey);
     }
 
     console.log('received ' + sessionKeyList.length + ' session keys');
@@ -258,6 +256,7 @@ exports.toSendInputHandler = function () {
 
 exports.initialize = function () {
     currentState = clientCommState.IDLE;
+    currentSessionKeyList = [];
     currentSessionKey = null;
     
     authPublicKey = iotAuth.loadPublicKey(this.getParameter('authCertPath'));
