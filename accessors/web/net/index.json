@@ -7,6 +7,8 @@
     "MqttSubscriber.js",
     "SecureCommClient.js",
     "SecureCommServer.js",
+    "SecurePublisher.js",
+    "SecureSubscriber.js",
     "TCPSocketClient.js",
     "TCPSocketServer.js",
     "UDPSocketListener.js",
