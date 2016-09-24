@@ -127,7 +127,7 @@ var currentSessionKey = null;
 
 function outputError(errorMessage) {
     console.log(errorMessage);
-    self.send('error', errorMessage);
+    self.error(errorMessage);
 };
 
 /*
@@ -148,14 +148,12 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     if (distributionKey) {
         console.log('Updating to a new distribution key key');
         currentDistributionKey = distributionKey;
-        console.log(currentDistributionKey);
     }
 
     console.log('received ' + sessionKeyList.length + ' session keys');
     var receivedSessionKey;
     for (var i = 0; i < sessionKeyList.length; i++) {
         receivedSessionKey = sessionKeyList[i];
-        console.log(receivedSessionKey);
     }
     console.log('Session key arrived');    
     if (receivedSessionKey.id == callbackParameters.keyId) {
