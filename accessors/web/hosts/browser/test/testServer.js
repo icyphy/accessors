@@ -67,15 +67,33 @@ server.on('request', function(request, response) {
             if (url.indexOf('..') < 0) {
                 var base = path.join(__dirname, '..', '..', '..');
                 var location = path.join(base, url);
-                fs.readFile(location, 'utf8', function(error, data) {
-                    if (error) {
-                        response.statusCode = 404;
-                        response.end(error.message);
-                        return;
-                    }
-                    response.write(data);
-                    response.end();
-                });
+                
+                // Check for images.  Used for testing accessors splash screen.
+                // TODO:  Support other file types.
+                if (location.indexOf('.jpg') >= 0) {
+                	fs.readFile(location, function(error, image) {
+                        if (error) {
+                            response.statusCode = 404;
+                            response.end(error.message);
+                            return;
+                        }
+                        
+                        // TODO:  Generalize this.
+                        response.writeHead(200, {'Content-Type' : 'image/jpg'});
+                        response.end(image, 'binary');
+                	});
+                } else {
+                    fs.readFile(location, 'utf8', function(error, data) {
+                        if (error) {
+                            response.statusCode = 404;
+                            response.end(error.message);
+                            return;
+                        }
+                        response.write(data);
+                        response.end();
+                    });
+                }
+                
             } else {
                 response.statusCode = 400;
                 response.end('File names with .. are not permitted by this server.');
