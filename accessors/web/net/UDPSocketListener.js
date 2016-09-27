@@ -78,7 +78,7 @@ exports.setup = function () {
     });
     this.input('listeningPort', {
         'value': 8084,
-        'type': ' int'
+        'type': 'int'
     });
     this.parameter('receiveType', {
         type: 'string',
