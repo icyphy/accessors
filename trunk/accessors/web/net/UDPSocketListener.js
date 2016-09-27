@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2014-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -68,30 +68,30 @@ var UDPSocket = require('udpSocket');
 
 // Set up the accessor. In an XML specification, this information would
 // be provided in XML syntax.
-exports.setup = function() {
+exports.setup = function () {
     this.output('message');
-    this.output('listening', {'type':'boolean'});
+    this.output('listening', {'type': 'boolean'});
 
     this.input('listeningAddress', {
         'value': '0.0.0.0',
-        'type':'string'
+        'type': 'string'
     });
     this.input('listeningPort', {
         'value': 8084,
-        'type':'int'
+        'type': ' int'
     });
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'string',
+        type: 'string',
+        value: 'string',
     });
-    
+
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
             options : UDPSocket.supportedReceiveTypes()
         });
-    } catch(err) {
+    } catch (err) {
         this.error(err);
     }
 };
@@ -99,67 +99,65 @@ exports.setup = function() {
 var socket = null;
 var running = false;
 
-exports.initialize = function() {
-	socket = null;
-	this.exports.closeAndOpen.call(this);
-	
-	// Listen for port inputs.
+exports.initialize = function () {
+    socket = null;
+    this.exports.closeAndOpen.call(this);
+
+    // Listen for port inputs.
     var self = this;
-    this.addInputHandler('listeningPort', function() {
-    	self.exports.closeAndOpen.call(self);
+    this.addInputHandler('listeningPort', function () {
+        self.exports.closeAndOpen.call(self);
     });
-    
+
     running = true;
 };
 
-exports.closeAndOpen = function() {
-    var self = this;
+exports.closeAndOpen = function () {
+    var self = this, port = null;
     if (socket) {
-    	
-    	// Close any previously open socket and make the connection
-    	// once the close is complete.
-    	socket.on('close', function() {
-    		socket = null;
-    		self.exports.closeAndOpen.call(self);
-    	});
-    	socket.close();
-    	
-    } else {
-    	var port = this.get('listeningPort');
-    	if (port >= 0) {
-    		socket = UDPSocket.createSocket();
-        	
-    		socket.on('error', function(message) {
-    			self.error(message);
-    		});
-    		socket.setReceiveType(this.get('receiveType'));
+        // Close any previously open socket and make the connection
+        // once the close is complete.
+        socket.on('close', function () {
+            socket = null;
+            self.exports.closeAndOpen.call(self);
+        });
+        socket.close();
 
-    		socket.on('message', function(message) {
-    			if (running) {
-    				self.send('message', message);
-    			}
-    		});
-    		socket.on('listening', function(message) {
-    			if (running) {
-    				self.send('listening', true);
-    			}
-    		});
-    		socket.on('close', function() {
-    			if (running) {
-    				self.send('listening', false);
-    				
-    			}
-    		});
-    		socket.bind(port, this.get('listeningAddress'));
-    	}
+    } else {
+        port = this.get('listeningPort');
+        if (port >= 0) {
+            socket = UDPSocket.createSocket();
+
+            socket.on('error', function (message) {
+                self.error(message);
+            });
+            socket.setReceiveType(this.get('receiveType'));
+
+            socket.on('message', function (message) {
+                if (running) {
+                    self.send('message', message);
+                }
+            });
+            socket.on('listening', function () {
+                if (running) {
+                    self.send('listening', true);
+                }
+            });
+            socket.on('close', function () {
+                if (running) {
+                    self.send('listening', false);
+                }
+            });
+            socket.bind(port, this.get('listeningAddress'));
+        }
     }
 };
 
 
-exports.wrapup = function() {
-	running = false;
-	if (socket) {
-		socket.close();
-		socket = null;
-	}
+exports.wrapup = function () {
+    running = false;
+    if (socket) {
+        socket.close();
+        socket = null;
+    }
 };
