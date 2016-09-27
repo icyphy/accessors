@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2014-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -53,55 +53,55 @@ var UDPSocket = require('udpSocket');
 
 // Set up the accessor. In an XML specification, this information would
 // be provided in XML syntax.
-exports.setup = function() {
+exports.setup = function () {
     this.input('toSend');
-    
+
     this.input('destinationAddress', {
         'value': 'localhost',
-        'type':'string'
+        'type': 'string'
     });
 
     this.input('destinationPort', {
         'value': 8084,
-        'type':'int'
+        'type': 'int'
     });
     this.parameter('sendType', {
         type : 'string',
         value : 'string',
-    });    
-    
+    });
+
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('sendType', {
             options : UDPSocket.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         this.error(err);
     }
 };
 
 var socket = null;
 
-exports.initialize = function() {
+exports.initialize = function () {
     var self = this;
 
     socket = UDPSocket.createSocket();
-    socket.on('error', function(message) {
+    socket.on('error', function (message) {
         self.error(message);
     });
     socket.setSendType(this.get('sendType'));
-    this.addInputHandler('toSend', function() {
+    this.addInputHandler('toSend', function () {
         var message = self.get('toSend');
         socket.send(message,
-        		self.get('destinationPort'),
-        		self.get('destinationAddress'));
+                    self.get('destinationPort'),
+                    self.get('destinationAddress'));
     });
 };
 
-exports.wrapup = function() {
-	// This null check avoids an error in code generation.
-	if (socket !== null) {
-		socket.close();
-	}
+exports.wrapup = function () {
+    // This null check avoids an error in code generation.
+    if (socket !== null) {
+        socket.close();
+    }
 };
