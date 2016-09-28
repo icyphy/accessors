@@ -23,7 +23,7 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"test\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Content-Length\": \"4\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": null, \n  \"origin\": \"98.16.82.40\", \n  \"url\": \"http://httpbin.org/post\"\n}\n"]);
+    TrainableTest.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"test\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Content-Length\": \"4\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": null, \n  \"url\": \"http://httpbin.org/post\"\n}\n"]);
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
@@ -34,9 +34,17 @@ exports.setup = function() {
     String.container = this;
     this.containedAccessors.push(String);
 
+    // Start: RemoveIPAddress: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
+    // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
+    // We probably need to do something with the bindings.
+    var RemoveIPAddress = new Accessor('RemoveIPAddress', '/** Remove IP address from response.\n *\n *  @accessor RemoveIPAddress\n *  @input input Remove IP address portion of the response.\n *  @output output The HTTP response without the IP address.\n *  @author Elizabeth Osyk\n *  @version $$Id$$\n */\nexports.setup = function() {\n    this.input(\'input\');\n    this.output(\'output\');\n};\n\nexports.initialize = function() {\n    var self = this;\n    this.addInputHandler(\'input\', function() {\n       var data = self.get(\'input\');\n       // Remove the \"origin\" (i.e. IP address) since this will differ per machine\n       var start = data.indexOf(\"origin\");\n       var end;\n       var result = data;\n       if (start >= 0) {\n       	  end = data.indexOf(\"url\");\n       	  result = data.substring(0, start) + data.substring(end, data.length);\n       }\n	   self.send(\'output\', result);\n    });\n}\n', null, null, null, null);
+    RemoveIPAddress.container = this;
+    this.containedAccessors.push(RemoveIPAddress);
+
     // Connections: TestRESTPost: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', REST, 'trigger');
     this.connect(String, 'output', REST, 'body');
-    this.connect(REST, 'response', TrainableTest, 'input');
+    this.connect(RemoveIPAddress, 'output', TrainableTest, 'input');
     this.connect(TestSpontaneousOnce, 'output', String, 'trigger');
+    this.connect(REST, 'response', RemoveIPAddress, 'input');
 }
