@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/WebSocketSendReceive)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/WebSocketSendReceive)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
     //  to edit the model, run:
@@ -18,16 +18,12 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.container = this;
-    this.containedAccessors.push(TrainableTest);
     TrainableTest.setParameter('correctValues', ["0123456789"]);
     TrainableTest.setParameter('trainingMode', true);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
     // Start: WebSocketClient: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketClient = this.instantiate('WebSocketClient', 'net/WebSocketClient.js');
-    WebSocketClient.container = this;
-    this.containedAccessors.push(WebSocketClient);
     WebSocketClient.setDefault('server', "localhost");
     WebSocketClient.setDefault('port', 8083);
     WebSocketClient.setParameter('receiveType', "text/html");
@@ -43,8 +39,6 @@ exports.setup = function() {
 
     // Start: WebSocketServer: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketServer = this.instantiate('WebSocketServer', 'net/WebSocketServer.js');
-    WebSocketServer.container = this;
-    this.containedAccessors.push(WebSocketServer);
     WebSocketServer.setParameter('hostInterface', "localhost");
     WebSocketServer.setParameter('port', 8083);
     WebSocketServer.setParameter('pfxKeyCertPassword', "");
@@ -55,13 +49,9 @@ exports.setup = function() {
 
     // Start: ClientDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var ClientDisplay = this.instantiate('ClientDisplay', 'test/TestDisplay.js');
-    ClientDisplay.container = this;
-    this.containedAccessors.push(ClientDisplay);
 
     // Start: ServerDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var ServerDisplay = this.instantiate('ServerDisplay', 'test/TestDisplay.js');
-    ServerDisplay.container = this;
-    this.containedAccessors.push(ServerDisplay);
 
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -72,8 +62,6 @@ exports.setup = function() {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.container = this;
-    this.containedAccessors.push(TrainableTest2);
     TrainableTest2.setParameter('correctValues', [{"message":"abcdefg","socketID":0}]);
     TrainableTest2.setParameter('trainingMode', true);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
