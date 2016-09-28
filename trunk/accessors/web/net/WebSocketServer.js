@@ -94,13 +94,14 @@
 /*globals console, error, exports, require */
 /*jshint globalstrict: true*/
 'use strict';
+/*jslint plusplus: true */
 
 var WebSocket = require('webSocketServer');
 var server = null;
 var running = false;
 
 /** Sets up the accessor by defining inputs and outputs. */
-exports.setup = function() {
+exports.setup = function () {
     this.parameter('hostInterface', {
         value: "localhost",
         type: "string"
@@ -131,9 +132,9 @@ exports.setup = function() {
     });
     this.input('toSend');
     this.output('received');
-    this.output('listening', {'type':'int'});
+    this.output('listening', {'type': 'int'});
     this.output('connection', {'spontaneous': true});
-    
+
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
@@ -143,7 +144,7 @@ exports.setup = function() {
         this.parameter('sendType', {
             options : WebSocket.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         error(err);
     }
 };
@@ -152,7 +153,7 @@ var sockets = [];
 
 /** Starts the web socket and attaches functions to inputs and outputs.
  * Adds an input handler on toSend that sends the input received to the right socket. */
-exports.initialize = function() {
+exports.initialize = function () {
     var self = this;
     if (!server) {
         server = new WebSocket.Server({
@@ -175,8 +176,8 @@ exports.initialize = function() {
     }
     running = true;
 
-    this.addInputHandler('toSend', function() {
-        var data = self.get('toSend');
+    this.addInputHandler('toSend', function () {
+        var data = self.get('toSend'), id;
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
 
@@ -203,7 +204,7 @@ exports.initialize = function() {
             } else {
                 // No socketID or message, so this is a broadcast message.
                 // var success = false;
-                for (var id = 0; id < sockets.length; id++) {
+                for (id = 0; id < sockets.length; id++) {
                     if (sockets[id].isOpen()) {
                         // console.log("Broadcasting to socket id " + id
                         //         + " message: " + data);
@@ -219,7 +220,7 @@ exports.initialize = function() {
     });
 };
 
-exports.onListening = function() {
+exports.onListening = function () {
     console.log('Server: Listening for socket connection requests.');
     this.send('listening', this.getParameter('port'));
 };
@@ -227,19 +228,18 @@ exports.onListening = function() {
 /** Executes when a connection has been establised.<br>
  *  Triggers an output on <code>'connection'</code>.
  *  Adds an event listener to the socket. */
-exports.onConnection = function(socket) {
-    var self = this;
-    //socketID is the index of the socket in the sockets array.
-    var socketID = sockets.length;
+exports.onConnection = function (socket) {
+    // socketID is the index of the socket in the sockets array.
+    var self = this, socketID = sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
-    this.send('connection', {'socketID':socketID, 'status':'open'});
-    socket.on('message', function(message) {
-        self.send('received', {'socketID':socketID, 'message':message});
+    this.send('connection', {'socketID': socketID, 'status': 'open'});
+    socket.on('message', function (message) {
+        self.send('received', {'socketID': socketID, 'message': message});
     });
-    socket.on('close', function(message) {
-        self.send('connection', {'socketID':socketID, 'status':'closed'});
+    socket.on('close', function () {
+        self.send('connection', {'socketID': socketID, 'status': 'closed'});
     });
-    socket.on('error', function(message) {
+    socket.on('error', function (message) {
         self.error(message);
     });
 
@@ -250,7 +250,7 @@ exports.onConnection = function(socket) {
  * Unregisters event listeners from sockets.<br>
  * Closes server.
  */
-exports.wrapup = function(){
+exports.wrapup = function () {
     sockets = [];
 
     if (server !== null) {
