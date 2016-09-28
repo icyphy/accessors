@@ -140,6 +140,7 @@
 /*global console, error, exports, require */
 /*jshint globalstrict: true*/
 'use strict';
+/*jslint plusplus: true */
 
 var WebSocket = require('webSocketClient');
 var client = null;
@@ -162,7 +163,7 @@ exports.setup = function () {
         type : 'boolean'
     });
     this.output('received');
-    
+
     this.parameter('receiveType', {
         type : 'string',
         value : 'application/json',
@@ -203,7 +204,7 @@ exports.setup = function () {
         type : 'int',
         value : 100
     });
-    
+
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
@@ -213,7 +214,7 @@ exports.setup = function () {
         this.parameter('sendType', {
             options : WebSocket.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         this.error(err);
     }
 };
@@ -243,38 +244,38 @@ exports.connect = function () {
     // Note that if 'server' and 'port' both receive new data in the same
     // reaction, then this will be invoked twice. But we only want to open
     // the socket once.  This is fairly tricky.
-    
-    var portValue = this.get('port');
+
+    var portValue = this.get('port'), serverValue = null;
     if (portValue < 0) {
-	// No port is specified. This could be a signal to close a previously
-	// open socket.
-	if (client) {
-	    client.close();
-	}
-	previousPort = null;
-	previousServer = null;
+        // No port is specified. This could be a signal to close a previously
+        // open socket.
+        if (client) {
+            client.close();
+        }
+        previousPort = null;
+        previousServer = null;
         // 
         console.log("WebSocketClient.js: connect(): portValue: " + portValue +
                     ", which is less than 0. This could be a signal to close a previously open socket." +
                     "  Returning.");
-	return;
+        return;
     }
-    
-    var serverValue = this.get('server');
+
+    serverValue = this.get('server');
     if (previousServer === serverValue && previousPort === portValue) {
-	// A request to open a client for this server/port pair has already
-	// been made and has not yet been closed or failed with an error.
-	return;
+        // A request to open a client for this server/port pair has already
+        // been made and has not yet been closed or failed with an error.
+        return;
     }
     // Record the host/port pair that we are now opening.
     previousServer = serverValue;
     previousPort = portValue;
-    
+
     if (client) {
-	// Either the host or the port has changed. Close the previous socket.
-	client.close();
+        // Either the host or the port has changed. Close the previous socket.
+        client.close();
     }
-    
+
     console.log("WebSocketClient.js: connect() calling new WebSocket.Client()");
     client = new WebSocket.Client(
         {
@@ -300,11 +301,11 @@ exports.connect = function () {
     client.on('close', this.exports.onClose.bind(this));
 
     client.on('error', function (message) {
-    	previousServer = null;
-    	previousPort = null;
+        previousServer = null;
+        previousPort = null;
         console.log('Error: ' + message);
     });
-    
+
     client.open();
     console.log("WebSocketClient.js: connect() done");
 };
@@ -318,7 +319,7 @@ exports.toSendInputHandler = function () {
 exports.sendToWebSocket = function (data) {
     // May be receiving inputs before client has been set.
     if (client) {
-    	client.send(data);
+        client.send(data);
     } else {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             pendingSends.push(data);
@@ -332,15 +333,16 @@ exports.sendToWebSocket = function (data) {
  *  Sets 'connected' output to true.
  */
 exports.onOpen = function () {
+    var i;
     console.log('WebSocketClient.js: onOpen(): Status: Connection established');
     this.send('connected', true);
-    
+
     // If there are pending sends, send them now.
     // Note this implementation requires that the host invoke
     // this callback function atomically w.r.t. the input handler
     // that adds messages to the pendingSends queue.
-    for (var i = 0; i < pendingSends.length; i++) {
-    	client.send(pendingSends[i]);
+    for (i = 0; i < pendingSends.length; i++) {
+        client.send(pendingSends[i]);
     }
     pendingSends = [];
 };
@@ -348,12 +350,12 @@ exports.onOpen = function () {
 /** Send false to 'connected' output.
  *  This will be called if either side closes the connection.
  */
-exports.onClose = function() {
+exports.onClose = function () {
     previousServer = null;
     previousPort = null;
 
     console.log('WebSocketClient.js onClose(): Status: Connection closed.');
-    
+
     // NOTE: Even if running is true, it can occur that it is too late
     // to send the message (the wrapup process has been started), in which case
     // the message may not be received.
