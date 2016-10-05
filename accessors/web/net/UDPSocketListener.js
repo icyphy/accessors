@@ -96,11 +96,11 @@ exports.setup = function () {
     }
 };
 
-var socket = null;
-var running = false;
+exports.socket = null;
+exports.running = false;
 
 exports.initialize = function () {
-    socket = null;
+    exports.socket = null;
     this.exports.closeAndOpen.call(this);
 
     // Listen for port inputs.
@@ -109,55 +109,60 @@ exports.initialize = function () {
         self.exports.closeAndOpen.call(self);
     });
 
-    running = true;
+    exports.running = true;
 };
 
 exports.closeAndOpen = function () {
+    console.log("UDPSocketListener.js: closeAndOpen()");
     var self = this, port = null;
-    if (socket) {
+    if (exports.socket) {
         // Close any previously open socket and make the connection
         // once the close is complete.
-        socket.on('close', function () {
-            socket = null;
+        exports.socket.on('close', function () {
+            exports.socket = null;
             self.exports.closeAndOpen.call(self);
         });
-        socket.close();
+        exports.socket.close();
 
     } else {
         port = this.get('listeningPort');
+        console.log("UDPSocketListener.js: closeAndOpen(): port: " + port);
         if (port >= 0) {
-            socket = UDPSocket.createSocket();
+            exports.socket = UDPSocket.createSocket();
 
-            socket.on('error', function (message) {
+            exports.socket.on('error', function (message) {
+                console.log("UDPSocketListener: error: " + message);
                 self.error(message);
             });
-            socket.setReceiveType(this.get('receiveType'));
+            exports.socket.setReceiveType(this.get('receiveType'));
 
-            socket.on('message', function (message) {
-                if (running) {
+            exports.socket.on('message', function (message) {
+                console.log("UDPSocketListener: sending message");
+                if (exports.running) {
                     self.send('message', message);
                 }
             });
-            socket.on('listening', function () {
-                if (running) {
+            exports.socket.on('listening', function () {
+                if (exports.running) {
                     self.send('listening', true);
                 }
             });
-            socket.on('close', function () {
-                if (running) {
+            exports.socket.on('close', function () {
+                if (exports.running) {
                     self.send('listening', false);
                 }
             });
-            socket.bind(port, this.get('listeningAddress'));
+            exports.socket.bind(port, this.get('listeningAddress'));
         }
     }
 };
 
 
 exports.wrapup = function () {
-    running = false;
-    if (socket) {
-        socket.close();
-        socket = null;
+    console.log("UDPSocketListener: wrapup()");
+    exports.running = false;
+    if (exports.socket) {
+        exports.socket.close();
+        exports.socket = null;
     }
 };
