@@ -70,6 +70,54 @@ exports.initialize = function () {
     console.log("Moto360GesterListener.js: initialize()");
 };
 
+// Convert the 2 bytes data to a integer.
+function trans(a, b) {
+    var c = a * Math.pow(2, 8);
+    c = c + b;
+    if (c > Math.pow(2, 15)) { 
+        c = (Math.pow(2, 16) - c) * -1;
+    }
+    return c;
+}
+
+/** Parse the gesture data.
+ *  See https://www.terraswarm.org/urbanheartbeat/wiki/Main/WatchSoftware#Package
+ */
+function parseGestureData(data) {
+    console.log("Moto360GestureListener.parseGestureData(): data: " + data);
+    // Receive the data and parse them and print.
+    if (data[4] === "w".charCodeAt(0)) {
+        console.log(String.fromCharCode(data[0]) + String.fromCharCode(data[1]) +
+                    String.fromCharCode(data[2]) + String.fromCharCode(data[3]));
+        console.log(String.fromCharCode(data[4]));
+        for(var i = 0; i < 10; i++) {
+            console.log(trans(data[5 + i * 20 + 1], data[5 + i * 20]) / 10000.0 + " " +
+                        trans(data[5 + i * 20 + 3], data[5 + i * 20 + 2]) / 10000.0 + " " +
+                        trans(data[5 + i * 20 + 5], data[5 + i * 20 + 4]) / 10000.0 + " " +
+                        trans(data[5 + i * 20 + 7], data[5 + i * 20 + 6]) / 10000.0 + " " +
+                        trans(data[5 + i * 20 + 9], data[5 + i * 20 + 8]) / 10000.0 + " " +
+                        trans(data[5 + i * 20 + 11], data[5 + i * 20 + 10]) / 10000.0 + " " +
+                        (data[5 + i * 20 + 12] | (data[5 + i * 20 + 13] << 8) | (data[5 + i * 20 + 14] << 16)) + " " +
+                        data[5 + i * 20 + 15] + " " +
+                        ((data[5 + i * 20 + 16] | (data[5 + i * 20 + 17] << 8) | (data[5 + i * 20 + 18] << 18) | (data[5 + i * 20 + 19] << 24)) >>> 0)); // Use >>> 0 to convert to unsigned.
+        }
+    } else if (data.toString("utf-8", 4, 5) === "g") {
+        console.log(data.toString("utf-8", 0, 4));
+        console.log(data.toString("utf-8", 4, 5));
+        for(var i = 0; i < 10; i++) {
+            console.log(trans(data[5 + i * 10 + 1], data[5 + i * 10]) / 10000.0 + " " +
+                        trans(data[5 + i * 10 + 3], data[5 + i * 10 + 2]) / 10000.0 + " " +
+                        trans(data[5 + i * 10 + 5], data[5 + i * 10 + 4]) / 10000.0 + " " +
+                        ((data[5 + i * 10 + 6] | (data[5 + i * 10 + 7] << 8) | (data[5 + i * 10 + 8] << 16) | (data[5 + i * 10 + 9] << 24)) >>> 0)); // Use >>> 0 to convert to unsigned.
+        }
+    } else if (data.toString("utf-8", 4, 5) === "b") {
+        console.log(data.toString("utf-8", 0, 4));
+        console.log(data.toString("utf-8", 4, 5));
+        console.log(data[5]);
+    }
+    console.log("");
+};
+
 exports.closeAndOpen = function () {
     console.log("Moto360GestureListener.js: closeAndOpen()");
 
@@ -82,9 +130,10 @@ exports.closeAndOpen = function () {
             console.log("Moto360GestureListener: sending message");
             self.send('message', message);
             // Here's where Moto360GestureListener differs from UDPSocketListener.
-
+            parseGestureData(message);
             // Here, we want to parse the data
         }
     });
 };
+
 
