@@ -114,8 +114,7 @@ exports.closeAndOpen = function () {
                 self.send("watchID", watchID);
 
                 console.log(String.fromCharCode(message[4]));
-                // FIXME: figure out the number of values from the size.
-                for(var i = 0; i < 10; i++) {
+                for(var i = 0; i < (message.length - 5)/20; i++) {
                     var accelerometerX = trans(message[5 + i * 20 + 1], message[5 + i * 20]) / 10000.0;
                     var accelerometerY = trans(message[5 + i * 20 + 3], message[5 + i * 20] + 2) / 10000.0;
                     var accelerometerZ = trans(message[5 + i * 20 + 5], message[5 + i * 20] + 4) / 10000.0;
@@ -146,12 +145,12 @@ exports.closeAndOpen = function () {
 
                     self.send('ppg', ppg)
                     self.send('heartRate', heartRate);
-                    this.send('timestamp', timestamp);
+                    self.send('timestamp', timestamp);
                 }
             } else if (message.toString("utf-8", 4, 5) === "g") {
                 console.log(message.toString("utf-8", 0, 4));
                 console.log(message.toString("utf-8", 4, 5));
-                for(var i = 0; i < 10; i++) {
+                for(var i = 0; i < (message.length - 5) / 10; i++) {
                     console.log(trans(message[5 + i * 10 + 1], message[5 + i * 10]) / 10000.0 + " " +
                                 trans(message[5 + i * 10 + 3], message[5 + i * 10 + 2]) / 10000.0 + " " +
                                 trans(message[5 + i * 10 + 5], message[5 + i * 10 + 4]) / 10000.0 + " " +
