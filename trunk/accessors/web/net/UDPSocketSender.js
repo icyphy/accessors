@@ -23,13 +23,18 @@
 /** This accessor sends UDP (datagram) messages to the specified
  *  destination address and port.
  *
- *  The send type can be any of those supported by the host.
- *  The list of supported types will be provided as options for the `sendType`
- *  parameter. For the Ptolemy II host, these include at
- *  least 'string', 'number', 'image', and a variety of numeric types.
+ *  The send type can be any of those supported by the host.  The list
+ *  of supported types will be provided as options for the `sendType`
+ *  parameter. For the Ptolemy II host, these include at least
+ *  'string', 'number', 'image', and a variety of numeric types.
+ *
+ *  Note that UDP, unlike TCP, has the notion of a "message" (a
+ *  datagram). A message can contain more than one byte.  The
+ *  `receiveType` determines the type of the elements sent
+ *  by this accessor
  *
  *  @accessor net/UDPSocketSender
- *  @author Hokeun Kim and Edward A. Lee
+ *  @author Hokeun Kim and Edward A. Lee, Contributor: Christopher Brooks
  *  @version $$Id$$
  *
  *  @input toSend The message to send.

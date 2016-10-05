@@ -20,27 +20,33 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor listens for UDP (datagram) messages on the specified host
- *  interface and port. If the value of the `port` input is initially
- *  negative, then this accessor waits until it receives a non-negative `port`
- *  input before initiating listening. Otherwise, it begins listening
- *  during initialization. If at any time during execution it receives
- *  a `port` input, then it will close any open socket and, if the new
- *  `port` value is non-negative, open
- *  a new socket to the current `host` and `port`.
+/** This accessor listens for UDP (datagram) messages on the specified
+ *  host interface and port. If the value of the `port` input is
+ *  initially negative, then this accessor waits until it receives a
+ *  non-negative `port` input before initiating listening. Otherwise,
+ *  it begins listening during initialization. If at any time during
+ *  execution it receives a `port` input, then it will close any open
+ *  socket and, if the new `port` value is non-negative, open a new
+ *  socket to the current `host` and `port`.
  *  
  *  When the connection is established, a `true` boolean is sent to
- *  the `listening` output. If the connection is broken during execution, then a `false`
- *  boolean is sent to the `listening` output. The swarmlet could respond to this by
- *  retrying to connect (send an event to the `port` input).
+ *  the `listening` output. If the connection is broken during
+ *  execution, then a `false` boolean is sent to the `listening`
+ *  output. The swarmlet could respond to this by retrying to connect
+ *  (send an event to the `port` input).
  *
- *  The receive type can be any of those supported by the host.
- *  The list of supported types will be provided as options for the
- *  and `receiveType` parameter. For the Ptolemy II host, these include at
+ *  The receive type can be any of those supported by the host.  The
+ *  list of supported types will be provided as options for the and
+ *  `receiveType` parameter. For the Ptolemy II host, these include at
  *  least 'string', 'number', 'image', and a variety of numeric types.
  *
+ *  Note that UDP, unlike TCP, has the notion of a "message" (a
+ *  datagram). A message can contain more than one byte.  The
+ *  `receiveType` determines the type of the elements of the output of
+ *  this accessor.
+ *
  *  @accessor net/UDPSocketListener
- *  @author Hokeun Kim and Edward A. Lee
+ *  @author Hokeun Kim and Edward A. Lee, Contributor: Christopher Brooks
  *  @version $$Id$$
  *  
  *  @output {string} message The received message.
@@ -96,6 +102,8 @@ exports.setup = function () {
     }
 };
 
+// We use "exports" here so that derived accessors can read and write
+// these variables.
 exports.socket = null;
 exports.running = false;
 
@@ -113,7 +121,6 @@ exports.initialize = function () {
 };
 
 exports.closeAndOpen = function () {
-    console.log("UDPSocketListener.js: closeAndOpen()");
     var self = this, port = null;
     if (exports.socket) {
         // Close any previously open socket and make the connection
@@ -126,18 +133,15 @@ exports.closeAndOpen = function () {
 
     } else {
         port = this.get('listeningPort');
-        console.log("UDPSocketListener.js: closeAndOpen(): port: " + port);
         if (port >= 0) {
             exports.socket = UDPSocket.createSocket();
 
             exports.socket.on('error', function (message) {
-                console.log("UDPSocketListener: error: " + message);
                 self.error(message);
             });
             exports.socket.setReceiveType(this.get('receiveType'));
 
             exports.socket.on('message', function (message) {
-                console.log("UDPSocketListener: sending message");
                 if (exports.running) {
                     self.send('message', message);
                 }
@@ -159,7 +163,6 @@ exports.closeAndOpen = function () {
 
 
 exports.wrapup = function () {
-    console.log("UDPSocketListener: wrapup()");
     exports.running = false;
     if (exports.socket) {
         exports.socket.close();
