@@ -59,6 +59,18 @@ exports.setup = function () {
         'value': 4567, // 4567 is the value found in https://github.com/Zziwei/PackageSendTest
         'type': 'int'
     });
+    this.output('accelerometerX', {'type': 'number'});
+    this.output('accelerometerY', {'type': 'number'});
+    this.output('accelerometerZ', {'type': 'number'});
+    this.output('gyroscopeX', {'type': 'number'});
+    this.output('gyroscopeY', {'type': 'number'});
+    this.output('gyroscopeZ', {'type': 'number'});
+    this.output('watchID', {'type': 'string'});
+    // PPG is like pulse? https://en.wikipedia.org/wiki/Photoplethysmogram
+    this.output('ppg', {'type': 'int'})
+    this.output('heartRate', {'type': 'int'});
+    this.output('timestamp', {'type': 'int'});
+
     this.parameter('receiveType', {
         type: 'string',
         value: 'unsignedbyte',
@@ -80,44 +92,6 @@ function trans(a, b) {
     return c;
 }
 
-/** Parse the gesture data.
- *  See https://www.terraswarm.org/urbanheartbeat/wiki/Main/WatchSoftware#Package
- */
-function parseGestureData(data) {
-    console.log("Moto360GestureListener.parseGestureData(): data: " + data);
-    // Receive the data and parse them and print.
-    if (data[4] === "w".charCodeAt(0)) {
-        console.log(String.fromCharCode(data[0]) + String.fromCharCode(data[1]) +
-                    String.fromCharCode(data[2]) + String.fromCharCode(data[3]));
-        console.log(String.fromCharCode(data[4]));
-        for(var i = 0; i < 10; i++) {
-            console.log(trans(data[5 + i * 20 + 1], data[5 + i * 20]) / 10000.0 + " " +
-                        trans(data[5 + i * 20 + 3], data[5 + i * 20 + 2]) / 10000.0 + " " +
-                        trans(data[5 + i * 20 + 5], data[5 + i * 20 + 4]) / 10000.0 + " " +
-                        trans(data[5 + i * 20 + 7], data[5 + i * 20 + 6]) / 10000.0 + " " +
-                        trans(data[5 + i * 20 + 9], data[5 + i * 20 + 8]) / 10000.0 + " " +
-                        trans(data[5 + i * 20 + 11], data[5 + i * 20 + 10]) / 10000.0 + " " +
-                        (data[5 + i * 20 + 12] | (data[5 + i * 20 + 13] << 8) | (data[5 + i * 20 + 14] << 16)) + " " +
-                        data[5 + i * 20 + 15] + " " +
-                        ((data[5 + i * 20 + 16] | (data[5 + i * 20 + 17] << 8) | (data[5 + i * 20 + 18] << 18) | (data[5 + i * 20 + 19] << 24)) >>> 0)); // Use >>> 0 to convert to unsigned.
-        }
-    } else if (data.toString("utf-8", 4, 5) === "g") {
-        console.log(data.toString("utf-8", 0, 4));
-        console.log(data.toString("utf-8", 4, 5));
-        for(var i = 0; i < 10; i++) {
-            console.log(trans(data[5 + i * 10 + 1], data[5 + i * 10]) / 10000.0 + " " +
-                        trans(data[5 + i * 10 + 3], data[5 + i * 10 + 2]) / 10000.0 + " " +
-                        trans(data[5 + i * 10 + 5], data[5 + i * 10 + 4]) / 10000.0 + " " +
-                        ((data[5 + i * 10 + 6] | (data[5 + i * 10 + 7] << 8) | (data[5 + i * 10 + 8] << 16) | (data[5 + i * 10 + 9] << 24)) >>> 0)); // Use >>> 0 to convert to unsigned.
-        }
-    } else if (data.toString("utf-8", 4, 5) === "b") {
-        console.log(data.toString("utf-8", 0, 4));
-        console.log(data.toString("utf-8", 4, 5));
-        console.log(data[5]);
-    }
-    console.log("");
-};
-
 exports.closeAndOpen = function () {
     console.log("Moto360GestureListener.js: closeAndOpen()");
 
@@ -130,8 +104,67 @@ exports.closeAndOpen = function () {
             console.log("Moto360GestureListener: sending message");
             self.send('message', message);
             // Here's where Moto360GestureListener differs from UDPSocketListener.
-            parseGestureData(message);
-            // Here, we want to parse the data
+            // See https://www.terraswarm.org/urbanheartbeat/wiki/Main/WatchSoftware#Package
+            console.log("Moto360GestureListener.parseGestureData(): message: " + message);
+            // Receive the data and parse them and print.
+            if (message[4] === "w".charCodeAt(0)) {
+                var watchID = String.fromCharCode(message[0]) + String.fromCharCode(message[1]) +
+                            String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
+                console.log(watchID);
+                self.send("watchID", watchID);
+
+                console.log(String.fromCharCode(message[4]));
+                // FIXME: figure out the number of values from the size.
+                for(var i = 0; i < 10; i++) {
+                    var accelerometerX = trans(message[5 + i * 20 + 1], message[5 + i * 20]) / 10000.0;
+                    var accelerometerY = trans(message[5 + i * 20 + 3], message[5 + i * 20] + 2) / 10000.0;
+                    var accelerometerZ = trans(message[5 + i * 20 + 5], message[5 + i * 20] + 4) / 10000.0;
+                    var gyroscopeX = trans(message[5 + i * 20 + 7], message[5 + i * 20] + 6) / 10000.0;
+                    var gyroscopeY = trans(message[5 + i * 20 + 9], message[5 + i * 20] + 8) / 10000.0;
+                    var gyroscopeZ = trans(message[5 + i * 20 + 11], message[5 + i * 20] + 10) / 10000.0;
+                    var ppg = (message[5 + i * 20 + 12] | (message[5 + i * 20 + 13] << 8) | (message[5 + i * 20 + 14] << 16));
+                    var heartRate = message[5 + i * 20 + 15]; 
+                    var timestamp = ((message[5 + i * 20 + 16] | (message[5 + i * 20 + 17] << 8) | (message[5 + i * 20 + 18] << 18) | (message[5 + i * 20 + 19] << 24)) >>> 0); // Use >>> 0 to convert to unsigned.
+                    console.log(accelerometerX + " " +
+                                accelerometerY + " " +
+                                accelerometerZ + " " +
+                                gyroscopeX + " " +
+                                gyroscopeY + " " +
+                                gyroscopeZ + " " +                                
+                                ppg + " " +
+                                heartRate + " " +
+                                timestamp);
+
+
+                    self.send('accelerometerX', accelerometerX);
+                    self.send('accelerometerY', accelerometerY);
+                    self.send('accelerometerZ', accelerometerZ);
+
+                    self.send('gyroscopeX', gyroscopeX);
+                    self.send('gyroscopeY', gyroscopeY);
+                    self.send('gyroscopeZ', gyroscopeZ);
+
+                    self.send('ppg', ppg)
+                    self.send('heartRate', heartRate);
+                    this.send('timestamp', timestamp);
+                }
+            } else if (message.toString("utf-8", 4, 5) === "g") {
+                console.log(message.toString("utf-8", 0, 4));
+                console.log(message.toString("utf-8", 4, 5));
+                for(var i = 0; i < 10; i++) {
+                    console.log(trans(message[5 + i * 10 + 1], message[5 + i * 10]) / 10000.0 + " " +
+                                trans(message[5 + i * 10 + 3], message[5 + i * 10 + 2]) / 10000.0 + " " +
+                                trans(message[5 + i * 10 + 5], message[5 + i * 10 + 4]) / 10000.0 + " " +
+                                ((message[5 + i * 10 + 6] | (message[5 + i * 10 + 7] << 8) | (message[5 + i * 10 + 8] << 16) | (message[5 + i * 10 + 9] << 24)) >>> 0)); // Use >>> 0 to convert to unsigned.
+                }
+            } else if (message.toString("utf-8", 4, 5) === "b") {
+                console.log(message.toString("utf-8", 0, 4));
+                console.log(message.toString("utf-8", 4, 5));
+                console.log(message[5]);
+            }
+            console.log("");
+
+
         }
     });
 };
