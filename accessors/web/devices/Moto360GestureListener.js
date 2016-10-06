@@ -29,16 +29,17 @@
  * @output {string} message The received message.
  * @output {boolean} listening True to indicate that listening has begun, false to
  *   indicate that it has stopped.
+ * @output {json} data The data from the watch.
  *
  * @input {string} listeningAddress The interface to listen on for incoming messages.
  *   This defaults to "0.0.0.0", which means to listen on all network interfaces.
  * @input {int} listeningPort The port to listen on for incoming messages.
  *   This defaults to 4567, which is the value found in https://github.com/Zziwei/PackageSendTest
  *   
- *  @parameter {string} receiveType See above.
-
- *  @author Christopher Brooks
- *  @version $$Id: Hue.js 748 2016-04-29 21:51:14Z cxh $$ 
+ * @parameter {string} receiveType See above.
+ 
+ * @author Christopher Brooks
+ * @version $$Id: Hue.js 748 2016-04-29 21:51:14Z cxh $$ 
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -55,21 +56,15 @@ var UDPSocket = require('udpSocket');
  */
 exports.setup = function () {
     this.extend('net/UDPSocketListener');
+
+    // Override the value of listeningPort in the parent.
     this.input('listeningPort', {
         'value': 4567, // 4567 is the value found in https://github.com/Zziwei/PackageSendTest
         'type': 'int'
     });
-    this.output('accelerometerX', {'type': 'number'});
-    this.output('accelerometerY', {'type': 'number'});
-    this.output('accelerometerZ', {'type': 'number'});
-    this.output('gyroscopeX', {'type': 'number'});
-    this.output('gyroscopeY', {'type': 'number'});
-    this.output('gyroscopeZ', {'type': 'number'});
-    this.output('watchID', {'type': 'string'});
-    // PPG is like pulse? https://en.wikipedia.org/wiki/Photoplethysmogram
-    this.output('ppg', {'type': 'int'})
-    this.output('heartRate', {'type': 'int'});
-    this.output('timestamp', {'type': 'int'});
+
+    
+    this.output('data', {'type': 'JSON'});
 
     this.parameter('receiveType', {
         type: 'string',
@@ -79,7 +74,6 @@ exports.setup = function () {
 
 exports.initialize = function () {
     exports.ssuper.initialize.call(this);
-    console.log("Moto360GesterListener.js: initialize()");
 };
 
 // Convert the 2 bytes data to a integer.
@@ -92,28 +86,32 @@ function trans(a, b) {
     return c;
 }
 
+var debug = false;
+
 exports.closeAndOpen = function () {
-    console.log("Moto360GestureListener.js: closeAndOpen()");
 
     exports.ssuper.closeAndOpen.call(this);
     var self = this;
 
     exports.ssuper.socket.on('message', function (message) {
-        console.log("Moto360GestureListener: sending message0");
         if (exports.ssuper.running) {
-            console.log("Moto360GestureListener: sending message");
             self.send('message', message);
+
             // Here's where Moto360GestureListener differs from UDPSocketListener.
             // See https://www.terraswarm.org/urbanheartbeat/wiki/Main/WatchSoftware#Package
-            console.log("Moto360GestureListener.parseGestureData(): message: " + message);
+            if (debug) {
+                console.log("Moto360GestureListener.parseGestureData(): message: " + message);
+            }
             // Receive the data and parse them and print.
             if (message[4] === "w".charCodeAt(0)) {
                 var watchID = String.fromCharCode(message[0]) + String.fromCharCode(message[1]) +
                             String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
-                console.log(watchID);
-                self.send("watchID", watchID);
 
-                console.log(String.fromCharCode(message[4]));
+                if (debug) {
+                    console.log(watchID);
+                    console.log(String.fromCharCode(message[4]));
+                }
+
                 for(var i = 0; i < (message.length - 5)/20; i++) {
                     var accelerometerX = trans(message[5 + i * 20 + 1], message[5 + i * 20]) / 10000.0;
                     var accelerometerY = trans(message[5 + i * 20 + 3], message[5 + i * 20] + 2) / 10000.0;
@@ -124,28 +122,19 @@ exports.closeAndOpen = function () {
                     var ppg = (message[5 + i * 20 + 12] | (message[5 + i * 20 + 13] << 8) | (message[5 + i * 20 + 14] << 16));
                     var heartRate = message[5 + i * 20 + 15]; 
                     var timestamp = ((message[5 + i * 20 + 16] | (message[5 + i * 20 + 17] << 8) | (message[5 + i * 20 + 18] << 18) | (message[5 + i * 20 + 19] << 24)) >>> 0); // Use >>> 0 to convert to unsigned.
-                    console.log(accelerometerX + " " +
-                                accelerometerY + " " +
-                                accelerometerZ + " " +
-                                gyroscopeX + " " +
-                                gyroscopeY + " " +
-                                gyroscopeZ + " " +                                
-                                ppg + " " +
-                                heartRate + " " +
-                                timestamp);
-
-
-                    self.send('accelerometerX', accelerometerX);
-                    self.send('accelerometerY', accelerometerY);
-                    self.send('accelerometerZ', accelerometerZ);
-
-                    self.send('gyroscopeX', gyroscopeX);
-                    self.send('gyroscopeY', gyroscopeY);
-                    self.send('gyroscopeZ', gyroscopeZ);
-
-                    self.send('ppg', ppg)
-                    self.send('heartRate', heartRate);
-                    self.send('timestamp', timestamp);
+                    if (debug) {
+                        console.log(accelerometerX + " " +
+                                    accelerometerY + " " +
+                                    accelerometerZ + " " +
+                                    gyroscopeX + " " +
+                                    gyroscopeY + " " +
+                                    gyroscopeZ + " " +                                
+                                    ppg + " " +
+                                    heartRate + " " +
+                                    timestamp);
+                    }
+                    var json = JSON.stringify({watchID: watchID, accelerometerX: accelerometerX, accelerometerY: accelerometerY, accelerometerZ: accelerometerZ, gyroscopeX: gyroscopeX, gyroscopeY: gyroscopeY, gyroscopeZ: gyroscopeZ, ppg: ppg, heartRate: heartRate, timestamp: timestamp})
+                    self.send("data", json)
                 }
             } else if (message.toString("utf-8", 4, 5) === "g") {
                 console.log(message.toString("utf-8", 0, 4));
