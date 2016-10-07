@@ -25,6 +25,8 @@
  *  
  * See https://github.com/Zziwei/GestureUDP for software for the watch.
  *
+ * See https://github.com/terraswarm/PackageSendTest for sample JavaScript drivers.
+ *
  * @accessor devices/Moto360GestureListener
  * @output {string} message The received message.
  * @output {boolean} listening True to indicate that listening has begun, false to
@@ -86,6 +88,33 @@ function trans(a, b) {
     return c;
 }
 
+// Convert timestamp to time string.
+function timestamp2string(time_stamp) {
+    try {
+        // Python time is in seconds.  JavaScript milliseconds.
+        //d = datetime.fromtimestamp(time_stamp / 1000.0);
+        time_stamp = Math.round(time_stamp * 1000);
+        var d = new Date(time_stamp);
+        //str1 = d.strftime("%Y-%m-%d %H:%M:%S.%f");
+        var str1 = d.toISOString();
+        //console.log("timestamp2string(" + time_stamp + ")" + d + " " + Date.now());
+        
+        // Python: 2015-08-28 16:43:37.283000
+        // JavaScript: 2016-10-05T03:21:09.617Z 
+        return str1;
+    } catch (e) {
+        console.log(e);
+        return '';
+    }
+}
+
+// Convert the 8 bytes timestamp to float.
+function bytes2float(byte_array) {
+    var value = (byte_array[0] & 0xff) | ((byte_array[1] << 8) & 0xff00) | ((byte_array[2] << 16) & 0xff0000) | ((byte_array[3] << 24) & 0xff000000);
+    value += ((((byte_array[4]) & 0xff) | ((byte_array[5] << 8) & 0xff00)) / 1000);
+    return value;
+}
+
 var debug = false;
 
 exports.closeAndOpen = function () {
@@ -113,15 +142,15 @@ exports.closeAndOpen = function () {
                 }
 
                 for(var i = 0; i < (message.length - 5)/20; i++) {
-                    var accelerometerX = trans(message[5 + i * 20 + 1], message[5 + i * 20]) / 10000.0;
-                    var accelerometerY = trans(message[5 + i * 20 + 3], message[5 + i * 20] + 2) / 10000.0;
-                    var accelerometerZ = trans(message[5 + i * 20 + 5], message[5 + i * 20] + 4) / 10000.0;
-                    var gyroscopeX = trans(message[5 + i * 20 + 7], message[5 + i * 20] + 6) / 10000.0;
-                    var gyroscopeY = trans(message[5 + i * 20 + 9], message[5 + i * 20] + 8) / 10000.0;
-                    var gyroscopeZ = trans(message[5 + i * 20 + 11], message[5 + i * 20] + 10) / 10000.0;
-                    var ppg = (message[5 + i * 20 + 12] | (message[5 + i * 20 + 13] << 8) | (message[5 + i * 20 + 14] << 16));
-                    var heartRate = message[5 + i * 20 + 15]; 
-                    var timestamp = ((message[5 + i * 20 + 16] | (message[5 + i * 20 + 17] << 8) | (message[5 + i * 20 + 18] << 18) | (message[5 + i * 20 + 19] << 24)) >>> 0); // Use >>> 0 to convert to unsigned.
+                    var accelerometerX = trans(message[5 + i * 22 + 1], message[5 + i * 22]) / 10000.0;
+                    var accelerometerY = trans(message[5 + i * 22 + 3], message[5 + i * 22] + 2) / 10000.0;
+                    var accelerometerZ = trans(message[5 + i * 22 + 5], message[5 + i * 22] + 4) / 10000.0;
+                    var gyroscopeX = trans(message[5 + i * 22 + 7], message[5 + i * 22] + 6) / 10000.0;
+                    var gyroscopeY = trans(message[5 + i * 22 + 9], message[5 + i * 22] + 8) / 10000.0;
+                    var gyroscopeZ = trans(message[5 + i * 22 + 11], message[5 + i * 22] + 10) / 10000.0;
+                    var ppg = (message[5 + i * 22 + 12] | (message[5 + i * 22 + 13] << 8) | (message[5 + i * 22 + 14] << 16));
+                    var heartRate = message[5 + i * 22 + 15]; 
+                    var timestamp = timestamp2string(bytes2float(message.slice(5 + i * 22 + 16, 5 + i * 22 + 22 + 1)));
                     if (debug) {
                         console.log(accelerometerX + " " +
                                     accelerometerY + " " +
