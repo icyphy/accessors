@@ -45,9 +45,29 @@ exports.setup = function() {
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
+    // Start: TestSpontaneousOnce3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestSpontaneousOnce3 = this.instantiate('TestSpontaneousOnce3', 'test/TestSpontaneousOnce.js');
+    TestSpontaneousOnce3.setParameter('interval', 1000.0);
+
+    // Start: REST3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var REST3 = this.instantiate('REST3', 'net/REST.js');
+    REST3.setDefault('options', {"url" : "http://echo.jsontest.com/key/value/one/two"});
+    REST3.setDefault('command', "");
+    REST3.setDefault('arguments', "");
+    REST3.setParameter('timeout', 5000);
+    REST3.setParameter('outputCompleteResponseOnly', true);
+
+    // Start: TrainableTest3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TrainableTest3 = this.instantiate('TrainableTest3', 'test/TrainableTest.js');
+    TrainableTest3.setParameter('correctValues', ["{\n   \"one\": \"two\",\n   \"key\": \"value\"\n}\n"]);
+    TrainableTest3.setParameter('trainingMode', false);
+    TrainableTest3.setParameter('tolerance', 1.0E-9);
+
     // Connections: TestRESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', REST, 'trigger');
     this.connect(REST, 'response', TrainableTest, 'input');
     this.connect(TestSpontaneousOnce2, 'output', REST2, 'trigger');
     this.connect(REST2, 'response', TrainableTest2, 'input');
+    this.connect(TestSpontaneousOnce3, 'output', REST3, 'trigger');
+    this.connect(REST3, 'response', TrainableTest3, 'input');
 }
