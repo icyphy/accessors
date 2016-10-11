@@ -34,6 +34,10 @@
  *  
  *  Logging on: This script attempts to access the bridge as a user with
  *  name given by <i>userName</i>, which defaults to "ptolemyuser". 
+ *  
+ *  FIXME: It is no longer possible to register a user this way.
+ *  Instead, we should query the bulb and get the user name.
+ *
  *  If there is no such user on the bridge, the script registers such a user and
  *  requests (via an alert dialog) that the link button on the bridge be pushed 
  *  to authorize registration of this user.
@@ -58,16 +62,12 @@
  *  accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
  *  
  *  @accessor devices/Hue
+ *  @input {JSON} commands JSON commands for the Hue, for example, {"id" : 1, "on" : on, "hue" : hue}
  *  @input {string} bridgeIP The bridge IP address (and port, if needed).
  *  @parameter {string} userName The user name for logging on to the Hue Bridge.
  *   This must be at least 11 characters, or the Hue regards it as invalid.
- *  @input {int} lightID The light identifier (an integer beginning with 1).
- *  @input {number} brightness The brightness (an integer between 0 and 255).
- *  @input {number} hue The hue (an integer between 0 and 62580).
- *  @input {number} saturation The saturation (an integer between 0 and 255).
- *  @output {boolean} on Whether the light is on (true) or off (false).
- *  @input {int} transitionTime The transition time, in multiples of 100ms.
- *  @input {int} trigger Triggers a PUT request with all the light settings. Can be any type.
+ *   To get the username, see <a href="http://www.developers.meethue.com/documentation/getting-started#in_browser">http://www.developers.meethue.com/documentation/getting-started</a>
+ *  (free Hue developer membership required)
  *  @author Edward A. Lee, Marcus Pan, Elizabeth Osyk, Marten Lohstroh
  *  @version $$Id$$ 
  */
@@ -341,6 +341,8 @@ function Hue() {
      */
     function registerUser() {
 
+        // FIXME: It is no longer possible to register a user this way.
+        // Instead, we should query the bulb and get the user name.
 	var registerData = {
 	    devicetype : userName,
 	    username : userName
