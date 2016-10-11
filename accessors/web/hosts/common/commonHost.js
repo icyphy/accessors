@@ -1372,6 +1372,16 @@ Accessor.prototype.react = function(name) {
 			// if TrainableTest.wrapup() throws an Error because
 			// the input does not match the training data, then we 
 			// don't ignore the error in commonHost.error().
+
+                        // FIXME: If the exception was thrown because
+                        // of Java, we should get the Java stacktrace.
+                        //console.log("commonHost: inputHandler problem");
+                        //console.log(exception.printStackTrace());
+  
+                        // FIXME: We should probably subclass Error
+                        // and have a version that takes an exception
+                        // as an argument and reads the value of
+                        // exception.stack.
                         throw new Error('commonHost.js, react(), invoking a specific handler for \"' +
                                    name + '\": Exception occurred in input handler,' +
                                    ' which has now has been removed.  Exception was: ' +
@@ -1416,7 +1426,8 @@ Accessor.prototype.react = function(name) {
                             thiz.anyInputHandlers[j].handle);
                     thiz.error('commonHost.js, react() invoking handlers registered to handle any input: Exception occurred in input handler,' +
                                ' which has now has been removed.  Exception was: ' +
-                               exception);
+                               exception +
+                               ' Stacktrace was: ' + exception.stack);
                 }
             }
         }
