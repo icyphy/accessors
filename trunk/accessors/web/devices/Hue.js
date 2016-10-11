@@ -103,6 +103,7 @@ function Hue() {
     hue.lights = {};
 
     // Private variables.
+    var debug = true;
     var handleRegisterUser;
     var ipAddress = "";
     var maxRetries = 5;
@@ -146,7 +147,9 @@ function Hue() {
     /** Get light settings from input and issue a command to the bridge. */	
     hue.issueCommand = function() {
     	var commands = self.get('commands');
-	//console.log("Issuing command.");
+        if (debug) {
+	    console.log("Hue.js: issueCommand():");
+        }
 
 	// (Re)connect with the bridge
     	if (ipAddress !== self.getParameter('bridgeIP') || userName !== self.getParameter('userName')) {
@@ -160,9 +163,10 @@ function Hue() {
     	    return;
     	}
     	
-    	// FIXME: Type check input
-	//console.log(JSON.stringify(commands));
-
+        if (debug) {
+    	    // FIXME: Type check input
+	    console.log("Hue.js: issueCommand() commands: " + console.log(JSON.stringify(commands)));
+        }
 	// FIXME: If only one record, also accept input!!!
 
     	// Iterate over commands (assuming input is an array of commands)
@@ -203,15 +207,21 @@ function Hue() {
     		self.error("Invalid command (" + i + "): please specify at least one property.");
     	    }
     	    else {
-    		//console.log("Command: " + JSON.stringify(command));
+                if (debug) {
+	            console.log("Hue.js: issueCommand() command: " + JSON.stringify(command));
+                }
     		var options = {
 	    	    body : JSON.stringify(command),
 	    	    timeout : 10000,
 	    	    url : url + "/" + userName + "/lights/" + lightID + "/state/"
 	    	};
-	    	//console.log("PUT request:" + JSON.stringify(options));
+                if (debug) {
+	            console.log("Hue.js: issueCommand(): PUT request: options: " + JSON.stringify(options));
+                }
 	    	http.put(options, function(response) {
-	    	    //console.log(JSON.stringify(response));
+                    if (debug) {
+	    	        console.log("Hue.js: issueCommand(): response: " + JSON.stringify(response));
+                    }
 	            if (isNonEmptyArray(response) && response[0].error) {
 	            	self.error("Server responds with error: " + 
 	            		   response[0].error.description);
@@ -343,7 +353,9 @@ function Hue() {
 	
 	http.post(options, function(response) {
 	    var rsp = JSON.parse(response.body);
-	    //console.log("Response " + JSON.stringify(response));
+            if (debug) {
+	        console.log("Hue.js registerUser(): Response " + JSON.stringify(response));
+            }
 	    if (isNonEmptyArray(rsp) && rsp[0].error) {
 	        
 	        var description = rsp[0].error.description;
@@ -368,7 +380,9 @@ function Hue() {
 		// contact the bridge and find the available lights
 		contactBridge();
 	    } else {
-	        //console.log("Response " + JSON.stringify(response));
+                if (debug) {
+	            console.log("Hue.js registerUser(): Response2 " + JSON.stringify(response));
+                }
 	        console.log(JSON.stringify(JSON.parse(response.body)[0].success));
 	        throw "Unknown error registering new user";
 	    }
@@ -432,7 +446,9 @@ exports.wrapup = function() {
         var self = this;
         
         http.put(options, function(response) {
-            //console.log(JSON.stringify(response));
+            if (debug) {
+	        console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
+            }
             if (isNonEmptyArray(response) && response[0].error) {
                 var lightID = self.get('lightID').toString();
                 errorLights.push(lightID);
