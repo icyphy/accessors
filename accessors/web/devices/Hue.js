@@ -219,9 +219,12 @@ function Hue() {
 	            console.log("Hue.js: issueCommand(): PUT request: options: " + JSON.stringify(options));
                 }
 	    	http.put(options, function(response) {
-                    if (debug) {
-	    	        console.log("Hue.js: issueCommand(): response: " + JSON.stringify(response));
-                    }
+
+                if (debug) {
+	    	        console.log("Hue.js: issueCommand(): response status: " + response.statusMessage);
+	    	        console.log("Hue.js: issueCommand(): response body: " + JSON.stringify(response.body));
+                }
+                    
 	            if (isNonEmptyArray(response) && response[0].error) {
 	            	self.error("Server responds with error: " + 
 	            		   response[0].error.description);
@@ -259,7 +262,6 @@ function Hue() {
      * needed.
      */
     function contactBridge() {
-	authenticated = false;
 	console.log("Attempting to connecting to: " + url + "/" + userName + "/lights/");
         var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
             if (response !== null) {
@@ -340,21 +342,20 @@ function Hue() {
      *  the button on the Hue bridge.
      */
     function registerUser() {
-
-        // FIXME: It is no longer possible to register a user this way.
-        // Instead, we should query the bulb and get the user name.
+    
+    // Should be of the format {"devicetype":"my_hue_app#iphone peter"}
+    // http://www.developers.meethue.com/documentation/getting-started
 	var registerData = {
-	    devicetype : userName,
-	    username : userName
+	    devicetype : "hue_accessor#" + userName,
 	};
 	var options = {
 	    body : JSON.stringify(registerData),
 	    timeout: 10000,
 	    url : url
 	};
-	
 	http.post(options, function(response) {
 	    var rsp = JSON.parse(response.body);
+	    console.log(rsp);
             if (debug) {
 	        console.log("Hue.js registerUser(): Response " + JSON.stringify(response));
             }
@@ -376,6 +377,12 @@ function Hue() {
 	            throw description;
 	        }
 	    } else if ((isNonEmptyArray(rsp) && rsp[0].success)) {
+	    	authorized = true;
+	    	
+	    	// TODO:  The hue will return a username.  Save it.
+	    	// Set the parameter in the accessor?
+	    	// Send to output port?
+	    	//  [ { success: { username: 'l3dMdgmM7EX9rIILdMXSwzWKAbOSZFzVN-1b0lgS' } } ]
 	        if (handleRegisterUser !== null) {
 	            clearTimeout(handleRegisterUser);
 	        }
@@ -410,8 +417,9 @@ exports.setup = function() {
         value: "ptolemyuser"
     });
     this.parameter('onWrapup', {
-        'value' : "turn off",
-        'options' : ["turn off", "restore"]
+        value : "turn off",
+        type: "string",
+        options : ["none", "restore", "turn off"]
     });
     
     // Call the Hue function binding "this", to create local state variables 
@@ -422,43 +430,63 @@ exports.setup = function() {
     this.hue = Hue.call(this);
 };
 
-/** Upon receipt of a bridge IP address, contact the bridge to check if it is
+/** Add an input handler to react to commands.  
+ *  If a bridge IP address has been given, contact the bridge to check if it is
  *  present.  Next, register the user if not already registered.  
  */
 
 exports.initialize = function() {
+	this.authenticated = false;
     this.addInputHandler('commands', this.hue.issueCommand);
+    
+    if (this.getParameter('bridgeIP') !== null && 
+    		this.getParameter('bridgeIP') !== "") {
+    			this.hue.connect();
+    }
+    /*
+     * 	// Check to see if a default input value for bridgeIPAddress is present.
+	// If so, 'send' this to the bridgeIPAddress input to trigger handler.
+	// This way, models that use a static IP address do not need to add extra
+	// actors to send the bridgeIPAddress.
+	if (this.get('bridgeIPAddress') != null && this.get('bridgeIPAddress') != "") {
+		send('bridgeIPAddress', this.get('bridgeIPAddress'));
+	} 
+     */
 };
 
 /** Turn off changed lights on wrapup. */
+// TODO:  Test restore feature?
 exports.wrapup = function() {
     var errorLights = [];
     var cmd = JSON.stringify({on:false});
     var options = { };
     
-    for (var i = 0; i < this.hue.changedLights.length; i++) {
-        options = {
-            body : cmd,
-            timeout : 10000, 
-            url : "http://" + this.get("bridgeIP") + "/api/" + 
-            	this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
-            	"/state/"
-        };
-        
-        var self = this;
-        
-        http.put(options, function(response) {
-            if (debug) {
-	        console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
-            }
-            if (isNonEmptyArray(response) && response[0].error) {
-                var lightID = self.get('lightID').toString();
-                errorLights.push(lightID);
-            }
-        });
-    }
-
-    if (errorLights.length !== 0) {
-        error("Error turning off lights " + errorLights.toString());
+    var action = this.getParameter('onWrapup');
+    if (action !== "none") {
+	    for (var i = 0; i < this.hue.changedLights.length; i++) {
+	        options = {
+	            body : cmd,
+	            timeout : 10000, 
+	            url : "http://" + this.get("bridgeIP") + "/api/" + 
+	            	this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
+	            	"/state/"
+	        };
+	        
+	        var self = this;
+	        
+	        http.put(options, function(response) {
+	            if (debug) {
+	        		console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
+            	}
+	            if (isNonEmptyArray(response) && response[0].error) {
+	                var lightID = self.get('lightID').toString();
+	                errorLights.push(lightID);
+	            }
+	        });
+	    }
+	
+	    if (errorLights.length !== 0) {
+	        error("Error turning off lights " + errorLights.toString());
+	    }
     }
 };
