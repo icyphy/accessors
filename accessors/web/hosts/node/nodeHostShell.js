@@ -96,6 +96,9 @@ startHost = function() {
             console.log('exit');
             interactiveHostRunning = false;
             rl.close();
+            // Invoke process.exit() so that exitHandler() in
+            // nodeHost.js gets invoked and calls wrapup.
+            process.exit();
             return;
         }
         if (command.match(/^\s*help\s*$/i)) {
