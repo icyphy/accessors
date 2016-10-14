@@ -20,35 +20,47 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-//  FIXME: Revise this documentation!
+//  FIXME: Allow an IP address to be dynamically provided.
 /** This accessor controls a Philips Hue lightbulb.
  *  
- *  It sets the parameters of the specified light according to the input values.
- *
- *  IP Address input:  Hue checks the value of the "bridgeIP" input in 
+ *  Initialization:  Hue checks for a value of the "bridgeIP" input in 
  *  initialize().  If a default value is present, Hue initiates a connection to 
- *  the bridge.  Otherwise, Hue waits for an IP address input to arrive.  
- *  Note that no commands can be sent until after an IP address has been given.  
- *  The "trigger" input is not enabled until after the Hue has connected to the
- *  bridge and verified that the user is authorized.
+ *  the bridge.  
+ *  FIXME:  Allow an IP address to be dynamically provided.
+ *  Otherwise, Hue waits for an IP address to be supplied as part
+ *  of a command.  Commands are ignored until an IP address is supplied.  If the
+ *  accessor fails to reach the bridge, it will retry a few times, then give up.
  *  
- *  Logging on: This script attempts to access the bridge as a user with
- *  name given by <i>userName</i>, which defaults to "ptolemyuser". 
+ *  User registration:
+ *  The Hue bridge automatically generates usernames.  If you have already 
+ *  generated a username, enter the value in the "userName" parameter.  
+ *  Otherwise, the accessor contacts the bridge to obtain a username, which is 
+ *  output on the "assignedUserName" port.  An alert dialog will pop up 
+ *  instructing the user to push the link button on the bridge.  Then, the 
+ *  bridge will respond to the accessor with a new username.  
+ *  This username will be remembered while the swarmlet is active; however, 
+ *  there is no persistent storage yet.  Please copy the assigned username to 
+ *  the "userName" parameter and save the accessor code. 
  *  
- *  FIXME: It is no longer possible to register a user this way.
- *  Instead, we should query the bulb and get the user name.
- *
- *  If there is no such user on the bridge, the script registers such a user and
- *  requests (via an alert dialog) that the link button on the bridge be pushed 
- *  to authorize registration of this user.
- *  The user is given 20s to do this before an exception is thrown
- *  If it fails to reach the bridge, it will try again a few times before giving up.
+ *  Bridge state: The final initialization step is to get a list of accessible 
+ *  lights.  
  *  
- *  Verifying the light: The final initialization step is to get a list of accessible lights.
- *  If the input light is not accessible, this accessor warns but does not error.
- *  Sometimes Hue lights are transient (get unplugged, become temporarily disconnected)
- *  and may be valid in the future. Rather than terminating the model, we hope
- *  that the lights come back.
+ *  Commands: A command is an object that may contain the following fields.  
+ *  The "command" port accepts an array of commands.
+ *  id (required):  The id of the light to manipulate. 
+ *  on: true to turn on; false to turn off.
+ *  bri: Brightness.  0-255.
+ *  hue: Hue (for bulbs that support color).  0-65280.
+ *  sat: Saturation (for bulbs that support color). 0-255.
+ *  transitiontime:  The delay before the bulb responds to the command.  In ms.
+ *  
+ *  Please see Hue docs for mapping colors to hue/saturation values:
+ *  http://www.developers.meethue.com/documentation/core-concepts
+ *  
+ *  If a light is not accessible, this accessor warns but does not error.
+ *  Sometimes Hue lights are transient (get unplugged, become temporarily 
+ *  disconnected) and may be valid in the future. Rather than terminating the 
+ *  model, we hope that the lights come back.
  *  
  *  Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
  *  The bridge acquires its address via DHCP, so the address will typically change
@@ -56,18 +68,15 @@
  *  accessible except on the local network.  The bridge responds to UPnP packets
  *  (universal plug-and-play), so it is possible to use software such as
  *  <a href="http://4thline.org/projects/cling/">Cling</a> to discover the bridge.
- *  Ideally, UPnP discover would be provided via an accessor. In this case, a
- *  swarmlet could be created that runs periodically on a local network and publishes
- *  the URL of any discovered bridges to a key-value store. Then the KeyValueStore
- *  accessor could be used to provide the <i>bridgeIPAdress</i> input to this accessor.
+ *  Another option is to use the Discovery accessor and look for a device named
+ *  philips-hue (or the name assigned to your bridge if assigned manually).
  *  
  *  @accessor devices/Hue
- *  @input {JSON} commands JSON commands for the Hue, for example, {"id" : 1, "on" : on, "hue" : hue}
+ *  @input {JSON} commands JSON commands for the Hue, for example, {"id" : 1, "on" : true, "hue" : 120}
  *  @input {string} bridgeIP The bridge IP address (and port, if needed).
- *  @parameter {string} userName The user name for logging on to the Hue Bridge.
+ *  @parameter {string} userName The username for logging on to the Hue Bridge.
  *   This must be at least 11 characters, or the Hue regards it as invalid.
- *   To get the username, see <a href="http://www.developers.meethue.com/documentation/getting-started#in_browser">http://www.developers.meethue.com/documentation/getting-started</a>
- *  (free Hue developer membership required)
+     A username will be automatically generated if none is available.
  *  @author Edward A. Lee, Marcus Pan, Elizabeth Osyk, Marten Lohstroh
  *  @version $$Id$$ 
  */
@@ -82,7 +91,6 @@ var http = require('httpClient');
 
 /** Define a Hue function using a variant of the Module pattern.  The function
  *  returns a hue object which offers a public connect() function.  
- *  The intiialize() function should call Hue() and save the returned hue object.
  *  This will create an object with its own local state, allowing multiple 
  *  Hue accessors to run concurrently without interfering with each other on
  *  hosts with a shared Javascript engine (such as the browser host).
@@ -91,6 +99,18 @@ var http = require('httpClient');
  *  <ul>
  *  <li> connect(): Contact the bridge and register the user, if needed.  Add an
  *        input handler to the trigger input to submit commands to the bridge.
+ *  </li>
+ *  <li> issueCommand():  Issue a command to the bridge.  A command is an object 
+ *  that may contain the following fields.  
+ *  For example, {"id" : 1, "on" : true, "hue" : 120}
+ *  
+ *  id (required):  The id of the light to manipulate. 
+ *  on: true to turn on; false to turn off.
+ *  bri: Brightness.  0-255.
+ *  hue: Hue (for bulbs that support color).  0-65280.
+ *  sat: Saturation (for bulbs that support color). 0-255.
+ *  transitiontime:  The delay before the bulb responds to the command.  In ms.
+ *  </li>
  *  </ul>
  * 
  */
@@ -103,19 +123,19 @@ function Hue() {
     hue.lights = {};
 
     // Private variables.
+    var authenticated = false;
     var debug = true;
     var handleRegisterUser;
     var ipAddress = "";
+    var maxRegisterAttempts = 3;
     var maxRetries = 5;
-    var registerInterval = 2000;
-    var registerTimeout = 20000;
+    var registerInterval = 10000;
     var registerAttempts = 0;
     var retryCount = 0;
     var retryTimeout = 1000;
     var timeout = 3000;
     var url = "";
-    var userName = "";
-    var authenticated = false;
+    var userName = ""; 
     
     // Use self in contained functions so the caller does not have to bind "this"
     // on each function call.
@@ -144,7 +164,8 @@ function Hue() {
         contactBridge();
     };
     
-    /** Get light settings from input and issue a command to the bridge. */	
+    /** Issue a command to the bridge.  Commands are ignored if not yet
+     * authenticated. */	
     hue.issueCommand = function() {
     	var commands = self.get('commands');
         if (debug) {
@@ -152,11 +173,14 @@ function Hue() {
         }
 
 	// (Re)connect with the bridge
-    	if (ipAddress !== self.getParameter('bridgeIP') || userName !== self.getParameter('userName')) {
+    	if (ipAddress !== self.getParameter('bridgeIP') || 
+    			userName !== self.getParameter('userName')) {
     	    console.log("New bridge parameters detected.");
     	    hue.connect();
     	}
 
+    	// FIXME:  If not yet connected, wait a bit for connection instead of 
+    	// just discarding the command.
     	// No connection to the bridge, ignore request.
     	if (!authenticated) {
    	    console.log("Not authenticated, ignoring command.");
@@ -335,67 +359,68 @@ function Hue() {
 	}
     }
     
-    /** Register a new user.
-     *  This function repeats at registerInterval until registration is
-     *  successful, or until registerTimeout.
-     *  It does so because it needs to wait until the user clicks
-     *  the button on the Hue bridge.
+    /** Register a new user.  
+     *  This function repeats at registerInterval until successful or until
+     *  maxRegisterAttempts.  Some wait time is given between attempts for the 
+     *  user to click the button on the Hue bridge.
      */
     function registerUser() {
     
-    // Should be of the format {"devicetype":"my_hue_app#iphone peter"}
-    // http://www.developers.meethue.com/documentation/getting-started
-	var registerData = {
-	    devicetype : "hue_accessor#" + userName,
-	};
-	var options = {
-	    body : JSON.stringify(registerData),
-	    timeout: 10000,
-	    url : url
-	};
-	http.post(options, function(response) {
-	    var rsp = JSON.parse(response.body);
-	    console.log(rsp);
-            if (debug) {
-	        console.log("Hue.js registerUser(): Response " + JSON.stringify(response));
-            }
-	    if (isNonEmptyArray(rsp) && rsp[0].error) {
-	        
-	        var description = rsp[0].error.description;
-
-	        if (description.match("link button not pressed")) {
-	            //repeat registration attempt unless registerTimeout has been reached.
-	            console.log("Please push the link button on the Hue bridge.");
-	            registerAttempts++;
-	            if ((registerAttempts * registerInterval) > registerTimeout) {
-	                throw "Failed to create user after " + registerTimeout/1000 +
-	                    "s.";
-	            }
-	            handleRegisterUser = setTimeout(registerUser, registerInterval);
-	            return;
-	        } else {
-	            throw description;
+	    // Should be of the format {"devicetype":"my_hue_app#iphone peter"}
+	    // http://www.developers.meethue.com/documentation/getting-started
+	    // (free registration required).
+		var registerData = {
+		    devicetype : "hue_accessor#" + userName,
+		};
+		var options = {
+		    body : JSON.stringify(registerData),
+		    timeout: 10000,
+		    url : url
+		};
+		http.post(options, function(response) {
+		    var rsp = JSON.parse(response.body);
+	        if (debug) {
+		        console.log("Hue.js registerUser(): Response " + JSON.stringify(rsp));
 	        }
-	    } else if ((isNonEmptyArray(rsp) && rsp[0].success)) {
-	    	authorized = true;
-	    	
-	    	// TODO:  The hue will return a username.  Save it.
-	    	// Set the parameter in the accessor?
-	    	// Send to output port?
-	    	//  [ { success: { username: 'l3dMdgmM7EX9rIILdMXSwzWKAbOSZFzVN-1b0lgS' } } ]
-	        if (handleRegisterUser !== null) {
-	            clearTimeout(handleRegisterUser);
-	        }
-		// contact the bridge and find the available lights
-		contactBridge();
-	    } else {
-                if (debug) {
-	            console.log("Hue.js registerUser(): Response2 " + JSON.stringify(response));
-                }
-	        console.log(JSON.stringify(JSON.parse(response.body)[0].success));
-	        throw "Unknown error registering new user";
-	    }
-	});
+		    if (isNonEmptyArray(rsp) && rsp[0].error) {
+		        
+		        var description = rsp[0].error.description;
+	
+		        if (description.match("link button not pressed")) {
+		            // Retry registration for the given number of attempts.
+		            console.log("Please push the link button on the Hue bridge.");
+		            registerAttempts++;
+		            
+		            if (registerAttempts < maxRegisterAttempts){
+		            	handleRegisterUser = setTimeout(registerUser, registerInterval);
+		            } else {
+		                throw "Failed to create user after " + registerAttempts +
+	                    " attempt(s).";
+		            }
+		            return;
+		        } else {
+		            throw description;
+		        }
+		    } else if ((isNonEmptyArray(rsp) && rsp[0].success)) {
+		    	authenticated = true;
+		    	
+		    	// The bridge will return a username.  Save it.
+		    	userName = rsp[0].success.username;
+		    	self.setParameter('userName', userName);
+		    	self.send('assignedUserName', userName);
+		        if (handleRegisterUser !== null) {
+		            clearTimeout(handleRegisterUser);
+		        }
+			// contact the bridge and find the available lights
+			contactBridge();
+		    } else {
+	                if (debug) {
+		            console.log("Hue.js registerUser(): Response2 " + JSON.stringify(response));
+	                }
+		        console.log(JSON.stringify(JSON.parse(response.body)[0].success));
+		        throw "Unknown error registering new user";
+		    }
+		});
     }
     
     return hue;
@@ -421,6 +446,9 @@ exports.setup = function() {
         type: "string",
         options : ["none", "restore", "turn off"]
     });
+    this.output('assignedUserName', {
+    	type: "string"
+    });
     
     // Call the Hue function binding "this", to create local state variables 
     // while providing access to accessor functions.  
@@ -437,21 +465,16 @@ exports.setup = function() {
 
 exports.initialize = function() {
 	this.authenticated = false;
+	
+	// FIXME:  Wait until autheticated to provide commands?  We need a way to 
+	// dynamically supply the IP address.  Recommend using a separate port.
     this.addInputHandler('commands', this.hue.issueCommand);
+    this.registerAttempts = 0;
     
     if (this.getParameter('bridgeIP') !== null && 
     		this.getParameter('bridgeIP') !== "") {
     			this.hue.connect();
     }
-    /*
-     * 	// Check to see if a default input value for bridgeIPAddress is present.
-	// If so, 'send' this to the bridgeIPAddress input to trigger handler.
-	// This way, models that use a static IP address do not need to add extra
-	// actors to send the bridgeIPAddress.
-	if (this.get('bridgeIPAddress') != null && this.get('bridgeIPAddress') != "") {
-		send('bridgeIPAddress', this.get('bridgeIPAddress'));
-	} 
-     */
 };
 
 /** Turn off changed lights on wrapup. */
