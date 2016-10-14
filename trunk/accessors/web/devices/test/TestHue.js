@@ -32,11 +32,15 @@ exports.setup = function() {
     var Hue = this.instantiate('Hue', 'devices/Hue.js');
     Hue.setDefault('commands', {});
     Hue.setParameter('bridgeIP', "192.168.254.15");
-    Hue.setParameter('userName', "S8y15EK-24ug2W3R56FxmrdchCs6-A86ubAIDDpn");
+    Hue.setParameter('userName', "testtesttest");
     Hue.setParameter('onWrapup', "none");
+
+    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
 
     // Connections: TestHue: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(Delay, 'output', Command, 'trigger');
     this.connect(TestSpontaneousOnce, 'output', Delay, 'input');
     this.connect(Command, 'output', Hue, 'commands');
+    this.connect(Hue, 'assignedUserName', TestDisplay, 'input');
 }
