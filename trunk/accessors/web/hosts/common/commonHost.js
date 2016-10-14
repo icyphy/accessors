@@ -440,9 +440,20 @@ function Accessor(
     } else {
         throw new Error('Host does not define required setTimeout function.');
     }
+    
+    if (bindings && bindings.alert) {
+        this.alert = bindings.alert;
+    } else if (typeof alert !== 'undefined') {
+        this.alert = alert;
+    } else if (typeof console.log !== 'undefined') {
+    	this.alert = console.log;
+    } else {
+        throw new Error('Host does not define required alert function.');
+    }
 
     var wrapper = new Function('\
-            error, \
+            alert, \
+    		error, \
             exports, \
             getResource, \
             httpRequest, \
@@ -452,6 +463,7 @@ function Accessor(
             setTimeout',
             code);
     wrapper.call(this,
+            this.alert,
             this.error,
             this.exports,
             this.getResource,
