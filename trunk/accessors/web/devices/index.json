@@ -2,6 +2,5 @@
     "AdsB.js",
     "Hue.js",
     "MockHueBridge.js",
-    "Moto360GestureListener.js",
     "Moto360SensorListener.js"
 ]
