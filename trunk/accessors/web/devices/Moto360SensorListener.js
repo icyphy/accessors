@@ -40,13 +40,14 @@
  *   indicate that it has stopped.
  * @output accelerometer The accelerometer data from the watch. This is an object
  *   with fields x, y, z representing measured acceleration (or the earth's gravitational
- *   field, which is indistinguishable from acceleration). The 'z' field points into
- *   the watch face, so it will be roughly +1.0 (one g) when the watch is facing up.
- *   The 'x' field is transverse to the watch, where +1.0 occurs roughly is 9 o'clock
- *   is pointing straight down. The 'y' axis is along band axis, where +1.0 will occur
+ *   field, which is indistinguishable from acceleration). These will be in SI units
+ *   of meters per second squared. The 'z' field points into
+ *   the watch face, so it will be roughly +9.8 (one g) when the watch is facing up.
+ *   The 'x' field is transverse to the watch, where +9.8 occurs roughly when 9 o'clock
+ *   is pointing straight down. The 'y' axis is along band axis, where +9.8 will occur
  *   roughly when the 12 o'clock is pointing straight up.
  * @output gyro The gyroscope data from the watch. This is an object
- *   with fields x, y, z representing measured angular rotation (in radians per second)
+ *   with fields x, y, z representing measured angular rotation (in radians per second).
  *   The 'z' field represents rotation around an axis pointing into the watch face.
  *   The 'x' field axis transverse to the watch, and the 'y' axis is along band axis.
  *   These are the same axes as for the accelerometer.
@@ -132,11 +133,16 @@ exports.initialize = function () {
 };
 
 // Convert the 2 bytes data to a integer.
-function trans(a, b) {
+// The first argument is the higher-order byte, and the second is the lower-order byte.
+// These are assumed to be non-negative numbers between 0 and 255.
+// If the result is greater than or equal to 2^15 = 32768, then the two bytes are
+// interpreted as a two's complement negative number and a negative integer is returned.
+// The returned result always lies between -32768 and 32767, inclusive.
+function bytesToInt(a, b) {
 	console.log('******** translating: ' + a + ', ' + b);
     var c = a * Math.pow(2, 8);
     c = c + b;
-    if (c > Math.pow(2, 15)) { 
+    if (c >= Math.pow(2, 15)) { 
         c = (Math.pow(2, 16) - c) * -1;
     }
     return c;
@@ -193,11 +199,13 @@ exports.closeAndOpen = function () {
             // Check for accelerometer data.
             if (message[4] == "a".charCodeAt(0)) {
             	// Received accelerometer data.
-            	// FIXME: 10000.0 is presumably a calibration parameter.
-            	// Document this.
-            	var x = trans(message[6], message[5]) / 10000.0;
-                var y = trans(message[8], message[7]) / 10000.0;
-                var z = trans(message[10], message[9]) / 10000.0;
+            	// To get SI units of m/s^2, the scaling factor needs to match
+            	// what is used in the watch application's SCALE_ACCELEROMETER
+            	// variable.
+            	var SCALE_ACCELEROMETER = 836;
+            	var x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
+                var y = bytesToInt(message[8], message[7]) / SCALE_ACCELEROMETER;
+                var z = bytesToInt(message[10], message[9]) / SCALE_ACCELEROMETER;
                 
                 // Compare current data against previous data.
                 var sensitivity = self.getParameter('accelerometerSensitivity');
@@ -225,11 +233,13 @@ exports.closeAndOpen = function () {
                 }
             } else if (message[4] == "g".charCodeAt(0)) {
             	// Received gyro data.
-            	// FIXME: 10000.0 is presumably a calibration parameter.
-            	// Document this.
-            	var x = trans(message[6], message[5]) / 10000.0;
-                var y = trans(message[8], message[7]) / 10000.0;
-                var z = trans(message[10], message[9]) / 10000.0;
+            	// To get units of radians per second, the scaling factor needs to match
+            	// what is used in the watch application's SCALE_GYRO
+            	// variable.
+            	var SCALE_GYRO = 5208;
+            	var x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
+                var y = bytesToInt(message[8], message[7]) / SCALE_GYRO;
+                var z = bytesToInt(message[10], message[9]) / SCALE_GYRO;
                 
                 // Compare current data against previous data.
                 var sensitivity = self.getParameter('gyroSensitivity');
