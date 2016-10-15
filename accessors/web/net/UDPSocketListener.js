@@ -49,7 +49,7 @@
  *  @author Hokeun Kim and Edward A. Lee, Contributor: Christopher Brooks
  *  @version $$Id$$
  *  
- *  @output {string} message The received message.
+ *  @output message The received message as a raw byte array.
  *  @output {boolean} listening True to indicate that listening has begun, false to
  *   indicate that it has stopped.
  *
