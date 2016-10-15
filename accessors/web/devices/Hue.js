@@ -307,7 +307,8 @@ function Hue() {
     		            	  "Push the link button on the Hue bridge to register.");
     		            //self.error(userName + " is not a registered user.\n" +
     		            //" Push the link button on the Hue bridge to register.");
-    		            handleRegisterUser = setTimeout(registerUser, registerInterval);
+    		            //handleRegisterUser = setTimeout(registerUser, registerInterval);
+    		            registerUser();
     		        } else {
     		            console.error('Error occurred when trying to get Hue light status.');
     		            self.error(description);
