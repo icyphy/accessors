@@ -191,7 +191,7 @@ exports.closeAndOpen = function () {
             var watchID = String.fromCharCode(message[0]) + String.fromCharCode(message[1]) +
             		String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
             // Get the timestamp.
-            var timestamp = timestamp2string(bytes2float(message.slice(21, 28)));
+            var timestamp = timestamp2string(bytes2float(message.slice(11, 17)));
             
             if (debug) {
                 console.log("Message received: " + message);
@@ -199,7 +199,7 @@ exports.closeAndOpen = function () {
                 console.log('Message type: ' + String.fromCharCode(message[4]));
             }
             // Check for accelerometer data.
-            if (message[4] == "a".charCodeAt(0)) {
+            if (message[4] == "A".charCodeAt(0)) {
             	// Received accelerometer data.
             	// To get SI units of m/s^2, the scaling factor needs to match
             	// what is used in the watch application's SCALE_ACCELEROMETER
@@ -233,7 +233,7 @@ exports.closeAndOpen = function () {
                     }
                     self.send("accelerometer", json);
                 }
-            } else if (message[4] == "g".charCodeAt(0)) {
+            } else if (message[4] == "G".charCodeAt(0)) {
             	// Received gyro data.
             	// To get units of radians per second, the scaling factor needs to match
             	// what is used in the watch application's SCALE_GYRO
