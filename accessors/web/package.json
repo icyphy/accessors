@@ -1,6 +1,6 @@
 {
   "name": "@terraswarm/accessors",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Actor-oriented proxies for IoT",
   "main": "hosts/node/nodeHost.js",
   "author": {
@@ -55,9 +55,24 @@
         }
     ],
   "files": [
-        "hosts/common",
-        "hosts/node",
-        "test"
+      "audio",
+      "audioIo",
+      "cameras",
+      "contextAware",
+      "devices",
+      "gdp",
+      "geodesy",
+      "image",
+      "localization",
+      "net",
+      "obsolete",
+      "robotics",
+      "services",
+      "signals",
+      "test",
+      "utilities",
+      "hosts/common",
+      "hosts/node"
     ],
   "homepage": "https://www.terraswarm.org/accessors/",
   "keywords": [
