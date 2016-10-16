@@ -83,7 +83,7 @@
 var UDPSocket = require('udpSocket');
 
 // FIXME: Use built in debug capability.
-var debug = true;
+var debug = false;
 
 // Initialize these to large numbers so that the first output always appears.
 // Accelerometer values.
@@ -139,7 +139,9 @@ exports.initialize = function () {
 // interpreted as a two's complement negative number and a negative integer is returned.
 // The returned result always lies between -32768 and 32767, inclusive.
 function bytesToInt(a, b) {
-	console.log('******** translating: ' + a + ', ' + b);
+    if (debug) {
+	    console.log('******** translating: ' + a + ', ' + b);
+	}
     var c = a * Math.pow(2, 8);
     c = c + b;
     if (c >= Math.pow(2, 15)) { 
@@ -266,7 +268,9 @@ exports.closeAndOpen = function () {
                     self.send("gyro", json);
                 }
             }
-            console.log("---------");
+            if (debug) {
+                console.log("---------");
+            }
         }
     });
 };
