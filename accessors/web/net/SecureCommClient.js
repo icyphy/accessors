@@ -27,7 +27,6 @@
  *  This accessor requires the 'iotAuth', and 'dataConverter' modules.
  *
  *  @accessor net/SecureCommClient
- *  TODO: populate inputs/outputs/parameters
  *
  *  @input serverHostPort The IP address or domain name of server. Defaults to 'localhost'.
  *  @input toSend The data to be sent over the socket.
