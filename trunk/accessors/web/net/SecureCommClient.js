@@ -29,6 +29,11 @@
  *  @accessor net/SecureCommClient
  *  TODO: populate inputs/outputs/parameters
  *
+ *  @input serverHostPort The IP address or domain name of server. Defaults to 'localhost'.
+ *  @input toSend The data to be sent over the socket.
+ *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
+ *  @output received The data received from the web socket server.
+ *
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
@@ -75,13 +80,11 @@ exports.setup = function() {
     // Spec for communication with Auth
     this.parameter('publicKeyCryptoSpec', {
         type: 'string',
-        options: iotAuth.publicKeyCryptoSpecs,
-        value: iotAuth.publicKeyCryptoSpecs[0]
+        options: iotAuth.publicKeyCryptoSpecs
     });
     this.parameter('distributionCryptoSpec', {
         type: 'string',
-        options: iotAuth.symmetricCryptoSpecs,
-        value: iotAuth.symmetricCryptoSpecs[0]
+        options: iotAuth.symmetricCryptoSpecs
     });
     this.parameter('numKeysPerRequest', {
         value: 1,
@@ -94,8 +97,7 @@ exports.setup = function() {
     });
     this.parameter('sessionCryptoSpec', {
         type: 'string',
-        options: iotAuth.symmetricCryptoSpecs,
-        value: iotAuth.symmetricCryptoSpecs[0]
+        options: iotAuth.symmetricCryptoSpecs
     });
     // Send/receive type
     this.parameter('receiveType', {
