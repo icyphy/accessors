@@ -501,27 +501,28 @@ exports.wrapup = function() {
     
     var action = this.getParameter('onWrapup');
     if (action !== "none") {
-        for (var i = 0; i < this.hue.changedLights.length; i++) {
-            options = {
-                body : cmd,
-                timeout : 10000, 
-                url : "http://" + this.get("bridgeIP") + "/api/" + 
-                    this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
-                    "/state/"
-            };
-            
-            var self = this;
-            
-            http.put(options, function(response) {
-                if (debug) {
-                    console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
-                }
-                if (hue.reportIfError(response)) {
-                    errorLights.push(lightID);
-                }
-            });
+        if (typeof this.hue.changedLights !== 'undefined') {
+            for (var i = 0; i < this.hue.changedLights.length; i++) {
+                options = {
+                    body : cmd,
+                    timeout : 10000, 
+                    url : "http://" + this.get("bridgeIP") + "/api/" + 
+                        this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
+                        "/state/"
+                };
+                
+                var self = this;
+                
+                http.put(options, function(response) {
+                    if (debug) {
+                        console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
+                    }
+                    if (hue.reportIfError(response)) {
+                        errorLights.push(lightID);
+                    }
+                });
+            }
         }
-    
         if (errorLights.length !== 0) {
             error("Error turning off lights " + errorLights.toString());
         }
