@@ -123,7 +123,7 @@ exports.initialize = function() {
     // initialize().
     // TODO:  Test with two accessors to make sure each has separate state.
     this.hue = Hue.call(this);
-    
+        
     // FIXME:  We need a way to dynamically supply the IP address.
     // Recommend using a separate port.
     this.addInputHandler('commands', this.hue.issueCommand);
@@ -165,9 +165,9 @@ function Hue() {
     var debug = true;
     var handleRegisterUser;
     var ipAddress = "";
-    var maxRegisterAttempts = 3;
+    var maxRegisterAttempts = 10;
     var maxRetries = 5;
-    var registerInterval = 10000;
+    var registerInterval = 5000;
     var registerAttempts = 0;
     var retryCount = 0;
     var retryTimeout = 1000;
@@ -175,6 +175,8 @@ function Hue() {
     var url = "";
     var userName = ""; 
     var pendingCommands = [];
+    var alerted = false;
+    var errorOccurred = false;
     
     // Use self in contained functions so the caller does not have to bind "this"
     // on each function call.
@@ -203,15 +205,18 @@ function Hue() {
     
     /** Issue a command to the bridge.  Commands are queued if not yet authenticated. */    
     hue.issueCommand = function() {
+        if (errorOccurred) {
+            return;
+        }
         var commands = self.get('commands');
         if (debug) {
-            console.log("Hue.js: issueCommand():");
+            console.log("Hue.js: issueCommand(): " + util.inspect(commands));
         }
 
         // (Re)connect with the bridge
         if (ipAddress !== self.getParameter('bridgeIP') || 
                     userName !== self.getParameter('userName')) {
-            console.log("New bridge parameters detected.");
+            console.log("New bridge parameters detected. Need to re-authenticate.");
             authenticated = false;
             hue.connect();
         }
@@ -229,12 +234,11 @@ function Hue() {
      *  with properties for the command, or an array of such objects.
      */
     hue.processCommands = function(commands) {
-        if (debug) {
-            // FIXME: Type check input
-            console.log("Hue.js: processCommands() commands: " + JSON.stringify(commands));
-        }
         if (typeof commands === 'string') {
             commands = JSON.parse(commands);
+        }
+        if (debug) {
+            console.log("Hue.js: processCommands() commands: " + util.inspect(commands));
         }
         // Accept both arrays and non-arrays.
         // The following concatenates the input with an empty array, ensuring the result
@@ -320,6 +324,7 @@ function Hue() {
         } else {
             self.error('Could not reach the Hue Bridge at ' + url +
                        ' after ' + retryCount + ' attempts.');
+            errorOccurred = true;
         }
     }
     
@@ -328,9 +333,13 @@ function Hue() {
     function contactBridge() {
         console.log("Attempting to connecting to: " + url + "/" + userName + "/lights/");
         var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
+            if (errorOccurred) {
+                // Fatal error has occurred. Ignore response.
+                return;
+            }
             if (response !== null) {
                 if (response.statusCode != 200) {
-                    // Response is other than OK.
+                    // Response is other than OK. Retry if not a fatal error.
                     bridgeRequestErrorHandler(response.statusMessage);
                 } else {
                     var lights = JSON.parse(response.body);
@@ -341,6 +350,8 @@ function Hue() {
             
                         if (description.match("unauthorized user")) {
                             // Add this user.
+                            // Prevent the alert from coming up more than once.
+                            alerted = true;
                             alert(userName + " is not a registered user.\n" +
                                   "Push the link button on the Hue bridge to register.");
                             // Oddly, the invalid userName, which has the right form,
@@ -354,6 +365,7 @@ function Hue() {
                         } else {
                             console.error('Error occurred when trying to get Hue light status:' + description);
                             self.error(description);
+                            errorOccurred = true;
                         }
                     } else if (lights) {
                         console.log("Authenticated!");
@@ -372,8 +384,9 @@ function Hue() {
                 }
             } else {
                 self.error("Unable to connect to bridge.");
+                errorOccurred = true;
             }
-        }).on('error', bridgeRequestErrorHandler);
+        });
     }
     
     /** Utility function to check that an object is a nonempty array.
@@ -437,7 +450,8 @@ function Hue() {
                 
                 var description = rsp[0].error.description;
     
-                if (description.match("link button not pressed")) {
+                if (description.match("link button not pressed")
+                        || description.match("invalid value")) {
                     // Retry registration for the given number of attempts.
                     console.log("Please push the link button on the Hue bridge.");
                     registerAttempts++;
@@ -445,11 +459,13 @@ function Hue() {
                     if (registerAttempts < maxRegisterAttempts){
                         handleRegisterUser = setTimeout(registerUser, registerInterval);
                     } else {
+                        errorOccurred = true;
                         throw "Failed to create user after " + registerAttempts +
                                 " attempt(s).";
                     }
                     return;
                 } else {
+                    errorOccurred = true;
                     throw description;
                 }
             } else if ((isNonEmptyArray(rsp) && rsp[0].success)) {
@@ -465,10 +481,6 @@ function Hue() {
                 // contact the bridge and find the available lights
                 contactBridge();
             } else {
-                if (debug) {
-                    console.log("Hue.js registerUser(): Response: " + JSON.stringify(response));
-                }
-                console.log(JSON.stringify(JSON.parse(response.body)[0].success));
                 throw "Unknown error registering new user";
             }
         });
