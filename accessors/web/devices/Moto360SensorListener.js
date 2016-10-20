@@ -102,7 +102,8 @@ exports.setup = function () {
 
     // Override the value of listeningPort in the parent.
     this.input('listeningPort', {
-        'value': 4567, // 4567 is the value found in https://github.com/Zziwei/PackageSendTest
+        'value': 4568, // 4568 is the value found in
+                       // https://github.com/terraswarm/WatchSoftware/blob/master/WatchSensorsUDP/app/src/main/java/org/terraswarm/accessor/wear/watchsensorsudp/MessageSender.java
         'type': 'int'
     });
     
