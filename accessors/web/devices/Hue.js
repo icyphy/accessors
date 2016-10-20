@@ -501,7 +501,10 @@ exports.wrapup = function() {
     
     var action = this.getParameter('onWrapup');
     if (action !== "none") {
-        if (typeof this.hue.changedLights !== 'undefined') {
+        // wrapup() gets called by the code generator after setting
+        // the types, so there is a chance that changedLights has not been set.
+        if (typeof this.hue !== 'undefined' && typeof this.hue.changedLights !== 'undefined') {
+
             for (var i = 0; i < this.hue.changedLights.length; i++) {
                 options = {
                     body : cmd,
