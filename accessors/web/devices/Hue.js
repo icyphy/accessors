@@ -331,19 +331,20 @@ function Hue() {
     /** Contact the bridge.  Register the user, if needed.
      */
     function contactBridge() {
-        console.log("Attempting to connecting to: " + url + "/" + userName + "/lights/");
+        console.log("Attempting to connect to: " + url + "/" + userName + "/lights/");
         var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
-            if (errorOccurred) {
-                // Fatal error has occurred. Ignore response.
-                return;
-            }
             if (response !== null) {
+                console.log("Got a response from the bridge: " + response.body);
+                if (errorOccurred) {
+                    // Fatal error has occurred. Ignore response.
+                    self.error('Error occurred before response arrive. Response ignored');
+                    return;
+                }
                 if (response.statusCode != 200) {
                     // Response is other than OK. Retry if not a fatal error.
                     bridgeRequestErrorHandler(response.statusMessage);
                 } else {
                     var lights = JSON.parse(response.body);
-                    console.log("Got a response from the bridge: " + response.body);
 
                     if (isNonEmptyArray(lights) && lights[0].error) {
                         var description = lights[0].error.description;
@@ -361,6 +362,7 @@ function Hue() {
                             // It takes two successive posts to register a new user.
                             // Issue the first one now, then attempt again later.
                             registerUser();
+                            console.log("Will register user in " + registerInterval + " ms");
                             handleRegisterUser = setTimeout(registerUser, registerInterval);
                         } else {
                             console.error('Error occurred when trying to get Hue light status:' + description);
