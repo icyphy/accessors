@@ -3,5 +3,6 @@
     "Hue.js",
     "MockHueBridge.js",
     "Moto360SensorListener.js",
-    "DrDose.js"
+    "DrDose.js",
+    "PhSensor"
 ]
