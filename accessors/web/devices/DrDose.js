@@ -20,7 +20,13 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Retrieve a stock price from a Yahoo server.
+/** 
+ *  This accessor controls acid, base, and nutrient dosing for your garden.
+ *  When a duration in miliseconds is sent to the accessor, it doses
+ *  the corresponding type of fluid. As of this time, simultaneous dosing commands will be send independtly
+ *  in some arbitrary order.
+ * 
+ *
  *  This accessor reacts to a *symbol* input by issuing a query to a web server
  *  for the most recent trade prices of the common stock whose symbol is given
  *  by the input. When the server replies, this accessor produces the most

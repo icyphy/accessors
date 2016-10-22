@@ -20,11 +20,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Retrieve a stock price from a Yahoo server.
- *  This accessor reacts to a *symbol* input by issuing a query to a web server
- *  for the most recent trade prices of the common stock whose symbol is given
- *  by the input. When the server replies, this accessor produces the most
- *  recent trade price on the *price* output.
+/** 
+ *  
+ *  
+ *  Retrieves the latest ph measurement from your garden
  *
  *  This accessor does not block waiting for the response, but if any additional
  *  *symbol* input is received before a pending request has received a response
