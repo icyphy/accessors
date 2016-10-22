@@ -4,5 +4,5 @@
     "MockHueBridge.js",
     "Moto360SensorListener.js",
     "DrDose.js",
-    "PhSensor"
+    "PhSensor.js"
 ]
