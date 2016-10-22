@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- A sample graph using the WebSocketClient.  
+     A WebSocketServer is available in Cape Code.
+     Please open the model at: $PTII/org/terraswarm/accessor/demo/WebSocketGraph/WebSocketGraph.xml
+     Run the model, 
+     Start the browser test server (see /accessors/host/browser/test/README.txt), 
+     Point your browser to http://localhost:8089/hosts/browser/demo/WebSocketGraph/WebSocketGraph.html,
+     Click 'react to inputs'.  Data should appear on the graph.   -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title> GDP Log </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    
+    <!-- Graph styling. -->
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/WebSocketGraph/WebSocketGraph.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the accessor
+        //  definition since they're specific to this scenario.  Wait until page
+        //  has loaded so that form fields exist.   
+ 	    var initialValues = {};
+        
+        // TYPE IN IP ADDRESS OF YOUR MACHINE HERE.
+ 	    initialValues["WebSocketClient.server"] = "192.168.254.2";
+ 	    initialValues["WebSocketClient.port"] = 8070;
+ 	    initialValues["WebSocketClient.receiveType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sendType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sslTls"] = false;
+    </script>
+	
+	<script type="text/javascript">
+	function startLog() {
+	  
+	  // Watch for changes in the WebSocketClient.received output.
+	  // Wait a bit after onload to make sure accessors are fully loaded.
+	  setTimeout(function() {
+		  document.getElementById('log').value = "";
+		  
+		  document.getElementById('WebSocketClient.received')
+		  	.addEventListener('DOMSubtreeModified', function() {
+			  var value = 
+				  document.getElementById('WebSocketClient.received').innerText + "\n";
+			  
+			  // Automatically scroll text box to bottom.
+			  document.getElementById("log").scrollTop = 
+				  document.getElementById("log").scrollHeight; 
+			  
+			  document.getElementById('log').value += value;
+		  });
+		  
+		  // React accessor so graph will update automatically.
+		  reactIfExecutable('WebSocketClient');
+	  }, 2000);
+
+	}
+	</script>
+
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    
+</head>
+<body onload="startLog()">
+<textarea rows="15" cols="50" id="log"> </textarea>
+
+<!-- The display:none hides the accessor. -->
+<div class="accessor"
+   src="net/WebSocketClient"
+   id="WebSocketClient"
+   style="display:none"></div>
+  
+</body>
+</html>	
