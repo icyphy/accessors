@@ -22,9 +22,30 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Subscribe to a log.
+/** Subscribe to a Global Data Plane (GDP) log.
  *
- *  @output {string} data The data that is read from the log
+ *  FIXME: What is the meaning of the startrec and numrec arguments? Makes no sense for subscription.
+ *
+ *  @output {string} data The data that is read from the log.
+ *
+ *  @input {string} logname The GDP logname.  By convention, a log name should be 
+ *   a reverse fully qualified name like "org.terraswarm.accessor.demo.MyDemoName".
+ *   If this input is an empty string, then no subscription will
+ *   occur until a non-empty value is provided.
+ *   By default, this is empty.
+ *   Providing an empty string will unsubscribe from any previously subscribed-to log.
+ *
+ *  @input {string} logdname The name of a logd server.  If empty,
+ *   then the hostname of the local machine is used. This server is
+ *   a gateway into the GDP.
+ *   FIXME: Shouldn't this be a parameter rather than input?
+ *
+ *  @input {int} numrec The number of records to read.
+ *
+ *  @input {int} startrec The record number to be read.  In the GDP,
+ *  the first record is record 1.
+ *
+ *  @input {int} timeout The timeout in milliseconds.
  *
  *  @parameter {string} debugLevel The value of the GDP debug flag.
  *  See gdp/README-developers.md for a complete summary.  The value is
@@ -34,23 +55,8 @@
  *  level to 40 for all components. The value of level is not usually
  *  over 127.  Values over 100 may modify the behavior.
  *
- *  @param {string} logname The GDP logname.  By convention, use 
- *  a reverse fully qualified name like
- *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
- *
- *  @param {string} logdname The name of the logd server.  If empty,
- *  then the hostname of the local machine is used.
- *
- *  @input {int} numrec The number of records to read.
-
- *  @input {int} startrec The record number to be read.  In the GDP,
- *  the first record is record 1.
- *
- *  @input {int} timeout The timeout in milliseconds.
- *
- *  @input trigger An input that triggers firing the subscription.
- *
- *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
+ *  @accessor gdp/GDPLogSubscribe
+ *  @author Christopher Brooks, Edward A. Lee, Nitesh Mor
  *  @version $$Id$$ 
  */
 
@@ -72,59 +78,56 @@ var sawNull = false;
 exports.setup = function() {
     this.output('data', {'type': 'string'});
     this.parameter('debugLevel', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': 'myLog'});
-    this.input('logdname', {'type': 'string', 'value': ''});
+    this.input('logname', {'type': 'string', 'value': ''});
+    this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
     this.parameter('numrec', {'type': 'int', 'value':0});
     this.parameter('startrec', {'type': 'int', 'value': 0});
     this.parameter('timeout', {'type': 'int', 'value':0});
-    this.input('trigger');
-};
-
-/** Get the next data.
- *  If necessary create the log.
- */
-exports.getNextData = function() {
-    console.log("GDPLogSubscribe.js: getNextData()");
-    var logname = this.get('logname');
-    if (logname === '') {
-        throw new Error('The logname parameter cannot be empty.  The _gdp_gcl_subscribe() C function will crash the JVM if the logname is empty.');
-    }
-
-    // The logname may change between initialization trigger getting
-    // the input.
-    if (logname != oldLogname) {
-	// console.log("GDPLogSubscribe.read(): About to call new GDP.GDP()");
-	var logdname = this.get('logdname');
-	log = new GDP.GDP(logname, 1, logdname);
-	log.setDebugLevel(this.getParameter('debugLevel'));
-	oldLogname = logname;
-	log.subscribe(this, this.getParameter('startrec'), this.getParameter('numrec'), this.getParameter('timeout'));
-
-    }
-
-    var data = log.getNextData(100);
-    if (data !== null) {
-	sawNull = false;
-	this.send('data', data); 
-    } else {
-	if (!sawNull) {
-	    this.send('data', 'datum was null?'); 
-	}
-	sawNull = true;
-    }
 };
 
 /** Add an input handler that will subscribe to a log. */
 exports.initialize = function() {
-    console.log("GDPLogSubscribe.js: initialize()");
-    oldLogname = null;
-    sawNull = false;
-    handle = this.addInputHandler('trigger', this.exports.getNextData.bind(this));
+    var self = this;
+
+    // Set an input handler to unsubscribe and then invoke this initialize()
+    // function when a new logname is provided.
+    this.addInputHandler('logname', function() {
+        // FIXME: WHy doesn't the following work??????????
+        // exports.wrapup();
+        // exports.initialize();
+    });
+
+    var logname = this.get('logname');
+    if (logname === '') {
+        // Nothing more to do.
+        return;
+    }    
+
+    var logdname = this.get('logdname');
+	    
+	// Create or connect to a log.
+	// The second argument specifies to open the log "read only."
+	log = new GDP.GDP(logname, 1, logdname);
+	    
+	// Listen for data from the log.
+	log.on('data', function(data) {
+	    console.log('****** received: ' + data);
+	    self.send('data', data); 
+	    console.log('****** sent data: ' + data);
+	});
+	    
+	log.setDebugLevel(this.getParameter('debugLevel'));
+	    
+	// Subscribe to the log so that 'data' events are emitted.
+	log.subscribe(
+	        this.getParameter('startrec'),
+	        this.getParameter('numrec'),
+	        this.getParameter('timeout'));
 };
 
-/** Remove the input handler. */
+/** Unsubscribe to the log. */
 exports.wrapup = function() {
-    if (handle !== null) {
-        this.removeInputHandler(handle);
+    if (log) {
+        log.unsubscribe();
     }
 };

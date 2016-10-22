@@ -22,28 +22,30 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Append to a Global Data Plane (GDP) log.
+/** Append string data to a Global Data Plane (GDP) log.
+ *  If a log with the specified name does not exist, it is automatically
+ *  created.
  *
  *  @input {string} data The data to be written.
  *
- *  @parameter {string} debugLevel The value of the GDP debug flag.
- *  See gdp/README-developers.md for a complete summary.  The value is
- *  typically "pattern=level", for example "gdplogd.physlog=39".  To
- *  see the patterns, use the "what" command or strings
- *  $PTII/lib/libgdp* | grep '@(#)'.  Use "*=40" to set the debug
- *  level to 40 for all components. The value of level is not usually
- *  over 127.  Values over 100 may modify the behavior.
- *
  *  @param {string} logname The GDP logname.  By convention, use 
- *  a reverse fully qualified name like
- *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
+ *   a reverse fully qualified name like
+ *   "org.terraswarm.accessors.demo.MyDemoName"
  *
- *  @param {string} logdname The name of the logd server.  If empty,
- *  then the hostname of the local machine is used.
+ *  @param {string} logdname The name of a logd server.  If empty,
+ *   then the hostname of the local machine is used. The logd server
+ *   is a gateway into the GDP.
  *
- *  @input trigger An input that triggers firing the reading of the data.
+ *  @parameter {string} debugLevel The value of the GDP debug flag.
+ *   See gdp/README-developers.md for a complete summary.  The value is
+ *   typically "pattern=level", for example "gdplogd.physlog=39".  To
+ *   see the patterns, use the "what" command or strings
+ *   $PTII/lib/libgdp* | grep '@(#)'.  Use "*=40" to set the debug
+ *   level to 40 for all components. The value of level is not usually
+ *   over 127.  Values over 100 may modify the behavior.
  *
- *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
+ *  @accessor gdp/GDPLogAppend
+ *  @author Christopher Brooks, Edward A. Lee, Nitesh Mor
  *  @version $$Id$$ 
  */
 
@@ -61,31 +63,28 @@ var oldLogname = null;
 exports.setup = function() {
     console.log("GDPLogAppend.js: setup()");
     this.input('data', {'type': 'string'});
+    this.input('logname', {'type': 'string', 'value': 'org.terraswarm.accessors.myLog'});
+    this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
     this.parameter('debugLevel', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': 'myLog'});
-    this.input('logdname', {'type': 'string', 'value': ''});
-    this.input('trigger');
 };
 
-/** Append data to the log.
- *  If necessary create the log.
- *  @param {string} data The data to be appended.
+/** Append data from the input port 'data' to the log.
+ *  If necessary, first create the log.
  */
-exports.append = function(data) {
-    console.log("GDPLogAppend.js: append()");
+exports.append = function() {
     var logname = this.get('logname');
-    console.log("GDPLogAppend.js: append(): logname");
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
+    console.log('Append to log named: ' + logname);
     if (logname != oldLogname) {
-	var logdname = this.get('logdname');
-	log = new GDP.GDP(logname, 2, logdname);
-	log.setDebugLevel(this.getParameter('debugLevel'));
-	oldLogname = logname;
+	    var logdname = this.get('logdname');
+	    log = new GDP.GDP(logname, 2, logdname);
+	    log.setDebugLevel(this.getParameter('debugLevel'));
+	    oldLogname = logname;
     }
     var dataValues = this.get('data');
-    console.log('GDPLogAppend.js.append(): ' + dataValues);
+    console.log('Append data: ' + dataValues);
     log.append(dataValues);
 };
 
@@ -93,12 +92,5 @@ exports.append = function(data) {
 exports.initialize = function() {
     console.log("GDPLogAppend.js: initialize()");
     oldLogname = null;
-    handle = this.addInputHandler('trigger', this.exports.append.bind(this));
-};
-
-/** Remove the input handler. */
-exports.wrapup = function() {
-    if (handle !== null) {
-        this.removeInputHandler(handle);
-    }
+    handle = this.addInputHandler('data', this.exports.append.bind(this));
 };
