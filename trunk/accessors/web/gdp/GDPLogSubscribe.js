@@ -92,10 +92,17 @@ exports.initialize = function() {
     // Set an input handler to unsubscribe and then invoke this initialize()
     // function when a new logname is provided.
     this.addInputHandler('logname', function() {
-        // FIXME: WHy doesn't the following work??????????
-        // exports.wrapup();
-        // exports.initialize();
+        // If there is an open subscription, close it.
+        self.exports.wrapup.call(self);
+        // Open the new subscription.
+        self.exports.subscribe.call(self);
     });
+    self.exports.subscribe.call(self);
+}
+
+/** If a non-empty logname is given, subscribe to the log. */
+exports.subscribe = function() {
+    var self = this;
 
     var logname = this.get('logname');
     if (logname === '') {
