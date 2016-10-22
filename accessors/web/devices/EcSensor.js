@@ -35,11 +35,11 @@
  *  This accessor requires the optional 'httpClient' module, which may or may
  *  not be provided by an accessor host. Most hosts will provide this module.
  *
- *  @accessor devices/PhSensor
+ *  @accessor devices/EcSensor
  *  @author Matt Weber (matt.weber@eecs.berkeley.edu)
- *  @version $$Id: PhSensor.js 925 2016-10-21  $$
+ *  @version $$Id: EcSensor.js 925 2016-10-21  $$
  *  @input trigger An input to trigger data acqusition.
- *  @output {number} ph The latest measured pH value.
+ *  @output {number} ec The latest measured ec value.
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -56,14 +56,14 @@ var http = require('httpClient');
 exports.setup = function() {
     this.extend('net/REST');
 	
-    this.output('ph', {
+    this.output('ec', {
     	'type': 'number'
     	});
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {'visibility':'expert', 'value':'"http://localhost:8080"'});
-    this.input('command', {'visibility':'expert', 'value':'ph' });
+    this.input('command', {'visibility':'expert', 'value':'ec' });
     this.input('arguments', {'visibility':'expert'});
     //this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
     this.input('body', {'visibility':'expert'});
@@ -85,7 +85,7 @@ exports.initialize = function() {
 };
 
 
-/** Filter the response, extracting the ph information. The full response is produced
+/** Filter the response, extracting the ed information. The full response is produced
  *  on the 'response' output.
  */
  
@@ -101,19 +101,19 @@ exports.filterResponse = function(response) {
 	    } else {
 		parsed = JSON.parse(response);
 	    }
-	    	// Extract the last ph value from the JSON record.
-	    	if(parsed.type === 'ph'){
-	    		throw "type of received value is not 'ph'"
+	    	// Extract the last ec value from the JSON record.
+	    	if(parsed.type === 'ec'){
+	    		throw "type of received value is not 'ec'"
 	    	}
-            var ph = parseFloat(parsed.value);
-            // Send the ph to the 'ph' output.
-            this.send('ph', ph);
+            var ec = parseFloat(parsed.value);
+            // Send the ec to the 'ec' output.
+            this.send('ec', ec);
         } catch (err) {
-            error('PhSensor: Unable to parse response: ' + err.message);
-            this.send('ph', null);
+            error('EcSensor: Unable to parse response: ' + err.message);
+            this.send('ec', null);
         }
     } else {
-        this.send('ph', null);
+        this.send('ec', null);
     }
     return response;
 };
