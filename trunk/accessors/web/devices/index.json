@@ -4,5 +4,6 @@
     "MockHueBridge.js",
     "Moto360SensorListener.js",
     "DrDose.js",
-    "PhSensor.js"
+    "PhSensor.js",
+    "EcSensor.js"
 ]
