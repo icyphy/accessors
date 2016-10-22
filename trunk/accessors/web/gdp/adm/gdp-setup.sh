@@ -28,24 +28,41 @@
 # OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,
 # OR MODIFICATIONS.
 
-
 #
 #  Set up GDP environment for compilation
 #
 #	This is overkill if you're not compiling.
 #
 
-
 cd `dirname $0`/..
 root=`pwd`
 . $root/adm/common-support.sh
 
-info "Setting up packages for GDP compilation."
-info "This is overkill if you are only installing binaries."
+info "Setting up packages that are required by the GDP shared library."
 
 info "Installing packages needed by GDP for $OS"
+
+info "Updating the package database"
+case "$PKGMGR" in
+    "brew")
+	brewUser=`ls -l $brew | awk '{print $3}'`
+	# Only use sudo to update brew if the brew binary is owned by root.
+	# This avoids "Cowardly refusing to 'sudo brew update'"
+	if [ "$brewUser" = "root" ]; then
+	    sudo brew update
+	else
+	    brew update
+	fi
+	;;
+
+    "macports")
+	sudo port selfupdate
+	;;
+esac
+
+
 case "$OS" in
-    "ubuntu" | "debian")
+    "ubuntu" | "debian" | "raspbian")
 	sudo apt-get update
 	sudo apt-get clean
 	package libdb-dev
@@ -57,15 +74,17 @@ case "$OS" in
 	package libavahi-common-dev
 	package libavahi-client-dev
 	package avahi-daemon
-	#package pandoc
-	if ! ls /etc/apt/sources.list.d/mosquitto* > /dev/null 2>&1
-	then
-		package software-properties-common
-		info "Setting up mosquitto repository"
-		sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-	fi
-	package libmosquitto-dev
-	package mosquitto-clients
+        echo "$0: No need to install pandoc unless you are updating the docs"
+	# package pandoc
+        echo "$0: Mosquitto is not usually needed at run time."
+	#if ! ls /etc/apt/sources.list.d/mosquitto* > /dev/null 2>&1
+	#then
+	#	package software-properties-common
+	#	info "Setting up mosquitto repository"
+	# sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
+	#fi
+	#package libmosquitto-dev
+	#package mosquitto-clients
 	;;
 
     "darwin")
@@ -73,10 +92,12 @@ case "$OS" in
 	package openssl
 	package lighttpd
 	package jansson
-	#package pandoc
-	if [ "$pkgmgr" = "brew" ]
+        echo "$0: No need to install pandoc unless you are updating the docs"
+	# package pandoc
+	if [ "$PKGMGR" = "brew" ]
 	then
-		package mosquitto
+                echo "$0: Mosquitto is not usually needed at run time."
+		#package mosquitto
 		warn "Homebrew doesn't support Avahi."
 		info "Avahi is used for Zeroconf (automatic client"
 		info "configuration.  Under Darwin, Avahi is difficult"
@@ -84,8 +105,9 @@ case "$OS" in
 		info "Zeroconf use 'make all_noavahi'"
 	else
 		package avahi
-		warn "Macports doesn't support Mosquitto: install by hand."
-		info "See https://mosquitto.org/ for instructions."
+                echo "$0: Mosquitto is not usually needed at run time."
+		#warn "Macports doesn't support Mosquitto: install by hand."
+		#info "See https://mosquitto.org/ for instructions."
 	fi
 	;;
 
@@ -95,8 +117,10 @@ case "$OS" in
 	package lighttpd
 	package jansson
 	package avahi
-	package mosquitto
-	#package hs-pandoc
+        echo "$0: Mosquitto is not usually needed at run time."
+	#package mosquitto
+        echo "$0: No need to install pandoc unless you are updating the docs"
+	# package hs-pandoc
 	;;
 
     "gentoo" | "redhat")
@@ -105,7 +129,8 @@ case "$OS" in
 	package lighttpd
 	package jansson-devel
 	package avahi-devel
-	package mosquitto
+        echo "$0: Mosquitto is not usually needed at run time."
+	#package mosquitto
 	warn "Yum doesn't support Pandoc: install by hand"
 	;;
 
@@ -116,12 +141,14 @@ case "$OS" in
 	package lighttpd
 	package jansson-devel
 	package avahi-devel
-	package mosquitto
-	#package pandoc
+        echo "$0: Mosquitto is not usually needed at run time."
+	#package mosquitto
+        echo "$0: No need to install pandoc unless you are updating the docs"
+	# package pandoc
 	;;
 
     *)
-	fatal "oops, we don't support $OS"
+	fatal "$0: unknown OS $OS"
 	;;
 esac
 

@@ -1,34 +1,4 @@
 #!/bin/sh
-
-# This is a copy of gdp/adm/common-support.sh which was written by Eric
-# Allman and others.  To use the GDP it is necesary to install 
-# certain packages.  The gdp-setup.sh script can do these installs.
-# gdp-setup.sh calls this script.
-
-
-# From the Ubiquitous Swarm Lab, 490 Cory Hall, U.C. Berkeley.
-
-# Copyright (c) 2015-2016, Regents of the University of California.
-# All rights reserved.
-
-# Permission is hereby granted, without written agreement and without
-# license or royalty fees, to use, copy, modify, and distribute this
-# software and its documentation for any purpose, provided that the above
-# copyright notice and the following two paragraphs appear in all copies
-# of this software.
-
-# IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-# SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST
-# PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
-# EVEN IF REGENTS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-# FOR A PARTICULAR PURPOSE. THE SOFTWARE AND ACCOMPANYING DOCUMENTATION,
-# IF ANY, PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO
-# OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,
-# OR MODIFICATIONS.
-
 { test -r /usr/local/etc/gdp.conf.sh && . /usr/local/etc/gdp.conf.sh; } ||
 	{ test -r /etc/gdp.conf.sh && . /etc/gdp.conf.sh; }
 
@@ -76,65 +46,39 @@ mkdir_gdp() {
 
 package() {
     info "Checking package $1..."
-    case "$OS" in
-	"ubuntu" | "debian")
+    case "${PKGMGR:-unknown}" in
+	"debian")
 	    if dpkg --get-selections | grep --quiet $1; then
 		info "$1 is already installed. skipping."
 	    else
 		sudo apt-get install -y $@
 	    fi
 	    ;;
-	"centos" | "redhat")
+
+	"yum")
 	    if rpm -qa | grep --quiet $1; then
 		info "$1 is already installed. skipping."
 	    else
 		sudo yum install -y $@
 	    fi
 	    ;;
-	"darwin")
-	    if [ -z "$pkgmgr" ]; then
-		if type brew > /dev/null 2>&1 && [ ! -z "`brew config`" ]; then
-		    pkgmgr=brew
-		    brew=`which brew`
-		    if [ -f $brew ]; then
-			brewUser=`ls -l $brew | awk '{print $3}'`
-			# Only use sudo to update brew if the brew binary is owned by root.
-			# This avoids "Cowardly refusing to 'sudo brew update'"
-			if [ "$brewUser" = "root" ]; then
-			    sudo brew update
-			else
-			    brew update
-			fi
-		    fi
-		fi
-		if type port > /dev/null 2>&1 && port installed | grep -q .; then
-		    if [ "$pkgmgr" = "brew" ]; then
-			warn "You seem to have both macports and homebrew installed."
-			fatal "You will have to deactivate one (or modify this script)"
-		    else
-			pkgmgr=port
-			sudo port selfupdate
-		    fi
-		fi
-		if [ -z "$pkgmgr" ]; then
-		    warn "You must install macports or homebrew."
-		    fatal "See README-compiling.md (Operating System Quirks) for details."
-		fi
-	    fi
-	    if [ "$pkgmgr" = "brew" ]; then
-		if brew list | grep --quiet $1; then
-		    info "$1 is already installed. skipping."
-		else
-		    brew install --build-bottle $@ || brew upgrade $@
-		fi
+
+	"brew")
+	    if brew list | grep --quiet $1; then
+		info "$1 is already installed. skipping."
 	    else
-		if port -q installed $1 | grep -q "."; then
-		    info "$1 is already installed. skipping."
-		else
-		    sudo port install $1
-		fi
+		brew install --build-bottle $@ || brew upgrade $@
 	    fi
 	    ;;
+
+	"macports")
+	    if port -q installed $1 | grep -q "."; then
+		info "$1 is already installed. skipping."
+	    else
+		sudo port install $1
+	    fi
+	    ;;
+
 	"freebsd")
 	    export PATH="/sbin:/usr/sbin:$PATH"
 	    if sudo pkg info -q $1; then
@@ -143,6 +87,7 @@ package() {
 		sudo pkg install $@
 	    fi
 	    ;;
+
 	"gentoo")
 	    if equery list $1 >& /dev/null; then
 		info "$1 is already installed. skipping."
@@ -150,8 +95,9 @@ package() {
 		sudo emerge $1
 	    fi
 	    ;;
+
 	*)
-	    fatal "unrecognized OS $OS"
+	    fatal "unrecognized PKGMGR $PKGMGR"
 	    ;;
     esac
 }
@@ -229,7 +175,7 @@ elif [ "$OS" = "darwin" ]; then
 elif [ "$OS" = "freebsd" ]; then
 	_major=`uname -r | sed -e 's/\..*//'`
 	_minor=`uname -r | sed -e 's/[0-9]*\.//' -e 's/-.*//'`
-	OSVER=`printf "%02d%02d00" "$_major" "$_minor"`
+	OSVER="$_major.$_minor"
 fi
 
 if [ -z "$OSVER" ]; then
@@ -239,19 +185,30 @@ else
     OSVER=`dot_to_int $OSVER`
 fi
 
-# check to make sure we understand this OS release
+fatal_osver() {
+	fatal "Must be running $1 or later (have $VERSION_ID)"
+}
+
+warn_unsupported() {
+	msg=${1:-"try anyway"}
+	warn "$OS is not a supported platform, but I'll $msg"
+}
+
+# check to make sure we understand this OS and OSVER; choose PKGMGR
+PKGMGR=$OS
 case $OS in
   "debian")
 	if expr $OSVER \< 80000 > /dev/null
 	then
-		fatal "Must be running Debian 8 (Jessie) or later (have $VERSION_ID)"
+		fatal_osver "Debian 8 (Jessie)"
 	fi
 	;;
 
   "ubuntu")
+	PKGMGR=debian
 	if expr $OSVER \< 140400 > /dev/null
 	then
-		fatal "Must be running Ubuntu 14.04 or later (have $VERSION_ID)"
+		fatal_osver "Ubuntu 14.04"
 	fi
 	if expr $OSVER \>= 160400 > /dev/null
 	then
@@ -261,13 +218,64 @@ case $OS in
 	fi
 	;;
 
+  "raspbian")
+	# warn_unsupported "assume it is debian-based"
+	PKGMGR=debian
+	;;
+
   "redhat")
+	# warn_unsupported
+	PKGMGR=yum
 	if expr $OSVER \< 070000 > /dev/null
 	then
 		INITguess=systemd
 	else
 		INITguess=upstart
 	fi
+	;;
+
+  "darwin")
+        # warn_unsupported
+	if type brew > /dev/null 2>&1 && [ ! -z "`brew config`" ]; then
+	    PKGMGR=brew
+	    brew=`which brew`
+	    if [ -f $brew ]; then
+		brewUser=`ls -l $brew | awk '{print $3}'`
+		# Only use sudo to update brew if the brew binary is owned by root.
+		# This avoids "Cowardly refusing to 'sudo brew update'"
+		if [ "$brewUser" = "root" ]; then
+		    sudo brew update
+		else
+		    brew update
+		fi
+	    fi
+	fi
+	if type port > /dev/null 2>&1 && port installed | grep -q .; then
+	    if [ "$PKGMGR" = "brew" ]; then
+		warn "You seem to have both macports and homebrew installed."
+		fatal "You will have to deactivate one (or modify this script)"
+	    else
+		PKGMGR=macports
+	    fi
+	fi
+	if [ "$PKGMGR" = "darwin" ]; then
+	    warn "You must install macports or homebrew."
+	    fatal "See README-compiling.md (Operating System Quirks) for details."
+	fi
+	;;
+
+  "centos")
+	# warn_unsupported
+	PKGMGR=yum
+	;;
+
+  "freebsd" | "gentoo")
+	# warn_unsupported
+	;;
+
+  *)
+	fatal "Oops, we don't support $OS"
+	;;
 esac
 
 # determine what init system we are using (heuristic!)
@@ -289,4 +297,4 @@ test -z "$INITguess" && INITguess="unknown"
 # see if we should use our guess
 test -z "$INITSYS" && INITSYS=$INITguess
 
-info "System Info: OS=$OS, OSVER=$OSVER, INITSYS=$INITSYS"
+info "System Info: OS=$OS, OSVER=$OSVER, PKGMGR=$PKGMGR, INITSYS=$INITSYS"
