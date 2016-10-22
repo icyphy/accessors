@@ -1,16 +1,32 @@
 #!/bin/sh
 # $Id$
 
-# gdpSetup - a script that downloads and builds the Global Data Plane
-# (GDP). In addition, scripts are set up that will allow a local copy
-# of the gdp to run without root access.
+# gdpBuildDevelEnvironement - a script that downloads and builds the Global Data Plane
+# (GDP).
+
+# To use the GDP, it is not necessary to run this script.
+
+# Instead, run gdp-setup.sh, which will install the packages needed by
+# the libgdp* shared library.
+
+# Run this script if you want to develop the GDP on your local machine.
+
+# Scripts are set up that will allow a local copy of the gdp to run
+# without root access.
 
 # This script requires read access to the GDP repository.  To get
 # access, contact Eric Allman (eric@cs.berkeley.edu)
 
 # This script is platform independent.
-# See gdp/debian/init.d/.ex for a Debian-specific script for starting the gdp.
 
+echo "-------"
+echo "$0: This script downloads the GDP and GDP Router sources."
+
+echo "    It is only necessary to run this script if you want to develop the GDP."
+
+echo "    If you only want to use the GDP, the run accessors/web/gdp/adm/gdp-setup.sh"
+
+echo "-------"
 
 if [ ! -z "$PTII" ]; then
    sourceDirectory=$PTII/vendors/gdp
