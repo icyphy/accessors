@@ -413,7 +413,7 @@ function exitHandler(options, err) {
 	    process.exitCode = 1;
         }
 	if (initialThrowable !== null) {
-	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable);
+	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
 	    process.exitCode = 1;
 	}
     }
