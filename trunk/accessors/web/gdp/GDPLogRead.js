@@ -63,7 +63,7 @@ var log = null;
 var oldLogname = null;
 
 /** Setup the parameters and ports. */
-exports.setup = function() {
+exports.setup = function () {
     this.output('data', {'type': 'string'});
     this.parameter('debugLevel', {'type': 'string'});
     this.input('logname', {'type': 'string', 'value': 'org.terraswarm.accessors.demo.MyDemoName'});
@@ -76,39 +76,38 @@ exports.setup = function() {
  *  Note that if the log does not exist, it will be created
  *  and a null will be sent.
  */
-exports.read = function() {
-    var recno = this.get('recno');
+exports.read = function () {
+    var recno = this.get('recno'), logname = this.get('logname'), logdname, data;
     console.log("GDPLogRead.read(" + recno + "): start");
-    var logname = this.get('logname');
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
-    if (logname != oldLogname) {
-	    console.log("GDPLogRead.read(" + recno + "): About to call new GDP.GDP()");
-	    var logdname = this.get('logdname');
-	    log = new GDP.GDP(logname, 1, logdname);
-	    log.setDebugLevel(this.getParameter('debugLevel'));
-	    oldLogname = logname;
+    if (logname !== oldLogname) {
+        console.log("GDPLogRead.read(" + recno + "): About to call new GDP.GDP()");
+        logdname = this.get('logdname');
+        log = new GDP.GDP(logname, 1, logdname);
+        log.setDebugLevel(this.getParameter('debugLevel'));
+        oldLogname = logname;
     }
     // FIXME: If recno == 0, then calling new GDP.GDP() and then trying to read results in 'ERROR: 404 not found [Berkeley:Swarm-GDP:404]'
     if (recno <= 0) {
-	    console.log("GDPLogRead.read(" + recno + "): recno was 0, sending nil");
-	    this.send('data', 'nil');
+        console.log("GDPLogRead.read(" + recno + "): recno was 0, sending nil");
+        this.send('data', 'nil');
     } else {
-	    var data = log.read(recno);
-	    console.log("GDPLogRead.read(" + recno + "): sending " + data);
-	    this.send('data', data);
+        data = log.read(recno);
+        console.log("GDPLogRead.read(" + recno + "): sending " + data);
+        this.send('data', data);
     }
 };
 
 /** Add an input handler that will read data. */
-exports.initialize = function() {
+exports.initialize = function () {
     oldLogname = null;
     handle = this.addInputHandler('trigger', this.exports.read.bind(this));
 };
 
 /** Remove the input handler. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (log) {
         log.close();
     }

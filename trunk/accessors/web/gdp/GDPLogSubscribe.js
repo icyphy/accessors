@@ -75,65 +75,63 @@ var oldLogname = null;
 var sawNull = false;
 
 /** Setup the parameters and ports. */
-exports.setup = function() {
+exports.setup = function () {
     this.output('data', {'type': 'string'});
     this.parameter('debugLevel', {'type': 'string'});
     this.input('logname', {'type': 'string', 'value': ''});
     this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
-    this.parameter('numrec', {'type': 'int', 'value':0});
+    this.parameter('numrec', {'type': 'int', 'value': 0});
     this.parameter('startrec', {'type': 'int', 'value': 0});
-    this.parameter('timeout', {'type': 'int', 'value':0});
+    this.parameter('timeout', {'type': 'int', 'value': 0});
 };
 
 /** Add an input handler that will subscribe to a log. */
-exports.initialize = function() {
+exports.initialize = function () {
     var self = this;
 
     // Set an input handler to unsubscribe and then invoke this initialize()
     // function when a new logname is provided.
-    this.addInputHandler('logname', function() {
+    this.addInputHandler('logname', function () {
         // If there is an open subscription, close it.
         self.exports.wrapup.call(self);
         // Open the new subscription.
         self.exports.subscribe.call(self);
     });
     self.exports.subscribe.call(self);
-}
+};
 
 /** If a non-empty logname is given, subscribe to the log. */
-exports.subscribe = function() {
-    var self = this;
+exports.subscribe = function () {
+    var self = this, logname = this.get('logname'), logdname = this.get('logdname');
 
-    var logname = this.get('logname');
     if (logname === '') {
         // Nothing more to do.
         return;
-    }    
+    }
 
-    var logdname = this.get('logdname');
-	    
-	// Create or connect to a log.
-	// The second argument specifies to open the log "read only."
-	log = new GDP.GDP(logname, 1, logdname);
-	    
-	// Listen for data from the log.
-	log.on('data', function(data) {
-	    console.log('****** received: ' + data);
-	    self.send('data', data); 
-	    console.log('****** sent data: ' + data);
-	});
-	    
-	log.setDebugLevel(this.getParameter('debugLevel'));
-	    
-	// Subscribe to the log so that 'data' events are emitted.
-	log.subscribe(
-	        this.getParameter('startrec'),
-	        this.getParameter('numrec'),
-	        this.getParameter('timeout'));
+    // Create or connect to a log.
+    // The second argument specifies to open the log "read only."
+    log = new GDP.GDP(logname, 1, logdname);
+
+    // Listen for data from the log.
+    log.on('data', function (data) {
+        console.log('****** received: ' + data);
+        self.send('data', data);
+        console.log('****** sent data: ' + data);
+    });
+
+    log.setDebugLevel(this.getParameter('debugLevel'));
+
+    // Subscribe to the log so that 'data' events are emitted.
+    log.subscribe(
+        this.getParameter('startrec'),
+        this.getParameter('numrec'),
+        this.getParameter('timeout')
+    );
 };
 
 /** Unsubscribe to the log. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (log) {
         log.unsubscribe();
     }
