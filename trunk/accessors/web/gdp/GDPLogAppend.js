@@ -94,3 +94,13 @@ exports.initialize = function() {
     oldLogname = null;
     handle = this.addInputHandler('data', this.exports.append.bind(this));
 };
+
+/** Remove the input handler. */
+exports.wrapup = function() {
+    if (log) {
+        log.close();
+    }
+    if (handle !== null) {
+        this.removeInputHandler(handle);
+    }
+};

@@ -109,6 +109,9 @@ exports.initialize = function() {
 
 /** Remove the input handler. */
 exports.wrapup = function() {
+    if (log) {
+        log.close();
+    }
     if (handle !== null) {
         this.removeInputHandler(handle);
     }
