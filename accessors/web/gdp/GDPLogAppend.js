@@ -60,7 +60,7 @@ var handle = null;
 var log = null;
 var oldLogname = null;
 
-exports.setup = function() {
+exports.setup = function () {
     console.log("GDPLogAppend.js: setup()");
     this.input('data', {'type': 'string'});
     this.input('logname', {'type': 'string', 'value': 'org.terraswarm.accessors.myLog'});
@@ -71,32 +71,32 @@ exports.setup = function() {
 /** Append data from the input port 'data' to the log.
  *  If necessary, first create the log.
  */
-exports.append = function() {
-    var logname = this.get('logname');
+exports.append = function () {
+    var logname = this.get('logname'), logdname, dataValues;
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }
     console.log('Append to log named: ' + logname);
-    if (logname != oldLogname) {
-	    var logdname = this.get('logdname');
-	    log = new GDP.GDP(logname, 2, logdname);
-	    log.setDebugLevel(this.getParameter('debugLevel'));
-	    oldLogname = logname;
+    if (logname !== oldLogname) {
+        logdname = this.get('logdname');
+        log = new GDP.GDP(logname, 2, logdname);
+        log.setDebugLevel(this.getParameter('debugLevel'));
+        oldLogname = logname;
     }
-    var dataValues = this.get('data');
+    dataValues = this.get('data');
     console.log('Append data: ' + dataValues);
     log.append(dataValues);
 };
 
 /** Add an input handler that will append data. */
-exports.initialize = function() {
+exports.initialize = function () {
     console.log("GDPLogAppend.js: initialize()");
     oldLogname = null;
     handle = this.addInputHandler('data', this.exports.append.bind(this));
 };
 
 /** Remove the input handler. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (log) {
         log.close();
     }
