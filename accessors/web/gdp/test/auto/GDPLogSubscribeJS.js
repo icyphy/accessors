@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 12000 gdp/test/auto/GDPLogSubscribeJS)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 12000 gdp/test/auto/GDPLogSubscribeJS)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
     //  to edit the model, run:
@@ -9,30 +9,11 @@ exports.setup = function() {
 
     // Ports: GDPLogSubscribeJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
-    // Start: GDPLogSubscribe: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var GDPLogSubscribe = this.instantiate('GDPLogSubscribe', 'gdp/GDPLogSubscribe.js');
-    GDPLogSubscribe.setParameter('debugLevel', "*=50");
-    GDPLogSubscribe.setDefault('logdname', "edu.berkeley.eecs.gdp-03.gdplogd");
-    GDPLogSubscribe.setDefault('logname', "myLog");
-    GDPLogSubscribe.setParameter('numrec', 0);
-    GDPLogSubscribe.setParameter('startrec', 0);
-    GDPLogSubscribe.setParameter('timeout', 0);
-
-    // Start: TestSpontaneous3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestSpontaneous3 = this.instantiate('TestSpontaneous3', 'test/TestSpontaneous.js');
-    TestSpontaneous3.setParameter('interval', 900.0);
-
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', ["datum was null?","1","2","3","4"]);
+    TrainableTest2.setParameter('correctValues', ["1","2","3"]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
-
-    // Start: GDPLogAppend: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var GDPLogAppend = this.instantiate('GDPLogAppend', 'gdp/GDPLogAppend.js');
-    GDPLogAppend.setParameter('debugLevel', "");
-    GDPLogAppend.setDefault('logname', "myLog");
-    GDPLogAppend.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
 
     // Start: GDPLogRead: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogRead = this.instantiate('GDPLogRead', 'gdp/GDPLogRead.js');
@@ -42,13 +23,13 @@ exports.setup = function() {
 
     // Start: GDPLogCreate: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogCreate = this.instantiate('GDPLogCreate', 'gdp/GDPLogCreate.js');
-    GDPLogCreate.setParameter('debugLevel', "");
+    GDPLogCreate.setParameter('debugLevel', "*=1");
     GDPLogCreate.setDefault('logname', "mylog1");
     GDPLogCreate.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
 
     // Start: TestSpontaneous: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous = this.instantiate('TestSpontaneous', 'test/TestSpontaneous.js');
-    TestSpontaneous.setParameter('interval', 1000.0);
+    TestSpontaneous.setParameter('interval', 2000.0);
 
     // Start: JavaScriptRamp: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -61,7 +42,7 @@ exports.setup = function() {
 
     // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
-    TestSpontaneous2.setParameter('interval', 1000.0);
+    TestSpontaneous2.setParameter('interval', 3000.0);
 
     // Start: JavaScriptRamp2: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -74,8 +55,8 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', ["1","2","3","4","5"]);
-    TrainableTest.setParameter('trainingMode', true);
+    TrainableTest.setParameter('correctValues', ["1","2"]);
+    TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
     // Start: JavaScriptGDPLogName: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
@@ -89,13 +70,23 @@ exports.setup = function() {
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
     TestSpontaneousOnce.setParameter('interval', 500.0);
 
+    // Start: GDPLogSubscribe2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var GDPLogSubscribe2 = this.instantiate('GDPLogSubscribe2', 'gdp/GDPLogSubscribe.js');
+    GDPLogSubscribe2.setParameter('debugLevel', "");
+    GDPLogSubscribe2.setDefault('logname', "");
+    GDPLogSubscribe2.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
+    GDPLogSubscribe2.setParameter('numrec', 0);
+    GDPLogSubscribe2.setParameter('startrec', 0);
+    GDPLogSubscribe2.setParameter('timeout', 0);
+
+    // Start: GDPLogAppend2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var GDPLogAppend2 = this.instantiate('GDPLogAppend2', 'gdp/GDPLogAppend.js');
+    GDPLogAppend2.setDefault('logname', "org.terraswarm.accessors.myLog");
+    GDPLogAppend2.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
+    GDPLogAppend2.setParameter('debugLevel', "");
+
     // Connections: GDPLogSubscribeJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
-    this.connect(GDPLogCreate, 'output', GDPLogSubscribe, 'logname');
-    this.connect(TestSpontaneous3, 'output', GDPLogSubscribe, 'trigger');
-    this.connect(GDPLogSubscribe, 'data', TrainableTest2, 'input');
-    this.connect(GDPLogCreate, 'output', GDPLogAppend, 'logname');
-    this.connect(TestSpontaneous, 'output', GDPLogAppend, 'trigger');
-    this.connect(JavaScriptRamp, 'output', GDPLogAppend, 'data');
+    this.connect(GDPLogSubscribe2, 'data', TrainableTest2, 'input');
     this.connect(GDPLogCreate, 'output', GDPLogRead, 'logname');
     this.connect(TestSpontaneous2, 'output', GDPLogRead, 'trigger');
     this.connect(JavaScriptRamp2, 'output', GDPLogRead, 'recno');
@@ -105,4 +96,7 @@ exports.setup = function() {
     this.connect(TestSpontaneous2, 'output', JavaScriptRamp2, 'trigger');
     this.connect(GDPLogRead, 'data', TrainableTest, 'input');
     this.connect(TestSpontaneousOnce, 'output', JavaScriptGDPLogName, 'trigger');
+    this.connect(GDPLogCreate, 'output', GDPLogSubscribe2, 'logname');
+    this.connect(GDPLogCreate, 'output', GDPLogAppend2, 'logname');
+    this.connect(JavaScriptRamp, 'output', GDPLogAppend2, 'data');
 }
