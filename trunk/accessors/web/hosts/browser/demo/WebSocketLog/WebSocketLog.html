@@ -17,6 +17,7 @@
     <!-- Graph styling. -->
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/WebSocketGraph/WebSocketGraph.css">
     <script>
+    
         // Define initial values for accessor inputs.  Do so here vs. in the accessor
         //  definition since they're specific to this scenario.  Wait until page
         //  has loaded so that form fields exist.   
@@ -32,6 +33,18 @@
 	
 	<script type="text/javascript">
 	function startLog() {
+		
+    	// Register an event listener for the button.
+    	document.getElementById("showAccessor").addEventListener("click", function() {
+    		var accessorDiv = document.getElementById("WebSocketClient");
+    		if (accessorDiv.style.display === "none") {
+    			accessorDiv.style.display = "";
+    			document.getElementById("showAccessor").textContent = "Hide Accessor";
+    		} else {
+    			accessorDiv.style.display = "none";
+    			document.getElementById("showAccessor").textContent = "Show Accessor";
+    		}
+    	});
 	  
 	  // Watch for changes in the WebSocketClient.received output.
 	  // Wait a bit after onload to make sure accessors are fully loaded.
@@ -61,13 +74,22 @@
     
 </head>
 <body onload="startLog()">
-<textarea rows="15" cols="50" id="log"> </textarea>
+	<div>
+		<textarea rows="15" cols="50" id="log"> </textarea> <br>
+	</div>
+
+   <!--  Add a button to show/hide the accessor. -->
+   <div>
+	<button id="showAccessor"> Show Accessor </button>
+	</div>
 
 <!-- The display:none hides the accessor. -->
-<div class="accessor"
-   src="net/WebSocketClient"
-   id="WebSocketClient"
-   style="display:none"></div>
+	<div class="accessor"
+	   src="net/WebSocketClient"
+	   id="WebSocketClient"
+	   style="display:none"></div>
+   
+
   
 </body>
 </html>	
