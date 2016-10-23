@@ -77,7 +77,7 @@ exports.create = function() {
     log = new GDP.GDP(logname, 3, logdname);
     log.setDebugLevel(this.getParameter('debugLevel'));
     this.send('output', logname);
-    console.log("GDPLogCreate.js: create() Done!");
+    console.log("\nGDPLogCreate.js: create() Done!");
 };
 
 /** Add an input handler that will create the log. */
