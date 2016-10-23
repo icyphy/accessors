@@ -27,51 +27,54 @@
  	    initialValues["WebSocketClient.receiveType"] = "text/plain";
  	    initialValues["WebSocketClient.sendType"] = "text/plain";
  	    initialValues["WebSocketClient.sslTls"] = false;
-    </script>
+	</script>
 	
-	<script type="text/javascript">
-	function startLog() {
+	<script>
+		function startLog() {
 		
-    	// Register an event listener for the button.
-    	document.getElementById("showAccessor").addEventListener("click", function() {
-    		var accessorDiv = document.getElementById("WebSocketClient");
-    		if (accessorDiv.style.display === "none") {
-    			accessorDiv.style.display = "";
-    			document.getElementById("showAccessor").textContent = "Hide Accessor";
-    		} else {
-    			accessorDiv.style.display = "none";
-    			document.getElementById("showAccessor").textContent = "Show Accessor";
-    		}
-    	});
-	  
-	  // Watch for changes in the WebSocketClient.received output.
-	  // Wait a bit after onload to make sure accessors are fully loaded.
-	  setTimeout(function() {
-		  document.getElementById('log').value = "";
+	    	// Register an event listener for the button.
+	    	document.getElementById("showAccessor").addEventListener("click", function() {
+	    		var accessorDiv = document.getElementById("WebSocketClient");
+	    		if (accessorDiv.style.display === "none") {
+	    			accessorDiv.style.display = "";
+	    			document.getElementById("showAccessor").textContent = "Hide Accessor";
+	    		} else {
+	    			accessorDiv.style.display = "none";
+	    			document.getElementById("showAccessor").textContent = "Show Accessor";
+	    		}
+	    	});
 		  
-		  document.getElementById('WebSocketClient.received')
-		  	.addEventListener('DOMSubtreeModified', function() {
-			  var value = 
-				  document.getElementById('WebSocketClient.received').innerText + "\n";
+		  	// Watch for changes in the WebSocketClient.received output.
+		  	// Wait a bit after onload to make sure accessors are fully loaded.
+		  	setTimeout(function() {
+			  document.getElementById('log').value = "";
 			  
-			  // Automatically scroll text box to bottom.
-			  document.getElementById("log").scrollTop = 
-				  document.getElementById("log").scrollHeight; 
+			  document.getElementById('WebSocketClient.received')
+			  	.addEventListener('DOMSubtreeModified', function() {
+				  var value = 
+					  document.getElementById('WebSocketClient.received').innerText + "\n";
+				  
+				  // Automatically scroll text box to bottom.
+				  document.getElementById("log").scrollTop = 
+					  document.getElementById("log").scrollHeight; 
+				  
+				  document.getElementById('log').value += value;
+			  });
 			  
-			  document.getElementById('log').value += value;
-		  });
-		  
-		  // React accessor so graph will update automatically.
-		  reactIfExecutable('WebSocketClient');
-	  }, 2000);
+			  // React accessor so graph will update automatically.
+			  reactIfExecutable('WebSocketClient');
+		  	}, 2000);
 
-	}
+		}
+		
+		window.addEventListener('load', startLog);
+		
 	</script>
 
     <script src="/accessors/hosts/browser/browser.js"></script>
     
 </head>
-<body onload="startLog()">
+<body>
 	<div>
 		<textarea rows="15" cols="50" id="log"> </textarea> <br>
 	</div>
