@@ -88,6 +88,9 @@
 
 var http = require('httpClient');
 
+// Node Host needs util defined.
+var util = require('util');
+
 /** Define inputs and outputs. */
 exports.setup = function() {
     
