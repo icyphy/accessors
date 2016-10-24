@@ -59,7 +59,7 @@ exports.setup = function() {
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"http://localhost:8080"'});
+    this.input('options', {'visibility':'expert', 'value':'"10.105.139.174:8080"'});
     this.input('command', {'visibility':'expert', 'value':'ec' });
     this.input('arguments', {'visibility':'expert'});
     //this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
