@@ -26,11 +26,36 @@
  *  This accessor requires the 'iotAuth' and 'mqtt' modules.
  *
  *  @accessor net/SecurePublisher
- *  TODO: populate inputs/outputs/parameters
+ *
+ *  @input toPublish The message to be published.
  *
  *  @output connection Output an object when a connection with a MQTT broker is established.
  *  @output ready Output an object when the secure publisher is ready to publish secure
  *      messages with a session key and connection with a MQTT broker.
+ *
+ *  @parameter {string} brokerHost The MQTT broker's IP address or domain name.
+ *  @parameter {int} brokerPort The MQTT broker's port number.
+ *  @parameter {string} topic The topic to publish.
+ *  @parameter {int} qosLevel QoS level of MQTT for published messages
+ *
+ *  @parameter {string} publisherName The publisher's unique name in string.
+ *  @parameter {string} authHost Auth's IP address or domain name.
+ *  @parameter {int} authPort Auth's port number.
+ *
+ *  @parameter {string} authCertPath The path for the X.509 certificate file (in pem format)
+ *   of Auth with which the publisher is registered.
+ *  @parameter {string} publisherPrivateKeyPath The path for the pem format private key of
+ *   the publisher.
+ *
+ *  @parameter {string} publicKeyCryptoSpec The specification for the public cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} distributionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} sessionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for publishing messages to the subscribers
+ *
+ *  @parameter {int} numKeysPerRequest The number of session keys to be requested per
+ *   session key request to Auth
  *
  *  @author Hokeun Kim
  *  @version $$Id$$
