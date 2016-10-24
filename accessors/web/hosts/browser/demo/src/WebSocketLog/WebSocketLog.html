@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<!-- A sample graph using the WebSocketClient.  
-     A WebSocketServer is available in Cape Code.
-     Please open the model at: $PTII/org/terraswarm/accessor/demo/WebSocketGraph/WebSocketGraph.xml
-     Run the model, 
-     Start the browser test server (see /accessors/host/browser/test/README.txt), 
-     Point your browser to http://localhost:8089/hosts/browser/demo/WebSocketGraph/WebSocketGraph.html,
-     Click 'react to inputs'.  Data should appear on the graph.   -->
+<!-- A logger using the WebSocketClient.  
+	 ADD INSTRUCTIONS ONCE FINALIZED
+	 
+	 Image credits:
+	 Moto 360:  https://www.motorola.com/us/products/motomaker/FLEXR8?style=ATO800001&deviceStyle=ATO800001&carrier=ATO800001&action=designNew
+	 Hue:  http://www2.meethue.com/en-us/products/
+	 Hands: https://pixabay.com/en/hands-hand-raised-hands-raised-220163/ 
+-->
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title> GDP Log </title>
+    <title> GDP Smartwatch Log </title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/src/WebSocketLog/websocketlog.css">
     
     <script>
     
@@ -58,6 +61,11 @@
 				  document.getElementById("log").scrollTop = 
 					  document.getElementById("log").scrollHeight; 
 				  
+				  // Clear log every 500 characters so it doesn't go to infinity.
+				  if (document.getElementById('log').value.length > 500) {
+					  document.getElementById('log').value = "";
+				  }
+				  
 				  document.getElementById('log').value += value;
 			  });
 			  
@@ -75,20 +83,45 @@
     
 </head>
 <body>
-	<div>
-		<textarea rows="15" cols="50" id="log"> </textarea> <br>
+<div>
+	<div class="main_div">
+		<textarea rows="20" cols="50" id="log"> </textarea> <br>
+		<!--  Add a button to show/hide the accessor. -->
+	    <div>
+		 	<button id="showAccessor"> Show Accessor </button>
+		</div>
 	</div>
+	<div class="watch_div"> 
+		<div>
+			<!-- TODO:  Figure out how to re-scale image height without overflowing div -->
+			<img src="moto360.jpg" height="150px">
+		</div>
+				<div>
+			Raise your hand. 
+		</div>
 
-   <!--  Add a button to show/hide the accessor. -->
-   <div>
-	<button id="showAccessor"> Show Accessor </button>
 	</div>
+	<div class="hue_div"> 
+		<div>
+			<img src="hue.jpg" height="150px"> 
+		</div>
+		<div>
+			We'll get the lights. 
+		</div>
+	</div>
+	
+</div>
 
+<div class="poster_div"> powered by accessors + GDP  <br> (theme 2 poster) </div>
 <!-- The display:none hides the accessor. -->
 	<div class="accessor"
 	   src="net/WebSocketClient"
 	   id="WebSocketClient"
 	   style="display:none"></div>
+	   
+<div>
+ 	<img src="hands.jpg" width="100%">
+</div>
    
 
   
