@@ -122,19 +122,16 @@ exports.setup = function () {
     // Spec for communication with Auth
     this.parameter('publicKeyCryptoSpec', {
         type: 'string',
-        options: iotAuth.publicKeyCryptoSpecs,
-        value: iotAuth.publicKeyCryptoSpecs[0]
+        options: iotAuth.publicKeyCryptoSpecs
     });
     this.parameter('distributionCryptoSpec', {
         type: 'string',
-        options: iotAuth.symmetricCryptoSpecs,
-        value: iotAuth.symmetricCryptoSpecs[0]
+        options: iotAuth.symmetricCryptoSpecs
     });
     // For communication with client
     this.parameter('sessionCryptoSpec', {
         type: 'string',
-        options: iotAuth.symmetricCryptoSpecs,
-        value: iotAuth.symmetricCryptoSpecs[0]
+        options: iotAuth.symmetricCryptoSpecs
     });
     // Send/receive type
     this.parameter('receiveType', {
