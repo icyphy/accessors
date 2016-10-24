@@ -24,14 +24,56 @@
  *  a local authorization entity, Auth (https://github.com/iotauth/iotauth),
  *  and for secure communication with a SecureCommserver.
  *
+ *  Specifically, this accessor establishes a secure communication with server
+ *  using session keys (symmetric cryptographic keys) and sends/receives 
+ *  messages to/from the server. To obtain session keys, this accessor also
+ *  communicates with the local authorization entity, Auth.
+ *
+ *  This accessor internally manages the credentials (cryptographic keys)
+ *  for communication with remote Auth and remote server.
+ *  All the messages to/from remote Auth and server are protected using
+ *  the credentials, while input/output data of this accessor is in plain text.
+ *
  *  This accessor requires the 'iotAuth', and 'dataConverter' modules.
  *
  *  @accessor net/SecureCommClient
  *
- *  @input serverHostPort The IP address or domain name of server. Defaults to 'localhost'.
- *  @input toSend The data to be sent over the socket.
- *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
- *  @output received The data received from the web socket server.
+ *  @input serverHostPort Information of the destination server. This input triggers 
+ *   a secure connection with a server (possibly using the SecureCommServer accessor).
+ *   This input is specified as a JSON with two properties, 'host' and 'port'. The property
+ *   'host' specifies the IP address or domain name of server in string and 'port' specifies
+ *   the port number in integer. If a session key for communicating with a server is not
+ *   available, the SecureCommClient communicates with Auth to request the session key(s)
+ *   for secure communication, before establishing a secure connection with the server.
+ *  @input toSend The data to be sent over the secure connection with the server.
+ *
+ *  @output {boolean} connected Output `true` on connected and `false` on disconnected with
+ *   the server over a secure connection.
+ *  @output received The data received from the server over a secure connection.
+ *
+ *  @parameter {string} clientName The client's unique name in string.
+ *  @parameter {string} authHost Auth's IP address or domain name.
+ *  @parameter {int} authPort Auth's port number.
+ *
+ *  @parameter {string} authCertPath The path for the X.509 certificate file (in pem format)
+ *   of Auth with which the client is registered.
+ *  @parameter {string} clientPrivateKeyPath The path for the pem format private key of
+ *   the client.
+ *
+ *  @parameter {string} publicKeyCryptoSpec The specification for the public cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} distributionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} sessionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with the server
+ *
+ *  @parameter {int} numKeysPerRequest The number of session keys to be requested per
+ *   session key request to Auth
+ *  @parameter {string} targetServerGroup The communication policy group to which the
+ *   target server belong.
+ *
+ *  @parameter {string} receiveType Data type of the received data from server.
+ *  @parameter {string} sendType Data type of the sent data to server.
  *
  *  @author Hokeun Kim
  *  @version $$Id$$

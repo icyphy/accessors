@@ -26,7 +26,35 @@
  *  This accessor requires the 'iotAuth' and 'mqtt' modules.
  *
  *  @accessor net/SecureSubscriber
- *  TODO: populate inputs/outputs/parameters
+ *
+ *  @input subscribe The topic to subscribe.
+ *  @input unsubscribe The topic to unsubscribe.
+ *
+ *  @output connection Output an object when a connection with a MQTT broker is established.
+ *  @output subscription When subscribed, includes subscription information.
+ *  @output received The received message.
+ *  @output receivedTopic The topic of received message
+ *
+ *  @parameter {string} brokerHost The MQTT broker's IP address or domain name.
+ *  @parameter {int} brokerPort The MQTT broker's port number.
+ *  @parameter {string} topic The topic to publish.
+ *  @parameter {int} qosLevel The minimum QoS level of MQTT to be received by the subscriber.
+ *
+ *  @parameter {string} subscriberName The subscriber's unique name in string.
+ *  @parameter {string} authHost Auth's IP address or domain name.
+ *  @parameter {int} authPort Auth's port number.
+ *
+ *  @parameter {string} authCertPath The path for the X.509 certificate file (in pem format)
+ *   of Auth with which the publisher is registered.
+ *  @parameter {string} subscriberPrivateKeyPath The path for the pem format private key of
+ *   the subscriber.
+ *
+ *  @parameter {string} publicKeyCryptoSpec The specification for the public cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} distributionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} sessionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for publishing messages from the publishers
  *
  *  @author Hokeun Kim
  *  @version $$Id$$

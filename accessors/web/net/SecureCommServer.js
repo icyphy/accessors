@@ -24,10 +24,46 @@
  *  a local authorization entity, Auth (https://github.com/iotauth/iotauth),
  *  and for secure communication with a SecureCommClient.
  *
+ *  Specifically, this access listens to secure communication requests from
+ *  clients and handles the client requests. 
+ *
+ *  This accessor internally manages the credentials (cryptographic keys)
+ *  for communication with remote Auth and remote client.
+ *
+ *  All the messages to/from remote Auth and client are protected using
+ *  the credentials, while input/output data of this accessor is in plain text.
+ *
  *  This accessor requires the 'iotAuth', and 'dataConverter' modules.
  *
  *  @accessor net/SecureCommServer
- *  TODO: populate inputs/outputs/parameters
+ *
+ *  @input toSend
+ *  @input {int} toSendID
+ *
+ *  @output {int} listening
+ *  @output connection Includes information of the remote client
+ *  @output received
+ *  @output receivedID
+ *
+ *  @parameter {string} serverName The server's unique name in string.
+ *  @parameter {int} serverPort Server's port number.
+ *  @parameter {string} authHost Auth's IP address or domain name.
+ *  @parameter {int} authPort Auth's port number.
+ *
+ *  @parameter {string} authCertPath The path for the X.509 certificate file (in pem format)
+ *   of Auth with which the server is registered.
+ *  @parameter {string} serverPrivateKeyPath The path for the pem format private key of
+ *   the server.
+ *
+ *  @parameter {string} publicKeyCryptoSpec The specification for the public cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} distributionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with Auth
+ *  @parameter {string} sessionCryptoSpec The specification for the symmetric cryptography
+ *   algorithms to be used for communication with the client
+ *
+ *  @parameter {string} receiveType Data type of the received data from client.
+ *  @parameter {string} sendType Data type of the sent data to client.
  *
  *  @author Hokeun Kim
  *  @version $$Id$$
