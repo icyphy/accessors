@@ -7,20 +7,20 @@ div {
 
 .main_div {
 	display:inline-block;
-	width: 40%;
+	width: 100%;
 	font-size : 1em;
 }
 
 .watch_div {
-	float:right;
+	display:inline-block;
+	width:100%;
 	font-size : 2.2em;
-	width: 25%;
 }
 
 .hue_div {
-	float:right;
+	display:inline-block;
 	font-size : 2.2em;
-	width: 25%;
+	width: 100%;
 	overflow: hidden;
 }
 
