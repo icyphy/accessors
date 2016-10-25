@@ -101,7 +101,7 @@ exports.filterResponse = function(response) {
 		parsed = JSON.parse(response);
 	    }
 	    	// Extract the last ph value from the JSON record.
-	    	if(parsed.type === 'ph'){
+	    	if(parsed.type !== 'ph'){
 	    		throw "type of received value is not 'ph'"
 	    	}
             var ph = parseFloat(parsed.value);
