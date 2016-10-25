@@ -99,7 +99,7 @@ exports.filterResponse = function(response) {
 		parsed = JSON.parse(response);
 	    }
 	    	// Extract the last ec value from the JSON record.
-	    	if(parsed.type === 'ec'){
+	    	if(parsed.type !== 'ec'){
 	    		throw "type of received value is not 'ec'"
 	    	}
             var ec = parseFloat(parsed.value);
