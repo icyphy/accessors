@@ -24,9 +24,9 @@
  *
  *  This accessor requires the 'mqtt' module.
  *
- *  @accessor net/MqttSubscriber
  *  TODO: populate inputs/outputs/parameters
  *
+ *  @accessor net/MqttSubscriber
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
