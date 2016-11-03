@@ -27,7 +27,7 @@
  * and launch the node using the command "roslaunch mavros apm2.launch". The accessor uses a websocket to access ros.
  * Thus, you need also to install rosbridge_server and launch "roslaunch rosbridge_server rosbridge_websocket.launch".
  * 
- *  @accessor robotics/DroneLocation.js
+ *  @accessor robotics/DroneLocation
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$
  *  @parameter {string} rosbridgeServer RosBridge server address  
