@@ -24,7 +24,7 @@
  * and outputs the euclidean distance between them.
  *  
  * 
- *  @accessor geodesy/LlaDist.js
+ *  @accessor geodesy/LlaDist
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: LlaDist.js 1 2016-03-06 16:00:00Z eloi $$
  *  @input {double} lat1 latitude
