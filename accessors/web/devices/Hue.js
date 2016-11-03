@@ -70,7 +70,7 @@
  *  philips-hue (or the name assigned to your bridge if assigned manually).
  *  
  *  @accessor devices/Hue
- *  @input commands JSON commands for the Hue, for example,
+ *  @input {JSON} commands JSON commands for the Hue, for example,
  *                {"id" : 1, "on" : true, "hue" : 120}
  *  @input {string} bridgeIP The bridge IP address (and port, if needed).
  *  @parameter {string} userName The username for logging on to the Hue Bridge.
