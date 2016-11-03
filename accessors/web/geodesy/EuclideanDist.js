@@ -23,7 +23,7 @@
 /** This accessor takes two 3D locations and calculate the euclidean distance between them.
  * 
  * 
- *  @accessor geodesy/Lla2Ecef.js
+ *  @accessor geodesy/Lla2Ecef
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: Lla2Ecef.js 1 2016-03-06 16:00:00Z eloi $$
  *  @input {double} x1 x-coordinate of the first location
