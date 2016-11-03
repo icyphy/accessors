@@ -22,7 +22,7 @@
 
 /** This accessor takes a mavros global_position/global message and retrieves the corresponding Latitude, Longitude, and Altitude
  * 
- *  @accessor robotics/GlobalPosition2LatLonAlt.js
+ *  @accessor robotics/GlobalPosition2LatLonAlt
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: GlobalPosition2LatLonAlt.js 1 2016-03-06 16:00:00Z eloi $$
  *  @input {object} global maveros message 
