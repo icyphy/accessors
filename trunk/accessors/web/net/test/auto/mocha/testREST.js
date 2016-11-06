@@ -4,6 +4,7 @@
 // This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance;
+var nodeHost = require('../../../../hosts/node/nodeHost.js');
 var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
@@ -13,8 +14,9 @@ describe('net/REST.js', function () {
 
 		// Read the accessor source code.
 		try {
-			code = getAccessorCode('net/REST');
-			instance = new commonHost.Accessor('REST', code);
+                    //code = getAccessorCode('net/REST');
+                    //instance = new commonHost.Accessor('REST', code);
+                    instance = instantiate('REST', 'net/REST');
 		} catch(err){
 			console.log(err);
 		}
@@ -42,7 +44,7 @@ describe('net/REST.js', function () {
 			// single quotes around 'ok', but deep.equal works.
 			instance.latestOutput('response').should.deep.equal(correctOutput);
 			done();
-		}, 1000);
+		}, 3000);
 	});
 	
 	it('Should GET values using the JSON with padding technique', function(done){
@@ -58,12 +60,13 @@ describe('net/REST.js', function () {
 		// FIXME:  Possible to add listener to send()?  Or callback to react()?				
 		setTimeout(function() {
 			var correctOutput = {};
-			correctOutput.userId = 1;
-			correctOutput.id = 1;
-			correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-			correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
-		
-			instance.latestOutput('response').should.deep.equal(correctOutput);
+                        correctOutput.userId = 1;
+                        correctOutput.id = 1;
+                        correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
+                        correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
+
+                        instance.latestOutput('response').should.deep.equal(correctOutput);
+                        
 			done();
 		}, 1000);
 	});
