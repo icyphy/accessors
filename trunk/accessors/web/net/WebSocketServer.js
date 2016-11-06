@@ -149,12 +149,14 @@ exports.setup = function () {
     }
 };
 
-var sockets = [];
+//var sockets = [];
 
 /** Starts the web socket and attaches functions to inputs and outputs.
  * Adds an input handler on toSend that sends the input received to the right socket. */
 exports.initialize = function () {
     var self = this;
+    self.sockets = [];
+    
     if (!server) {
         server = new WebSocket.Server({
             'port': this.getParameter('port'),
@@ -188,7 +190,7 @@ exports.initialize = function () {
             // org/terraswarm/accessor/test/WebSocketClientTest.tcl
             if ((data.socketID != null)  && (data.message !== null)) {
                 // data has the right form for a point-to-point send.
-                if (sockets[data.socketID] && sockets[data.socketID].isOpen()) {
+                if (self.sockets[data.socketID] && self.sockets[data.socketID].isOpen()) {
                     // id matches this socket.
                     /*
                       console.log("Sending to socket id " +
@@ -196,7 +198,7 @@ exports.initialize = function () {
                       " message: " +
                       data.message);
                     */
-                    sockets[data.socketID].send(data.message);
+                    self.sockets[data.socketID].send(data.message);
                 } else {
                     console.log('Socket with ID ' + data.socketID +
                                 ' is not open. Discarding message.');
@@ -204,11 +206,11 @@ exports.initialize = function () {
             } else {
                 // No socketID or message, so this is a broadcast message.
                 // var success = false;
-                for (id = 0; id < sockets.length; id++) {
-                    if (sockets[id].isOpen()) {
+                for (id = 0; id < self.sockets.length; id++) {
+                    if (self.sockets[id].isOpen()) {
                         // console.log("Broadcasting to socket id " + id
                         //         + " message: " + data);
-                        sockets[id].send(data);
+                        self.sockets[id].send(data);
                         // success = true;
                     }
                 }
@@ -230,20 +232,28 @@ exports.onListening = function () {
  *  Adds an event listener to the socket. */
 exports.onConnection = function (socket) {
     // socketID is the index of the socket in the sockets array.
-    var self = this, socketID = sockets.length;
+    var self = this, socketID = self.sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
     this.send('connection', {'socketID': socketID, 'status': 'open'});
-    socket.on('message', function (message) {
-        self.send('received', {'socketID': socketID, 'message': message});
+    
+    self.sockets.push(socket);
+    
+    self.sockets[socketID].on('message', function (message) {
+    	// If message is a string, strip leading and trailing "
+    	if (typeof message === 'string') {
+    		message = message.replace(/^"(.*)"$/, '$1');
+    	}
+        self.send('received', {'message': message, 'socketID': socketID});
     });
-    socket.on('close', function () {
+    self.sockets[socketID].on('close', function () {
         self.send('connection', {'socketID': socketID, 'status': 'closed'});
     });
-    socket.on('error', function (message) {
+    self.sockets[socketID].on('error', function (message) {
+    	console.log('error ' + message);
         self.error(message);
     });
 
-    sockets.push(socket);
+    
 };
 
 /** Removes all inputHandlers from sockets.<br>
@@ -251,7 +261,7 @@ exports.onConnection = function (socket) {
  * Closes server.
  */
 exports.wrapup = function () {
-    sockets = [];
+    this.sockets = [];
 
     if (server !== null) {
         server.stop();
