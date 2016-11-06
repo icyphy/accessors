@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/WebSocketClient3JS)
+    //  (cd C:\workspaceluna\ptII\org\terraswarm\accessor\accessors\web\net\test\auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/WebSocketClient3JS)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
+    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
+    //  $PTII/bin/vergil -capecode file:/C:/workspaceluna/ptII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
 
     // Ports: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -19,7 +19,7 @@ exports.setup = function() {
     WebSocketClient.setParameter('sendType', "application/json");
     WebSocketClient.setParameter('connectTimeout', 1000);
     WebSocketClient.setDefault('server', "localhost");
-    WebSocketClient.setDefault('port', -1);
+    WebSocketClient.setDefault('port', 8092);
     WebSocketClient.setParameter('trustedCACertPath', "");
     WebSocketClient.setParameter('trustAll', false);
     WebSocketClient.setParameter('sslTls', false);
@@ -27,7 +27,7 @@ exports.setup = function() {
     // Start: WebSocketServer: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketServer = this.instantiate('WebSocketServer', 'net/WebSocketServer.js');
     WebSocketServer.setParameter('hostInterface', "localhost");
-    WebSocketServer.setParameter('port', 8087);
+    WebSocketServer.setParameter('port', 8092);
     WebSocketServer.setParameter('receiveType', "application/json");
     WebSocketServer.setParameter('sendType', "application/json");
     WebSocketServer.setParameter('pfxKeyCertPassword', "");
@@ -55,7 +55,6 @@ exports.setup = function() {
     this.containedAccessors.push(JavaScriptStop2);
 
     // Connections: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
-    this.connect(WebSocketServer, 'listening', WebSocketClient, 'port');
     this.connect(JavaScript2, 'toSend', WebSocketServer, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript2, 'connectionReady');
     this.connect(WebSocketClient, 'received', TrainableTest, 'input');
