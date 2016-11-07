@@ -1,0 +1,13 @@
+[package]
+authors = ["Christopher Brooks <cxh@eecs.berkeley.edu>"]
+description = "A Rust version of the embedded Duktape accessor host."
+keywords = ["accessor", "duktape", "javascript", "js"]
+license = "MIT"
+name = "rusteduk"
+readme = "README.md"
+version = "0.1.0"
+
+
+[dependencies]
+duk = { git = "https://github.com/dflemstr/duk"}
+libc = "0.2"
