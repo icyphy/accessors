@@ -1,4 +1,4 @@
-// Rusteduk: Accessor host using Rust and Duktape
+// Parse a JavaScript file.
 
 // Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
@@ -32,13 +32,10 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Read;
 
-// Evaluate composite accessors using Rust and Duktape.
+// Parse a JavaScript file.
 //
-// To compile: 
-//   cargo build --example rusteduk
-//
-// To run::
-//    (cd ../..; duktape/rusteduk/target/debug/examples/rusteduk duktape/test/testComposite.js)
+// Usage:
+//   cargo run --example parse examples/life.js
 //
 // @author Christopher Brooks
 // @version $Id$
