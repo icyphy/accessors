@@ -9,7 +9,8 @@ $(RUSTEDUK): examples/rusteduk.rs
 
 test: $(RUSTEDUK)
 	(cd ../..; duktape/rusteduk/$(RUSTEDUK) duktape/test/testComposite.js)
+
 # Simple parser test case.
-parse:
+life:
 	cargo run --example parse examples/life.js
 
