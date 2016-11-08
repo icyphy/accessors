@@ -1,0 +1,15 @@
+
+# The Rusteduk Accessor Host
+RUSTEDUK = target/debug/examples/rusteduk
+
+all: $(RUSTEDUK)
+
+$(RUSTEDUK): examples/rusteduk.rs
+	cargo build --example rusteduk
+
+test: $(RUSTEDUK)
+	(cd ../..; duktape/rusteduk/$(RUSTEDUK) duktape/test/testComposite.js)
+# Simple parser test case.
+parse:
+	cargo run --example parse examples/life.js
+
