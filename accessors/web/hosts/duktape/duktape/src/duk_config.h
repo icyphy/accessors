@@ -667,7 +667,7 @@
 #include <stdarg.h>  /* varargs */
 #include <setjmp.h>
 #include <stddef.h>  /* e.g. ptrdiff_t */
-#include <math.h>
+//#include <math.h>
 #include <limits.h>
 
 /* date.h is omitted, and included per platform */

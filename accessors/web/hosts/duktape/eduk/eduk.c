@@ -88,13 +88,13 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
         // called.
 
         // requestEventLoopExit() is defined in ecma_eventloop.js
-        snprintf(buf, length,
+      printf(/*buf, length,*/
                 "var a=['%s'],t=this;t.b=instantiateAndInitialize(a),setTimeout(function(){for(var i in t.b)t.b[i].wrapup();requestEventLoopExit()},%d);",
                 accessorFileName, timeout);
     } else {
         // Prevent the script from exiting by repeating the empty function
         // every ~25 days.
-        snprintf(buf, length,
+      /*sn*/printf(/*buf, length,*/
                 "var a=['%s'];instantiateAndInitialize(a);setInterval(function(){},2147483647);",
                 accessorFileName);
     }
@@ -127,6 +127,12 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     }
     //fprintf(stderr, "runAccessorHost() done.\n");
     return 0;
+}
+
+int usage(duk_context *ctx) {
+    duk_destroy_heap(ctx);
+    fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
+    return 1;
 }
 
 /** Run an accessor.
@@ -164,11 +170,13 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < argc; i++) {
         char *arg = argv[i];
         if (!arg) {
-            goto usage;
+          usage(ctx);
+          return 1;
         }
         if (strcmp(arg, "--timeout") == 0) {
             if (i == argc - 1) {
-                goto usage;
+              usage(ctx);
+              return 1;
             }
             i++;
             timeout = atoi(argv[i]);
@@ -188,9 +196,5 @@ int main(int argc, char *argv[]) {
     }
     duk_destroy_heap(ctx);
     return returnValue;
-
- usage: 
-    duk_destroy_heap(ctx);
-    fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
-    return 1;
 }
+
