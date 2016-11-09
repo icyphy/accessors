@@ -9,5 +9,6 @@ version = "0.1.0"
 
 
 [dependencies]
-duk = { git = "https://github.com/dflemstr/duk"}
+#duk = { git = "https://github.com/dflemstr/duk"}
+duk = {path = "duk"}
 libc = "0.2"
