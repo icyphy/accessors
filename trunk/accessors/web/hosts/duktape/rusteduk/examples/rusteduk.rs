@@ -54,7 +54,7 @@ fn main() {
     
     //let resolver: Box<duk::ModuleResolver> = Box::new(|a, _| a[..a.len() - 3].to_owned());
     let resolver: Box<duk::ModuleResolver> = Box::new(|a, _| -> String {
-        println!("ModuleResolver called: {}", a);
+        //println!("ModuleResolver called: {}", a);
         a
     });
 
@@ -73,20 +73,20 @@ fn main() {
     // Parse duktapeHost.js.
     // FIXME: It is expected that the command is run from the accessor/web/hosts directory.
     let path = Path::new("duktape/duktapeHost.js");
-    println!("About to parse {:?}", path);
+    //println!("About to parse {:?}", path);
     let result = parse_file(&ctx, &path);
     match result {
         Ok(v) => println!("{}: duktapeHost.js: result was {:?}", args[0], v.to_value()),
         Err(e) => println!("{}: duktapeHost.js: error was: {:?}", args[0], e),
     }
 
-    println!("Done parsing {:?}", path);
+    //println!("Done parsing {:?}", path);
 
 
     // Parse ecma_eventloop.js
     // FIXME: It is expected that the command is run from the accessor/web/hosts directory.
     let path = Path::new("duktape/duktape/examples/eventloop/ecma_eventloop.js");
-    println!("About to parse {:?}", path);
+    //println!("About to parse {:?}", path);
     let result = parse_file(&ctx, &path);
     match result {
         Ok(v) => println!("{}: duktapeHost.js: result was {:?}", args[0], v.to_value()),
@@ -94,7 +94,7 @@ fn main() {
     }
     // Parse the command line argument.
     if args.len() > 1 {
-        println!("About to parse {:?}", path);
+        //println!("About to parse {:?}", path);
         let path = Path::new(&args[1]);
         let result = parse_file(&ctx, &path);
         match result {
@@ -105,7 +105,7 @@ fn main() {
 }
 
 fn module_loader<'a>(filename: String) -> Option<String> {
-    println!("module_loader: Attempting to load \"{}\".", filename);
+    //println!("module_loader: Attempting to load \"{}\".", filename);
 
     // Check to see if the filename exists.
     // If it does not, then:
