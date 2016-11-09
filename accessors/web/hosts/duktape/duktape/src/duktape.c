@@ -75180,6 +75180,7 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 
 		if (x < 0xc0UL) {
 			/* 10xx xxxx -> invalid */
+		  fprintf(stderr, "%s:%d: duk__file_lexer_buffer() encoding error 1: %x\n", __FILE__, __LINE__, x);
 			goto error_encoding;
 		} else if (x < 0xe0UL) {
 			/* 110x xxxx   10xx xxxx  */
@@ -75204,6 +75205,7 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 			x = x & 0x07UL;
 		} else {
 			/* no point in supporting encodings of 5 or more bytes */
+		  fprintf(stderr, "%s:%d: duk__file_lexer_buffer() encoding error 2: %x\n", __FILE__, __LINE__, x);
 			goto error_encoding;
 		}
 
@@ -75217,6 +75219,7 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 			y = *p++;
 			if ((y & 0xc0U) != 0x80U) {
 				/* check that byte has the form 10xx xxxx */
+		  fprintf(stderr, "%s:%d: duk__file_lexer_buffer() encoding error 3: %x\n", __FILE__, __LINE__, y);
 				goto error_encoding;
 			}
 			x = x << 6;
@@ -75227,10 +75230,12 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 		/* check final character validity */
 
 		if (x > 0x10ffffUL) {
+		  fprintf(stderr, "%s:%d: duk__file_lexer_buffer() encoding error 4: %x\n", __FILE__, __LINE__, x);
 			goto error_encoding;
 		}
 #ifdef DUK_USE_STRICT_UTF8_SOURCE
 		if (x < mincp || (x >= 0xd800UL && x <= 0xdfffUL) || x == 0xfffeUL) {
+		  fprintf(stderr, "%s:%d: duk__file_lexer_buffer() encoding error 5: %x\n", __FILE__, __LINE__, x);
 			goto error_encoding;
 		}
 #endif
