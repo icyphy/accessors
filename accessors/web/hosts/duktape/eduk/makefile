@@ -52,6 +52,10 @@ CCLIBS	= -lm
 eduk: $(C_FILES) $(H_FILES)
 	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
+# Convert from C to Rust, see https://github.com/jameysharp/corrode
+eduk.rs:
+	corrode -o $@ $(DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
+
 TCMALLOC_FLAGS = -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
 eduk.tcmalloc: $(C_FILES) $(H_FILES)
 	$(CC) -o $@ $(DEFINES) $(TCMALLOC_FLAGS) $(CCOPTS) $(C_FILES) $(CCLIBS) -ltcmalloc
