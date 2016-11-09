@@ -60,68 +60,7 @@ fn main() {
 
     //let loader: Box<duk::ModuleLoader> = Box::new(|m| if m == "foo" { Some("exports.num = 3".to_owned()) } else { None });
     let loader: Box<duk::ModuleLoader> = Box::new(|filename| -> Option<String> {
-        println!("Attempting to require {}.", filename);
-
-        
-        // FIXME: Figure out the lifetime Rust stuff here and avoid duplicate code
-        let path = Path::new(&filename);
-        if !path.exists() {
-            // Add .js
-            // FIXME: Only add .js if it is not yet there.
-            // let canonical_path = path.canonicalize();
-            // let path_buffer = canonical_path.unwrap().as_path().join(Path::new("js"));
-            // let new_path = path_buffer.as_path();
-            let new_filename = format!("{}.js", filename);
-            let new_path = Path::new(&new_filename);
-            if !new_path.exists() {
-                // Remove ../
-                // FIXME: Only remove ../ if it is there.
-                let short_path = Path::new(&filename[3..filename.len()]);
-                if !short_path.exists() {
-                    println!("Warning: require('{:?}') failed, {:?} does not exist, tried {:?} and {:?}.!", path, path, new_path, short_path);
-                    return None;
-                } else {
-                    // Read the file.
-                    let mut f = File::open(short_path).unwrap();
-                    let mut s = String::new();
-                    let display = short_path.display();
-    
-                    match f.read_to_string(&mut s) {
-                        Err(why) => println!("couldn't require {}: {}", display,
-                                             Error::description(&why)),
-                        //Ok(_) => print!("{} contains:\n{}", display, s),
-                        Ok(_) => println!("required {}.", display),
-                    }
-                    return Some(s);
-                }
-            } else {
-                // Read the file.
-                let mut f = File::open(new_path).unwrap();
-                let mut s = String::new();
-                let display = new_path.display();
-    
-                match f.read_to_string(&mut s) {
-                    Err(why) => println!("couldn't require {}: {}", display,
-                                         Error::description(&why)),
-                    //Ok(_) => print!("{} contains:\n{}", display, s),
-                    Ok(_) => println!("required {}.", display),
-                }
-                return Some(s);
-            }
-        }
-
-        // Read the file.
-        let mut f = File::open(path).unwrap();
-        let mut s = String::new();
-        let display = path.display();
-    
-        match f.read_to_string(&mut s) {
-            Err(why) => println!("couldn't require {}: {}", display,
-                               Error::description(&why)),
-            //Ok(_) => print!("{} contains:\n{}", display, s),
-            Ok(_) => println!("required {}.", display),
-        }
-        Some(s)
+        module_loader(filename)
     });
 
     let ctx = duk::Context::builder()
@@ -163,6 +102,74 @@ fn main() {
             Err(e) => println!("{}: error was: {:?}", args[0], e),
         }
     }
+}
+
+fn module_loader<'a>(filename: String) -> Option<String> {
+    println!("module_loader: Attempting to load \"{}\".", filename);
+
+    // Check to see if the filename exists.
+    // If it does not, then:
+    // 1. If it does not have .js appended, append it and try again.
+    // 2. If it starts with ../, then remove that, optionally append .js and try again.
+
+    // FIXME: This section could be better, the issue is that we need
+    // to have the right lifetimes.  The workaround is to define these
+    // first.
+    
+    let js_filename = format!("{}.js", filename);
+    let short_filename = &filename[3..filename.len()];
+    let short_js_filename = format!("{}.js", &filename[3..filename.len()]);
+    let mut path = Path::new(&filename);
+
+    // 1. If the path is not found and does not have .js appended,
+    // append it and try again.
+    if !path.exists() {
+
+        if !&filename.ends_with(".js") {
+            // let canonical_path = path.canonicalize();
+            // let path_buffer = canonical_path.unwrap().as_path().join(Path::new("js"));
+            // let new_path = path_buffer.as_path();
+            let js_path = Path::new(&js_filename);
+            if js_path.exists() {
+                path = js_path;
+            }
+        }
+    }
+
+    // 2. If it starts with ../, then remove that, optionally append
+    // .js and try again.
+    if !path.exists() && filename.starts_with("../") {
+        if !&filename.ends_with(".js") {
+            let short_js_path = Path::new(&short_js_filename);
+            if short_js_path.exists() {
+                path = short_js_path;
+            }
+        } else {
+            let short_path = Path::new(&short_filename);
+            if short_path.exists() {
+                path = short_path;
+            }
+        }
+    }
+
+    if !path.exists() {
+        println!("Warning: require('{:?}') failed.  {:?} does not exist, also possibly tried {:?}, {:?} and {:?}.", filename, filename, js_filename, short_filename, short_js_filename);
+        return None;
+    }
+
+    let display = path.display();
+
+    // Read the file.
+    // FIXME: Do some error checking here.
+    let mut f = File::open(path).unwrap();
+    let mut s = String::new();
+    match f.read_to_string(&mut s) {
+        Err(why) => println!("module_loader: Couldn't require {}: {}", display,
+                             Error::description(&why)),
+        //Ok(_) => print!("{} contains:\n{}", display, s),
+        Ok(_) => println!("module_loader: Done! Successfully found {}.", display),
+    }
+    Some(s)
 }
 
 // Parse a JavaScript file.
