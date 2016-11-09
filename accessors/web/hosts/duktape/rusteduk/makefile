@@ -14,3 +14,6 @@ test: $(RUSTEDUK)
 life:
 	cargo run --example parse examples/life.js
 
+clean:
+	rm -f $(RUSTEDUK)
+	cargo clean
