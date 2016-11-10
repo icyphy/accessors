@@ -10,5 +10,5 @@ version = "0.1.0"
 
 [dependencies]
 #duk = { git = "https://github.com/dflemstr/duk"}
-duk = {git = "https://github.com/terraswarm/duk.git" branch="cxh/fileio"}
+duk = {git = "https://github.com/terraswarm/duk.git", branch="cxh/fileio"}
 libc = "0.2"

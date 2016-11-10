@@ -24,13 +24,14 @@
 
 
 extern crate duk;
+
 use std::env;
-use std::path::Path;
-
 use std::error::Error;
-
 use std::fs::File;
 use std::io::Read;
+use std::path::Path;
+use std::str::FromStr;
+
 
 // Evaluate composite accessors using Rust and Duktape.
 //
@@ -43,6 +44,7 @@ use std::io::Read;
 // @author Christopher Brooks
 // @version $Id$
 fn main() {
+    let mut timeout: u64 = 0;
 
     // Create a Duktape Context with a ModuleResolver and ModuleLoader
 
@@ -80,27 +82,36 @@ fn main() {
         Err(e) => println!("{}: duktapeHost.js: error was: {:?}", args[0], e),
     }
 
-    //println!("Done parsing {:?}", path);
-
-
     // Parse ecma_eventloop.js
     // FIXME: It is expected that the command is run from the accessor/web/hosts directory.
     let path = Path::new("duktape/duktape/examples/eventloop/ecma_eventloop.js");
-    //println!("About to parse {:?}", path);
     let result = parse_file(&ctx, &path);
     match result {
         Ok(v) => println!("{}: duktapeHost.js: result was {:?}", args[0], v.to_value()),
         Err(e) => println!("{}: duktapeHost.js: error was: {:?}", args[0], e),
     }
-    // Parse the command line argument.
-    if args.len() > 1 {
-        //println!("About to parse {:?}", path);
-        let path = Path::new(&args[1]);
+
+    // The index of the first accessor filename.
+    let mut accessor_index = 1;
+
+    // Check for --timeout.
+    if args.len() >= 2 {
+        if args[1] == "--timeout" {
+            timeout = u64::from_str(&args[2]).unwrap();
+            println!("Saw timeout {}, ignoring it for now", timeout);
+            accessor_index = 3;
+        }
+    }
+
+    // Loop through the accessors.
+    while accessor_index < args.len() {
+        let path = Path::new(&args[accessor_index]);
         let result = parse_file(&ctx, &path);
         match result {
             Ok(v) => println!("{}: result was {:?}", args[0], v.to_value()),
             Err(e) => println!("{}: error was: {:?}", args[0], e),
         }
+        accessor_index += 1;
     }
 }
 
@@ -172,8 +183,9 @@ fn module_loader<'a>(filename: String) -> Option<String> {
     Some(s)
 }
 
-// Parse a JavaScript file.
-// @param filename The name of the file to be parsed
+// Run an Accessor using the Rust Accessor Host.
+// @param ctx The Duktape context.
+// @param filename The name of the file to be parsed.
 // @return The result.
 fn parse_file<'a>(ctx: &'a duk::Context, path: &Path) -> Result<duk::Reference<'a>, duk::Error> {
 

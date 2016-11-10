@@ -8,7 +8,7 @@ $(RUSTEDUK): examples/rusteduk.rs
 	cargo build --example rusteduk
 
 test: $(RUSTEDUK)
-	(cd ../..; duktape/rusteduk/$(RUSTEDUK) duktape/test/testComposite.js)
+	(cd ../..; duktape/rusteduk/$(RUSTEDUK) -timeout 4000 duktape/test/testComposite.js)
 
 # Simple parser test case.
 life:
