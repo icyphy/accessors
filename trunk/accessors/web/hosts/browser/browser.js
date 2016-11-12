@@ -633,10 +633,11 @@ function generateAccessorHTML(path, id) {
                         className, code, getAccessorCode, bindings);
                 
                 // Mocha tests use instantiate.  Define it.
+                // code = getAccessorCode('net/REST');
+                // instance = new commonHost.Accessor('REST', code);
                 instantiate = function(className, path) {
-                	code = getAcessorCode(path);
-                	return new commonHost.Accessor(className, code, 
-                			getAccessorCode, bindings);
+                	code = getAccessorCode(path);
+                	return new commonHost.Accessor(className, code);
                 };
             } catch(err2) {
                 error(err2, 'instantiating accessor');
