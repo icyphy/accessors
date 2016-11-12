@@ -10,12 +10,14 @@ var assert = chai.assert;
 var should = chai.should();
 
 describe('net/REST.js', function () {
+	// Increase default timeout (originally 2000ms).
+	this.timeout(10000);
+	
 	before(function() {
 
 		// Read the accessor source code.
 		try {
-                    //code = getAccessorCode('net/REST');
-                    //instance = new commonHost.Accessor('REST', code);
+			console.log('instantiate ' + typeof instantiate);
                     instance = instantiate('REST', 'net/REST');
 		} catch(err){
 			console.log(err);
