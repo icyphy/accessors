@@ -182,7 +182,7 @@ var RegressionTester = (function() {
                 		// Wait until page has loaded, then click react to 
                 		// inputs (if present).
                 		driver.wait(function() {
-                			return driver.isElementPresent(By.id('reactToInputs'));
+                			return driver.findElements(By.id('reactToInputs'));
                 		}, waitTimeLimit).then(function() {
                 			driver.findElement(By.id('reactToInputs')).click();
                 		}).catch(function(err){
@@ -193,9 +193,10 @@ var RegressionTester = (function() {
                 		// Let the accessor run for the specified time.
                 		// TODO:  How to define when accessor is done?
                         setTimeout(function() {
-                        	driver.isElementPresent(By.className('accessorError'))
+                        	// This returns an array of any found elements.
+                        	driver.findElements(By.className('accessorError'))
                         		.then(function(found) {
-                        			if (found) {
+                        			if (found.length > 0) {
                             			compositeFailureCount ++;
                             			console.log(testAccessor + ' failed');
                             			
@@ -300,7 +301,7 @@ var RegressionTester = (function() {
 					
 					driver.wait(until.elementTextContains(element, 'xml'), 10000)
 							.then(function(element) {
-						
+
 						element.getText().then(function(text) {
 							mochaResults.push({'testName':testName, 'directory' : testNames[count].directory, 'result':text});
 							resolve('passed');
@@ -313,7 +314,7 @@ var RegressionTester = (function() {
 
 					}).catch(function(err){
 						console.log(err);
-						reject('Error: No result produced by test.');
+						reject('Error: Cannot retrieve result text.');
 					});
 				}).catch(function(err){
 					console.log(testName + ' failed');
