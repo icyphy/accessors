@@ -143,8 +143,9 @@ window.onload = function() {
 // Export commonHost after it is loaded.  Used by Test accessor.
 var commonHost;
 
-// These will be defined when commonHost.js is loaded.  Used by Test accessor.
-var Accessor;	
+// These will be defined when commonHost.js is loaded.  Used by Test accessor
+// and mocha test cases.
+var Accessor, instantiate;
 
 /** Local function controlling how standard elements are rendered in the
  *  document with an optional label.
@@ -630,6 +631,13 @@ function generateAccessorHTML(path, id) {
             	
                 instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
+                
+                // Mocha tests use instantiate.  Define it.
+                instantiate = function(className, path) {
+                	code = getAcessorCode(path);
+                	return new commonHost.Accessor(className, code, 
+                			getAccessorCode, bindings);
+                };
             } catch(err2) {
                 error(err2, 'instantiating accessor');
                 executable = false;
