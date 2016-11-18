@@ -23,8 +23,15 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 
-// The file system module 'fs', is not available under Duktape.
-if (typeof Duktape !== 'object') {
+// The file system module 'fs', is not available under Duktape, CapeCode or Nashorn.
+//if (typeof Duktape !== 'object') {
+var hasFsModule = true;
+
+if (typeof Duktape === 'object' || (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function')) {
+    hasFsModule = false;
+}
+
+if (hasFsModule) {
     // Require the filesystem module to read the accessor source code.
     var fs = require('fs');
 }
@@ -49,28 +56,47 @@ getAccessorCode = function (name) {
             name += '.js';
         }
         try {
-            if (typeof Duktape !== 'object') {
+	    if (hasFsModule) {
                 var pathName = searchPath[i] + name;
-                // console.log("testCommon.js: pathName: " + pathName);
+                //console.log("testCommon.js: pathName: " + pathName);
                 if (fs.statSync(pathName).isFile()) {
                     return fs.readFileSync(pathName, 'utf8');
                 }
             } else {
                 var pathName = searchPath[i] + name;
-                // print("testCommon.js: pathName: " + pathName);
-                var src = FileIo.readfile(pathName);
-                if (typeof src === 'buffer') {
-                    // print("testCommon.js: returning contents of " + pathName);
-                    return src;
-                }
+                print("testCommon.js: pathName: " + pathName);
+		if (typeof Duktape === 'object') {
+                    var src = FileIo.readfile(pathName);
+                    if (typeof src === 'buffer') {
+			// print("testCommon.js: returning contents of " + pathName);
+			return src;
+                    }
+		} else {
+		    var FileReader = java.io.FileReader,
+			BufferedReader = java.io.BufferedReader,
+			buffered,
+			src = '';
+
+		    try {
+			buffered = new BufferedReader(new FileReader(pathName));
+			while ((line = buffered.readLine()) !== null) {
+			    src += line + '\n';
+			}
+		    } finally {
+			if (typeof buffered !== 'undefined') {
+			    buffered.close(); // close the stream so there's no file locks   
+			}
+		    }
+		    print("testCommon.js: returning contents of " + pathName);
+		    return src;
+		}
             }
         } catch (e) {
-            // Ignored
+	    //print("getAccessorCode(" + name + "):" + e);
         }
     }
     throw ('Failed to find ' + name + ". Looked in " + searchPath);
 }
-
 
 // Read the accessor source code.
 var code = getAccessorCode('test/TestAccessor');
