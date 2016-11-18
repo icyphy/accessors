@@ -64,7 +64,8 @@ getAccessorCode = function (name) {
                 }
             } else {
                 var pathName = searchPath[i] + name;
-                print("testCommon.js: pathName: " + pathName);
+                // print("testCommon.js: pathName: " + pathName);
+
 		if (typeof Duktape === 'object') {
                     var src = FileIo.readfile(pathName);
                     if (typeof src === 'buffer') {
@@ -72,6 +73,7 @@ getAccessorCode = function (name) {
 			return src;
                     }
 		} else {
+		    // Nashorn
 		    var FileReader = java.io.FileReader,
 			BufferedReader = java.io.BufferedReader,
 			buffered,
@@ -87,7 +89,7 @@ getAccessorCode = function (name) {
 			    buffered.close(); // close the stream so there's no file locks   
 			}
 		    }
-		    print("testCommon.js: returning contents of " + pathName);
+		    // print("testCommon.js: returning contents of " + pathName);
 		    return src;
 		}
             }
