@@ -160,8 +160,8 @@
   </target>
   
   <target name="tests"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha"
-          description="Run the CapeCode, Browser, Duktape, eduk and node host tests">
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha, tests.nashorn"
+          description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
   </target>
 
   <target name="-ptII-exists" unless="ptII.exists">
@@ -351,9 +351,47 @@
     </exec>
   </target>
 
+  <target name="tests.nashorn"
+          depends="-ptII-exists"
+          description="Execute the Nashorn tests in hosts/nashorn/test.">
+    <echo>
+      == tests.nashorn ==
+      These tests are only run if $PTII exists.
+      The Nashorn accessor host is a subset of the Cape Code accessor host
+    </echo>
+    <apply dir="hosts"
+           executable="nashorn/nashornAccessorHost"
+           failonerror="true">
+      <arg value="-js"/>
+      <arg value="-timeout"/>
+      <arg value="4010"/>
+      <fileset dir="hosts">
+        <include name="nashorn/test/*.js"/>
+	<exclude name="**/testNashornHost.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      Running the Nashorn smoke test.  To replicate:
+      cd hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
+    </echo>
+
+    <exec dir="hosts"
+          executable="nashorn/nashornAccessorHost">
+      <arg value="-timeout"/>
+      <arg value="1000"/>
+      <arg value="hosts/nashorn/test/testNashornHost.js"/>
+    </exec>
+  </target>
+
   <target name="tests.rusteduk"
           depends="rusteduk"
           description="Execute the rusteduk tests.">
+    <echo>
+      == tests.rusteduk ==
+      Rusteduk is an accessor written partially in Rust that uses Duktape as the JS engine.
+    </echo>
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/rusteduk/target/debug/examples/rusteduk"
