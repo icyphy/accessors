@@ -21,6 +21,11 @@
   <!-- The location of the Node.js binary. -->
   <property name="node.executable" value="/usr/local/bin/node" />
 
+  <!-- Location of the Rusteduk sources.
+       Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
+  -->
+  <property name="rusteduk.source" value="${basedir}/hosts/duktape/rusteduk"/>
+
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
     <exclude name="vendors/"/>
@@ -41,7 +46,7 @@
   </fileset>
 
   <target name="build"
-          depends="duktape, jsdoc, ptdoc"
+          depends="duktape, jsdoc, ptdoc, rusteduk"
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
@@ -61,7 +66,7 @@
        that are used by eduk and duk.
     --> 
   <target name="duktape"
-          depends="eduk, duk"
+          depends="eduk, duk, rusteduk"
           description="Build the duktape binaries">
   </target>
 
@@ -72,6 +77,7 @@
       The duk binary would not be deployed on an embedded machine.
     </echo>
     <exec dir="${duktape.source}"
+	  failonerror="true"
           executable="make">
     </exec>
   </target>
@@ -90,6 +96,7 @@
   <target name="eduk.tcmalloc"
           description="Build the eduk with tcmalloc for heap profiling">
     <exec dir="${eduk.source}"
+          failonerror="true"
           executable="make">
       <arg value="eduk.tcmalloc"/>
     </exec>
@@ -138,6 +145,20 @@
     </exec>
   </target>
 
+  <target name="rusteduk"
+          description="Build the eduk binary.  Requires rustc.">
+    <echo>The rusteduk binary is a Rust binary that invokes the C-based duktape JavaScript interpreter.
+    Rusteduk requires rustc.  The easiest way to get rustc is to install rustup, see https://www.rustup.rs
+    Then run:
+      rustup default stable
+    See https://www.terraswarm.org/accessors/wiki/Main/RustHost
+    </echo>
+    <exec dir="${rusteduk.source}"
+          failonerror="true"
+          executable="make">
+    </exec>
+  </target>
+  
   <target name="tests"
           depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha"
           description="Run the CapeCode, Browser, Duktape, eduk and node host tests">
@@ -328,6 +349,26 @@
       <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
       <arg line="${converted}"/>
     </exec>
+  </target>
+
+  <target name="tests.rusteduk"
+          depends="rusteduk"
+          description="Execute the rusteduk tests.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="hosts"
+           executable="duktape/rusteduk/target/debug/examples/rusteduk"
+           failonerror="true"
+	   relative="true">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- rusteduk does not have a separate rusteduk test directory, we just
+	     run the accessors in test/auto instead.
+	  --> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
   </target>
 
   <target name="vendors-jsdoc"
