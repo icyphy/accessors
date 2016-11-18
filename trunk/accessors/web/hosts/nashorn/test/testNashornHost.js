@@ -1,8 +1,12 @@
-// This is just a simple smoke test for the Node.js host.
-// To use it, run the node host:
+// This is just a simple smoke test for the Nashorn Accessor Host.
+// To run it:
 //    cd ..
-//    node nodeHostShell.js
-// and copy and paste the following into it.
+//    ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
+//
+// Or, use ant!
+//    cd ../..
+//    ant tests.nashorn
+//
 var a = this.instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);

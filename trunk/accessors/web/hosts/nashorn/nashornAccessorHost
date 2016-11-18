@@ -8,6 +8,7 @@
 #
 # This script is syntactic sugar for the Ptolemy II command.
 
+echo "$0 $@"
 installMessage="$0: \$PTII/bin/ptinvoke could not be found.  Perhaps you need to install Cape Code (aka Ptolemy II?) See https://www.terraswarm.org/accessors/wiki/Main/PtolemyII"
 if [ -z $PTII ]; then
     echo "$0: \$PTII was not set"
