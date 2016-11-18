@@ -210,7 +210,8 @@ var accessorHostsEnum = {
     CAPECODE: 2,
     DEFAULT: 3,
     DUKTAPE: 4,
-    NODE: 5
+    NODE: 5,
+    NASHORN: 6
 };
 exports.accessorHostsEnum = accessorHostsEnum;
 
@@ -219,10 +220,12 @@ var accessorHost = accessorHostsEnum.DEFAULT;
 // In alphabetical order.
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
-} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function' && actor !== null) {
     accessorHost = accessorHostsEnum.CAPECODE;
 } else if (typeof Duktape === 'object') {
     accessorHost = accessorHostsEnum.DUKTAPE;
+} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function' && actor === null) {
+    accessorHost = accessorHostsEnum.NASHORN;
 } else if (typeof process !== 'undefined' && typeof process.version === 'string') {
     accessorHost = accessorHostsEnum.NODE;
 }
@@ -452,6 +455,9 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
         throw new Error('Host does not define required alert function.');
     }
 
+    // By default, the root property is this instance.
+    this.root = this;
+
     var wrapper = new Function('\
 alert, \
 error, \
@@ -482,9 +488,6 @@ setTimeout',
 
     ////////////////////////////////////////////////////////////////////
     //// Set up the prototype chain and ssuper properties.
-
-    // By default, the root property is this instance.
-    this.root = this;
 
     if (extendedBy) {
         // This accessor is being extended.
