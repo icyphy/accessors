@@ -64,10 +64,10 @@ exports.makeRequest = function() {
     } else {
         request.method = "GET";
         var tmp = url + "key=" + key;
-        if (ts !== null) {
-            var _ts = ts.replace("000000", "");
-            var d = Date.parse(_ts)/1000.0;        //milliseconds
-            tmp = tmp + "&ts=" + d;
+        if (timestamp !== null) {
+            var _timestamp = timestamp.replace("000000", "");
+            var date = Date.parse(_timestamp)/1000.0;        //milliseconds
+            tmp += "&ts=" + date;
         }
         request.url = tmp;
     }
@@ -113,7 +113,7 @@ exports.handleResponse = function(message) {
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
+    this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
 };
 
 /** Upon wrapup, stop handling new inputs.  */

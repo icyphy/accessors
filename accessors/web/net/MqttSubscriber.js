@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -31,6 +31,10 @@
  *  @version $$Id$$
  */
  
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global console, exports, require */
+/*jshint globalstrict: true */
 "use strict";
 
 var mqtt = require('mqtt');
@@ -59,7 +63,8 @@ exports.setup = function () {
         type: 'int',
         value: 0
     });
-}
+};
+
 var self;
 var mqttClient;
 function onMessage(topic, data) {
@@ -101,8 +106,8 @@ exports.initialize = function() {
     mqttClient.on('connect', onConnect);
     mqttClient.on('message', onMessage);
     mqttClient.start();
-}
+};
 
 exports.wrapup = function() {
     mqttClient.end();
-}
+};

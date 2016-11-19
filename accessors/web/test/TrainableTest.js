@@ -15,7 +15,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals */
+/*globals console, exports*/
 /*jshint globalstrict: true*/
 /*jslint plusplus: true */
 'use strict';
@@ -50,15 +50,18 @@ var trainingTokens = [];
  */
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
-    inputHandled = false;
-    initialized = true;
-    numberOfInputTokensSeen = 0;
-    trainingTokens = [];
+    var inputHandled = false,
+	inputValueValue,
+	initialized = true, 
+	numberOfInputTokensSeen = 0,
+	trainingTokens = [];
     
     var self = this;
     
     this.addInputHandler('input', function() {
-        var inputValue = self.get('input');
+        var cache = [],
+	    inputValue = self.get('input'),
+	    inputValueValue;
         inputHandled = true;
         // If the input is not connected, then inputValue will be null.
         if (self.getParameter('trainingMode')) {
@@ -79,8 +82,8 @@ exports.initialize = function () {
                                     'Perhaps the input is not connected?'
                                    );
                 }
-                var cache = [];
-                var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                cache = [];
+                inputValueValue = JSON.stringify(inputValue, function(key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
                             // Circular reference found, discard key
@@ -118,8 +121,8 @@ exports.initialize = function () {
                                     referenceToken + '"');
                 }
             } else if (typeof referenceToken === 'object') {
-                var cache = [];
-                var inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                cache = [];
+                inputValueValue = JSON.stringify(inputValue, function(key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
                             // Circular reference found, discard key
@@ -130,7 +133,7 @@ exports.initialize = function () {
                     }
                     return value;
                 });
-                var cache = [];
+                cache = [];
                 var referenceTokenValue = JSON.stringify(referenceToken, function(key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
@@ -198,9 +201,9 @@ exports.wrapup = function () {
         }
         initialized = false;
     }
-    var name = this.accessorName
+    var name = this.accessorName;
     if (this.container) {
-	name = this.container.accessorName + "." + name
+	name = this.container.accessorName + "." + name;
     }
     console.log("TrainableTest.js: wrapup() finished: " + name);
 };

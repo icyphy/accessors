@@ -19,7 +19,7 @@
   <property name="jsdoc.home" value="vendors/jsdoc" />
 
   <!-- The location of the Node.js binary. -->
-  <property name="node.executable" value="/usr/local/bin/node" />
+  <property name="node.executable" value="node" />
 
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.

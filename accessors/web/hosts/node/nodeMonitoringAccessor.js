@@ -1,6 +1,6 @@
 // Monitoring accessor for the accessor host.
 //
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -44,7 +44,7 @@
 /** Create a dummy instance of timer to collect samples and initiliaze it.
  *  This is just for initialization and is overridden with the input handler
  *  for sample collection once the first input is provided
-*/
+ */
 var timer = setInterval(function() { 
     console.log('[Monitoring] Initialized dummy input handler');
     return undefined; 
@@ -65,7 +65,7 @@ exports.initialize = function() {
         clearInterval(timer);
         timer = setInterval(function() {
             self.send('sample', 
-			JSON.stringify(Accessor.queryActiveAccessors()))
+		      JSON.stringify(Accessor.queryActiveAccessors()));
         }, this.get('samplePeriodInMs'));
     });
 };

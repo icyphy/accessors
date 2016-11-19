@@ -39,5 +39,6 @@ exports.setup = function() {
 };
 
 exports.fire = function() {
+    console.log("TestAdder: inputLeft: " + this.get('inputLeft') + " inputRight: " + this.get('inputRight'));
     this.send('sum', this.get('inputLeft') + this.get('inputRight'));
 };

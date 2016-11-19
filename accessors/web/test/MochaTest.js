@@ -69,7 +69,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals exports, require*/
+/*globals console, exports, require*/
 /*jshint globalstrict: true*/
 'use strict';
 

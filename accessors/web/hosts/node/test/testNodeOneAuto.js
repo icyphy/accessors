@@ -14,13 +14,13 @@ var fs = require('fs');
 var auto = "";
 // Look for -Dauto=
 for (var i in process.argv) {
-    if (process.argv[i].indexOf('--Dauto=') == 0) {
+    if (process.argv[i].indexOf('--Dauto=') === 0) {
 	auto = process.argv[i].substr(8); 
 	break;
     }
 }
 
-if (auto == "") {
+if (auto === "") {
     console.log("Could not find --Dauto=?  Arguments were:");
     console.log(process.argv);
 } else {

@@ -31,4 +31,4 @@ exports.setup = function() {
     // Connections: RampJSTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(JavaScriptRamp, 'output', TrainableTest, 'input');
-}
+};
