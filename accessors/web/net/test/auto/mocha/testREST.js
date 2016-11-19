@@ -4,8 +4,7 @@
 // This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance;
-//var nodeHost = require('../../../../hosts/node/nodeHost.js');
-var nodeHost = require('./nodeHost.js');
+var nodeHost = require('../../../../hosts/node/nodeHost.js');
 var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
