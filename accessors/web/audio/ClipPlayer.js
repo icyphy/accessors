@@ -51,23 +51,23 @@ exports.setup = function() {
 };
 
 exports.initialize = function() {
-	var self = this;
-	self.player = new audio.ClipPlayer();
-	self.player.load(this.getParameter('clipURL'));
-	
-	this.addInputHandler('start', function () {
+        var self = this;
+        self.player = new audio.ClipPlayer();
+        self.player.load(this.getParameter('clipURL'));
+        
+        this.addInputHandler('start', function () {
         self.player.play();
         self.send('output', true);
     });
-	
-	this.addInputHandler('stop', function() {
-		self.player.stop();
-		self.send('output', false);
-	});
+        
+        this.addInputHandler('stop', function() {
+                self.player.stop();
+                self.send('output', false);
+        });
 };
 
 exports.wrapup = function() {
-	if (this.player !== null) {
-		this.player.stop();
-	}
+        if (this.player !== null) {
+                this.player.stop();
+        }
 };

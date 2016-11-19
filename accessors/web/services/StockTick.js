@@ -56,12 +56,12 @@ var http = require('httpClient');
 exports.setup = function() {
     this.extend('net/REST');
     this.input('symbol', {
-	    'value':'YHOO',
-		'type':'string'
-		});
+            'value':'YHOO',
+                'type':'string'
+                });
     this.output('price', {
-	    'type':'number'
-		});
+            'type':'number'
+                });
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {'visibility':'expert', 'value':'"https://query.yahooapis.com"'});
@@ -84,15 +84,15 @@ exports.initialize = function() {
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
     this.addInputHandler('symbol', function() {
-	    // Read the current value of the 'symbol' input.
-	    var stock = self.get('symbol');        
-	    var args = self.get('arguments');
-	    args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
-		stock +
-		'")';
-	    self.send('arguments', args);
-	    self.send('trigger', true);
-	});
+            // Read the current value of the 'symbol' input.
+            var stock = self.get('symbol');        
+            var args = self.get('arguments');
+            args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
+                stock +
+                '")';
+            self.send('arguments', args);
+            self.send('trigger', true);
+        });
 };
 
 /** Filter the response, extracting the stock tick information and
@@ -102,13 +102,13 @@ exports.initialize = function() {
 exports.filterResponse = function(response) {
     if (response) {
         try {
-	    // Check if response is JSON or stringified JSON.  If stringified, parse.
-	    var parsed;
-	    if (typeof response == "object") {
-		parsed = response;
-	    } else {
-		parsed = JSON.parse(response);
-	    }
+            // Check if response is JSON or stringified JSON.  If stringified, parse.
+            var parsed;
+            if (typeof response == "object") {
+                parsed = response;
+            } else {
+                parsed = JSON.parse(response);
+            }
 
             // Extract the last trade price from the JSON record.
             var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);

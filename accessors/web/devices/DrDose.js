@@ -65,23 +65,23 @@ exports.setup = function() {
     this.extend('net/REST');
      /*
      this.input('AcidDuration', {
-     	'type':'number'
+             'type':'number'
      });
     */
  
     this.input('Acid Duration', {
-	    'value': 0,
-		'type':'number'
-		});
-	this.input('Base Duration', {
-	    'value': 0,
-		'type':'number'
-		});
-	this.input('Nutrient Duration', {
-	    'value': 0,
-		'type':'number'
-		});
-		
+            'value': 0,
+                'type':'number'
+                });
+        this.input('Base Duration', {
+            'value': 0,
+                'type':'number'
+                });
+        this.input('Nutrient Duration', {
+            'value': 0,
+                'type':'number'
+                });
+                
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {'visibility':'expert', 'value':'"http://192.168.1.247:8080"'});
@@ -105,41 +105,41 @@ exports.initialize = function() {
 
     // Send duration to Dr Dose when input arrives.
     this.addInputHandler('Acid Duration', function() {
-	    // Read the current value of the 'Acid Duration' input.
-	    var command = "acid";
-	    var duration = self.get('Acid Duration');        
-	    var args = {'duration': duration};
-	    //console.log(JSON.stringify(args));
-	    self.send('command', command);
-	    self.send('arguments', args);
-	    self.send('trigger', true);
-	});
-	
-	// Send duration to Dr Dose when input arrives.
+            // Read the current value of the 'Acid Duration' input.
+            var command = "acid";
+            var duration = self.get('Acid Duration');        
+            var args = {'duration': duration};
+            //console.log(JSON.stringify(args));
+            self.send('command', command);
+            self.send('arguments', args);
+            self.send('trigger', true);
+        });
+        
+        // Send duration to Dr Dose when input arrives.
     this.addInputHandler('Base Duration', function() {
-	    // Read the current value of the 'Base Duration' input.
-	    var command = "base";
-	    var duration = self.get('Base Duration');        
-	    //args = duration;
-	    var args = {'duration': duration};
-   	    self.send('command', command);
-	    self.send('arguments', args);
-	    self.send('trigger', true);
-	});
+            // Read the current value of the 'Base Duration' input.
+            var command = "base";
+            var duration = self.get('Base Duration');        
+            //args = duration;
+            var args = {'duration': duration};
+               self.send('command', command);
+            self.send('arguments', args);
+            self.send('trigger', true);
+        });
 
-	// Send duration to Dr Dose when input arrives.
+        // Send duration to Dr Dose when input arrives.
     this.addInputHandler('Nutrient Duration', function() {
-	    // Read the current value of the 'Nutrient Duration' input.
-	    var command = "nutrient";
-	    var duration = self.get('Nutrient Duration');        
-	    //args = duration;
-	    var args = {'duration': duration};
-   	    self.send('command', command);
-	    self.send('arguments', args);
-	    self.send('trigger', true);
-	});
-		
-	//self.send('trigger', true);
+            // Read the current value of the 'Nutrient Duration' input.
+            var command = "nutrient";
+            var duration = self.get('Nutrient Duration');        
+            //args = duration;
+            var args = {'duration': duration};
+               self.send('command', command);
+            self.send('arguments', args);
+            self.send('trigger', true);
+        });
+                
+        //self.send('trigger', true);
 };
 
 
@@ -149,17 +149,17 @@ exports.initialize = function() {
  */
  /*
 exports.filterResponse = function(response) {
-	
-	
+        
+        
     if (response) {
         try {
-	    // Check if response is JSON or stringified JSON.  If stringified, parse.
-	    var parsed;
-	    if (typeof response == "object") {
-		parsed = response;
-	    } else {
-		parsed = JSON.parse(response);
-	    }
+            // Check if response is JSON or stringified JSON.  If stringified, parse.
+            var parsed;
+            if (typeof response == "object") {
+                parsed = response;
+            } else {
+                parsed = JSON.parse(response);
+            }
 
             // Extract the last trade price from the JSON record.
             var price = parseFloat(parsed.query.results.quote.LastTradePriceOnly);

@@ -58,20 +58,20 @@ exports.playJSON = function(audioJSON) {
 
 exports.setup = function() {
     this.parameter('numOutputChannels', {
-	type: 'number',
-	value: 1
+        type: 'number',
+        value: 1
     });
     this.parameter('samplingRate', {
-	type: 'number',
-	value: 44100
+        type: 'number',
+        value: 44100
     });
     this.parameter('blockSize', {
-	type: 'number',
-	value: 512
+        type: 'number',
+        value: 512
     });
     this.input('signal');
     this.input('signalJSON', {
-	type: 'json'
+        type: 'json'
     });
 };
 

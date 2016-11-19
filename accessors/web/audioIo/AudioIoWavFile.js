@@ -43,10 +43,10 @@ exports.loadFile = function() {
 
 exports.setup = function() {
     this.input('wavfile', {
-	type: 'string'
+        type: 'string'
     });
     this.output('wavdata', {
-	type: 'json'
+        type: 'json'
     });
 };
 

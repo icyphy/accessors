@@ -73,11 +73,11 @@ var mqtt = require('mqtt');
 exports.setup = function () {
     // Inputs and outputs
     this.input('toPublish');
-    this.output('connection', {	
-    	spontaneous: true
+    this.output('connection', {        
+            spontaneous: true
     });
-    this.output('ready', {	
-    	spontaneous: true
+    this.output('ready', {        
+            spontaneous: true
     });
     // MQTT information
     this.parameter('brokerHost', {
@@ -153,8 +153,8 @@ function onConnect() {
     mqttConnected = true;
     self.send('connection', 'connected to a broker');
     if (!publisherReady && mqttConnected && currentSessionKey !== null) {
-	publisherReady = true;
-    	self.send('ready', 'publisher is ready');
+        publisherReady = true;
+            self.send('ready', 'publisher is ready');
     }
 }
 
@@ -176,11 +176,11 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList) {
         currentSessionKeyList.push(sessionKeyList[i]);
     }
     if (currentSessionKeyList.length > 0) {
-    	currentSessionKey = currentSessionKeyList.shift();
+            currentSessionKey = currentSessionKeyList.shift();
     }
     if (!publisherReady && mqttConnected && currentSessionKey !== null) {
-	publisherReady = true;
-    	self.send('ready', 'publisher is ready');
+        publisherReady = true;
+            self.send('ready', 'publisher is ready');
     }
 }
 
@@ -196,12 +196,12 @@ exports.toPublishInputHandler = function () {
     
     var toPublish = this.get('toPublish');
     var encrypted = iotAuth.encryptSecureMessageToPublish(
-    	{sequenceNum: publishSequenceNum, data: toPublish},
-    	this.getParameter('sessionCryptoSpec'),
-    	currentSessionKey);
+            {sequenceNum: publishSequenceNum, data: toPublish},
+            this.getParameter('sessionCryptoSpec'),
+            currentSessionKey);
     publishSequenceNum++;
     mqttClient.publish(this.getParameter('topic'), encrypted,
-		       {qos: this.getParameter('qosLevel')});
+                       {qos: this.getParameter('qosLevel')});
 };
 
 exports.initialize = function() {
@@ -217,9 +217,9 @@ exports.initialize = function() {
     
     this.addInputHandler('toPublish', exports.toPublishInputHandler.bind(this));
     mqttClient = mqtt.createClient(
-    	this.getParameter('brokerPort'), 
-    	this.getParameter('brokerHost'),
-    	{rawBytes: true});
+            this.getParameter('brokerPort'), 
+            this.getParameter('brokerHost'),
+            {rawBytes: true});
     mqttClient.on('connect', onConnect);
     mqttClient.start();
     

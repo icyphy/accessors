@@ -103,20 +103,20 @@ exports.setup = function() {
     value: "GET"
   });
   this.input('body', {
-	  type: "JSON",
-	  value: ""
+          type: "JSON",
+          value: ""
   });
   this.output('response', {
-	    type: "string",
-	    value: ""
-	  });
+            type: "string",
+            value: ""
+          });
   this.output('state', {
-		  type: "JSON",
-		  value: ""
+                  type: "JSON",
+                  value: ""
   });
   this.parameter('bridgeID', {
-	  type: "string",
-	  value: "Bridge1"
+          type: "string",
+          value: "Bridge1"
   });
 };
 
@@ -124,22 +124,22 @@ exports.setup = function() {
  * initialize its state.
  */
 exports.initialize = function() {
-	// mockHueBridges.MockHueBridge is an object containing the results
-	// of a self-executing function.  This, in essence, creates a singleton
-	// object with a set of functions as its public API.
-	bridge = mockHueBridges.MockHueBridge;
-	connection = bridge.connect(this.get('bridgeID'));
-	connection.initializeToDefault();
-	
-	var self = this;
-	
-	/** React to a change in the bridge state by outputting the new state.  */
-	connection.on('change', function(data) {
-		self.send('state', data);
-	});
+        // mockHueBridges.MockHueBridge is an object containing the results
+        // of a self-executing function.  This, in essence, creates a singleton
+        // object with a set of functions as its public API.
+        bridge = mockHueBridges.MockHueBridge;
+        connection = bridge.connect(this.get('bridgeID'));
+        connection.initializeToDefault();
+        
+        var self = this;
+        
+        /** React to a change in the bridge state by outputting the new state.  */
+        connection.on('change', function(data) {
+                self.send('state', data);
+        });
   
-	// Register input handler
-	handle = this.addInputHandler('URI', inputHandler.bind(this));
+        // Register input handler
+        handle = this.addInputHandler('URI', inputHandler.bind(this));
 };
 
 /** Input HTTP request information and generate a response from the bridge.  */
@@ -151,9 +151,9 @@ function inputHandler() {
   // Check if body exists.  If so, include the body in the command.
   var body = this.get('body');
   if (typeof body !== 'undefined') {
-	  output = connection.command(method, uri, body);
+          output = connection.command(method, uri, body);
   } else {
-	  output = connection.command(method, uri);
+          output = connection.command(method, uri);
   }
  
   this.send('response', output);

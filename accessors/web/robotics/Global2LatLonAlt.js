@@ -50,9 +50,9 @@ exports.setup = function() {
 exports.initialize = function() {
     var self = this;
     this.addInputHandler('global', function () {
-	var raw = self.get('global');
-	self.send('lat',raw.msg.latitude);
-	self.send('lon',raw.msg.longitude);
-	self.send('alt',raw.msg.altitude);
+        var raw = self.get('global');
+        self.send('lat',raw.msg.latitude);
+        self.send('lon',raw.msg.longitude);
+        self.send('alt',raw.msg.altitude);
     });
 };

@@ -18,7 +18,7 @@ var i;
 for(i = 0; i < directoryFiles.length; i += 1) {
     var fileName = directoryFiles[i].getPath();
     if (fileName.endsWith('.js')) {
-	jsFiles.push(fileName);
+        jsFiles.push(fileName);
     }
 }
 

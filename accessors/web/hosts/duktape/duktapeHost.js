@@ -58,12 +58,12 @@ Duktape.modSearch = function (id, require, exports, module) {
 
 
     try {
-	// Use NoFileIo instead of FileIo because small embedded systems
-	// don't have file systems.
-	src = NoFileIo.readfile(name);
+        // Use NoFileIo instead of FileIo because small embedded systems
+        // don't have file systems.
+        src = NoFileIo.readfile(name);
     } catch (error) {
-	// Rusteduk has FileIo, not NoFileIo.
-	src = FileIo.readfile(name);
+        // Rusteduk has FileIo, not NoFileIo.
+        src = FileIo.readfile(name);
     }
 
     // print('readFile returned', src);
@@ -124,13 +124,13 @@ function getAccessorCode(name) {
             code = NoFileIo.readfile(location);
             break;
         } catch(error) {
-	    // Rusteduk has FileIo
-	    try {
-		code = FileIo.readfile(location);
-	    } catch (error) {
-		//print("duktapeHost.js getAccessorCode(\"" + name + "\"): error reading " + location + ": " + error);
-		continue;
-	    }
+            // Rusteduk has FileIo
+            try {
+                code = FileIo.readfile(location);
+            } catch (error) {
+                //print("duktapeHost.js getAccessorCode(\"" + name + "\"): error reading " + location + ": " + error);
+                continue;
+            }
         }
     }
     if (!code) {

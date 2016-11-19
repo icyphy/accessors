@@ -56,7 +56,7 @@ getAccessorCode = function (name) {
             name += '.js';
         }
         try {
-	    if (hasFsModule) {
+            if (hasFsModule) {
                 var pathName = searchPath[i] + name;
                 //console.log("testCommon.js: pathName: " + pathName);
                 if (fs.statSync(pathName).isFile()) {
@@ -66,35 +66,35 @@ getAccessorCode = function (name) {
                 var pathName = searchPath[i] + name;
                 // print("testCommon.js: pathName: " + pathName);
 
-		if (typeof Duktape === 'object') {
+                if (typeof Duktape === 'object') {
                     var src = FileIo.readfile(pathName);
                     if (typeof src === 'buffer') {
-			// print("testCommon.js: returning contents of " + pathName);
-			return src;
+                        // print("testCommon.js: returning contents of " + pathName);
+                        return src;
                     }
-		} else {
-		    // Nashorn
-		    var FileReader = java.io.FileReader,
-			BufferedReader = java.io.BufferedReader,
-			buffered,
-			src = '';
+                } else {
+                    // Nashorn
+                    var FileReader = java.io.FileReader,
+                        BufferedReader = java.io.BufferedReader,
+                        buffered,
+                        src = '';
 
-		    try {
-			buffered = new BufferedReader(new FileReader(pathName));
-			while ((line = buffered.readLine()) !== null) {
-			    src += line + '\n';
-			}
-		    } finally {
-			if (typeof buffered !== 'undefined') {
-			    buffered.close(); // close the stream so there's no file locks   
-			}
-		    }
-		    // print("testCommon.js: returning contents of " + pathName);
-		    return src;
-		}
+                    try {
+                        buffered = new BufferedReader(new FileReader(pathName));
+                        while ((line = buffered.readLine()) !== null) {
+                            src += line + '\n';
+                        }
+                    } finally {
+                        if (typeof buffered !== 'undefined') {
+                            buffered.close(); // close the stream so there's no file locks   
+                        }
+                    }
+                    // print("testCommon.js: returning contents of " + pathName);
+                    return src;
+                }
             }
         } catch (e) {
-	    //print("getAccessorCode(" + name + "):" + e);
+            //print("getAccessorCode(" + name + "):" + e);
         }
     }
     throw ('Failed to find ' + name + ". Looked in " + searchPath);

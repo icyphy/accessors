@@ -60,37 +60,37 @@ exports.setup = function() {
     this.extend('net/REST');
 
     this.parameter('dump1090Server', { // address of the web server created by dump1090
-	type: 'string',
-	value: 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.parameter('port', { // port of the web server created by dump1090
-	type: 'int',
-	value: 8080
+        type: 'int',
+        value: 8080
     });
 
     this.parameter('timeToLiveIfNotUpdated', { // time in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device
-	type: 'int',
-	value: 20000
+        type: 'int',
+        value: 20000
     });
     this.parameter('threshold',{
-	type: 'double',
-	value: null
+        type: 'double',
+        value: null
     });
     this.input('options', {'visibility':'expert','value': '"http://localhost:8080"'});
     this.input('command', {'visibility':'expert','value':'/dump1090/data.json'});
     this.input('arguments', {'visibility':'expert'});
     this.input('body', {'visibility':'expert'});
     this.input('latRef', {
-	type: 'double',
-	value: null
+        type: 'double',
+        value: null
     });
     this.input('lonRef', {
-	type: 'double',
-	value: null
+        type: 'double',
+        value: null
     });
     this.input('altRef', {
-	type: 'double',
-	value: null
+        type: 'double',
+        value: null
     });
     this.output('headers', {'visibility':'expert'});
     this.output('status', {'visibility':'expert'});
@@ -106,27 +106,27 @@ exports.initialize = function(){
     this.send('options',{"url": serverUrl});
     var self = this;
     this.addInputHandler('latRef',function () {
-	var latRef = Number(self.get('latRef'));
-	var lonRef = Number(self.get('lonRef'));
-	var altRef = Number(self.get('altRef'));
-	var threshold = self.getParameter('threshold');
-	//console.log("Reference: lat = " + latRef + " lon = " + lonRef + " alt " + altRef + " thrsld = " + threshold);
-	if (latRef && lonRef && altRef && threshold){
-	    var filteredMap = {};
-	    for (var a in map){
-		var lat = Number(map[a].lat);
-		var lon = Number(map[a].lon);
-		var alt = Number(map[a].alt);
-		//console.log("Aircraft " + a + " is at lat = " + lat + " lon = " + lon + " alt " + alt);
-		var distance = llaEuclideanDistance(latRef,lonRef,altRef,lat,lon,alt);
-		console.log("Aircraft " + a + " is within " + distance + " meters.");
-		if (distance < threshold*1000){
-		    filteredMap[a] = map[a];
-		    console.log("Aircraft " + a + " is within thresold distance.");
-		}  
-	    }
-	    self.send('traffic', filteredMap);
-	}
+        var latRef = Number(self.get('latRef'));
+        var lonRef = Number(self.get('lonRef'));
+        var altRef = Number(self.get('altRef'));
+        var threshold = self.getParameter('threshold');
+        //console.log("Reference: lat = " + latRef + " lon = " + lonRef + " alt " + altRef + " thrsld = " + threshold);
+        if (latRef && lonRef && altRef && threshold){
+            var filteredMap = {};
+            for (var a in map){
+                var lat = Number(map[a].lat);
+                var lon = Number(map[a].lon);
+                var alt = Number(map[a].alt);
+                //console.log("Aircraft " + a + " is at lat = " + lat + " lon = " + lon + " alt " + alt);
+                var distance = llaEuclideanDistance(latRef,lonRef,altRef,lat,lon,alt);
+                console.log("Aircraft " + a + " is within " + distance + " meters.");
+                if (distance < threshold*1000){
+                    filteredMap[a] = map[a];
+                    console.log("Aircraft " + a + " is within thresold distance.");
+                }  
+            }
+            self.send('traffic', filteredMap);
+        }
     });
 };
 
@@ -171,27 +171,27 @@ exports.filterResponse = function(response) {
             // Check if response is JSON or stringified JSON.  If stringified, parse.
             var parsed;
             if (typeof response == "object") {
-        	parsed = response;
+                parsed = response;
             } else {
-        	parsed = JSON.parse(response);
+                parsed = JSON.parse(response);
             }
-	    
-	    var currentTime = (new Date()).getTime();
-	    for (var i = 0; i < parsed.length; i++){
-		var a = parsed[i];
-		if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {		    		    
-		    var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
-		    var key = a.flight.replace(/ /g, '');
-		    map[key] = s;
-		}
-	    }
-	    for(var k in map){
-		var elapsed = currentTime - map[k].seen;
-		if(elapsed > this.getParameter('timeToLiveIfNotUpdated')){
-		    //console.log(k + ", it has been more than " + this.getParameter('timeToLiveIfNotUpdated') + " ms since I've last seen you. Im going to delete you.");
-		    delete map[k];
-		}
-	    }
+            
+            var currentTime = (new Date()).getTime();
+            for (var i = 0; i < parsed.length; i++){
+                var a = parsed[i];
+                if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {                                        
+                    var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
+                    var key = a.flight.replace(/ /g, '');
+                    map[key] = s;
+                }
+            }
+            for(var k in map){
+                var elapsed = currentTime - map[k].seen;
+                if(elapsed > this.getParameter('timeToLiveIfNotUpdated')){
+                    //console.log(k + ", it has been more than " + this.getParameter('timeToLiveIfNotUpdated') + " ms since I've last seen you. Im going to delete you.");
+                    delete map[k];
+                }
+            }
             this.send('aircrafts', map);
         } catch (err) {
             error('AdsB: Unable to parse response: ' + err.message);

@@ -59,7 +59,7 @@ exports.setup = function () {
  */
 exports.initialize = function () {
     var self = this;
-	this.addInputHandler('trigger', function() {
-		self.send('IPAddress', ds.getHostAddress());
-	});
+        this.addInputHandler('trigger', function() {
+                self.send('IPAddress', ds.getHostAddress());
+        });
 };
