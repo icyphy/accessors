@@ -50,6 +50,15 @@
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
+  <target name="-cargo-in-path">
+    <property environment="env" />
+    <available file="cargo"
+	       filepath="${env.PATH}"
+	       property="cargo.path"/>
+    <echo>cargo binary found: ${cargo.path}
+    </echo>
+  </target>
+  
   <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
     <available property="vendors.jsdoc.exists" file="${jsdoc.home}/jsdoc"/>
   </target>
@@ -146,12 +155,17 @@
   </target>
 
   <target name="rusteduk"
-          description="Build the eduk binary.  Requires rustc.">
-    <echo>The rusteduk binary is a Rust binary that invokes the C-based duktape JavaScript interpreter.
-    Rusteduk requires rustc.  The easiest way to get rustc is to install rustup, see https://www.rustup.rs
-    Then run:
-      rustup default stable
-    See https://www.terraswarm.org/accessors/wiki/Main/RustHost
+	  depends="-cargo-in-path"
+          description="Build the rusteduk binary.  Requires rustc.">
+    <echo>
+      The rusteduk binary is a Rust binary that invokes the C-based
+      duktape JavaScript interpreter.  Rusteduk requires cargo and
+      rustc.  The easiest way to get rustc is to install rustup, see
+      https://www.rustup.rs
+
+      Then run:
+        rustup default stable
+      See https://www.terraswarm.org/accessors/wiki/Main/RustHost
     </echo>
     <exec dir="${rusteduk.source}"
           failonerror="true"
@@ -233,7 +247,7 @@
 
   <target name="tests.duk.auto"
           depends="duk"
-          description="Execute the duk tests in tests/auto.">
+          description="Execute the duk tests in test/auto.">
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/duktape/duktape/duk"
@@ -352,6 +366,27 @@
   </target>
 
   <target name="tests.nashorn"
+          depends="tests.nashorn.test, tests.nashorn.auto"
+          description="Execute the Nashorn tests in nashorn/test and test/auto.">
+  </target>
+  
+  <target name="tests.nashorn.auto"
+          description="Execute the nashorn tests in test/auto.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="."
+           executable="hosts/nashorn/nashornAccessorHost"
+           failonerror="true"
+	   relative="true">
+      <arg value="-timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+  </target>
+
+  <target name="tests.nashorn.test"
           depends="-ptII-exists"
           description="Execute the Nashorn tests in hosts/nashorn/test.">
     <echo>
