@@ -55,7 +55,9 @@
     <available file="cargo"
 	       filepath="${env.PATH}"
 	       property="cargo.path"/>
-    <echo>cargo binary found: ${cargo.path}
+    <echo>
+      cargo binary found: ${cargo.path}
+      path: ${env.PATH}
     </echo>
   </target>
   
