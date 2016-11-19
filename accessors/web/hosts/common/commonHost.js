@@ -1360,7 +1360,7 @@ Accessor.queryActiveAccessors = function() {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function(name) {
-    console.log("commonHost.js: react(" + name + "): start");
+    //console.log("commonHost.js: react(" + name + "): start");
     // For monitoring, we want to time execution of this function.
     var startTime = Date.now();
     var thiz = this.root;
@@ -1423,13 +1423,13 @@ Accessor.prototype.react = function(name) {
 
     if (name) {
         // Handling a specific input.
-	console.log("commonHost.js: react(" + name + "): Handling a specific input.");
+	//console.log("commonHost.js: react(" + name + "): Handling a specific input.");
         invokeSpecificHandler(name);
     } else {
         // No specific input has been given.
     	// Invoke pending inputHandlers.  An accessor might send to its own
     	// inputs, so repeat until there are no more pending handlers.
-	console.log("commonHost.js: react(" + name + "): no specific input has been given.");
+	//console.log("commonHost.js: react(" + name + "): no specific input has been given.");
     	var moreInputsPossiblyAvailable = true;
     	while (moreInputsPossiblyAvailable) {
     	    moreInputsPossiblyAvailable = false;
@@ -1444,7 +1444,7 @@ Accessor.prototype.react = function(name) {
     	}
     }
     // Next, invoke handlers registered to handle any input.
-    console.log("commonHost.js: react(" + name + "): invoke handlers registered to handle any input");
+    //console.log("commonHost.js: react(" + name + "): invoke handlers registered to handle any input");
     if (thiz.anyInputHandlers.length > 0) {
         for (var j = 0; j < thiz.anyInputHandlers.length; j++) {
             if (typeof thiz.anyInputHandlers[j] === 'function') {
@@ -1466,7 +1466,7 @@ Accessor.prototype.react = function(name) {
 
     // Next, invoke react() on any contained accessors.
     if (thiz.containedAccessors && thiz.containedAccessors.length > 0) {
-        console.log('commonHost.js react(' + name + '): Composite is reacting with ' + thiz.eventQueue.length + ' events.');
+        //console.log('commonHost.js react(' + name + '): Composite is reacting with ' + thiz.eventQueue.length + ' events.');
         while (thiz.eventQueue && thiz.eventQueue.length > 0) {
             // Remove from the event queue the first accessor, which will now react.
             // It may add itself back in, if it sends to its own input. But in that
@@ -1478,7 +1478,7 @@ Accessor.prototype.react = function(name) {
 
     // Next, invoke the fire() function.
     if (typeof this.exports.fire === 'function') {
-        console.log('commonHost.js react(' + name + '): invoking fire');
+        //console.log('commonHost.js react(' + name + '): invoking fire');
         this.exports.fire.call(this);
     }
 
