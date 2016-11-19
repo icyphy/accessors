@@ -4,7 +4,8 @@
 // This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance;
-var nodeHost = require('../../../../hosts/node/nodeHost.js');
+//var nodeHost = require('../../../../hosts/node/nodeHost.js');
+var nodeHost = require('./nodeHost.js');
 var chai = require('chai');
 var assert = chai.assert;	
 var should = chai.should();
@@ -28,7 +29,7 @@ describe('net/REST.js', function () {
 		
 	});
 	
-	it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done){
+	it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(){
 		
 		instance.provideInput('options', 
 				"{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
@@ -44,12 +45,13 @@ describe('net/REST.js', function () {
 			correctOutput.status = "ok";
 			// The strict equals should.equal fails for some reason due to the 
 			// single quotes around 'ok', but deep.equal works.
-			instance.latestOutput('response').should.deep.equal(correctOutput);
-			done();
+			// The assertion generates a promise; return the promise so that
+			// mocha is able to catch any exceptions.
+			return instance.latestOutput('response').should.deep.equal(correctOutput);
 		}, 3000);
 	});
 	
-	it('Should GET values using the JSON with padding technique', function(done){
+	it('Should GET values using the JSON with padding technique', function(){
 	
 		instance.provideInput('options', 
 				"{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");
@@ -62,14 +64,14 @@ describe('net/REST.js', function () {
 		// FIXME:  Possible to add listener to send()?  Or callback to react()?				
 		setTimeout(function() {
 			var correctOutput = {};
-                        correctOutput.userId = 1;
-                        correctOutput.id = 1;
-                        correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-                        correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
+            correctOutput.userId = 1;
+            correctOutput.id = 1;
+            correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
+            correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
 
-                        instance.latestOutput('response').should.deep.equal(correctOutput);
-                        
-			done();
+			// The assertion generates a promise; return the promise so that
+			// mocha is able to catch any exceptions.
+            return instance.latestOutput('response').should.deep.equal(correctOutput);
 		}, 1000);
 	});
 });
