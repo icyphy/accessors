@@ -198,7 +198,7 @@ exports.issueCommand = function(callback) {
     }
     
     if (typeof body !== 'undefined') {
-    	command.body = body; 
+            command.body = body; 
     }
     
     // console.log("REST request to: " + JSON.stringify(command));
@@ -242,9 +242,9 @@ exports.handleResponse = function(message) {
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	this.addInputHandler('trigger',
-	        this.exports.issueCommand.bind(this),
-	        this.exports.handleResponse.bind(this));
+        this.addInputHandler('trigger',
+                this.exports.issueCommand.bind(this),
+                this.exports.handleResponse.bind(this));
 };
 
 /** Upon wrapup, stop handling new inputs.  */

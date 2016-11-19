@@ -29,7 +29,7 @@
  *  @version $$Id$$
  */ 
 exports.setup = function() {
-	this.extend('test/TestBaseC');
+        this.extend('test/TestBaseC');
 };
 
 // This overrides the value of baseField for any function that accesses the

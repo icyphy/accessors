@@ -54,27 +54,27 @@ exports.setup = function() {
 
     sub.setParameter('topic',"/mavros/global_position/global");
     this.parameter('rosbridgeServer',{
-	type: 'string', 
-	value: 'localhost'
+        type: 'string', 
+        value: 'localhost'
     });
     this.parameter('rosbridgePort',{
-	type: 'int', 
-	value: 9090
+        type: 'int', 
+        value: 9090
     });
     
     this.input('server',{'visibility': 'expert'});
     this.input('port',{'visibility': 'expert'});
     this.output('lat', {
-	type: 'double',
-	value: 0.0
+        type: 'double',
+        value: 0.0
     });
     this.output('lon', {
-	type: 'double',
-	value: 0.0
+        type: 'double',
+        value: 0.0
     });
     this.output('alt', {
-	type: 'double',
-	value: 0.0
+        type: 'double',
+        value: 0.0
     });
     this.connect('server',sub,'server');
     this.connect('port',sub,'port');

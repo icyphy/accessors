@@ -239,17 +239,17 @@ exports.onConnection = function (socket) {
     self.sockets.push(socket);
     
     self.sockets[socketID].on('message', function (message) {
-    	// If message is a string, strip leading and trailing "
-    	if (typeof message === 'string') {
-    		message = message.replace(/^"(.*)"$/, '$1');
-    	}
+            // If message is a string, strip leading and trailing "
+            if (typeof message === 'string') {
+                    message = message.replace(/^"(.*)"$/, '$1');
+            }
         self.send('received', {'message': message, 'socketID': socketID});
     });
     self.sockets[socketID].on('close', function () {
         self.send('connection', {'socketID': socketID, 'status': 'closed'});
     });
     self.sockets[socketID].on('error', function (message) {
-    	console.log('error ' + message);
+            console.log('error ' + message);
         self.error(message);
     });
 

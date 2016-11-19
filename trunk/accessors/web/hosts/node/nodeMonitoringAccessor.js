@@ -65,7 +65,7 @@ exports.initialize = function() {
         clearInterval(timer);
         timer = setInterval(function() {
             self.send('sample', 
-		      JSON.stringify(Accessor.queryActiveAccessors()));
+                      JSON.stringify(Accessor.queryActiveAccessors()));
         }, this.get('samplePeriodInMs'));
     });
 };

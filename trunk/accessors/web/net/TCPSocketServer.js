@@ -346,9 +346,9 @@ exports.initialize = function () {
     });
     
     server.on('connection', function(serverSocket) {
-    	// serverSocket is an instance of the Socket class defined
-    	// in the socket module.
-    	connectionCount++;
+            // serverSocket is an instance of the Socket class defined
+            // in the socket module.
+            connectionCount++;
         var socketInstance = connectionCount;
         var socketID = {
             'id': socketInstance,

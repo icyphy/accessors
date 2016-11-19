@@ -44,27 +44,27 @@ exports.record = function() {
     recording = !recording;
     console.log("recording is " + recording);
     if (recording === true) {
-	console.log("passing onData callback to audio.capture");
-	audio.capture(this.exports.onData.bind(this));
+        console.log("passing onData callback to audio.capture");
+        audio.capture(this.exports.onData.bind(this));
     } else {
-	console.log("passing a null callback to audio.capture");
-	audio.capture(null);
+        console.log("passing a null callback to audio.capture");
+        audio.capture(null);
     }
 };
 
 exports.setup = function() {
     console.log("Audio Capture Setup");
     this.parameter('numInputChannels', {
-	type: 'number',
-	value: 1
+        type: 'number',
+        value: 1
     });
     this.parameter('samplingRate', {
-	type: 'number',
-	value: 44100
+        type: 'number',
+        value: 44100
     });
     this.parameter('blockSize', {
-	type: 'number',
-	value: 512
+        type: 'number',
+        value: 512
     });
     this.input('trigger');
     this.output('signal');

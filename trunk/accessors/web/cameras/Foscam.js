@@ -108,14 +108,14 @@ exports.setup = function () {
             'left',
             'right',
             'up',
-		    'stop down',
-		    'stop left',
-		    'stop right',
+                    'stop down',
+                    'stop left',
+                    'stop right',
             'stop up',
             'horizontal patrol',
-		    'vertical patrol',
-		    'stop vertical patrol',
-		    'stop horizontal patrol'
+                    'vertical patrol',
+                    'stop vertical patrol',
+                    'stop horizontal patrol'
         ]});
     // Provide parameters for username and password.
     this.parameter('username', {'value':'admin', 'type':'string'});
@@ -135,28 +135,28 @@ exports.encodePath = function() {
     }
     var code = -1;
     switch(command) {
-		case 'up':                      code = 0; break;
-		case 'stop up':                 code = 1; break;
-		case 'down':                    code = 2; break;
-		case 'stop down':               code = 3; break;
-		case 'left':                    code = 4; break;
-		case 'stop left':               code = 5; break;
-		case 'right':                   code = 6; break;
-		case 'stop right':              code = 7; break;
-		case 'center':                  code = 25; break;
-		case 'vertical patrol':         code = 26; break;
-		case 'stop vertical patrol':    code = 27; break;
-		case 'horizontal patrol':       code = 28; break;
-		case 'stop horizontal patrol':  code = 29; break;
-		// FIXME: No idea what the following mean, so not offerred above.
-		case 'io output high':          code = 94; break;
+                case 'up':                      code = 0; break;
+                case 'stop up':                 code = 1; break;
+                case 'down':                    code = 2; break;
+                case 'stop down':               code = 3; break;
+                case 'left':                    code = 4; break;
+                case 'stop left':               code = 5; break;
+                case 'right':                   code = 6; break;
+                case 'stop right':              code = 7; break;
+                case 'center':                  code = 25; break;
+                case 'vertical patrol':         code = 26; break;
+                case 'stop vertical patrol':    code = 27; break;
+                case 'horizontal patrol':       code = 28; break;
+                case 'stop horizontal patrol':  code = 29; break;
+                // FIXME: No idea what the following mean, so not offerred above.
+                case 'io output high':          code = 94; break;
         case 'io output low':           code = 95; break;
-	}
-	var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
-	if (code >= 0) {
-	    command = 'decoder_control';
-	    encodedArgs += '&command=' + code;
-	}
+        }
+        var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
+        if (code >= 0) {
+            command = 'decoder_control';
+            encodedArgs += '&command=' + code;
+        }
     var additionalArgs = querystring.stringify(this.get('arguments')).trim();
     if (additionalArgs !== "") {
         encodedArgs += '&' + additionalArgs;

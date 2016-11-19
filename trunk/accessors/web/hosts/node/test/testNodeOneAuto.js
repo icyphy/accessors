@@ -15,8 +15,8 @@ var auto = "";
 // Look for -Dauto=
 for (var i in process.argv) {
     if (process.argv[i].indexOf('--Dauto=') === 0) {
-	auto = process.argv[i].substr(8); 
-	break;
+        auto = process.argv[i].substr(8); 
+        break;
     }
 }
 
@@ -25,9 +25,9 @@ if (auto === "") {
     console.log(process.argv);
 } else {
     try {
-	fs.accessSync(auto, fs.F_OK);
-	testNodeAuto.testNodeAuto(auto);
+        fs.accessSync(auto, fs.F_OK);
+        testNodeAuto.testNodeAuto(auto);
     } catch (e) {
-	console.log("Could not find " + auto);
+        console.log("Could not find " + auto);
     }
 }

@@ -141,8 +141,8 @@ exports.initialize = function () {
 // The returned result always lies between -32768 and 32767, inclusive.
 function bytesToInt(a, b) {
     if (debug) {
-	    console.log('******** translating: ' + a + ', ' + b);
-	}
+            console.log('******** translating: ' + a + ', ' + b);
+        }
     var c = a * Math.pow(2, 8);
     c = c + b;
     if (c >= Math.pow(2, 15)) { 
@@ -190,7 +190,7 @@ exports.closeAndOpen = function () {
             self.send('message', message);
 
             var watchID = String.fromCharCode(message[0]) + String.fromCharCode(message[1]) +
-            		String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
+                            String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
             // Get the timestamp.
             var timestamp = timestamp2string(bytes2float(message.slice(11, 17)));
             
@@ -199,15 +199,15 @@ exports.closeAndOpen = function () {
                 console.log('Watch ID: ' + watchID);
                 console.log('Message type: ' + String.fromCharCode(message[4]));
             }
-	    var json, x, y, z, sensitivity;
+            var json, x, y, z, sensitivity;
             // Check for accelerometer data.
             if (message[4] == "A".charCodeAt(0)) {
-            	// Received accelerometer data.
-            	// To get SI units of m/s^2, the scaling factor needs to match
-            	// what is used in the watch application's SCALE_ACCELEROMETER
-            	// variable.
-            	var SCALE_ACCELEROMETER = 836;
-            	x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
+                    // Received accelerometer data.
+                    // To get SI units of m/s^2, the scaling factor needs to match
+                    // what is used in the watch application's SCALE_ACCELEROMETER
+                    // variable.
+                    var SCALE_ACCELEROMETER = 836;
+                    x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
                 y = bytesToInt(message[8], message[7]) / SCALE_ACCELEROMETER;
                 z = bytesToInt(message[10], message[9]) / SCALE_ACCELEROMETER;
                 
@@ -236,12 +236,12 @@ exports.closeAndOpen = function () {
                     self.send("accelerometer", json);
                 }
             } else if (message[4] == "G".charCodeAt(0)) {
-            	// Received gyro data.
-            	// To get units of radians per second, the scaling factor needs to match
-            	// what is used in the watch application's SCALE_GYRO
-            	// variable.
-            	var SCALE_GYRO = 5208;
-            	x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
+                    // Received gyro data.
+                    // To get units of radians per second, the scaling factor needs to match
+                    // what is used in the watch application's SCALE_GYRO
+                    // variable.
+                    var SCALE_GYRO = 5208;
+                    x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
                 y = bytesToInt(message[8], message[7]) / SCALE_GYRO;
                 z = bytesToInt(message[10], message[9]) / SCALE_GYRO;
                 

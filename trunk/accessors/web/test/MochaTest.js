@@ -75,7 +75,7 @@
 
 // FIXME:  Why does this not work if defined in testing.js vs. here??
 if (typeof window === 'undefined') {
-	var window = {};
+        var window = {};
 }
 
 try {
@@ -99,7 +99,7 @@ try {
 }
 
 exports.setup = function () {
-	// TODO:  Same file for all.  Put in common?  Or in test/Test?
+        // TODO:  Same file for all.  Put in common?  Or in test/Test?
     this.input('testFile', {'type': 'string', 'value': "/accessors/hosts/common/modules/mocha/testCommon.js"});
     this.output('result', {'type': 'string'});
 };
@@ -107,19 +107,19 @@ exports.setup = function () {
 exports.initialize = function () {
     // Capture 'this' for use in callback.
     var self = this;
-	
+        
     this.addInputHandler('testFile', function () {
         var fileName = self.get('testFile');
         if (fileName !== null && fileName !== "") {
-        	testing.loadTestFile(fileName);
-        	testing.run();
+                testing.loadTestFile(fileName);
+                testing.run();
         }
     });
     
     try {
         // Register an event listener for the test results.
         testing.on('end', function(result) {
-    	    self.send('result', result);
+                self.send('result', result);
         });
     } catch (err) {
         if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {

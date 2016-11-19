@@ -98,7 +98,7 @@ exports.handleResponse = function(message) {
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-	this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
+        this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
 };
 
 /** Upon wrapup, stop handling new inputs.  */
