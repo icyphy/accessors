@@ -26,4 +26,4 @@ exports.setup = function() {
     this.connect('input', TestAdder, 'inputLeft');
     this.connect(TestAdder, 'sum', 'output');
     this.connect(TestGain, 'scaled', TestAdder, 'inputRight');
-}
+};

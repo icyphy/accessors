@@ -199,6 +199,7 @@ exports.closeAndOpen = function () {
                 console.log('Watch ID: ' + watchID);
                 console.log('Message type: ' + String.fromCharCode(message[4]));
             }
+	    var json, x, y, z, sensitivity;
             // Check for accelerometer data.
             if (message[4] == "A".charCodeAt(0)) {
             	// Received accelerometer data.
@@ -206,23 +207,23 @@ exports.closeAndOpen = function () {
             	// what is used in the watch application's SCALE_ACCELEROMETER
             	// variable.
             	var SCALE_ACCELEROMETER = 836;
-            	var x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
-                var y = bytesToInt(message[8], message[7]) / SCALE_ACCELEROMETER;
-                var z = bytesToInt(message[10], message[9]) / SCALE_ACCELEROMETER;
+            	x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
+                y = bytesToInt(message[8], message[7]) / SCALE_ACCELEROMETER;
+                z = bytesToInt(message[10], message[9]) / SCALE_ACCELEROMETER;
                 
                 // Compare current data against previous data.
-                var sensitivity = self.getParameter('accelerometerSensitivity');
-                if (sensitivity == 0.0
-                        || Math.abs(x - previousX) > sensitivity
-                        || Math.abs(y - previousY) > sensitivity
-                        || Math.abs(z - previousZ) > sensitivity) {
+                sensitivity = self.getParameter('accelerometerSensitivity');
+                if (sensitivity === 0.0 ||
+                     Math.abs(x - previousX) > sensitivity ||
+                     Math.abs(y - previousY) > sensitivity ||
+                     Math.abs(z - previousZ) > sensitivity) {
                         
                     // Output is to be produced.
                     previousX = x;
                     previousY = y;
                     previousZ = z;
                     
-                    var json = {
+                    json = {
                         watchID: watchID,
                         'x': x,
                         'y': y,
@@ -240,23 +241,23 @@ exports.closeAndOpen = function () {
             	// what is used in the watch application's SCALE_GYRO
             	// variable.
             	var SCALE_GYRO = 5208;
-            	var x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
-                var y = bytesToInt(message[8], message[7]) / SCALE_GYRO;
-                var z = bytesToInt(message[10], message[9]) / SCALE_GYRO;
+            	x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
+                y = bytesToInt(message[8], message[7]) / SCALE_GYRO;
+                z = bytesToInt(message[10], message[9]) / SCALE_GYRO;
                 
                 // Compare current data against previous data.
-                var sensitivity = self.getParameter('gyroSensitivity');
-                if (sensitivity == 0.0
-                        || Math.abs(x - previousGX) > sensitivity
-                        || Math.abs(y - previousGY) > sensitivity
-                        || Math.abs(z - previousGZ) > sensitivity) {
+                sensitivity = self.getParameter('gyroSensitivity');
+                if (sensitivity === 0.0 ||
+                    Math.abs(x - previousGX) > sensitivity ||
+                    Math.abs(y - previousGY) > sensitivity ||
+                    Math.abs(z - previousGZ) > sensitivity) {
                         
                     // Output is to be produced.
                     previousGX = x;
                     previousGY = y;
                     previousGZ = z;
                     
-                    var json = {
+                    json = {
                         watchID: watchID,
                         'x': x,
                         'y': y,

@@ -315,7 +315,7 @@ stop = function() {
     //setTimeout(function() {
     //	process.exit();
     //}, 2000);
-}
+};
 
 //////////////////////////////////////////////
 // Visibility and exports below here.
@@ -352,7 +352,10 @@ function exitHandler(options, err) {
     //var myError = new Error("nodeHost.js: In exitHandler()");
     //console.log(myError.stack);
 
-    var initialThrowable = null;
+    var accessor,
+	composite,
+	i,
+	initialThrowable = null;
     if (options.cleanup) {
         try {
 
@@ -364,16 +367,16 @@ function exitHandler(options, err) {
 	    //console.log('nodeHost.js: this.accessors');
 	    //console.log(this.accessors);
 
- 	    for (var composite in this.accessors) {
-		for (var i in this.accessors[composite].containedAccessors) {
+ 	    for (composite in this.accessors) {
+		for (i in this.accessors[composite].containedAccessors) {
 		    try {
-			var accessor = this.accessors[composite].containedAccessors[i];
+			accessor = this.accessors[composite].containedAccessors[i];
 			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
 			if (accessor) {
 			    accessor.wrapup();
 			}
 		    } catch (error) {
-			if (initialThrowable == null) {
+			if (initialThrowable === null) {
 			    initialThrowable = error;
 			}
 		    }
@@ -422,9 +425,9 @@ function exitHandler(options, err) {
 	var util = require('util');
 	console.log("nodeHost.js: SIGUSR1 was received.");
 	//console.log(util.inspect(this, {depth: 15}));
-	for (var composite in this.process.mainModule.exports.accessors) {
-	    for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
-		var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+	for (composite in this.process.mainModule.exports.accessors) {
+	    for (i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+		accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
 		console.log("accessor: " + accessor.accessorName);
 		//console.log(util.inspect(accessor, {depth: 2}));
 		console.log("accessor.outputs: ");
@@ -435,7 +438,7 @@ function exitHandler(options, err) {
 		    console.log("accessor.outputs: outputs[output]: ");
 		    console.log(accessor.outputs[output]);
 		    var destinations = accessor.outputs[output];
-		    for (var destination in destinations['destinations']) {
+		    for (var destination in destinations.destinations) {
 			console.log("output " + output + ", destination: " + destination);
 		    }
 		}

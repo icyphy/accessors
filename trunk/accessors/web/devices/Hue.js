@@ -455,8 +455,8 @@ function Hue() {
                 
                 var description = rsp[0].error.description;
     
-                if (description.match("link button not pressed")
-                        || description.match("invalid value")) {
+                if (description.match("link button not pressed") ||
+                    description.match("invalid value")) {
                     // Retry registration for the given number of attempts.
                     console.log("Please push the link button on the Hue bridge.");
                     registerAttempts++;
@@ -489,7 +489,7 @@ function Hue() {
                 throw "Unknown error registering new user";
             }
         });
-    };
+    }
     
     /** If the response indicates an error, report it.
      *  Return true if the response is an error.
@@ -505,7 +505,7 @@ function Hue() {
             return true;
         }
         return false;
-    };
+    }
     
     return hue;
 }

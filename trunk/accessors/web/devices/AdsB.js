@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -46,13 +46,13 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals addInputHandler, get, error, exports, extend, get, input, output, parameter, require, send */
+/*globals addInputHandler, console, get, error, exports, extend, get, input, output, parameter, require, send */
 /*jshint globalstrict: true*/
 'use strict';
 
 var http = require('httpClient');
 
-var map = new Object();
+var map = {};
 
 /** Set up the accessor by defining the inputs and outputs.
  */
@@ -112,7 +112,7 @@ exports.initialize = function(){
 	var threshold = self.getParameter('threshold');
 	//console.log("Reference: lat = " + latRef + " lon = " + lonRef + " alt " + altRef + " thrsld = " + threshold);
 	if (latRef && lonRef && altRef && threshold){
-	    var filteredMap = new Object();
+	    var filteredMap = {};
 	    for (var a in map){
 		var lat = Number(map[a].lat);
 		var lon = Number(map[a].lon);
@@ -138,7 +138,7 @@ var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
     this.heading = heading;
     this.squawk = squawk;
     this.seen = seen;
-}
+};
 
 
 
@@ -179,10 +179,10 @@ exports.filterResponse = function(response) {
 	    var currentTime = (new Date()).getTime();
 	    for (var i = 0; i < parsed.length; i++){
 		var a = parsed[i];
-		if (a.flight != '' && a.validposition == 1 && a.validtrack == 1) {		    		    
-			var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
-			var key = a.flight.replace(/ /g, '');
-			map[key] = s;
+		if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {		    		    
+		    var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
+		    var key = a.flight.replace(/ /g, '');
+		    map[key] = s;
 		}
 	    }
 	    for(var k in map){

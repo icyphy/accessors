@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -79,7 +79,11 @@
  *  @version $$Id$$
  */
 
- "use strict";
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global console, exports, require */
+/*jshint globalstrict: true */
+"use strict";
 
 var iotAuth = require('iotAuth');
 var dataConverter = require('dataConverter');
@@ -174,22 +178,25 @@ var currentState = clientCommState.IDLE;
 function outputError(errorMessage) {
     console.log(errorMessage);
     self.error(errorMessage);
-};
+}
 
-// Event handlers for a secure client socket
+// Event handlers for a secure client socket.
 function onConnection(entityClientSocket) {
     console.log('communication initialization succeeded');
     currentSecureClient = entityClientSocket;
     currentState = clientCommState.IN_COMM;
     self.send('connected', true);
-};
+}
+
 function onClose() {
     console.log('secure connection with the server closed.');
     self.send('connected', false);
-};
+}
+
 function onError(message) {
     outputError('Error in secure comm - details: ' + message);
-};
+}
+
 function onData(data) {
     console.log('data received from server via secure communication');
 
@@ -202,7 +209,7 @@ function onData(data) {
     else if (receiveType == 'byteArray') {
         self.send('received', data.getArray());
     }
-};
+}
 
 function initSecureCommWithSessionKey(sessionKey, serverHost, serverPort) {
     currentSessionKey = sessionKey;
@@ -224,13 +231,13 @@ function initSecureCommWithSessionKey(sessionKey, serverHost, serverPort) {
         onConnection: onConnection
     };
     iotAuth.initializeSecureCommunication(options, eventHandlers);
-};
+}
 
 /*
-callbackParameters = {
-    host,
-    port
-}
+  callbackParameters = {
+  host,
+  port
+  }
 */
 function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, callbackParameters) {
     if (status.error) {
@@ -251,15 +258,15 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     }
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-            callbackParameters.host, callbackParameters.port);
+				     callbackParameters.host, callbackParameters.port);
     }
-};
+}
 
 exports.serverHostPortInputHandler = function() {
     var serverHostPort = this.get('serverHostPort');
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-            serverHostPort.host, serverHostPort.port);
+				     serverHostPort.host, serverHostPort.port);
     }
     else {
         var options = {
@@ -310,9 +317,9 @@ exports.initialize = function () {
     self = this;
     
     this.addInputHandler('serverHostPort',
-        this.exports.serverHostPortInputHandler.bind(this));
+			 this.exports.serverHostPortInputHandler.bind(this));
     this.addInputHandler('toSend',
-        this.exports.toSendInputHandler.bind(this));
+			 this.exports.toSendInputHandler.bind(this));
 };
 
 exports.wrapup = function () {

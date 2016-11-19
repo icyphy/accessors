@@ -65,7 +65,7 @@ var processSignal = function() {
         outputArray[j] = trial; 
     }
     this.send('fftOutput', outputArray); 
-}
+};
 
 exports.wrapup = function() { 
     this.removeInputHandler('signalIn',handle); 
