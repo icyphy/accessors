@@ -98,34 +98,34 @@ exports.setup = function () {
     this.input('toSend');
     this.output('received');
 
-	this.parameter('baudRate', {
-		'type': 'int',
-		'value': 9600
-	});
-	this.parameter('port', {
-		'type':'string',
-	});
-	this.parameter('receiveType', {
-		'type': 'string',
-		'value': 'string',
-	});
-	this.parameter('sendType', {
-		'type':'string',
-		'value': 'string',
-	});
+        this.parameter('baudRate', {
+                'type': 'int',
+                'value': 9600
+        });
+        this.parameter('port', {
+                'type':'string',
+        });
+        this.parameter('receiveType', {
+                'type': 'string',
+                'value': 'string',
+        });
+        this.parameter('sendType', {
+                'type':'string',
+                'value': 'string',
+        });
     // Attempt to add a list of options for types and ports, but do not error out
     // if the socket module is not supported by the host.
     try {
         var serialPorts = xbee.hostSerialPorts();
-    	this.parameter('port', {
-    		'options': serialPorts,
-		    'value': serialPorts[serialPorts.length - 1]
-	    });
+            this.parameter('port', {
+                    'options': serialPorts,
+                    'value': serialPorts[serialPorts.length - 1]
+            });
         this.parameter('receiveType', {
-		    'options': xbee.supportedReceiveTypes()
+                    'options': xbee.supportedReceiveTypes()
         });
         this.parameter('sendType', {
-		    'options': xbee.supportedSendTypes()
+                    'options': xbee.supportedSendTypes()
         });
     } catch(err) {
         error(err);
@@ -143,25 +143,25 @@ exports.toSendInputHandler = function () {
  *  on the toSend() input port.
  */
 exports.initialize = function() {
-	port = new xbee.XBee(
-		this.get('port'), {
-		    'baudRate': this.getParameter('baudRate'),
-			'receiveType': this.getParameter('receiveType'),
-			'sendType': this.getParameter('sendType'),
-		});
-	
-	var self = this;
-	
-	port.on('data', function(data) {
-		self.send('received', data);
-	});
+        port = new xbee.XBee(
+                this.get('port'), {
+                    'baudRate': this.getParameter('baudRate'),
+                        'receiveType': this.getParameter('receiveType'),
+                        'sendType': this.getParameter('sendType'),
+                });
+        
+        var self = this;
+        
+        port.on('data', function(data) {
+                self.send('received', data);
+        });
 
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
 /** Close the web socket connection. */
 exports.wrapup = function() {
-	if (port) {
-		port.close();
-	}
+        if (port) {
+                port.close();
+        }
 };

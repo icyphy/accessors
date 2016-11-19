@@ -258,7 +258,7 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     }
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-				     callbackParameters.host, callbackParameters.port);
+                                     callbackParameters.host, callbackParameters.port);
     }
 }
 
@@ -266,7 +266,7 @@ exports.serverHostPortInputHandler = function() {
     var serverHostPort = this.get('serverHostPort');
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-				     serverHostPort.host, serverHostPort.port);
+                                     serverHostPort.host, serverHostPort.port);
     }
     else {
         var options = {
@@ -317,9 +317,9 @@ exports.initialize = function () {
     self = this;
     
     this.addInputHandler('serverHostPort',
-			 this.exports.serverHostPortInputHandler.bind(this));
+                         this.exports.serverHostPortInputHandler.bind(this));
     this.addInputHandler('toSend',
-			 this.exports.toSendInputHandler.bind(this));
+                         this.exports.toSendInputHandler.bind(this));
 };
 
 exports.wrapup = function () {

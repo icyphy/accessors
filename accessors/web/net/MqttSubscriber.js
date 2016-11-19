@@ -43,12 +43,12 @@ exports.setup = function () {
     // Inputs and outputs
     this.input('subscribe');
     this.input('unsubscribe');
-    this.output('connection', {	
-    	spontaneous: true
+    this.output('connection', {        
+            spontaneous: true
     });
     this.output('subscription');
     this.output('received', {
-    	spontaneous: true
+            spontaneous: true
     });
     this.output('receivedTopic');
     this.parameter('brokerHost', {

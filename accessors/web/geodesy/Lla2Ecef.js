@@ -62,15 +62,15 @@ exports.initialize = function() {
 
     var self = this;
     this.addInputHandler(function () {
-	var lat = this.get('lat')*Math.PI/180;
-	var lon = this.get('lon')*Math.PI/180;
-	var alt = this.get('alt');
-	var n = a/Math.sqrt(1 - e2*Math.sin( lat )*Math.sin( lat ) );
-	var x = ( n + alt )*Math.cos( lat )*Math.cos( lon );
-	var y = ( n + alt )*Math.cos( lat )*Math.sin( lon );
-	var z = ( n*(1 - e2 ) + alt )*Math.sin( lat );
-	self.send('x',x);
-	self.send('y',y);
-	self.send('z',z);
+        var lat = this.get('lat')*Math.PI/180;
+        var lon = this.get('lon')*Math.PI/180;
+        var alt = this.get('alt');
+        var n = a/Math.sqrt(1 - e2*Math.sin( lat )*Math.sin( lat ) );
+        var x = ( n + alt )*Math.cos( lat )*Math.cos( lon );
+        var y = ( n + alt )*Math.cos( lat )*Math.sin( lon );
+        var z = ( n*(1 - e2 ) + alt )*Math.sin( lat );
+        self.send('x',x);
+        self.send('y',y);
+        self.send('z',z);
     });
 };

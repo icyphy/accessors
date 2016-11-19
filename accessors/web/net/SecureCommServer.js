@@ -197,7 +197,7 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
         console.log('Session key id is as expected');
         currentSessionKey = receivedSessionKey;
         callbackParameters.sendHandshake2Callback(callbackParameters.handshake1Payload,
-						  callbackParameters.serverSocket, receivedSessionKey);
+                                                  callbackParameters.serverSocket, receivedSessionKey);
     }
     else {
         outputError('Session key id is NOT as expected');
@@ -251,7 +251,7 @@ function onClose(socketID) {
 
 function onError(message, socketID) {
     outputError('Error in secure server socket #' + socketID +
-		' details: ' + message);
+                ' details: ' + message);
 }
 
 function onConnection(socketInstance, entityServerSocket) {

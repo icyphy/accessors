@@ -56,7 +56,7 @@ exports.setup = function() {
     this.extend('net/REST');
     
     this.output('ph', {
-    	'type': 'number'
+            'type': 'number'
     });
 
     // Change default values of the base class inputs.
@@ -93,17 +93,17 @@ exports.filterResponse = function(response) {
     
     if (response) {
         try {
-	    // Check if response is JSON or stringified JSON.  If stringified, parse.
-	    var parsed;
-	    if (typeof response == "object") {
-		parsed = response;
-	    } else {
-		parsed = JSON.parse(response);
-	    }
-	    // Extract the last ph value from the JSON record.
-	    if(parsed.type !== 'ph'){
-	    	throw "type of received value is not 'ph'";
-	    }
+            // Check if response is JSON or stringified JSON.  If stringified, parse.
+            var parsed;
+            if (typeof response == "object") {
+                parsed = response;
+            } else {
+                parsed = JSON.parse(response);
+            }
+            // Extract the last ph value from the JSON record.
+            if(parsed.type !== 'ph'){
+                    throw "type of received value is not 'ph'";
+            }
             var ph = parseFloat(parsed.value);
             // Send the ph to the 'ph' output.
             this.send('ph', ph);

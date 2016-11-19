@@ -78,11 +78,11 @@ var handle;
 exports.initialize = function () {
     var self = this;
     handle = this.addInputHandler('hostIP', function() {
-	if (self.get('useNmap')) {
-	    ds.discoverDevices(self.get('hostIP'), 'nmap');
-	} else {
-	    ds.discoverDevices(self.get('hostIP'));
-	}
+        if (self.get('useNmap')) {
+            ds.discoverDevices(self.get('hostIP'), 'nmap');
+        } else {
+            ds.discoverDevices(self.get('hostIP'));
+        }
     });
 };
 

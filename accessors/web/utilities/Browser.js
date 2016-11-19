@@ -39,14 +39,14 @@ exports.setup = function() {
 };
 
 function display() {
-	var toDisplay = this.get('html');
-	browser.display(toDisplay);
+        var toDisplay = this.get('html');
+        browser.display(toDisplay);
 }
 
 exports.initialize = function() {
-	this.addInputHandler('html', display);
+        this.addInputHandler('html', display);
 };
 
 exports.wrapup = function(){
-	browser.shutdown();
+        browser.shutdown();
 };

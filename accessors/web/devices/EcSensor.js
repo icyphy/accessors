@@ -21,7 +21,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** 
- *	Retrieves the latest electric current (EC) measurement from your garden
+ *        Retrieves the latest electric current (EC) measurement from your garden
  *
  *  This accessor does not block waiting for the response, but if any additional
  *  *symbol* input is received before a pending request has received a response
@@ -54,7 +54,7 @@ exports.setup = function() {
     this.extend('net/REST');
     
     this.output('ec', {
-    	'type': 'number'
+            'type': 'number'
     });
 
     // Change default values of the base class inputs.
@@ -91,17 +91,17 @@ exports.filterResponse = function(response) {
     
     if (response) {
         try {
-	    // Check if response is JSON or stringified JSON.  If stringified, parse.
-	    var parsed;
-	    if (typeof response == "object") {
-		parsed = response;
-	    } else {
-		parsed = JSON.parse(response);
-	    }
-	    // Extract the last ec value from the JSON record.
-	    if(parsed.type !== 'ec'){
-	    	throw "type of received value is not 'ec'";
-	    }
+            // Check if response is JSON or stringified JSON.  If stringified, parse.
+            var parsed;
+            if (typeof response == "object") {
+                parsed = response;
+            } else {
+                parsed = JSON.parse(response);
+            }
+            // Extract the last ec value from the JSON record.
+            if(parsed.type !== 'ec'){
+                    throw "type of received value is not 'ec'";
+            }
             var ec = parseFloat(parsed.value);
             // Send the ec to the 'ec' output.
             this.send('ec', ec);

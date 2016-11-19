@@ -27,7 +27,7 @@
  *  @accessor contextAware/contextAwareTest
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} input to the accessor
- *	@parameter {{string} the name of the REST service that context aware tries
+ *        @parameter {{string} the name of the REST service that context aware tries
  *     to adapt. A list of available services are presented as option.
  
  *  @version $$Id$$ 
@@ -60,25 +60,25 @@ exports.setup = function () {
     {
         this.implement("contextAware/GSNInterface.js");
         this.input('dataType', 
-    	      {'type': 'string',
-      	       'value': 'all',
-      	       'options':contextAware.gsnServices()}); 
+                  {'type': 'string',
+                     'value': 'all',
+                     'options':contextAware.gsnServices()}); 
     }
     else if (selectedService == 'Paraimpu') {
         this.implement("contextAware/ParaimpuInterface.js");
         this.input('dataType', {
-   	    type: 'string',
-   	    value: 'all',
-   	    'options':contextAware.paraimpuServices()
-   	}); 
+               type: 'string',
+               value: 'all',
+               'options':contextAware.paraimpuServices()
+           }); 
     }
     else if (selectedService == 'Firebase'){
         this.implement("contextAware/FirebaseInterface.js");
         this.input('dataType', {
-      	    type: 'string',
-      	    value: 'all',
-      	    'options':contextAware.firebaseServices()
-      	}); 
+                  type: 'string',
+                  value: 'all',
+                  'options':contextAware.firebaseServices()
+              }); 
     }
     else {
         console.log("Cannot load service interface !!");
@@ -104,7 +104,7 @@ exports.initialize = function () {
     handle = this.addInputHandler('input', function() {
         console.log("ContextAwareTest.js input handler start");
         serviceParam = contextAwareService.discoverServices();
-	console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
+        console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
         //var serviceURL = this.getParameter('ipAddress');
         var serviceURL = {"url":{"host":getParameter('host'), "port": this.getParameter('port'), "protocol": this.getParameter('protocol')}};
         this.send('options',  serviceURL);
@@ -136,14 +136,14 @@ exports.filterResponse = function(response) {
     
     switch(selectedService) {
     case "GSN":
-	getGSNData.call(this, response);
-	break;
+        getGSNData.call(this, response);
+        break;
     case "Paraimpu":
-	getParaimpuData.call(this, response);
-	break;
+        getParaimpuData.call(this, response);
+        break;
     case "Firebase":
-	getFirebaseData.call(this, response);
-	break;
+        getFirebaseData.call(this, response);
+        break;
     }
     console.log("Response" + response);
     return response;
@@ -156,22 +156,22 @@ function getFirebaseData(response) {
     var result=JSON.parse(response);
     switch(type) {
     case "microwave":
-	this.send('microwave', result.Microwave);
-	console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave));
-	break;
+        this.send('microwave', result.Microwave);
+        console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave));
+        break;
     case "microwaveStatus":
-	this.send('microwaveStatus',  result.Microwave.status);
-	break;
+        this.send('microwaveStatus',  result.Microwave.status);
+        break;
     case "pastValues":
-	this.send('pastValues', result.Microwave.pastValues);
-	break;
+        this.send('pastValues', result.Microwave.pastValues);
+        break;
     case "all":
-	this.send('microwave', result.Microwave);
-	this.send('microwaveStatus',  result.Microwave.status);
-	this.send('pastValues', result.Microwave.pastValues);
-	break;
+        this.send('microwave', result.Microwave);
+        this.send('microwaveStatus',  result.Microwave.status);
+        this.send('pastValues', result.Microwave.pastValues);
+        break;
     default:
-	this.send('microwave', result.Microwave);
+        this.send('microwave', result.Microwave);
     }
 }
 /** filter the response from Paraimpu
@@ -181,22 +181,22 @@ function getParaimpuData(response) {
     var result=JSON.parse(response);
     switch (type) {
     case "payload":
-	this.send('payload', result.payload);
-	console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.payload));
-	break;
+        this.send('payload', result.payload);
+        console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.payload));
+        break;
     case "thingId":
-	this.send('sensorId', result.thingId);
-	break;
+        this.send('sensorId', result.thingId);
+        break;
     case "producer":
-	this.send('producer', result.producer);
-	break;
+        this.send('producer', result.producer);
+        break;
     case "all":
-	this.send('payload', result.payload);
-	this.send('sensorId', result.thingId);
-	this.send('producer', result.producer);
-	break;
+        this.send('payload', result.payload);
+        this.send('sensorId', result.thingId);
+        this.send('producer', result.producer);
+        break;
     default:
-	this.send('response', result);
+        this.send('response', result);
     }
 }
 
@@ -214,22 +214,22 @@ function getGSNData(response) {
         // This code has no tests because the GSN source on the web does not stay up.
         // http://stackoverflow.com/questions/19217365/missing-name-after-operator-yui-compressor-for-socket-io-js-files
         // suggests using ['..']
-	//send('sound', result."virtual-sensor"[2].field[2]);
+        //send('sound', result."virtual-sensor"[2].field[2]);
         this.send('sound', result['virtual-sensor'][2].field[2]);
-	break;
+        break;
     case "sensorName":
-	//send('sensorName', result."virtual-sensor"[2].name);
-	this.send('sensorName', result['virtual-sensor'][2].name);
-	break;
-    case "all":
-	//send('sound', result."virtual-sensor"[2].field[2]);
-	this.send('sound', result['virtual-sensor'][2].field[2]);
-	//send('sensorName', result."virtual-sensor"[2].name);
+        //send('sensorName', result."virtual-sensor"[2].name);
         this.send('sensorName', result['virtual-sensor'][2].name);
-	break;
+        break;
+    case "all":
+        //send('sound', result."virtual-sensor"[2].field[2]);
+        this.send('sound', result['virtual-sensor'][2].field[2]);
+        //send('sensorName', result."virtual-sensor"[2].name);
+        this.send('sensorName', result['virtual-sensor'][2].name);
+        break;
     default:
-	//send('response', result."virtual-sensor");
-	this.send('response', result['virtual-sensor']);
+        //send('response', result."virtual-sensor");
+        this.send('response', result['virtual-sensor']);
     }
 }
 

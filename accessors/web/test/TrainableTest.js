@@ -51,17 +51,17 @@ var trainingTokens = [];
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     var inputHandled = false,
-	inputValueValue,
-	initialized = true, 
-	numberOfInputTokensSeen = 0,
-	trainingTokens = [];
+        inputValueValue,
+        initialized = true, 
+        numberOfInputTokensSeen = 0,
+        trainingTokens = [];
     
     var self = this;
     
     this.addInputHandler('input', function() {
         var cache = [],
-	    inputValue = self.get('input'),
-	    inputValueValue;
+            inputValue = self.get('input'),
+            inputValueValue;
         inputHandled = true;
         // If the input is not connected, then inputValue will be null.
         if (self.getParameter('trainingMode')) {
@@ -114,8 +114,8 @@ exports.initialize = function () {
                 }
             } else if (typeof referenceToken === 'string') {
                 if (inputValue !== referenceToken) {
-                	console.log('typeof inputValue ' + typeof inputValue);
-                	console.log('typeof referenceToken ' + typeof referenceToken);
+                        console.log('typeof inputValue ' + typeof inputValue);
+                        console.log('typeof referenceToken ' + typeof referenceToken);
                     throw new Error('The input "' + inputValue + '" is !== ' +
                                     ' to the expected value "' +
                                     referenceToken + '"');
@@ -203,7 +203,7 @@ exports.wrapup = function () {
     }
     var name = this.accessorName;
     if (this.container) {
-	name = this.container.accessorName + "." + name;
+        name = this.container.accessorName + "." + name;
     }
     console.log("TrainableTest.js: wrapup() finished: " + name);
 };

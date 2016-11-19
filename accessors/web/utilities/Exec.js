@@ -32,12 +32,12 @@ var sh = null;
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function() {
-	this.input('stdin', {
-		'type': 'string'
-	});
-	this.output('stdout', {
-		'type': 'string'
-	});
+        this.input('stdin', {
+                'type': 'string'
+        });
+        this.output('stdout', {
+                'type': 'string'
+        });
     this.input('command', {
         'value': 'ls',
         'type':'string'
@@ -47,30 +47,30 @@ exports.setup = function() {
 /** Initialize the accessor and start the process subsequently.
  */
 exports.initialize = function() {
-	sh = new shell.Shell({'cmd' : this.get('command')});
-	
-	var self = this;
-	
-	this.addInputHandler('stdin', function() {
-	    var data = self.get('stdin');
-	    if (data) {
-		  sh.write(data);
-	    }
-	});
+        sh = new shell.Shell({'cmd' : this.get('command')});
+        
+        var self = this;
+        
+        this.addInputHandler('stdin', function() {
+            var data = self.get('stdin');
+            if (data) {
+                  sh.write(data);
+            }
+        });
 
-	sh.on('message', function(data) {
-		if(data)  {
-			self.send('stdout', data.toString());
-		}		
-	});
+        sh.on('message', function(data) {
+                if(data)  {
+                        self.send('stdout', data.toString());
+                }                
+        });
 
-	sh.start();
+        sh.start();
 };
-	
+        
 /** Wrap up the execution of the accessor by stopping the process.
  */
 exports.wrapup = function() {
-	if(sh)  {
-		sh.wrapup();
-	}
+        if(sh)  {
+                sh.wrapup();
+        }
 };

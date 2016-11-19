@@ -62,7 +62,7 @@ exports.setup = function() {
     type: "string",
     value: ""
   });
-	this.input('HostPort', {
+        this.input('HostPort', {
     type: "string",
     value: ""
   });
@@ -95,37 +95,37 @@ exports.initialize = function() {
 
 /* Get data over REST based on dataType input */
 function getData(){
-	var type = this.get('dataType');
-	switch(type){
-		case "ibeacon":
-			this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
-			break;
-		case "alps":
-			this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
-			break;
-		case "imu":
-			this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
-			break;
-		case "wifi":
-			this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
-			break;
-		case "location":
-			this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
-			break;
-		case "all":
-	                getAll.call(this);
-			break;
-		default:
-			getAll.call(this);
-	}
+        var type = this.get('dataType');
+        switch(type){
+                case "ibeacon":
+                        this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
+                        break;
+                case "alps":
+                        this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
+                        break;
+                case "imu":
+                        this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
+                        break;
+                case "wifi":
+                        this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
+                        break;
+                case "location":
+                        this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+                        break;
+                case "all":
+                        getAll.call(this);
+                        break;
+                default:
+                        getAll.call(this);
+        }
 }
 
 /* Get all location/sensor data */
 function getAll() {
-   	this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
-   	this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
-   	this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
-   	this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
-   	this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+           this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
+           this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
+           this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
+           this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
+           this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
 }
-	
+        

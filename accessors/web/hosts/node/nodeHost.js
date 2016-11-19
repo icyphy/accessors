@@ -86,10 +86,10 @@ getAccessorCode = function(name) {
     // Look for the accessor as a regular file.
     // See https://www.terraswarm.org/accessors/wiki/Main/DeploymentNotes#SSHScript
     try {
-	code = fs.readFileSync(name, 'utf8');
-	return code;
+        code = fs.readFileSync(name, 'utf8');
+        return code;
     } catch (error) {
-	// Ignore, we will look search the accessorPath.
+        // Ignore, we will look search the accessorPath.
     }
 
     for (var i = 0; i < accessorPath.length; i++) {
@@ -97,7 +97,7 @@ getAccessorCode = function(name) {
         try {
             code = fs.readFileSync(location, 'utf8');
             console.log('Reading accessor at: ' + location);
-	    break;
+            break;
         } catch(error) {
             console.log(error);
             continue;
@@ -218,35 +218,35 @@ invoke = function(argv) {
     argv.shift();
 
     if (argv.length === 0) {
-	console.error("nodeHost.invoke(): Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
-	process.exit(3);
+        console.error("nodeHost.invoke(): Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
+        process.exit(3);
     }
 
     // Process the -timeout argument.
     if (argv.length > 1) {
-	if (argv[0] === "-timeout") {
-	    timeout = argv[1];
-	    // Remove -timeout and the value.
-	    argv.shift();
-	    argv.shift();
-	    this.accessors = instantiateAndInitialize(argv);
-	    setTimeout(function () {
-		    // process.exit gets caught by exitHandler() in
-		    // nodeHost.js and invokes wrapup().
-		    process.exit(0);
-		}, timeout);
-	} else {
-	    // Handle multiple composite accessors on the command line.
-	    this.accessors = instantiateAndInitialize(argv);
-	    // Prevent the script from exiting by repeating the empty function
-	    // every ~25 days.
-	    setInterval(function () {}, 2147483647);
-	}
+        if (argv[0] === "-timeout") {
+            timeout = argv[1];
+            // Remove -timeout and the value.
+            argv.shift();
+            argv.shift();
+            this.accessors = instantiateAndInitialize(argv);
+            setTimeout(function () {
+                    // process.exit gets caught by exitHandler() in
+                    // nodeHost.js and invokes wrapup().
+                    process.exit(0);
+                }, timeout);
+        } else {
+            // Handle multiple composite accessors on the command line.
+            this.accessors = instantiateAndInitialize(argv);
+            // Prevent the script from exiting by repeating the empty function
+            // every ~25 days.
+            setInterval(function () {}, 2147483647);
+        }
     } else {
-	this.accessors = instantiateAndInitialize(argv);
-	// Prevent the script from exiting by repeating the empty function
-	// every ~25 days.
-	setInterval(function () {}, 2147483647);
+        this.accessors = instantiateAndInitialize(argv);
+        // Prevent the script from exiting by repeating the empty function
+        // every ~25 days.
+        setInterval(function () {}, 2147483647);
     }
 };
 
@@ -258,11 +258,11 @@ setupMonitoring = function() {
     if (!monitoringSetup) {
         try {
             monitoringAccessor = instantiate('monitoringAccessor', 
-					     'hosts/node/nodeMonitoringAccessor');
+                                             'hosts/node/nodeMonitoringAccessor');
             monitoringAccessor.initialize();
 
             // FIXME: Need to remove hardcoding of sampling period for monitoring, 
-	    // which is currently at 5 seconds
+            // which is currently at 5 seconds
             monitoringAccessor.provideInput('samplePeriodInMs', 5000);
             monitoringAccessor.react();
             monitoringSetup = true;
@@ -300,20 +300,20 @@ stop = function() {
     // Not all Accessors host have container, see 
     // https://www.terraswarm.org/accessors/wiki/Version1/Container
     if (thiz.container) {
-	for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
-	    console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
-	    thiz.container.containedAccessors[i].wrapup();
-	}
+        for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
+            console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
+            thiz.container.containedAccessors[i].wrapup();
+        }
     }
 
     // If you want to wrapup all the accessors:
     // for (var i = 0; i < accessors.length; i++) {
-    //	accessors[i].wrapup();
+    //        accessors[i].wrapup();
     //}
     
     // TODO:  Improve on arbitrary timeout.
     //setTimeout(function() {
-    //	process.exit();
+    //        process.exit();
     //}, 2000);
 };
 
@@ -353,98 +353,98 @@ function exitHandler(options, err) {
     //console.log(myError.stack);
 
     var accessor,
-	composite,
-	i,
-	initialThrowable = null;
+        composite,
+        i,
+        initialThrowable = null;
     if (options.cleanup) {
         try {
 
-	    // Getting a list of all the accessors seems to be a bit convoluted.
+            // Getting a list of all the accessors seems to be a bit convoluted.
 
             console.log('nodeHost.js: About to invoke wrapup().');
-	    //var util = require('util');
-	    //console.log(util.inspect(this, {depth: 10}));
-	    //console.log('nodeHost.js: this.accessors');
-	    //console.log(this.accessors);
+            //var util = require('util');
+            //console.log(util.inspect(this, {depth: 10}));
+            //console.log('nodeHost.js: this.accessors');
+            //console.log(this.accessors);
 
- 	    for (composite in this.accessors) {
-		for (i in this.accessors[composite].containedAccessors) {
-		    try {
-			accessor = this.accessors[composite].containedAccessors[i];
-			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-			if (accessor) {
-			    accessor.wrapup();
-			}
-		    } catch (error) {
-			if (initialThrowable === null) {
-			    initialThrowable = error;
-			}
-		    }
-		}
-	    }
+             for (composite in this.accessors) {
+                for (i in this.accessors[composite].containedAccessors) {
+                    try {
+                        accessor = this.accessors[composite].containedAccessors[i];
+                        console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+                        if (accessor) {
+                            accessor.wrapup();
+                        }
+                    } catch (error) {
+                        if (initialThrowable === null) {
+                            initialThrowable = error;
+                        }
+                    }
+                }
+            }
 
-// 	    console.log('nodeHost.js: this.process.mainModule');
-// 	    console.log(this.process.mainModule);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports');
-// 	    console.log(this.process.mainModule.exports);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors');
-// 	    console.log(this.process.mainModule.exports.accessors);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
-// 	    console.log(this.process.mainModule.exports.accessors[0]);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
-// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
-// 	    console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
-// 	    console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
-// 	    for (var composite in this.process.mainModule.exports.accessors) {
-// 		for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
-// 		    var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
-// 		    try {
-// 			console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-// 			if (accessor) {
-// 			    accessor.wrapup();
-// 			}
-// 		    } catch (error) {
-// 			if (initialThrowable == null) {
-// 			    initialThrowable = error;
-// 			}
-// 		    }
-// 		}
+//             console.log('nodeHost.js: this.process.mainModule');
+//             console.log(this.process.mainModule);
+//             console.log('nodeHost.js: this.process.mainModule.exports');
+//             console.log(this.process.mainModule.exports);
+//             console.log('nodeHost.js: this.process.mainModule.exports.accessors');
+//             console.log(this.process.mainModule.exports.accessors);
+//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
+//             console.log(this.process.mainModule.exports.accessors[0]);
+//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
+//             console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
+//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
+//             console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
+//             for (var composite in this.process.mainModule.exports.accessors) {
+//                 for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+//                     var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+//                     try {
+//                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+//                         if (accessor) {
+//                             accessor.wrapup();
+//                         }
+//                     } catch (error) {
+//                         if (initialThrowable == null) {
+//                             initialThrowable = error;
+//                         }
+//                     }
+//                 }
 //             }
-	    // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
+            // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
-	    process.exitCode = 1;
+            process.exitCode = 1;
         }
-	if (initialThrowable !== null) {
-	    console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
-	    process.exitCode = 1;
-	}
+        if (initialThrowable !== null) {
+            console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
+            process.exitCode = 1;
+        }
     }
     // Use kill -30 to display a stack
     if (options.stack) {
-	var util = require('util');
-	console.log("nodeHost.js: SIGUSR1 was received.");
-	//console.log(util.inspect(this, {depth: 15}));
-	for (composite in this.process.mainModule.exports.accessors) {
-	    for (i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
-		accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
-		console.log("accessor: " + accessor.accessorName);
-		//console.log(util.inspect(accessor, {depth: 2}));
-		console.log("accessor.outputs: ");
-		console.log(util.inspect(accessor.outputs, {depth: 2}));
-		for (var output in accessor.outputs) {
-		    console.log("accessor.outputs: output: ");
-		    console.log(output);
-		    console.log("accessor.outputs: outputs[output]: ");
-		    console.log(accessor.outputs[output]);
-		    var destinations = accessor.outputs[output];
-		    for (var destination in destinations.destinations) {
-			console.log("output " + output + ", destination: " + destination);
-		    }
-		}
+        var util = require('util');
+        console.log("nodeHost.js: SIGUSR1 was received.");
+        //console.log(util.inspect(this, {depth: 15}));
+        for (composite in this.process.mainModule.exports.accessors) {
+            for (i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+                accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+                console.log("accessor: " + accessor.accessorName);
+                //console.log(util.inspect(accessor, {depth: 2}));
+                console.log("accessor.outputs: ");
+                console.log(util.inspect(accessor.outputs, {depth: 2}));
+                for (var output in accessor.outputs) {
+                    console.log("accessor.outputs: output: ");
+                    console.log(output);
+                    console.log("accessor.outputs: outputs[output]: ");
+                    console.log(accessor.outputs[output]);
+                    var destinations = accessor.outputs[output];
+                    for (var destination in destinations.destinations) {
+                        console.log("output " + output + ", destination: " + destination);
+                    }
+                }
             }
-	}
-	err = new Error("SIGUSR1 was received, here's the stack.");
+        }
+        err = new Error("SIGUSR1 was received, here's the stack.");
     }
     if (err) {
         console.log(err.stack);

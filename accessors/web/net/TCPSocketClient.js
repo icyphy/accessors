@@ -297,10 +297,10 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-	// May be receiving inputs before client has been set.
-	if (client) {
-    	client.send(this.get('toSend'));
-	} else {
+        // May be receiving inputs before client has been set.
+        if (client) {
+            client.send(this.get('toSend'));
+        } else {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             var maxUnsentMessages = this.getParameter('maxUnsentMessages');
             if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
@@ -313,7 +313,7 @@ exports.toSendInputHandler = function () {
         } else {
             console.log('Discarding data because socket is not open.');
         }
-	}
+        }
 };
 
 /** Set up input handlers, and if the current value of the 'port' input is
@@ -323,8 +323,8 @@ exports.toSendInputHandler = function () {
  *  errors, and closing from the server.
  */
 exports.initialize = function () {
-	this.addInputHandler('host', this.exports.connect.bind(this));
-	this.addInputHandler('port', this.exports.connect.bind(this));
+        this.addInputHandler('host', this.exports.connect.bind(this));
+        this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     this.exports.connect.call(this);
     running = true;
@@ -336,37 +336,37 @@ exports.initialize = function () {
  *  on the toSend() input port.
  */
 exports.connect = function () {
-	// Note that if 'host' and 'port' both receive new data in the same
-	// reaction, then this will be invoked twice. But we only want to open
-	// the socket once.  This is fairly tricky.
-	
-	var portValue = this.get('port');
-	if (portValue < 0) {
-		// No port is specified. This could be a signal to close a previously
-		// open socket.
-		if (client && client.isOpen()) {
-			client.close();
-		}
-		previousPort = null;
-		previousHost = null;
-		return;
-	}
-	
-	var hostValue = this.get('host');
-	if (previousHost === hostValue && previousPort === portValue) {
-		// A request to open a client for this host/port pair has already
-		// been made and has not yet been closed or failed with an error.
-		return;
-	}
-	// Record the host/port pair that we are now opening.
-	previousHost = hostValue;
-	previousPort = portValue;
-	
-	if (client && client.isOpen()) {
-		// Either the host or the port has changed. Close the previous socket.
-		client.close();
-	}
-	// Create a new SocketClient.
+        // Note that if 'host' and 'port' both receive new data in the same
+        // reaction, then this will be invoked twice. But we only want to open
+        // the socket once.  This is fairly tricky.
+        
+        var portValue = this.get('port');
+        if (portValue < 0) {
+                // No port is specified. This could be a signal to close a previously
+                // open socket.
+                if (client && client.isOpen()) {
+                        client.close();
+                }
+                previousPort = null;
+                previousHost = null;
+                return;
+        }
+        
+        var hostValue = this.get('host');
+        if (previousHost === hostValue && previousPort === portValue) {
+                // A request to open a client for this host/port pair has already
+                // been made and has not yet been closed or failed with an error.
+                return;
+        }
+        // Record the host/port pair that we are now opening.
+        previousHost = hostValue;
+        previousPort = portValue;
+        
+        if (client && client.isOpen()) {
+                // Either the host or the port has changed. Close the previous socket.
+                client.close();
+        }
+        // Create a new SocketClient.
     client = new socket.SocketClient(portValue, hostValue,
         {
             'connectTimeout' : this.getParameter('connectTimeout'),
@@ -401,7 +401,7 @@ exports.connect = function () {
         // this callback function atomically w.r.t. the input handler
         // that adds messages to the pendingSends queue.
         for (var i = 0; i < pendingSends.length; i++) {
-        	client.send(pendingSends[i]);
+                client.send(pendingSends[i]);
         }
         pendingSends = [];
     });
@@ -409,8 +409,8 @@ exports.connect = function () {
         self.send('received', data);
     });
     client.on('close', function() {
-    	previousHost = null;
-    	previousPort = null;
+            previousHost = null;
+            previousPort = null;
         console.log('Connection closed.');
         // NOTE: Even if running is true, it can occur that it is too late
         // to send the message (the wrapup process has been started), in which case
@@ -420,8 +420,8 @@ exports.connect = function () {
         }
     });
     client.on('error', function (message) {
-    	previousHost = null;
-    	previousPort = null;
+            previousHost = null;
+            previousPort = null;
         self.error(message);
     });
     
