@@ -40,6 +40,7 @@ exports.setup = function() {
 
 exports.initialize = function() {
     this.addInputHandler('input', function() {
+	console.log("TestGain: input " + this.get('input') + " gain: " + this.getParameter('gain')); 
         this.send('scaled', this.get('input') * this.getParameter('gain'));
     });
 };

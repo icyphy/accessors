@@ -8,8 +8,7 @@ exports.setup = function() {
     var GDPLogSubscribe = this.instantiate('GDPLogSubscribe', 'gdp/GDPLogSubscribe.js');
     GDPLogSubscribe.setParameter('debugLevel', "");
     GDPLogSubscribe.setDefault('logdname', "edu.berkeley.eecs.gdp-01.gdplogd");
-    GDPLogSubscribe.setDefault('logname', "ptolemy.actor.lib.jjs.modules.gdp.test.auto.GDPLog\
-SubscribeJS.cxh9");
+    GDPLogSubscribe.setDefault('logname', "ptolemy.actor.lib.jjs.modules.gdp.test.auto.GDPLogSubscribeJS.cxh9");
     GDPLogSubscribe.setParameter('numrec', 0);
     GDPLogSubscribe.setParameter('startrec', 0);
     GDPLogSubscribe.setParameter('timeout', 0);
@@ -26,4 +25,4 @@ SubscribeJS.cxh9");
     this.connect(TestSpontaneous3, 'output', GDPLogSubscribe, 'trigger');
     this.connect(GDPLogSubscribe, 'data', TrainableTest2, 'input');
 
-}
+};

@@ -28,4 +28,4 @@ exports.setup = function() {
     // Connections: RampJSDisplay: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
-}
+};

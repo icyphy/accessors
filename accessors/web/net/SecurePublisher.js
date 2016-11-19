@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -60,7 +60,11 @@
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
- 
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global console, exports, require */
+/*jshint globalstrict: true */
 "use strict";
 
 var iotAuth = require('iotAuth');
@@ -132,7 +136,7 @@ exports.setup = function () {
         type: 'string',
         options: iotAuth.symmetricCryptoSpecs
     });
-}
+};
 
 var self;
 var mqttClient;
@@ -146,13 +150,13 @@ var publisherReady = false;
 var publishSequenceNum = 0;
 
 function onConnect() {
-	mqttConnected = true;
-	self.send('connection', 'connected to a broker');
-	if (!publisherReady && mqttConnected && currentSessionKey != null) {
-		publisherReady = true;
+    mqttConnected = true;
+    self.send('connection', 'connected to a broker');
+    if (!publisherReady && mqttConnected && currentSessionKey !== null) {
+	publisherReady = true;
     	self.send('ready', 'publisher is ready');
-	}
-};
+    }
+}
 
 function sessionKeyResponseCallback(status, distributionKey, sessionKeyList) {
     if (status.error) {
@@ -174,18 +178,18 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList) {
     if (currentSessionKeyList.length > 0) {
     	currentSessionKey = currentSessionKeyList.shift();
     }
-	if (!publisherReady && mqttConnected && currentSessionKey != null) {
-		publisherReady = true;
+    if (!publisherReady && mqttConnected && currentSessionKey !== null) {
+	publisherReady = true;
     	self.send('ready', 'publisher is ready');
-	}
-};
+    }
+}
 
 exports.toPublishInputHandler = function () {
     if (!mqttClient.connected) {
         console.log('MQTT client is not connected. Discarding data.');
         return;
     }
-    if (currentSessionKey == null) {
+    if (currentSessionKey === null) {
         console.log('Session key is not available. Discarding data.');
         return;
     }
@@ -197,7 +201,7 @@ exports.toPublishInputHandler = function () {
     	currentSessionKey);
     publishSequenceNum++;
     mqttClient.publish(this.getParameter('topic'), encrypted,
-        {qos: this.getParameter('qosLevel')});
+		       {qos: this.getParameter('qosLevel')});
 };
 
 exports.initialize = function() {
@@ -216,7 +220,7 @@ exports.initialize = function() {
     	this.getParameter('brokerPort'), 
     	this.getParameter('brokerHost'),
     	{rawBytes: true});
-	mqttClient.on('connect', onConnect);
+    mqttClient.on('connect', onConnect);
     mqttClient.start();
     
     var options = {

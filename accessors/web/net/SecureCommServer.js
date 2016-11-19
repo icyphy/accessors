@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -69,6 +69,10 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*global console, exports, idToSendTo, require */
+/*jshint globalstrict: true */
 "use strict";
 
 var iotAuth = require('iotAuth');
@@ -161,15 +165,15 @@ var currentSessionKey = null;
 function outputError(errorMessage) {
     console.log(errorMessage);
     self.error(errorMessage);
-};
+}
 
 /*
-callbackParameters = {
-    keyId,
-    sendHandshake2Callback,
-    handshake1Payload,
-    serverSocket
-}
+  callbackParameters = {
+  keyId,
+  sendHandshake2Callback,
+  handshake1Payload,
+  serverSocket
+  }
 */
 function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, callbackParameters) {
     if (status.error) {
@@ -193,27 +197,28 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
         console.log('Session key id is as expected');
         currentSessionKey = receivedSessionKey;
         callbackParameters.sendHandshake2Callback(callbackParameters.handshake1Payload,
-            callbackParameters.serverSocket, receivedSessionKey);
+						  callbackParameters.serverSocket, receivedSessionKey);
     }
     else {
         outputError('Session key id is NOT as expected');
     }
-};
+}
 
 // event handlers for the listening server
 function onServerListening(listeningPort) {
     console.log('Server: Listening for socket connection requests on port ' + listeningPort);
     self.send('listening', listeningPort);
-};
+}
+
 function onServerError(message) {
     outputError('Error in server - details: ' + message);
-};
+}
+
 function onClientRequest(handshake1Payload, serverSocket, sendHandshake2Callback) {
     var keyId = handshake1Payload.readUIntBE(0, iotAuth.SESSION_KEY_ID_SIZE);
-    if (currentSessionKey != null && currentSessionKey.id == keyId) {
+    if (currentSessionKey !== null && currentSessionKey.id === keyId) {
         sendHandshake2Callback(handshake1Payload, serverSocket, currentSessionKey);
-    }
-    else {
+    } else {
         console.log('session key NOT found! sending session key id to AuthService');
         var options = {
             authHost: self.getParameter('authHost'),
@@ -232,26 +237,29 @@ function onClientRequest(handshake1Payload, serverSocket, sendHandshake2Callback
             sendHandshake2Callback: sendHandshake2Callback,
             handshake1Payload: handshake1Payload,
             serverSocket: serverSocket
-        }
+        };
         iotAuth.sendSessionKeyRequest(options, sessionKeyResponseCallback, callbackParameters);
     }
-};
+}
 
-// event handlers for individual sockets
+// Event handlers for individual sockets.
 function onClose(socketID) {
     console.log('secure connection with the client closed.');
     sockets[socketID] = null;
     self.send('connection', 'socket #' + socketID + ' closed');
-};
+}
+
 function onError(message, socketID) {
     outputError('Error in secure server socket #' + socketID +
-        ' details: ' + message);
-};
+		' details: ' + message);
+}
+
 function onConnection(socketInstance, entityServerSocket) {
     console.log('secure connection with the client established.');
     self.send('connection', socketInstance);
     sockets[socketInstance.id] = entityServerSocket;
-};
+}
+
 function onData(data, socketID) {
     console.log('data received from server via secure communication');
     

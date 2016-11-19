@@ -43,4 +43,4 @@ exports.setup = function() {
     this.connect(TestSpontaneousOnce, 'output', Delay, 'input');
     this.connect(Command, 'output', Hue, 'commands');
     this.connect(Hue, 'assignedUserName', TestDisplay, 'input');
-}
+};

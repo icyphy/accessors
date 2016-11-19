@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -52,10 +52,10 @@ var http = require('httpClient');
  */
 exports.setup = function() {
     this.extend('net/REST');
-	
+    
     this.output('ec', {
     	'type': 'number'
-    	});
+    });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
@@ -85,10 +85,10 @@ exports.initialize = function() {
 /** Filter the response, extracting the ed information. The full response is produced
  *  on the 'response' output.
  */
- 
+
 exports.filterResponse = function(response) {
-	
-	
+    
+    
     if (response) {
         try {
 	    // Check if response is JSON or stringified JSON.  If stringified, parse.
@@ -98,10 +98,10 @@ exports.filterResponse = function(response) {
 	    } else {
 		parsed = JSON.parse(response);
 	    }
-	    	// Extract the last ec value from the JSON record.
-	    	if(parsed.type !== 'ec'){
-	    		throw "type of received value is not 'ec'"
-	    	}
+	    // Extract the last ec value from the JSON record.
+	    if(parsed.type !== 'ec'){
+	    	throw "type of received value is not 'ec'";
+	    }
             var ec = parseFloat(parsed.value);
             // Send the ec to the 'ec' output.
             this.send('ec', ec);

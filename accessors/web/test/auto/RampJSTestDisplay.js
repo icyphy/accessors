@@ -35,4 +35,4 @@ exports.setup = function() {
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
     this.connect(JavaScriptRamp, 'output', TrainableTest, 'input');
-}
+};
