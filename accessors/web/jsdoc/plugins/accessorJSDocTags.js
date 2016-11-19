@@ -40,6 +40,10 @@
  * @since Ptolemy II 11.0
  */
 
+/*global console, exports, require, writePtDoc, xmlEscape */
+/*jshint globalstrict: true, multistr: true */
+'use strict';
+
 //Start of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
 function filepathMinusPrefix(filepath) {
     var sourcePaths = getSourcePaths();
