@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2015-2016 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -40,7 +40,8 @@
  *   @example
  *       jsdoc StockTick.js -t templates/ptdoc
  */
-/*global writePtDoc, xmlEscape */
+/*global console, exports, require, writePtDoc, xmlEscape */
+/*jshint globalstrict: true, multistr: true */
 /*jslint nomen: true */
 'use strict';
 
@@ -69,7 +70,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
             // What we want:
             // <property name="price (output, number)" class="ptolemy.kernel.util.StringAttribute" type="int" value="The most recent trade price for the stock.">
 
-            simplerType = xmlEscape(type);
+            var simplerType = xmlEscape(type);
             if (type !== undefined) {
                 simplerType = simplerType.replace(/^\({names:\[&quot;/g, '').replace(/&quot;\]}\)$/g, '');
                 //console.error("simplerType: type: " + type + ", new simpleType: " + simplerType);
@@ -132,13 +133,13 @@ exports.publish = function (data) {
                 if (element.author !== undefined) {
                     // Strip off [" "]
                     var author = element.author.toSource(), shortAuthor = author.substring(2, author.length - 2);
-                    moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n'
-                        + '    </property>\n';
+                    moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n' +
+                        '    </property>\n';
                 }
 
                 if (element.description !== undefined) {
-                    moml += '    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n'
-                        + '    </property>\n';
+                    moml += '    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n' +
+                        '    </property>\n';
                 }
 
                 // See ../plugins/accessorJSDocTags.js for how we create
@@ -157,9 +158,9 @@ exports.publish = function (data) {
                 }
 
                 if (element.version !== undefined) {
-                    moml += '    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="'
-                        + xmlEscape(element.version) + '">\n'
-                        + '    </property>\n';
+                    moml += '    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="' +
+                        xmlEscape(element.version) + '">\n' +
+                        '    </property>\n';
                 }
 
                 moml += '</property>';
