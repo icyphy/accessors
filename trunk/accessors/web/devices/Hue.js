@@ -82,7 +82,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*globals clearTimeout, console, error, exports, httpRequest, require, setTimeout  */
+/*globals alert, clearTimeout, console, error, exports, httpRequest, require, setTimeout  */
 /*jshint globalstrict: true*/
 "use strict";
 
@@ -512,11 +512,12 @@ exports.initialize = function() {
 
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function() {
-    var errorLights = [];
-    var cmd = JSON.stringify({on:false});
-    var options = {};
+    var action = this.getParameter('onWrapup'),
+	cmd = JSON.stringify({on:false}),
+	debug = false,
+	errorLights = [],
+	options = {};
 
-    var action = this.getParameter('onWrapup');
     if (action !== "none") {
         // wrapup() gets called by the code generator after setting
         // the types, so there is a chance that changedLights has not been set.

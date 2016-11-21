@@ -23,14 +23,14 @@
 /** This accessor discovers IOT services on web.
  *  It requires the contextAware module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
- *
+ * 
  *  @accessor contextAware/contextAwareTest
  *  @author Anne H. Ngu (angu@btxstate.edu)
  *  @input {number} input to the accessor
  *        @parameter {{string} the name of the REST service that context aware tries
  *     to adapt. A list of available services are presented as option.
-
- *  @version $$Id$$
+ 
+ *  @version $$Id$$ 
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should be no
@@ -44,7 +44,7 @@ var contextAware = require("contextAwareTest");
 
 
 // Initialize the context aware service discovery class. Not used currently
-var contextAwareService = new contextAware.DiscoveryOfRESTService();
+var contextAwareService = new contextAware.DiscoveryOfRESTService();  
 
 var selectedService;
 
@@ -52,17 +52,17 @@ exports.setup = function () {
     this.input('input');
     // a simple UI interface to start the dialog with users
     this.parameter('RESTSource', { 'type': 'string',
-                                   'value': 'Make a selection',
-                                   'options':contextAware.services()}
-                  );
+				   'value': 'Make a selection',
+				   'options':contextAware.services()}
+		  );
     selectedService = this.getParameter('RESTSource');
     if (selectedService == 'GSN')
     {
         this.implement("contextAware/GSNInterface.js");
-        this.input('dataType',
+        this.input('dataType', 
                    {'type': 'string',
                     'value': 'all',
-                    'options':contextAware.gsnServices()});
+                    'options':contextAware.gsnServices()}); 
     }
     else if (selectedService == 'Paraimpu') {
         this.implement("contextAware/ParaimpuInterface.js");
@@ -70,7 +70,7 @@ exports.setup = function () {
             type: 'string',
             value: 'all',
             'options':contextAware.paraimpuServices()
-        });
+        }); 
     }
     else if (selectedService == 'Firebase'){
         this.implement("contextAware/FirebaseInterface.js");
@@ -78,7 +78,7 @@ exports.setup = function () {
             type: 'string',
             value: 'all',
             'options':contextAware.firebaseServices()
-        });
+        }); 
     }
     else {
         console.log("Cannot load service interface !!");
@@ -99,7 +99,7 @@ exports.initialize = function () {
     // to issue an HTTP request based on the current inputs.
     this.ssuper.initialize();
     var serviceParam; //the input that is needed for the options port in REST
-
+    
     // Add a handler for the 'input' input.
     handle = this.addInputHandler('input', function() {
         console.log("ContextAwareTest.js input handler start");
@@ -118,18 +118,18 @@ exports.initialize = function () {
         //ex. of valid json format for reference
         //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
         //send('options', {"url":{"host":"pluto.cs.txstate.edu","port":22001}});
-
+        
         // Cause the base class handler to issue the HTTP request.
         this.send('trigger', true);
         //send('response', this.issueCommand(handleResponse))
         // console.log(this.get('response'));
         console.log("ContextAwareTest.js input handler end");
-    });
+    }); 
 };
 
 /** Filter the response from Firebase.
  */
-function getFirebaseData(response) {
+var getFirebaseData = function(response) {
     var type = this.get('dataType');
     var result=JSON.parse(response);
     switch(type) {
@@ -151,10 +151,11 @@ function getFirebaseData(response) {
     default:
         this.send('microwave', result.Microwave);
     }
-}
-/** filter the response from Paraimpu
+};
+
+/** Filter the response from Paraimpu.
  */
-function getParaimpuData(response) {
+var getParaimpuData = function(response) {
     var type = this.get('dataType');
     var result=JSON.parse(response);
     switch (type) {
@@ -176,12 +177,11 @@ function getParaimpuData(response) {
     default:
         this.send('response', result);
     }
-}
+};
 
-/** Filter the response from GSN. Need to convert the data to json format first
- *
+/** Filter the response from GSN. Need to convert the data to json format first.
  */
-function getGSNData(response) {
+var getGSNData = function(response) {
     var type = this.get('dataType');
     var xmlJson={};
     xmlJson=contextAware.xmlToJson(response);
@@ -209,7 +209,7 @@ function getGSNData(response) {
         //send('response', result."virtual-sensor");
         this.send('response', result['virtual-sensor']);
     }
-}
+};
 
 /**
  * Filter the response. It overrides the filterResponse() in the base class to
@@ -217,7 +217,7 @@ function getGSNData(response) {
  * service interface
  */
 exports.filterResponse = function(response) {
-
+    
     switch(selectedService) {
     case "GSN":
         getGSNData.call(this, response);
@@ -240,7 +240,7 @@ exports.filterResponse = function(response) {
   itemList.push(itemKeys[x]);
   }
   for (var y in itemList) {
-  if (itemList[y] == "Microwave")
+  if (itemList[y] == "Microwave") 
   console.log("ContextAwareTest filterResponse() " + JSON.stringify("result."+ type));
   }
   console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave.pastValues));
@@ -251,7 +251,7 @@ exports.filterResponse = function(response) {
 
 
 exports.wrapup = function() {
-
+    
     this.removeInputHandler(handle);
 };
 

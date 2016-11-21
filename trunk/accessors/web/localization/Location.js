@@ -78,16 +78,16 @@ exports.setup = function() {
 };
 
 /* Get all location/sensor data. */
-function getAll() {
+var getAll = function () {
     this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
     this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
     this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
     this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
     this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
-}
+};
 
 /* Get data over REST based on dataType input. */
-function getData(){
+var getData = function (){
     var type = this.get('dataType');
     switch(type){
     case "ibeacon":
@@ -111,7 +111,7 @@ function getData(){
     default:
         getAll.call(this);
     }
-}
+};
 
 /* Initialize connection. */
 exports.initialize = function() {
