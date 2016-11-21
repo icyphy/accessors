@@ -40,9 +40,11 @@
  * @since Ptolemy II 11.0
  */
 
-/*global console, exports, require, writePtDoc, xmlEscape */
+/*global console, exports, getSourcePaths, require, writePtDoc, xmlEscape */
 /*jshint globalstrict: true, multistr: true */
 'use strict';
+
+const path = require('path');
 
 //Start of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
 function filepathMinusPrefix(filepath) {
@@ -106,7 +108,7 @@ exports.defineTags = function(dictionary) {
                 // Add the type names and other type properties (such as `optional`).
                 // Don't overwrite existing properties.
                 Object.keys(tag.value).forEach(function(prop) {
-                    if ( !hasOwnProp.call(doclet, prop) ) {
+                    if ( !hasOwnProperty.call(doclet, prop) ) {
                         doclet[prop] = tag.value[prop];
                     }
                 });

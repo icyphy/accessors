@@ -169,6 +169,76 @@ function Hue() {
     // Public functions.
     // Available to be used for e.g. inputHandlers.
 
+    /** Utility function to check that an object is a nonempty array.
+     *  @param obj The object.
+     */
+    function isNonEmptyArray(obj) {
+        return (obj instanceof Array && obj.length > 0);
+    }
+
+    /** Contact the bridge.  Register the user, if needed.
+     */
+    function contactBridge() {
+        console.log("Attempting to connect to: " + url + "/" + userName + "/lights/");
+        var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
+            if (response !== null) {
+                console.log("Got a response from the bridge: " + response.body);
+                if (errorOccurred) {
+                    // Fatal error has occurred. Ignore response.
+                    self.error('Error occurred before response arrive. Response ignored');
+                    return;
+                }
+                if (response.statusCode != 200) {
+                    // Response is other than OK. Retry if not a fatal error.
+                    bridgeRequestErrorHandler(response.statusMessage);
+                } else {
+                    var lights = JSON.parse(response.body);
+
+                    if (isNonEmptyArray(lights) && lights[0].error) {
+                        var description = lights[0].error.description;
+
+                        if (description.match("unauthorized user")) {
+                            // Add this user.
+                            // Prevent the alert from coming up more than once.
+                            alerted = true;
+                            alert(userName + " is not a registered user.\n" +
+                                  "Push the link button on the Hue bridge to register.");
+                            // Oddly, the invalid userName, which has the right form,
+                            // is not an acceptable parameter value. Since it is invalid
+                            // anyway, discard it and replace.
+                            userName = 'ptolemy_user';
+                            // It takes two successive posts to register a new user.
+                            // Issue the first one now, then attempt again later.
+                            registerUser();
+                            console.log("Will register user in " + registerInterval + " ms");
+                            handleRegisterUser = setTimeout(registerUser, registerInterval);
+                        } else {
+                            console.error('Error occurred when trying to get Hue light status:' + description);
+                            self.error(description);
+                            errorOccurred = true;
+                        }
+                    } else if (lights) {
+                        console.log("Authenticated!");
+                        authenticated = true;
+
+                        // Process any previously queued requests.
+                        if (pendingCommands) {
+                            for (var i = 0; i < pendingCommands.length; i++) {
+                                hue.processCommands(pendingCommands[i]);
+                            }
+                            pendingCommands = [];
+                        }
+                        hue.lights = lights;
+                        self.send('lights', lights);
+                    }
+                }
+            } else {
+                self.error("Unable to connect to bridge.");
+                errorOccurred = true;
+            }
+        });
+    }
+
     /** Contact the bridge and register the user, if needed. */
     hue.connect = function() {
         ipAddress = self.getParameter('bridgeIP');
@@ -213,6 +283,49 @@ function Hue() {
         }
         hue.processCommands(commands);
     };
+
+    /** Utility function to limit the range of a number
+     *  and to force it to be an integer. If the value argument
+     *  is a string, then it will be converted to a Number.
+     *  @param value The value to limit.
+     *  @param low The low value.
+     *  @param high The high value.
+     */
+    function limit(value, low, high) {
+        var parsed = parseInt(value);
+        if (typeof parsed === 'undefined') {
+            parsed = parseFloat(value);
+            if (typeof parsed === 'undefined') {
+                self.error("Expected a number between " + low + " and " + high + ", but got " + value);
+                return 0;
+            } else {
+                parsed = Math.floor(parsed);
+            }
+        }
+        if (parsed < low) {
+            return low;
+        } else if (parsed > high) {
+            return high;
+        } else {
+            return parsed;
+        }
+    }
+
+    /** If the response indicates an error, report it.
+     *  Return true if the response is an error.
+     */
+    function reportIfError(response) {
+        var body = response.body;
+        if (typeof body == "string") {
+            body = JSON.parse(body);
+        }
+        if (isNonEmptyArray(body) && body[0].error) {
+            self.error("Server responds with error: " +
+                       body[0].error.description);
+            return true;
+        }
+        return false;
+    }
 
     /** Process the specified commands. The argument can be a single object
      *  with properties for the command, or an array of such objects.
@@ -312,103 +425,6 @@ function Hue() {
         }
     }
 
-    /** Contact the bridge.  Register the user, if needed.
-     */
-    function contactBridge() {
-        console.log("Attempting to connect to: " + url + "/" + userName + "/lights/");
-        var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
-            if (response !== null) {
-                console.log("Got a response from the bridge: " + response.body);
-                if (errorOccurred) {
-                    // Fatal error has occurred. Ignore response.
-                    self.error('Error occurred before response arrive. Response ignored');
-                    return;
-                }
-                if (response.statusCode != 200) {
-                    // Response is other than OK. Retry if not a fatal error.
-                    bridgeRequestErrorHandler(response.statusMessage);
-                } else {
-                    var lights = JSON.parse(response.body);
-
-                    if (isNonEmptyArray(lights) && lights[0].error) {
-                        var description = lights[0].error.description;
-
-                        if (description.match("unauthorized user")) {
-                            // Add this user.
-                            // Prevent the alert from coming up more than once.
-                            alerted = true;
-                            alert(userName + " is not a registered user.\n" +
-                                  "Push the link button on the Hue bridge to register.");
-                            // Oddly, the invalid userName, which has the right form,
-                            // is not an acceptable parameter value. Since it is invalid
-                            // anyway, discard it and replace.
-                            userName = 'ptolemy_user';
-                            // It takes two successive posts to register a new user.
-                            // Issue the first one now, then attempt again later.
-                            registerUser();
-                            console.log("Will register user in " + registerInterval + " ms");
-                            handleRegisterUser = setTimeout(registerUser, registerInterval);
-                        } else {
-                            console.error('Error occurred when trying to get Hue light status:' + description);
-                            self.error(description);
-                            errorOccurred = true;
-                        }
-                    } else if (lights) {
-                        console.log("Authenticated!");
-                        authenticated = true;
-
-                        // Process any previously queued requests.
-                        if (pendingCommands) {
-                            for (var i = 0; i < pendingCommands.length; i++) {
-                                hue.processCommands(pendingCommands[i]);
-                            }
-                            pendingCommands = [];
-                        }
-                        hue.lights = lights;
-                        self.send('lights', lights);
-                    }
-                }
-            } else {
-                self.error("Unable to connect to bridge.");
-                errorOccurred = true;
-            }
-        });
-    }
-
-    /** Utility function to check that an object is a nonempty array.
-     *  @param obj The object.
-     */
-    function isNonEmptyArray(obj) {
-        return (obj instanceof Array && obj.length > 0);
-    }
-
-    /** Utility function to limit the range of a number
-     *  and to force it to be an integer. If the value argument
-     *  is a string, then it will be converted to a Number.
-     *  @param value The value to limit.
-     *  @param low The low value.
-     *  @param high The high value.
-     */
-    function limit(value, low, high) {
-        var parsed = parseInt(value);
-        if (typeof parsed === 'undefined') {
-            parsed = parseFloat(value);
-            if (typeof parsed === 'undefined') {
-                self.error("Expected a number between " + low + " and " + high + ", but got " + value);
-                return 0;
-            } else {
-                parsed = Math.floor(parsed);
-            }
-        }
-        if (parsed < low) {
-            return low;
-        } else if (parsed > high) {
-            return high;
-        } else {
-            return parsed;
-        }
-    }
-
     /** Register a new user.
      *  This function repeats at registerInterval until successful or until
      *  maxRegisterAttempts.  Some wait time is given between attempts for the
@@ -470,22 +486,6 @@ function Hue() {
                 throw "Unknown error registering new user";
             }
         });
-    }
-
-    /** If the response indicates an error, report it.
-     *  Return true if the response is an error.
-     */
-    function reportIfError(response) {
-        var body = response.body;
-        if (typeof body == "string") {
-            body = JSON.parse(body);
-        }
-        if (isNonEmptyArray(body) && body[0].error) {
-            self.error("Server responds with error: " +
-                       body[0].error.description);
-            return true;
-        }
-        return false;
     }
 
     return hue;

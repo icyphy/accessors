@@ -27,7 +27,7 @@
  *
  * The ../plugins/accessorJSDocTags.js plugin is used to create the
  * inputs, outputs and parameters arrays.
- * 
+ *
  * The ../../jsdoc.json file is what adds the plugin, it contains something like:
  *
  * "plugins": ["jsdoc/plugins/accessorJSDocTags"]
@@ -55,14 +55,14 @@ var util = require('util');
  *  @return MoML representation of the accessor xml.
  */
 function accessorPropertiesToMoML(propertyName, elements) {
-    var moml = '', _debugging = false;
+    var moml = '', debugging = false;
     elements
         .forEach(function (element) {
             var name = element.name, type = element.type, description = element.description;
             if (type !== undefined) {
                 type = type.toSource();
             }
-            if (_debugging) {
+            if (debugging) {
                 console.error(propertyName + " name: " + name);
                 console.error(propertyName + " type: " + type);
                 console.error(propertyName + " description: " + description);
@@ -72,7 +72,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
 
             var simplerType = xmlEscape(type);
             if (type !== undefined) {
-                simplerType = simplerType.replace(/^\({names:\[&quot;/g, '').replace(/&quot;\]}\)$/g, '');
+                simplerType = simplerType.replace(/^\(\{names:\[&quot;/g, '').replace(/&quot;\]}\)$/g, '');
                 //console.error("simplerType: type: " + type + ", new simpleType: " + simplerType);
             }
             moml += '    <property name="' + xmlEscape(name) + " (" + propertyName + ")" +
@@ -85,7 +85,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
 }
 
 /** Process the JavaScript and generate ptdoc-compatible xml files.
- *  
+ *
  *  This is the main entry point for JSDoc.  See
  *  https://github.com/jsdoc3/jsdoc/blob/master/templates/README.md
  *
@@ -96,7 +96,7 @@ function accessorPropertiesToMoML(propertyName, elements) {
  *  @param {TAFFY} data
  */
 exports.publish = function (data) {
-    var docs, fileName = '', fullFileName = '', moml = '', _debugging = false;
+    var docs, fileName = '', fullFileName = '', moml = '', debugging = false;
     data({undocumented: true}).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
@@ -116,7 +116,7 @@ exports.publish = function (data) {
                 }
             }
 
-            if (_debugging) {
+            if (debugging) {
                 if (element.meta !== undefined) {
                     console.error("ptdoc/public.js: docs.meta.path: " + element.meta.path);
                     console.error("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
@@ -191,20 +191,20 @@ function xmlEscape(bad) {
         return bad;
     }
     return bad.replace(/[\n<>&'"]/g,
-         function (c) {
-            switch (c) {
-            case '\n':
-                return '&#10;';
-            case '<':
-                return '&lt;';
-            case '>':
-                return '&gt;';
-            case '&':
-                return '&amp;';
-            case '\'':
-                return '&apos;';
-            case '"':
-                return '&quot;';
-            }
-        });
+                       function (c) {
+                           switch (c) {
+                           case '\n':
+                               return '&#10;';
+                           case '<':
+                               return '&lt;';
+                           case '>':
+                               return '&gt;';
+                           case '&':
+                               return '&amp;';
+                           case '\'':
+                               return '&apos;';
+                           case '"':
+                               return '&quot;';
+                           }
+                       });
 }
