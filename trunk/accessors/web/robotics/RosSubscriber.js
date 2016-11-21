@@ -21,9 +21,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor subscribes to a pre-established ROS topic.<br>
- *  It communicates to ROS through the rosbridge web socket, and extends the 
- *  WebSocketClient accessor to do so. 
- *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br>. 
+ *  It communicates to ROS through the rosbridge web socket, and extends the
+ *  WebSocketClient accessor to do so.
+ *  It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.<br>.
  *  The other parameters configure how the data is to be received according
  *  to the rosbridge specification:
  *  https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe
@@ -38,7 +38,7 @@
  *   before it is to be fragmented. Defaults to 1000. Ptolemy will close the
  *   model if fragment size is too large (not sure what the maximum is).
  *  @parameter {string} compression A string to specify the compression
- *   scheme to be used on messages. Options are "none" (default) and "png". 
+ *   scheme to be used on messages. Options are "none" (default) and "png".
  *  @parameter {boolean} outputCompleteResponseOnly A flag which if set to true
  *   will cause the accessor to delay in sending messages on the "received" port
  *   until it has concatenated the data fields from message fragments back into
@@ -47,7 +47,7 @@
  *  @output {boolean} connected The status of the web socket connection.
  *  @output {JSON} received The data received from the web socket server.
  *  @author Marcus Pan, Matt Weber
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -59,7 +59,7 @@
 
 /** Sets up by accessor by inheriting inputs, outputs and parameters from setup() in WebSocketClient.<br>
  *  Adds a 'topic' input which is the ROS topic to subscribe to. */
-exports.setup = function() {
+exports.setup = function () {
 
     this.extend('net/WebSocketClient');
 
@@ -92,14 +92,14 @@ exports.setup = function() {
 /** Overrides the toSendInputHandler to throw an error if called.
  *  A subscriber should not be publishing inputs.
  */
-exports.toSendInputHandler = function() {
+exports.toSendInputHandler = function () {
     console.error('This is a subscriber and does not take input to publish.');
 };
 
 /** Inherits initialize from webSocketClient.
  *  Sends a message to rosbridge to start subscribing to the topic on input 'topic'.
- */ 
-exports.initialize = function() {
+ */
+exports.initialize = function () {
     this.exports.ssuper.initialize.call(this);
 
     this.exports.sendToWebSocket.call(this, {
@@ -113,7 +113,7 @@ exports.initialize = function() {
 };
 
 /** Unsubscribe from the topic. Close websocket connections by calling wrapup of WebSocketClient */
-exports.wrapup = function() {
+exports.wrapup = function () {
     var unsubscribe = {
         "op": "unsubscribe",
         "topic": this.getParameter('topic')
@@ -124,16 +124,15 @@ exports.wrapup = function() {
 
 //Combines fragments into the original message. If the message is incomplete this function
 //returns null. When the entire message has been received it returns the whole message.
-exports.defragmentMessage = (function() {
-    
+exports.defragmentMessage = (function () {
+
     //This closure remembers the number and content of fragments already seen.
-    var originalMessage = "";
-    var fragmentCount = 0;
-    
-    var processMessage = function(message){
+    var originalMessage = "",
+        fragmentCount = 0,
+        processMessage = function (message) {
 
         //Check for missing fragment
-        if (fragmentCount != message.num){
+        if (fragmentCount !== message.num) {
             console.error("Fragment " +
                 fragmentCount +
                 " of message is missing. Instead received fragment number " +
@@ -141,15 +140,15 @@ exports.defragmentMessage = (function() {
         }
 
         //Accumulate data from fragment.
-        if (fragmentCount === 0){
+        if (fragmentCount === 0) {
             originalMessage = message.data;
-            fragmentCount++;
+            fragmentCount += 1;
             return null;
-        } else if (fragmentCount < message.total - 1 ){
+        } else if (fragmentCount < message.total - 1) {
             originalMessage += message.data;
-            fragmentCount++;
+            fragmentCount += 1;
             return null;
-        } else if (fragmentCount == message.total -1 ){
+        } else if (fragmentCount == message.total -1) {
             originalMessage += message.data;
             fragmentCount = 0;
             return originalMessage;
@@ -162,12 +161,12 @@ exports.defragmentMessage = (function() {
 })();
 
 
-exports.onMessage = function(message){
-    
+exports.onMessage = function (message) {
+
     var messageToSend;
-    if (this.getParameter('outputCompleteResponseOnly') && message.op == "fragment"){
+    if (this.getParameter('outputCompleteResponseOnly') && message.op === "fragment") {
         messageToSend = this.defragmentMessage(message);
-        if (messageToSend === null){
+        if (messageToSend === null) {
             return;
         }
     } else {

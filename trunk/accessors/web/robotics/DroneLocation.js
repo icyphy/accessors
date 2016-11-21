@@ -26,12 +26,12 @@
  * Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command "rosed mavros apm2.launch"
  * and launch the node using the command "roslaunch mavros apm2.launch". The accessor uses a websocket to access ros.
  * Thus, you need also to install rosbridge_server and launch "roslaunch rosbridge_server rosbridge_websocket.launch".
- * 
+ *
  *  @accessor robotics/DroneLocation
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$
- *  @parameter {string} rosbridgeServer RosBridge server address  
- *  @parameter {int} rosbridgePort RosBridge server port  
+ *  @parameter {string} rosbridgeServer RosBridge server address
+ *  @parameter {int} rosbridgePort RosBridge server port
  *  @output {double} lat Latitude of the drone
  *  @output {double} lon Longitude of the drone
  *  @output {double} alt Altitude of the drone
@@ -54,14 +54,14 @@ exports.setup = function() {
 
     sub.setParameter('topic',"/mavros/global_position/global");
     this.parameter('rosbridgeServer',{
-        type: 'string', 
+        type: 'string',
         value: 'localhost'
     });
     this.parameter('rosbridgePort',{
-        type: 'int', 
+        type: 'int',
         value: 9090
     });
-    
+
     this.input('server',{'visibility': 'expert'});
     this.input('port',{'visibility': 'expert'});
     this.output('lat', {
