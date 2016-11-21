@@ -21,8 +21,8 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor sends and/or receives messages from a web socket at
- *  the specified host and port. 
- *  <a href="https://en.wikipedia.org/wiki/WebSocket">WebSockets</a> 
+ *  the specified host and port.
+ *  <a href="https://en.wikipedia.org/wiki/WebSocket">WebSockets</a>
  *  provide full-duplex communication channels over a single TCP/IP connection.
  *  In `initialize()`, it  begins connecting to the web socket server.
  *  Once the connection is established, a `true` boolean is sent to
@@ -99,7 +99,7 @@
  *  @input toSend The data to be sent over the socket.
  *  @output {boolean} connected Output `true` on connected and `false` on disconnected.
  *  @output received The data received from the web socket server.
- *  
+ *
  *  @parameter {string} receiveType The MIME type for incoming messages,
  *   which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages,
@@ -117,7 +117,7 @@
  *   then this option needs to specify the fully qualified filename for the file that stores
  *   the certificate of a certificate authority (CA) that this client will use to verify server
  *   certificates. This path can be any of those understood by the Ptolemy host, e.g. paths
- *   beginning with $CLASSPATH/. 
+ *   beginning with $CLASSPATH/.
  *   FIXME: Need to be a list of paths for certificates rather than a single path.
  *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
  *  @parameter {boolean} discardMessagesBeforeOpen If true,
@@ -166,11 +166,11 @@ exports.setup = function () {
 
     this.parameter('receiveType', {
         type : 'string',
-        value : 'application/json',
+        value : 'application/json'
     });
     this.parameter('sendType', {
         type : 'string',
-        value : 'application/json',
+        value : 'application/json'
     });
     this.parameter('connectTimeout', {
         value: 1000,
@@ -254,7 +254,7 @@ exports.connect = function () {
         }
         previousPort = null;
         previousServer = null;
-        // 
+        //
         console.log("WebSocketClient.js: connect(): portValue: " + portValue +
                     ", which is less than 0. This could be a signal to close a previously open socket." +
                     "  Returning.");
@@ -341,7 +341,7 @@ exports.onOpen = function () {
     // Note this implementation requires that the host invoke
     // this callback function atomically w.r.t. the input handler
     // that adds messages to the pendingSends queue.
-    for (i = 0; i < pendingSends.length; i++) {
+    for (i = 0; i < pendingSends.length; i += 1) {
         client.send(pendingSends[i]);
     }
     pendingSends = [];

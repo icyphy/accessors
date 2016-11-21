@@ -182,7 +182,7 @@ var pose_in = function () {
             topic: this.getParameter('topicPrefix') + '/goal',
             msg: {
                 'header': {
-                    'seq': seq++,
+                    'seq': seq,
                     'stamp': {
                         'secs': 0,
                         'nsecs': 0
@@ -192,7 +192,7 @@ var pose_in = function () {
                 'pose': v
             }
         };
-
+    seq += 1;
     poseClient.send(out);
 };
 

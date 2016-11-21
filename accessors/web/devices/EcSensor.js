@@ -20,7 +20,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** 
+/**
  *        Retrieves the latest electric current (EC) measurement from your garden
  *
  *  This accessor does not block waiting for the response, but if any additional
@@ -52,7 +52,7 @@ var http = require('httpClient');
  */
 exports.setup = function() {
     this.extend('net/REST');
-    
+
     this.output('ec', {
             'type': 'number'
     });
@@ -74,11 +74,11 @@ exports.setup = function() {
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
-    
+
     // Capture 'this' for use in callback.
     var self = this;
 
-    
+
 };
 
 
@@ -87,8 +87,8 @@ exports.initialize = function() {
  */
 
 exports.filterResponse = function(response) {
-    
-    
+
+
     if (response) {
         try {
             // Check if response is JSON or stringified JSON.  If stringified, parse.

@@ -52,7 +52,7 @@
  *       <li> host: A string giving the domain name or IP address of
  *            the server to issue the request to. This defaults to 'localhost'.
  *       <li> protocol: The protocol. This is a string that defaults to 'http'.
- *       <li> port: Port of remote server. This defaults to 80. 
+ *       <li> port: Port of remote server. This defaults to 80.
  *       </ul>
  *  </ul>
  *
@@ -86,7 +86,7 @@
  *  If the parameter 'outputCompleteResponseOnly' is true (the default), then this
  *  accessor will produce a 'response' output only upon receiving a complete response.
  *  If it is false, then multiple outputs may result from a single input or trigger.
- * 
+ *
  *  @accessor net/REST
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input {JSON} options The url for the command or an object specifying options.
@@ -101,7 +101,7 @@
  *   before triggering a null response and an error. This defaults to 5000.
  *  @parameter {boolean} outputCompleteResponseOnly If true (the default), the produce a
  *   'response' output only upon receiving the entire response.
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -196,13 +196,13 @@ exports.issueCommand = function(callback) {
     if (this.getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
     }
-    
+
     if (typeof body !== 'undefined') {
-            command.body = body; 
+            command.body = body;
     }
-    
+
     // console.log("REST request to: " + JSON.stringify(command));
-    
+
     request = httpClient.request(command, callback);
     request.on('error', function(message) {
         if (!message) {

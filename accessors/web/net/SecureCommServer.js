@@ -25,7 +25,7 @@
  *  and for secure communication with a SecureCommClient.
  *
  *  Specifically, this access listens to secure communication requests from
- *  clients and handles the client requests. 
+ *  clients and handles the client requests.
  *
  *  This accessor internally manages the credentials (cryptographic keys)
  *  for communication with remote Auth and remote client.
@@ -192,7 +192,7 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     for (var i = 0; i < sessionKeyList.length; i++) {
         receivedSessionKey = sessionKeyList[i];
     }
-    console.log('Session key arrived');    
+    console.log('Session key arrived');
     if (receivedSessionKey.id == callbackParameters.keyId) {
         console.log('Session key id is as expected');
         currentSessionKey = receivedSessionKey;
@@ -262,7 +262,7 @@ function onConnection(socketInstance, entityServerSocket) {
 
 function onData(data, socketID) {
     console.log('data received from server via secure communication');
-    
+
     if (receiveType == 'string') {
         self.send('received', data.toString());
     }
@@ -326,7 +326,7 @@ exports.initialize = function () {
         onConnection: onConnection
     };
     server = iotAuth.initializeSecureServer(options, eventHandlers);
-    
+
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 

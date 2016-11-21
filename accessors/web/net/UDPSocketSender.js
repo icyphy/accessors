@@ -72,7 +72,7 @@ exports.setup = function () {
     });
     this.parameter('sendType', {
         type : 'string',
-        value : 'string',
+        value : 'string'
     });
 
     // Attempt to add a list of options for types, but do not error out

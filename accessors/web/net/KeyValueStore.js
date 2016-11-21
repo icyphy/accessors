@@ -53,7 +53,7 @@
  *  * To remove a value, use
  *
  *      http://localhost:8077/keyvalue/delete?id=MY_ID
- * 
+ *
  *  The key and value are both
  *  encoded using the JavaScript encodeURIComponent() function,
  *  and on retrieval, decoded using decodeURIComponent(),

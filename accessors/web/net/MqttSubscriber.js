@@ -30,7 +30,7 @@
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
- 
+
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*global console, exports, require */
@@ -43,7 +43,7 @@ exports.setup = function () {
     // Inputs and outputs
     this.input('subscribe');
     this.input('unsubscribe');
-    this.output('connection', {        
+    this.output('connection', {
             spontaneous: true
     });
     this.output('subscription');

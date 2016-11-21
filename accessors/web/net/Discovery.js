@@ -23,16 +23,16 @@
 /** This accessor discovers devices on the local area network.
  *  It requires the discovery module.  Please see:
  *  https://www.terraswarm.org/accessors/wiki/Version0/Discovery
- * 
+ *
  *  @accessor net/Discovery
  *  @author Elizabeth Latronico (beth@berkeley.edu)
  *  @input {string} hostIP The IP address of the host.  Used to discover other
  *   devices on the local area network.
  *  @output devices An object containing IP addresses and (when
  *   available) names and MAC addresses of devices on the local area network.
- *  @parameter {boolean} useNmap True if nmap should be used for discovery, 
+ *  @parameter {boolean} useNmap True if nmap should be used for discovery,
  *   false to use ping and arp.  Default is false.
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -50,29 +50,29 @@ var discovery = require('discovery');
 // the interface.
 var ds;
 try {
-    ds = new discovery.DiscoveryService();  
+    ds = new discovery.DiscoveryService();
 } catch(err) {
     error('Failed to instantiate discovery service: ' + err);
 }
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    
+
     this.input('hostIP', {
-        type: 'string',
+        type: 'string'
     });
-    
+
     this.output('devices');
-    
+
     this.parameter('useNmap', {
         type: 'boolean',
-        value: false,
+        value: false
     });
 };
 
 var handle;
 
-/** Upon receiving a host IP address, discover devices on the corresponding 
+/** Upon receiving a host IP address, discover devices on the corresponding
  *  local area network.
  */
 exports.initialize = function () {

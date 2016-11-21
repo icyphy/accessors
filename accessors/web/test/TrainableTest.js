@@ -163,7 +163,7 @@ exports.initialize = function () {
                                 '" is not a number, it is a ' +
                                 typeof referenceToken);
             }
-            numberOfInputTokensSeen++;
+            numberOfInputTokensSeen += 1;
             // If we are past the end of the expected inputs, then read
             if (numberOfInputTokensSeen >= correctValuesValues.length) {
                 self.send('output', true);
