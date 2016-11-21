@@ -30,7 +30,15 @@
  *  @accessor utilities/Browser
  *  @input {string} html An HTML document to render in the browser.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
+ *  @version $$Id$$
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should be no
+// space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*global  exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
 var Browser = require('browser');
 var browser = new Browser.Browser();
 

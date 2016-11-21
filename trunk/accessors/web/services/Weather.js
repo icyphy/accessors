@@ -78,6 +78,23 @@ exports.setup = function() {
     this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
+/** Convert the temperature in kelvins to the units specified in the
+ *  temperature parameter. Also, round the result to a precision of
+ *  0.01 degrees.
+ *  @param kelvin The temperature in degrees Kelvin.
+ *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
+ *  @return The temperature in the desired units.
+ */
+var convertTemperature = function(kelvin, units) {
+    var result = kelvin;
+    if (units == 'Fahrenheit') {
+        result = (kelvin - 273.15) * 1.8 + 32.00;
+    } else if (units == 'Celsius') {
+        result = kelvin - 273.15;
+    }
+    return (Math.round(result * 100)/100);
+};
+
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
@@ -200,20 +217,5 @@ exports.filterResponse = function(response) {
     return response;
 };
 
-/** Convert the temperature in kelvins to the units specified in the
- *  temperature parameter. Also, round the result to a precision of
- *  0.01 degrees.
- *  @param kelvin The temperature in degrees Kelvin.
- *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
- *  @return The temperature in the desired units.
- */
-var convertTemperature = function(kelvin, units) {
-    var result = kelvin;
-    if (units == 'Fahrenheit') {
-        result = (kelvin - 273.15) * 1.8 + 32.00;
-    } else if (units == 'Celsius') {
-        result = kelvin - 273.15;
-    }
-    return (Math.round(result * 100)/100);
-};
+
 

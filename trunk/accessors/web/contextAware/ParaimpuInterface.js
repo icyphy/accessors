@@ -22,9 +22,9 @@
 
 /**
  *  @author Anne H. Ngu (angu@txstate.edu)
- *  @parameter {string} host is the ip address of the server hosting the service 
+ *  @parameter {string} host is the ip address of the server hosting the service
  *  @parameter {int} port is the port number of the host, default to 80. it is 443 for paraimpu
- *  @parameter {string} protocol is the communication protocol used (http or https) 
+ *  @parameter {string} protocol is the communication protocol used (http or https)
  *  @parameter {string} accessToken is the authentication information for this service
  *  @parameter {string} path is the command for invoking the service
  *  @parameter {string} method is the http request method (GET, POST)

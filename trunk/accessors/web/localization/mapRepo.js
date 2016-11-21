@@ -22,20 +22,20 @@
 
 /**
  * This accessor collects map data from its input and aggregates
- * the results in a map repository in local memory. 
- * When it receives a trigger input it sends the contents of its 
- * repository on its output port. When it receives a 
+ * the results in a map repository in local memory.
+ * When it receives a trigger input it sends the contents of its
+ * repository on its output port. When it receives a
  * clear input it empties its repository.
- * 
+ *
  * @accessor localization/mapRepo
- * 
+ *
  * @input report Input that triggers a report of the map repo contents.
  * @input clear Input that triggers a reset of the repository's data.
  * @input {JSON} mapData MapSchema structured map data.
  * @output {JSON} repoData MapSchema structured map data from the repository.
- * 
+ *
  * @author Matt Weber
- * @version $$Id$$ 
+ * @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -59,7 +59,7 @@ exports.setup = function(){
 };
 
 exports.initialize = function(){
-        reportHandle = this.addInputHandler('report', this.reportInputHandler); 
+        reportHandle = this.addInputHandler('report', this.reportInputHandler);
         clearHandle = this.addInputHandler('clearHandle', this.clearInputHandler);
         mapDataHandle = this.addInputHandler('mapData', this.mapDataInputHandler);
 };

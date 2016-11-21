@@ -85,7 +85,7 @@ exports.initialize = function() {
     recording = false;
 };
 
-this.exports.wrapup = function() {
+exports.wrapup = function() {
     console.log("Audio Capture Wrapup");
     audio.wrapup();
     this.removeInputHandler('trigger', triggerHandler);

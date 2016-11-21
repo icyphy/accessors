@@ -44,12 +44,6 @@ var dspEngine = null;
 var dsp = require("dsp");   
 var handle = null;
 
-exports.initialize = function() { 
-    handle = this.addInputHandler('signalIn',processSignal); 
-    var n = 0; 
-    dspEngine = new dsp.Signal();   
-};
-
 var processSignal = function() {
     var signalValue = this.get('signalIn');  
     var fftLength = signalValue.length; 
@@ -58,13 +52,19 @@ var processSignal = function() {
     var outputArray = [];
     // parse the fft coefficients as record tokens with
     // real and imaginary parts
-    for (var j = 0; j < fftLength; j++) { 
+    for (var j = 0; j < fftLength; j += 1) { 
         var trial = {};
         trial.real = fftResult.real[j];
         trial.imag = fftResult.imag[j];
         outputArray[j] = trial; 
     }
     this.send('fftOutput', outputArray); 
+};
+
+exports.initialize = function() { 
+    handle = this.addInputHandler('signalIn',processSignal); 
+    var n = 0; 
+    dspEngine = new dsp.Signal();   
 };
 
 exports.wrapup = function() { 

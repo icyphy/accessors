@@ -21,17 +21,17 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This is the interface specification of a global sensor network service (GSN)
- *  
- * 
+ *
+ *
  *  @author Anne H. Ngu (angu@btxstate.edu)
- *  @parameter {string} host is the ip address of the server hosting the service 
+ *  @parameter {string} host is the ip address of the server hosting the service
  *  @parameter {int} port is the port number of host
- *  @parameter {string} protocol is the communication protocol used. 
+ *  @parameter {string} protocol is the communication protocol used.
  *  @parameter {string} username is the login account name for the service
  *  @parameter {string} password  is the password for the login account
  *  @parameter {string} method is the http request method
- *  @parameter {string} path is the directory to target resource requested 
- *  @version $$Id$$ 
+ *  @parameter {string} path is the directory to target resource requested
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should be no

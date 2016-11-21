@@ -29,12 +29,12 @@
  *  a 'port' input, then it will close any open socket and, if the new
  *  'port' value is non-negative, open
  *  a new socket to the current 'host' and 'port'.
- *  
+ *
  *  When the connection is established, a `true` boolean is sent to
  *  the `connected` output. If the connection is broken during execution, then a `false`
  *  boolean is sent to the `connected` output. The swarmlet could respond to this by
  *  retrying to connect (send an event to either the `port` or `host` input).
- *  
+ *
  *  Whenever an input is received on the `toSend` input,
  *  the data on that input is sent to the socket. If the socket is not yet open,
  *  this accessor will, by default, queue the message to send when a socket next opens,
@@ -138,9 +138,9 @@
  *    client authentication, then this option needs to specify the password for the pfx key-cert
  *    file specified by pfxKeyCertPath.
  *  @parameter {string} pfxKeyCertPath If sslTls is set to true and the server requires
- *    client authentication, then this option needs to specify the fully qualified filename for 
+ *    client authentication, then this option needs to specify the fully qualified filename for
  *    the file that stores the private key and certificate that this client will use to authenticate
- *    itself to the server. This path can be any of those understood by the Ptolemy host, 
+ *    itself to the server. This path can be any of those understood by the Ptolemy host,
  *    e.g. paths beginning with $CLASSPATH/.
  *  @parameter {boolean} rawBytes If true (the default), then transmit only the data bytes provided
  *    to this.send() without any header. If false, then prepend sent data with length
@@ -201,12 +201,12 @@ exports.setup = function () {
     // This input is added after host and port so that if there are
     // simultaneous inputs, host and port are handled first.
     this.input('toSend');
-    
+
     this.output('connected', {
         type : 'boolean'
     });
     this.output('received');
-    
+
     // The parameters are in alphabetical order.
     this.parameter('connectTimeout', {
         value: 6000,
@@ -250,7 +250,7 @@ exports.setup = function () {
     });
     this.parameter('receiveType', {
         type : 'string',
-        value : 'string',
+        value : 'string'
     });
     this.parameter('reconnectAttempts', {
         type : 'int',
@@ -266,7 +266,7 @@ exports.setup = function () {
     });
     this.parameter('sendType', {
         type : 'string',
-        value : 'string',
+        value : 'string'
     });
     this.parameter('sslTls', {
         type : 'boolean',
@@ -280,7 +280,7 @@ exports.setup = function () {
         type : 'string',
         value : ''
     });
-    
+
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
@@ -297,23 +297,23 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-        // May be receiving inputs before client has been set.
-        if (client) {
-            client.send(this.get('toSend'));
-        } else {
+    // May be receiving inputs before client has been set.
+    if (client) {
+        client.send(this.get('toSend'));
+    } else {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             var maxUnsentMessages = this.getParameter('maxUnsentMessages');
             if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
                 this.error("Maximum number of unsent messages has been exceeded: " +
-                    maxUnsentMessages +
-                    ". Consider setting discardMessagesBeforeOpen to true.");
+                           maxUnsentMessages +
+                           ". Consider setting discardMessagesBeforeOpen to true.");
                 return;
             }
             pendingSends.push(this.get('toSend'));
         } else {
             console.log('Discarding data because socket is not open.');
         }
-        }
+    }
 };
 
 /** Set up input handlers, and if the current value of the 'port' input is
@@ -323,8 +323,8 @@ exports.toSendInputHandler = function () {
  *  errors, and closing from the server.
  */
 exports.initialize = function () {
-        this.addInputHandler('host', this.exports.connect.bind(this));
-        this.addInputHandler('port', this.exports.connect.bind(this));
+    this.addInputHandler('host', this.exports.connect.bind(this));
+    this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
     this.exports.connect.call(this);
     running = true;
@@ -336,72 +336,72 @@ exports.initialize = function () {
  *  on the toSend() input port.
  */
 exports.connect = function () {
-        // Note that if 'host' and 'port' both receive new data in the same
-        // reaction, then this will be invoked twice. But we only want to open
-        // the socket once.  This is fairly tricky.
-        
-        var portValue = this.get('port');
-        if (portValue < 0) {
-                // No port is specified. This could be a signal to close a previously
-                // open socket.
-                if (client && client.isOpen()) {
-                        client.close();
-                }
-                previousPort = null;
-                previousHost = null;
-                return;
-        }
-        
-        var hostValue = this.get('host');
-        if (previousHost === hostValue && previousPort === portValue) {
-                // A request to open a client for this host/port pair has already
-                // been made and has not yet been closed or failed with an error.
-                return;
-        }
-        // Record the host/port pair that we are now opening.
-        previousHost = hostValue;
-        previousPort = portValue;
-        
+    // Note that if 'host' and 'port' both receive new data in the same
+    // reaction, then this will be invoked twice. But we only want to open
+    // the socket once.  This is fairly tricky.
+
+    var portValue = this.get('port');
+    if (portValue < 0) {
+        // No port is specified. This could be a signal to close a previously
+        // open socket.
         if (client && client.isOpen()) {
-                // Either the host or the port has changed. Close the previous socket.
-                client.close();
+            client.close();
         }
-        // Create a new SocketClient.
+        previousPort = null;
+        previousHost = null;
+        return;
+    }
+
+    var hostValue = this.get('host');
+    if (previousHost === hostValue && previousPort === portValue) {
+        // A request to open a client for this host/port pair has already
+        // been made and has not yet been closed or failed with an error.
+        return;
+    }
+    // Record the host/port pair that we are now opening.
+    previousHost = hostValue;
+    previousPort = portValue;
+
+    if (client && client.isOpen()) {
+        // Either the host or the port has changed. Close the previous socket.
+        client.close();
+    }
+    // Create a new SocketClient.
     client = new socket.SocketClient(portValue, hostValue,
-        {
-            'connectTimeout' : this.getParameter('connectTimeout'),
-            'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
-            'idleTimeout' : this.getParameter('idleTimeout'),
-            'keepAlive' : this.getParameter('keepAlive'),
-            'maxUnsentMessages' : this.getParameter('maxUnsentMessages'),
-            'noDelay' : this.getParameter('noDelay'),
-            'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
-            'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
-            'rawBytes' : this.getParameter('rawBytes'),
-            'receiveBufferSize' : this.getParameter('receiveBufferSize'),
-            'receiveType' : this.getParameter('receiveType'),
-            'reconnectAttempts' : this.getParameter('reconnectAttempts'),
-            'reconnectInterval' : this.getParameter('reconnectInterval'),
-            'sendBufferSize' : this.getParameter('sendBufferSize'),
-            'sendType' : this.getParameter('sendType'),
-            'sslTls' : this.getParameter('sslTls'),
-            'trustAll' : this.getParameter('trustAll'),
-            'trustedCACertPath' : this.getParameter('trustedCACertPath')
-        }
-    );
-    
+                                     {
+                                         'connectTimeout' : this.getParameter('connectTimeout'),
+                                         'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
+                                         'idleTimeout' : this.getParameter('idleTimeout'),
+                                         'keepAlive' : this.getParameter('keepAlive'),
+                                         'maxUnsentMessages' : this.getParameter('maxUnsentMessages'),
+                                         'noDelay' : this.getParameter('noDelay'),
+                                         'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
+                                         'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
+                                         'rawBytes' : this.getParameter('rawBytes'),
+                                         'receiveBufferSize' : this.getParameter('receiveBufferSize'),
+                                         'receiveType' : this.getParameter('receiveType'),
+                                         'reconnectAttempts' : this.getParameter('reconnectAttempts'),
+                                         'reconnectInterval' : this.getParameter('reconnectInterval'),
+                                         'sendBufferSize' : this.getParameter('sendBufferSize'),
+                                         'sendType' : this.getParameter('sendType'),
+                                         'sslTls' : this.getParameter('sslTls'),
+                                         'trustAll' : this.getParameter('trustAll'),
+                                         'trustedCACertPath' : this.getParameter('trustedCACertPath')
+                                     }
+                                    );
+
     var self = this;
 
     client.on('open', function() {
         console.log('Status: Connection established');
         self.send('connected', true);
-        
+
         // If there are pending sends, send them now.
         // Note this implementation requires that the host invoke
         // this callback function atomically w.r.t. the input handler
         // that adds messages to the pendingSends queue.
         for (var i = 0; i < pendingSends.length; i++) {
-                client.send(pendingSends[i]);
+            client.send(pendingSends[i]);
         }
         pendingSends = [];
     });
@@ -409,8 +409,8 @@ exports.connect = function () {
         self.send('received', data);
     });
     client.on('close', function() {
-            previousHost = null;
-            previousPort = null;
+        previousHost = null;
+        previousPort = null;
         console.log('Connection closed.');
         // NOTE: Even if running is true, it can occur that it is too late
         // to send the message (the wrapup process has been started), in which case
@@ -420,11 +420,11 @@ exports.connect = function () {
         }
     });
     client.on('error', function (message) {
-            previousHost = null;
-            previousPort = null;
+        previousHost = null;
+        previousPort = null;
         self.error(message);
     });
-    
+
     client.open();
 };
 

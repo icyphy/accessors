@@ -25,20 +25,20 @@
 /** This accessor controls a Philips Hue lightbulb via a Hue Bridge.
  *  To use it, you need to know the IP address of the Hue Bridge, which is
  *  unfortunately, somewhat hard to find out.  See below for some hints.
- *  
+ *
  *  Upon initialization, this accessor will use the userName parameter to
  *  contact the Hue Bridge. If the userName is invalid, then the accessor will
  *  engage in a dialog with the Bridge to create a new user. This will require
  *  the user to push the button on the Hue Bridge when the alert to do so appears.
  *  The assigned userName will be recorded in the userName parameter.
- *  
+ *
  *  Upon authenticating with the Bridge, this accessor will output a data
  *  structure that reports all the lights that have been registered with the Bridge.
  *  These lights each have a number ID, such as '1'.  The state of each light
  *  will be reported in this output. The most important property of the state
  *  is the 'reachable' property. If this has value false, then the light is not
- *  reachable by the Bridge and therefore cannot be controlled.  
- *  
+ *  reachable by the Bridge and therefore cannot be controlled.
+ *
  *  The *commands* input is either a single command or an array of commands,
  *  where each command can have the following properties:
  *
@@ -50,16 +50,16 @@
  *  * sat: Saturation, for bulbs that support color. This is a number in the
  *    range 0-255.
  *  * transitiontime: The time in ms for the bulb to make the transition.
- *  
+ *
  *  Please see Hue docs for mapping colors to hue/saturation values:
  *  http://www.developers.meethue.com/documentation/core-concepts
- *  
+ *
  *  If a light is not accessible, this accessor warns but does not error.
  *  FIXME: Where is the warning appearing?
- *  Sometimes Hue lights are transient (get unplugged, become temporarily 
- *  disconnected) and may be valid in the future. Rather than terminating the 
+ *  Sometimes Hue lights are transient (get unplugged, become temporarily
+ *  disconnected) and may be valid in the future. Rather than terminating the
  *  model, we hope that the lights come back.
- *  
+ *
  *  Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
  *  The bridge acquires its address via DHCP, so the address will typically change
  *  each time the bridge is rebooted. Moreover, the address will likely not be
@@ -68,16 +68,16 @@
  *  <a href="http://4thline.org/projects/cling/">Cling</a> to discover the bridge.
  *  Another option is to use the Discovery accessor and look for a device named
  *  philips-hue (or the name assigned to your bridge if assigned manually).
- *  
+ *
  *  @accessor devices/Hue
  *  @input {JSON} commands JSON commands for the Hue, for example,
  *                {"id" : 1, "on" : true, "hue" : 120}
  *  @input {string} bridgeIP The bridge IP address (and port, if needed).
  *  @parameter {string} userName The username for logging on to the Hue Bridge.
  *   This must be at least 11 characters, or the Hue regards it as invalid.
-     A username will be automatically generated if none is available.
+ A username will be automatically generated if none is available.
  *  @author Edward A. Lee, Marcus Pan, Elizabeth Osyk, Marten Lohstroh
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -93,7 +93,7 @@ var util = require('util');
 
 /** Define inputs and outputs. */
 exports.setup = function() {
-    
+
     this.input('commands');
     this.parameter('bridgeIP', {
         type: "string",
@@ -114,39 +114,20 @@ exports.setup = function() {
     });
 };
 
-/** Add an input handler to react to commands.
- *  Commands will be ignored until the user is authenticated.
- *  If a bridge IP address has been given, contact the bridge to check if it is
- *  present.  Next, register the user if not already registered.  
- */
-exports.initialize = function() {
-    // Call the Hue function binding "this", to create local state variables 
-    // while providing access to accessor functions.  
-    // Setting "this.hue" makes hue available in other accessor functions, e.g.
-    // initialize().
-    // TODO:  Test with two accessors to make sure each has separate state.
-    this.hue = Hue.call(this);
-        
-    // FIXME:  We need a way to dynamically supply the IP address.
-    // Recommend using a separate port.
-    this.addInputHandler('commands', this.hue.issueCommand);
-    this.hue.connect();
-};
-
 /** Define a Hue function using a variant of the Module pattern.  The function
- *  returns a hue object which offers a public connect() function.  
- *  This will create an object with its own local state, allowing multiple 
+ *  returns a hue object which offers a public connect() function.
+ *  This will create an object with its own local state, allowing multiple
  *  Hue accessors to run concurrently without interfering with each other on
  *  hosts with a shared Javascript engine (such as the browser host).
- *  
+ *
  *  An instance of the returned hue object implements the following public functions:
  *
  *  * connect(): Contact the bridge and register the user, if needed.  Add an
  *    input handler to the trigger input to submit commands to the bridge. </li>
- *  * issueCommand():  Issue a command to the bridge.  A command is an object 
+ *  * issueCommand():  Issue a command to the bridge.  A command is an object
  *    that may contain the following fields:
  *
- *    * id (required):  The id of the light to manipulate. 
+ *    * id (required):  The id of the light to manipulate.
  *    * on: true to turn on; false to turn off.
  *    * bri: Brightness.  0-255.
  *    * hue: Hue (for bulbs that support color).  0-65280.
@@ -154,12 +135,12 @@ exports.initialize = function() {
  *    * transitiontime:  The delay before the bulb responds to the command.  In ms.
  *
  *  For example, {"id" : 1, "on" : true, "hue" : 120}
- * 
+ *
  */
 function Hue() {
     var hue = {};
-    
-    // Public variables. 
+
+    // Public variables.
     hue.changedLights = [];
     hue.lights = {};
 
@@ -176,23 +157,23 @@ function Hue() {
     var retryTimeout = 1000;
     var timeout = 3000;
     var url = "";
-    var userName = ""; 
+    var userName = "";
     var pendingCommands = [];
     var alerted = false;
     var errorOccurred = false;
-    
+
     // Use self in contained functions so the caller does not have to bind "this"
     // on each function call.
     var self = this;
-    
-    // Public functions. 
+
+    // Public functions.
     // Available to be used for e.g. inputHandlers.
-    
+
     /** Contact the bridge and register the user, if needed. */
     hue.connect = function() {
         ipAddress = self.getParameter('bridgeIP');
         userName = self.getParameter('userName');
-    
+
         if (userName.length < 11) {
             throw "Username too short. Hue only accepts usernames that contain at least 11 characters.";
         }
@@ -202,11 +183,11 @@ function Hue() {
         }
 
         url = "http://" + ipAddress + "/api";
-        
+
         contactBridge();
     };
-    
-    /** Issue a command to the bridge.  Commands are queued if not yet authenticated. */    
+
+    /** Issue a command to the bridge.  Commands are queued if not yet authenticated. */
     hue.issueCommand = function() {
         if (errorOccurred) {
             return;
@@ -217,8 +198,8 @@ function Hue() {
         }
 
         // (Re)connect with the bridge
-        if (ipAddress !== self.getParameter('bridgeIP') || 
-                    userName !== self.getParameter('userName')) {
+        if (ipAddress !== self.getParameter('bridgeIP') ||
+            userName !== self.getParameter('userName')) {
             console.log("New bridge parameters detected. Need to re-authenticate.");
             authenticated = false;
             hue.connect();
@@ -232,7 +213,7 @@ function Hue() {
         }
         hue.processCommands(commands);
     };
-    
+
     /** Process the specified commands. The argument can be a single object
      *  with properties for the command, or an array of such objects.
      */
@@ -246,7 +227,7 @@ function Hue() {
         // Accept both arrays and non-arrays.
         // The following concatenates the input with an empty array, ensuring the result
         // is an array.
-        commands = [].concat(commands); 
+        commands = [].concat(commands);
 
         // Iterate over commands (assuming input is an array of commands)
         for (var i = 0; i < commands.length; i++) {
@@ -255,7 +236,7 @@ function Hue() {
                 commands[i] = JSON.parse(commands);
             }
             var lightID = commands[i].id;
-            
+
             // Check whether input is valid
             if (typeof lightID === 'undefined') {
                 self.error("Invalid command (no light id): " + commands[i]);
@@ -265,7 +246,7 @@ function Hue() {
                 if (hue.changedLights.indexOf(lightID) == -1) {
                     hue.changedLights.push(lightID);
                 }
-            
+
                 // Pack properties into object
                 if (typeof commands[i].on !== 'undefined') {
                     command.on = commands[i].on;
@@ -310,9 +291,9 @@ function Hue() {
     };
 
     // Private functions.
-    
-    /** Handle an error. This will report it on the console and then retry a 
-     *  fixed number of times before giving up.  A retry is a re-invocation of 
+
+    /** Handle an error. This will report it on the console and then retry a
+     *  fixed number of times before giving up.  A retry is a re-invocation of
      *  registerUser().
      */
     function bridgeRequestErrorHandler(err) {
@@ -330,7 +311,7 @@ function Hue() {
             errorOccurred = true;
         }
     }
-    
+
     /** Contact the bridge.  Register the user, if needed.
      */
     function contactBridge() {
@@ -351,7 +332,7 @@ function Hue() {
 
                     if (isNonEmptyArray(lights) && lights[0].error) {
                         var description = lights[0].error.description;
-            
+
                         if (description.match("unauthorized user")) {
                             // Add this user.
                             // Prevent the alert from coming up more than once.
@@ -375,7 +356,7 @@ function Hue() {
                     } else if (lights) {
                         console.log("Authenticated!");
                         authenticated = true;
-                        
+
                         // Process any previously queued requests.
                         if (pendingCommands) {
                             for (var i = 0; i < pendingCommands.length; i++) {
@@ -393,7 +374,7 @@ function Hue() {
             }
         });
     }
-    
+
     /** Utility function to check that an object is a nonempty array.
      *  @param obj The object.
      */
@@ -427,14 +408,14 @@ function Hue() {
             return parsed;
         }
     }
-    
-    /** Register a new user.  
+
+    /** Register a new user.
      *  This function repeats at registerInterval until successful or until
-     *  maxRegisterAttempts.  Some wait time is given between attempts for the 
+     *  maxRegisterAttempts.  Some wait time is given between attempts for the
      *  user to click the button on the Hue bridge.
      */
     function registerUser() {
-    
+
         // Should be of the format {"devicetype":"my_hue_app#iphone peter"}
         // http://www.developers.meethue.com/documentation/getting-started
         // (free registration required).
@@ -452,21 +433,21 @@ function Hue() {
                 console.log("Hue.js registerUser(): Response " + JSON.stringify(rsp));
             }
             if (isNonEmptyArray(rsp) && rsp[0].error) {
-                
+
                 var description = rsp[0].error.description;
-    
+
                 if (description.match("link button not pressed") ||
                     description.match("invalid value")) {
                     // Retry registration for the given number of attempts.
                     console.log("Please push the link button on the Hue bridge.");
                     registerAttempts++;
-                    
+
                     if (registerAttempts < maxRegisterAttempts){
                         handleRegisterUser = setTimeout(registerUser, registerInterval);
                     } else {
                         errorOccurred = true;
                         throw "Failed to create user after " + registerAttempts +
-                                " attempt(s).";
+                            " attempt(s).";
                     }
                     return;
                 } else {
@@ -475,7 +456,7 @@ function Hue() {
                 }
             } else if ((isNonEmptyArray(rsp) && rsp[0].success)) {
                 authenticated = true;
-                
+
                 // The bridge will return a username.  Save it.
                 userName = rsp[0].success.username;
                 self.setParameter('userName', userName);
@@ -490,32 +471,51 @@ function Hue() {
             }
         });
     }
-    
+
     /** If the response indicates an error, report it.
      *  Return true if the response is an error.
      */
-     function reportIfError(response) {
+    function reportIfError(response) {
         var body = response.body;
         if (typeof body == "string") {
             body = JSON.parse(body);
         }
         if (isNonEmptyArray(body) && body[0].error) {
-            self.error("Server responds with error: " + 
-                   body[0].error.description);
+            self.error("Server responds with error: " +
+                       body[0].error.description);
             return true;
         }
         return false;
     }
-    
+
     return hue;
 }
+
+/** Add an input handler to react to commands.
+ *  Commands will be ignored until the user is authenticated.
+ *  If a bridge IP address has been given, contact the bridge to check if it is
+ *  present.  Next, register the user if not already registered.
+ */
+exports.initialize = function() {
+    // Call the Hue function binding "this", to create local state variables
+    // while providing access to accessor functions.
+    // Setting "this.hue" makes hue available in other accessor functions, e.g.
+    // initialize().
+    // TODO:  Test with two accessors to make sure each has separate state.
+    this.hue = Hue.call(this);
+
+    // FIXME:  We need a way to dynamically supply the IP address.
+    // Recommend using a separate port.
+    this.addInputHandler('commands', this.hue.issueCommand);
+    this.hue.connect();
+};
 
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function() {
     var errorLights = [];
     var cmd = JSON.stringify({on:false});
     var options = {};
-    
+
     var action = this.getParameter('onWrapup');
     if (action !== "none") {
         // wrapup() gets called by the code generator after setting
@@ -525,14 +525,14 @@ exports.wrapup = function() {
             for (var i = 0; i < this.hue.changedLights.length; i++) {
                 options = {
                     body : cmd,
-                    timeout : 10000, 
-                    url : "http://" + this.get("bridgeIP") + "/api/" + 
-                        this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] + 
+                    timeout : 10000,
+                    url : "http://" + this.get("bridgeIP") + "/api/" +
+                        this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] +
                         "/state/"
                 };
-                
+
                 var self = this;
-                
+
                 http.put(options, function(response) {
                     if (debug) {
                         console.log("Hue.js wrapup(): Response " + JSON.stringify(response));

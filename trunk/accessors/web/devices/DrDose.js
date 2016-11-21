@@ -20,12 +20,12 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** 
+/**
  *  This accessor controls acid, base, and nutrient dosing for your garden.
  *  When a duration in miliseconds is sent to the accessor, it doses
  *  the corresponding type of fluid. As of this time, simultaneous dosing commands will be send independtly
  *  in some arbitrary order.
- * 
+ *
  *
  *  This accessor reacts to a *symbol* input by issuing a query to a web server
  *  for the most recent trade prices of the common stock whose symbol is given
@@ -68,7 +68,7 @@ exports.setup = function() {
              'type':'number'
      });
     */
- 
+
     this.input('Acid Duration', {
             'value': 0,
                 'type':'number'
@@ -81,7 +81,7 @@ exports.setup = function() {
             'value': 0,
                 'type':'number'
                 });
-                
+
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {'visibility':'expert', 'value':'"http://192.168.1.247:8080"'});
@@ -99,7 +99,7 @@ exports.setup = function() {
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
-    
+
     // Capture 'this' for use in callback.
     var self = this;
 
@@ -107,19 +107,19 @@ exports.initialize = function() {
     this.addInputHandler('Acid Duration', function() {
             // Read the current value of the 'Acid Duration' input.
             var command = "acid";
-            var duration = self.get('Acid Duration');        
+            var duration = self.get('Acid Duration');
             var args = {'duration': duration};
             //console.log(JSON.stringify(args));
             self.send('command', command);
             self.send('arguments', args);
             self.send('trigger', true);
         });
-        
+
         // Send duration to Dr Dose when input arrives.
     this.addInputHandler('Base Duration', function() {
             // Read the current value of the 'Base Duration' input.
             var command = "base";
-            var duration = self.get('Base Duration');        
+            var duration = self.get('Base Duration');
             //args = duration;
             var args = {'duration': duration};
                self.send('command', command);
@@ -131,14 +131,14 @@ exports.initialize = function() {
     this.addInputHandler('Nutrient Duration', function() {
             // Read the current value of the 'Nutrient Duration' input.
             var command = "nutrient";
-            var duration = self.get('Nutrient Duration');        
+            var duration = self.get('Nutrient Duration');
             //args = duration;
             var args = {'duration': duration};
                self.send('command', command);
             self.send('arguments', args);
             self.send('trigger', true);
         });
-                
+
         //self.send('trigger', true);
 };
 
@@ -149,8 +149,8 @@ exports.initialize = function() {
  */
  /*
 exports.filterResponse = function(response) {
-        
-        
+
+
     if (response) {
         try {
             // Check if response is JSON or stringified JSON.  If stringified, parse.

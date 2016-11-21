@@ -73,10 +73,10 @@ var mqtt = require('mqtt');
 exports.setup = function () {
     // Inputs and outputs
     this.input('toPublish');
-    this.output('connection', {        
+    this.output('connection', {
             spontaneous: true
     });
-    this.output('ready', {        
+    this.output('ready', {
             spontaneous: true
     });
     // MQTT information
@@ -193,7 +193,7 @@ exports.toPublishInputHandler = function () {
         console.log('Session key is not available. Discarding data.');
         return;
     }
-    
+
     var toPublish = this.get('toPublish');
     var encrypted = iotAuth.encryptSecureMessageToPublish(
             {sequenceNum: publishSequenceNum, data: toPublish},
@@ -206,7 +206,7 @@ exports.toPublishInputHandler = function () {
 
 exports.initialize = function() {
     self = this;
-    
+
     publishSequenceNum = 0;
     mqttConnected = false;
     publisherReady = false;
@@ -214,15 +214,15 @@ exports.initialize = function() {
     currentSessionKeyList = [];
     authPublicKey = iotAuth.loadPublicKey(this.getParameter('authCertPath'));
     publisherPrivateKey = iotAuth.loadPrivateKey(this.getParameter('publisherPrivateKeyPath'));
-    
+
     this.addInputHandler('toPublish', exports.toPublishInputHandler.bind(this));
     mqttClient = mqtt.createClient(
-            this.getParameter('brokerPort'), 
+            this.getParameter('brokerPort'),
             this.getParameter('brokerHost'),
             {rawBytes: true});
     mqttClient.on('connect', onConnect);
     mqttClient.start();
-    
+
     var options = {
         authHost: this.getParameter('authHost'),
         authPort: this.getParameter('authPort'),

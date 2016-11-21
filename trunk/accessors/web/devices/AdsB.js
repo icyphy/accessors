@@ -22,16 +22,16 @@
 
 /** This accessor uses the dump1090 driver to access a Software-Defined Radio
  * such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)
- * in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an 
+ * in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an
  * aircraft periodically broadcasts its state such as location, altitude, heading, etc.
- * In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090, 
+ * In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090,
  * plug your SDR USB dongle, and run ./dump1090 --net --interactive
  * One can also feed the accessor with a reference location (e.g. from an autopilot) and a threshold parameter.
  * If a reference location is provided, the accessor retrieves all the aircrafts within the threshold distance in the output "traffic"
  *  @accessor devices/AdsB
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$
- *  @input {trigger}  
+ *  @input {trigger}
  *  @input {double} latRef Latitude of the reference location
  *  @input {double} lonRef Longitude of the reference location
  *  @input {double} altRef Altitude of the reference location
@@ -100,6 +100,25 @@ exports.setup = function() {
     this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
+function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2){
+    var a = 6378137.0; //WGS-84 semi-major axis (meters)
+    var e2 = 0.0066943799901377997;  //WGS-84 first eccentricity squared
+    var lat1Rad = lat1*Math.PI/180;
+    var lon1Rad = lon1*Math.PI/180;
+    var n1 = a/Math.sqrt(1 - e2*Math.sin(lat1Rad)*Math.sin(lat1Rad));
+    var x1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.cos(lon1Rad);
+    var y1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.sin(lon1Rad);
+    var z1 = (n1*(1 - e2) + alt1)*Math.sin(lat1Rad);
+    var lat2Rad = lat2*Math.PI/180;
+    var lon2Rad = lon2*Math.PI/180;
+    var n2 = a/Math.sqrt(1 - e2*Math.sin(lat2Rad)*Math.sin(lat2Rad));
+    var x2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.cos(lon2Rad);
+    var y2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.sin(lon2Rad);
+    var z2 = (n2*(1 - e2) + alt2)*Math.sin(lat2Rad);
+    var dist = Math.sqrt( Math.pow(x1-x2,2) + Math.pow(y1-y2,2) + Math.pow(z1-z2,2) );
+    return dist;
+}
+
 exports.initialize = function(){
     this.exports.ssuper.initialize.call(this);
     var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
@@ -123,7 +142,7 @@ exports.initialize = function(){
                 if (distance < threshold*1000){
                     filteredMap[a] = map[a];
                     console.log("Aircraft " + a + " is within thresold distance.");
-                }  
+                }
             }
             self.send('traffic', filteredMap);
         }
@@ -140,32 +159,11 @@ var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
     this.seen = seen;
 };
 
-
-
-function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2){
-    var a = 6378137.0; //WGS-84 semi-major axis (meters)
-    var e2 = 0.0066943799901377997;  //WGS-84 first eccentricity squared
-    var lat1Rad = lat1*Math.PI/180;
-    var lon1Rad = lon1*Math.PI/180;
-    var n1 = a/Math.sqrt(1 - e2*Math.sin(lat1Rad)*Math.sin(lat1Rad));
-    var x1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.cos(lon1Rad);
-    var y1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.sin(lon1Rad);
-    var z1 = (n1*(1 - e2) + alt1)*Math.sin(lat1Rad);
-    var lat2Rad = lat2*Math.PI/180;
-    var lon2Rad = lon2*Math.PI/180;
-    var n2 = a/Math.sqrt(1 - e2*Math.sin(lat2Rad)*Math.sin(lat2Rad));
-    var x2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.cos(lon2Rad);
-    var y2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.sin(lon2Rad);
-    var z2 = (n2*(1 - e2) + alt2)*Math.sin(lat2Rad);
-    var dist = Math.sqrt( Math.pow(x1-x2,2) + Math.pow(y1-y2,2) + Math.pow(z1-z2,2) );
-    return dist;
-}
-
 /** Filter the response, extracting the aircrat information. The full response is produced
  *  on the 'response' output.
  */
 exports.filterResponse = function(response) {
-    
+
     if (response) {
         try {
             // Check if response is JSON or stringified JSON.  If stringified, parse.
@@ -175,11 +173,11 @@ exports.filterResponse = function(response) {
             } else {
                 parsed = JSON.parse(response);
             }
-            
+
             var currentTime = (new Date()).getTime();
             for (var i = 0; i < parsed.length; i++){
                 var a = parsed[i];
-                if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {                                        
+                if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {
                     var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
                     var key = a.flight.replace(/ /g, '');
                     map[key] = s;
