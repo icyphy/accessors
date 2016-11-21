@@ -121,7 +121,7 @@ exports.setup = function() {
 };
 
 /** Input HTTP request information and generate a response from the bridge.  */
-function inputHandler() {
+var inputHandler = function () {
     var method = this.get('method').toString();
     var uri = this.get('URI').toString();
     var output;
@@ -135,7 +135,7 @@ function inputHandler() {
     }
 
     this.send('response', output);
-}
+};
 
 /** Initialize the accessor.  Create a bridge object, connect to the bridge, and
  * initialize its state.
