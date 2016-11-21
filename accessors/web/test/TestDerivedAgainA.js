@@ -26,20 +26,27 @@
  *  @accessor test/TestDerivedAgainA
  *  @author Edward A. Lee
  *  @version $$Id$$
- */ 
-exports.setup = function() {
-   this.extend('test/TestDerivedC');
-   this.output('out2');
+ */
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.extend('test/TestDerivedC');
+    this.output('out2');
 };
 
 // Override input Handler of base.
 // Access a field defined in TestBaseC and overridden in TestDerivedC.
-exports.inputHandler = function() {
-   // Invoke the base class inputHandler, defined two levels up.
-   // Have to call it with 'this' bound to this accessor, otherwise,
-   // 'this' will be the superclass exports property.
-   this.exports.ssuper.inputHandler.call(this);
-   this.send('out2', this.exports.baseField);
+exports.inputHandler = function () {
+    // Invoke the base class inputHandler, defined two levels up.
+    // Have to call it with 'this' bound to this accessor, otherwise,
+    // 'this' will be the superclass exports property.
+    this.exports.ssuper.inputHandler.call(this);
+    this.send('out2', this.exports.baseField);
 };
 
 

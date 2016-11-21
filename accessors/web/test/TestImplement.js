@@ -33,12 +33,18 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
     this.implement('test/TestAccessor');
 };
 
-exports.initialize = function() {
-    this.addInputHandler('numeric', function() {
+exports.initialize = function () {
+    this.addInputHandler('numeric', function () {
         this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
     });
 };

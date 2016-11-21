@@ -41,42 +41,48 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
-    this.input('untyped');                               // Untyped input.
-    this.input('numeric', {'type':'number', 'value':0}); // Numeric input.
-    this.input('boolean', {'type':'boolean'});           // Boolean input.
-    this.output('typeOfUntyped', {'type':'string'});     // Type of untyped input.
-    this.output('jsonOfUntyped', {'type':'string'});     // JSON of untyped input.
-    this.output('numericPlusP', {'type':'number'});      // Numeric input plus p.
-    this.output('negation', {'type':'boolean'});         // Negation of boolean input.
-    this.parameter('p', {'value':42});                   // Untyped, with numeric value.
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.input('untyped');                                // Untyped input.
+    this.input('numeric', {'type': 'number', 'value': 0}); // Numeric input.
+    this.input('boolean', {'type': 'boolean'});           // Boolean input.
+    this.output('typeOfUntyped', {'type': 'string'});     // Type of untyped input.
+    this.output('jsonOfUntyped', {'type': 'string'});     // JSON of untyped input.
+    this.output('numericPlusP', {'type': 'number'});      // Numeric input plus p.
+    this.output('negation', {'type': 'boolean'});         // Negation of boolean input.
+    this.parameter('p', {'value': 42});                   // Untyped, with numeric value.
 };
 
 // Base class variable that is visible to subclasses through inheritance.
 exports.variable = 'hello';
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Respond to any input by updating them all.
-    this.addInputHandler('untyped', function() {
+    this.addInputHandler('untyped', function () {
         this.send('typeOfUntyped', typeof this.get('untyped'));
         // Refer to the function using 'this.exports' rather than 'exports'
         // to allow an override. Note that we choose here to invoke formatOutput
         // with 'this' bound to 'this.exports'.
         this.send('jsonOfUntyped', this.exports.formatOutput(this.get('untyped')));
     });
-    this.addInputHandler('numeric', function() {
+    this.addInputHandler('numeric', function () {
         this.send('numericPlusP', this.get('numeric') + this.getParameter('p'));
     });
-    this.addInputHandler('boolean', function() {
+    this.addInputHandler('boolean', function () {
         this.send('negation', !this.get('boolean'));
     });
 };
 
 /** Define a function that can be overridden in subclasses. */
-exports.formatOutput = function(value) {
+exports.formatOutput = function (value) {
     return 'JSON for untyped input: ' + JSON.stringify(value);
 };
 
-exports.fire = function() {
+exports.fire = function () {
     console.log('TestAccessor.fire() invoked.');
 };

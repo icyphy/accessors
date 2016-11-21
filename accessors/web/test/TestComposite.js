@@ -34,12 +34,21 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
-    this.input('input', {'type':'number', 'value':0});
-    this.output('output', {'type':'number'});
-    var gain = this.instantiate('TestGain', 'test/TestGain');
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.input('input', {'type': 'number', 'value': 0});
+    this.output('output', {'type': 'number'});
+
+    var gain = this.instantiate('TestGain', 'test/TestGain'),
+        adder = this.instantiate('TestAdder', 'test/TestAdder');
+
     gain.setParameter('gain', 4);
-    var adder = this.instantiate('TestAdder', 'test/TestAdder');
+
     this.connect('input', adder, 'inputLeft');
     this.connect('input', gain, 'input');
     this.connect(gain, 'scaled', adder, 'inputRight');

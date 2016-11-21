@@ -29,12 +29,19 @@
  *   base class.
  *  @version $$Id$$
  */
-exports.setup = function() {
+
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
     this.input('in1');
     this.output('out1');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Careful to refer to this.exports.inputHandler, not
     // just exports.inputHandler. The latter refers specifically
     // to the function defined in this base class, whereas the former
@@ -42,7 +49,7 @@ exports.initialize = function() {
     this.addInputHandler('in1', this.exports.inputHandler);
 };
 
-exports.inputHandler = function() {
+exports.inputHandler = function () {
     // Use of this.exports allows subclasses to override the value of the baseField.
     // Using just exports.baseField would always access the variable defined here,
     // even if a subclass invokes this function.

@@ -2,7 +2,7 @@
  *
  *  This actor is based on the NonStrictTest actor, but currently only
  *  handles numeric and string input.
- *  
+ *
  *  @accessor test/TrainableTest
  *  @input input The input value
  *  @output output False as long as there is data to compare against the input
@@ -45,20 +45,19 @@ var numberOfInputTokensSeen = 0;
 // If trainingMode is true, then inputs that have been seen so far.
 var trainingTokens = [];
 
-/** Create an input handler to compare the input with the appropriate element(s) 
+/** Create an input handler to compare the input with the appropriate element(s)
  *  from correctValues.
  */
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     var inputHandled = false,
         inputValueValue,
-        initialized = true, 
+        initialized = true,
         numberOfInputTokensSeen = 0,
-        trainingTokens = [];
-    
-    var self = this;
-    
-    this.addInputHandler('input', function() {
+        trainingTokens = [],
+        self = this;
+
+    this.addInputHandler('input', function () {
         var cache = [],
             inputValue = self.get('input'),
             inputValueValue;
@@ -83,7 +82,7 @@ exports.initialize = function () {
                                    );
                 }
                 cache = [];
-                inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                inputValueValue = JSON.stringify(inputValue, function (key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
                             // Circular reference found, discard key
@@ -95,7 +94,7 @@ exports.initialize = function () {
                     return value;
                 });
                 if (inputValueValue.length > 100) {
-                    inputValueValue = inputValueValue.substring(0,100) + '...';
+                    inputValueValue = inputValueValue.substring(0, 100) + '...';
                 }
                 cache = null; // Enable garbage collection
 
@@ -122,7 +121,7 @@ exports.initialize = function () {
                 }
             } else if (typeof referenceToken === 'object') {
                 cache = [];
-                inputValueValue = JSON.stringify(inputValue, function(key, value) {
+                inputValueValue = JSON.stringify(inputValue, function (key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
                             // Circular reference found, discard key
@@ -134,7 +133,7 @@ exports.initialize = function () {
                     return value;
                 });
                 cache = [];
-                var referenceTokenValue = JSON.stringify(referenceToken, function(key, value) {
+                var referenceTokenValue = JSON.stringify(referenceToken, function (key, value) {
                     if (typeof value === 'object' && value !== null) {
                         if (cache.indexOf(value) !== -1) {
                             // Circular reference found, discard key
