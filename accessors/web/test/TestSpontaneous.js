@@ -34,7 +34,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*globals clearInterval, console, error, exports, require, setInterval */
+/*globals clearInterval, exports, require, setInterval */
 /*jshint globalstrict: true*/
 "use strict";
 
@@ -52,8 +52,8 @@ exports.initialize = function () {
     // Need to record 'this' for use in the callback.
     var thiz = this;
     handle = setInterval(function () {
-        count += 1;
         thiz.send('output', count);
+        count += 1;
     }, this.getParameter('interval'));
 };
 
