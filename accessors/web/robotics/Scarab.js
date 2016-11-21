@@ -131,7 +131,7 @@
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
-/*globals console, error, exports */
+/*globals console, error, exports, require */
 /*jshint globalstrict: true*/
 "use strict";
 
