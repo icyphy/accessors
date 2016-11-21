@@ -48,12 +48,12 @@ var handle = null;
 var audio = require("audio");
 var cacheLength = 128;  
 
-function record() {
+var record = function() {
     var data = recorder.get(), i; 
     for (i = 0; i < data.length; i++) {
         this.send('signal', data[i]);
     }
-}
+};
 
 exports.initialize = function() { 
     handle = this.addInputHandler("trigger",record); 

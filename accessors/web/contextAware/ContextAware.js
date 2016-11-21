@@ -183,7 +183,7 @@ exports.initialize = function() {
  * Filter the response from Firebase. Extracting data about microwave, its last
  * reading and current status
  */
-function getFirebaseData(response) {
+var getFirebaseData = function (response) {
     var type = this.get('dataType');
     var result=JSON.parse(response);
     switch(type) {
@@ -206,14 +206,14 @@ function getFirebaseData(response) {
     default:
         this.send('microwave', result.Microwave);
     }
-}
+};
 
 /*
  * Filter response from Paraimpu. Extracting the wind speed and the sensor that
  * produces the wind speed
  *
  */
-function getParaimpuData(response) {
+var getParaimpuData = function(response) {
     var type = this.get('dataType');
     var result=JSON.parse(response);
     switch (type) {
@@ -236,7 +236,7 @@ function getParaimpuData(response) {
     default:
         this.send('response', result);
     }
-}
+};
 
 /**
  * Filter response from GSN. The response is in xml format which needs to be
@@ -246,7 +246,7 @@ function getParaimpuData(response) {
  * is needed from this source
  *
  */
-function getGSNData(response) {
+var getGSNData = function (response) {
     var type = this.get('dataType');
     var xmlJson={};
     xmlJson=contextAware.xmlToJson(response);
@@ -274,7 +274,7 @@ function getGSNData(response) {
         //send('response', result."virtual-sensor");
         this.send('response', result['virtual-sensor']);
     }
-}
+};
 
 /**
  * Filter the response. It overrides the filterResponse() in the base class to
