@@ -39,18 +39,24 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
 var util = require('util');
 
-exports.setup = function() {
+exports.setup = function () {
     this.extend('test/TestAccessor');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Test ability to invoke superclass function from overridden function.
     this.ssuper.initialize();
 };
 
 /** Override the base class to use util. */
-exports.formatOutput = function(value) {
+exports.formatOutput = function (value) {
     return util.format('JSON for untyped input using util.format(): %j', value);
 };
