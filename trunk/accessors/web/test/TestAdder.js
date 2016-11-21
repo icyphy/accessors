@@ -32,13 +32,19 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
-    this.input('inputLeft', {'type':'number', 'value':0});
-    this.input('inputRight', {'type':'number', 'value':0});
-    this.output('sum', {'type':'number'});
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.input('inputLeft', {'type': 'number', 'value': 0});
+    this.input('inputRight', {'type': 'number', 'value': 0});
+    this.output('sum', {'type': 'number'});
 };
 
-exports.fire = function() {
+exports.fire = function () {
     console.log("TestAdder: inputLeft: " + this.get('inputLeft') + " inputRight: " + this.get('inputRight'));
     this.send('sum', this.get('inputLeft') + this.get('inputRight'));
 };

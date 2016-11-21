@@ -32,8 +32,14 @@
  *  @version $$Id: TestSpontaneous.js 546 2016-02-03 02:07:57Z cxh $$
  */
 
-exports.setup = function() {
-    this.parameter('interval', {'type':'number', 'value':1000});
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals clearTimeout, console, error, exports, require, setTimeout */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.parameter('interval', {'type': 'number', 'value': 1000});
     this.output('output', {'type': 'number'});
 };
 
@@ -41,16 +47,17 @@ exports.setup = function() {
 var handle = null;
 var count = 0;
 
-exports.initialize = function() {
+exports.initialize = function () {
     count = 0;
     // Need to record 'this' for use in the callback.
     var thiz = this;
-    handle = setTimeout(function() {
-        thiz.send('output', count++);
+    handle = setTimeout(function () {
+        count += 1;
+        thiz.send('output', count);
     }, this.getParameter('interval'));
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (handle) {
         clearTimeout(handle);
         handle = null;

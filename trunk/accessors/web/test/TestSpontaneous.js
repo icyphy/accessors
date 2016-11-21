@@ -32,8 +32,14 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
-    this.parameter('interval', {'type':'number', 'value':1000});
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals clearInterval, console, error, exports, require, setInterval */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.parameter('interval', {'type': 'number', 'value': 1000});
     this.output('output', {'type': 'number'});
 };
 
@@ -41,16 +47,17 @@ exports.setup = function() {
 var handle = null;
 var count = 0;
 
-exports.initialize = function() {
+exports.initialize = function () {
     count = 0;
     // Need to record 'this' for use in the callback.
     var thiz = this;
-    handle = setInterval(function() {
-        thiz.send('output', count++);
+    handle = setInterval(function () {
+        count += 1;
+        thiz.send('output', count);
     }, this.getParameter('interval'));
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (handle) {
         clearInterval(handle);
         handle = null;

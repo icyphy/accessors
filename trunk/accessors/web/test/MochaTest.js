@@ -23,40 +23,40 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** A composite accessor that accepts a test file name and executes the tests.
- *  Tests are written using the Mocha framework.  The test results are displayed 
+ *  Tests are written using the Mocha framework.  The test results are displayed
  *  to the console window.
- *  
+ *
  *  To run:
  *  For the browser, first, start the test server.  Please see:
  *  /accessors/web/hosts/browser/test/README.txt
  *  Open a browser window and point to:
  *  http://localhost:8088/hosts/browser/test/test/testRunner.html
- *  Click "react to inputs".  The test output will appear at the top of the 
- *  page, and also in the browser console window.  You may need to open a 
- *  debugging pane to see the console window.  
- *  
+ *  Click "react to inputs".  The test output will appear at the top of the
+ *  page, and also in the browser console window.  You may need to open a
+ *  debugging pane to see the console window.
+ *
  *  In node, from the command prompt, change to the directory:
  *  /accessors/web/hosts/node/test/mocha
  *  Execute:
  *  node ../../nodeHostShell.js < ./testCommon.js
- *  
+ *
  *  In Cape Code, there is a demo available at:
  *  $PTII/ptolemy/actor/lib/jjs/modules/testing/demo/Testing/Testing.xml
- *  
- *  The Mocha framework allows developers to describe a test case, execute code, 
- *  then check assertions.  Mocha tracks each assertion and reports if the 
- *  assertion is satisfied or if it fails.  Add-on libraries extend Mocha's 
- *  capabilities.  Chai is an assertion library offering "should", "expect", and 
- *  "assert" styles.  Sinon is used for creating test spies, stubs and mocks; 
- *  for example, mocking an HTTP response.   
- *  Please see this page for instructions on installing Mocha, Chai and Sinon 
- *  and writing tests.  
+ *
+ *  The Mocha framework allows developers to describe a test case, execute code,
+ *  then check assertions.  Mocha tracks each assertion and reports if the
+ *  assertion is satisfied or if it fails.  Add-on libraries extend Mocha's
+ *  capabilities.  Chai is an assertion library offering "should", "expect", and
+ *  "assert" styles.  Sinon is used for creating test spies, stubs and mocks;
+ *  for example, mocking an HTTP response.
+ *  Please see this page for instructions on installing Mocha, Chai and Sinon
+ *  and writing tests.
  *  https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
- *  
- *  For an overview of the testing capabilities of different hosts, please see:  
+ *
+ *  For an overview of the testing capabilities of different hosts, please see:
  *  https://www.terraswarm.org/accessors/wiki/Main/Testing
  *
- *  Test results are send to the output port and logged to the console.  
+ *  Test results are send to the output port and logged to the console.
  *  A future improvement is to format results JUnit-style.
  *
  *  @accessor test/Test
@@ -107,7 +107,7 @@ exports.setup = function () {
 exports.initialize = function () {
     // Capture 'this' for use in callback.
     var self = this;
-        
+
     this.addInputHandler('testFile', function () {
         var fileName = self.get('testFile');
         if (fileName !== null && fileName !== "") {
@@ -115,10 +115,10 @@ exports.initialize = function () {
                 testing.run();
         }
     });
-    
+
     try {
         // Register an event listener for the test results.
-        testing.on('end', function(result) {
+        testing.on('end', function (result) {
                 self.send('result', result);
         });
     } catch (err) {

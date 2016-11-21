@@ -89,7 +89,7 @@ exports.onOpen = function() {
 function random_color () {
    var letters = '0123456789ABCDEF'.split('');
    var color = '0x';
-   for (var i = 0; i < 6; i++ ) {
+   for (var i = 0; i < 6; i += 1) {
       color += letters[Math.floor(Math.random() * 16)];
    }
    return parseInt(color, 16);

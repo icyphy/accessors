@@ -35,26 +35,32 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
-    this.output('getResource', {'type':'string'});
-    this.output('httpRequest', {'type':'string'});
-    this.output('readURL', {'type':'string'});
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, httpRequest, readURL, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
+    this.output('getResource', {'type': 'string'});
+    this.output('httpRequest', {'type': 'string'});
+    this.output('readURL', {'type': 'string'});
 };
 
-exports.fire = function() {
+exports.fire = function () {
     try {
         this.send('getResource', this.getResource('index.html', 3000));
-    } catch(exception) {
+    } catch (exception) {
         this.send('getResource', 'FAILED: ' + exception);
     }
     try {
         this.send('httpRequest', httpRequest('index.html', 'GET'));
-    } catch(exception) {
+    } catch (exception) {
         this.send('httpRequest', 'FAILED: ' + exception);
     }
     try {
         this.send('readURL', readURL('index.html'));
-    } catch(exception) {
+    } catch (exception) {
         this.send('readURL', 'FAILED: ' + exception);
     }
 };

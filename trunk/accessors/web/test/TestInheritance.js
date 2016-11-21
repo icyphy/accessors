@@ -33,17 +33,23 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports, require */
+/*jshint globalstrict: true*/
+"use strict";
+
+exports.setup = function () {
     this.extend('test/TestAccessor');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Test ability to invoke superclass function from overridden function.
     this.ssuper.initialize();
 };
 
 /** Override the base class to use output a constant read from the base class. */
-exports.formatOutput = function(value) {
+exports.formatOutput = function (value) {
     // Variable 'variable' is defined in the base class.
     // Note that the base class invokes this function with 'this' bound to the
     // exports property, of which variable is a property.
