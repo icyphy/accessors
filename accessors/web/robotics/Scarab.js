@@ -100,7 +100,7 @@
  *   Send the robot to a location with a given orientation,
  *   where orientation is a quaternion.
  *  @input {array<{linear: {x: 0, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0}}>} cmdvel
- *   Low-level control for the wheel motors. 
+ *   Low-level control for the wheel motors.
  *   To drive the robot straight forward and backward, set the linear.x property
  *   to a value between -1.0 (backwards) and 1.0 (forwards). To turn the robot,
  *   set the angular.z property to a value between -1.0 and 1.0. Both can be
@@ -129,35 +129,41 @@
  *  @version $$Id$$
  */
 
+// Stop extra messages from jslint.  Note that there should be no
+// space between the / and the * and global.
+/*globals console, error, exports */
+/*jshint globalstrict: true*/
+"use strict";
+
 var WebSocket = require('webSocket');
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
-exports.setup = function() {
+exports.setup = function () {
 
-        this.input('pose');
-        this.input('cmdvel');
-        this.input('cancel');
+    this.input('pose');
+    this.input('cmdvel');
+    this.input('cancel');
 
-        this.output('battery', {
-                type: 'int'
-        });
-        this.output('state', {
-                type: 'string'
-        });
-        this.output('location');
+    this.output('battery', {
+        type: 'int'
+    });
+    this.output('state', {
+        type: 'string'
+    });
+    this.output('location');
 
-        this.parameter('server', {
-                type: 'string',
-                value: 'localhost'
-        });
-        this.parameter('port', {
-                type: 'int',
-                value: 8080
-        });
-        this.parameter('topicPrefix', {
-                type: 'string',
-                value: '/scarab/lucy'
-        });
+    this.parameter('server', {
+        type: 'string',
+        value: 'localhost'
+    });
+    this.parameter('port', {
+        type: 'int',
+        value: 8080
+    });
+    this.parameter('topicPrefix', {
+        type: 'string',
+        value: '/scarab/lucy'
+    });
 };
 
 var batteryClient = null;
@@ -169,234 +175,232 @@ var cancelClient = null;
 
 var seq = 0;
 
-/** Initialize the accessor by attaching functions to inputs
- *  and opening web socket connections to RosBridge.
- */
-exports.initialize = function() {
-
-        var self = this;
-
-        // Retreive the current battery charge status
-        batteryClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        batteryClient.on('open', function () {
-                // Subscribe to /scarab/name/diagnostics
-                batteryClient.send({
-                        op: "subscribe",
-                        topic: self.getParameter('topicPrefix') + '/diagnostics'
-                });
-        });
-        batteryClient.on('message', function (msg) {
-                // Quick hack to find the charge of the battery.
-                // Ideally this would be done in some better way, but this is all we
-                // need for now.
-                s = msg.msg.status[1].message;
-                charge = parseInt(s.substr(0, s.indexOf('%')));
-                if (!isNaN(charge)) {
-                        self.send('battery', charge);
-                }
-        });
-        batteryClient.on('error', function(message) {
-            error(message);
-        });
-        batteryClient.open();
-
-        // Keep track of what the robot is doing
-        stateClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        stateClient.on('open', function () {
-                // Subscribe to /scarab/name/diagnostics
-                stateClient.send({
-                        op: "subscribe",
-                        topic: self.getParameter('topicPrefix') + '/state'
-                });
-        });
-        stateClient.on('message', function (msg) {
-                // one of: IDLE, BUSY, STUCK, FAILED
-                self.send('state', msg.msg.state);
-        });
-        stateClient.on('error', function(message) {
-            error(message);
-        });
-        stateClient.open();
-
-        // Get location updates from the robot
-        locationClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        locationClient.on('open', function () {
-                // Subscribe to /scarab/name/pose
-                locationClient.send({
-                        op: "subscribe",
-                        topic: self.getParameter('topicPrefix') + '/pose'
-                });
-        });
-        locationClient.on('message', function (msg) {
-                self.send('location', msg.msg.pose);
-        });
-        locationClient.on('error', function(message) {
-            error(message);
-        });
-        locationClient.open();
-
-        // Send poses to the robot
-        poseClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        poseClient.on('open', function () {
-                poseClient.send({
-                        op: 'advertise',
-                        topic: self.getParameter('topicPrefix') + '/goal',
-                        type: 'geometry_msgs/PoseStamped'
-                });
-        });
-        poseClient.on('error', function(message) {
-            error(message);
-        });
-        self.addInputHandler('pose', pose_in.bind(self));
-        poseClient.open();
-
-        // Send cmd_vel to the robot
-        cmdvelClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        cmdvelClient.on('open', function () {
-                var advertise = {
-                                op: 'advertise',
-                                topic: self.getParameter('topicPrefix') + '/cmd_vel',
-                                type: 'geometry_msgs/Twist'
-                };
-                cmdvelClient.send(advertise);
-                console.log('Sending over socket: ' + JSON.stringify(advertise));
-        });
-        cmdvelClient.on('error', function(message) {
-            error(message);
-        });
-        self.addInputHandler('cmdvel', cmdvel_in.bind(self));
-        cmdvelClient.open();
-
-        // Send cancel to the robot
-        cancelClient = new WebSocket.Client({
-                host: self.getParameter('server'),
-                port: self.getParameter('port')
-        });
-        cancelClient.on('open', function () {
-                cancelClient.send({
-                        op: 'advertise',
-                        topic: self.getParameter('topicPrefix') + '/cancel',
-                        type: 'std_msgs/Empty'
-                });
-        });
-        cancelClient.on('error', function(message) {
-            error(message);
-        });
-        self.addInputHandler('cancel', cancel_in.bind(this));
-        cancelClient.open();
-};
-
 var pose_in = function () {
-        var v = this.get('pose');
-
+    var v = this.get('pose'),
         out = {
-                        op: 'publish',
-                        topic: this.getParameter('topicPrefix') + '/goal',
-                        msg: {
-                                'header': {
-                                        'seq': seq++,
-                                        'stamp': {
-                                                'secs': 0,
-                                                'nsecs': 0
-                                        },
-                                        'frame_id': 'map_hokuyo'
-                                },
-                                'pose': v
-                        }
+            op: 'publish',
+            topic: this.getParameter('topicPrefix') + '/goal',
+            msg: {
+                'header': {
+                    'seq': seq++,
+                    'stamp': {
+                        'secs': 0,
+                        'nsecs': 0
+                    },
+                    'frame_id': 'map_hokuyo'
+                },
+                'pose': v
+            }
         };
 
-        poseClient.send(out);
+    poseClient.send(out);
 };
 
 var cmdvel_in = function () {
-        var c = this.get('cmdvel');
-
+    var c = this.get('cmdvel'),
         out = {
-                        op: 'publish',
-                        topic: this.getParameter('topicPrefix') + '/cmd_vel',
-                        msg: c
+            op: 'publish',
+            topic: this.getParameter('topicPrefix') + '/cmd_vel',
+            msg: c
         };
 
-        console.log('Sending over socket: ' + JSON.stringify(out));
-        cmdvelClient.send(out);
+    console.log('Sending over socket: ' + JSON.stringify(out));
+    cmdvelClient.send(out);
 };
 
 var cancel_in = function () {
-        var c = this.get('cancel');
-
+    var c = this.get('cancel'),
         out = {
-                        op: 'publish',
-                        topic: this.getParameter('topicPrefix') + '/cancel',
-                        msg: {}
+            op: 'publish',
+            topic: this.getParameter('topicPrefix') + '/cancel',
+            msg: {}
         };
 
-        cancelClient.send(out);
+    cancelClient.send(out);
 };
 
-exports.wrapup = function() {
-        if (stateClient) {
-                stateClient.close();
-        }
-        if (batteryClient) {
-                batteryClient.close();
-        }
-        if (locationClient) {
-                locationClient.close();
-        }
-        if (poseClient) {
-                poseClient.send({
-                        op: 'unadvertise',
-                        topic: this.getParameter('topicPrefix') + '/goal'
-                });
-                poseClient.close();
-        }
-        if (cmdvelClient) {
-                // Stop the robot, then unadvertise.
-                var zeroVelocity = {
-                    linear: {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                    },
-                    angular: {
-                            x: 0,
-                            y: 0,
-                            z: 0
-                    }
-                };
-                var out = {
-                        op: 'publish',
-                        topic: this.getParameter('topicPrefix') + '/cmd_vel',
-                        msg: zeroVelocity
-                };
-                cmdvelClient.send(out);
+/** Initialize the accessor by attaching functions to inputs
+ *  and opening web socket connections to RosBridge.
+ */
+exports.initialize = function () {
 
-                cmdvelClient.send({
-                        op: 'unadvertise',
-                        topic: this.getParameter('topicPrefix') + '/cmd_vel'
-                });
-                cmdvelClient.close();
+    var self = this;
+
+    // Retreive the current battery charge status
+    batteryClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    batteryClient.on('open', function () {
+        // Subscribe to /scarab/name/diagnostics
+        batteryClient.send({
+            op: "subscribe",
+            topic: self.getParameter('topicPrefix') + '/diagnostics'
+        });
+    });
+    batteryClient.on('message', function (msg) {
+        // Quick hack to find the charge of the battery.
+        // Ideally this would be done in some better way, but this is all we
+        // need for now.
+        var s = msg.msg.status[1].message,
+            charge = parseInt(s.substr(0, s.indexOf('%')), 10);
+        if (!isNaN(charge)) {
+            self.send('battery', charge);
         }
-        if (cancelClient) {
-                cancelClient.send({
-                        op: 'unadvertise',
-                        topic: this.getParameter('topicPrefix') + '/cancel'
-                });
-                cancelClient.close();
-        }
+    });
+    batteryClient.on('error', function (message) {
+        error(message);
+    });
+    batteryClient.open();
+
+    // Keep track of what the robot is doing
+    stateClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    stateClient.on('open', function () {
+        // Subscribe to /scarab/name/diagnostics
+        stateClient.send({
+            op: "subscribe",
+            topic: self.getParameter('topicPrefix') + '/state'
+        });
+    });
+    stateClient.on('message', function (msg) {
+        // one of: IDLE, BUSY, STUCK, FAILED
+        self.send('state', msg.msg.state);
+    });
+    stateClient.on('error', function (message) {
+        error(message);
+    });
+    stateClient.open();
+
+    // Get location updates from the robot
+    locationClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    locationClient.on('open', function () {
+        // Subscribe to /scarab/name/pose
+        locationClient.send({
+            op: "subscribe",
+            topic: self.getParameter('topicPrefix') + '/pose'
+        });
+    });
+    locationClient.on('message', function (msg) {
+        self.send('location', msg.msg.pose);
+    });
+    locationClient.on('error', function (message) {
+        error(message);
+    });
+    locationClient.open();
+
+    // Send poses to the robot
+    poseClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    poseClient.on('open', function () {
+        poseClient.send({
+            op: 'advertise',
+            topic: self.getParameter('topicPrefix') + '/goal',
+            type: 'geometry_msgs/PoseStamped'
+        });
+    });
+    poseClient.on('error', function (message) {
+        error(message);
+    });
+    self.addInputHandler('pose', pose_in.bind(self));
+    poseClient.open();
+
+    // Send cmd_vel to the robot
+    cmdvelClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    cmdvelClient.on('open', function () {
+        var advertise = {
+            op: 'advertise',
+            topic: self.getParameter('topicPrefix') + '/cmd_vel',
+            type: 'geometry_msgs/Twist'
+        };
+        cmdvelClient.send(advertise);
+        console.log('Sending over socket: ' + JSON.stringify(advertise));
+    });
+    cmdvelClient.on('error', function (message) {
+        error(message);
+    });
+    self.addInputHandler('cmdvel', cmdvel_in.bind(self));
+    cmdvelClient.open();
+
+    // Send cancel to the robot
+    cancelClient = new WebSocket.Client({
+        host: self.getParameter('server'),
+        port: self.getParameter('port')
+    });
+    cancelClient.on('open', function () {
+        cancelClient.send({
+            op: 'advertise',
+            topic: self.getParameter('topicPrefix') + '/cancel',
+            type: 'std_msgs/Empty'
+        });
+    });
+    cancelClient.on('error', function (message) {
+        error(message);
+    });
+    self.addInputHandler('cancel', cancel_in.bind(this));
+    cancelClient.open();
+};
+
+
+exports.wrapup = function () {
+    if (stateClient) {
+        stateClient.close();
+    }
+    if (batteryClient) {
+        batteryClient.close();
+    }
+    if (locationClient) {
+        locationClient.close();
+    }
+    if (poseClient) {
+        poseClient.send({
+            op: 'unadvertise',
+            topic: this.getParameter('topicPrefix') + '/goal'
+        });
+        poseClient.close();
+    }
+    if (cmdvelClient) {
+        // Stop the robot, then unadvertise.
+        var zeroVelocity = {
+            linear: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            angular: {
+                x: 0,
+                y: 0,
+                z: 0
+            }
+        },
+            out = {
+                op: 'publish',
+                topic: this.getParameter('topicPrefix') + '/cmd_vel',
+                msg: zeroVelocity
+            };
+        cmdvelClient.send(out);
+
+        cmdvelClient.send({
+            op: 'unadvertise',
+            topic: this.getParameter('topicPrefix') + '/cmd_vel'
+        });
+        cmdvelClient.close();
+    }
+    if (cancelClient) {
+        cancelClient.send({
+            op: 'unadvertise',
+            topic: this.getParameter('topicPrefix') + '/cancel'
+        });
+        cancelClient.close();
+    }
 };

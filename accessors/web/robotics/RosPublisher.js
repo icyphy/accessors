@@ -40,10 +40,10 @@
  * topic will be established.</li>
  * </ul>
  *
- *  On input from 'toSend', this accessor publishes that input to the 
- *  aforementioned topic. 
+ *  On input from 'toSend', this accessor publishes that input to the
+ *  aforementioned topic.
  *  The input from 'toSend' must be in JSON form, and must match the message
- *  datatype that the ROS topic is expecting. For example if ROS topic is 
+ *  datatype that the ROS topic is expecting. For example if ROS topic is
  *  expecting <code>std_msgs/String</code>, then the input in 'toSend' should be
  *  as follows:
  *  <pre> { "data": "hello world" } </pre>
@@ -68,8 +68,8 @@
  *  @parameter {string} ROStype The ROS datatype of the topic.
  *  @parameter {boolean} addHeader If (true), this accessor will send a header with a blank seq and timestamp field, and rosbridge will add the header for you.
  *  @parameter {string} frame_id The frame_id of the header (only needed if a header is required).
- *  @author Marcus Pan 
- *  @version $$Id$$ 
+ *  @author Marcus Pan
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -82,7 +82,7 @@
 /** Sets up by accessor by inheriting inputs from setup() in
  * WebSocketClient. Adds additional parameters regarding the ROS topic
  * to which to publish to.
- */ 
+ */
 exports.setup = function() {
     this.extend('net/WebSocketClient');
     this.parameter('topic', {
@@ -110,19 +110,19 @@ exports.toSendInputHandler = function() {
             "frame_id": this.getParameter('frame_id')
         };
     }
-    
+
     var data = {
         "op": "publish",
         "topic": this.getParameter('topic'),
-        "msg": msg 
+        "msg": msg
     };
-    
+
     this.exports.sendToWebSocket.call(this, data);
 };
 
-/**  Inherits initialize from WebSocketClient. 
+/**  Inherits initialize from WebSocketClient.
  *   Advertise the topic we are publishing to.
- */ 
+ */
 exports.initialize = function() {
     this.exports.ssuper.initialize.call(this);
 
@@ -132,7 +132,7 @@ exports.initialize = function() {
         "type": this.getParameter('ROStype')
     };
     this.exports.sendToWebSocket.call(this, advertise);
-    
+
 };
 
 /** Unadvertise the topic and inherit wrapup from WebSocketClient. */
