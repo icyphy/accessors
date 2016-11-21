@@ -44,7 +44,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-mapManager = require("mapManager");
+var mapManager = require("mapManager");
 
 var reportHandle = null;
 var clearHandle = null;

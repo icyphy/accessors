@@ -75,7 +75,8 @@
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*globals clearTimeout, console, error, exports, httpRequest, require, setTimeout  */
-/*jshint globalstrict: true*/
+/*jshint globalstrict: true, bitwise: true */
+/*jslint bitwise: true */
 "use strict";
 
 // This accessor requires the optional 'udpSocket' module, which may or may
@@ -124,7 +125,7 @@ exports.setup = function () {
     this.parameter('receiveType', {
         type: 'string',
         value: 'unsignedbyte',
-        visibility:'expert'
+        visibility: 'expert'
     });
 };
 
@@ -157,9 +158,8 @@ function timestamp2string(time_stamp) {
         // Python time is in seconds.  JavaScript milliseconds.
         //d = datetime.fromtimestamp(time_stamp / 1000.0);
         time_stamp = Math.round(time_stamp * 1000);
-        var d = new Date(time_stamp);
-        //str1 = d.strftime("%Y-%m-%d %H:%M:%S.%f");
-        var str1 = d.toISOString();
+        var d = new Date(time_stamp),
+            str1 = d.toISOString();
         //console.log("timestamp2string(" + time_stamp + ")" + d + " " + Date.now());
 
         // Python: 2015-08-28 16:43:37.283000
