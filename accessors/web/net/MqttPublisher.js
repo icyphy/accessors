@@ -31,7 +31,7 @@
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
- 
+
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*global console, exports, require */
@@ -43,7 +43,7 @@ var mqtt = require('mqtt');
 exports.setup = function () {
     // Inputs and outputs
     this.input('toPublish');
-    this.output('connection', { 
+    this.output('connection', {
         spontaneous: true
     });
     // Server information

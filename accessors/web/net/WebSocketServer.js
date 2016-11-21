@@ -64,15 +64,15 @@
  *  @parameter {string} pfxKeyCertPassword If sslTls is set to true, then this option needs
  *   to specify the password for the pfx key-cert file specified by pfxKeyCertPath.
  *  @parameter {string} pfxKeyCertPath If sslTls is set to true, then this option needs to
- *   specify the fully qualified filename for the file that stores the private key and certificate 
+ *   specify the fully qualified filename for the file that stores the private key and certificate
  *   that this server will use to identify itself. This path can be any of those understood by the
  *   Ptolemy host, e.g. paths beginning with $CLASSPATH/.
- *  @parameter {string} receiveType The MIME type for incoming messages, 
+ *  @parameter {string} receiveType The MIME type for incoming messages,
  *    which defaults to 'application/json'.
  *  @parameter {string} sendType The MIME type for outgoing messages,
  *    which defaults to 'application/json'.
  *  @parameter {boolean} sslTls Whether SSL/TLS is enabled. This defaults to false.
- *  @input toSend The data to be sent to open sockets. 
+ *  @input toSend The data to be sent to open sockets.
  *    If this is an object with 'socketID' field and a 'message' field,
  *    then send the value of the message field to the socket identified
  *    by the socketID field. If the input has any other form, then the
@@ -84,7 +84,7 @@
  *    which is a unique ID for this client connection, and a 'status' field,
  *    which is the string 'open' or 'closed'.
  *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
- *  @author Hokeun Kim, Edward Lee 
+ *  @author Hokeun Kim, Edward Lee
  *  @version $$Id$$
  */
 
@@ -120,11 +120,11 @@ exports.setup = function () {
     });
     this.parameter('receiveType', {
         type : 'string',
-        value : 'application/json',
+        value : 'application/json'
     });
     this.parameter('sendType', {
         type : 'string',
-        value : 'application/json',
+        value : 'application/json'
     });
     this.parameter('sslTls', {
         type: 'boolean',
@@ -156,7 +156,7 @@ exports.setup = function () {
 exports.initialize = function () {
     var self = this;
     self.sockets = [];
-    
+
     if (!server) {
         server = new WebSocket.Server({
             'port': this.getParameter('port'),
@@ -206,7 +206,7 @@ exports.initialize = function () {
             } else {
                 // No socketID or message, so this is a broadcast message.
                 // var success = false;
-                for (id = 0; id < self.sockets.length; id++) {
+                for (id = 0; id < self.sockets.length; id += 1) {
                     if (self.sockets[id].isOpen()) {
                         // console.log("Broadcasting to socket id " + id
                         //         + " message: " + data);
@@ -235,25 +235,25 @@ exports.onConnection = function (socket) {
     var self = this, socketID = self.sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
     this.send('connection', {'socketID': socketID, 'status': 'open'});
-    
+
     self.sockets.push(socket);
-    
+
     self.sockets[socketID].on('message', function (message) {
-            // If message is a string, strip leading and trailing "
-            if (typeof message === 'string') {
-                    message = message.replace(/^"(.*)"$/, '$1');
-            }
+        // If message is a string, strip leading and trailing "
+        if (typeof message === 'string') {
+            message = message.replace(/^"(.*)"$/, '$1');
+        }
         self.send('received', {'message': message, 'socketID': socketID});
     });
     self.sockets[socketID].on('close', function () {
         self.send('connection', {'socketID': socketID, 'status': 'closed'});
     });
     self.sockets[socketID].on('error', function (message) {
-            console.log('error ' + message);
+        console.log('error ' + message);
         self.error(message);
     });
 
-    
+
 };
 
 /** Removes all inputHandlers from sockets.<br>

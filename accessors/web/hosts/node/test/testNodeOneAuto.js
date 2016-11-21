@@ -2,7 +2,7 @@
 // Run the .js files in just one auto directory.
 //
 // Example Usage:
-//  (cd ../../..; mocha hosts/node/test/mocha/testNodeOneAuto.js --Dauto=net/test/auto)
+//  (cd ../../..; mocha hosts/node/test/testNodeOneAuto.js --Dauto=net/test/auto)
 //
 // To run all the composite tests:
 //  (cd ../../..; ant tests.mocha.composites)

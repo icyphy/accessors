@@ -28,7 +28,7 @@
  *  execution it receives a `port` input, then it will close any open
  *  socket and, if the new `port` value is non-negative, open a new
  *  socket to the current `host` and `port`.
- *  
+ *
  *  When the connection is established, a `true` boolean is sent to
  *  the `listening` output. If the connection is broken during
  *  execution, then a `false` boolean is sent to the `listening`
@@ -48,7 +48,7 @@
  *  @accessor net/UDPSocketListener
  *  @author Hokeun Kim and Edward A. Lee, Contributor: Christopher Brooks
  *  @version $$Id$$
- *  
+ *
  *  @output message The received message as a raw byte array.
  *  @output {boolean} listening True to indicate that listening has begun, false to
  *   indicate that it has stopped.
@@ -57,7 +57,7 @@
  *   This defaults to "0.0.0.0", which means to listen on all network interfaces.
  *  @input {int} listeningPort The port to listen on for incoming messages.
  *   This defaults to 8084.
- *   
+ *
  *  @parameter {string} receiveType See above.
  */
 
@@ -88,7 +88,7 @@ exports.setup = function () {
     });
     this.parameter('receiveType', {
         type: 'string',
-        value: 'string',
+        value: 'string'
     });
 
     // Attempt to add a list of options for types, but do not error out

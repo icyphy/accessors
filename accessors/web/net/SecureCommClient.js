@@ -25,7 +25,7 @@
  *  and for secure communication with a SecureCommserver.
  *
  *  Specifically, this accessor establishes a secure communication with server
- *  using session keys (symmetric cryptographic keys) and sends/receives 
+ *  using session keys (symmetric cryptographic keys) and sends/receives
  *  messages to/from the server. To obtain session keys, this accessor also
  *  communicates with the local authorization entity, Auth.
  *
@@ -38,7 +38,7 @@
  *
  *  @accessor net/SecureCommClient
  *
- *  @input serverHostPort Information of the destination server. This input triggers 
+ *  @input serverHostPort Information of the destination server. This input triggers
  *   a secure connection with a server (possibly using the SecureCommServer accessor).
  *   This input is specified as a JSON with two properties, 'host' and 'port'. The property
  *   'host' specifies the IP address or domain name of server in string and 'port' specifies
@@ -287,7 +287,7 @@ exports.serverHostPortInputHandler = function() {
 
 exports.toSendInputHandler = function () {
     var toSend = this.get('toSend');
-    
+
     if (sendType == 'image') {
         toSend = dataConverter.imageToJSArray(toSend);
     }
@@ -308,14 +308,14 @@ exports.initialize = function () {
     currentState = clientCommState.IDLE;
     currentSessionKeyList = [];
     currentSessionKey = null;
-    
+
     authPublicKey = iotAuth.loadPublicKey(this.getParameter('authCertPath'));
     clientPrivateKey = iotAuth.loadPrivateKey(this.getParameter('clientPrivateKeyPath'));
     receiveType = this.getParameter('receiveType');
     sendType = this.getParameter('sendType');
 
     self = this;
-    
+
     this.addInputHandler('serverHostPort',
                          this.exports.serverHostPortInputHandler.bind(this));
     this.addInputHandler('toSend',

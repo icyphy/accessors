@@ -21,14 +21,21 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor outputs the IP address of the local machine.
- * 
+ *
  *  @accessor net/IPAddress
  *  @author Elizabeth Latronico (beth@berkeley.edu), based on IPAddress actor
  *  by Christopher Brooks
  *  @input {boolean} trigger Send a token here to produce an output.
  *  @output {string} IPAddress The IP address of the local machine.
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
+
+// Stop extra messages from jslint and jshint.  Note that there should
+// be no space between the / and the * and global. See
+// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
+/*globals error, exports, require */
+/*jshint globalstrict: true*/
+'use strict';
 
 var discovery = require('discovery');
 // Initialize ds here, instead of in setup(), so that the ds object is defined
@@ -38,20 +45,20 @@ var discovery = require('discovery');
 // the interface.
 var ds;
 try {
-    ds = new discovery.DiscoveryService();  
+    ds = new discovery.DiscoveryService();
 } catch(err) {
     error('Failed to instantiate discovery service: ' + err);
 }
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    
+
     this.input('trigger', {
-        type: 'boolean',
+        type: 'boolean'
       });
-    
+
     this.output('IPAddress', {
-        type: 'string',
+        type: 'string'
       });
 };
 

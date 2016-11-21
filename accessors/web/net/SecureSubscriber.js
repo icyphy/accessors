@@ -59,7 +59,7 @@
  *  @author Hokeun Kim
  *  @version $$Id$$
  */
- 
+
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*global console, exports, require */
@@ -73,7 +73,7 @@ exports.setup = function () {
     // Inputs and outputs
     this.input('subscribe');
     this.input('unsubscribe');
-    this.output('connection', {        
+    this.output('connection', {
             spontaneous: true
     });
     this.output('subscription');
@@ -94,7 +94,7 @@ exports.setup = function () {
         type: 'int',
         value: 0
     });
-    
+
     // Subscriber information
     this.parameter('subscriberName', {
         value: '',
@@ -253,13 +253,13 @@ exports.unsubscribeInputHandler = function () {
 
 exports.initialize = function() {
     self = this;
-    
+
     currentDistributionKey = null;
     currentSessionKeyList = [];
     subscribeSequenceNum = 0;
     authPublicKey = iotAuth.loadPublicKey(this.getParameter('authCertPath'));
     subscriberPrivateKey = iotAuth.loadPrivateKey(this.getParameter('subscriberPrivateKeyPath'));
-    
+
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
     mqttClient = mqtt.createClient(

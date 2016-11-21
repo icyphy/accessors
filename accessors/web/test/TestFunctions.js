@@ -55,12 +55,12 @@ exports.fire = function () {
     }
     try {
         this.send('httpRequest', httpRequest('index.html', 'GET'));
-    } catch (exception) {
-        this.send('httpRequest', 'FAILED: ' + exception);
+    } catch (exception2) {
+        this.send('httpRequest', 'FAILED: ' + exception2);
     }
     try {
         this.send('readURL', readURL('index.html'));
-    } catch (exception) {
-        this.send('readURL', 'FAILED: ' + exception);
+    } catch (exception3) {
+        this.send('readURL', 'FAILED: ' + exception3);
     }
 };

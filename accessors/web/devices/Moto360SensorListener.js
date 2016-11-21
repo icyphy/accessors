@@ -20,7 +20,7 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** 
+/**
  * Read sensor data from a Moto 360 watch that is broadcasting the data via
  * UDP on the local network.
  *
@@ -32,7 +32,7 @@
  *
  * See https://www.terraswarm.org/urbanheartbeat/wiki/Main/WatchSoftware
  * for details on the software that runs on the watch.
- *  
+ *
  * @accessor devices/Moto360SensorListener
  *
  * @output message The received message as a raw byte array.
@@ -67,9 +67,9 @@
  *   reading differs in some axis by more than the specified sensitivity.
  *   A small number means high sensitivity (lots of outputs) and a larger number
  *   means low sensitivity (fewer outputs).
- *  
+ *
  * @author Christopher Brooks and Edward A. Lee
- * @version $$Id$$ 
+ * @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -103,10 +103,10 @@ exports.setup = function () {
     // Override the value of listeningPort in the parent.
     this.input('listeningPort', {
         'value': 4568, // 4568 is the value found in
-                       // https://github.com/terraswarm/WatchSoftware/blob/master/WatchSensorsUDP/app/src/main/java/org/terraswarm/accessor/wear/watchsensorsudp/MessageSender.java
+        // https://github.com/terraswarm/WatchSoftware/blob/master/WatchSensorsUDP/app/src/main/java/org/terraswarm/accessor/wear/watchsensorsudp/MessageSender.java
         'type': 'int'
     });
-    
+
     // Accelerometer output port.
     this.output('accelerometer');
     this.parameter('accelerometerSensitivity', {
@@ -141,11 +141,11 @@ exports.initialize = function () {
 // The returned result always lies between -32768 and 32767, inclusive.
 function bytesToInt(a, b) {
     if (debug) {
-            console.log('******** translating: ' + a + ', ' + b);
-        }
+        console.log('******** translating: ' + a + ', ' + b);
+    }
     var c = a * Math.pow(2, 8);
     c = c + b;
-    if (c >= Math.pow(2, 15)) { 
+    if (c >= Math.pow(2, 15)) {
         c = (Math.pow(2, 16) - c) * -1;
     }
     return c;
@@ -161,9 +161,9 @@ function timestamp2string(time_stamp) {
         //str1 = d.strftime("%Y-%m-%d %H:%M:%S.%f");
         var str1 = d.toISOString();
         //console.log("timestamp2string(" + time_stamp + ")" + d + " " + Date.now());
-        
+
         // Python: 2015-08-28 16:43:37.283000
-        // JavaScript: 2016-10-05T03:21:09.617Z 
+        // JavaScript: 2016-10-05T03:21:09.617Z
         return str1;
     } catch (e) {
         console.log(e);
@@ -190,10 +190,10 @@ exports.closeAndOpen = function () {
             self.send('message', message);
 
             var watchID = String.fromCharCode(message[0]) + String.fromCharCode(message[1]) +
-                            String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
+                String.fromCharCode(message[2]) + String.fromCharCode(message[3]);
             // Get the timestamp.
             var timestamp = timestamp2string(bytes2float(message.slice(11, 17)));
-            
+
             if (debug) {
                 console.log("Message received: " + message);
                 console.log('Watch ID: ' + watchID);
@@ -202,27 +202,27 @@ exports.closeAndOpen = function () {
             var json, x, y, z, sensitivity;
             // Check for accelerometer data.
             if (message[4] == "A".charCodeAt(0)) {
-                    // Received accelerometer data.
-                    // To get SI units of m/s^2, the scaling factor needs to match
-                    // what is used in the watch application's SCALE_ACCELEROMETER
-                    // variable.
-                    var SCALE_ACCELEROMETER = 836;
-                    x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
+                // Received accelerometer data.
+                // To get SI units of m/s^2, the scaling factor needs to match
+                // what is used in the watch application's SCALE_ACCELEROMETER
+                // variable.
+                var SCALE_ACCELEROMETER = 836;
+                x = bytesToInt(message[6], message[5]) / SCALE_ACCELEROMETER;
                 y = bytesToInt(message[8], message[7]) / SCALE_ACCELEROMETER;
                 z = bytesToInt(message[10], message[9]) / SCALE_ACCELEROMETER;
-                
+
                 // Compare current data against previous data.
                 sensitivity = self.getParameter('accelerometerSensitivity');
                 if (sensitivity === 0.0 ||
-                     Math.abs(x - previousX) > sensitivity ||
-                     Math.abs(y - previousY) > sensitivity ||
-                     Math.abs(z - previousZ) > sensitivity) {
-                        
+                    Math.abs(x - previousX) > sensitivity ||
+                    Math.abs(y - previousY) > sensitivity ||
+                    Math.abs(z - previousZ) > sensitivity) {
+
                     // Output is to be produced.
                     previousX = x;
                     previousY = y;
                     previousZ = z;
-                    
+
                     json = {
                         watchID: watchID,
                         'x': x,
@@ -236,27 +236,27 @@ exports.closeAndOpen = function () {
                     self.send("accelerometer", json);
                 }
             } else if (message[4] == "G".charCodeAt(0)) {
-                    // Received gyro data.
-                    // To get units of radians per second, the scaling factor needs to match
-                    // what is used in the watch application's SCALE_GYRO
-                    // variable.
-                    var SCALE_GYRO = 5208;
-                    x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
+                // Received gyro data.
+                // To get units of radians per second, the scaling factor needs to match
+                // what is used in the watch application's SCALE_GYRO
+                // variable.
+                var SCALE_GYRO = 5208;
+                x = bytesToInt(message[6], message[5]) / SCALE_GYRO;
                 y = bytesToInt(message[8], message[7]) / SCALE_GYRO;
                 z = bytesToInt(message[10], message[9]) / SCALE_GYRO;
-                
+
                 // Compare current data against previous data.
                 sensitivity = self.getParameter('gyroSensitivity');
                 if (sensitivity === 0.0 ||
                     Math.abs(x - previousGX) > sensitivity ||
                     Math.abs(y - previousGY) > sensitivity ||
                     Math.abs(z - previousGZ) > sensitivity) {
-                        
+
                     // Output is to be produced.
                     previousGX = x;
                     previousGY = y;
                     previousGZ = z;
-                    
+
                     json = {
                         watchID: watchID,
                         'x': x,

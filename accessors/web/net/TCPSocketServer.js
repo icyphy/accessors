@@ -103,7 +103,7 @@
  *  client side.
  *
  *  Accessors that extend this one can override the `toSendInputHandler` function
- *  to customize what is sent. 
+ *  to customize what is sent.
  *
  *  This accessor requires the 'socket' module.
  *
@@ -241,7 +241,7 @@ exports.setup = function () {
     });
     this.parameter('receiveType', {
         type : 'string',
-        value : 'string',
+        value : 'string'
     });
     this.parameter('sendBufferSize', {
         value: 65536,
@@ -249,7 +249,7 @@ exports.setup = function () {
     });
     this.parameter('sendType', {
         type : 'string',
-        value : 'string',
+        value : 'string'
     });
     this.parameter('sslTls', {
         type : 'boolean',
@@ -299,7 +299,7 @@ exports.toSendInputHandler = function () {
                         ' is not open. Discarding data.');
         } else {
             error('Attempting to send data over socket with id ' + idToSendTo +
-                    ', but this socket is not open.');
+                  ', but this socket is not open.');
         }
     }
 };
@@ -339,16 +339,16 @@ exports.initialize = function () {
     server.on('error', function(message) {
         self.error(message);
     });
-        
+
     server.on('listening', function(port) {
         console.log('Server: Listening for socket connection requests on port ' + port);
         self.send('listening', port);
     });
-    
+
     server.on('connection', function(serverSocket) {
-            // serverSocket is an instance of the Socket class defined
-            // in the socket module.
-            connectionCount++;
+        // serverSocket is an instance of the Socket class defined
+        // in the socket module.
+        connectionCount++;
         var socketInstance = connectionCount;
         var socketID = {
             'id': socketInstance,
@@ -357,7 +357,7 @@ exports.initialize = function () {
             'status': 'open'
         };
         self.send('connection', socketID);
-        
+
         sockets[socketInstance] = serverSocket;
 
         serverSocket.on('close', function() {
@@ -374,10 +374,10 @@ exports.initialize = function () {
             self.error(message);
         });
     });
-    
+
     // Open the server after setting up all the handlers.
     server.start();
-    
+
     // Bind the input handler to caller's object so that when it is invoked,
     // it is invoked in the context of that object and not this one.
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));

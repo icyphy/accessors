@@ -27,7 +27,7 @@
  *  @parameter {port} port The port of host url, ex: 80
  *  @parameter {string} username The login account name for the service.
  *  @parameter {string} password  The password for the login account.
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 // Stop extra messages from jslint and jshint.  Note that there should be no
 // space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
