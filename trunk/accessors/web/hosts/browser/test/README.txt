@@ -24,11 +24,11 @@ The test library there is particularly useful for testing.
 
 3) Other tests in this directory:
 
-  http://localhost:8089/hosts/browser/test/httpClient/testCORS.html
-  http://localhost:8089/hosts/browser/test/httpClient/testJSONP.html
-  http://localhost:8089/hosts/browser/test/httpClient/testREST.html
-  http://localhost:8089/hosts/browser/test/httpClient/testStockTick.html
-  http://localhost:8089/hosts/browser/test/httpClient/testWeather.html
+  http://localhost:8089/hosts/browser/test/manual/httpClient/testCORS.html
+  http://localhost:8089/hosts/browser/test/manual/httpClient/testJSONP.html
+  http://localhost:8089/hosts/browser/test/manual/httpClient/testREST.html
+  http://localhost:8089/hosts/browser/test/manual/httpClient/testStockTick.html
+  http://localhost:8089/hosts/browser/test/manual/httpClient/testWeather.html
   
 The testWeather.html page requires keys to access online geocoder and weather
 services.  See keys.README.txt.
