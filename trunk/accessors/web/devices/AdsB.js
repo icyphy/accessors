@@ -30,7 +30,7 @@
  * If a reference location is provided, the accessor retrieves all the aircrafts within the threshold distance in the output "traffic"
  *  @accessor devices/AdsB
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$
+ *  @version $$Id$$
  *  @input {trigger}
  *  @input {double} latRef Latitude of the reference location
  *  @input {double} lonRef Longitude of the reference location

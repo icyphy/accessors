@@ -38,7 +38,7 @@
  *  @output numericPlusP Produces the value of the 'numeric' input plus 'p'.
  *  @output negation Produces the negation of the 'boolean' input.
  *  @author Edward A. Lee
- *  @version $$Id: TestAccessor.js 825 2016-06-17 21:38:37Z sandur2@illinois.edu $$
+ *  @version $$Id$$
  */
 
 //cordova.define("TestAccessor", function(require, exports, module) {

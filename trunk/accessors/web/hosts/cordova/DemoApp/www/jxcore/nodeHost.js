@@ -32,7 +32,7 @@
  *  
  *  @module nodeHost
  *  @authors Edward A. Lee, Chris Shaver, Christopher Brooks
- *  @version $$Id: nodeHost.js 825 2016-06-17 21:38:37Z sandur2@illinois.edu $$
+ *  @version $$Id$$
  */
 
 //cordova.define("nodeHost", function(require, exports, module) {

@@ -29,7 +29,7 @@
  *  @parameter interval The interval before the output in milliseconds.
  *  @output output Output for the counting sequence, of type number.
  *  @author Christopher Brooks. Based on TestSpontaneous by Edward A. Lee
- *  @version $$Id: TestSpontaneous.js 546 2016-02-03 02:07:57Z cxh $$
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no

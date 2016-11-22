@@ -36,7 +36,7 @@
  *
  *  @accessor devices/PhSensor
  *  @author Matt Weber (matt.weber@eecs.berkeley.edu)
- *  @version $$Id: PhSensor.js 925 2016-10-21  $$
+ *  @version $$Id$$
  *  @input trigger An input to trigger data acqusition.
  *  @output {number} ph The latest measured pH value.
  */

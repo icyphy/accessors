@@ -29,7 +29,7 @@
  *
  *  @accessor robotics/DroneLocation
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$
+ *  @version $$Id$$
  *  @parameter {string} rosbridgeServer RosBridge server address
  *  @parameter {int} rosbridgePort RosBridge server port
  *  @output {double} lat Latitude of the drone
