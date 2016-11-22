@@ -92,7 +92,7 @@ var http = require('httpClient');
 var util = require('util');
 
 /** Define inputs and outputs. */
-exports.setup = function() {
+exports.setup = function () {
 
     this.input('commands');
     this.parameter('bridgeIP', {
@@ -176,6 +176,9 @@ function Hue() {
         return (obj instanceof Array && obj.length > 0);
     }
 
+    var bridgeRequestErrorHandler;
+    var registerUser;
+
     /** Contact the bridge.  Register the user, if needed.
      */
     function contactBridge() {
@@ -188,7 +191,7 @@ function Hue() {
                     self.error('Error occurred before response arrive. Response ignored');
                     return;
                 }
-                if (response.statusCode != 200) {
+                if (response.statusCode !== 200) {
                     // Response is other than OK. Retry if not a fatal error.
                     bridgeRequestErrorHandler(response.statusMessage);
                 } else {
@@ -240,7 +243,7 @@ function Hue() {
     }
 
     /** Contact the bridge and register the user, if needed. */
-    hue.connect = function() {
+    hue.connect = function () {
         ipAddress = self.getParameter('bridgeIP');
         userName = self.getParameter('userName');
 
@@ -258,7 +261,7 @@ function Hue() {
     };
 
     /** Issue a command to the bridge.  Commands are queued if not yet authenticated. */
-    hue.issueCommand = function() {
+    hue.issueCommand = function () {
         if (errorOccurred) {
             return;
         }
@@ -330,7 +333,7 @@ function Hue() {
     /** Process the specified commands. The argument can be a single object
      *  with properties for the command, or an array of such objects.
      */
-    hue.processCommands = function(commands) {
+    hue.processCommands = function (commands) {
         if (typeof commands === 'string') {
             commands = JSON.parse(commands);
         }
@@ -392,7 +395,7 @@ function Hue() {
                 if (debug) {
                     console.log("Hue.js: processCommands(): PUT request: options: " + JSON.stringify(options));
                 }
-                http.put(options, function(response) {
+                http.put(options, function (response) {
                     if (debug) {
                         console.log("Hue.js: processCommands(): response status: " + response.statusMessage);
                         console.log("Hue.js: processCommands(): response body: " + response.body);
@@ -409,7 +412,7 @@ function Hue() {
      *  fixed number of times before giving up.  A retry is a re-invocation of
      *  registerUser().
      */
-    function bridgeRequestErrorHandler(err) {
+    bridgeRequestErrorHandler = function (err) {
         // FIXME: We should do a UPnP discovery here and find a bridge.
         // Could not connect to the bridge
         console.error('Error connecting to Hue Bridge:');
@@ -423,27 +426,27 @@ function Hue() {
                        ' after ' + retryCount + ' attempts.');
             errorOccurred = true;
         }
-    }
+    };
 
     /** Register a new user.
      *  This function repeats at registerInterval until successful or until
      *  maxRegisterAttempts.  Some wait time is given between attempts for the
      *  user to click the button on the Hue bridge.
      */
-    function registerUser() {
+    registerUser = function () {
 
         // Should be of the format {"devicetype":"my_hue_app#iphone peter"}
         // http://www.developers.meethue.com/documentation/getting-started
         // (free registration required).
         var registerData = {
-            devicetype : "hue_accessor#" + userName,
+            devicetype : "hue_accessor#" + userName
         };
         var options = {
             body : JSON.stringify(registerData),
             timeout: 10000,
             url : url
         };
-        http.post(options, function(response) {
+        http.post(options, function (response) {
             var rsp = JSON.parse(response.body);
             if (debug) {
                 console.log("Hue.js registerUser(): Response " + JSON.stringify(rsp));
@@ -486,7 +489,7 @@ function Hue() {
                 throw "Unknown error registering new user";
             }
         });
-    }
+    };
 
     return hue;
 }
@@ -496,7 +499,7 @@ function Hue() {
  *  If a bridge IP address has been given, contact the bridge to check if it is
  *  present.  Next, register the user if not already registered.
  */
-exports.initialize = function() {
+exports.initialize = function () {
     // Call the Hue function binding "this", to create local state variables
     // while providing access to accessor functions.
     // Setting "this.hue" makes hue available in other accessor functions, e.g.
@@ -511,7 +514,7 @@ exports.initialize = function() {
 };
 
 /** Turn off changed lights on wrapup. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     var action = this.getParameter('onWrapup'),
 	cmd = JSON.stringify({on:false}),
 	debug = false,
@@ -534,12 +537,12 @@ exports.wrapup = function() {
 
                 var self = this;
 
-                http.put(options, function(response) {
+                http.put(options, function (response) {
                     if (debug) {
                         console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
                     }
-                    if (hue.reportIfError(response)) {
-                        errorLights.push(lightID);
+                    if (this.hue.reportIfError(response)) {
+                        errorLights.push(this.lightID);
                     }
                 });
             }
