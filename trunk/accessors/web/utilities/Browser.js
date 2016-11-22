@@ -46,7 +46,7 @@ exports.setup = function() {
     this.input('html', {'type':'string'});
 };
 
-var display() = function () {
+var display = function () {
     var toDisplay = this.get('html');
     browser.display(toDisplay);
 }
