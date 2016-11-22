@@ -53,29 +53,48 @@ var http = require('httpClient');
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
     this.input('symbol', {
-            'value':'YHOO',
-                'type':'string'
-                });
+        'value': 'YHOO',
+        'type': 'string'
+    });
     this.output('price', {
-            'type':'number'
-                });
+        'type': 'number'
+    });
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"https://query.yahooapis.com"'});
-    this.input('command', {'visibility':'expert', 'value':'/v1/public/yql'});
-    this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
-    this.input('body', {'visibility':'expert'});
-    this.input('trigger', {'visibility':'expert'});
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"https://query.yahooapis.com"'
+    });
+    this.input('command', {
+        'visibility': 'expert',
+        'value': '/v1/public/yql'
+    });
+    this.input('arguments', {
+        'visibility': 'expert',
+        'value': '{"env":"http://datatables.org/alltables.env", "format":"json"}'
+    });
+    this.input('body', {
+        'visibility': 'expert'
+    });
+    this.input('trigger', {
+        'visibility': 'expert'
+    });
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
-exports.initialize = function() {
+exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
 
@@ -83,23 +102,23 @@ exports.initialize = function() {
     var self = this;
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
-    this.addInputHandler('symbol', function() {
-            // Read the current value of the 'symbol' input.
-            var stock = self.get('symbol');
-            var args = self.get('arguments');
-            args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
-                stock +
-                '")';
-            self.send('arguments', args);
-            self.send('trigger', true);
-        });
+    this.addInputHandler('symbol', function () {
+        // Read the current value of the 'symbol' input.
+        var stock = self.get('symbol');
+        var args = self.get('arguments');
+        args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
+            stock +
+            '")';
+        self.send('arguments', args);
+        self.send('trigger', true);
+    });
 };
 
 /** Filter the response, extracting the stock tick information and
  *  outputting it on the price output. The full response is produced
  *  on the 'response' output.
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
     if (response) {
         try {
             // Check if response is JSON or stringified JSON.  If stringified, parse.

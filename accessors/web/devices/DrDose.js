@@ -61,42 +61,59 @@ var http = require('httpClient');
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
-     /*
+    /*
      this.input('AcidDuration', {
              'type':'number'
      });
     */
 
     this.input('Acid Duration', {
-            'value': 0,
-                'type':'number'
-                });
-        this.input('Base Duration', {
-            'value': 0,
-                'type':'number'
-                });
-        this.input('Nutrient Duration', {
-            'value': 0,
-                'type':'number'
-                });
+        'value': 0,
+        'type': 'number'
+    });
+    this.input('Base Duration', {
+        'value': 0,
+        'type': 'number'
+    });
+    this.input('Nutrient Duration', {
+        'value': 0,
+        'type': 'number'
+    });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"http://192.168.1.247:8080"'});
-    this.input('command', {'visibility':'expert'});
-    this.input('arguments', {'visibility':'expert'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"http://192.168.1.247:8080"'
+    });
+    this.input('command', {
+        'visibility': 'expert'
+    });
+    this.input('arguments', {
+        'visibility': 'expert'
+    });
     //this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
-    this.input('body', {'visibility':'expert'});
-    this.input('trigger', {'visibility':'expert'});
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('body', {
+        'visibility': 'expert'
+    });
+    this.input('trigger', {
+        'visibility': 'expert'
+    });
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
-exports.initialize = function() {
+exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
 
@@ -104,42 +121,48 @@ exports.initialize = function() {
     var self = this;
 
     // Send duration to Dr Dose when input arrives.
-    this.addInputHandler('Acid Duration', function() {
-            // Read the current value of the 'Acid Duration' input.
-            var command = "acid";
-            var duration = self.get('Acid Duration');
-            var args = {'duration': duration};
-            //console.log(JSON.stringify(args));
-            self.send('command', command);
-            self.send('arguments', args);
-            self.send('trigger', true);
-        });
+    this.addInputHandler('Acid Duration', function () {
+        // Read the current value of the 'Acid Duration' input.
+        var command = "acid";
+        var duration = self.get('Acid Duration');
+        var args = {
+            'duration': duration
+        };
+        //console.log(JSON.stringify(args));
+        self.send('command', command);
+        self.send('arguments', args);
+        self.send('trigger', true);
+    });
 
-        // Send duration to Dr Dose when input arrives.
-    this.addInputHandler('Base Duration', function() {
-            // Read the current value of the 'Base Duration' input.
-            var command = "base";
-            var duration = self.get('Base Duration');
-            //args = duration;
-            var args = {'duration': duration};
-               self.send('command', command);
-            self.send('arguments', args);
-            self.send('trigger', true);
-        });
+    // Send duration to Dr Dose when input arrives.
+    this.addInputHandler('Base Duration', function () {
+        // Read the current value of the 'Base Duration' input.
+        var command = "base";
+        var duration = self.get('Base Duration');
+        //args = duration;
+        var args = {
+            'duration': duration
+        };
+        self.send('command', command);
+        self.send('arguments', args);
+        self.send('trigger', true);
+    });
 
-        // Send duration to Dr Dose when input arrives.
-    this.addInputHandler('Nutrient Duration', function() {
-            // Read the current value of the 'Nutrient Duration' input.
-            var command = "nutrient";
-            var duration = self.get('Nutrient Duration');
-            //args = duration;
-            var args = {'duration': duration};
-               self.send('command', command);
-            self.send('arguments', args);
-            self.send('trigger', true);
-        });
+    // Send duration to Dr Dose when input arrives.
+    this.addInputHandler('Nutrient Duration', function () {
+        // Read the current value of the 'Nutrient Duration' input.
+        var command = "nutrient";
+        var duration = self.get('Nutrient Duration');
+        //args = duration;
+        var args = {
+            'duration': duration
+        };
+        self.send('command', command);
+        self.send('arguments', args);
+        self.send('trigger', true);
+    });
 
-        //self.send('trigger', true);
+    //self.send('trigger', true);
 };
 
 
@@ -147,7 +170,7 @@ exports.initialize = function() {
  *  outputting it on the price output. The full response is produced
  *  on the 'response' output.
  */
- /*
+/*
 exports.filterResponse = function(response) {
 
 

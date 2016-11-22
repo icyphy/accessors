@@ -119,12 +119,12 @@ exports.setup = function () {
         type: 'string'
     });
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'application/json'
+        type: 'string',
+        value: 'application/json'
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'application/json'
+        type: 'string',
+        value: 'application/json'
     });
     this.parameter('sslTls', {
         type: 'boolean',
@@ -132,17 +132,21 @@ exports.setup = function () {
     });
     this.input('toSend');
     this.output('received');
-    this.output('listening', {'type': 'int'});
-    this.output('connection', {'spontaneous': true});
+    this.output('listening', {
+        'type': 'int'
+    });
+    this.output('connection', {
+        'spontaneous': true
+    });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
-            options : WebSocket.supportedReceiveTypes()
+            options: WebSocket.supportedReceiveTypes()
         });
         this.parameter('sendType', {
-            options : WebSocket.supportedSendTypes()
+            options: WebSocket.supportedSendTypes()
         });
     } catch (err) {
         error(err);
@@ -179,7 +183,8 @@ exports.initialize = function () {
     running = true;
 
     this.addInputHandler('toSend', function () {
-        var data = self.get('toSend'), id;
+        var data = self.get('toSend'),
+            id;
         // Careful: Don't do if (data) because if data === 0, then data is false.
         if (data !== null) {
 
@@ -188,7 +193,7 @@ exports.initialize = function () {
             // org/terraswarm/accessor/test/auto/WebSocketClient.xml
             // to fail upon reloading.  See
             // org/terraswarm/accessor/test/WebSocketClientTest.tcl
-            if ((data.socketID != null)  && (data.message !== null)) {
+            if ((data.socketID != null) && (data.message !== null)) {
                 // data has the right form for a point-to-point send.
                 if (self.sockets[data.socketID] && self.sockets[data.socketID].isOpen()) {
                     // id matches this socket.
@@ -201,7 +206,7 @@ exports.initialize = function () {
                     self.sockets[data.socketID].send(data.message);
                 } else {
                     console.log('Socket with ID ' + data.socketID +
-                                ' is not open. Discarding message.');
+                        ' is not open. Discarding message.');
                 }
             } else {
                 // No socketID or message, so this is a broadcast message.
@@ -232,9 +237,13 @@ exports.onListening = function () {
  *  Adds an event listener to the socket. */
 exports.onConnection = function (socket) {
     // socketID is the index of the socket in the sockets array.
-    var self = this, socketID = self.sockets.length;
+    var self = this,
+        socketID = self.sockets.length;
     console.log('Server: new socket established with ID: ' + socketID);
-    this.send('connection', {'socketID': socketID, 'status': 'open'});
+    this.send('connection', {
+        'socketID': socketID,
+        'status': 'open'
+    });
 
     self.sockets.push(socket);
 
@@ -243,10 +252,16 @@ exports.onConnection = function (socket) {
         if (typeof message === 'string') {
             message = message.replace(/^"(.*)"$/, '$1');
         }
-        self.send('received', {'message': message, 'socketID': socketID});
+        self.send('received', {
+            'message': message,
+            'socketID': socketID
+        });
     });
     self.sockets[socketID].on('close', function () {
-        self.send('connection', {'socketID': socketID, 'status': 'closed'});
+        self.send('connection', {
+            'socketID': socketID,
+            'status': 'closed'
+        });
     });
     self.sockets[socketID].on('error', function (message) {
         console.log('error ' + message);

@@ -82,7 +82,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('storeLocation', {
         'type': 'string',
         'value': 'http://localhost:8077/keyvalue'
@@ -103,7 +103,7 @@ exports.setup = function() {
     });
 };
 
-exports.fire = function() {
+exports.fire = function () {
     var store = this.get('storeLocation');
     var theKey = this.get('key');
     var toRemove = this.get('remove');
@@ -111,13 +111,13 @@ exports.fire = function() {
     var url = store + '/get?id=' + theKey;
     var produce;
     if (toRemove) {
-       if (theKey !== "") {
-           produce = readURL(url);
-           url = store + '/delete?id=' + theKey;
-           readURL(url);
-           if (produce !== "") {
-               this.send('result', produce);
-           }
+        if (theKey !== "") {
+            produce = readURL(url);
+            url = store + '/delete?id=' + theKey;
+            readURL(url);
+            if (produce !== "") {
+                this.send('result', produce);
+            }
         }
     } else {
         // toRemove == false. If there is a value, use it to set.

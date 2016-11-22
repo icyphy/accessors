@@ -74,11 +74,11 @@ exports.setup = function () {
     this.input('subscribe');
     this.input('unsubscribe');
     this.output('connection', {
-            spontaneous: true
+        spontaneous: true
     });
     this.output('subscription');
     this.output('received', {
-            spontaneous: true
+        spontaneous: true
     });
     this.output('receivedTopic');
     // MQTT information
@@ -87,8 +87,8 @@ exports.setup = function () {
         value: ''
     });
     this.parameter('brokerPort', {
-        type : 'int',
-        value : 1883
+        type: 'int',
+        value: 1883
     });
     this.parameter('qosLevel', {
         type: 'int',
@@ -102,8 +102,8 @@ exports.setup = function () {
     });
     // For communication with Auth
     this.parameter('authHost', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.parameter('authPort', {
         value: -1,
@@ -164,53 +164,54 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     console.log('received ' + sessionKeyList.length + ' session keys');
     for (var i = 0; i < sessionKeyList.length; i++) {
         if (sessionKeyList[i].id === callbackParameters.keyId) {
-                console.log('key id is as expected!');
-                currentSessionKeyList.push(sessionKeyList[i]);
-                        var ret = iotAuth.decryptSecurePublishedMessage(callbackParameters.encryptedMessage,
-                                self.getParameter('sessionCryptoSpec'), sessionKeyList[i]);
-                        if (!ret.success) {
-                                self.error('Error in decrypting published message - Details: ' + ret.error);
-                                return;
-                        }
-                        console.log('Received sequence number: ' + ret.sequenceNum);
-                    self.send('received', mqtt.byteArrayToString(ret.message));
-                    self.send('receivedTopic', callbackParameters.topic);
-        }
-        else {
-                self.error('key id is not as expected!');
+            console.log('key id is as expected!');
+            currentSessionKeyList.push(sessionKeyList[i]);
+            var ret = iotAuth.decryptSecurePublishedMessage(callbackParameters.encryptedMessage,
+                self.getParameter('sessionCryptoSpec'), sessionKeyList[i]);
+            if (!ret.success) {
+                self.error('Error in decrypting published message - Details: ' + ret.error);
                 return;
+            }
+            console.log('Received sequence number: ' + ret.sequenceNum);
+            self.send('received', mqtt.byteArrayToString(ret.message));
+            self.send('receivedTopic', callbackParameters.topic);
+        } else {
+            self.error('key id is not as expected!');
+            return;
         }
     }
 }
 
 function onMessage(topic, data) {
-        var ret = iotAuth.getKeyIdOfSecurePublishedMessage(data);
-        if (!ret.success) {
-                self.error('Error in published message - Details: ' + ret.error);
+    var ret = iotAuth.getKeyIdOfSecurePublishedMessage(data);
+    if (!ret.success) {
+        self.error('Error in published message - Details: ' + ret.error);
+        return;
+    }
+    for (var i = 0; i < currentSessionKeyList.length; i++) {
+        if (currentSessionKeyList[i].id === ret.keyId) {
+            console.log('Session key is available!');
+            ret = iotAuth.decryptSecurePublishedMessage(ret.encryptedMessage,
+                self.getParameter('sessionCryptoSpec'), currentSessionKeyList[i]);
+            if (!ret.success) {
+                self.error('Error in decrypting published message - Details: ' + ret.error);
                 return;
+            }
+            console.log('Received sequence number: ' + ret.sequenceNum);
+            self.send('received', mqtt.byteArrayToString(ret.message));
+            self.send('receivedTopic', topic);
+            return;
         }
-        for (var i = 0; i < currentSessionKeyList.length; i++) {
-                if (currentSessionKeyList[i].id === ret.keyId) {
-                        console.log('Session key is available!');
-                        ret = iotAuth.decryptSecurePublishedMessage(ret.encryptedMessage,
-                                self.getParameter('sessionCryptoSpec'), currentSessionKeyList[i]);
-                        if (!ret.success) {
-                                self.error('Error in decrypting published message - Details: ' + ret.error);
-                                return;
-                        }
-                        console.log('Received sequence number: ' + ret.sequenceNum);
-                    self.send('received', mqtt.byteArrayToString(ret.message));
-                    self.send('receivedTopic', topic);
-                        return;
-                }
-        }
-        console.log('Session key for published message is not available, sending session key request..');
+    }
+    console.log('Session key for published message is not available, sending session key request..');
     var options = {
         authHost: self.getParameter('authHost'),
         authPort: self.getParameter('authPort'),
         entityName: self.getParameter('subscriberName'),
         numKeysPerRequest: 1,
-        purpose: {keyId: ret.keyId},
+        purpose: {
+            keyId: ret.keyId
+        },
         distributionKey: currentDistributionKey,
         distributionCryptoSpec: self.getParameter('distributionCryptoSpec'),
         publicKeyCryptoSpec: self.getParameter('publicKeyCryptoSpec'),
@@ -218,9 +219,9 @@ function onMessage(topic, data) {
         entityPrivateKey: subscriberPrivateKey
     };
     var callbackParameters = {
-            keyId: ret.keyId,
-            topic: topic,
-            encryptedMessage: ret.encryptedMessage
+        keyId: ret.keyId,
+        topic: topic,
+        encryptedMessage: ret.encryptedMessage
     };
     iotAuth.sendSessionKeyRequest(options, sessionKeyResponseCallback, callbackParameters);
 }
@@ -234,8 +235,7 @@ exports.subscribeInputHandler = function () {
     if (mqttClient.connected) {
         mqttClient.subscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - subscribed');
-    }
-    else {
+    } else {
         self.error('Client is not connected to broker, subscribe failed. Topic: ' + topic);
     }
 };
@@ -245,13 +245,12 @@ exports.unsubscribeInputHandler = function () {
     if (mqttClient.connected) {
         mqttClient.unsubscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
-    }
-    else {
+    } else {
         self.error('Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
     }
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     self = this;
 
     currentDistributionKey = null;
@@ -263,14 +262,15 @@ exports.initialize = function() {
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
     mqttClient = mqtt.createClient(
-            self.getParameter('brokerPort'),
-            self.getParameter('brokerHost'),
-            {rawBytes: true});
+        self.getParameter('brokerPort'),
+        self.getParameter('brokerHost'), {
+            rawBytes: true
+        });
     mqttClient.on('connect', onConnect);
     mqttClient.on('message', onMessage);
     mqttClient.start();
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     mqttClient.end();
 };

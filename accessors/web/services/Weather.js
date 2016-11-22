@@ -55,27 +55,54 @@
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
-    this.input('location', {'value': {"latitude": 37.85, "longitude": -122.26}});
+    this.input('location', {
+        'value': {
+            "latitude": 37.85,
+            "longitude": -122.26
+        }
+    });
     this.output('weather');
     this.parameter('temperature', {
-        'type':'string',
-        'options':['Fahrenheit', 'Celsius', 'Kelvin'],
-        'value':'Fahrenheit'
+        'type': 'string',
+        'options': ['Fahrenheit', 'Celsius', 'Kelvin'],
+        'value': 'Fahrenheit'
     });
-    this.parameter('key', {'type':'string', 'value':'Enter Key Here'});
+    this.parameter('key', {
+        'type': 'string',
+        'value': 'Enter Key Here'
+    });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"http://api.openweathermap.org"'});
-    this.input('command', {'visibility':'expert', 'value':'/data/2.5/weather'});
-    this.input('arguments', {'visibility':'expert', 'value':'{"lat":37.85, "lon":-122.26}'});
-    this.input('body', {'visibility':'expert'});
-    this.input('trigger', {'visibility':'expert'});
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"http://api.openweathermap.org"'
+    });
+    this.input('command', {
+        'visibility': 'expert',
+        'value': '/data/2.5/weather'
+    });
+    this.input('arguments', {
+        'visibility': 'expert',
+        'value': '{"lat":37.85, "lon":-122.26}'
+    });
+    this.input('body', {
+        'visibility': 'expert'
+    });
+    this.input('trigger', {
+        'visibility': 'expert'
+    });
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
 /** Convert the temperature in kelvins to the units specified in the
@@ -85,17 +112,17 @@ exports.setup = function() {
  *  @param units The units to convert to, one of 'Fahrenheit' or 'Celsius'.
  *  @return The temperature in the desired units.
  */
-var convertTemperature = function(kelvin, units) {
+var convertTemperature = function (kelvin, units) {
     var result = kelvin;
     if (units == 'Fahrenheit') {
         result = (kelvin - 273.15) * 1.8 + 32.00;
     } else if (units == 'Celsius') {
         result = kelvin - 273.15;
     }
-    return (Math.round(result * 100)/100);
+    return (Math.round(result * 100) / 100);
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
 
@@ -107,24 +134,24 @@ exports.initialize = function() {
     var self = this;
 
     // Handle location information.
-    this.addInputHandler('location', function() {
+    this.addInputHandler('location', function () {
         var location = this.get('location');
         if (location &&
-                typeof location.latitude === 'number' &&
-                typeof location.longitude === 'number') {
+            typeof location.latitude === 'number' &&
+            typeof location.longitude === 'number') {
             var reformatted = {
-                'lat' : location.latitude,
-                'lon' : location.longitude,
-                'APPID' : key
+                'lat': location.latitude,
+                'lon': location.longitude,
+                'APPID': key
             };
             self.send('arguments', reformatted);
             self.send('trigger', true);
         } else {
-            if (location ==- null) {
+            if (location == -null) {
                 error('Weather: No location information.');
             } else {
                 error('Weather: Malformed location: ' + location +
-                      '\nExpecting {"latitude":number, "longitude":number}');
+                    '\nExpecting {"latitude":number, "longitude":number}');
             }
             self.send('weather', null);
         }
@@ -135,7 +162,7 @@ exports.initialize = function() {
  *  outputting it on the weather output. The full response is produced
  *  on the 'response' output.
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
     if (response) {
         // Note that for some hosts, the response is a string, needing to parsed,
         // and for some, its already been parsed.
@@ -145,7 +172,7 @@ exports.filterResponse = function(response) {
                 parsed = JSON.parse(response);
             } catch (err) {
                 error('Weather: Unable to parse response: ' + err.message +
-                        '\nResponse was: ' + response);
+                    '\nResponse was: ' + response);
                 // So that downstream actors don't just a previous location, send null.
                 this.send('weather', null);
             }
@@ -153,16 +180,16 @@ exports.filterResponse = function(response) {
         var weather = {};
         // Look for a description field.
         if (parsed.weather &&
-                Array.isArray(parsed.weather) &&
-                parsed.weather[0] &&
-                parsed.weather[0].description) {
+            Array.isArray(parsed.weather) &&
+            parsed.weather[0] &&
+            parsed.weather[0].description) {
             weather.description = parsed.weather[0].description;
         }
         if (parsed.main) {
             if (parsed.main.temp) {
                 weather.temperature = convertTemperature(
-                        parsed.main.temp,
-                        this.getParameter('temperature'));
+                    parsed.main.temp,
+                    this.getParameter('temperature'));
             }
             if (parsed.main.pressure) {
                 weather['pressure (hPa)'] = parsed.main.pressure;
@@ -172,13 +199,13 @@ exports.filterResponse = function(response) {
             }
             if (parsed.main.temp_min) {
                 weather['minimum temperature'] = convertTemperature(
-                        parsed.main.temp_min,
-                        this.getParameter('temperature'));
+                    parsed.main.temp_min,
+                    this.getParameter('temperature'));
             }
             if (parsed.main.temp_max) {
                 weather['maximum temperature'] = convertTemperature(
-                        parsed.main.temp_max,
-                        this.getParameter('temperature'));
+                    parsed.main.temp_max,
+                    this.getParameter('temperature'));
             }
             if (parsed.main.wind) {
                 if (parsed.main.wind.speed) {
@@ -204,7 +231,7 @@ exports.filterResponse = function(response) {
                         "Northwest",
                         "North Northwest"
                     ];
-                    var index = Math.floor(((deg + 11.25) % 360)/22.5);
+                    var index = Math.floor(((deg + 11.25) % 360) / 22.5);
                     weather['wind direction'] = directions[index];
                 }
             }
@@ -216,6 +243,3 @@ exports.filterResponse = function(response) {
     }
     return response;
 };
-
-
-

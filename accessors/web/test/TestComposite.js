@@ -41,8 +41,13 @@
 "use strict";
 
 exports.setup = function () {
-    this.input('input', {'type': 'number', 'value': 0});
-    this.output('output', {'type': 'number'});
+    this.input('input', {
+        'type': 'number',
+        'value': 0
+    });
+    this.output('output', {
+        'type': 'number'
+    });
 
     var gain = this.instantiate('TestGain', 'test/TestGain'),
         adder = this.instantiate('TestAdder', 'test/TestAdder');

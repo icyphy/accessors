@@ -35,7 +35,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('signalIn');
     this.output('fftOutput');
 };
@@ -44,7 +44,7 @@ var dspEngine = null;
 var dsp = require("dsp");
 var handle = null;
 
-var processSignal = function() {
+var processSignal = function () {
     var signalValue = this.get('signalIn');
     var fftLength = signalValue.length;
     var fftResult = dspEngine.fft(signalValue);
@@ -61,12 +61,12 @@ var processSignal = function() {
     this.send('fftOutput', outputArray);
 };
 
-exports.initialize = function() {
-    handle = this.addInputHandler('signalIn',processSignal);
+exports.initialize = function () {
+    handle = this.addInputHandler('signalIn', processSignal);
     var n = 0;
     dspEngine = new dsp.Signal();
 };
 
-exports.wrapup = function() {
-    this.removeInputHandler('signalIn',handle);
+exports.wrapup = function () {
+    this.removeInputHandler('signalIn', handle);
 };

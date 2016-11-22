@@ -47,17 +47,37 @@
 /** Set up the accessor by defining the inputs and outputs.
  */
 
-exports.setup = function() {
-    this.input('lat1', {'type':'number', 'value':0.0});
-    this.input('lon1', {'type':'number', 'value':0.0});
-    this.input('alt1', {'type':'number', 'value':0.0});
-    this.input('lat2', {'type':'number', 'value':0.0});
-    this.input('lon2', {'type':'number', 'value':0.0});
-    this.input('alt2', {'type':'number', 'value':0.0});
-    this.output('dist', {'type':'number'});
-    var lla2ecef1 = this.instantiate('Lla2Ecef','geodesy/Lla2Ecef');
-    var lla2ecef2 = this.instantiate('Lla2Ecef','geodesy/Lla2Ecef');
-    var dist = this.instantiate('EuclideanDist','geodesy/EuclideanDist');
+exports.setup = function () {
+    this.input('lat1', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.input('lon1', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.input('alt1', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.input('lat2', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.input('lon2', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.input('alt2', {
+        'type': 'number',
+        'value': 0.0
+    });
+    this.output('dist', {
+        'type': 'number'
+    });
+    var lla2ecef1 = this.instantiate('Lla2Ecef', 'geodesy/Lla2Ecef');
+    var lla2ecef2 = this.instantiate('Lla2Ecef', 'geodesy/Lla2Ecef');
+    var dist = this.instantiate('EuclideanDist', 'geodesy/EuclideanDist');
     this.connect('lat1', lla2ecef1, 'lat');
     this.connect('lon1', lla2ecef1, 'lon');
     this.connect('alt1', lla2ecef1, 'alt');
@@ -70,6 +90,5 @@ exports.setup = function() {
     this.connect(lla2ecef2, 'x', dist, 'x2');
     this.connect(lla2ecef2, 'y', dist, 'y2');
     this.connect(lla2ecef2, 'z', dist, 'z2');
-    this.connect(dist,'dist', 'dist');
- };
-
+    this.connect(dist, 'dist', 'dist');
+};

@@ -76,13 +76,32 @@ var sawNull = false;
 
 /** Setup the parameters and ports. */
 exports.setup = function () {
-    this.output('data', {'type': 'string'});
-    this.parameter('debugLevel', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': ''});
-    this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
-    this.parameter('numrec', {'type': 'int', 'value': 0});
-    this.parameter('startrec', {'type': 'int', 'value': 0});
-    this.parameter('timeout', {'type': 'int', 'value': 0});
+    this.output('data', {
+        'type': 'string'
+    });
+    this.parameter('debugLevel', {
+        'type': 'string'
+    });
+    this.input('logname', {
+        'type': 'string',
+        'value': ''
+    });
+    this.input('logdname', {
+        'type': 'string',
+        'value': 'edu.berkeley.eecs.gdp-01.gdplogd'
+    });
+    this.parameter('numrec', {
+        'type': 'int',
+        'value': 0
+    });
+    this.parameter('startrec', {
+        'type': 'int',
+        'value': 0
+    });
+    this.parameter('timeout', {
+        'type': 'int',
+        'value': 0
+    });
 };
 
 /** Add an input handler that will subscribe to a log. */
@@ -102,7 +121,9 @@ exports.initialize = function () {
 
 /** If a non-empty logname is given, subscribe to the log. */
 exports.subscribe = function () {
-    var self = this, logname = this.get('logname'), logdname = this.get('logdname');
+    var self = this,
+        logname = this.get('logname'),
+        logdname = this.get('logdname');
 
     if (logname === '') {
         // Nothing more to do.

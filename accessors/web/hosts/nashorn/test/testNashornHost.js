@@ -11,9 +11,6 @@ var a = this.instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);
 a.react();
-console.log(a.latestOutput('output'));  // Should return 50
+console.log(a.latestOutput('output')); // Should return 50
 a.wrapup();
 quit();
-
-
-

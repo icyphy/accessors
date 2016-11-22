@@ -61,19 +61,34 @@
 
 var imageFilters = require('imageFilters');
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('image');
-    this.input('graphic', {'value':'', 'type':'string'});
-    this.input('graphicURI', {'value':'', 'type':'string'});
-    this.input('scale', {'value':1.0, 'type':'number'});
-    this.input('rotation', {'value':0.0, 'type':'number'});
+    this.input('graphic', {
+        'value': '',
+        'type': 'string'
+    });
+    this.input('graphicURI', {
+        'value': '',
+        'type': 'string'
+    });
+    this.input('scale', {
+        'value': 1.0,
+        'type': 'number'
+    });
+    this.input('rotation', {
+        'value': 0.0,
+        'type': 'number'
+    });
     this.input('translate');
-    this.input('options', {'value':'', 'type':'JSON'});
+    this.input('options', {
+        'value': '',
+        'type': 'JSON'
+    });
     this.output('output');
 };
 
-exports.initialize = function() {
-    this.addInputHandler('image', function() {
+exports.initialize = function () {
+    this.addInputHandler('image', function () {
         var image = this.get('image');
         var options = this.get('options');
         if (!options) {

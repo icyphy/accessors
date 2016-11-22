@@ -196,79 +196,79 @@ exports.setup = function () {
 
     // The parameters below are listed alphabetically.
     this.parameter('clientAuth', {
-        type : 'string',
-        value : 'none'    // Indicates no SSL/TSL will be used.
+        type: 'string',
+        value: 'none' // Indicates no SSL/TSL will be used.
     });
     this.parameter('discardSendToUnopenedSocket', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('hostInterface', {
-        type : 'string',
-        value : '0.0.0.0' // Means listen on all available interfaces.
+        type: 'string',
+        value: '0.0.0.0' // Means listen on all available interfaces.
     });
     this.parameter('idleTimeout', {
-        value: 0,         // In seconds. 0 means don't timeout.
+        value: 0, // In seconds. 0 means don't timeout.
         type: "int"
     });
     this.parameter('keepAlive', {
-        type : 'boolean',
-        value : true
+        type: 'boolean',
+        value: true
     });
     this.parameter('noDelay', {
-        type : 'boolean',
-        value : true
+        type: 'boolean',
+        value: true
     });
     this.parameter('pfxKeyCertPassword', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     this.parameter('pfxKeyCertPath', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     this.parameter('port', {
-        type : 'int',
-        value : 4000
+        type: 'int',
+        value: 4000
     });
     this.parameter('rawBytes', {
-        type : 'boolean',
-        value : false      // Means to use a messaging protocol.
+        type: 'boolean',
+        value: false // Means to use a messaging protocol.
     });
     this.parameter('receiveBufferSize', {
         value: 65536,
         type: "int"
     });
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'string'
+        type: 'string',
+        value: 'string'
     });
     this.parameter('sendBufferSize', {
         value: 65536,
         type: "int"
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'string'
+        type: 'string',
+        value: 'string'
     });
     this.parameter('sslTls', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('trustedCACertPath', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
-            options : socket.supportedReceiveTypes()
+            options: socket.supportedReceiveTypes()
         });
         this.parameter('sendType', {
-            options : socket.supportedSendTypes()
+            options: socket.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         error(err);
     }
 };
@@ -296,10 +296,10 @@ exports.toSendInputHandler = function () {
         var discardSendToUnopenedSocket = this.getParameter('discardSendToUnopenedSocket');
         if (discardSendToUnopenedSocket) {
             console.log('Socket with ID ' + idToSendTo +
-                        ' is not open. Discarding data.');
+                ' is not open. Discarding data.');
         } else {
             error('Attempting to send data over socket with id ' + idToSendTo +
-                  ', but this socket is not open.');
+                ', but this socket is not open.');
         }
     }
 };
@@ -314,38 +314,36 @@ exports.toSendInputHandler = function () {
  */
 exports.initialize = function () {
 
-    server = new socket.SocketServer(
-        {
-            'clientAuth' : this.getParameter('clientAuth'),
-            'hostInterface' : this.getParameter('hostInterface'),
-            'idleTimeout' : this.getParameter('idleTimeout'),
-            'keepAlive' : this.getParameter('keepAlive'),
-            'noDelay' : this.getParameter('noDelay'),
-            'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
-            'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
-            'port' : this.getParameter('port'),
-            'rawBytes' : this.getParameter('rawBytes'),
-            'receiveBufferSize' : this.getParameter('receiveBufferSize'),
-            'receiveType' : this.getParameter('receiveType'),
-            'sendBufferSize' : this.getParameter('sendBufferSize'),
-            'sendType' : this.getParameter('sendType'),
-            'sslTls' : this.getParameter('sslTls'),
-            'trustedCACertPath' : this.getParameter('trustedCACertPath')
-        }
-    );
+    server = new socket.SocketServer({
+        'clientAuth': this.getParameter('clientAuth'),
+        'hostInterface': this.getParameter('hostInterface'),
+        'idleTimeout': this.getParameter('idleTimeout'),
+        'keepAlive': this.getParameter('keepAlive'),
+        'noDelay': this.getParameter('noDelay'),
+        'pfxKeyCertPassword': this.getParameter('pfxKeyCertPassword'),
+        'pfxKeyCertPath': this.getParameter('pfxKeyCertPath'),
+        'port': this.getParameter('port'),
+        'rawBytes': this.getParameter('rawBytes'),
+        'receiveBufferSize': this.getParameter('receiveBufferSize'),
+        'receiveType': this.getParameter('receiveType'),
+        'sendBufferSize': this.getParameter('sendBufferSize'),
+        'sendType': this.getParameter('sendType'),
+        'sslTls': this.getParameter('sslTls'),
+        'trustedCACertPath': this.getParameter('trustedCACertPath')
+    });
 
     var self = this;
 
-    server.on('error', function(message) {
+    server.on('error', function (message) {
         self.error(message);
     });
 
-    server.on('listening', function(port) {
+    server.on('listening', function (port) {
         console.log('Server: Listening for socket connection requests on port ' + port);
         self.send('listening', port);
     });
 
-    server.on('connection', function(serverSocket) {
+    server.on('connection', function (serverSocket) {
         // serverSocket is an instance of the Socket class defined
         // in the socket module.
         connectionCount++;
@@ -360,17 +358,17 @@ exports.initialize = function () {
 
         sockets[socketInstance] = serverSocket;
 
-        serverSocket.on('close', function() {
+        serverSocket.on('close', function () {
             socketID.status = 'closed';
             self.send('connection', socketID);
             // Avoid a memory leak here.
             sockets[socketInstance] = null;
         });
-        serverSocket.on('data', function(data) {
+        serverSocket.on('data', function (data) {
             self.send('received', data);
             self.send('receivedID', connectionCount);
         });
-        serverSocket.on('error', function(message) {
+        serverSocket.on('error', function (message) {
             self.error(message);
         });
     });
@@ -385,7 +383,7 @@ exports.initialize = function () {
 
 /** Close all sockets, unregister event listeners, and stop the server.
  */
-exports.wrapup = function() {
+exports.wrapup = function () {
     sockets = [];
 
     if (server !== null) {

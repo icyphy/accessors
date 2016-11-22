@@ -42,9 +42,15 @@
 "use strict";
 
 exports.setup = function () {
-    this.output('getResource', {'type': 'string'});
-    this.output('httpRequest', {'type': 'string'});
-    this.output('readURL', {'type': 'string'});
+    this.output('getResource', {
+        'type': 'string'
+    });
+    this.output('httpRequest', {
+        'type': 'string'
+    });
+    this.output('readURL', {
+        'type': 'string'
+    });
 };
 
 exports.fire = function () {

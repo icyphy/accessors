@@ -103,13 +103,13 @@ exports.setup = function () {
         type: 'string'
     });
     this.parameter('serverPort', {
-        type : 'int',
-        value : 4000
+        type: 'int',
+        value: 4000
     });
     // For communication with Auth
     this.parameter('authHost', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.parameter('authPort', {
         value: -1,
@@ -139,14 +139,14 @@ exports.setup = function () {
     });
     // Send/receive type
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'string',
-        options : ['string', 'image', 'byteArray']
+        type: 'string',
+        value: 'string',
+        options: ['string', 'image', 'byteArray']
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'string',
-        options : ['string', 'image', 'byteArray']
+        type: 'string',
+        value: 'string',
+        options: ['string', 'image', 'byteArray']
     });
 };
 
@@ -197,9 +197,8 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
         console.log('Session key id is as expected');
         currentSessionKey = receivedSessionKey;
         callbackParameters.sendHandshake2Callback(callbackParameters.handshake1Payload,
-                                                  callbackParameters.serverSocket, receivedSessionKey);
-    }
-    else {
+            callbackParameters.serverSocket, receivedSessionKey);
+    } else {
         outputError('Session key id is NOT as expected');
     }
 }
@@ -225,7 +224,9 @@ function onClientRequest(handshake1Payload, serverSocket, sendHandshake2Callback
             authPort: self.getParameter('authPort'),
             entityName: self.getParameter('serverName'),
             numKeysPerRequest: 1,
-            purpose: {keyId: keyId},
+            purpose: {
+                keyId: keyId
+            },
             distributionKey: currentDistributionKey,
             distributionCryptoSpec: self.getParameter('distributionCryptoSpec'),
             publicKeyCryptoSpec: self.getParameter('publicKeyCryptoSpec'),
@@ -251,7 +252,7 @@ function onClose(socketID) {
 
 function onError(message, socketID) {
     outputError('Error in secure server socket #' + socketID +
-                ' details: ' + message);
+        ' details: ' + message);
 }
 
 function onConnection(socketInstance, entityServerSocket) {
@@ -265,11 +266,9 @@ function onData(data, socketID) {
 
     if (receiveType == 'string') {
         self.send('received', data.toString());
-    }
-    else if (receiveType == 'image') {
+    } else if (receiveType == 'image') {
         self.send('received', dataConverter.jsArrayToImage(data.getArray()));
-    }
-    else if (receiveType == 'byteArray') {
+    } else if (receiveType == 'byteArray') {
         self.send('received', data.getArray());
     }
     self.send('receivedID', socketID);
@@ -290,13 +289,11 @@ exports.toSendInputHandler = function () {
             }
             if (!sockets[i].checkSessionKeyValidity()) {
                 outputError('session key expired!');
-            }
-            else if (!sockets[i].send(toSend)) {
+            } else if (!sockets[i].send(toSend)) {
                 outputError('Error in sending data');
             }
         }
-    }
-    else if (sockets[toSendID]) {
+    } else if (sockets[toSendID]) {
         sockets[toSendID].send(toSend);
     } else {
         console.log('Socket with ID ' + idToSendTo + ' is not open. Discarding data.');
@@ -330,7 +327,7 @@ exports.initialize = function () {
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     sockets = [];
     if (server !== null) {
         server.stop();

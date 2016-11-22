@@ -72,22 +72,22 @@
 var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs and outputs. */
-exports.setup = function() {
+exports.setup = function () {
     this.input('address', {
-        'value':'topic',
-        'type':'string'
+        'value': 'topic',
+        'type': 'string'
     });
     this.input('message');
     this.input('broadcast', {
-        'value':true,
-        'type':'boolean'
+        'value': true,
+        'type': 'boolean'
     });
     this.parameter('busHost', {
-        'type':'string'
+        'type': 'string'
     });
     this.parameter('busHostPort', {
-        'value':0,
-        'type':'int'
+        'value': 0,
+        'type': 'int'
     });
     this.output('reply');
 };
@@ -96,16 +96,19 @@ exports.setup = function() {
 var bus;
 var handle;
 
-var replyHandler = function(message) {
+var replyHandler = function (message) {
     this.send('reply', message);
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     var port = this.get('busHostPort');
     var host = this.get('busHost');
-    bus = new eventbus.VertxBus({'port':port, 'host':host});
+    bus = new eventbus.VertxBus({
+        'port': port,
+        'host': host
+    });
 
-    handle = this.addInputHandler('message', function() {
+    handle = this.addInputHandler('message', function () {
         var topic = this.get('address');
         var msg = this.get('message');
         var all = this.get('broadcast');
@@ -119,7 +122,7 @@ exports.initialize = function() {
     });
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     bus.unsubscribe();
     this.removeInputHandler(handle, 'message');
 };

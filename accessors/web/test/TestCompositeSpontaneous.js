@@ -39,7 +39,9 @@
 "use strict";
 
 exports.setup = function () {
-    this.output('output', {'type': 'number'});
+    this.output('output', {
+        'type': 'number'
+    });
     var gen = this.instantiate('TestSpontaneous', 'test/TestSpontaneous'),
         gain = this.instantiate('TestGain', 'test/TestGain');
     gain.setParameter('gain', 4);

@@ -36,12 +36,32 @@
 "use strict";
 
 exports.setup = function () {
-    this.parameter('host', {'type': 'string', 'value': 'localhost'});
-    this.parameter('port', {'type': 'int', 'value': 80});
-    this.parameter('protocol',{'type':'string', 'value': 'http'});
-    this.parameter('path', {'type':'string', 'value': 'gsn'});
-    this.parameter('username', {'type': 'string', 'value': 'admin'});
-    this.parameter('password', {'type': 'string', 'value': ''});
-    this.parameter('method',{'type':'string', 'value':'GET'});
+    this.parameter('host', {
+        'type': 'string',
+        'value': 'localhost'
+    });
+    this.parameter('port', {
+        'type': 'int',
+        'value': 80
+    });
+    this.parameter('protocol', {
+        'type': 'string',
+        'value': 'http'
+    });
+    this.parameter('path', {
+        'type': 'string',
+        'value': 'gsn'
+    });
+    this.parameter('username', {
+        'type': 'string',
+        'value': 'admin'
+    });
+    this.parameter('password', {
+        'type': 'string',
+        'value': ''
+    });
+    this.parameter('method', {
+        'type': 'string',
+        'value': 'GET'
+    });
 };
-

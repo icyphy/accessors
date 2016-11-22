@@ -55,112 +55,110 @@ var locations = {};
  * WebSocketClient. Adds additional parameters regarding the ROS topic
  * to publish to.
  */
-exports.setup = function() {
-   this.extend('net/WebSocketClient');
-   this.parameter('topic', {
-      type: "string"
-   });
-   this.parameter('frame_id', {
-      type: "string",
-      value: ""
-   });
+exports.setup = function () {
+    this.extend('net/WebSocketClient');
+    this.parameter('topic', {
+        type: "string"
+    });
+    this.parameter('frame_id', {
+        type: "string",
+        value: ""
+    });
 };
 
 /**  Inherits initialize from WebSocketClient.
  *   Advertise the topic we are publishing to.
  */
-exports.initialize = function() {
-   this.exports.ssuper.initialize.call(this);
+exports.initialize = function () {
+    this.exports.ssuper.initialize.call(this);
 };
 
 /** Override onOpen from WebSocketClient */
-exports.onOpen = function() {
-   this.exports.ssuper.onOpen.call(this);
+exports.onOpen = function () {
+    this.exports.ssuper.onOpen.call(this);
 
-   // Advertise what we have when the websocket opens.
-   var advertise = {
-      "op": "advertise",
-      "topic": this.getParameter('topic'),
-      "type": ROS_TYPE
-   };
-   this.exports.sendToWebSocket.call(this, advertise);
+    // Advertise what we have when the websocket opens.
+    var advertise = {
+        "op": "advertise",
+        "topic": this.getParameter('topic'),
+        "type": ROS_TYPE
+    };
+    this.exports.sendToWebSocket.call(this, advertise);
 };
 
-function random_color () {
-   var letters = '0123456789ABCDEF'.split('');
-   var color = '0x';
-   for (var i = 0; i < 6; i += 1) {
-      color += letters[Math.floor(Math.random() * 16)];
-   }
-   return parseInt(color, 16);
+function random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '0x';
+    for (var i = 0; i < 6; i += 1) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return parseInt(color, 16);
 }
 
 /** Override inputHandler on 'toSend' from WebSocketClient. */
-exports.toSendInputHandler = function() {
-   var msg = this.get('toSend');
+exports.toSendInputHandler = function () {
+    var msg = this.get('toSend');
 
-   // Update the current location map with this incoming packet
-   var id = msg.id;
-   var x = msg.X || 0;
-   var y = msg.Y || 0;
-   var z = msg.Z || 0;
+    // Update the current location map with this incoming packet
+    var id = msg.id;
+    var x = msg.X || 0;
+    var y = msg.Y || 0;
+    var z = msg.Z || 0;
 
-   // Check if this ID already has a color
-   var color = 0.0;
-   if (id in locations) {
-      color = locations[id].color;
-   } else {
-      color = random_color();
-   }
+    // Check if this ID already has a color
+    var color = 0.0;
+    if (id in locations) {
+        color = locations[id].color;
+    } else {
+        color = random_color();
+    }
 
-   // Actually update the record
-   locations[id] = {
-      position: {
-         x: x,
-         y: y,
-         z: z
-      },
-      color: color
-   };
+    // Actually update the record
+    locations[id] = {
+        position: {
+            x: x,
+            y: y,
+            z: z
+        },
+        color: color
+    };
 
-   // Create arrays we can publish
-   var location_points = [];
-   var colors = [];
-   Object.keys(locations).forEach(function (key) {
-      location_points.push(locations[key].position);
-      colors.push(locations[key].color);
-   });
+    // Create arrays we can publish
+    var location_points = [];
+    var colors = [];
+    Object.keys(locations).forEach(function (key) {
+        location_points.push(locations[key].position);
+        colors.push(locations[key].color);
+    });
 
-   var out = {
-      header: {
-         frame_id: this.getParameter('frame_id')
-      },
-      points: location_points,
-      channels: [
-         {
+    var out = {
+        header: {
+            frame_id: this.getParameter('frame_id')
+        },
+        points: location_points,
+        channels: [{
             name: 'rgb',
             values: colors
-         }
-      ]
-   };
+        }]
+    };
 
-   var data = {
-      "op": "publish",
-      "topic": this.getParameter('topic'),
-      "msg": out
-   };
+    var data = {
+        "op": "publish",
+        "topic": this.getParameter('topic'),
+        "msg": out
+    };
 
-   exports.sendToWebSocket(data);
+    exports.sendToWebSocket(data);
 };
 
 /** Unadvertise the topic and inherit wrapup from WebSocketClient. */
-exports.wrapup = function() {
-   if (this.exports.isOpen()) {
-      var unadvertise = {
-         "op": "unadvertise",
-         "topic": this.getParameter('topic')
-      };
-      this.exports.sendToWebSocket.call(this, unadvertise);
-   }
-   this.exports.ssuper.wrapup.call(this);
+exports.wrapup = function () {
+    if (this.exports.isOpen()) {
+        var unadvertise = {
+            "op": "unadvertise",
+            "topic": this.getParameter('topic')
+        };
+        this.exports.sendToWebSocket.call(this, unadvertise);
+    }
+    this.exports.ssuper.wrapup.call(this);
 };

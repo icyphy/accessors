@@ -60,30 +60,30 @@ exports.setup = function () {
     this.input('trigger');
     this.output('image');
     this.parameter('triggered', {
-        'type' : 'boolean',
-        'value' : true
+        'type': 'boolean',
+        'value': true
     });
     // NOTE: The following assumes that setup() is reinvoked whenever a parameter
     // value changes, since the camera will change and so will the available options.
     this.parameter('camera', {
-        'type' : 'string',
-        'value' : 'default camera'
+        'type': 'string',
+        'value': 'default camera'
     });
     this.parameter('viewSize', {
-        'type' : 'JSON'
+        'type': 'JSON'
     });
     // This is in a try-catch so that this accessor can be instantiated even if the
     // host does not provide a cameras module.
     try {
         this.parameter('camera', {
-            'options' : cameras.cameras()
+            'options': cameras.cameras()
         });
         camera = new cameras.Camera(this.getParameter('camera'));
         this.parameter('viewSize', {
-            'value' : camera.getViewSize(),
-            'options' : camera.viewSizes()
+            'value': camera.getViewSize(),
+            'options': camera.viewSizes()
         });
-    } catch(err) {
+    } catch (err) {
         error(err);
     }
 };

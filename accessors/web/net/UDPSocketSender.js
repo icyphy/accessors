@@ -71,15 +71,15 @@ exports.setup = function () {
         'type': 'int'
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'string'
+        type: 'string',
+        value: 'string'
     });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('sendType', {
-            options : UDPSocket.supportedSendTypes()
+            options: UDPSocket.supportedSendTypes()
         });
     } catch (err) {
         this.error(err);
@@ -99,8 +99,8 @@ exports.initialize = function () {
     this.addInputHandler('toSend', function () {
         var message = self.get('toSend');
         socket.send(message,
-                    self.get('destinationPort'),
-                    self.get('destinationAddress'));
+            self.get('destinationPort'),
+            self.get('destinationAddress'));
     });
 };
 

@@ -116,16 +116,33 @@ var querystring = require('querystring');
 
 /** Define inputs and outputs. */
 exports.setup = function () {
-    this.input('options', {'type':'JSON', 'value':''});
-    this.input('command', {'type':'string', 'value':''});
-    this.input('arguments', {'type':'JSON', 'value':''});
+    this.input('options', {
+        'type': 'JSON',
+        'value': ''
+    });
+    this.input('command', {
+        'type': 'string',
+        'value': ''
+    });
+    this.input('arguments', {
+        'type': 'JSON',
+        'value': ''
+    });
     this.input('trigger');
     this.input('body');
     this.output('response');
-    this.output('status', {'type':'string'});
+    this.output('status', {
+        'type': 'string'
+    });
     this.output('headers');
-    this.parameter('timeout', {'value': 5000, 'type': 'int'});
-    this.parameter('outputCompleteResponseOnly', {'value':true, 'type':'boolean'});
+    this.parameter('timeout', {
+        'value': 5000,
+        'type': 'int'
+    });
+    this.parameter('outputCompleteResponseOnly', {
+        'value': true,
+        'type': 'boolean'
+    });
 };
 
 /** Build the path from the command and arguments.
@@ -139,7 +156,7 @@ exports.setup = function () {
  *  the interaction. The returned string should not include a leading '/'.
  *  That will be added automatically.
  */
-exports.encodePath = function() {
+exports.encodePath = function () {
     // Remove any leading slash that might be present.
     var command = this.get('command').replace(/^\//, '');
     // Encode any characters that are not allowed in a URL.
@@ -157,7 +174,7 @@ exports.encodePath = function() {
  *  (e.g., a timeout or error occurred).
  *  @param response The response, or null if there is none.
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
     return response;
 };
 
@@ -172,7 +189,7 @@ var request;
  *   response as an argument (an instance of IncomingMessage, defined in
  *   the httpClient module).
  */
-exports.issueCommand = function(callback) {
+exports.issueCommand = function (callback) {
     var encodedPath = this.exports.encodePath.call(this);
     var options = this.get('options');
     var body = this.get('body');
@@ -198,13 +215,13 @@ exports.issueCommand = function(callback) {
     }
 
     if (typeof body !== 'undefined') {
-            command.body = body;
+        command.body = body;
     }
 
     // console.log("REST request to: " + JSON.stringify(command));
 
     request = httpClient.request(command, callback);
-    request.on('error', function(message) {
+    request.on('error', function (message) {
         if (!message) {
             message = 'Request failed. No further information.';
         }
@@ -222,7 +239,7 @@ exports.issueCommand = function(callback) {
  *  nothing.
  *  @param message An incoming message.
  */
-exports.handleResponse = function(message) {
+exports.handleResponse = function (message) {
     // Assume that if the response is null, an error will be signaled.
     if (message !== null && typeof message !== 'undefined') {
         if (message.body) {
@@ -242,9 +259,9 @@ exports.handleResponse = function(message) {
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-        this.addInputHandler('trigger',
-                this.exports.issueCommand.bind(this),
-                this.exports.handleResponse.bind(this));
+    this.addInputHandler('trigger',
+        this.exports.issueCommand.bind(this),
+        this.exports.handleResponse.bind(this));
 };
 
 /** Upon wrapup, stop handling new inputs.  */

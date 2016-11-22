@@ -93,7 +93,7 @@ var connection;
 var handle;
 
 /** Define inputs and outputs. */
-exports.setup = function() {
+exports.setup = function () {
     this.input('URI', {
         type: "string",
         value: ""
@@ -140,7 +140,7 @@ var inputHandler = function () {
 /** Initialize the accessor.  Create a bridge object, connect to the bridge, and
  * initialize its state.
  */
-exports.initialize = function() {
+exports.initialize = function () {
     // mockHueBridges.MockHueBridge is an object containing the results
     // of a self-executing function.  This, in essence, creates a singleton
     // object with a set of functions as its public API.
@@ -151,7 +151,7 @@ exports.initialize = function() {
     var self = this;
 
     /** React to a change in the bridge state by outputting the new state.  */
-    connection.on('change', function(data) {
+    connection.on('change', function (data) {
         self.send('state', data);
     });
 

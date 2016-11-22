@@ -85,22 +85,22 @@
 
 if (!window.hasOwnProperty('browserJSLoaded')) {
 
-        // Note that the following will not work in IE 8 or older.
-        window.addEventListener('DOMContentLoaded', function () {
-            window.generate();
-        });
+    // Note that the following will not work in IE 8 or older.
+    window.addEventListener('DOMContentLoaded', function () {
+        window.generate();
+    });
 
-        window.addEventListener('unload', function (event) {
-            if (window.accessors) {
-                for (var accessor in window.accessors) {
-                    if (accessor.initialized) {
-                        accessor.wrapup();
-                    }
+    window.addEventListener('unload', function (event) {
+        if (window.accessors) {
+            for (var accessor in window.accessors) {
+                if (accessor.initialized) {
+                    accessor.wrapup();
                 }
             }
-        });
+        }
+    });
 
-        window.browserJSLoaded = true;
+    window.browserJSLoaded = true;
 }
 
 // Check the URL for a querystring specifying an accessor to load (optional).
@@ -109,32 +109,33 @@ if (!window.hasOwnProperty('browserJSLoaded')) {
 // E.g. https://www.terraswarm.org/accessors/library/index.html?accessor=services.StockTick
 // The querystring uses . instead of / since / is a special character in URLs. -->
 window.onload = function () {
-        var url = window.location.href;
-        var index = url.lastIndexOf('?');
-        var querystring = "", accessor = "";
-        var slashIndex = -1;
+    var url = window.location.href;
+    var index = url.lastIndexOf('?');
+    var querystring = "",
+        accessor = "";
+    var slashIndex = -1;
 
-        if (index >= 0) {
-                querystring = url.substring(index + 1, url.length);
+    if (index >= 0) {
+        querystring = url.substring(index + 1, url.length);
 
-                // This code assumes that "accessor" is the only querystring parameter passed.
-                if (querystring.startsWith("accessor=")) {
-                        querystring = querystring.substring(9, querystring.length);
+        // This code assumes that "accessor" is the only querystring parameter passed.
+        if (querystring.startsWith("accessor=")) {
+            querystring = querystring.substring(9, querystring.length);
 
-                        // Querystring uses . instead of / which is a special character.
-                        // Replace . with /
-                        querystring = querystring.replace('.', '/');
-                        generateAccessorHTML(querystring, 'accessorDirectoryTarget');
+            // Querystring uses . instead of / which is a special character.
+            // Replace . with /
+            querystring = querystring.replace('.', '/');
+            generateAccessorHTML(querystring, 'accessorDirectoryTarget');
 
-                        // Call toggleVisbility() to expand the directory that this
-                        // this accessor is located in.  For example, expand "net"
-                        // for "net/REST".
-                        slashIndex = querystring.indexOf("/");
-                        if (slashIndex > 0) {
-                                toggleVisibility("/accessors/" + querystring.substring(0, slashIndex), 0, getIndex);
-                        }
-                }
+            // Call toggleVisbility() to expand the directory that this
+            // this accessor is located in.  For example, expand "net"
+            // for "net/REST".
+            slashIndex = querystring.indexOf("/");
+            if (slashIndex > 0) {
+                toggleVisibility("/accessors/" + querystring.substring(0, slashIndex), 0, getIndex);
+            }
         }
+    }
 };
 
 ///////////////////////////////////////////////////////////////////
@@ -182,7 +183,7 @@ function appendPlaceholder(target, id, element) {
  *  with class 'accessorDirectory' and insert an accessory directory.
  */
 function generate() {
-        var i, element;
+    var i, element;
     var accessorCount = 0;
     var acessorElements = document.getElementsByClassName('accessor');
     if (acessorElements && acessorElements.length > 0) {
@@ -302,11 +303,11 @@ function generateAccessorHTML(path, id) {
             detail = 'from accessor';
         }
         pp.innerHTML = 'Error ' +
-                        detail +
-                        ' at ' +
-                        path +
-                ': ' +
-                err;
+            detail +
+            ' at ' +
+            path +
+            ': ' +
+            err;
         var target = document.getElementById(id + 'Error');
         target.appendChild(pp);
         executable = false;
@@ -351,6 +352,7 @@ function generateAccessorHTML(path, id) {
         // The third argument specifies a synchronous read.
         request.open("GET", uri, false);
         var timeoutHandler = setTimeout(handleTimeout, timeout);
+
         function handleTimeout() {
             request.abort();
             error("getResource timed out at URI: " + uri);
@@ -445,10 +447,10 @@ function generateAccessorHTML(path, id) {
 
         var evaluate = function (code) {
             // Create the exports object to be populated.
-                // Some libraries overwrite module.exports instead of adding to exports.
-                var module = {};
-                module.exports = {};
-                var exports = module.exports;
+            // Some libraries overwrite module.exports instead of adding to exports.
+            var module = {};
+            module.exports = {};
+            var exports = module.exports;
 
             // In strict mode, eval() cannot modify the scope of this function.
             // Hence, we wrap the code in the function, and will pass in the
@@ -501,45 +503,45 @@ function generateAccessorHTML(path, id) {
 
     // Load the specified module.
     function require(path) {
-            // If the commonHost is required, return it.
-            if (path.indexOf("commonHost") >= 0) {
-                    return commonHost;
-            }
+        // If the commonHost is required, return it.
+        if (path.indexOf("commonHost") >= 0) {
+            return commonHost;
+        }
 
-            // If module already loaded, return the cached copy.
-            if (loadedModules.hasOwnProperty(path)) {
-                    return(loadedModules[path]);
+        // If module already loaded, return the cached copy.
+        if (loadedModules.hasOwnProperty(path)) {
+            return (loadedModules[path]);
+        } else {
+            // Otherwise, load the module.
+            // Indicate required modules in the docs.
+            var modules = document.getElementById(id + 'Modules');
+            var text = modules.innerHTML;
+            if (!text) {
+                text = '<p><b>Modules required:</b> ' + path;
             } else {
-                    // Otherwise, load the module.
-                // Indicate required modules in the docs.
-                var modules = document.getElementById(id + 'Modules');
-                var text = modules.innerHTML;
-                if (!text) {
-                    text = '<p><b>Modules required:</b> ' + path;
-                } else {
-                    // Remove the trailing '</p>'
-                    text = text.replace('</p>', '');
-                    text += ', ' + path;
-                }
-                // Default return value.
-                var result = 'Module failed to load';
-                // Load the module synchronously because the calling function needs the returned
-                // value. If a module fails to load, however, we will still want to display a web
-                // page. It's just that execution will fail.
-                try {
-                    // The third argument (null) indicates synchronous load.
-                    result = loadFromServer(path, id, null);
-                    loadedModules[path] = result;
-                    // If successful, add the module name to the text of the modules list.
-                } catch (err) {
-                        console.log("path " + path);
-                        console.log("err " + err);
-                    executable = false;
-                    text += '<span class="accessorError"> (Not supported by this host)</span>';
-                }
-                modules.innerHTML = text + '</p>';
-                return result;
+                // Remove the trailing '</p>'
+                text = text.replace('</p>', '');
+                text += ', ' + path;
             }
+            // Default return value.
+            var result = 'Module failed to load';
+            // Load the module synchronously because the calling function needs the returned
+            // value. If a module fails to load, however, we will still want to display a web
+            // page. It's just that execution will fail.
+            try {
+                // The third argument (null) indicates synchronous load.
+                result = loadFromServer(path, id, null);
+                loadedModules[path] = result;
+                // If successful, add the module name to the text of the modules list.
+            } catch (err) {
+                console.log("path " + path);
+                console.log("err " + err);
+                executable = false;
+                text += '<span class="accessorError"> (Not supported by this host)</span>';
+            }
+            modules.innerHTML = text + '</p>';
+            return result;
+        }
     }
 
     // Send an output or to an input.  This implementation assumes that the
@@ -551,7 +553,7 @@ function generateAccessorHTML(path, id) {
     // whose value is an instance of the Accessor class of the
     // common/commonHost.js module.
     function send(name, value) {
-            var isInput = false;
+        var isInput = false;
         var element = document.getElementById(id + '.' + name);
         if (!element) {
             alert('No output named ' + name + ' for accessor with id ' + id);
@@ -560,16 +562,16 @@ function generateAccessorHTML(path, id) {
         // Handle data types.  Check output ports.
         var options = window.accessors[id].outputs[name];
         if (!options) {
-                // Check input ports
-                options = window.accessors[id].inputs[name];
-                isInput = true;
-                if (!options) {
-                        // This could only occur is somehow the document has an element
-                        // with the right name, but there is no such input.
-                        alert('No record of output or input named ' + name +
-                                        ' for accessor with id ' + id);
-                        return null;
-                }
+            // Check input ports
+            options = window.accessors[id].inputs[name];
+            isInput = true;
+            if (!options) {
+                // This could only occur is somehow the document has an element
+                // with the right name, but there is no such input.
+                alert('No record of output or input named ' + name +
+                    ' for accessor with id ' + id);
+                return null;
+            }
         }
         options.latestValue = value;
 
@@ -577,14 +579,14 @@ function generateAccessorHTML(path, id) {
         // Set value for HTML element.  Call provideInput() on inputs.
         if (isInput) {
             if (options.type === 'string') {
-                    element.setAttribute("value", value);
+                element.setAttribute("value", value);
             } else {
                 element.setAttribute("value", JSON.stringify(value));
             }
-                provideInput(id, name, value);
+            provideInput(id, name, value);
         } else {
             if (options.type === 'string') {
-                    element.textContent = value;
+                element.textContent = value;
             } else {
                 element.textContent = JSON.stringify(value);
             }
@@ -602,25 +604,26 @@ function generateAccessorHTML(path, id) {
 
     // Load common/commonHost.js code asynchronously.
     loadFromServer('/accessors/hosts/common/commonHost.js',
-            id, function (err, theCommonHost) {
-        var instance;
-        if (err) {
-            error(err, 'loading commonHost.js');
-            return;
-        } else {
-            // Function bindings for the accessor:
-            var bindings = {
-                'error' : error,
-                'get': get,
-                'getParameter': getParameter,
-                'getResource': getResource,
-                'httpRequest' : httpRequest,
-                'readURL': readURL,
-                'require': require,
-                'send': send,
-                'util': util
-            };
-            try {
+        id,
+        function (err, theCommonHost) {
+            var instance;
+            if (err) {
+                error(err, 'loading commonHost.js');
+                return;
+            } else {
+                // Function bindings for the accessor:
+                var bindings = {
+                    'error': error,
+                    'get': get,
+                    'getParameter': getParameter,
+                    'getResource': getResource,
+                    'httpRequest': httpRequest,
+                    'readURL': readURL,
+                    'require': require,
+                    'send': send,
+                    'util': util
+                };
+                try {
                     // Make the commonHost globally visible.  Used by Test accessor.
                     commonHost = theCommonHost;
                     Accessor = commonHost.Accessor;
@@ -629,53 +632,53 @@ function generateAccessorHTML(path, id) {
                     // 'Accessor' constructor is used in Mocha tests.
                     commonHost.Accessor.prototype.require = require;
 
-                instance = new commonHost.Accessor(
+                    instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
 
-                // Mocha tests use instantiate.  Define it.
-                // code = getAccessorCode('net/REST');
-                // instance = new commonHost.Accessor('REST', code);
-                instantiate = function (className, path) {
+                    // Mocha tests use instantiate.  Define it.
+                    // code = getAccessorCode('net/REST');
+                    // instance = new commonHost.Accessor('REST', code);
+                    instantiate = function (className, path) {
                         code = getAccessorCode(path);
                         return new commonHost.Accessor(className, code);
-                };
-            } catch (err2) {
-                error(err2, 'instantiating accessor');
-                executable = false;
-                // Failed to instantiate the accessor. Can't generate very much.
-                // Generate docs and button to view the accessor code.
-                generateAccessorDocumentation(path, id);
-                generateAccessorCodeElement(code, id);
-                return;
+                    };
+                } catch (err2) {
+                    error(err2, 'instantiating accessor');
+                    executable = false;
+                    // Failed to instantiate the accessor. Can't generate very much.
+                    // Generate docs and button to view the accessor code.
+                    generateAccessorDocumentation(path, id);
+                    generateAccessorCodeElement(code, id);
+                    return;
+                }
+                // If an error occurred or a module was found missing during instantiation,
+                // then executable will be false.
+                instance.executable = executable;
             }
-            // If an error occurred or a module was found missing during instantiation,
-            // then executable will be false.
-            instance.executable = executable;
-        }
-        // Record the accessor instance.
-        // The following will define a global variable 'accessors'
-        // if it is not already defined.
-        if (!window.accessors) {
-            window.accessors = {};
-        }
-        window.accessors[id] = instance;
+            // Record the accessor instance.
+            // The following will define a global variable 'accessors'
+            // if it is not already defined.
+            if (!window.accessors) {
+                window.accessors = {};
+            }
+            window.accessors[id] = instance;
 
-        // Create documentation for the accessor.
-        generateAccessorDocumentation(path, id);
+            // Create documentation for the accessor.
+            generateAccessorDocumentation(path, id);
 
-        // Create a button to view the accessor code.
-        generateAccessorCodeElement(code, id);
+            // Create a button to view the accessor code.
+            generateAccessorCodeElement(code, id);
 
-        // Generate tables for the accessor.
-        generateTables(instance, id);
+            // Generate tables for the accessor.
+            generateTables(instance, id);
 
-        // If the accessor has no inputs, then there will be no
-        // 'react to inputs' button. In this case, attempt to initialize
-        // and fire accessor.
-        if (instance && (!instance.inputList || instance.inputList.length === 0)) {
-            reactIfExecutable(id, true);
-        }
-    });
+            // If the accessor has no inputs, then there will be no
+            // 'react to inputs' button. In this case, attempt to initialize
+            // and fire accessor.
+            if (instance && (!instance.inputList || instance.inputList.length === 0)) {
+                reactIfExecutable(id, true);
+            }
+        });
 }
 
 /** Generate a button that will optionally reveal the accessor source code.
@@ -746,7 +749,7 @@ function generateAccessorDirectory(element) {
  *  @param id The id of the accessor.
  */
 function generateAccessorDocumentation(path, id) {
-        var i;
+    var i;
 
     // Attempt to read the PtDoc file.
     path = normalizePath(path);
@@ -756,7 +759,7 @@ function generateAccessorDocumentation(path, id) {
     request.overrideMimeType("application/xml");
     // FIXME: Have to do a synchronous fetch here with this design because the
     // data structure being constructed will be used when this return.
-    request.open('GET', path, false);    // Pass false for synchronous
+    request.open('GET', path, false); // Pass false for synchronous
     request.send();
     // Data structure to populate with doc information.
     var docs = {};
@@ -781,7 +784,7 @@ function generateAccessorDocumentation(path, id) {
     // If the request was unsuccessful.
     if (request.status !== 200) {
         docs.description =
-                '<p class="accessorWarning">No documentation found for \
+            '<p class="accessorWarning">No documentation found for \
                 the accessor (tried ' + path + ').';
     } else {
         // Request was successful. Parsed DOM is in responseXML.
@@ -818,12 +821,12 @@ function generateAccessorDocumentation(path, id) {
  *  @param id The id of the accessor.
  */
 function generateTables(instance, id) {
-        var promises = [];
+    var promises = [];
 
     // Generate a table for parameters.
     if (instance.parameterList && instance.parameterList.length > 0) {
         promises.push(generateTable("Parameters",
-                instance.parameterList, instance.parameters, "parameter", id));
+            instance.parameterList, instance.parameters, "parameter", id));
     }
     // Generate a table for inputs.
     if (instance.inputList && instance.inputList.length > 0) {
@@ -839,7 +842,7 @@ function generateTables(instance, id) {
     // TODO:  It would be even better to generate an event when all content
     // is done.  This would probably require Promises everywhere...
     Promise.all(promises).then(function () {
-            window.dispatchEvent(new Event('accessorTableDone'));
+        window.dispatchEvent(new Event('accessorTableDone'));
     });
 
     // Generate a list of contained accessors, if any.
@@ -877,7 +880,7 @@ function generateReactButton(id) {
     var target = document.getElementById(id + 'Tables');
     var targetClass = target.getAttribute('class');
     if (targetClass &&
-            (targetClass === 'containedAccessor')) {
+        (targetClass === 'containedAccessor')) {
         // A contained accessor cannot be asked to react independently.
         return;
     }
@@ -907,100 +910,100 @@ function generateReactButton(id) {
  *  @param id The id of the accessor.
  */
 function generateTable(title, names, contents, role, id) {
-        return new Promise(function (resolve, reject) {
-                var promises= [];
-            var target = document.getElementById(id + 'Tables');
+    return new Promise(function (resolve, reject) {
+        var promises = [];
+        var target = document.getElementById(id + 'Tables');
 
-            // Create header line.
-            var header = document.createElement('h2');
-            header.innerHTML = title;
-            header.setAttribute('class', 'accessorTableTitle');
-            target.appendChild(header);
+        // Create header line.
+        var header = document.createElement('h2');
+        header.innerHTML = title;
+        header.setAttribute('class', 'accessorTableTitle');
+        target.appendChild(header);
 
-            if (role === 'input') {
-                // Generate a react button.
-                generateReactButton(id);
-            }
+        if (role === 'input') {
+            // Generate a react button.
+            generateReactButton(id);
+        }
 
-            var table = document.createElement('table');
-            table.setAttribute('class', 'accessorTable ui-responsive table-stroke');
-            table.setAttribute('width', '100%');
-            table.setAttribute('data-role', 'table');
+        var table = document.createElement('table');
+        table.setAttribute('class', 'accessorTable ui-responsive table-stroke');
+        table.setAttribute('width', '100%');
+        table.setAttribute('data-role', 'table');
 
-            var head = document.createElement('thead');
-            table.appendChild(head);
+        var head = document.createElement('thead');
+        table.appendChild(head);
 
-            var titleRow = document.createElement('tr');
-            titleRow.setAttribute('class', 'accessorTableRow');
-            head.appendChild(titleRow);
+        var titleRow = document.createElement('tr');
+        titleRow.setAttribute('class', 'accessorTableRow');
+        head.appendChild(titleRow);
 
-            var column = document.createElement('th');
-            column.setAttribute('class', 'accessorTableHeader');
-            // To not expand, use 1%.
-            column.setAttribute('width', '1%');
-            column.innerHTML = 'Name';
-            titleRow.appendChild(column);
+        var column = document.createElement('th');
+        column.setAttribute('class', 'accessorTableHeader');
+        // To not expand, use 1%.
+        column.setAttribute('width', '1%');
+        column.innerHTML = 'Name';
+        titleRow.appendChild(column);
 
-            column = document.createElement('th');
-            column.setAttribute('class', 'accessorTableHeader');
-            column.setAttribute('width', '1%');
-            column.innerHTML = 'Type';
-            titleRow.appendChild(column);
+        column = document.createElement('th');
+        column.setAttribute('class', 'accessorTableHeader');
+        column.setAttribute('width', '1%');
+        column.innerHTML = 'Type';
+        titleRow.appendChild(column);
 
-            column = document.createElement('th');
-            column.setAttribute('class', 'accessorTableHeader');
-            column.innerHTML = 'Value';
-            titleRow.appendChild(column);
+        column = document.createElement('th');
+        column.setAttribute('class', 'accessorTableHeader');
+        column.innerHTML = 'Value';
+        titleRow.appendChild(column);
 
-            column = document.createElement('th');
-            column.setAttribute('class', 'accessorTableHeader');
-            column.innerHTML = 'Documentation';
-            titleRow.appendChild(column);
+        column = document.createElement('th');
+        column.setAttribute('class', 'accessorTableHeader');
+        column.innerHTML = 'Documentation';
+        titleRow.appendChild(column);
 
-            var tbody = document.createElement('tbody');
-            table.appendChild(tbody);
+        var tbody = document.createElement('tbody');
+        table.appendChild(tbody);
 
-            target.appendChild(table);
+        target.appendChild(table);
 
-            var editable = true;
-            if (role === 'output') {
-                editable = false;
-            }
-            if (target.getAttribute('class') === 'containedAccessor') {
-                editable = false;
-            }
+        var editable = true;
+        if (role === 'output') {
+            editable = false;
+        }
+        if (target.getAttribute('class') === 'containedAccessor') {
+            editable = false;
+        }
 
-            for (var i = 0; i < names.length; i++) {
-                    var visible = true;
-                var item = contents[names[i]];
-                if (item) {
-                    if (item.visibility) {
-                        var visibility = item.visibility;
-                        if (visibility == 'notEditable') {
-                            editable = false;
-                        }
-                        if (visibility == 'expert') {
-                                visible = false;
-                        }
+        for (var i = 0; i < names.length; i++) {
+            var visible = true;
+            var item = contents[names[i]];
+            if (item) {
+                if (item.visibility) {
+                    var visibility = item.visibility;
+                    if (visibility == 'notEditable') {
+                        editable = false;
                     }
-                    promises.push(generateTableRow(
-                            tbody,
-                            names[i],
-                            id,
-                            item,
-                            editable,
-                            visible,
-                            role));
+                    if (visibility == 'expert') {
+                        visible = false;
+                    }
                 }
+                promises.push(generateTableRow(
+                    tbody,
+                    names[i],
+                    id,
+                    item,
+                    editable,
+                    visible,
+                    role));
             }
+        }
 
-            // Resolve promise once all rows are created.
-            Promise.all(promises).then(function () {
-                    return resolve(true);
-            }, function () {
-                    return reject(true);
-            });
+        // Resolve promise once all rows are created.
+        Promise.all(promises).then(function () {
+            return resolve(true);
+        }, function () {
+            return reject(true);
         });
+    });
 }
 
 /** Generate a table row for an input, parameter, or output.
@@ -1016,131 +1019,131 @@ function generateTable(title, names, contents, role, id) {
  *  @param role Can be parameter, input or output.
  */
 function generateTableRow(table, name, id, options, editable, visible, role) {
-        return new Promise(function (resolve, reject) {
-            var row = document.createElement("tr");
-            var classTag;
+    return new Promise(function (resolve, reject) {
+        var row = document.createElement("tr");
+        var classTag;
 
-            if (visible) {
-                    classTag = "accessorTableRow";
+        if (visible) {
+            classTag = "accessorTableRow";
+        } else {
+            classTag = "accessorTableRow invisible";
+        }
+
+        row.setAttribute('class', classTag);
+
+        // Insert the name.
+        var nameCell = document.createElement("td");
+        nameCell.setAttribute('class', 'accessorTableData');
+        nameCell.innerHTML = name;
+        row.appendChild(nameCell);
+
+        // Insert the type.
+        var typeCell = document.createElement("td");
+        typeCell.setAttribute('class', 'accessorTableData');
+        var type = options.type;
+        if (!type) {
+            type = '';
+        }
+        typeCell.innerHTML = type;
+        row.appendChild(typeCell);
+
+        // Insert the value.
+        // Initial values are optional. There are two ways to specify initial values.
+        // To specify an initial value for all instances of an accessor, define a
+        // value in setup().  Please see
+        // /net/REST.js for example.
+        // To specify an initial value for a web page, add a script element to the
+        // page prior to browser.js defining an initialValues object.  Please see
+        // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
+        var valueCell = document.createElement("td");
+        valueCell.setAttribute('class', 'accessorTableData');
+
+        if ((typeof initialValues != "undefined") &&
+            (initialValues.hasOwnProperty(id + "." + name))) {
+            options.initialValue = initialValues[id + "." + name];
+        }
+
+        var value = options.currentValue ||
+            options.initialValue || // Page-specific initial value takes precedence
+            // over accessor default value (options.value)
+            options.value ||
+            options.latestOutput ||
+            '';
+
+        if (typeof value === 'object') {
+            value = JSON.stringify(value);
+        }
+        if (!editable) {
+            valueCell.innerHTML = value;
+
+            // Set a unique ID so that this input can be retrieved by the get()
+            // or set by the send() function defined in local.js.
+            valueCell.setAttribute('id', id + '.' + name);
+
+        } else {
+            // Either a parameter or input.  Outputs are not editable.
+            var valueInput = document.createElement("input");
+
+            if (role === 'input') {
+                // Do not invoke any handlers on input change.  The user must
+                // initiate invoctaion with the "react to inputs" button.
+                valueInput.setAttribute('class', 'valueInputBox inputRole');
             } else {
-                    classTag = "accessorTableRow invisible";
+                // Invoke setParameter() on change.  Note onchange() also fires when
+                // the user deletes a form field value.
+                valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
+                valueInput.setAttribute('class', 'valueInputBox parameterRole');
             }
 
-            row.setAttribute('class', classTag);
+            // Set a unique ID so that this input can be retrieved by the get()
+            // function defined in local.js.
+            valueInput.setAttribute('id', id + '.' + name);
+            valueInput.setAttribute('type', 'text');
+            valueInput.setAttribute('name', name);
+            valueInput.setAttribute('value', value);
 
-            // Insert the name.
-            var nameCell = document.createElement("td");
-            nameCell.setAttribute('class', 'accessorTableData');
-            nameCell.innerHTML = name;
-            row.appendChild(nameCell);
+            valueCell.appendChild(valueInput);
+        }
+        row.appendChild(valueCell);
 
-            // Insert the type.
-            var typeCell = document.createElement("td");
-            typeCell.setAttribute('class', 'accessorTableData');
-            var type = options.type;
-            if (!type) {
-                type = '';
-            }
-            typeCell.innerHTML = type;
-            row.appendChild(typeCell);
+        // Insert the documentation, if any is found.
+        var success = false;
+        var docCell;
+        if (window.accessorDocs) {
+            var docs = window.accessorDocs[id];
+            if (docs) {
+                // Try with various suffixes.
+                var doc = docs[name];
+                if (!doc) {
+                    doc = docs[name + ' (parameter)'];
+                }
+                if (!doc) {
+                    doc = docs[name + ' (port)'];
+                }
+                if (!doc) {
+                    doc = docs[name + ' (port-parameter)'];
+                }
+                if (doc) {
+                    success = true;
+                    docCell = document.createElement("td");
 
-            // Insert the value.
-            // Initial values are optional. There are two ways to specify initial values.
-            // To specify an initial value for all instances of an accessor, define a
-            // value in setup().  Please see
-            // /net/REST.js for example.
-            // To specify an initial value for a web page, add a script element to the
-            // page prior to browser.js defining an initialValues object.  Please see
-            // /web/hosts/browser/modules/test/httpClient/testREST.html for example.
-            var valueCell = document.createElement("td");
-            valueCell.setAttribute('class', 'accessorTableData');
-
-            if ( (typeof initialValues != "undefined") &&
-                            (initialValues.hasOwnProperty(id + "." + name))) {
-                    options.initialValue = initialValues[id + "." + name];
-            }
-
-            var value = options.currentValue ||
-                    options.initialValue ||        // Page-specific initial value takes precedence
-                                                                    // over accessor default value (options.value)
-                options.value ||
-                options.latestOutput ||
-                '';
-
-            if (typeof value === 'object') {
-                value = JSON.stringify(value);
-            }
-            if (!editable) {
-                valueCell.innerHTML = value;
-
-                // Set a unique ID so that this input can be retrieved by the get()
-                // or set by the send() function defined in local.js.
-                valueCell.setAttribute('id', id + '.' + name);
-
-            } else {
-                    // Either a parameter or input.  Outputs are not editable.
-                    var valueInput = document.createElement("input");
-
-                    if (role === 'input') {
-                            // Do not invoke any handlers on input change.  The user must
-                            // initiate invoctaion with the "react to inputs" button.
-                            valueInput.setAttribute('class', 'valueInputBox inputRole');
-                    } else {
-                            // Invoke setParameter() on change.  Note onchange() also fires when
-                            // the user deletes a form field value.
-                            valueInput.setAttribute('onchange', 'setParameter("' + id + '", name, value)');
-                            valueInput.setAttribute('class', 'valueInputBox parameterRole');
-                    }
-
-                    // Set a unique ID so that this input can be retrieved by the get()
-                    // function defined in local.js.
-                    valueInput.setAttribute('id', id + '.' + name);
-                    valueInput.setAttribute('type', 'text');
-                    valueInput.setAttribute('name', name);
-                    valueInput.setAttribute('value', value);
-
-                    valueCell.appendChild(valueInput);
-            }
-            row.appendChild(valueCell);
-
-            // Insert the documentation, if any is found.
-            var success = false;
-            var docCell;
-            if (window.accessorDocs) {
-                var docs = window.accessorDocs[id];
-                if (docs) {
-                    // Try with various suffixes.
-                    var doc = docs[name];
-                    if (!doc) {
-                        doc = docs[name + ' (parameter)'];
-                    }
-                    if (!doc) {
-                        doc = docs[name + ' (port)'];
-                    }
-                    if (!doc) {
-                        doc = docs[name + ' (port-parameter)'];
-                    }
-                    if (doc) {
-                        success = true;
-                        docCell = document.createElement("td");
-
-                        docCell.className = 'accessorDocumentation accessorTableData';
-                        docCell.innerHTML = doc;
-                        row.appendChild(docCell);
-                    }
+                    docCell.className = 'accessorDocumentation accessorTableData';
+                    docCell.innerHTML = doc;
+                    row.appendChild(docCell);
                 }
             }
-            if (!success) {
-                docCell = document.createElement("td");
+        }
+        if (!success) {
+            docCell = document.createElement("td");
 
-                docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
-                docCell.innerHTML = 'No description found';
-                row.appendChild(docCell);
-            }
+            docCell.setAttribute('class', 'accessorDocumentation accessorWarning');
+            docCell.innerHTML = 'No description found';
+            row.appendChild(docCell);
+        }
 
-            table.appendChild(row);
-            return resolve(true);
-        });
+        table.appendChild(row);
+        return resolve(true);
+    });
 }
 
 /** Get default documentation from a base accessor or implemented interface.
@@ -1158,7 +1161,7 @@ function getBaseDocumentation(docs, path) {
     // FIXME: Have to do this as a synchronous request with this design
     // because we are populating the data structure that will be used upon
     // returning.
-    request.open('GET', path, false);    // Pass false for synchronous
+    request.open('GET', path, false); // Pass false for synchronous
     request.send();
     // FIXME: Need to instantiate the base in order to know whether
     // it, in turn, extends or implements anything, and follow that here.
@@ -1177,8 +1180,8 @@ function getBaseDocumentation(docs, path) {
             var property = properties[i];
             var name = property.getAttribute('name');
             if (name !== 'description' &&
-                            name !== 'author' &&
-                            name !== 'version') {
+                name !== 'author' &&
+                name !== 'version') {
                 docs[name] = property.getAttribute('value');
             }
         }
@@ -1198,7 +1201,7 @@ function getIndex(baseDirectory, docElement, indent) {
     var request = new XMLHttpRequest();
     request.overrideMimeType("application/json");
     var path = baseDirectory + 'index.json';
-    request.open('GET', path, true);    // Pass true for asynchronous
+    request.open('GET', path, true); // Pass true for asynchronous
     request.onreadystatechange = function () {
         // If the request is complete (state is 4)
         if (request.readyState === 4) {
@@ -1214,17 +1217,17 @@ function getIndex(baseDirectory, docElement, indent) {
                         // Accessor reference.
                         // Strip off the .js
 
-                            content = document.createElement('a');
+                        content = document.createElement('a');
 
-                            // Remove .accessors/ from baseDirectory.
-                            var querystring = "index.html?accessor=" +
-                                    baseDirectory.substring(11, baseDirectory.length) +
-                                    item.substring(0, item.length - 3);
-                            querystring = querystring.replace('/', '.');
-                            content.href = querystring;
+                        // Remove .accessors/ from baseDirectory.
+                        var querystring = "index.html?accessor=" +
+                            baseDirectory.substring(11, baseDirectory.length) +
+                            item.substring(0, item.length - 3);
+                        querystring = querystring.replace('/', '.');
+                        content.href = querystring;
 
-                            content.setAttribute('class', 'accessorDirectoryItem');
-                            docElement.appendChild(content);
+                        content.setAttribute('class', 'accessorDirectoryItem');
+                        docElement.appendChild(content);
                         content.innerHTML = item.substring(0, item.length - 3);
 
                     } else if (item.indexOf('.xml') !== -1) {
@@ -1274,7 +1277,7 @@ function getInputOrParameter(name, role, id) {
     var element = document.getElementById(id + '.' + name);
     if (!element) {
         alert('No ' + role + ' named ' + name +
-                        ' for accessor with id ' + id);
+            ' for accessor with id ' + id);
         return null;
     }
     // Depending on the type, we should parse the input or parameter.
@@ -1288,7 +1291,7 @@ function getInputOrParameter(name, role, id) {
             // This could only occur is somehow the document has an element
             // with the right name, but there is no such input or parameter.
             alert('No record of ' + role + ' named ' + name +
-                            ' for accessor with id ' + id);
+                ' for accessor with id ' + id);
             return null;
         }
         if (!options.type) {
@@ -1313,8 +1316,8 @@ function getInputOrParameter(name, role, id) {
             try {
                 return JSON.parse(element.value);
             } catch (err) {
-                alert('Invalid JSON on ' + role + ' named ' + name +': ' +
-                                element.value + ' for accessor with id ' + id);
+                alert('Invalid JSON on ' + role + ' named ' + name + ': ' +
+                    element.value + ' for accessor with id ' + id);
                 return null;
             }
         }
@@ -1379,8 +1382,8 @@ function getJavaScript(path, callback, module) {
     request.overrideMimeType("application/javascript");
     if (!callback) {
         // Synchronous version.
-        request.open('GET', path, false);   // Pass false for synchronous
-        request.send();                     // Send the request now
+        request.open('GET', path, false); // Pass false for synchronous
+        request.send(); // Send the request now
         // Throw an error if the request was not 200 OK
         if (request.status !== 200) {
             throw 'Failed to get ' + path + ': ' + request.statusText;
@@ -1388,7 +1391,7 @@ function getJavaScript(path, callback, module) {
         return request.responseText;
     } else {
         // Asynchronous version.
-        request.open('GET', path, true);    // Pass true for asynchronous
+        request.open('GET', path, true); // Pass true for asynchronous
         request.onreadystatechange = function () {
             // If the request is complete (state is 4)
             if (request.readyState === 4) {
@@ -1397,9 +1400,9 @@ function getJavaScript(path, callback, module) {
                     callback(null, request.responseText);
                 } else {
                     callback('Failed to get ' +
-                                    path +
-                                    ': ' + request.statusText,
-                            null);
+                        path +
+                        ': ' + request.statusText,
+                        null);
                 }
             }
         };
@@ -1469,50 +1472,50 @@ function reactIfExecutable(id, suppress) {
         if (instance && instance.executable) {
             initializeIfNecessary(instance);
             try {
-                    // Call provideInput() on all visible inputs for this accessor.
-                    // This enables inputHandlers for all inputs even if an input's
-                    // value has not changed since last execution.
-                    // Non-visible inputs are not triggered from the UI, but an
-                    // accessor might send to a non-visible input
-                    // (see web/services/StockTick.js)
-                    var period;
-                    var inputs = document.getElementsByClassName('inputRole');
-                    var element;
-                    var found, visible;
+                // Call provideInput() on all visible inputs for this accessor.
+                // This enables inputHandlers for all inputs even if an input's
+                // value has not changed since last execution.
+                // Non-visible inputs are not triggered from the UI, but an
+                // accessor might send to a non-visible input
+                // (see web/services/StockTick.js)
+                var period;
+                var inputs = document.getElementsByClassName('inputRole');
+                var element;
+                var found, visible;
 
-                    for (var i = 0; i < inputs.length; i++) {
-                            // Element at 6 parents up has accessor name.
-                            // (No ancestor function in plain Javascript.)
+                for (var i = 0; i < inputs.length; i++) {
+                    // Element at 6 parents up has accessor name.
+                    // (No ancestor function in plain Javascript.)
 
-                            // Check that this input belongs to the accessor that the
-                            // "react to inputs" button was clicked for.  I.e., the
-                            // element should have an ancestor with the accessor id.
-                            // Also, check if this input is visible.  I.e., does not
-                            // have an ancestor with class "invisible".
-                            element = inputs[i];
-                            found = false;
-                            visible = true;
+                    // Check that this input belongs to the accessor that the
+                    // "react to inputs" button was clicked for.  I.e., the
+                    // element should have an ancestor with the accessor id.
+                    // Also, check if this input is visible.  I.e., does not
+                    // have an ancestor with class "invisible".
+                    element = inputs[i];
+                    found = false;
+                    visible = true;
 
-                            while (element.parentNode !== null) {
-                                    if (element.classList.contains("invisible")) {
-                                            visible = false;
-                                    }
-                                    if (element.parentNode.id === id) {
-                                            found = true;
-                                            break;
-                                    }
-                                    element = element.parentNode;
-                            }
-
-                            if (found && visible) {
-                                    if (inputs[i].value !== null && inputs[i].value !== "") {
-                                        // Do not call provideInput for blank fields.
-                                        // Use "" in a form field to send an empty string as input.
-                                            provideInput(id, inputs[i].getAttribute('name'),
-                                                            inputs[i].value);
-                                    }
-                            }
+                    while (element.parentNode !== null) {
+                        if (element.classList.contains("invisible")) {
+                            visible = false;
+                        }
+                        if (element.parentNode.id === id) {
+                            found = true;
+                            break;
+                        }
+                        element = element.parentNode;
                     }
+
+                    if (found && visible) {
+                        if (inputs[i].value !== null && inputs[i].value !== "") {
+                            // Do not call provideInput for blank fields.
+                            // Use "" in a form field to send an empty string as input.
+                            provideInput(id, inputs[i].getAttribute('name'),
+                                inputs[i].value);
+                        }
+                    }
+                }
 
                 window.accessors[id].react();
             } catch (err) {
@@ -1532,8 +1535,8 @@ function reactIfExecutable(id, suppress) {
  *  @param value The value to provide.
  */
 function setParameter(id, name, value) {
-        var instance = window.accessors[id];
-        instance.setParameter(name, value);
+    var instance = window.accessors[id];
+    instance.setParameter(name, value);
 }
 
 /** Toggle the visibility of an element on the web page.

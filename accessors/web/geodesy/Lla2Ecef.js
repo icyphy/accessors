@@ -46,7 +46,7 @@
 /** Set up the accessor by defining the inputs and outputs.
  */
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('lat');
     this.input('lon');
     this.input('alt');
@@ -55,22 +55,22 @@ exports.setup = function() {
     this.output('z');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // WGS-84 parameters
     var a = 6378137.0; //WGS-84 semi-major axis (meters)
-    var e2 = 6.6943799901377997e-3;  //WGS-84 first eccentricity squared
+    var e2 = 6.6943799901377997e-3; //WGS-84 first eccentricity squared
 
     var self = this;
     this.addInputHandler(function () {
-        var lat = this.get('lat')*Math.PI/180;
-        var lon = this.get('lon')*Math.PI/180;
+        var lat = this.get('lat') * Math.PI / 180;
+        var lon = this.get('lon') * Math.PI / 180;
         var alt = this.get('alt');
-        var n = a/Math.sqrt(1 - e2*Math.sin( lat )*Math.sin( lat ) );
-        var x = ( n + alt )*Math.cos( lat )*Math.cos( lon );
-        var y = ( n + alt )*Math.cos( lat )*Math.sin( lon );
-        var z = ( n*(1 - e2 ) + alt )*Math.sin( lat );
-        self.send('x',x);
-        self.send('y',y);
-        self.send('z',z);
+        var n = a / Math.sqrt(1 - e2 * Math.sin(lat) * Math.sin(lat));
+        var x = (n + alt) * Math.cos(lat) * Math.cos(lon);
+        var y = (n + alt) * Math.cos(lat) * Math.sin(lon);
+        var z = (n * (1 - e2) + alt) * Math.sin(lat);
+        self.send('x', x);
+        self.send('y', y);
+        self.send('z', z);
     });
 };

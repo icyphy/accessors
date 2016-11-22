@@ -40,20 +40,29 @@ var httpClient = require('httpClient');
 /** Define inputs and outputs. */
 exports.setup = function () {
     this.input('trigger');
-    this.input('key', {'type':'string'});
-    this.input('timestamp', {'type':'string'});
-    this.output('value', {'type':'string'});
-    this.parameter('url', {'type':'string', 'value':''});
+    this.input('key', {
+        'type': 'string'
+    });
+    this.input('timestamp', {
+        'type': 'string'
+    });
+    this.output('value', {
+        'type': 'string'
+    });
+    this.parameter('url', {
+        'type': 'string',
+        'value': ''
+    });
 };
 
-exports.getRESTurl = function() {
+exports.getRESTurl = function () {
 
     var url = this.get('url');
     var key = this.get('key');
     var timestamp = this.get('timestamp');
     if (timestamp !== null) {
-        var _timestamp = timestamp.replace("000000","");
-        var e = Date.parse(_timestamp)/1000.0;
+        var _timestamp = timestamp.replace("000000", "");
+        var e = Date.parse(_timestamp) / 1000.0;
         console.log(e);
         return url + "key=" + key + "&timestamp=" + e;
     } else {
@@ -66,19 +75,19 @@ exports.getRESTurl = function() {
 var request;
 
 // Based on the REST accessor.
-exports.issueCommand = function(callback) {
+exports.issueCommand = function (callback) {
     var url = this.getRESTurl();
     console.log("REST request to: " + url);
 
     // To ensure that the callback is called with the same context
     // as this function, create a new function.
     var thiz = this;
-    var contextCallback = function() {
+    var contextCallback = function () {
         callback.apply(thiz, arguments);
     };
 
     request = httpClient.request(url, contextCallback);
-    request.on('error', function(message) {
+    request.on('error', function (message) {
         if (!message) {
             message = 'Request failed. No further information.';
         }
@@ -87,7 +96,7 @@ exports.issueCommand = function(callback) {
     request.end();
 };
 
-exports.handleResponse = function(message) {
+exports.handleResponse = function (message) {
     if (message !== null && message !== undefined) {
         this.send('value', JSON.parse(message.body).value);
     } else {
@@ -98,7 +107,7 @@ exports.handleResponse = function(message) {
 /** Register the input handler.  */
 exports.initialize = function () {
     // Upon receiving a trigger input, issue a command.
-        this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
+    this.addInputHandler('trigger', this.issueCommand, this.handleResponse);
 };
 
 /** Upon wrapup, stop handling new inputs.  */

@@ -120,14 +120,14 @@ function test(testName, expression, expectedValue) {
         // Print a stack trace.
         var e = new Error('dummy');
         var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-                .replace(/^\s+at\s+/gm, '')
-                .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-                .split('\n');
+            .replace(/^\s+at\s+/gm, '')
+            .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+            .split('\n');
         console.log(stack);
 
-        throw('Test failed: ' + testName
-                + '. Expected: ' + expectedValue
-                + ', but got: ' + expression);
+        throw ('Test failed: ' + testName +
+            '. Expected: ' + expectedValue +
+            ', but got: ' + expression);
     } else {
         console.log('Test passed: ' + testName);
     }
@@ -167,82 +167,82 @@ a.initialize();
 
 // Check assigned priorities.
 test('TestComposite: priority number of destination is higher than source',
-        a.containedAccessors[0].priority < a.containedAccessors[1].priority,
-        true);
+    a.containedAccessors[0].priority < a.containedAccessors[1].priority,
+    true);
 
 a.provideInput('input', 10)
 a.containedAccessors[0].react()
 a.containedAccessors[1].react()
 test('TestComposite: composite accessor with manual scheduling',
-        a.latestOutput('output'), 50);
+    a.latestOutput('output'), 50);
 
 a.initialize();
 a.provideInput('input', 5)
 a.react();
 test('TestComposite: composite accessor with automatic scheduling',
-        a.latestOutput('output'), 25);
+    a.latestOutput('output'), 25);
 
 // Note that the following two tests will run concurrently (!)
 
 // Test spontaneous accessor.
 var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous',
-        getAccessorCode);
+    getAccessorCode);
 
 b.initialize();
-setTimeout(function() {
+setTimeout(function () {
     test('TestSpontaneous: spontaneous accessor produces 0 after 1 second',
-            b.latestOutput('output'), 0);
+        b.latestOutput('output'), 0);
 }, 1500);
-setTimeout(function() {
+setTimeout(function () {
     test('TestSpontaneous: spontaneous accessor produces 1 after 2 seconds',
-            b.latestOutput('output'), 1);
+        b.latestOutput('output'), 1);
     b.wrapup();
 }, 2500);
 
 // Test composite spontaneous accessor.
 var c = commonHost.instantiateAccessor(
-        'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
+    'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
 c.initialize();
-setTimeout(function() {
+setTimeout(function () {
     test('TestCompositeSpontaneous: composite spontaneous accessor produces 0 after 1 second',
-            c.latestOutput('output'), 0);
+        c.latestOutput('output'), 0);
 }, 1500);
-setTimeout(function() {
+setTimeout(function () {
     test('TestCompositeSpontaneous: composite spontaneous accessor produces 4 after 2 seconds',
-            c.latestOutput('output'), 4);
+        c.latestOutput('output'), 4);
     c.wrapup();
 }, 2500);
 
 // Test this.extend().
 var d = commonHost.instantiateAccessor(
-        'TestInheritance', 'test/TestInheritance', getAccessorCode);
+    'TestInheritance', 'test/TestInheritance', getAccessorCode);
 d.initialize();
 d.provideInput('untyped', 'foo');
 d.react();
 test('TestInheritance: inheritance, function overriding, and variable visibility',
-        d.latestOutput('jsonOfUntyped'), 'hello');
+    d.latestOutput('jsonOfUntyped'), 'hello');
 
 // Test this.implement().
 var e = commonHost.instantiateAccessor(
-        'TestImplement', 'test/TestImplement', getAccessorCode);
+    'TestImplement', 'test/TestImplement', getAccessorCode);
 e.initialize();
 e.provideInput('numeric', '42');
 e.react();
 test('TestImplement: implementing an interface',
-        e.latestOutput('numericPlusP'), 84);
+    e.latestOutput('numericPlusP'), 84);
 
 // Test access to exported fields of base classes an proper scoping of initialize().
 var f = commonHost.instantiateAccessor(
-        'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
+    'TestDerivedC', 'test/TestDerivedC', getAccessorCode);
 f.initialize();
 f.provideInput('in1', '42');
 f.react();
 test('TestDerivedC: access to base class exports properties',
-        f.latestOutput('out1'), 2);
+    f.latestOutput('out1'), 2);
 
 // Test two-level inheritance.
 var g = commonHost.instantiateAccessor(
-        'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
+    'TestDerivedAgainA', 'test/TestDerivedAgainA', getAccessorCode);
 g.initialize();
 g.provideInput('in1', 42);
 g.react();

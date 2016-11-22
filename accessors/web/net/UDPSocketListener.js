@@ -76,7 +76,9 @@ var UDPSocket = require('udpSocket');
 // be provided in XML syntax.
 exports.setup = function () {
     this.output('message');
-    this.output('listening', {'type': 'boolean'});
+    this.output('listening', {
+        'type': 'boolean'
+    });
 
     this.input('listeningAddress', {
         'value': '0.0.0.0',
@@ -95,7 +97,7 @@ exports.setup = function () {
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
-            options : UDPSocket.supportedReceiveTypes()
+            options: UDPSocket.supportedReceiveTypes()
         });
     } catch (err) {
         this.error(err);
@@ -121,7 +123,8 @@ exports.initialize = function () {
 };
 
 exports.closeAndOpen = function () {
-    var self = this, port = null;
+    var self = this,
+        port = null;
     if (exports.socket) {
         // Close any previously open socket and make the connection
         // once the close is complete.

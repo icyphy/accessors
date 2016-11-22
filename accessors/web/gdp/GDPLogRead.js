@@ -64,12 +64,24 @@ var oldLogname = null;
 
 /** Setup the parameters and ports. */
 exports.setup = function () {
-    this.output('data', {'type': 'string'});
-    this.parameter('debugLevel', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': 'org.terraswarm.accessors.demo.MyDemoName'});
-    this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
+    this.output('data', {
+        'type': 'string'
+    });
+    this.parameter('debugLevel', {
+        'type': 'string'
+    });
+    this.input('logname', {
+        'type': 'string',
+        'value': 'org.terraswarm.accessors.demo.MyDemoName'
+    });
+    this.input('logdname', {
+        'type': 'string',
+        'value': 'edu.berkeley.eecs.gdp-01.gdplogd'
+    });
     this.input('trigger');
-    this.input('recno', {'type': 'int'});
+    this.input('recno', {
+        'type': 'int'
+    });
 };
 
 /** Read a record and send the data on the output.
@@ -77,7 +89,9 @@ exports.setup = function () {
  *  and a null will be sent.
  */
 exports.read = function () {
-    var recno = this.get('recno'), logname = this.get('logname'), logdname, data;
+    var recno = this.get('recno'),
+        logname = this.get('logname'),
+        logdname, data;
     console.log("GDPLogRead.read(" + recno + "): start");
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');

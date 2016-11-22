@@ -51,44 +51,52 @@ var selectedService;
 exports.setup = function () {
     this.input('input');
     // a simple UI interface to start the dialog with users
-    this.parameter('RESTSource', { 'type': 'string',
-                                   'value': 'Make a selection',
-                                   'options':contextAware.services()}
-                  );
+    this.parameter('RESTSource', {
+        'type': 'string',
+        'value': 'Make a selection',
+        'options': contextAware.services()
+    });
     selectedService = this.getParameter('RESTSource');
-    if (selectedService == 'GSN')
-    {
+    if (selectedService == 'GSN') {
         this.implement("contextAware/GSNInterface.js");
-        this.input('dataType',
-                   {'type': 'string',
-                    'value': 'all',
-                    'options':contextAware.gsnServices()});
-    }
-    else if (selectedService == 'Paraimpu') {
+        this.input('dataType', {
+            'type': 'string',
+            'value': 'all',
+            'options': contextAware.gsnServices()
+        });
+    } else if (selectedService == 'Paraimpu') {
         this.implement("contextAware/ParaimpuInterface.js");
         this.input('dataType', {
             type: 'string',
             value: 'all',
-            'options':contextAware.paraimpuServices()
+            'options': contextAware.paraimpuServices()
         });
-    }
-    else if (selectedService == 'Firebase') {
+    } else if (selectedService == 'Firebase') {
         this.implement("contextAware/FirebaseInterface.js");
         this.input('dataType', {
             type: 'string',
             value: 'all',
-            'options':contextAware.firebaseServices()
+            'options': contextAware.firebaseServices()
         });
-    }
-    else {
+    } else {
         console.log("Cannot load service interface !!");
     }
     this.extend("net/REST.js");
-    this.input('command', {'visibility':'expert'});
-    this.input('arguments', {'visibility':'expert'});
-    this.input('options',{'visibility':'expert'});
-    this.output('header',{'visibility':'expert'});
-    this.input('trigger',{'visibility':'expert'});
+    this.input('command', {
+        'visibility': 'expert'
+    });
+    this.input('arguments', {
+        'visibility': 'expert'
+    });
+    this.input('options', {
+        'visibility': 'expert'
+    });
+    this.output('header', {
+        'visibility': 'expert'
+    });
+    this.input('trigger', {
+        'visibility': 'expert'
+    });
 };
 
 /** Upon receiving details of a REST service, construct a concrete accessor to access it.
@@ -106,14 +114,22 @@ exports.initialize = function () {
         serviceParam = contextAwareService.discoverServices();
         console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: serviceParam: " + serviceParam);
         //var serviceURL = this.getParameter('ipAddress');
-        var serviceURL = {"url":{"host":getParameter('host'), "port": this.getParameter('port'), "protocol": this.getParameter('protocol')}};
-        this.send('options',  serviceURL);
+        var serviceURL = {
+            "url": {
+                "host": getParameter('host'),
+                "port": this.getParameter('port'),
+                "protocol": this.getParameter('protocol')
+            }
+        };
+        this.send('options', serviceURL);
         this.send('command', this.getParameter('path'));
         if (selectedService == 'Paraimpu') {
             //sample access token to use "46e0ee55195c4dd9dca295a7ac8282d28f4a2259"
-            var arg = {"access_token": this.getParameter('accessToken')};
+            var arg = {
+                "access_token": this.getParameter('accessToken')
+            };
             console.log("org/terraswarm/accessor/accessors/web/contextAware/ContextAwareTest.js: access_token:" + arg);
-            send ('arguments', arg);
+            send('arguments', arg);
         }
         //ex. of valid json format for reference
         //send('options', {"url":"http://pluto.cs.txstate.edu:22001"});
@@ -131,21 +147,21 @@ exports.initialize = function () {
  */
 var getFirebaseData = function (response) {
     var type = this.get('dataType');
-    var result=JSON.parse(response);
-    switch(type) {
+    var result = JSON.parse(response);
+    switch (type) {
     case "microwave":
         this.send('microwave', result.Microwave);
         console.log("ContextAwareTest filterResponse() " + JSON.stringify(result.Microwave));
         break;
     case "microwaveStatus":
-        this.send('microwaveStatus',  result.Microwave.status);
+        this.send('microwaveStatus', result.Microwave.status);
         break;
     case "pastValues":
         this.send('pastValues', result.Microwave.pastValues);
         break;
     case "all":
         this.send('microwave', result.Microwave);
-        this.send('microwaveStatus',  result.Microwave.status);
+        this.send('microwaveStatus', result.Microwave.status);
         this.send('pastValues', result.Microwave.pastValues);
         break;
     default:
@@ -157,7 +173,7 @@ var getFirebaseData = function (response) {
  */
 var getParaimpuData = function (response) {
     var type = this.get('dataType');
-    var result=JSON.parse(response);
+    var result = JSON.parse(response);
     switch (type) {
     case "payload":
         this.send('payload', result.payload);
@@ -183,10 +199,10 @@ var getParaimpuData = function (response) {
  */
 var getGSNData = function (response) {
     var type = this.get('dataType');
-    var xmlJson={};
-    xmlJson=contextAware.xmlToJson(response);
+    var xmlJson = {};
+    xmlJson = contextAware.xmlToJson(response);
     var result = JSON.parse(xmlJson);
-    switch(type) {
+    switch (type) {
     case "sound":
         // jsdoc was failing with "line 271: missing name after . operator"
         // This code has no tests because the GSN source on the web does not stay up.
@@ -218,7 +234,7 @@ var getGSNData = function (response) {
  */
 exports.filterResponse = function (response) {
 
-    switch(selectedService) {
+    switch (selectedService) {
     case "GSN":
         getGSNData.call(this, response);
         break;
@@ -254,4 +270,3 @@ exports.wrapup = function () {
 
     this.removeInputHandler(handle);
 };
-

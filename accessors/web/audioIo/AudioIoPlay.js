@@ -44,20 +44,20 @@ channels = null;
 
 blockSize = null;
 
-exports.playArray = function() {
+exports.playArray = function () {
     var audioVector;
     audioVector = this.get('signal');
     console.log("Audio Play (array), channels: " + channels + ", data size : " + audioVector.length);
     audio.play(channels, audioVector);
 };
 
-exports.playJSON = function(audioJSON) {
+exports.playJSON = function (audioJSON) {
     audioJSON = this.get('signalJSON');
     console.log("Audio Play (JSON), channels: " + audioJSON.channels + ", data size : " + audioJSON.data.length);
     audio.play(audioJSON.channels, audioJSON.data);
 };
 
-exports.setup = function() {
+exports.setup = function () {
     this.parameter('numOutputChannels', {
         type: 'number',
         value: 1
@@ -76,7 +76,7 @@ exports.setup = function() {
     });
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     console.log("Audio Play Initialize... Initializing...");
     console.log("Number Output Channels : " + this.getParameter('numOutputChannels'));
     console.log("Sampling Rate : " + this.getParameter('samplingRate'));
@@ -88,7 +88,7 @@ exports.initialize = function() {
     signalJsonInputHandler = this.addInputHandler('signalJSON', this.exports.playJSON.bind(this));
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     audio.wrapup();
     this.removeInputHandler('signal', signalInputHander);
     this.removeInputHandler('signalJSON', signalJsonInputHandler);
