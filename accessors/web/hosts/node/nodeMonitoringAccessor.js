@@ -23,19 +23,19 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Monitoring accessor with sampling period input and sample output.
- *  This accessor is designed to periodically collect monitoring data 
- *  that captures the react() function execution times of different 
+ *  This accessor is designed to periodically collect monitoring data
+ *  that captures the react() function execution times of different
  *  accessors running on the accessor host.
  *
  *  Note that the output array has the following format:
  *
- *  {<Accessor class> : [<count of sample>, <mean of react execution 
+ *  {<Accessor class> : [<count of sample>, <mean of react execution
  *    duration>, <variance in react execution duration>]}
  *
  *  @accessor hosts/node/nodeMonitoringAccessor
- *  @input samplePeriodInMs A numeric input which provides sampling period 
+ *  @input samplePeriodInMs A numeric input which provides sampling period
  *  for monitoring data.
- *  @output sample String which provides duration statistics for react() 
+ *  @output sample String which provides duration statistics for react()
  *  function execution on host.
  *  @author Atul Sandur
  *  @version $$Id$$
@@ -45,17 +45,17 @@
  *  This is just for initialization and is overridden with the input handler
  *  for sample collection once the first input is provided
  */
-var timer = setInterval(function() { 
+var timer = setInterval(function() {
     console.log('[Monitoring] Initialized dummy input handler');
-    return undefined; 
+    return undefined;
 }, 5000);
 
 exports.setup = function() {
     // Input time period of sampling data.
-    this.input('samplePeriodInMs');                      
+    this.input('samplePeriodInMs');
 
     // Output for collected sample as a string.
-    this.output('sample', {'type':'string'});            
+    this.output('sample', {'type':'string'});
 };
 
 exports.initialize = function() {
@@ -64,7 +64,7 @@ exports.initialize = function() {
     this.addInputHandler('samplePeriodInMs', function() {
         clearInterval(timer);
         timer = setInterval(function() {
-            self.send('sample', 
+            self.send('sample',
                       JSON.stringify(Accessor.queryActiveAccessors()));
         }, this.get('samplePeriodInMs'));
     });

@@ -2,7 +2,7 @@
 //
 // To run this:
 //   cd accessors/web/hosts
-//   ./nashorn/nashornAccessorHost -js -timeout 5000 nashorn/test/testCommon.js 
+//   ./nashorn/nashornAccessorHost -js -timeout 5000 nashorn/test/testCommon.js
 //
 // Or, use ant!
 //   cd accessors/web

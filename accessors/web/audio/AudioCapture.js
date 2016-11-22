@@ -20,10 +20,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Capture audio from the microphone. 
+/** Capture audio from the microphone.
  *
  *  This accessor requires the optional 'audio' module, which may or may
- *  not be provided by an accessor host. 
+ *  not be provided by an accessor host.
  *
  *  @accessor audio/AudioCapture
  *  @author  Ilge Akkya
@@ -40,29 +40,29 @@
 
 exports.setup = function() {
     this.input('trigger');
-    this.output('signal',{'type':'number'});  
+    this.output('signal',{'type':'number'});
 };
 
-var recorder = null; 
+var recorder = null;
 var handle = null;
 var audio = require("audio");
-var cacheLength = 128;  
+var cacheLength = 128;
 
 var record = function() {
-    var data = recorder.get(), i; 
+    var data = recorder.get(), i;
     for (i = 0; i < data.length; i++) {
         this.send('signal', data[i]);
     }
 };
 
-exports.initialize = function() { 
-    handle = this.addInputHandler("trigger",record); 
-    recorder = new audio.Capture(); 
+exports.initialize = function() {
+    handle = this.addInputHandler("trigger",record);
+    recorder = new audio.Capture();
 };
 
 exports.wrapup = function() {
-    if (recorder !== null) { 
+    if (recorder !== null) {
         recorder.stop();
         this.removeInputHandler('trigger',handle);
-    } 
+    }
 };

@@ -64,7 +64,7 @@
  *    * '''host''': A string giving the domain name or IP address of
  *    the server to issue the request to. This defaults to 'localhost'.
  *    * '''protocol''': The protocol. This is a string that defaults to 'http'.
- *    * '''port''': Port of remote server. This defaults to 80. 
+ *    * '''port''': Port of remote server. This defaults to 80.
  *
  *
  *  This accessor has been tested with a Foscam NVision F18910W only.
@@ -72,7 +72,7 @@
  *  http://www.foscam.es/descarga/ipcam_cgi_sdk.pdf.
  *  The design of this accessor is inspired by the "foscam" module for
  *  Node.js, found at https://github.com/fvdm/nodejs-foscam.
- * 
+ *
  *  @accessor cameras/Foscam
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input {JSON} options The specification for the URL, as defined above.
@@ -83,7 +83,7 @@
  *  @output {int} status The status code of the response.
  *  @output {JSON} headers The headers sent with the response.
  *  @extends net.REST
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should be no

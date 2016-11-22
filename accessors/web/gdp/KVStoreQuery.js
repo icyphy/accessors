@@ -25,7 +25,7 @@
 /** Query a Key/Value store.
  *
  *  @accessor gdp/KVStoreQuery
- *  @version $$Id$$ 
+ *  @version $$Id$$
  *  @author Edward A. Lee, Nitesh Mor, Contributor: Christopher Brooks
  */
 
@@ -69,14 +69,14 @@ var request;
 exports.issueCommand = function(callback) {
     var url = this.getRESTurl();
     console.log("REST request to: " + url);
-    
+
     // To ensure that the callback is called with the same context
     // as this function, create a new function.
     var thiz = this;
     var contextCallback = function() {
         callback.apply(thiz, arguments);
     };
-    
+
     request = httpClient.request(url, contextCallback);
     request.on('error', function(message) {
         if (!message) {

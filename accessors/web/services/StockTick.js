@@ -78,14 +78,14 @@ exports.setup = function() {
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
-    
+
     // Capture 'this' for use in callback.
     var self = this;
 
     // Invoke the getPrice function each time a 'symbol' input arrives.
     this.addInputHandler('symbol', function() {
             // Read the current value of the 'symbol' input.
-            var stock = self.get('symbol');        
+            var stock = self.get('symbol');
             var args = self.get('arguments');
             args.q = 'select * from yahoo.finance.quotes where symbol in ("' +
                 stock +

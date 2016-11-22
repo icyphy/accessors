@@ -42,7 +42,7 @@
 var Browser = require('browser');
 var browser = new Browser.Browser();
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('html', {'type':'string'});
 };
 
@@ -51,10 +51,10 @@ var display = function () {
     browser.display(toDisplay);
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     this.addInputHandler('html', display);
 };
 
-exports.wrapup = function(){
+exports.wrapup = function () {
     browser.shutdown();
 };

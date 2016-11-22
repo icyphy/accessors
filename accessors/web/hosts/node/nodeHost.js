@@ -23,15 +23,15 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Provide a Node.js swarmlet host.
- *  
+ *
  *  This file reads a command line argument that is expected
  *  to define a composite accessor.  The instantiate() and initialize()
  *  functions are then invoked.
- * 
+ *
  *  See nodeHostShell.js for an interactive program.
- *  
+ *
  *  @module nodeHost
- *  @authors Edward A. Lee, Chris Shaver, Christopher Brooks
+ *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$
  */
 
@@ -55,10 +55,10 @@ var accessors = [];
 var monitoringSetup = false;
 
 // Stores instance of monitoring accessor that is setup for the host
-var monitoringAccessor; 
+var monitoringAccessor;
 
 /////////////////////////////////////////////////
-// Functions are defined below here. 
+// Functions are defined below here.
 // Please keep them alphabetical.
 
 /** Return the source code for an accessor from its fully qualified name.
@@ -76,13 +76,13 @@ var monitoringAccessor;
  *
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
-getAccessorCode = function(name) {
+getAccessorCode = function (name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
         name += '.js';
     }
-    
+
     // Look for the accessor as a regular file.
     // See https://www.terraswarm.org/accessors/wiki/Main/DeploymentNotes#SSHScript
     try {
@@ -98,7 +98,7 @@ getAccessorCode = function(name) {
             code = fs.readFileSync(location, 'utf8');
             console.log('Reading accessor at: ' + location);
             break;
-        } catch(error) {
+        } catch (error) {
             console.log(error);
             continue;
         }
@@ -115,7 +115,7 @@ getAccessorCode = function(name) {
  *  @param accessorName The name to give to the instance.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiate = function(accessorName, accessorClass) {
+instantiate = function (accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
@@ -124,7 +124,7 @@ instantiate = function(accessorName, accessorClass) {
     var instance = new commonHost.instantiateAccessor(
             accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
-    
+
     accessors.push(instance);
     return instance;
 };
@@ -150,7 +150,7 @@ instantiate = function(accessorName, accessorClass) {
  * @param accessorNames An array of accessor names in a format suitable
  * for getAccessorCode(name).
  */
-instantiateAndInitialize = function(accessorNames) {
+instantiateAndInitialize = function (accessorNames) {
     var accessors = [];
     var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
@@ -186,8 +186,8 @@ instantiateAndInitialize = function(accessorNames) {
  *  require('./nodeHost.js');
  *  invoke(process.argv);
  *  </pre>
- *  
- *  If the accessors module is installed using npm with 
+ *
+ *  If the accessors module is installed using npm with
  *  <pre>
  *  npm install @terraswarm/gdp
  *  </pre>
@@ -208,7 +208,7 @@ instantiateAndInitialize = function(accessorNames) {
  *  argument(s) are one or more .js files that define a setup() function
  *  that builds a composite accessor.
  */
-invoke = function(argv) {
+invoke = function (argv) {
     // This function is in nodeHost.js so that we can easily invoke a
     // composite accessor with a very small file.  See the comment for how to do this.
 
@@ -250,18 +250,18 @@ invoke = function(argv) {
     }
 };
 
-/** Instantiates and initializes monitoring accessor that periodically 
- *  collects monitoring data for accessors running on the host 
+/** Instantiates and initializes monitoring accessor that periodically
+ *  collects monitoring data for accessors running on the host
  */
-setupMonitoring = function() {
+setupMonitoring = function () {
     // Setup monitoring accessor, if it has not been already for this host
     if (!monitoringSetup) {
         try {
-            monitoringAccessor = instantiate('monitoringAccessor', 
+            monitoringAccessor = instantiate('monitoringAccessor',
                                              'hosts/node/nodeMonitoringAccessor');
             monitoringAccessor.initialize();
 
-            // FIXME: Need to remove hardcoding of sampling period for monitoring, 
+            // FIXME: Need to remove hardcoding of sampling period for monitoring,
             // which is currently at 5 seconds
             monitoringAccessor.provideInput('samplePeriodInMs', 5000);
             monitoringAccessor.react();
@@ -286,18 +286,18 @@ setupMonitoring = function() {
  *  </pre>
  *  In the exitHandler() function, exit() is caught and wrapup() is invoked.
  */
-stop = function() {
+stop = function () {
     var thiz = this.root;
     console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName +  ": stop() invoked");
-    
+
     // Call wrapup() on any accessors in the container.  These accessors should
     // wrapup() themselves, and ideally emit a 'stopped' event.
     // TODO:  Listen for all 'stopped' events for a given time before exit.
     // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
     // TODO:  Figure out how accessors should signal a stop().  Should probably
-    // not call it directly.  
-    
-    // Not all Accessors host have container, see 
+    // not call it directly.
+
+    // Not all Accessors host have container, see
     // https://www.terraswarm.org/accessors/wiki/Version1/Container
     if (thiz.container) {
         for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
@@ -310,9 +310,9 @@ stop = function() {
     // for (var i = 0; i < accessors.length; i++) {
     //        accessors[i].wrapup();
     //}
-    
+
     // TODO:  Improve on arbitrary timeout.
-    //setTimeout(function() {
+    //setTimeout(function () {
     //        process.exit();
     //}, 2000);
 };
@@ -340,7 +340,7 @@ exports = {
     'setParameter': commonHost.setParameter,
 };
 
-/** 
+/**
  * Handle calls to exit, Control-C, errors and uncaught exceptions.
  * The wrapup() method is invoked for all accessors.  The first
  * exception is reported and process.exitCode is set to non-zero;

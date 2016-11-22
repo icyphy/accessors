@@ -51,46 +51,46 @@ var clearHandle = null;
 var mapDataHandle = null;
 var mapManager = null;
 
-exports.setup = function(){
+exports.setup = function () {
         this.input('report');
         this.input('clear');
         this.input('mapData', {'type' : 'JSON'});
         this.output('repoData', {'type' : 'JSON'} );
 };
 
-exports.initialize = function(){
+exports.initialize = function () {
         reportHandle = this.addInputHandler('report', this.reportInputHandler);
         clearHandle = this.addInputHandler('clearHandle', this.clearInputHandler);
         mapDataHandle = this.addInputHandler('mapData', this.mapDataInputHandler);
 };
 
 
-exports.reportInputHandler = function(){
+exports.reportInputHandler = function () {
         this.send("repoData", mapManager.localRepoToJSONString());
 };
 
 
-exports.clearInputHandler = function(){
+exports.clearInputHandler = function () {
         mapManager.clearRepo();
 };
 
 //Todo: What happens if mapData comes the same time as a clearRepo signal?
-exports.mapDataInputHandler = function(){
+exports.mapDataInputHandler = function () {
         mapManager.replaceRepo(this.get("mapData"));
 };
 
 
 
-exports.wrapup = function(){
-        if(reportHandle !==null){
+exports.wrapup = function () {
+        if (reportHandle !==null) {
                 this.removeInputHandler(reportHandle);
                 reportHandle = null;
         }
-        if(clearHandle !==null){
+        if (clearHandle !==null) {
                 this.removeInputHandler(clearHandle);
                 clearHandle = null;
         }
-        if(mapDataHandle !==null){
+        if (mapDataHandle !==null) {
                 this.removeInputHandler(mapDataHandle);
                 mapDataHandle = null;
         }

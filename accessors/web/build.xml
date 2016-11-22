@@ -93,6 +93,26 @@
     </exec>
   </target>
 
+  <target name="echo-js-files"
+	  description="Echo the .js files that are locally developed">
+    <echo>The .js files are being written to jsfiles.txt</echo>
+    <exec executable="bash"
+	  output="jsfiles.txt">
+      <arg value="-c"/>
+      <arg value="find . -name '*.js' | egrep -v '(duktape-sys|node_modules|vendors)'"/>
+    </exec>
+  </target>	 
+
+  <target name="echo-js-files-copyright"
+	  description="Echo the .js files that should have a copyright">
+    <echo>The .js files are being written to jsFilesCopyright.txt</echo>
+    <exec executable="bash"
+	  output="jsFilesCopyright.txt">
+      <arg value="-c"/>
+      <arg value="find . -name '*.js' | egrep -v '(browser/modules|duk*/examples|duktape-sys|common/modules|node_modules|node/test|test/auto|test/manual|test/mocha|vendors)'"/>
+    </exec>
+  </target>	 
+
   <target name="eduk"
           description="Build the eduk binary.  Requires xxd, make and gcc.">
     <echo>The eduk binary has fewer command line options than the duk binary.

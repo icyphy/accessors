@@ -21,8 +21,8 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** This accessor takes two 3D locations and calculate the euclidean distance between them.
- * 
- * 
+ *
+ *
  *  @accessor geodesy/Lla2Ecef
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id$$
@@ -33,7 +33,7 @@
  *  @input {double} y2 y-coordinate of the second location
  *  @input {double} z2 z-coordinate of the second location
  *  @output {double} dist distance
- *  
+ *
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -46,7 +46,7 @@
 /** Set up the accessor by defining the inputs and outputs.
  */
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('x1');
     this.input('y1');
     this.input('z1');
@@ -56,8 +56,8 @@ exports.setup = function() {
     this.output('dist');
 };
 
-exports.initialize = function() {
-    this.addInputHandler(function(){
+exports.initialize = function () {
+    this.addInputHandler(function () {
         var x1 = this.get('x1');
         var x2 = this.get('x2');
         var y1 = this.get('y1');
@@ -67,4 +67,4 @@ exports.initialize = function() {
         this.send('dist',Math.sqrt(Math.pow(x1-x2,2)+ Math.pow(y1-y2,2)+Math.pow(z1-z2,2)));
     });
 };
-    
+

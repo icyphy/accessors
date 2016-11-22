@@ -28,7 +28,7 @@
  *
  *  @output {string} data The data that is read from the log.
  *
- *  @input {string} logname The GDP logname.  By convention, a log name should be 
+ *  @input {string} logname The GDP logname.  By convention, a log name should be
  *   a reverse fully qualified name like "org.terraswarm.accessor.demo.MyDemoName".
  *   If this input is an empty string, then no subscription will
  *   occur until a non-empty value is provided.
@@ -57,7 +57,7 @@
  *
  *  @accessor gdp/GDPLogSubscribe
  *  @author Christopher Brooks, Edward A. Lee, Nitesh Mor
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no

@@ -27,7 +27,7 @@
  * JavaScript functions for a browser swarmlet host.
  * This file includes default accessor functions (initialize, fire, wrapup)
  * and functions for reading inputs and sending outputs.
- * 
+ *
  * @author Edward A. Lee and Chris Shaver
  * @version $$Id$$
  */
@@ -64,7 +64,7 @@ function wrapup() {
 
 /* Retrieve an input.
  *  @param {string} input
- *  @return The elemeny in the document with the 
+ *  @return The elemeny in the document with the
  *  Id input + "Input".
  */
 function get(input) {

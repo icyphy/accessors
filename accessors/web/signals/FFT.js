@@ -23,7 +23,7 @@
 /** This accessor returns an array of FFT coefficients, corresponding to the input signal.
  *
  *  @accessor services/FFT
- *  @author Ilge Akkaya 
+ *  @author Ilge Akkaya
  *  @version $$Id$$
  *  @input {array<number>} signalIn Input signal array
  *  @output {array<{'real':'number', 'imag': 'number'}>} fftOutput An array of FFT coefficients, each being a record with real and imaginary parts.
@@ -39,34 +39,34 @@ exports.setup = function() {
     this.input('signalIn');
     this.output('fftOutput');
 };
- 
-var dspEngine = null; 
-var dsp = require("dsp");   
+
+var dspEngine = null;
+var dsp = require("dsp");
 var handle = null;
 
 var processSignal = function() {
-    var signalValue = this.get('signalIn');  
-    var fftLength = signalValue.length; 
-    var fftResult = dspEngine.fft(signalValue); 
-    
+    var signalValue = this.get('signalIn');
+    var fftLength = signalValue.length;
+    var fftResult = dspEngine.fft(signalValue);
+
     var outputArray = [];
     // parse the fft coefficients as record tokens with
     // real and imaginary parts
-    for (var j = 0; j < fftLength; j += 1) { 
+    for (var j = 0; j < fftLength; j += 1) {
         var trial = {};
         trial.real = fftResult.real[j];
         trial.imag = fftResult.imag[j];
-        outputArray[j] = trial; 
+        outputArray[j] = trial;
     }
-    this.send('fftOutput', outputArray); 
+    this.send('fftOutput', outputArray);
 };
 
-exports.initialize = function() { 
-    handle = this.addInputHandler('signalIn',processSignal); 
-    var n = 0; 
-    dspEngine = new dsp.Signal();   
+exports.initialize = function() {
+    handle = this.addInputHandler('signalIn',processSignal);
+    var n = 0;
+    dspEngine = new dsp.Signal();
 };
 
-exports.wrapup = function() { 
-    this.removeInputHandler('signalIn',handle); 
+exports.wrapup = function() {
+    this.removeInputHandler('signalIn',handle);
 };

@@ -86,7 +86,7 @@ getAccessorCode = function (name) {
                         }
                     } finally {
                         if (typeof buffered !== 'undefined') {
-                            buffered.close(); // close the stream so there's no file locks   
+                            buffered.close(); // close the stream so there's no file locks
                         }
                     }
                     // print("testCommon.js: returning contents of " + pathName);
@@ -124,7 +124,7 @@ function test(testName, expression, expectedValue) {
                 .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
                 .split('\n');
         console.log(stack);
-        
+
         throw('Test failed: ' + testName
                 + '. Expected: ' + expectedValue
                 + ', but got: ' + expression);
