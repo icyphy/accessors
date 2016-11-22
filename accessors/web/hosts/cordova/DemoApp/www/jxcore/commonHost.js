@@ -23,15 +23,15 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 
-                ////////////////////////////////////////////
-                ////                NOTE:               ////
-                ////  This file has an exact copy in    ////
-                ////    accessors/web/hosts/common      ////
-                ////    and in the Ptolemy tree at      ////
-                ////   $PTII/ptolemy/actor/lib/jjs      ////
-                //// If you update here, please update  ////
-                ////   both places and run the tests    ////
-                ////////////////////////////////////////////
+////////////////////////////////////////////
+////                NOTE:               ////
+////  This file has an exact copy in    ////
+////    accessors/web/hosts/common      ////
+////    and in the Ptolemy tree at      ////
+////   $PTII/ptolemy/actor/lib/jjs      ////
+//// If you update here, please update  ////
+////   both places and run the tests    ////
+////////////////////////////////////////////
 
 /** This module provides host-independent functions for swarmlet hosts.
  *  A specific host (such as the Node.js host, the browser host, or the Ptolemy II
@@ -73,9 +73,9 @@
  *
  *  Events Emitted
  *  --------------
- *  
+ *
  *  An instantiated accessor is an event emitter that emits the following events:
- * 
+ *
  *  * **initialize**: Emitted when the accessor has been initialized.
  *  * **output**(*name*, *value*): Emitted when an output with the specified name
  *    and value are sent.
@@ -138,7 +138,7 @@
  *  as inputs to any connected accessors and then those will react as well.
  *  Finally, a contained accessor may send an output to an output of C, in which
  *  case the composite accessor will produce an output.
- *  
+ *
  *  The reactions of contained accessors in a composite will occur in topological
  *  sort order (upstream accessors are assured of reacting first). This ensures that
  *  reactions of a composite are deterministic. Specifically, suppose that A, B, and
@@ -193,17 +193,13 @@
  *
  *  @module commonHost
  *  @authors: Edward A. Lee and Chris Shaver
- *  @version: $$Id: commonHost.js 826 2016-06-17 23:02:54Z sandur2@illinois.edu $$
+ *  @version $$Id: commonHost.js 75426 2016-11-22 15:33:24Z cxh $$
  */
-
-//define(function(){
-//cordova.define("commonHost", function(require, exports, module) {
-
 
 // Stop extra messages from jslint and jshint.
 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint
-/* globals console, exports, instance, Packages, process, require, setInterval, setTimeout, window */
-/* jshint globalstrict: true, multistr: true */
+/*globals actor, alert, console, Duktape, exports, instance, java, Packages, process, require, setInterval, setTimeout, window */
+/*jshint globalstrict: true, multistr: true */
 'use strict';
 
 // Determine which accessor host is in use.
@@ -214,7 +210,8 @@ var accessorHostsEnum = {
     CAPECODE: 2,
     DEFAULT: 3,
     DUKTAPE: 4,
-    NODE: 5
+    NODE: 5,
+    NASHORN: 6
 };
 exports.accessorHostsEnum = accessorHostsEnum;
 
@@ -223,10 +220,12 @@ var accessorHost = accessorHostsEnum.DEFAULT;
 // In alphabetical order.
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
-} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function' && actor !== null) {
     accessorHost = accessorHostsEnum.CAPECODE;
 } else if (typeof Duktape === 'object') {
     accessorHost = accessorHostsEnum.DUKTAPE;
+} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function' && actor === null) {
+    accessorHost = accessorHostsEnum.NASHORN;
 } else if (typeof process !== 'undefined' && typeof process.version === 'string') {
     accessorHost = accessorHostsEnum.NODE;
 }
@@ -234,8 +233,8 @@ if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
 exports.accessorHost = accessorHost;
 
 if (accessorHost === accessorHostsEnum.DUKTAPE) {
-    var util = require('./util');
-    var EventEmitter = require('./events').EventEmitter;
+    var util = require('../common/modules/util.js');
+    var EventEmitter = require('../common/modules/events.js').EventEmitter;
 } else {
     // The node host will load the core util module here and not access the file system.
     var util = require('util');
@@ -282,9 +281,10 @@ if (accessorHost === accessorHostsEnum.DUKTAPE) {
  *  The returned instance may also include the following properties:
  *
  *  * **accessorClass**: The class name of the accessor, if not anonymous.
+ *  * **containedAccessors**: A list of contained accessors, if this is a composite
+ *    accessor.
  *  * **container**: A reference to the containing accessor, if this instance is
- *    instantiated by such a container.  The Cape Code host does not set container,
- *    see [https://www.terraswarm.org/accessors/wiki/Version1/Container](https://www.terraswarm.org/accessors/wiki/Version1/Container)
+ *    instantiated by a composite accessor.
  *  * **extendedBy**: A reference to the accessor that this is extended by, if there is
  *    one.
  *  * **extending**: A reference to the accessor that this extends, if it extends one.
@@ -316,16 +316,16 @@ if (accessorHost === accessorHostsEnum.DUKTAPE) {
  *   If this argument is present, then the getAccessorCode and bindings arguments are
  *   ignored (the instance inherits those properties from the implementer).
  */
-function Accessor(
-        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy) {
+function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy) {
     if (!code) {
         throw new Error('No accessor code specified.');
     }
+    var binding;
     // First, create all the properties that this instance will have as its 'own'
     // properties, even if it is being extended or implemented.
     this.accessorName = accessorName;
     this.extendedBy = extendedBy;
-    
+
     this.bindings = bindings;
 
     ////////////////////////////////////////////////////////////////////
@@ -335,7 +335,7 @@ function Accessor(
     // for this instance. Do this before creating other own properties in case
     // the caller accidentally tries to provide bindings whose names match key
     // properties of this instance.
-    for (var binding in bindings) {
+    for (binding in bindings) {
         this[binding] = bindings[binding];
     }
 
@@ -350,7 +350,7 @@ function Accessor(
 
         ////////////////////////////////////////////////////////////////////
         //// Define the properties that define inputs and input handlers
-    
+
         // Inputs, outputs, and parameters need to be able to be accessed two ways,
         // by name and in the order they are defined. Hence, we define two data
         // structures for each, one of which is an ordered list of names, and one
@@ -360,16 +360,16 @@ function Accessor(
         this.inputHandlers = {};
         this.anyInputHandlers = [];
         this.inputHandlersIndex = {};
-    
+
         // Counter used to assign unique IDs to each input handler.
         this.inputHandlerID = 0;
-    
+
         ////////////////////////////////////////////////////////////////////
         //// Define the properties that define outputs.
-    
+
         this.outputList = [];
         this.outputs = {};
-    
+
         ////////////////////////////////////////////////////////////////////
         //// Define the properties that define parameters.
 
@@ -390,39 +390,42 @@ function Accessor(
     // of the exports object of the immediate parent (see the this.extend() function
     // below).
     this.exports = {};
-    
+
     // To keep track of implemented interfaces.
     // Note that since this is an 'own' property, only the immediately
     // implemented interfaces are listed.
     this.implementedInterfaces = [];
-    
+
     // To prevent ssuper from being inherited via the prototype chain,
     // define it explicitly to be null.
     this.ssuper = null;
     this.exports.ssuper = null;
 
-    // Define an object to be populated with monitoring data active accessors, whose react() has been invoked. 
-    // A mapping from accessor class to statistics capturing the execution time (in milliseconds) of react() is stored.
-    // ************************FORMAT of output sample array***************************
-    // {<Accessor class> : [<count of sample>, <mean of react execution duration>, 
-    // <standard deviation of react execution duration>]}
-    // ********************************************************************************
-    // NOTE: We can use a different strategy for storing execution times, like a fixed window of recent durations that 
-    // can later be processed by monitoring components downstream. Should be an easy change, if needed.
-    // FIXME: It is possible a callback is created in react(), the execution time of callback is not accounted for  
-    // with current monitoring implementation
-    if(typeof Accessor.activeAccessors == 'undefined')
-    {
+    // Define an object to be populated with monitoring data for active
+    // accessors whose react() has been invoked. A mapping from accessor
+    // class to statistics capturing the execution time (in milliseconds)
+    // of react() is stored.
+    // ****************FORMAT of output sample array*******************
+    // {<Accessor class> : [<count of sample>, <mean of react execution
+    // duration>, <standard deviation of react execution duration>]}
+    // ****************************************************************
+    // NOTE: This is only a first iteration approach, we can use a different
+    // strategy if needed for storing execution times, like a fixed window of
+    // recent durations that can later be processed by monitoring components
+    // downstream.
+    // FIXME: It is possible a callback is created in react(), execution
+    // time of callback is not accounted for with current implementation
+    if (typeof Accessor.activeAccessors == 'undefined') {
         Accessor.activeAccessors = {};
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the accessor code.
 
     // In strict mode, eval() cannot modify the scope of this function.
     // Hence, we wrap the code in the function, and will pass in the
     // exports object that we want the code to modify.
-    
+
     // Need to provide all the functions that are allowed to be invoked
     // as top-level functions in the accessor specification.
     // FIXME: Probably need to include setInterval, clearInterval,
@@ -442,76 +445,88 @@ function Accessor(
         throw new Error('Host does not define required setTimeout function.');
     }
 
+    if (bindings && bindings.alert) {
+        this.alert = bindings.alert;
+    } else if (typeof alert !== 'undefined') {
+        this.alert = alert;
+    } else if (typeof console.log !== 'undefined') {
+            this.alert = console.log;
+    } else {
+        throw new Error('Host does not define required alert function.');
+    }
+
+    // By default, the root property is this instance.
+    this.root = this;
+
     var wrapper = new Function('\
-            error, \
-            exports, \
-            getResource, \
-            httpRequest, \
-            readURL, \
-            require, \
-            setInterval, \
-            setTimeout',
-            code);
+alert, \
+error, \
+exports, \
+getResource, \
+httpRequest, \
+readURL, \
+require, \
+setInterval, \
+setTimeout',
+                               code);
     wrapper.call(this,
-            this.error,
-            this.exports,
-            this.getResource,
-            this.httpRequest,
-            this.readURL,
-            this.require,
-            this.setInterval,
-            this.setTimeout);
-    
+                 this.alert,
+                 this.error,
+                 this.exports,
+                 this.getResource,
+                 this.httpRequest,
+                 this.readURL,
+                 this.require,
+                 this.setInterval,
+                 this.setTimeout);
+
     // Mark that the accessor has not been initialized
     this.initialized = false;
-    
+
     // Record the instance indexed by its exports property.
     _accessorInstanceTable[this.exports] = this;
 
     ////////////////////////////////////////////////////////////////////
     //// Set up the prototype chain and ssuper properties.
-    
-    // By default, the root property is this instance.
-    this.root = this;
-    
+
     if (extendedBy) {
         // This accessor is being extended.
-        
+
         // First argument is the object, second is the prototype.
         // Note the reverse arrangment for the accessor instance vs.
         // its exports property.
         Object.setPrototypeOf(this, extendedBy);
         Object.setPrototypeOf(extendedBy.exports, this.exports);
-        
+
         if (extendedBy.ssuper) {
             throw new Error('Cannot extend more than one base accessor.');
         }
-        
+
         extendedBy.ssuper = this;
         extendedBy.exports.ssuper = this.exports;
-        
+
         this.root = extendedBy.root;
-        
+
         extendedBy.extending = this;
-        
+
     } else if (implementedBy) {
         // This accessor interface is being implemented.
         Object.setPrototypeOf(this, implementedBy);
         // Note that these now no relationship between the exports properties,
         // and there are no ssuper properties provided.
-        
+
         this.root = implementedBy.root;
-        
+
         implementedBy.implementedInterfaces.push(this);
     }
 
     ////////////////////////////////////////////////////////////////////
     //// Evaluate the setup() function to populate the data structures.
-        
+
     if (typeof this.exports.setup === 'function') {
         this.exports.setup.call(this);
     }
-        
+
     ////////////////////////////////////////////////////////////////////
     //// Provide wrapper functions for initialize(), fire(), and wrapup().
 
@@ -538,7 +553,7 @@ function Accessor(
             this.initialized = true;
             this.emit('initialize');
         };
-        
+
         this.fire = function() {
             if (typeof this.exports.fire === 'function') {
                 // Call with 'this' being the accessor instance, not the exports
@@ -550,14 +565,14 @@ function Accessor(
         this.wrapup = function() {
             // Mark that this accessor has not been initialized.
             this.initialized = false;
-   
+
             // Remove all input handlers.
             this.inputHandlers = {};
             this.anyInputHandlers = [];
             this.inputHandlersIndex = {};
             // Reset counter used to assign unique IDs to each input handler.
             this.inputHandlerID = 0;
-           
+
             // Invoke wrapup on contained accessors.
             if (this.containedAccessors && this.containedAccessors.length > 0) {
                 for (var i = 0; i < this.containedAccessors.length; i++) {
@@ -611,7 +626,7 @@ Accessor.prototype.addInputHandler = function(name, func) {
     if (name && !this.inputs[name]) {
         throw new Error('Cannot add an input handler to a non-existent input: ' + name);
     }
-    
+
     // Bind the callback function so that it is always invoked in the context
     // of the root accessor object (not extended or implemented instances).
     // If there are arguments to the callback, create a new function.
@@ -668,7 +683,7 @@ Accessor.prototype.assignPriorities = function() {
     // prototype chain, but in a deep hierarchy, this will be more efficient.
     var thiz = this.root;
     var accessors = thiz.containedAccessors;
-    
+
     // First, initialize the contained accessors with a null priority.
     for (var i = 0; i < accessors.length; i++) {
         accessors[i].priority = null;
@@ -696,6 +711,11 @@ Accessor.prototype.assignPriorities = function() {
 
 /** Assuming that the specified accessor has an assigned priority, follow its
  *  connections downstream and assign priorities to connected accessors.
+ *  Each downstream accessor gets a priority at least one greater than the
+ *  priority of the specified accessor, and each gets a unique priority.
+ *  Return the largest priority assigned to a downstream accessor, or if
+ *  no priorities are assigned to downstream accessor, then return the priority
+ *  of the specified accessor.
  *  @param accessor The contained accessor with a priority.
  *  @param cyclePriority If we encounter an accessor with this priority, then
  *   there is a causality loop.
@@ -728,24 +748,41 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function(accessor, cycleP
                 if (theirPriority === null) {
                     // Destination has no previously assigned priority. Give it one,
                     // and follow the implications.
-                    destinationAccessor.priority = myPriority + 1;
-                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + (myPriority + 1));
-                    this.assignImpliedPrioritiesDownstream(
-                            destinationAccessor, cyclePriority);
+
+                    // We increment myPriority before use so that if
+                    // an output is connected to multiple inputs, the
+                    // inputs do not have the same priority.
+                    // To replicate this, run:
+
+                    // (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke -timeout 6000 test/auto/RampJSTestDisplay.js)
+
+                    // If we don't increment the priority then either
+                    // the Display or the TrainableTest fails to get
+                    // inputs.
+                    destinationAccessor.priority = ++myPriority;
+                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + myPriority));
+
+                    // In case there are further assigned priorities further downstream,
+                    // update myPriority to the largest of those.
+                    myPriority = this.assignImpliedPrioritiesDownstream(
+                        destinationAccessor, cyclePriority);
                 } else {
                     if (theirPriority > myPriority) {
                         // Priority is OK. Continue.
                         continue;
                     }
                     // Priority has to be adjusted.
-                    destinationAccessor.priority = myPriority + 1;
+
+                    // See comment above for why we increment myPriority.
+                    destinationAccessor.priority = ++myPriority;
                     // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + (myPriority + 1));
-                    this.assignImpliedPrioritiesDownstream(
-                            destinationAccessor, cyclePriority);
+                    myPriority = this.assignImpliedPrioritiesDownstream(
+                        destinationAccessor, cyclePriority);
                 }
             }
         }
-    }        
+    }
+    return myPriority;
 };
 
 /** Assuming that the specified accessor has an assigned priority, follow its
@@ -775,8 +812,8 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
             }
             var theirPriority = source.priority;
             if (theirPriority === cyclePriority) {
-                    throw new Error('Causality loop found including at least: ' +
-                            accessor.accessorName);
+                throw new Error('Causality loop found including at least: ' +
+                                accessor.accessorName);
             }
             if (theirPriority === null) {
                 // Source has no previously assigned priority. Give it one,
@@ -795,7 +832,7 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function(accessor, cyclePri
                 this.assignImpliedPrioritiesUpstream(source, cyclePriority);
             }
         }
-    }        
+    }
 };
 
 /** Connect the specified inputs and outputs.
@@ -881,7 +918,7 @@ Accessor.prototype.connect = function(a, b, c, d) {
         }
     }
 };
-    
+
 /** Convert the specified type to the type expected by the specified input,
  *  or throw an exception if no such conversion is possible.
  *  @param value The value to convert.
@@ -899,13 +936,13 @@ function convertType(value, destination, name) {
                 value = JSON.stringify(value);
             } catch (error) {
                 throw new Error('Object provided to ' +
-                        name +
-                        ' does not have a string representation: ' +
-                        error);
+                                name +
+                                ' does not have a string representation: ' +
+                                error);
             }
         }
     } else if (typeof value === 'string') {
-        // Provided value is a string, but 
+        // Provided value is a string, but
         // destination type is boolean, number, int, or JSON.
         if (value === '') {
             // If the value is an empty string, then convert
@@ -918,11 +955,11 @@ function convertType(value, destination, name) {
                 value = JSON.parse(value);
             } catch (error) {
                 throw new Error('Failed to convert value to destination type: ' +
-                        name +
-                        ' expected a ' +
-                        destination.type +
-                        ' but received: ' +
-                        value);
+                                name +
+                                ' expected a ' +
+                                destination.type +
+                                ' but received: ' +
+                                value);
             }
         }
     } else if (destination.type === 'boolean' && typeof value !== 'boolean') {
@@ -936,9 +973,9 @@ function convertType(value, destination, name) {
         // value is not a string. Needs to be a number.
         if (typeof value !== 'number') {
             throw new Error(name + ' expected an int, but got a ' +
-                    (typeof value) +
-                    ': ' +
-                    value);
+                            (typeof value) +
+                            ': ' +
+                            value);
         }
         // If type is int, need the value to be an integer.
         if (destination.type === 'int' && value % 1 !== 0) {
@@ -952,15 +989,18 @@ function convertType(value, destination, name) {
             JSON.stringify(value);
         } catch(err) {
             throw new Error('Object provided to ' +
-                    name +
-                    ' does not have a JSON representation: ' +
-                    err);
+                            name +
+                            ' does not have a JSON representation: ' +
+                            err);
         }
     }
     return value;
 }
 
 /** Report an error using console.error().
+ *  This should be used by an accessor to report non-fatal errors.
+ *  For fatal errors, invoke "throw new Error('A Description');"
+ *
  *  @param message The error message.
  */
 Accessor.prototype.error = function(message) {
@@ -969,9 +1009,9 @@ Accessor.prototype.error = function(message) {
     console.error('------------------------- error stack trace:');
     var e = new Error('dummy');
     var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-            .replace(/^\s+at\s+/gm, '')
-            .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-            .split('\n');
+        .replace(/^\s+at\s+/gm, '')
+        .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+        .split('\n');
     console.error(stack);
     console.error('-------------------------');
 };
@@ -988,12 +1028,12 @@ Accessor.prototype.extend = function(accessorClass) {
     if (!this.getAccessorCode) {
         throw new Error('extend() is not supported by this swarmlet host.');
     }
-    
+
     var baseName = this.accessorName + '_' + accessorClass;
-    
+
     // Create an instance of the accessor this is extending.
     var extendedInstance = instantiateAccessor(
-            baseName, accessorClass, this.getAccessorCode, this.bindings, this, null);
+        baseName, accessorClass, this.getAccessorCode, this.bindings, this, null);
 };
 
 /** Default implementation of this.get(), which reads the current value of the input
@@ -1006,7 +1046,7 @@ Accessor.prototype.get = function(name) {
     // prototype chain, but in a deep hierarchy, this will be more efficient.
     var thiz = this.root;
     var input = thiz.inputs[name];
-    
+
     if (!input) {
         // Tolerate using this.get() to retrieve a parameter instead of input,
         // since names are required to be unique anyway. This ensure backward
@@ -1057,7 +1097,7 @@ Accessor.prototype.getParameter = function(name) {
 
 /** Default implement of the this.getResource() function, which throws an exception stating
  *  that getResource is not supported.
- */    
+ */
 Accessor.prototype.getResource = function() {
     throw new Error('This swarmlet host does not support this.getResource().');
 };
@@ -1066,7 +1106,7 @@ Accessor.prototype.getResource = function() {
  *  that httpRequest is not supported.
  *  Note that this function is deprecated in the Accessor Specification version 1,
  *  but we include it here anyway.
- */    
+ */
 Accessor.prototype.httpRequest = function() {
     throw new Error('This swarmlet host does not support httpRequest().');
 };
@@ -1087,7 +1127,7 @@ Accessor.prototype.implement = function(accessorClass) {
 
     // Create an instance of the accessor this is implementing.
     var extendedInstance = instantiateAccessor(
-            interfaceName, accessorClass, this.getAccessorCode, this.bindings, null, this);
+        interfaceName, accessorClass, this.getAccessorCode, this.bindings, null, this);
 };
 
 /** Default implementation of the function to define an accessor input.
@@ -1127,7 +1167,7 @@ Accessor.prototype.instantiate = function(instanceName, accessorClass) {
     };
     instanceName = this.accessorName + '.' + instanceName;
     var containedInstance = instantiateAccessor(
-            instanceName, accessorClass, this.getAccessorCode, insideBindings);
+        instanceName, accessorClass, this.getAccessorCode, insideBindings);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
     return containedInstance;
@@ -1154,10 +1194,10 @@ Accessor.prototype.instantiate = function(instanceName, accessorClass) {
  *   ignored (the instance inherits those properties from the implementer).
  */
 function instantiateAccessor(
-        accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
+    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
     var instance = new Accessor(
-            accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
+        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
     return instance;
 }
@@ -1240,7 +1280,7 @@ Accessor.prototype.parameter = function(name, options) {
     pushIfNotPresent(name, this.parameterList);
     this.parameters[name] = mergeObjects(this.parameters[name], options);
 };
-    
+
 /** Set an input of this accessor to the specified value.
  *  This function will perform conversions to the destination port type, if possible.
  *  For example, if a number is expected, but a string is provided, then it will
@@ -1256,7 +1296,7 @@ Accessor.prototype.provideInput = function(name, value) {
 
     value = convertType(value, input, name);
     input.currentValue = value;
-    
+
     // Mark this input as requiring invocation of an input handler.
     // But be careful: If the value is null and the port has no default
     // value, then this is being called to indicate that there is _no_
@@ -1269,7 +1309,7 @@ Accessor.prototype.provideInput = function(name, value) {
         if (this.container) {
             this.container.scheduleEvent(this);
         }
-    
+
         // If the input is connected on the inside, then provide the same input
         // to the destination(s).
         if (input.destinations) {
@@ -1298,14 +1338,14 @@ function pushIfNotPresent(item, list) {
         }
     }
     list.push(item);
-};
+}
 
 /** Test function to query the accessor execution time statistics
- *  @return A mapping from accessor class to duration statistics for 
+ *  @return A mapping from accessor class to duration statistics for
  *          execution time of the accessor instance react function
  */
 Accessor.queryActiveAccessors = function() {
-    return Accessor.activeAccessors;    
+    return Accessor.activeAccessors;
 };
 
 /** Invoke any registered handlers for all inputs or for a specified input.
@@ -1320,29 +1360,61 @@ Accessor.queryActiveAccessors = function() {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function(name) {
-    // For monitoring, we want to time execution of this function. 
+    //console.log("commonHost.js: react(" + name + "): start");
+    // For monitoring, we want to time execution of this function.
     var startTime = Date.now();
     var thiz = this.root;
     // Allow further reactions to be scheduled by this reaction.
     thiz.reactRequestedAlready = false;
-    
+
     // To avoid code duplication, define a local function.
     var invokeSpecificHandler = function(name) {
+
         if (thiz.inputHandlers[name] && thiz.inputHandlers[name].length > 0) {
-            for (var i = 0; i < thiz.inputHandlers[name].length; i++) {
+            // When calling stop, there is a chance that "removed[0].react()" below
+            // will fail with 'TypeError: Cannot read property 'length' of undefined',
+            // so we check to see if thiz.inputHandlers[name] is defined.
+            for (var i = 0; thiz.inputHandlers[name] && i < thiz.inputHandlers[name].length; i++) {
                 if (typeof thiz.inputHandlers[name][i] === 'function') {
                     // Input handlers functions are bound to the exports object.
                     try {
                         thiz.inputHandlers[name][i]();
                     } catch (exception) {
                         // Remove the input handler.
-                        thiz.removeInputHandler(
+                        if (thiz.inputHandlers && thiz.inputHandlers[name]) {
+                            thiz.removeInputHandler(
                                 thiz.inputHandlers[name][i].handle);
-                        thiz.error('commonHost.js, react(), invoking a specific handler for \"' +
-                                   name + '\": Exception occurred in input handler,' +
-                                   ' which has now has been removed.  Exception was: ' +
-                                   exception +
-                                   ' Stacktrace was: ' + exception.stack);
+                        }
+                        // Throw an Error here instead of calling error() so that
+                        // if TrainableTest.wrapup() throws an Error because
+                        // the input does not match the training data, then we
+                        // don't ignore the error in commonHost.error().
+
+                        // If the exception was thrown because of
+                        // Java, we should get the Java stacktrace.
+                        var stacktrace = exception.stack;
+                        if (typeof stacktrace === 'undefined' && accessorHost === accessorHostsEnum.CAPECODE || accessorHost === accessorHostEnum.NASHORN) {
+                            try {
+                                // This code is Cape Code Host-specific because it uses Java.
+                                var StringWriter = java.io.StringWriter, PrintWriter = java.io.PrintWriter;
+                                var stringWriter = new StringWriter();
+                                var printWriter = new PrintWriter(stringWriter);
+                                exception.printStackTrace(printWriter);
+                                stacktrace = "\n" + stringWriter.toString();
+                            } catch (exception2) {
+                                stacktrace = "undefined and the exception was not a Java exception so exception.printStackTrace() failed with: " + exception2;
+                            }
+                        }
+
+                        // FIXME: We should probably subclass Error
+                        // and have a version that takes an exception
+                        // as an argument and reads the value of
+                        // exception.stack.
+                        throw new Error('commonHost.js, react(), invoking a specific handler for \"' +
+                                        name + '\": Exception occurred in input handler,' +
+                                        ' which has now has been removed.  Exception was: ' +
+                                        exception +
+                                        ' Stacktrace was: ' + stacktrace);
                     }
                 }
             }
@@ -1351,25 +1423,28 @@ Accessor.prototype.react = function(name) {
 
     if (name) {
         // Handling a specific input.
+        //console.log("commonHost.js: react(" + name + "): Handling a specific input.");
         invokeSpecificHandler(name);
     } else {
         // No specific input has been given.
-    	// Invoke pending inputHandlers.  An accessor might send to its own 
-    	// inputs, so repeat until there are no more pending handlers.
-    	var moreInputsPossiblyAvailable = true;
-    	while (moreInputsPossiblyAvailable) {
-    		moreInputsPossiblyAvailable = false;
-	        for (var i = 0; i < thiz.inputList.length; i++) {
-	            name = thiz.inputList[i];
-	            if (thiz.inputs[name].pendingHandler) {
-	                thiz.inputs[name].pendingHandler = false;
-	                moreInputsPossiblyAvailable = true;
-	                invokeSpecificHandler(name);
-	            }
-	        }
-    	}
+            // Invoke pending inputHandlers.  An accessor might send to its own
+            // inputs, so repeat until there are no more pending handlers.
+        //console.log("commonHost.js: react(" + name + "): no specific input has been given.");
+            var moreInputsPossiblyAvailable = true;
+            while (moreInputsPossiblyAvailable) {
+                moreInputsPossiblyAvailable = false;
+            for (var i = 0; i < thiz.inputList.length; i++) {
+                name = thiz.inputList[i];
+                if (thiz.inputs[name].pendingHandler) {
+                    thiz.inputs[name].pendingHandler = false;
+                    moreInputsPossiblyAvailable = true;
+                    invokeSpecificHandler(name);
+                }
+            }
+            }
     }
     // Next, invoke handlers registered to handle any input.
+    //console.log("commonHost.js: react(" + name + "): invoke handlers registered to handle any input");
     if (thiz.anyInputHandlers.length > 0) {
         for (var j = 0; j < thiz.anyInputHandlers.length; j++) {
             if (typeof thiz.anyInputHandlers[j] === 'function') {
@@ -1379,50 +1454,51 @@ Accessor.prototype.react = function(name) {
                 } catch (exception) {
                     // Remove the input handler.
                     thiz.removeInputHandler(
-                            thiz.anyInputHandlers[j].handle);
+                        thiz.anyInputHandlers[j].handle);
                     thiz.error('commonHost.js, react() invoking handlers registered to handle any input: Exception occurred in input handler,' +
                                ' which has now has been removed.  Exception was: ' +
-                               exception);
+                               exception +
+                               ' Stacktrace was: ' + exception.stack);
                 }
             }
         }
     }
-    
+
     // Next, invoke react() on any contained accessors.
     if (thiz.containedAccessors && thiz.containedAccessors.length > 0) {
-        // console.log('Composite is reacting with ' + thiz.eventQueue.length + ' events.');
+        //console.log('commonHost.js react(' + name + '): Composite is reacting with ' + thiz.eventQueue.length + ' events.');
         while (thiz.eventQueue && thiz.eventQueue.length > 0) {
             // Remove from the event queue the first accessor, which will now react.
             // It may add itself back in, if it sends to its own input. But in that
             // case, it should fire again immediately, so that is correct.
             var removed = thiz.eventQueue.splice(0, 1);
-            removed[0].react();        
+            removed[0].react();
         }
     }
 
     // Next, invoke the fire() function.
     if (typeof this.exports.fire === 'function') {
+        //console.log('commonHost.js react(' + name + '): invoking fire');
         this.exports.fire.call(this);
     }
 
     // Duration is in milliseconds
-    var duration = Date.now() - startTime;   
-    if(this.accessorClass in Accessor.activeAccessors)
-    {
+    var duration = Date.now() - startTime;
+    if (this.accessorClass in Accessor.activeAccessors) {
         // Update mean and variance for duration of react execution
         var newCount = Accessor.activeAccessors[this.accessorClass][0] + 1;
         var currentMean = Accessor.activeAccessors[this.accessorClass][1];
-        var currentStdDev =  Accessor.activeAccessors[this.accessorClass][2];
+        var currentVar =  Accessor.activeAccessors[this.accessorClass][2];
         Accessor.activeAccessors[this.accessorClass][0] = newCount;
         Accessor.activeAccessors[this.accessorClass][1] = currentMean + ((duration - currentMean)/newCount);
-        if(newCount > 1)
-        {
-            var nextVar = (((newCount - 2)/(newCount - 1)) * Math.pow(currentStdDev , 2)) + ((1/newCount) * Math.pow(duration - currentMean, 2));
-            Accessor.activeAccessors[this.accessorClass][2] = Math.sqrt(nextVar);
-        }        
+        if (newCount > 1) {
+            var deviation = duration - currentMean;
+            var nextVar = (((newCount - 2)/(newCount - 1)) * currentVar) +
+                ((1/newCount) * (deviation * deviation));
+            Accessor.activeAccessors[this.accessorClass][2] = nextVar;
+        }
     }
-    else 
-    {
+    else {
         Accessor.activeAccessors[this.accessorClass] = [1, duration, 0];
     }
 
@@ -1433,7 +1509,7 @@ Accessor.prototype.react = function(name) {
  *  that readURL is not supported.
  *  Note that this function is deprecated in the Accessor Specification version 1,
  *  but we include it here anyway.
- */    
+ */
 Accessor.prototype.readURL = function() {
     throw new Error('This swarmlet host does not support readURL().');
 };
@@ -1448,7 +1524,7 @@ Accessor.prototype.removeInputHandler = function(handle) {
     if (handler) {
         if (handler.name) {
             if (thiz.inputHandlers[handler.name] &&
-                    thiz.inputHandlers[handler.name][handler.index]) {
+                thiz.inputHandlers[handler.name][handler.index]) {
                 thiz.inputHandlers[handler.name][handler.index] = null;
             }
         } else {
@@ -1463,14 +1539,14 @@ Accessor.prototype.removeInputHandler = function(handle) {
 
 /** Default implement of the require function, which throws an exception stating
  *  that require is not supported.
- */    
+ */
 Accessor.prototype.require = function() {
     // Print a stack trace.
     var e = new Error('This swarmlet host does not support require().');
     var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-            .replace(/^\s+at\s+/gm, '')
-            .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-            .split('\n');
+        .replace(/^\s+at\s+/gm, '')
+        .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+        .split('\n');
     console.log(stack);
     throw e;
 };
@@ -1493,7 +1569,8 @@ Accessor.prototype.scheduleEvent = function(accessor) {
         thiz.reactRequestedAlready = true;
         setTimeout(function() { thiz.react(); }, 0);
     }
-    if (!queue || queue.length === 0) {
+    // In the Nashorn host, queue can be undefined.
+    if (typeof queue === 'undefined' || !queue || queue.length === 0) {
         // Use a simple array as an event queue because almost all
         // sorted insertions will be at the end, and all extractions
         // will be at the beginning.
@@ -1504,14 +1581,14 @@ Accessor.prototype.scheduleEvent = function(accessor) {
     var myPriority = accessor.priority;
     if (typeof myPriority !== 'number') {
         throw new Error('Accessor does not have a priority: ' +
-                accessor.accessorName +
-                '. Perhaps initialize() is overridden?');
+                        accessor.accessorName +
+                        '. Perhaps initialize() is overridden?');
     }
     // Recall that a higher priority number means a lower priority.
     var theirPriority = queue[queue.length - 1].priority;
     if (myPriority > theirPriority) {
         // Simple case. Append to the end of the queue.
-        queue.push(instance);
+        queue.push(accessor);
         return;
     }
     if (myPriority == theirPriority) {
@@ -1654,4 +1731,3 @@ var _accessorInstanceTable = {};
 
 exports.Accessor = Accessor;
 exports.instantiateAccessor = instantiateAccessor;
-//});
