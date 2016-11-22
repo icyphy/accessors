@@ -49,7 +49,7 @@ exports.setup = function() {
 var display = function () {
     var toDisplay = this.get('html');
     browser.display(toDisplay);
-}
+};
 
 exports.initialize = function() {
     this.addInputHandler('html', display);
