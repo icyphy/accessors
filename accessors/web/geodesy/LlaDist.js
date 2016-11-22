@@ -26,7 +26,7 @@
  * 
  *  @accessor geodesy/LlaDist
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: LlaDist.js 1 2016-03-06 16:00:00Z eloi $$
+ *  @version $$Id$$
  *  @input {double} lat1 latitude
  *  @input {double} lon1 longitude
  *  @input {double} alt1 altitude

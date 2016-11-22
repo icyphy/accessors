@@ -34,7 +34,7 @@
  *
  *  @accessor devices/EcSensor
  *  @author Matt Weber (matt.weber@eecs.berkeley.edu)
- *  @version $$Id: EcSensor.js 925 2016-10-21  $$
+ *  @version $$Id$$
  *  @input trigger An input to trigger data acqusition.
  *  @output {number} ec The latest measured ec value.
  */

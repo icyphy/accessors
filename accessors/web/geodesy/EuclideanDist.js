@@ -25,7 +25,7 @@
  * 
  *  @accessor geodesy/Lla2Ecef
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: Lla2Ecef.js 1 2016-03-06 16:00:00Z eloi $$
+ *  @version $$Id$$
  *  @input {double} x1 x-coordinate of the first location
  *  @input {double} y1 y-coordinate of the first location
  *  @input {double} z1 z-coordinate of the first location

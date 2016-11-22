@@ -24,7 +24,7 @@
  *
  *  @accessor robotics/GlobalPosition2LatLonAlt
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
- *  @version $$Id: GlobalPosition2LatLonAlt.js 1 2016-03-06 16:00:00Z eloi $$
+ *  @version $$Id$$
  *  @input {object} global maveros message
  *  @output {double} lat latitude
  *  @output {double} lon longitude

@@ -38,7 +38,7 @@
  *  @output sample String which provides duration statistics for react() 
  *  function execution on host.
  *  @author Atul Sandur
- *  @version $$Id: nodeMonitoringAccessor.js 546 2016-06-01 02:07:57Z cxh $$
+ *  @version $$Id$$
  */
 
 /** Create a dummy instance of timer to collect samples and initiliaze it.

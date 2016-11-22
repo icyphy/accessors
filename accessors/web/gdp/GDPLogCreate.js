@@ -43,7 +43,7 @@
  *  @output output An output that is written to when the creation is complete.
  *
  *  @author Christopher Brooks
- *  @version $$Id: GDPLogCreate.js 865 2016-07-20 14:11:58Z cxh $$ 
+ *  @version $$Id$$ 
  */
 
 // Stop extra messages from jslint.  Note that there should be no

@@ -43,7 +43,7 @@
  *
  *  @accessor devices/DrDose
  *  @author Matt Weber (matt.weber@eecs.berkeley.edu)
- *  @version $$Id: DrDose.js 925 2016-10-21  $$
+ *  @version $$Id$$
  *  @input {number} Acid Duration The desired dosing time in miliseconds.
  *  @input {number} Base Duration The desired dosing time in miliseconds.
  *  @input {number} Nutrient Duration The desired dosing time in miliseconds.
