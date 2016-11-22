@@ -8,6 +8,8 @@
 //   cd accessors/web
 //   ant tests.nashorn
 
+var capeCodeHost = require('capeCodeHost');
+
 // Generate a list of auto files in ../test/auto
 var File = Java.type('java.io.File');
 var directory = new File('../test/auto');

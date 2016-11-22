@@ -21,7 +21,3 @@ if [ ! -f "$PTII/bin/ptinvoke" ]; then
 fi
 
 "$PTII/bin/ptinvoke" ptolemy.actor.lib.jjs.NashornAccessorHostApplication $@
-
-
-
-
