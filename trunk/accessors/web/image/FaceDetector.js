@@ -65,15 +65,18 @@
 
 var faceDetector = require('objectDetection');
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('input');
     this.output('output');
     this.output('faceCount');
-    this.input('options', {'value':'{"MinFaceSize": 50, "MaxFaceSize": 400}', 'type':'JSON'});
+    this.input('options', {
+        'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
+        'type': 'JSON'
+    });
 };
 
-exports.initialize = function() {
-    this.addInputHandler('input', function() {
+exports.initialize = function () {
+    this.addInputHandler('input', function () {
         var options = this.get('options');
         var image = this.get('input');
         var result = faceDetector.filter(image, options);
@@ -82,4 +85,3 @@ exports.initialize = function() {
         this.send('faceCount', numFaces);
     });
 };
-

@@ -38,11 +38,11 @@ audio = require('audio-io');
 
 fileInputHander = null;
 
-exports.loadFile = function() {
+exports.loadFile = function () {
     this.send('wavdata', audio.loadwav(this.get('wavfile')));
 };
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('wavfile', {
         type: 'string'
     });
@@ -51,11 +51,11 @@ exports.setup = function() {
     });
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     fileInputHander = this.addInputHandler('wavfile', this.exports.loadFile.bind(this));
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     audio.wrapup();
     this.removeInputHandler('wavfile', fileInputHander);
 };

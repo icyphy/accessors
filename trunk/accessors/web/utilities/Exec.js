@@ -1,4 +1,3 @@
-
 /** Exec starts a shell command and connects to the process' stdin and stdout.
  * This accessor implements an interface to the shell of the host. It takes a
  * command and starts it as a process. It connects the process' stdin and
@@ -32,45 +31,47 @@ var sh = null;
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
-        this.input('stdin', {
-                'type': 'string'
-        });
-        this.output('stdout', {
-                'type': 'string'
-        });
+    this.input('stdin', {
+        'type': 'string'
+    });
+    this.output('stdout', {
+        'type': 'string'
+    });
     this.input('command', {
         'value': 'ls',
-        'type':'string'
+        'type': 'string'
     });
 };
 
 /** Initialize the accessor and start the process subsequently.
  */
 exports.initialize = function () {
-        sh = new shell.Shell({'cmd' : this.get('command')});
+    sh = new shell.Shell({
+        'cmd': this.get('command')
+    });
 
-        var self = this;
+    var self = this;
 
-        this.addInputHandler('stdin', function () {
-            var data = self.get('stdin');
-            if (data) {
-                  sh.write(data);
-            }
-        });
+    this.addInputHandler('stdin', function () {
+        var data = self.get('stdin');
+        if (data) {
+            sh.write(data);
+        }
+    });
 
-        sh.on('message', function (data) {
-                if (data)  {
-                        self.send('stdout', data.toString());
-                }
-        });
+    sh.on('message', function (data) {
+        if (data) {
+            self.send('stdout', data.toString());
+        }
+    });
 
-        sh.start();
+    sh.start();
 };
 
 /** Wrap up the execution of the accessor by stopping the process.
  */
 exports.wrapup = function () {
-        if (sh)  {
-                sh.wrapup();
-        }
+    if (sh) {
+        sh.wrapup();
+    }
 };

@@ -23,11 +23,22 @@
 exports.setup = function () {
     // FIXME: this only supports numbers and strings, unlike the Cape Code Test
     // actor, which supports many types.
-    this.parameter('correctValues', {'type': 'JSON', 'value': '{0}'});
+    this.parameter('correctValues', {
+        'type': 'JSON',
+        'value': '{0}'
+    });
     this.input('input');
-    this.output('output', {'type': 'boolean'});
-    this.parameter('tolerance', {'type': 'number', 'value': 0.000000001});
-    this.parameter('trainingMode', {'type': 'boolean', 'value': false});
+    this.output('output', {
+        'type': 'boolean'
+    });
+    this.parameter('tolerance', {
+        'type': 'number',
+        'value': 0.000000001
+    });
+    this.parameter('trainingMode', {
+        'type': 'boolean',
+        'value': false
+    });
 };
 
 // Input, parameter and variable names match those in $PTII/ptolemy/actor/lib/NonStrictTest.java
@@ -77,9 +88,9 @@ exports.initialize = function () {
             if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
                 if (inputValue === null) {
                     throw new Error('After seeing ' + numberOfInputTokensSeen +
-                                    ' tokens, the value of the input was null?  ' +
-                                    'Perhaps the input is not connected?'
-                                   );
+                        ' tokens, the value of the input was null?  ' +
+                        'Perhaps the input is not connected?'
+                    );
                 }
                 cache = [];
                 inputValueValue = JSON.stringify(inputValue, function (key, value) {
@@ -100,24 +111,24 @@ exports.initialize = function () {
 
 
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
-                                ' tokens, the input "' + inputValue +
-                                '" is neither a number nor a string, it is a ' +
-                                typeof inputValue  + ' with value ' + inputValueValue);
+                    ' tokens, the input "' + inputValue +
+                    '" is neither a number nor a string, it is a ' +
+                    typeof inputValue + ' with value ' + inputValueValue);
             }
             if (typeof referenceToken === 'number') {
                 if (Math.abs(inputValue - referenceToken) > self.getParameter('tolerance')) {
                     throw new Error('The input "' + inputValue + '" is not within "' +
-                                    self.getParameter('tolerance') +
-                                    '" of the expected value "' +
-                                    referenceToken + '"');
+                        self.getParameter('tolerance') +
+                        '" of the expected value "' +
+                        referenceToken + '"');
                 }
             } else if (typeof referenceToken === 'string') {
                 if (inputValue !== referenceToken) {
-                        console.log('typeof inputValue ' + typeof inputValue);
-                        console.log('typeof referenceToken ' + typeof referenceToken);
+                    console.log('typeof inputValue ' + typeof inputValue);
+                    console.log('typeof referenceToken ' + typeof referenceToken);
                     throw new Error('The input "' + inputValue + '" is !== ' +
-                                    ' to the expected value "' +
-                                    referenceToken + '"');
+                        ' to the expected value "' +
+                        referenceToken + '"');
                 }
             } else if (typeof referenceToken === 'object') {
                 cache = [];
@@ -147,21 +158,21 @@ exports.initialize = function () {
 
                 cache = null; // Enable garbage collection
                 if (inputValueValue.length > 100) {
-                    inputValueValue = inputValueValue.substring(0,100) + '...';
+                    inputValueValue = inputValueValue.substring(0, 100) + '...';
                 }
                 if (referenceTokenValue.length > 100) {
-                    referenceTokenValue = referenceTokenValue.substring(0,100) + '...';
+                    referenceTokenValue = referenceTokenValue.substring(0, 100) + '...';
                 }
                 if (inputValueValue !== referenceTokenValue) {
                     throw new Error('The input "' + inputValueValue + '" is !== "' +
-                                    '" to the expected value "' +
-                                    referenceTokenValue + '"');
+                        '" to the expected value "' +
+                        referenceTokenValue + '"');
                 }
             } else {
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
-                                ' tokens, the referenceToken "' + referenceToken +
-                                '" is not a number, it is a ' +
-                                typeof referenceToken);
+                    ' tokens, the referenceToken "' + referenceToken +
+                    '" is not a number, it is a ' +
+                    typeof referenceToken);
             }
             numberOfInputTokensSeen += 1;
             // If we are past the end of the expected inputs, then read
@@ -185,17 +196,17 @@ exports.wrapup = function () {
             if (!inputHandled) {
                 initialized = false;
                 throw new Error(this.accessorName + 'The input handler of this accessor was never invoked. ' +
-                                'Usually, this is an error indicating that ' +
-                                'starvation is occurring.');
+                    'Usually, this is an error indicating that ' +
+                    'starvation is occurring.');
             }
             var correctValuesValues = this.getParameter('correctValues');
             if (numberOfInputTokensSeen < correctValuesValues.length) {
                 throw new Error(this.accessorName + ': The test produced only ' +
-                                numberOfInputTokensSeen +
-                                ' tokens, yet the correctValues parameter was ' +
-                                'expecting ' +
-                                correctValuesValues.length +
-                                ' tokens');
+                    numberOfInputTokensSeen +
+                    ' tokens, yet the correctValues parameter was ' +
+                    'expecting ' +
+                    correctValuesValues.length +
+                    ' tokens');
             }
         }
         initialized = false;

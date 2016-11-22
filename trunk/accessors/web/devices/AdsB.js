@@ -72,14 +72,24 @@ exports.setup = function () {
         type: 'int',
         value: 20000
     });
-    this.parameter('threshold',{
+    this.parameter('threshold', {
         type: 'double',
         value: null
     });
-    this.input('options', {'visibility':'expert','value': '"http://localhost:8080"'});
-    this.input('command', {'visibility':'expert','value':'/dump1090/data.json'});
-    this.input('arguments', {'visibility':'expert'});
-    this.input('body', {'visibility':'expert'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"http://localhost:8080"'
+    });
+    this.input('command', {
+        'visibility': 'expert',
+        'value': '/dump1090/data.json'
+    });
+    this.input('arguments', {
+        'visibility': 'expert'
+    });
+    this.input('body', {
+        'visibility': 'expert'
+    });
     this.input('latRef', {
         type: 'double',
         value: null
@@ -92,39 +102,49 @@ exports.setup = function () {
         type: 'double',
         value: null
     });
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.output('response', {'visibility':'expert'});
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.output('response', {
+        'visibility': 'expert'
+    });
     this.output('aircrafts');
     this.output('traffic');
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
-function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2) {
+function llaEuclideanDistance(lat1, lon1, alt1, lat2, lon2, alt2) {
     var a = 6378137.0; //WGS-84 semi-major axis (meters)
-    var e2 = 0.0066943799901377997;  //WGS-84 first eccentricity squared
-    var lat1Rad = lat1*Math.PI/180;
-    var lon1Rad = lon1*Math.PI/180;
-    var n1 = a/Math.sqrt(1 - e2*Math.sin(lat1Rad)*Math.sin(lat1Rad));
-    var x1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.cos(lon1Rad);
-    var y1 = (n1 + alt1)*Math.cos(lat1Rad)*Math.sin(lon1Rad);
-    var z1 = (n1*(1 - e2) + alt1)*Math.sin(lat1Rad);
-    var lat2Rad = lat2*Math.PI/180;
-    var lon2Rad = lon2*Math.PI/180;
-    var n2 = a/Math.sqrt(1 - e2*Math.sin(lat2Rad)*Math.sin(lat2Rad));
-    var x2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.cos(lon2Rad);
-    var y2 = (n2 + alt2)*Math.cos(lat2Rad)*Math.sin(lon2Rad);
-    var z2 = (n2*(1 - e2) + alt2)*Math.sin(lat2Rad);
-    var dist = Math.sqrt( Math.pow(x1-x2,2) + Math.pow(y1-y2,2) + Math.pow(z1-z2,2) );
+    var e2 = 0.0066943799901377997; //WGS-84 first eccentricity squared
+    var lat1Rad = lat1 * Math.PI / 180;
+    var lon1Rad = lon1 * Math.PI / 180;
+    var n1 = a / Math.sqrt(1 - e2 * Math.sin(lat1Rad) * Math.sin(lat1Rad));
+    var x1 = (n1 + alt1) * Math.cos(lat1Rad) * Math.cos(lon1Rad);
+    var y1 = (n1 + alt1) * Math.cos(lat1Rad) * Math.sin(lon1Rad);
+    var z1 = (n1 * (1 - e2) + alt1) * Math.sin(lat1Rad);
+    var lat2Rad = lat2 * Math.PI / 180;
+    var lon2Rad = lon2 * Math.PI / 180;
+    var n2 = a / Math.sqrt(1 - e2 * Math.sin(lat2Rad) * Math.sin(lat2Rad));
+    var x2 = (n2 + alt2) * Math.cos(lat2Rad) * Math.cos(lon2Rad);
+    var y2 = (n2 + alt2) * Math.cos(lat2Rad) * Math.sin(lon2Rad);
+    var z2 = (n2 * (1 - e2) + alt2) * Math.sin(lat2Rad);
+    var dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) + Math.pow(z1 - z2, 2));
     return dist;
 }
 
 exports.initialize = function () {
     this.exports.ssuper.initialize.call(this);
     var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
-    this.send('options',{"url": serverUrl});
+    this.send('options', {
+        "url": serverUrl
+    });
     var self = this;
-    this.addInputHandler('latRef',function () {
+    this.addInputHandler('latRef', function () {
         var latRef = Number(self.get('latRef'));
         var lonRef = Number(self.get('lonRef'));
         var altRef = Number(self.get('altRef'));
@@ -137,9 +157,9 @@ exports.initialize = function () {
                 var lon = Number(map[a].lon);
                 var alt = Number(map[a].alt);
                 //console.log("Aircraft " + a + " is at lat = " + lat + " lon = " + lon + " alt " + alt);
-                var distance = llaEuclideanDistance(latRef,lonRef,altRef,lat,lon,alt);
+                var distance = llaEuclideanDistance(latRef, lonRef, altRef, lat, lon, alt);
                 console.log("Aircraft " + a + " is within " + distance + " meters.");
-                if (distance < threshold*1000) {
+                if (distance < threshold * 1000) {
                     filteredMap[a] = map[a];
                     console.log("Aircraft " + a + " is within thresold distance.");
                 }
@@ -178,7 +198,7 @@ exports.filterResponse = function (response) {
             for (var i = 0; i < parsed.length; i++) {
                 var a = parsed[i];
                 if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {
-                    var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
+                    var s = new AircraftState(a.lat, a.lon, a.altitude, a.speed, a.track, a.squawk, (currentTime - a.seen * 1000));
                     var key = a.flight.replace(/ /g, '');
                     map[key] = s;
                 }

@@ -83,7 +83,7 @@
  * WebSocketClient. Adds additional parameters regarding the ROS topic
  * to which to publish to.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/WebSocketClient');
     this.parameter('topic', {
         type: "string"
@@ -102,7 +102,7 @@ exports.setup = function() {
 };
 
 /** Override inputHandler on 'toSend' from WebSocketClient. */
-exports.toSendInputHandler = function() {
+exports.toSendInputHandler = function () {
     var msg = this.get('toSend');
     // Add a header with a blank time and sequence info. This will be added by rosbridge.
     if (this.getParameter('addHeader')) {
@@ -123,7 +123,7 @@ exports.toSendInputHandler = function() {
 /**  Inherits initialize from WebSocketClient.
  *   Advertise the topic we are publishing to.
  */
-exports.initialize = function() {
+exports.initialize = function () {
     this.exports.ssuper.initialize.call(this);
 
     var advertise = {
@@ -136,7 +136,7 @@ exports.initialize = function() {
 };
 
 /** Unadvertise the topic and inherit wrapup from WebSocketClient. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     var unadvertise = {
         "op": "unadvertise",
         "topic": this.getParameter('topic')

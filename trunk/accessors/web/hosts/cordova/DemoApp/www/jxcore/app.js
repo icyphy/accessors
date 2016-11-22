@@ -6,7 +6,7 @@ Mobile('log').call("Running accessor on Android!");
 var commonHost = require('./commonHost');
 var accessorPath = [path.join(__dirname)];
 var accessors;
-getAccessorCode = function(name) {
+getAccessorCode = function (name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
@@ -17,32 +17,32 @@ getAccessorCode = function(name) {
         try {
             code = fs.readFileSync(location, 'utf8');
             console.log('Reading accessor at: ' + location);
-        } catch(error) {
+        } catch (error) {
             console.log(error);
             continue;
         }
     }
     if (!code) {
-        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+        throw ('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
 };
 
-instantiate = function(accessorName, accessorClass) {
+instantiate = function (accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
-       'require': require,
+        'require': require,
     };
     // var bindings = [];
     var instance = new commonHost.instantiateAccessor(
-            'Instance1', 'TestAccessor', getAccessorCode, bindings);
+        'Instance1', 'TestAccessor', getAccessorCode, bindings);
     Mobile('log').call('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };
 
 
-instantiateAndInitialize = function(accessorNames) {
+instantiateAndInitialize = function (accessorNames) {
     var accessors = [];
     var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
@@ -72,7 +72,7 @@ instantiateAndInitialize = function(accessorNames) {
 };
 
 
-stop = function() {
+stop = function () {
     console.log("nodeHost.js: stop() invoked");
     process.exit();
 }

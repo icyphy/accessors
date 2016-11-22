@@ -151,68 +151,68 @@ var running = false;
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
     this.input('server', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.input('port', {
-        type : 'int',
-        value : -1
+        type: 'int',
+        value: -1
     });
     this.input('toSend');
     this.output('connected', {
-        type : 'boolean'
+        type: 'boolean'
     });
     this.output('received');
 
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'application/json'
+        type: 'string',
+        value: 'application/json'
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'application/json'
+        type: 'string',
+        value: 'application/json'
     });
     this.parameter('connectTimeout', {
         value: 1000,
         type: "int"
     });
     this.parameter('numberOfRetries', {
-        type : 'int',
-        value : 5
+        type: 'int',
+        value: 5
     });
     this.parameter('timeBetweenRetries', {
-        type : 'int',
-        value : 500
+        type: 'int',
+        value: 500
     });
     this.parameter('trustAll', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('trustedCACertPath', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     this.parameter('sslTls', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('discardMessagesBeforeOpen', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('throttleFactor', {
-        type : 'int',
-        value : 100
+        type: 'int',
+        value: 100
     });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
-            options : WebSocket.supportedReceiveTypes()
+            options: WebSocket.supportedReceiveTypes()
         });
         this.parameter('sendType', {
-            options : WebSocket.supportedSendTypes()
+            options: WebSocket.supportedSendTypes()
         });
     } catch (err) {
         this.error(err);
@@ -245,7 +245,8 @@ exports.connect = function () {
     // reaction, then this will be invoked twice. But we only want to open
     // the socket once.  This is fairly tricky.
 
-    var portValue = this.get('port'), serverValue = null;
+    var portValue = this.get('port'),
+        serverValue = null;
     if (portValue < 0) {
         // No port is specified. This could be a signal to close a previously
         // open socket.
@@ -256,8 +257,8 @@ exports.connect = function () {
         previousServer = null;
         //
         console.log("WebSocketClient.js: connect(): portValue: " + portValue +
-                    ", which is less than 0. This could be a signal to close a previously open socket." +
-                    "  Returning.");
+            ", which is less than 0. This could be a signal to close a previously open socket." +
+            "  Returning.");
         return;
     }
 
@@ -277,22 +278,20 @@ exports.connect = function () {
     }
 
     console.log("WebSocketClient.js: connect() calling new WebSocket.Client()");
-    client = new WebSocket.Client(
-        {
-            'host' : this.get('server'),
-            'port' : this.get('port'),
-            'receiveType' : this.getParameter('receiveType'),
-            'sendType' : this.getParameter('sendType'),
-            'connectTimeout' : this.getParameter('connectTimeout'),
-            'numberOfRetries' : this.getParameter('numberOfRetries'),
-            'timeBetweenRetries' : this.getParameter('timeBetweenRetries'),
-            'trustAll' : this.getParameter('trustAll'),
-            'trustedCACertPath' : this.getParameter('trustedCACertPath'),
-            'sslTls' : this.getParameter('sslTls'),
-            'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
-            'throttleFactor' : this.getParameter('throttleFactor')
-        }
-    );
+    client = new WebSocket.Client({
+        'host': this.get('server'),
+        'port': this.get('port'),
+        'receiveType': this.getParameter('receiveType'),
+        'sendType': this.getParameter('sendType'),
+        'connectTimeout': this.getParameter('connectTimeout'),
+        'numberOfRetries': this.getParameter('numberOfRetries'),
+        'timeBetweenRetries': this.getParameter('timeBetweenRetries'),
+        'trustAll': this.getParameter('trustAll'),
+        'trustedCACertPath': this.getParameter('trustedCACertPath'),
+        'sslTls': this.getParameter('sslTls'),
+        'discardMessagesBeforeOpen': this.getParameter('discardMessagesBeforeOpen'),
+        'throttleFactor': this.getParameter('throttleFactor')
+    });
 
     // Using 'this.exports' rather than just 'exports' below allows these
     // functions to be overridden in derived accessors.

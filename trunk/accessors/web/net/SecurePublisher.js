@@ -74,10 +74,10 @@ exports.setup = function () {
     // Inputs and outputs
     this.input('toPublish');
     this.output('connection', {
-            spontaneous: true
+        spontaneous: true
     });
     this.output('ready', {
-            spontaneous: true
+        spontaneous: true
     });
     // MQTT information
     this.parameter('brokerHost', {
@@ -85,8 +85,8 @@ exports.setup = function () {
         value: ''
     });
     this.parameter('brokerPort', {
-        type : 'int',
-        value : 1883
+        type: 'int',
+        value: 1883
     });
     this.parameter('topic', {
         type: 'string',
@@ -103,8 +103,8 @@ exports.setup = function () {
     });
     // For communication with Auth
     this.parameter('authHost', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.parameter('authPort', {
         value: -1,
@@ -154,7 +154,7 @@ function onConnect() {
     self.send('connection', 'connected to a broker');
     if (!publisherReady && mqttConnected && currentSessionKey !== null) {
         publisherReady = true;
-            self.send('ready', 'publisher is ready');
+        self.send('ready', 'publisher is ready');
     }
 }
 
@@ -176,11 +176,11 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList) {
         currentSessionKeyList.push(sessionKeyList[i]);
     }
     if (currentSessionKeyList.length > 0) {
-            currentSessionKey = currentSessionKeyList.shift();
+        currentSessionKey = currentSessionKeyList.shift();
     }
     if (!publisherReady && mqttConnected && currentSessionKey !== null) {
         publisherReady = true;
-            self.send('ready', 'publisher is ready');
+        self.send('ready', 'publisher is ready');
     }
 }
 
@@ -195,16 +195,19 @@ exports.toPublishInputHandler = function () {
     }
 
     var toPublish = this.get('toPublish');
-    var encrypted = iotAuth.encryptSecureMessageToPublish(
-            {sequenceNum: publishSequenceNum, data: toPublish},
-            this.getParameter('sessionCryptoSpec'),
-            currentSessionKey);
+    var encrypted = iotAuth.encryptSecureMessageToPublish({
+            sequenceNum: publishSequenceNum,
+            data: toPublish
+        },
+        this.getParameter('sessionCryptoSpec'),
+        currentSessionKey);
     publishSequenceNum++;
-    mqttClient.publish(this.getParameter('topic'), encrypted,
-                       {qos: this.getParameter('qosLevel')});
+    mqttClient.publish(this.getParameter('topic'), encrypted, {
+        qos: this.getParameter('qosLevel')
+    });
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     self = this;
 
     publishSequenceNum = 0;
@@ -217,9 +220,10 @@ exports.initialize = function() {
 
     this.addInputHandler('toPublish', exports.toPublishInputHandler.bind(this));
     mqttClient = mqtt.createClient(
-            this.getParameter('brokerPort'),
-            this.getParameter('brokerHost'),
-            {rawBytes: true});
+        this.getParameter('brokerPort'),
+        this.getParameter('brokerHost'), {
+            rawBytes: true
+        });
     mqttClient.on('connect', onConnect);
     mqttClient.start();
 
@@ -228,7 +232,9 @@ exports.initialize = function() {
         authPort: this.getParameter('authPort'),
         entityName: this.getParameter('publisherName'),
         numKeysPerRequest: this.getParameter('numKeysPerRequest'),
-        purpose: {pubTopic: this.getParameter('topic')},
+        purpose: {
+            pubTopic: this.getParameter('topic')
+        },
         distributionKey: currentDistributionKey,
         distributionCryptoSpec: this.getParameter('distributionCryptoSpec'),
         publicKeyCryptoSpec: this.getParameter('publicKeyCryptoSpec'),
@@ -238,6 +244,6 @@ exports.initialize = function() {
     iotAuth.sendSessionKeyRequest(options, sessionKeyResponseCallback);
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     mqttClient.end();
 };

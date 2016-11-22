@@ -191,19 +191,19 @@ var previousHost, previousPort;
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
     this.input('host', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.input('port', {
-        type : 'int',
-        value : -1
+        type: 'int',
+        value: -1
     });
     // This input is added after host and port so that if there are
     // simultaneous inputs, host and port are handled first.
     this.input('toSend');
 
     this.output('connected', {
-        type : 'boolean'
+        type: 'boolean'
     });
     this.output('received');
 
@@ -213,84 +213,84 @@ exports.setup = function () {
         type: "int"
     });
     this.parameter('discardMessagesBeforeOpen', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('idleTimeout', {
         value: 0,
         type: "int"
     });
     this.parameter('keepAlive', {
-        type : 'boolean',
-        value : true
+        type: 'boolean',
+        value: true
     });
     this.parameter('maxUnsentMessages', {
         value: 100,
         type: "int"
     });
     this.parameter('noDelay', {
-        type : 'boolean',
-        value : true
+        type: 'boolean',
+        value: true
     });
     this.parameter('pfxKeyCertPassword', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     this.parameter('pfxKeyCertPath', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
     this.parameter('rawBytes', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('receiveBufferSize', {
         value: 65536,
         type: "int"
     });
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'string'
+        type: 'string',
+        value: 'string'
     });
     this.parameter('reconnectAttempts', {
-        type : 'int',
-        value : 10
+        type: 'int',
+        value: 10
     });
     this.parameter('reconnectInterval', {
-        type : 'int',
-        value : 1000
+        type: 'int',
+        value: 1000
     });
     this.parameter('sendBufferSize', {
         value: 65536,
         type: "int"
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'string'
+        type: 'string',
+        value: 'string'
     });
     this.parameter('sslTls', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('trustAll', {
-        type : 'boolean',
-        value : false
+        type: 'boolean',
+        value: false
     });
     this.parameter('trustedCACertPath', {
-        type : 'string',
-        value : ''
+        type: 'string',
+        value: ''
     });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
     try {
         this.parameter('receiveType', {
-            options : socket.supportedReceiveTypes()
+            options: socket.supportedReceiveTypes()
         });
         this.parameter('sendType', {
-            options : socket.supportedSendTypes()
+            options: socket.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         this.error(err);
     }
 };
@@ -305,8 +305,8 @@ exports.toSendInputHandler = function () {
             var maxUnsentMessages = this.getParameter('maxUnsentMessages');
             if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
                 this.error("Maximum number of unsent messages has been exceeded: " +
-                           maxUnsentMessages +
-                           ". Consider setting discardMessagesBeforeOpen to true.");
+                    maxUnsentMessages +
+                    ". Consider setting discardMessagesBeforeOpen to true.");
                 return;
             }
             pendingSends.push(this.get('toSend'));
@@ -367,32 +367,30 @@ exports.connect = function () {
         client.close();
     }
     // Create a new SocketClient.
-    client = new socket.SocketClient(portValue, hostValue,
-                                     {
-                                         'connectTimeout' : this.getParameter('connectTimeout'),
-                                         'discardMessagesBeforeOpen' : this.getParameter('discardMessagesBeforeOpen'),
-                                         'idleTimeout' : this.getParameter('idleTimeout'),
-                                         'keepAlive' : this.getParameter('keepAlive'),
-                                         'maxUnsentMessages' : this.getParameter('maxUnsentMessages'),
-                                         'noDelay' : this.getParameter('noDelay'),
-                                         'pfxKeyCertPassword' : this.getParameter('pfxKeyCertPassword'),
-                                         'pfxKeyCertPath' : this.getParameter('pfxKeyCertPath'),
-                                         'rawBytes' : this.getParameter('rawBytes'),
-                                         'receiveBufferSize' : this.getParameter('receiveBufferSize'),
-                                         'receiveType' : this.getParameter('receiveType'),
-                                         'reconnectAttempts' : this.getParameter('reconnectAttempts'),
-                                         'reconnectInterval' : this.getParameter('reconnectInterval'),
-                                         'sendBufferSize' : this.getParameter('sendBufferSize'),
-                                         'sendType' : this.getParameter('sendType'),
-                                         'sslTls' : this.getParameter('sslTls'),
-                                         'trustAll' : this.getParameter('trustAll'),
-                                         'trustedCACertPath' : this.getParameter('trustedCACertPath')
-                                     }
-                                    );
+    client = new socket.SocketClient(portValue, hostValue, {
+        'connectTimeout': this.getParameter('connectTimeout'),
+        'discardMessagesBeforeOpen': this.getParameter('discardMessagesBeforeOpen'),
+        'idleTimeout': this.getParameter('idleTimeout'),
+        'keepAlive': this.getParameter('keepAlive'),
+        'maxUnsentMessages': this.getParameter('maxUnsentMessages'),
+        'noDelay': this.getParameter('noDelay'),
+        'pfxKeyCertPassword': this.getParameter('pfxKeyCertPassword'),
+        'pfxKeyCertPath': this.getParameter('pfxKeyCertPath'),
+        'rawBytes': this.getParameter('rawBytes'),
+        'receiveBufferSize': this.getParameter('receiveBufferSize'),
+        'receiveType': this.getParameter('receiveType'),
+        'reconnectAttempts': this.getParameter('reconnectAttempts'),
+        'reconnectInterval': this.getParameter('reconnectInterval'),
+        'sendBufferSize': this.getParameter('sendBufferSize'),
+        'sendType': this.getParameter('sendType'),
+        'sslTls': this.getParameter('sslTls'),
+        'trustAll': this.getParameter('trustAll'),
+        'trustedCACertPath': this.getParameter('trustedCACertPath')
+    });
 
     var self = this;
 
-    client.on('open', function() {
+    client.on('open', function () {
         console.log('Status: Connection established');
         self.send('connected', true);
 
@@ -405,10 +403,10 @@ exports.connect = function () {
         }
         pendingSends = [];
     });
-    client.on('data', function(data) {
+    client.on('data', function (data) {
         self.send('received', data);
     });
-    client.on('close', function() {
+    client.on('close', function () {
         previousHost = null;
         previousPort = null;
         console.log('Connection closed.');

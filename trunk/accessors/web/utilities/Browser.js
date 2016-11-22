@@ -43,7 +43,9 @@ var Browser = require('browser');
 var browser = new Browser.Browser();
 
 exports.setup = function () {
-    this.input('html', {'type':'string'});
+    this.input('html', {
+        'type': 'string'
+    });
 };
 
 var display = function () {

@@ -38,9 +38,11 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('trigger');
-    this.output('signal',{'type':'number'});
+    this.output('signal', {
+        'type': 'number'
+    });
 };
 
 var recorder = null;
@@ -48,21 +50,22 @@ var handle = null;
 var audio = require("audio");
 var cacheLength = 128;
 
-var record = function() {
-    var data = recorder.get(), i;
+var record = function () {
+    var data = recorder.get(),
+        i;
     for (i = 0; i < data.length; i++) {
         this.send('signal', data[i]);
     }
 };
 
-exports.initialize = function() {
-    handle = this.addInputHandler("trigger",record);
+exports.initialize = function () {
+    handle = this.addInputHandler("trigger", record);
     recorder = new audio.Capture();
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (recorder !== null) {
         recorder.stop();
-        this.removeInputHandler('trigger',handle);
+        this.removeInputHandler('trigger', handle);
     }
 };

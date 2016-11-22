@@ -41,12 +41,33 @@
 "use strict";
 
 exports.setup = function () {
-    this.parameter('host', {'type': 'string', 'value': 'sizzling-fire-8605.firebaseio.com'});
-    this.parameter('port', {'type': 'int', 'value': 443});
-    this.parameter('protocol',{'type':'string', 'value': 'https'});
-    this.parameter('path', {'type':'string', 'value': 'devices.json'});
-    this.parameter('method',{'type':'string', 'value':'GET'});
-    this.output('microwave', {'type':'JSON'});
-    this.output('microwaveStatus',{'type':'string'});
-    this.output('pastValues',{'type':'JSON'});
+    this.parameter('host', {
+        'type': 'string',
+        'value': 'sizzling-fire-8605.firebaseio.com'
+    });
+    this.parameter('port', {
+        'type': 'int',
+        'value': 443
+    });
+    this.parameter('protocol', {
+        'type': 'string',
+        'value': 'https'
+    });
+    this.parameter('path', {
+        'type': 'string',
+        'value': 'devices.json'
+    });
+    this.parameter('method', {
+        'type': 'string',
+        'value': 'GET'
+    });
+    this.output('microwave', {
+        'type': 'JSON'
+    });
+    this.output('microwaveStatus', {
+        'type': 'string'
+    });
+    this.output('pastValues', {
+        'type': 'JSON'
+    });
 };

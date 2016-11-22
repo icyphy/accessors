@@ -74,9 +74,9 @@ startHost = function () {
     }
     // FIXME: make options passable to startHost()?
     var rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      completer: completer,
+        input: process.stdin,
+        output: process.stdout,
+        completer: completer,
     });
 
     // Setup monitoring accessor for host before accepting commands
@@ -92,7 +92,7 @@ startHost = function () {
         // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
         // Also, tolerate trailing semicolon.
         if (command.match(/^\s*quit\s*$/i) ||
-                command.match(/^\s*exit\s*$/i)) {
+            command.match(/^\s*exit\s*$/i)) {
             console.log('exit');
             interactiveHostRunning = false;
             rl.close();

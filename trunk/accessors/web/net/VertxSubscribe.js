@@ -70,18 +70,18 @@
 var eventbus = require('eventbus');
 
 /** Set up the accessor by defining the inputs, outputs, and parameters. */
-exports.setup = function() {
+exports.setup = function () {
     this.input('address', {
-        'value':'topic',
-        'type':'string'
+        'value': 'topic',
+        'type': 'string'
     });
     this.output('message');
     this.parameter('busHost', {
-        'type':'string'
+        'type': 'string'
     });
     this.parameter('busHostPort', {
-        'value':0,
-        'type':'int'
+        'value': 0,
+        'type': 'int'
     });
     this.input('reply', {
         'value': ''
@@ -90,14 +90,17 @@ exports.setup = function() {
 
 var bus, currentAddress, addressHandle, replyHandle;
 
-var onReceived = function(msg) {
+var onReceived = function (msg) {
     this.send('message', msg);
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     var port = this.get('busHostPort');
     var host = this.get('busHost');
-    bus = new eventbus.VertxBus({'port':port, 'host':host});
+    bus = new eventbus.VertxBus({
+        'port': port,
+        'host': host
+    });
     currentAddress = this.get('address');
     bus.subscribe(currentAddress);
     bus.on(this.get('address'), onReceived.bind(this));
@@ -105,7 +108,7 @@ exports.initialize = function() {
     if (replyText !== null && replyText !== '') {
         bus.setReply(replyText);
     }
-    addressHandle = this.addInputHandler('address', function() {
+    addressHandle = this.addInputHandler('address', function () {
         var topic = this.get('address');
         if (topic != currentAddress) {
             bus.unsubscribe(currentAddress);
@@ -113,7 +116,7 @@ exports.initialize = function() {
         }
     });
 
-    replyHandle = this.addInputHandler('reply', function() {
+    replyHandle = this.addInputHandler('reply', function () {
         var replyText = this.get('reply');
         if (replyText) {
             bus.setReply(replyText);
@@ -123,7 +126,7 @@ exports.initialize = function() {
     });
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     bus.unsubscribe();
     this.removeInputHandler('address', addressHandle);
     this.removeInputHandler('reply', replyHandle);

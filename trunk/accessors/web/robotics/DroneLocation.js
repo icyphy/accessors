@@ -48,22 +48,26 @@
  */
 
 
-exports.setup = function() {
-    var sub = this.instantiate('RosSubscriber','robotics/RosSubscriber');
-    var g = this.instantiate('Global2LatLonAlt','robotics/Global2LatLonAlt');
+exports.setup = function () {
+    var sub = this.instantiate('RosSubscriber', 'robotics/RosSubscriber');
+    var g = this.instantiate('Global2LatLonAlt', 'robotics/Global2LatLonAlt');
 
-    sub.setParameter('topic',"/mavros/global_position/global");
-    this.parameter('rosbridgeServer',{
+    sub.setParameter('topic', "/mavros/global_position/global");
+    this.parameter('rosbridgeServer', {
         type: 'string',
         value: 'localhost'
     });
-    this.parameter('rosbridgePort',{
+    this.parameter('rosbridgePort', {
         type: 'int',
         value: 9090
     });
 
-    this.input('server',{'visibility': 'expert'});
-    this.input('port',{'visibility': 'expert'});
+    this.input('server', {
+        'visibility': 'expert'
+    });
+    this.input('port', {
+        'visibility': 'expert'
+    });
     this.output('lat', {
         type: 'double',
         value: 0.0
@@ -76,17 +80,17 @@ exports.setup = function() {
         type: 'double',
         value: 0.0
     });
-    this.connect('server',sub,'server');
-    this.connect('port',sub,'port');
+    this.connect('server', sub, 'server');
+    this.connect('port', sub, 'port');
     this.connect(sub, 'received', g, 'global');
-    this.connect(g, 'lat','lat');
-    this.connect(g, 'lon','lon');
-    this.connect(g, 'alt','alt');
+    this.connect(g, 'lat', 'lat');
+    this.connect(g, 'lon', 'lon');
+    this.connect(g, 'alt', 'alt');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     var server = this.getParameter('rosbridgeServer').toString();
     var port = this.getParameter('rosbridgePort');
-    this.send('server',server);
+    this.send('server', server);
     this.send('port', port);
 };

@@ -82,7 +82,7 @@ getAccessorCode = function (name) {
         }
     }
     if (!code) {
-        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+        throw ('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
 };
@@ -125,11 +125,11 @@ instantiate = function (accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
-       'require': require,
+        'require': require,
     };
     // var bindings = [];
     var instance = new commonHost.instantiateAccessor(
-            'Instance1', 'TestAccessor', getAccessorCode, bindings);
+        'Instance1', 'TestAccessor', getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };

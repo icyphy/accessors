@@ -39,9 +39,17 @@
 "use strict";
 
 exports.setup = function () {
-    this.input('inputLeft', {'type': 'number', 'value': 0});
-    this.input('inputRight', {'type': 'number', 'value': 0});
-    this.output('sum', {'type': 'number'});
+    this.input('inputLeft', {
+        'type': 'number',
+        'value': 0
+    });
+    this.input('inputRight', {
+        'type': 'number',
+        'value': 0
+    });
+    this.output('sum', {
+        'type': 'number'
+    });
 };
 
 exports.fire = function () {

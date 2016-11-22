@@ -40,17 +40,31 @@ var httpClient = require('httpClient');
 /** Define inputs and outputs. */
 exports.setup = function () {
     this.input('trigger');
-    this.input('write', {'type': 'boolean', 'value': false});
-    this.input('key', {'type':'string'});
-    this.input('timestamp', {'type':'string'});
-    this.input('value', {'type': 'string'});
-    this.output('output', {'type':'string'});
-    this.parameter('url', {'type':'string', 'value':''});
+    this.input('write', {
+        'type': 'boolean',
+        'value': false
+    });
+    this.input('key', {
+        'type': 'string'
+    });
+    this.input('timestamp', {
+        'type': 'string'
+    });
+    this.input('value', {
+        'type': 'string'
+    });
+    this.output('output', {
+        'type': 'string'
+    });
+    this.parameter('url', {
+        'type': 'string',
+        'value': ''
+    });
 };
 
 
 /** Create the request that will be sent to httpClient. */
-exports.makeRequest = function() {
+exports.makeRequest = function () {
 
     var request = {};
     var timestamp = this.get('timestamp');
@@ -66,7 +80,7 @@ exports.makeRequest = function() {
         var tmp = url + "key=" + key;
         if (timestamp !== null) {
             var _timestamp = timestamp.replace("000000", "");
-            var date = Date.parse(_timestamp)/1000.0;        //milliseconds
+            var date = Date.parse(_timestamp) / 1000.0; //milliseconds
             tmp += "&ts=" + date;
         }
         request.url = tmp;
@@ -81,19 +95,19 @@ exports.makeRequest = function() {
 var request;
 
 // Based on the REST accessor.
-exports.issueCommand = function(callback) {
+exports.issueCommand = function (callback) {
 
     var req = this.makeRequest();
 
     // To ensure that the callback is called with the same context
     // as this function, create a new function.
     var thiz = this;
-    var contextCallback = function() {
+    var contextCallback = function () {
         callback.apply(thiz, arguments);
     };
 
     request = httpClient.request(req, contextCallback);
-    request.on('error', function(message) {
+    request.on('error', function (message) {
         if (!message) {
             message = 'Request failed. No further information.';
         }
@@ -102,7 +116,7 @@ exports.issueCommand = function(callback) {
     request.end();
 };
 
-exports.handleResponse = function(message) {
+exports.handleResponse = function (message) {
     if (message !== null && message !== undefined) {
         this.send('output', JSON.parse(message.body).value);
     } else {

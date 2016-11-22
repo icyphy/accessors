@@ -39,13 +39,37 @@
 
 // Define the interface of Paraimpu service.
 exports.setup = function () {
-    this.parameter('host', {'type': 'string', 'value': 'api.paraimpu.com'});
-    this.parameter('port', {'type': 'int', 'value': 443});
-    this.parameter('protocol',{'type':'string', 'value': 'https'});
-    this.parameter('path', {'type':'string', 'value': 'v1/things/67de5874-33b1-48be-a99b-85ed5c55d7a4/data/last'});
-    this.parameter('accessToken', {'type': 'string', 'value': '46e0ee55195c4dd9dca295a7ac8282d28f4a2259'});
-    this.parameter('method', {'type': 'string', 'value': 'GET'});
-    this.output('payload',{'type':'number'});
-    this.output('producer', {'type':'string'});
-    this.output('sensorId', {'type':'string'});
+    this.parameter('host', {
+        'type': 'string',
+        'value': 'api.paraimpu.com'
+    });
+    this.parameter('port', {
+        'type': 'int',
+        'value': 443
+    });
+    this.parameter('protocol', {
+        'type': 'string',
+        'value': 'https'
+    });
+    this.parameter('path', {
+        'type': 'string',
+        'value': 'v1/things/67de5874-33b1-48be-a99b-85ed5c55d7a4/data/last'
+    });
+    this.parameter('accessToken', {
+        'type': 'string',
+        'value': '46e0ee55195c4dd9dca295a7ac8282d28f4a2259'
+    });
+    this.parameter('method', {
+        'type': 'string',
+        'value': 'GET'
+    });
+    this.output('payload', {
+        'type': 'number'
+    });
+    this.output('producer', {
+        'type': 'string'
+    });
+    this.output('sensorId', {
+        'type': 'string'
+    });
 };

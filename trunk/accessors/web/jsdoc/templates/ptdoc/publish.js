@@ -55,10 +55,13 @@ var util = require('util');
  *  @return MoML representation of the accessor xml.
  */
 function accessorPropertiesToMoML(propertyName, elements) {
-    var moml = '', debugging = false;
+    var moml = '',
+        debugging = false;
     elements
         .forEach(function (element) {
-            var name = element.name, type = element.type, description = element.description;
+            var name = element.name,
+                type = element.type,
+                description = element.description;
             if (type !== undefined) {
                 type = type.toSource();
             }
@@ -96,8 +99,13 @@ function accessorPropertiesToMoML(propertyName, elements) {
  *  @param {TAFFY} data
  */
 exports.publish = function (data) {
-    var docs, fileName = '', fullFileName = '', moml = '', debugging = false;
-    data({undocumented: true}).remove();
+    var docs, fileName = '',
+        fullFileName = '',
+        moml = '',
+        debugging = false;
+    data({
+        undocumented: true
+    }).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
     //    console.error("ptdoc/public.js: docs: " + docs.toSource());
@@ -132,7 +140,8 @@ exports.publish = function (data) {
                 // Alphabetical by tag.
                 if (element.author !== undefined) {
                     // Strip off [" "]
-                    var author = element.author.toSource(), shortAuthor = author.substring(2, author.length - 2);
+                    var author = element.author.toSource(),
+                        shortAuthor = author.substring(2, author.length - 2);
                     moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n' +
                         '    </property>\n';
                 }
@@ -191,20 +200,20 @@ function xmlEscape(bad) {
         return bad;
     }
     return bad.replace(/[\n<>&'"]/g,
-                       function (c) {
-                           switch (c) {
-                           case '\n':
-                               return '&#10;';
-                           case '<':
-                               return '&lt;';
-                           case '>':
-                               return '&gt;';
-                           case '&':
-                               return '&amp;';
-                           case '\'':
-                               return '&apos;';
-                           case '"':
-                               return '&quot;';
-                           }
-                       });
+        function (c) {
+            switch (c) {
+            case '\n':
+                return '&#10;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '&':
+                return '&amp;';
+            case '\'':
+                return '&apos;';
+            case '"':
+                return '&quot;';
+            }
+        });
 }

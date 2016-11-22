@@ -48,14 +48,29 @@
 "use strict";
 
 exports.setup = function () {
-    this.input('untyped');                                // Untyped input.
-    this.input('numeric', {'type': 'number', 'value': 0}); // Numeric input.
-    this.input('boolean', {'type': 'boolean'});           // Boolean input.
-    this.output('typeOfUntyped', {'type': 'string'});     // Type of untyped input.
-    this.output('jsonOfUntyped', {'type': 'string'});     // JSON of untyped input.
-    this.output('numericPlusP', {'type': 'number'});      // Numeric input plus p.
-    this.output('negation', {'type': 'boolean'});         // Negation of boolean input.
-    this.parameter('p', {'value': 42});                   // Untyped, with numeric value.
+    this.input('untyped'); // Untyped input.
+    this.input('numeric', {
+        'type': 'number',
+        'value': 0
+    }); // Numeric input.
+    this.input('boolean', {
+        'type': 'boolean'
+    }); // Boolean input.
+    this.output('typeOfUntyped', {
+        'type': 'string'
+    }); // Type of untyped input.
+    this.output('jsonOfUntyped', {
+        'type': 'string'
+    }); // JSON of untyped input.
+    this.output('numericPlusP', {
+        'type': 'number'
+    }); // Numeric input plus p.
+    this.output('negation', {
+        'type': 'boolean'
+    }); // Negation of boolean input.
+    this.parameter('p', {
+        'value': 42
+    }); // Untyped, with numeric value.
 };
 
 // Base class variable that is visible to subclasses through inheritance.

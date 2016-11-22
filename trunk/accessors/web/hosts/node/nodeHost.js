@@ -122,7 +122,7 @@ instantiate = function (accessorName, accessorClass) {
         'require': require,
     };
     var instance = new commonHost.instantiateAccessor(
-            accessorName, accessorClass, getAccessorCode, bindings);
+        accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
 
     accessors.push(instance);
@@ -231,10 +231,10 @@ invoke = function (argv) {
             argv.shift();
             this.accessors = instantiateAndInitialize(argv);
             setTimeout(function () {
-                    // process.exit gets caught by exitHandler() in
-                    // nodeHost.js and invokes wrapup().
-                    process.exit(0);
-                }, timeout);
+                // process.exit gets caught by exitHandler() in
+                // nodeHost.js and invokes wrapup().
+                process.exit(0);
+            }, timeout);
         } else {
             // Handle multiple composite accessors on the command line.
             this.accessors = instantiateAndInitialize(argv);
@@ -258,7 +258,7 @@ setupMonitoring = function () {
     if (!monitoringSetup) {
         try {
             monitoringAccessor = instantiate('monitoringAccessor',
-                                             'hosts/node/nodeMonitoringAccessor');
+                'hosts/node/nodeMonitoringAccessor');
             monitoringAccessor.initialize();
 
             // FIXME: Need to remove hardcoding of sampling period for monitoring,
@@ -266,8 +266,7 @@ setupMonitoring = function () {
             monitoringAccessor.provideInput('samplePeriodInMs', 5000);
             monitoringAccessor.react();
             monitoringSetup = true;
-        }
-        catch (ex) {
+        } catch (ex) {
             // Monitoring setup failure shouldn't interfere with accessor setup
             // Will simply retry next time an accessor is instantiated
             console.error("Monitoring setup failure ", ex.message);
@@ -288,7 +287,7 @@ setupMonitoring = function () {
  */
 stop = function () {
     var thiz = this.root;
-    console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName +  ": stop() invoked");
+    console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName + ": stop() invoked");
 
     // Call wrapup() on any accessors in the container.  These accessors should
     // wrapup() themselves, and ideally emit a 'stopped' event.
@@ -367,7 +366,7 @@ function exitHandler(options, err) {
             //console.log('nodeHost.js: this.accessors');
             //console.log(this.accessors);
 
-             for (composite in this.accessors) {
+            for (composite in this.accessors) {
                 for (i in this.accessors[composite].containedAccessors) {
                     try {
                         accessor = this.accessors[composite].containedAccessors[i];
@@ -383,33 +382,33 @@ function exitHandler(options, err) {
                 }
             }
 
-//             console.log('nodeHost.js: this.process.mainModule');
-//             console.log(this.process.mainModule);
-//             console.log('nodeHost.js: this.process.mainModule.exports');
-//             console.log(this.process.mainModule.exports);
-//             console.log('nodeHost.js: this.process.mainModule.exports.accessors');
-//             console.log(this.process.mainModule.exports.accessors);
-//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
-//             console.log(this.process.mainModule.exports.accessors[0]);
-//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
-//             console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
-//             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
-//             console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
-//             for (var composite in this.process.mainModule.exports.accessors) {
-//                 for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
-//                     var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
-//                     try {
-//                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-//                         if (accessor) {
-//                             accessor.wrapup();
-//                         }
-//                     } catch (error) {
-//                         if (initialThrowable == null) {
-//                             initialThrowable = error;
-//                         }
-//                     }
-//                 }
-//             }
+            //             console.log('nodeHost.js: this.process.mainModule');
+            //             console.log(this.process.mainModule);
+            //             console.log('nodeHost.js: this.process.mainModule.exports');
+            //             console.log(this.process.mainModule.exports);
+            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors');
+            //             console.log(this.process.mainModule.exports.accessors);
+            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
+            //             console.log(this.process.mainModule.exports.accessors[0]);
+            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
+            //             console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
+            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
+            //             console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
+            //             for (var composite in this.process.mainModule.exports.accessors) {
+            //                 for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
+            //                     var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
+            //                     try {
+            //                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+            //                         if (accessor) {
+            //                             accessor.wrapup();
+            //                         }
+            //                     } catch (error) {
+            //                         if (initialThrowable == null) {
+            //                             initialThrowable = error;
+            //                         }
+            //                     }
+            //                 }
+            //             }
             // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
@@ -431,7 +430,9 @@ function exitHandler(options, err) {
                 console.log("accessor: " + accessor.accessorName);
                 //console.log(util.inspect(accessor, {depth: 2}));
                 console.log("accessor.outputs: ");
-                console.log(util.inspect(accessor.outputs, {depth: 2}));
+                console.log(util.inspect(accessor.outputs, {
+                    depth: 2
+                }));
                 for (var output in accessor.outputs) {
                     console.log("accessor.outputs: output: ");
                     console.log(output);
@@ -457,16 +458,22 @@ function exitHandler(options, err) {
 }
 
 // If the node host is exiting, then cleanup, which includes invoking wrapup();
-process.on('exit', exitHandler.bind(null, {cleanup:true}));
+process.on('exit', exitHandler.bind(null, {
+    cleanup: true
+}));
 
 // Catch the Control-C event, which calls exit, which is caught in the line above.
-process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+process.on('SIGINT', exitHandler.bind(null, {
+    exit: true
+}));
 
 // Catch kill -30 and display a stack.  SIGUSR1 is reserved by node to
 // start the debugger, but we use it here anyway.
-process.on('SIGUSR1', exitHandler.bind(null, {stack:true}));
+process.on('SIGUSR1', exitHandler.bind(null, {
+    stack: true
+}));
 
 // Catch any uncaughtExceptions.  If an uncaughtException is caught, is it still uncaught? :-)
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
-
-
+process.on('uncaughtException', exitHandler.bind(null, {
+    exit: true
+}));

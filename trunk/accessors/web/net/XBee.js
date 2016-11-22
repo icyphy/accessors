@@ -103,14 +103,14 @@ exports.setup = function () {
         'value': 9600
     });
     this.parameter('port', {
-        'type':'string'
+        'type': 'string'
     });
     this.parameter('receiveType', {
         'type': 'string',
         'value': 'string'
     });
     this.parameter('sendType', {
-        'type':'string',
+        'type': 'string',
         'value': 'string'
     });
     // Attempt to add a list of options for types and ports, but do not error out
@@ -127,7 +127,7 @@ exports.setup = function () {
         this.parameter('sendType', {
             'options': xbee.supportedSendTypes()
         });
-    } catch(err) {
+    } catch (err) {
         error(err);
     }
 };
@@ -142,7 +142,7 @@ exports.toSendInputHandler = function () {
  *  errors, and closing from the server, and set up a handler for inputs
  *  on the toSend() input port.
  */
-exports.initialize = function() {
+exports.initialize = function () {
     port = new xbee.XBee(
         this.get('port'), {
             'baudRate': this.getParameter('baudRate'),
@@ -152,7 +152,7 @@ exports.initialize = function() {
 
     var self = this;
 
-    port.on('data', function(data) {
+    port.on('data', function (data) {
         self.send('received', data);
     });
 
@@ -160,7 +160,7 @@ exports.initialize = function() {
 };
 
 /** Close the web socket connection. */
-exports.wrapup = function() {
+exports.wrapup = function () {
     if (port) {
         port.close();
     }

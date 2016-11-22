@@ -372,17 +372,17 @@ exports.wrapup = function () {
     if (cmdvelClient) {
         // Stop the robot, then unadvertise.
         var zeroVelocity = {
-            linear: {
-                x: 0,
-                y: 0,
-                z: 0
+                linear: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                angular: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
             },
-            angular: {
-                x: 0,
-                y: 0,
-                z: 0
-            }
-        },
             out = {
                 op: 'publish',
                 topic: this.getParameter('topicPrefix') + '/cmd_vel',

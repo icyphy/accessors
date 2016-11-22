@@ -39,8 +39,13 @@
 "use strict";
 
 exports.setup = function () {
-    this.parameter('interval', {'type': 'number', 'value': 1000});
-    this.output('output', {'type': 'number'});
+    this.parameter('interval', {
+        'type': 'number',
+        'value': 1000
+    });
+    this.output('output', {
+        'type': 'number'
+    });
 };
 
 // These variables will not be visible to subclasses.

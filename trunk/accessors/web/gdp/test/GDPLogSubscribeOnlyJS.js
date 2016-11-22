@@ -1,4 +1,4 @@
-exports.setup = function() {
+exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
@@ -17,7 +17,7 @@ exports.setup = function() {
     TestSpontaneous3.setParameter('interval', 1500.0);
 
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', ["datum was null?","2","3"]);
+    TrainableTest2.setParameter('correctValues', ["datum was null?", "2", "3"]);
     console.log("GDPLogSubscribeJS.js: Setting TrainableTest2.trainingMode to true");
     TrainableTest2.setParameter('trainingMode', true);
     TrainableTest2.setParameter('tolerance', 1.0E-9);

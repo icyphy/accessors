@@ -64,7 +64,6 @@ exports.initialize = function () {
         var y2 = this.get('y2');
         var z1 = this.get('z1');
         var z2 = this.get('z2');
-        this.send('dist',Math.sqrt(Math.pow(x1-x2,2)+ Math.pow(y1-y2,2)+Math.pow(z1-z2,2)));
+        this.send('dist', Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) + Math.pow(z1 - z2, 2)));
     });
 };
-

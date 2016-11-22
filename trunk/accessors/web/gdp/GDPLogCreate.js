@@ -58,10 +58,20 @@ var handle = null;
 
 /** Setup the parameters and ports. */
 exports.setup = function () {
-    this.parameter('debugLevel', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': 'myLog'});
-    this.input('logdname', {'type': 'string', 'value': ''});
-    this.output('output', {'type': 'string'});
+    this.parameter('debugLevel', {
+        'type': 'string'
+    });
+    this.input('logname', {
+        'type': 'string',
+        'value': 'myLog'
+    });
+    this.input('logdname', {
+        'type': 'string',
+        'value': ''
+    });
+    this.output('output', {
+        'type': 'string'
+    });
     this.input('trigger');
 };
 
@@ -69,7 +79,8 @@ exports.setup = function () {
  */
 exports.create = function () {
     console.log("GDPLogCreate.js: create() Start.");
-    var logname = this.get('logname'), logdname;
+    var logname = this.get('logname'),
+        logdname;
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }

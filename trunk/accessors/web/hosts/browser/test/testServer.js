@@ -1,4 +1,3 @@
-
 // This is a simple Node.js server that you can run.
 // Then point your browser to http://localhost:8080/hosts/browser/test/testWebPage.html
 // to open the test file.
@@ -26,16 +25,16 @@ var port = 8089;
 //The first element will be 'node', the second element will be the name of the JavaScript file.
 //The third element (if present) will be the port number.
 if (process.argv.length > 2) {
-        port = process.argv[2];
+    port = process.argv[2];
 }
 
 var server = http.createServer();
-server.on('request', function(request, response) {
+server.on('request', function (request, response) {
 
     var url = request.url;
     var querystring = "";
     // Strip any leading slashes.
-    while (url.substring(0,1) == '/') {
+    while (url.substring(0, 1) == '/') {
         url = url.substring(1);
     }
 
@@ -43,22 +42,22 @@ server.on('request', function(request, response) {
 
     // Extract any querystring parameters
     if (index >= 0) {
-            querystring = url.substring(index, url.length);
-            url = url.substring(0, index);
+        querystring = url.substring(index, url.length);
+        url = url.substring(0, index);
     }
 
     if (request.method === 'GET') {
         // First, check if this url path has an entry in the put table
         // If so, return the contents
         if (putTable.hasOwnProperty(url)) {
-                response.statusCode = 200;
-                response.write(putTable[url]);
-                response.end();
+            response.statusCode = 200;
+            response.write(putTable[url]);
+            response.end();
         } else {
             // Otherwise, look for a file
 
-                // This test server may be used to test pages for terraswarm.org.
-                // The URLS for these pages have a leading 'accessors/'. Remove it.
+            // This test server may be used to test pages for terraswarm.org.
+            // The URLS for these pages have a leading 'accessors/'. Remove it.
             if (url.indexOf('accessors/') === 0) {
                 url = url.substring(10);
             }
@@ -71,7 +70,7 @@ server.on('request', function(request, response) {
                 // Check for images.  Used for testing accessors splash screen.
                 // TODO:  Support other file types.
                 if (location.indexOf('.jpg') >= 0) {
-                        fs.readFile(location, function(error, image) {
+                    fs.readFile(location, function (error, image) {
                         if (error) {
                             response.statusCode = 404;
                             response.end(error.message);
@@ -79,11 +78,13 @@ server.on('request', function(request, response) {
                         }
 
                         // TODO:  Generalize this.
-                        response.writeHead(200, {'Content-Type' : 'image/jpg'});
-                        response.end(image, 'binary');
+                        response.writeHead(200, {
+                            'Content-Type': 'image/jpg'
                         });
+                        response.end(image, 'binary');
+                    });
                 } else {
-                    fs.readFile(location, 'utf8', function(error, data) {
+                    fs.readFile(location, 'utf8', function (error, data) {
                         if (error) {
                             response.statusCode = 404;
                             response.end(error.message);
@@ -102,45 +103,46 @@ server.on('request', function(request, response) {
 
 
     } else {
-            // POST and PUT echo the request body.
-            // POSTs to /regressiontest will write contents to ../../../reports/junit/
-            // TODO:  Add support for JSONP
-            response.statusCode = 200;
-            var data = "";
+        // POST and PUT echo the request body.
+        // POSTs to /regressiontest will write contents to ../../../reports/junit/
+        // TODO:  Add support for JSONP
+        response.statusCode = 200;
+        var data = "";
 
-            request.on('data', function(chunk) {
-                    data = data + chunk;
-            });
+        request.on('data', function (chunk) {
+            data = data + chunk;
+        });
 
-            request.on('end', function () {
-                // For PUT, save body so that future GET requests will get body contents
-                    // jQuery sends method as uppercase
-                if (request.method === 'PUT') {
-                        putTable[url] = data;
-                }
+        request.on('end', function () {
+            // For PUT, save body so that future GET requests will get body contents
+            // jQuery sends method as uppercase
+            if (request.method === 'PUT') {
+                putTable[url] = data;
+            }
 
-                var info = {method : request.method};
-                response.write("Request info: " + JSON.stringify(info) + ", ");
-                response.write("Request body: " + data);
-                response.end();
-            });
+            var info = {
+                method: request.method
+            };
+            response.write("Request info: " + JSON.stringify(info) + ", ");
+            response.write("Request body: " + data);
+            response.end();
+        });
     }
 });
 
-server.on('error', function(message) {
+server.on('error', function (message) {
     console.error(message);
     // Signal a port error to the parent process (if any).
     // Used in regressionTestScript.
     if (process.hasOwnProperty('send')) {
-            process.send('portError');
+        process.send('portError');
     }
 });
 
 console.log('Starting server on port ' + port + '.');
-server.listen(port, function() {
+server.listen(port, function () {
     console.log('Server listening.');
     if (process.hasOwnProperty('send')) {
-            process.send('listening');
+        process.send('listening');
     }
 });
-

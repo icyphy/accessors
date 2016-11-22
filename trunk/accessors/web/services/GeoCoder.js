@@ -54,27 +54,52 @@
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
     this.input('address');
     this.output('location');
-    this.parameter('key', {'type':'string', 'value':'Enter Key Here'});
+    this.parameter('key', {
+        'type': 'string',
+        'value': 'Enter Key Here'
+    });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     // Note the need for quotation marks on the options parameter.
-    this.input('options', {'visibility':'expert', 'value':'"https://maps.googleapis.com"'});
-    this.input('command', {'visibility':'expert', 'value':'maps/api/geocode/json'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"https://maps.googleapis.com"'
+    });
+    this.input('command', {
+        'visibility': 'expert',
+        'value': 'maps/api/geocode/json'
+    });
     // NOTE: The value can be given as a JSON string or a JavaScript object.
-    this.input('arguments', {'visibility':'expert', 'value':{"address":"Berkeley, CA", "key":"Enter Key Here"}});
-    this.input('body', {'visibility':'expert'});
-    this.input('trigger', {'visibility':'expert'});
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.input('arguments', {
+        'visibility': 'expert',
+        'value': {
+            "address": "Berkeley, CA",
+            "key": "Enter Key Here"
+        }
+    });
+    this.input('body', {
+        'visibility': 'expert'
+    });
+    this.input('trigger', {
+        'visibility': 'expert'
+    });
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
 
@@ -85,13 +110,13 @@ exports.initialize = function() {
     var self = this;
 
     // Handle location information.
-    this.addInputHandler('address', function() {
+    this.addInputHandler('address', function () {
         var address = this.get('address');
         if (address) {
             // arguments is a reserved word, so we use args.
             var args = {
-                'address' : address,
-                'key' : key
+                'address': address,
+                'key': key
             };
             self.send('arguments', args);
             self.send('trigger', true);
@@ -104,7 +129,7 @@ exports.initialize = function() {
 /** Filter the response, extracting the latitude and longitude and
  *  formatting.
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
     if (response) {
         // Note that for some hosts, the response is a string, needing to parsed,
         // and for some, its already been parsed.
@@ -114,7 +139,7 @@ exports.filterResponse = function(response) {
                 parsed = JSON.parse(response);
             } catch (err) {
                 error('GeoCoder: Unable to parse response: ' + err.message +
-                        '\nResponse was: ' + response);
+                    '\nResponse was: ' + response);
                 // So that downstream actors don't just a previous location, send null.
                 this.send('location', null);
             }
@@ -129,8 +154,8 @@ exports.filterResponse = function(response) {
             parsed.results[0].geometry.location.lat &&
             parsed.results[0].geometry.location.lng) {
             this.send('location', {
-                    "latitude": parsed.results[0].geometry.location.lat,
-                    "longitude": parsed.results[0].geometry.location.lng
+                "latitude": parsed.results[0].geometry.location.lat,
+                "longitude": parsed.results[0].geometry.location.lng
             });
         } else {
             error('GeoCoder: No matching location.');
