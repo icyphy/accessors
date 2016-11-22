@@ -193,7 +193,7 @@
  *
  *  @module commonHost
  *  @authors: Edward A. Lee and Chris Shaver
- *  @version $$Id: commonHost.js 75426 2016-11-22 15:33:24Z cxh $$
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.
