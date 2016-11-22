@@ -28,7 +28,7 @@
  *
  *  @input {string} data The data to be written.
  *
- *  @param {string} logname The GDP logname.  By convention, use 
+ *  @param {string} logname The GDP logname.  By convention, use
  *   a reverse fully qualified name like
  *   "org.terraswarm.accessors.demo.MyDemoName"
  *
@@ -46,7 +46,7 @@
  *
  *  @accessor gdp/GDPLogAppend
  *  @author Christopher Brooks, Edward A. Lee, Nitesh Mor
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no

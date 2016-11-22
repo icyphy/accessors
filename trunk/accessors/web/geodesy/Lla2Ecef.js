@@ -20,10 +20,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor takes a WG-84 location (latitude, longitude, and altitude) 
+/** This accessor takes a WG-84 location (latitude, longitude, and altitude)
  * and converts it to ECEF (Earth-Centered, Earth-Fixed) cartesian coordinates.
  *  Based on http://danceswithcode.net/engineeringnotes/geodetic_to_ecef/geodetic_to_ecef.html
- * 
+ *
  *  @accessor geodesy/Lla2Ecef
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id$$
@@ -33,7 +33,7 @@
  *  @output {double} x ecef x coordinate
  *  @output {double} y ecef y coordinate
  *  @output {double} z ecef z coordinate
- *  
+ *
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should

@@ -31,7 +31,7 @@
  *  grep '@(#)'.  Use "*=40" to set the debug level to 40 for all
  *  components. The value of level is not usually over 127.  Values
  *  over 100 may modify the behavior.
- *  @input {string} logname The GDP logname.  By convention, use 
+ *  @input {string} logname The GDP logname.  By convention, use
  *  a reverse fully qualified name like
  *  "org.ptolemy.actor.lib.jjs.modules.gdp.demo.GDPLogRead.GDPLogRead"
  *  @input {string} logdname The IP address or DNS name of the gdp
@@ -43,7 +43,7 @@
  *  @output output An output that is written to when the creation is complete.
  *
  *  @author Christopher Brooks
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no

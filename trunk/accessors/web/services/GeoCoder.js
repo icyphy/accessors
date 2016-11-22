@@ -59,7 +59,7 @@ exports.setup = function() {
     this.input('address');
     this.output('location');
     this.parameter('key', {'type':'string', 'value':'Enter Key Here'});
-    
+
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     // Note the need for quotation marks on the options parameter.
@@ -77,13 +77,13 @@ exports.setup = function() {
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
-    
+
     var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
     }
     var self = this;
-    
+
     // Handle location information.
     this.addInputHandler('address', function() {
         var address = this.get('address');

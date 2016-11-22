@@ -1,6 +1,6 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
-    //  To run the code, run: 
+    //  To run the code, run:
     //  (cd C:\workspaceluna\ptII\org\terraswarm\accessor\accessors\web\net\test\auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/TestHue)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/org/terraswarm/accessor/demo/WatchHue/TestHue.xml

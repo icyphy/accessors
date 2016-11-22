@@ -21,15 +21,15 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** An accessor for playing a sound clip.
- * 
+ *
  *  @accessor audio/ClipPlayer
  *  @author Elizabeth Osyk (beth@berkeley.edu)
- *  @input start A trigger input to start playback.  
+ *  @input start A trigger input to start playback.
  *   The value is ignored and can be anything.
- *  @input stop A trigger to stop playback.  
+ *  @input stop A trigger to stop playback.
  *   The value is ignored and can be anything.
- *  @parameter clipURL The URL to retrieve the sound clip from. 
- *  @version $$Id$$ 
+ *  @parameter clipURL The URL to retrieve the sound clip from.
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -54,12 +54,12 @@ exports.initialize = function() {
         var self = this;
         self.player = new audio.ClipPlayer();
         self.player.load(this.getParameter('clipURL'));
-        
+
         this.addInputHandler('start', function () {
         self.player.play();
         self.send('output', true);
     });
-        
+
         this.addInputHandler('stop', function() {
                 self.player.stop();
                 self.send('output', false);

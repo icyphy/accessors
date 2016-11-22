@@ -31,7 +31,7 @@ var sh = null;
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
         this.input('stdin', {
                 'type': 'string'
         });
@@ -46,20 +46,20 @@ exports.setup = function() {
 
 /** Initialize the accessor and start the process subsequently.
  */
-exports.initialize = function() {
+exports.initialize = function () {
         sh = new shell.Shell({'cmd' : this.get('command')});
 
         var self = this;
 
-        this.addInputHandler('stdin', function() {
+        this.addInputHandler('stdin', function () {
             var data = self.get('stdin');
             if (data) {
                   sh.write(data);
             }
         });
 
-        sh.on('message', function(data) {
-                if(data)  {
+        sh.on('message', function (data) {
+                if (data)  {
                         self.send('stdout', data.toString());
                 }
         });
@@ -69,8 +69,8 @@ exports.initialize = function() {
 
 /** Wrap up the execution of the accessor by stopping the process.
  */
-exports.wrapup = function() {
-        if(sh)  {
+exports.wrapup = function () {
+        if (sh)  {
                 sh.wrapup();
         }
 };

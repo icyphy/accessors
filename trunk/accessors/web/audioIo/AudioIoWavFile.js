@@ -21,8 +21,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /**
+ * @accessor audioIo/AudioIoWavFile
  * @author Ilya Y. Rostovtsev
- * @version $Id$
+ * @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no

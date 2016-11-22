@@ -56,7 +56,7 @@ var map = {};
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
 
     this.parameter('dump1090Server', { // address of the web server created by dump1090
@@ -100,7 +100,7 @@ exports.setup = function() {
     this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
 };
 
-function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2){
+function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2) {
     var a = 6378137.0; //WGS-84 semi-major axis (meters)
     var e2 = 0.0066943799901377997;  //WGS-84 first eccentricity squared
     var lat1Rad = lat1*Math.PI/180;
@@ -119,7 +119,7 @@ function llaEuclideanDistance(lat1,lon1,alt1,lat2,lon2,alt2){
     return dist;
 }
 
-exports.initialize = function(){
+exports.initialize = function () {
     this.exports.ssuper.initialize.call(this);
     var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();
     this.send('options',{"url": serverUrl});
@@ -130,16 +130,16 @@ exports.initialize = function(){
         var altRef = Number(self.get('altRef'));
         var threshold = self.getParameter('threshold');
         //console.log("Reference: lat = " + latRef + " lon = " + lonRef + " alt " + altRef + " thrsld = " + threshold);
-        if (latRef && lonRef && altRef && threshold){
+        if (latRef && lonRef && altRef && threshold) {
             var filteredMap = {};
-            for (var a in map){
+            for (var a in map) {
                 var lat = Number(map[a].lat);
                 var lon = Number(map[a].lon);
                 var alt = Number(map[a].alt);
                 //console.log("Aircraft " + a + " is at lat = " + lat + " lon = " + lon + " alt " + alt);
                 var distance = llaEuclideanDistance(latRef,lonRef,altRef,lat,lon,alt);
                 console.log("Aircraft " + a + " is within " + distance + " meters.");
-                if (distance < threshold*1000){
+                if (distance < threshold*1000) {
                     filteredMap[a] = map[a];
                     console.log("Aircraft " + a + " is within thresold distance.");
                 }
@@ -149,7 +149,7 @@ exports.initialize = function(){
     });
 };
 
-var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
+var AircraftState = function (lat, lon, alt, speed, heading, squawk, seen) {
     this.lat = lat;
     this.lon = lon;
     this.alt = alt;
@@ -162,7 +162,7 @@ var AircraftState = function(lat, lon, alt, speed, heading, squawk, seen) {
 /** Filter the response, extracting the aircrat information. The full response is produced
  *  on the 'response' output.
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
 
     if (response) {
         try {
@@ -175,7 +175,7 @@ exports.filterResponse = function(response) {
             }
 
             var currentTime = (new Date()).getTime();
-            for (var i = 0; i < parsed.length; i++){
+            for (var i = 0; i < parsed.length; i++) {
                 var a = parsed[i];
                 if (a.flight !== '' && a.validposition == 1 && a.validtrack == 1) {
                     var s = new AircraftState(a.lat,a.lon,a.altitude,a.speed,a.track,a.squawk,(currentTime - a.seen*1000));
@@ -183,9 +183,9 @@ exports.filterResponse = function(response) {
                     map[key] = s;
                 }
             }
-            for(var k in map){
+            for (var k in map) {
                 var elapsed = currentTime - map[k].seen;
-                if(elapsed > this.getParameter('timeToLiveIfNotUpdated')){
+                if (elapsed > this.getParameter('timeToLiveIfNotUpdated')) {
                     //console.log(k + ", it has been more than " + this.getParameter('timeToLiveIfNotUpdated') + " ms since I've last seen you. Im going to delete you.");
                     delete map[k];
                 }

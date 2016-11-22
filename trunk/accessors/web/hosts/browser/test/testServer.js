@@ -31,32 +31,32 @@ if (process.argv.length > 2) {
 
 var server = http.createServer();
 server.on('request', function(request, response) {
-    
+
     var url = request.url;
     var querystring = "";
     // Strip any leading slashes.
     while (url.substring(0,1) == '/') {
         url = url.substring(1);
     }
-    
+
     var index = url.lastIndexOf('?');
-    
+
     // Extract any querystring parameters
     if (index >= 0) {
             querystring = url.substring(index, url.length);
             url = url.substring(0, index);
     }
-    
-    if (request.method === 'GET') { 
+
+    if (request.method === 'GET') {
         // First, check if this url path has an entry in the put table
-        // If so, return the contents 
+        // If so, return the contents
         if (putTable.hasOwnProperty(url)) {
                 response.statusCode = 200;
                 response.write(putTable[url]);
                 response.end();
         } else {
             // Otherwise, look for a file
-            
+
                 // This test server may be used to test pages for terraswarm.org.
                 // The URLS for these pages have a leading 'accessors/'. Remove it.
             if (url.indexOf('accessors/') === 0) {
@@ -67,7 +67,7 @@ server.on('request', function(request, response) {
             if (url.indexOf('..') < 0) {
                 var base = path.join(__dirname, '..', '..', '..');
                 var location = path.join(base, url);
-                
+
                 // Check for images.  Used for testing accessors splash screen.
                 // TODO:  Support other file types.
                 if (location.indexOf('.jpg') >= 0) {
@@ -77,7 +77,7 @@ server.on('request', function(request, response) {
                             response.end(error.message);
                             return;
                         }
-                        
+
                         // TODO:  Generalize this.
                         response.writeHead(200, {'Content-Type' : 'image/jpg'});
                         response.end(image, 'binary');
@@ -93,32 +93,32 @@ server.on('request', function(request, response) {
                         response.end();
                     });
                 }
-                
+
             } else {
                 response.statusCode = 400;
                 response.end('File names with .. are not permitted by this server.');
             }
         }
-        
+
 
     } else {
             // POST and PUT echo the request body.
             // POSTs to /regressiontest will write contents to ../../../reports/junit/
-            // TODO:  Add support for JSONP  
+            // TODO:  Add support for JSONP
             response.statusCode = 200;
             var data = "";
-            
+
             request.on('data', function(chunk) {
                     data = data + chunk;
             });
-            
+
             request.on('end', function () {
                 // For PUT, save body so that future GET requests will get body contents
                     // jQuery sends method as uppercase
                 if (request.method === 'PUT') {
                         putTable[url] = data;
                 }
-                    
+
                 var info = {method : request.method};
                 response.write("Request info: " + JSON.stringify(info) + ", ");
                 response.write("Request body: " + data);
@@ -129,7 +129,7 @@ server.on('request', function(request, response) {
 
 server.on('error', function(message) {
     console.error(message);
-    // Signal a port error to the parent process (if any).  
+    // Signal a port error to the parent process (if any).
     // Used in regressionTestScript.
     if (process.hasOwnProperty('send')) {
             process.send('portError');

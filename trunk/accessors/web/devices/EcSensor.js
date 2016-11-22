@@ -50,7 +50,7 @@ var http = require('httpClient');
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.extend('net/REST');
 
     this.output('ec', {
@@ -71,7 +71,7 @@ exports.setup = function() {
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
-exports.initialize = function() {
+exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     this.exports.ssuper.initialize.call(this);
 
@@ -86,7 +86,7 @@ exports.initialize = function() {
  *  on the 'response' output.
  */
 
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
 
 
     if (response) {
@@ -99,7 +99,7 @@ exports.filterResponse = function(response) {
                 parsed = JSON.parse(response);
             }
             // Extract the last ec value from the JSON record.
-            if(parsed.type !== 'ec'){
+            if (parsed.type !== 'ec') {
                     throw "type of received value is not 'ec'";
             }
             var ec = parseFloat(parsed.value);
