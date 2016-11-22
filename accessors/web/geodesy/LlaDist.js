@@ -20,10 +20,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor takes two WG-84 locations (latitude, longitude, and altitude) 
+/** This accessor takes two WG-84 locations (latitude, longitude, and altitude)
  * and outputs the euclidean distance between them.
- *  
- * 
+ *
+ *
  *  @accessor geodesy/LlaDist
  *  @author Eloi T. Pereira (eloi@berkeley.edu)
  *  @version $$Id$$
@@ -34,7 +34,7 @@
  *  @input {double} lon2 longitude
  *  @input {double} alt2 altitude
  *  @output {double} dist euclidean distance
- *  
+ *
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should

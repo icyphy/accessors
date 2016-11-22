@@ -23,19 +23,19 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Provide a Node.js swarmlet host.
- *  
+ *
  *  This file reads a command line argument that is expected
  *  to define a composite accessor.  The instantiate() and initialize()
  *  functions are then invoked.
- * 
+ *
  *  See nodeHostShell.js for an interactive program.
- *  
+ *
  *  @module nodeHost
- *  @authors Edward A. Lee, Chris Shaver, Christopher Brooks
+ *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$
  */
 
-//cordova.define("nodeHost", function(require, exports, module) {
+//cordova.define("nodeHost", function (require, exports, module) {
 
 var path = require('path');
 var fs = require('fs');
@@ -58,14 +58,14 @@ var accessors;
 var monitoringSetup = false;
 
 // Stores instance of monitoring accessor that is setup for the host
-var monitoringAccessor; 
+var monitoringAccessor;
 
 /** Return the source code for an accessor from its fully qualified name.
  *  This will throw an exception if there is no such accessor on the accessor
  *  search path.
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
-getAccessorCode = function(name) {
+getAccessorCode = function (name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
@@ -76,7 +76,7 @@ getAccessorCode = function(name) {
         try {
             code = fs.readFileSync(location, 'utf8');
             console.log('Reading accessor at: ' + location);
-        } catch(error) {
+        } catch (error) {
             console.log(error);
             continue;
         }
@@ -88,17 +88,17 @@ getAccessorCode = function(name) {
 };
 
 // /** Instantiates and initializes monitoring accessor that periodically collects
-// *  monitoring data for accessors running on the host 
+// *  monitoring data for accessors running on the host
 // */
-//setupMonitoring = function() {
+//setupMonitoring = function () {
 //    // Setup monitoring accessor, if it has not been already for this host
-//    if(!monitoringSetup)
+//    if (!monitoringSetup)
 //    {
-//        try{
+//        try {
 //            monitoringAccessor = instantiate('monitoringAccessor', 'hosts/node/nodeMonitoringAccessor');
 //            monitoringAccessor.initialize();
 //
-//            // FIXME: Need to remove hardcoding of sampling period for monitoring, which is currently 
+//            // FIXME: Need to remove hardcoding of sampling period for monitoring, which is currently
 //            // at 5 seconds
 //            monitoringAccessor.provideInput('samplePeriodInMs', 5000);
 //            monitoringAccessor.react();
@@ -121,7 +121,7 @@ getAccessorCode = function(name) {
  *  @param accessorName The name to give to the instance.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiate = function(accessorName, accessorClass) {
+instantiate = function (accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
@@ -147,9 +147,9 @@ instantiate = function(accessorName, accessorClass) {
  * <pre>
  * var commonHost = require('./nodeHost.js');
  * // Remove "node.js" from the array of command line arguments.
- * process.argv.shift(); 
+ * process.argv.shift();
  * // Remove "nodeHostInvoke.js" from the array of command line arguments.
- * process.argv.shift(); 
+ * process.argv.shift();
  * instantiateAndInitialize(process.argv);
  * </pre>
  *
@@ -161,7 +161,7 @@ instantiate = function(accessorName, accessorClass) {
  * @param accessorNames An array of accessor names in a format suitable
  * for getAccessorCode(name).
  */
-instantiateAndInitialize = function(accessorNames) {
+instantiateAndInitialize = function (accessorNames) {
     var accessors = [];
     var length = accessorNames.length;
     for (index = 0; index < length; ++index) {
@@ -193,7 +193,7 @@ instantiateAndInitialize = function(accessorNames) {
 // Stop execution.
 // In nodeHostInvoke.js, exit() is caught
 // and wrapup() is invoked.
-stop = function() {
+stop = function () {
     console.log("nodeHost.js: stop() invoked");
     process.exit();
 }

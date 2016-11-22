@@ -63,7 +63,7 @@ setTimeout = function(func, delay) {
         // setInterval() is a function that explictly uses 'this'.
         // So, we throw an error.
         throw new TypeError('callback is string, which is not supported because of this issues.');
-        
+
     } else if (typeof func !== 'function') {
         throw new TypeError('callback is not a function/string');
     } else if (arguments.length > 2) {
@@ -115,7 +115,7 @@ setInterval = function(func, delay) {
         // function and does not explicitly use 'this'.  However, in Duktape,
         // setInterval() is a function that explictly uses 'this'.
         // So, we throw an error.
-        throw new TypeError('callback is string, which is not supported.');        
+        throw new TypeError('callback is string, which is not supported.');
 
     } else if (typeof func !== 'function') {
         throw new TypeError('callback is not a function/string');

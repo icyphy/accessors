@@ -31,7 +31,7 @@
  *  Finally, the 'area' output produces the percentage of area
  *  covered by motion in the input image, where 0 means no motion
  *  and 100 means full image motion.
- *  
+ *
  *  The options parameter can include the following fields:
  *  * _PixelThreshold_: Intensity threshold whereby a pixel is
  *    deemed to different (an int in the range of 0 to 255, with default 25).
@@ -46,7 +46,7 @@
  *  the webcam-capture package by Bartosz Firyn (SarXos), available from
  *  [https://github.com/sarxos/webcam-capture](https://github.com/sarxos/webcam-capture).
  *  The webcam-capture package is licensed under the MIT License.
- * 
+ *
  *  @accessor image/MotionDetector
  *  @input input A stream of images.
  *  @input {{"PixelThreshold": number, "AreaThreshold": number}} options The options controlling the filter.
@@ -68,7 +68,7 @@ var faceDetector = require('objectDetection');
 exports.setup = function() {
     this.input('input');
     this.output('output');
-    this.output('faceCount'); 
+    this.output('faceCount');
     this.input('options', {'value':'{"MinFaceSize": 50, "MaxFaceSize": 400}', 'type':'JSON'});
 };
 

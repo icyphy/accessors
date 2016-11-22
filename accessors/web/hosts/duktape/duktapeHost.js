@@ -25,7 +25,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE
- 
+
 // FIXME: Move the Duktape code elsewhere so as to avoid copyright issues.
 /** Search for a module.
  */
@@ -174,9 +174,9 @@ instantiate = function(accessorName, accessorClass) {
  * <pre>
  * var commonHost = require('./duktapeHost.js');
  * // Remove "node.js" from the array of command line arguments.
- * process.argv.shift(); 
+ * process.argv.shift();
  * // Remove "duktapeHostInvoke.js" from the array of command line arguments.
- * process.argv.shift(); 
+ * process.argv.shift();
  * instantiateAndInitialize(process.argv);
  * </pre>
  *

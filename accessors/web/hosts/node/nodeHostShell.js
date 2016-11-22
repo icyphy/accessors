@@ -31,7 +31,7 @@
  *  See <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
  *  @module nodeHostShell
- *  @authors Edward A. Lee, Chris Shaver, Christopher Brooks
+ *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$
  */
 
@@ -46,15 +46,15 @@ var interactiveHostRunning = false;
 /** Start an interactive version of this host.
  *  This will produce a prompt on stdout that accepts JavaScript statements
  *  and executes them.
- */ 
-startHost = function() {
+ */
+startHost = function () {
     if (interactiveHostRunning) {
         console.log('Interactive host is already running.');
         return;
     }
     interactiveHostRunning = true;
     var readline = require('readline');
-    
+
     // Support auto completion for common commands.
     function completer(line) {
         var completions = [
@@ -65,7 +65,7 @@ startHost = function() {
             'setParameter(',
             'quit',
         ];
-        var hits = completions.filter(function(candidate) {
+        var hits = completions.filter(function (candidate) {
             // FIXME: need a better filter.
             return candidate.indexOf(line) === 0;
         });
@@ -78,15 +78,15 @@ startHost = function() {
       output: process.stdout,
       completer: completer,
     });
-    
+
     // Setup monitoring accessor for host before accepting commands
     eval.call(this, 'var monitoringInstance = setupMonitoring()');
 
     // Emitted whenever a command is entered.
-    rl.on('line', function(command) {
+    rl.on('line', function (command) {
         // Remove any trailing semicolon.
         command = command.replace(/;$/, '');
-        
+
         ///////////////
         // exit and quit functions.
         // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
@@ -108,7 +108,7 @@ startHost = function() {
             rl.prompt();
             return;
         }
-        
+
         ///////////////
         // Evaluate anything else.
         try {
@@ -121,14 +121,14 @@ startHost = function() {
             // How to fix that? As a workaround, you can invoke a.require(), where
             // a is an accessor instance.
             console.log(eval.call(this, command));
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
         rl.prompt();
     });
     // Emitted whenever the input stream receives a ^C.
-    rl.on('SIGINT', function() {
-        rl.question('Are you sure you want to exit?', function(answer) {
+    rl.on('SIGINT', function () {
+        rl.question('Are you sure you want to exit?', function (answer) {
             if (answer.match(/^y(es)?$/i)) {
                 rl.close();
             }
@@ -136,11 +136,11 @@ startHost = function() {
     });
     // Emitted whenever the input stream is sent to the background with ^Z
     // and then continued with fg. Does not work on Windows.
-    rl.on('SIGCONT', function() {
+    rl.on('SIGCONT', function () {
         // `prompt` will automatically resume the stream
         rl.prompt();
     });
-    
+
     console.log('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
     rl.setPrompt('nsh> ');
     rl.prompt();

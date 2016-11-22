@@ -105,7 +105,7 @@ by Edwin Olson in his Java implementation of an AprilTag detector:
   @output tags An array of objects, one object for each tag detected in the image.
   @parameter options The options for the detector. This is a JSON object with fields defined above.
   It defaults to an empty object, meaning to use default values for all the otpions.
-  @version $$Id$$ 
+  @version $$Id$$
 */
 
 // Stop extra messages from jslint.  Note that there should be no

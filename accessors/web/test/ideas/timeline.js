@@ -1,28 +1,28 @@
 // Based on http://alignedleft.com/tutorials/d3/making-a-scatterplot
 window.onload = function() {
-var dataset = [ 
-        { 'xy': [100, 60], 
+var dataset = [
+        { 'xy': [100, 60],
           'time': '1:00',
           'pass':true,
           'message':'net/Discovery: Cory hall printer should be available'
-        }, 
-        { 'xy': [100, 120], 
+        },
+        { 'xy': [100, 120],
           'time': '1:30',
           'pass':false,
           'message':'cameras/Camera: Room 123 camera should be recording'
         },
-    { 'xy': [100, 200], 
+    { 'xy': [100, 200],
           'time': '2:15',
           'pass':true,
           'message':'robotics/Scarab: Robot should bring coffee to room 123'
         }];
-        
+
 //Create SVG element
 var svg = d3.select("#timeline")
             .append("svg")
             .attr("width", 1000)
             .attr("height", 250);
-                        
+
 svg.append("line")
    .attr("x1", 100)
    .attr("x2", 100)
@@ -30,7 +30,7 @@ svg.append("line")
    .attr("y2", 200)
    .attr("stroke", "lightgrey")
    .attr("stroke-width", 4);
-   
+
 svg.selectAll("circle")
    .data(dataset)
    .enter()
@@ -85,4 +85,4 @@ svg.selectAll("messagetext")
    .attr("font-size", "16px");
 };
 
-   
+

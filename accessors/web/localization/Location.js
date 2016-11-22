@@ -57,7 +57,7 @@ var handlers = [];
 var handle = null;
 
 /** Define inputs and outputs. */
-exports.setup = function() {
+exports.setup = function () {
     this.input('HostIP', {
         type: "string",
         value: ""
@@ -87,9 +87,9 @@ var getAll = function () {
 };
 
 /* Get data over REST based on dataType input. */
-var getData = function (){
+var getData = function () {
     var type = this.get('dataType');
-    switch(type){
+    switch(type) {
     case "ibeacon":
         this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
         break;
@@ -114,7 +114,7 @@ var getData = function (){
 };
 
 /* Initialize connection. */
-exports.initialize = function() {
+exports.initialize = function () {
     var ipAddress = this.get('HostIP');
     var port = this.get('HostPort');
 

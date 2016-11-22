@@ -95,12 +95,12 @@ var handle;
 /** Define inputs and outputs. */
 exports.setup = function() {
     this.input('URI', {
-	type: "string",
-	value: ""
+        type: "string",
+        value: ""
     });
     this.input('method', {
-	type: "string",
-	value: "GET"
+        type: "string",
+        value: "GET"
     });
     this.input('body', {
         type: "JSON",

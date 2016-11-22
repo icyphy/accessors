@@ -90,7 +90,7 @@ var selectedService;
  * Define the input and the choice of REST services to which this accessor may
  * adapt.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.input('input');
     // a simple UI interface to start the dialog with users to select a REST
     // service
@@ -115,7 +115,7 @@ exports.setup = function() {
             'value': 'all',
             'options':contextAware.paraimpuServices()
         });
-    } else if (selectedService == 'Firebase'){
+    } else if (selectedService == 'Firebase') {
         this.implement("contextAware/FirebaseInterface.js");
         this.input('dataType', {
             'type': 'string',
@@ -139,7 +139,7 @@ exports.setup = function() {
  * Upon receiving details of a REST service, construct a concrete REST accessor
  * to access the service.
  */
-exports.initialize = function() {
+exports.initialize = function () {
     // The superclass registers a handler for the 'trigger' input
     // to issue an HTTP request based on the current inputs.
     this.ssuper.initialize();
@@ -149,7 +149,7 @@ exports.initialize = function() {
     // Add a handler for the 'input' input.
     this.addInputHandler(
         'input',
-        function() {
+        function () {
             // construct the URL for the selected service
             var serviceURL = {
                 "url" : {
@@ -213,7 +213,7 @@ var getFirebaseData = function (response) {
  * produces the wind speed
  *
  */
-var getParaimpuData = function(response) {
+var getParaimpuData = function (response) {
     var type = this.get('dataType');
     var result=JSON.parse(response);
     switch (type) {
@@ -281,7 +281,7 @@ var getGSNData = function (response) {
  * extract a portion of the response that is defined in the corresponding
  * service interface
  */
-exports.filterResponse = function(response) {
+exports.filterResponse = function (response) {
 
     switch(selectedService) {
     case "GSN":

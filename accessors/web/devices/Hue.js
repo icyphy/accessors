@@ -461,7 +461,7 @@ function Hue() {
                     console.log("Please push the link button on the Hue bridge.");
                     registerAttempts++;
 
-                    if (registerAttempts < maxRegisterAttempts){
+                    if (registerAttempts < maxRegisterAttempts) {
                         handleRegisterUser = setTimeout(registerUser, registerInterval);
                     } else {
                         errorOccurred = true;
@@ -516,10 +516,10 @@ exports.initialize = function () {
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function () {
     var action = this.getParameter('onWrapup'),
-	cmd = JSON.stringify({on:false}),
-	debug = false,
-	errorLights = [],
-	options = {};
+        cmd = JSON.stringify({on:false}),
+        debug = false,
+        errorLights = [],
+        options = {};
 
     if (action !== "none") {
         // wrapup() gets called by the code generator after setting

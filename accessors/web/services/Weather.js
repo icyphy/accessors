@@ -98,14 +98,14 @@ var convertTemperature = function(kelvin, units) {
 exports.initialize = function() {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
-    
+
     var key = this.getParameter('key');
     if (key == "Enter Key Here") {
         throw "Weather:  You need a key, which you can obtain at http://openweathermap.org/appid.";
     }
 
     var self = this;
-    
+
     // Handle location information.
     this.addInputHandler('location', function() {
         var location = this.get('location');

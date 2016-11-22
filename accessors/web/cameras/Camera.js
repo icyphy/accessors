@@ -26,7 +26,7 @@
  *  input is received and produces that image on its output. In open-loop mode,
  *  it captures every image produced by the camera, at the speed of the camera,
  *  and produces on the output a stream of such images.
- * 
+ *
  *  @accessor cameras/Camera
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @input trigger A trigger input for triggered mode.
@@ -42,7 +42,7 @@
  *   to use for capture, in pixels. A list of available view sizes for
  *   the selected camara is presented as options. This is a JSON specification
  *   with a "width" and "height" field, as in for example {"width":640, "height":480}.
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should be no

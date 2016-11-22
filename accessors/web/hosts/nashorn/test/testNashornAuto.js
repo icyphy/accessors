@@ -2,7 +2,7 @@
 //
 // To run this:
 //   cd accessors/web/hosts
-//   ./nashorn/nashornAccessorHost -js -timeout 5000 nashorn/test/testNashornAuto.js 
+//   ./nashorn/nashornAccessorHost -js -timeout 5000 nashorn/test/testNashornAuto.js
 //
 // Or, use ant!
 //   cd accessors/web
@@ -17,7 +17,7 @@ var directoryFiles = directory.listFiles();
 var jsFiles = [];
 var i;
 
-for(i = 0; i < directoryFiles.length; i += 1) {
+for (i = 0; i < directoryFiles.length; i += 1) {
     var fileName = directoryFiles[i].getPath();
     if (fileName.endsWith('.js')) {
         jsFiles.push(fileName);

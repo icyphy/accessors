@@ -41,7 +41,7 @@
  *    and a _translate_ input is also provided, the both offsets are applied.
  *  * __YOffset__: The vertical offset for the graphic. If this is specified
  *    and a _translate_ input is also provided, the both offsets are applied.
- *  
+ *
  *  @accessor image/ImageAnnotate
  *  @input image The image to annotate.
  *  @input graphic The location of an SVG graphic to overlay on the image.
@@ -79,7 +79,7 @@ exports.initialize = function() {
         if (!options) {
             options = {};
         }
-        
+
         var scale = this.get('scale');
         if (scale !== null) {
             // Combine with scale options, if specified.
@@ -88,7 +88,7 @@ exports.initialize = function() {
             }
             options.Scale = scale;
         }
-        
+
         var rotation = this.get('rotation');
         if (rotation !== null) {
             // Combine with rotation options, if specified.
@@ -97,7 +97,7 @@ exports.initialize = function() {
             }
             options.Rotation = rotation;
         }
-            
+
         var translate = this.get('translate');
         if (translate !== null && translate[0] !== null && translate[1] !== null) {
             // Combine with offset options, if specified.
@@ -106,7 +106,7 @@ exports.initialize = function() {
                 xOffset += options.XOffset;
             }
             options.XOffset = xOffset;
-            
+
             var yOffset = translate[1];
             if (options.YOffset) {
                 yOffset += options.YOffset;

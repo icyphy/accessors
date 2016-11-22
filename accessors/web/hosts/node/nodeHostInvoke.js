@@ -47,7 +47,7 @@
  *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
- *  @authors Christopher Brooks
+ *  @author Christopher Brooks
  *  @version $$Id$$
  */
 

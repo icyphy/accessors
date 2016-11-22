@@ -26,7 +26,7 @@
  *
  *  @output {string} data The data that is read from the log
  *
- *  @param {string} logname The GDP logname.  By convention, use 
+ *  @param {string} logname The GDP logname.  By convention, use
  *  a reverse fully qualified name like
  *  "org.terraswarm.accessors.demo.MyDemoName"
  *
@@ -48,7 +48,7 @@
  *
  *  @accessor gdp/GDPLogRead
  *  @author Edward A. Lee, Nitesh Mor. Contributor: Christopher Brooks
- *  @version $$Id$$ 
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
