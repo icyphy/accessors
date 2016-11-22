@@ -44,7 +44,7 @@
 /*jshint globalstrict: true, multistr: true */
 'use strict';
 
-const path = require('path');
+var path = require('path');
 
 //Start of text from jsdoc/lib/jsdoc/tag/dictionary/definitions.js
 function filepathMinusPrefix(filepath) {
