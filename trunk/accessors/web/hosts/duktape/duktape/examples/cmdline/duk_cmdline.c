@@ -10,6 +10,8 @@
 // created by running xxd -i ../duktapeHost.js duktapeHost.h
 #include "duktapeHost.h"
 
+#include <unistd.h> // For getcwd()
+
 #if !defined(DUK_CMDLINE_FANCY)
 #define NO_READLINE
 #define NO_RLIMIT
@@ -806,6 +808,7 @@ int main(int argc, char *argv[]) {
 	int alloc_provider = ALLOC_DEFAULT;
 	int ajsheap_log = 0;
 	int debugger = 0;
+	int echo = 0;
 	int recreate_heap = 0;
 	int no_heap_destroy = 0;
 	int verbose = 0;
@@ -903,9 +906,9 @@ int main(int argc, char *argv[]) {
 				goto usage;
 			}
 			i++;  /* skip code */
-		} else if (strcmp(arg, "--accessor") == 0) {
+		} else if (strcmp(arg, "--accessor") == 0 || strcmp(arg, "-accessor") == 0) {
                     accessor = 1;
-		} else if (strcmp(arg, "--timeout") == 0) {
+		} else if (strcmp(arg, "--timeout") == 0 || strcmp(arg, "-timeout") == 0) {
                     if (i == argc - 1) {
                         goto usage;
                     }
@@ -925,6 +928,8 @@ int main(int argc, char *argv[]) {
 			ajsheap_log = 1;
 		} else if (strcmp(arg, "--debugger") == 0) {
 			debugger = 1;
+		} else if (strcmp(arg, "--echo") == 0 || strcmp(arg, "-echo") == 0) {
+			echo = 1;
 		} else if (strcmp(arg, "--recreate-heap") == 0) {
 			recreate_heap = 1;
 		} else if (strcmp(arg, "--no-heap-destroy") == 0) {
@@ -933,7 +938,9 @@ int main(int argc, char *argv[]) {
 			verbose = 1;
 		} else if (strcmp(arg, "--run-stdin") == 0) {
 			run_stdin = 1;
-		} else if (strlen(arg) >= 1 && arg[0] == '-') {
+		} else if ((strlen(arg) >= 1 && arg[0] == '-')
+			   || strcmp(arg, "-h") == 0 || strcmp(arg, "--h") == 0
+			   || strcmp(arg, "-help") == 0 || strcmp(arg, "--help") == 0) {
 			goto usage;
 		} else {
 			have_files = 1;
@@ -943,6 +950,22 @@ int main(int argc, char *argv[]) {
 		interactive = 1;
 	}
 
+	
+	if (echo) {
+	  // Accessors: Echo the directory and command so that it can
+	  // be run by hand.  This is helpful when running tests.
+	  char cwd[1024];
+	  if (getcwd(cwd, sizeof(cwd)) != NULL) {
+	    printf("--------------- (cd %s;", cwd);
+	    int i;
+	    for (i = 0; i < argc; i++) {
+	      printf(" %s", argv[i]);
+	    }
+	    printf(")\n");
+	  } else {
+	    perror("getcwd() error");
+	  }
+	}
 	/*
 	 *  Memory limit
 	 */
@@ -1010,7 +1033,8 @@ int main(int argc, char *argv[]) {
 			i++;  /* skip filename */
 			continue;
 		} else if (strlen(arg) >= 1 && arg[0] == '-') {
-                        if (strcmp(arg, "--timeout") == 0) {
+		  if (strcmp(arg, "--timeout") == 0
+		      || strcmp(arg, "-timeout") == 0) {
                             // Skip the value of timeout.
                             i++;
                         }
@@ -1029,6 +1053,7 @@ int main(int argc, char *argv[]) {
                     fprintf(stderr, "duk: About to instantiate %s\n", arg);
                     fflush(stderr);
                     if (timeout > 0) {
+		      printf("timeout %d\n", timeout);
                         // Timeout.
 
                         // While exiting, invoke wrapup() on any accessors that were
@@ -1147,6 +1172,7 @@ int main(int argc, char *argv[]) {
 			"   --verbose          verbose messages to stderr\n"
 	                "   --restrict-memory  use lower memory limit (used by test runner)\n"
                         "   --accessor         run the files as accessors\n"
+                        "   -accessor         run the files as accessors\n"
 	                "   --alloc-default    use Duktape default allocator\n"
 #if defined(DUK_CMDLINE_ALLOC_LOGGING)
 	                "   --alloc-logging    use logging allocator (writes to /tmp)\n"
@@ -1164,9 +1190,14 @@ int main(int argc, char *argv[]) {
 #if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
 			"   --debugger         start example debugger\n"
 #endif
+                        "   --echo             echo the current directory and command line args.\n"		
+                        "   -echo              echo the current directory and command line args.\n"		
+		        "   -h                 print this help message\n"
 			"   --recreate-heap    recreate heap after every file\n"
 			"   --no-heap-destroy  force GC, but don't destroy heap at end (leak testing)\n"
                         "   --timeout time     valid only with --accessors\n"
+                        "   -timeout time      valid only with --accessors\n"
+		        " See https://www.terraswarm.org/accessors/wiki/Notes/CommandLineArguments\n"
 	                "\n"
 	                "If <filename> is omitted, interactive mode is started automatically.\n");
 	fflush(stderr);
