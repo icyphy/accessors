@@ -123,7 +123,7 @@ function getAccessorCode(name) {
             //print("duktapeHost.js getAccessorCode(\"" + name + "\"): Reading using NoFileIo" + location);
             code = NoFileIo.readfile(location);
             break;
-        } catch(error) {
+        } catch (error) {
             // Rusteduk has FileIo
             try {
                 code = FileIo.readfile(location);
@@ -134,7 +134,7 @@ function getAccessorCode(name) {
         }
     }
     if (!code) {
-        throw('Accessor ' + name + ' not found on path: ' + accessorPath);
+        throw ('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
 }
@@ -145,7 +145,7 @@ function getAccessorCode(name) {
  *  @param accessorName The name to give to the instance.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiate = function(accessorName, accessorClass) {
+instantiate = function (accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
@@ -156,7 +156,7 @@ instantiate = function(accessorName, accessorClass) {
         'setTimeout': setTimeout,
     };
     var result = new commonHost.instantiateAccessor(
-            accessorName, accessorClass, getAccessorCode, bindings);
+        accessorName, accessorClass, getAccessorCode, bindings);
     //print('duktapeHost.js: instantiate() done: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return result;
 };
@@ -188,7 +188,7 @@ instantiate = function(accessorName, accessorClass) {
  * @param accessorNames An array of accessor names in a format suitable
  * for getAccessorCode(name).
  */
-instantiateAndInitialize = function(accessorNames) {
+instantiateAndInitialize = function (accessorNames) {
     // console.log("duktapeHost.js: instantiateAndInitialize() start: " + accessorNames + " " + accessorNames.length);
 
     var length = accessorNames.length;
@@ -246,7 +246,11 @@ setParameter = commonHost.setParameter;
 // If ecma_eventloop is required here, then using c_eventloop.js will fail.
 //var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');
 
-console = { log: function() { print(Array.prototype.join.call(arguments, ' ')); } };
+console = {
+    log: function () {
+        print(Array.prototype.join.call(arguments, ' '));
+    }
+};
 
 // To print the contents of an object in Duktape, download json2.js
 //   cd hosts/duktape
@@ -269,4 +273,3 @@ exports = {
     //'setTimeout': setTimeout,
 };
 print("duktapeHost.js done");
-

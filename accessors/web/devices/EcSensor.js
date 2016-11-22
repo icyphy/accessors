@@ -54,20 +54,36 @@ exports.setup = function () {
     this.extend('net/REST');
 
     this.output('ec', {
-            'type': 'number'
+        'type': 'number'
     });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
-    this.input('options', {'visibility':'expert', 'value':'"http://192.168.1.247:8080"'});
-    this.input('command', {'visibility':'expert', 'value':'ec' });
-    this.input('arguments', {'visibility':'expert'});
+    this.input('options', {
+        'visibility': 'expert',
+        'value': '"http://192.168.1.247:8080"'
+    });
+    this.input('command', {
+        'visibility': 'expert',
+        'value': 'ec'
+    });
+    this.input('arguments', {
+        'visibility': 'expert'
+    });
     //this.input('arguments', {'visibility':'expert', 'value':'{"env":"http://datatables.org/alltables.env", "format":"json"}'});
-    this.input('body', {'visibility':'expert'});
+    this.input('body', {
+        'visibility': 'expert'
+    });
     //this.input('trigger', {'visibility':'expert'});
-    this.output('headers', {'visibility':'expert'});
-    this.output('status', {'visibility':'expert'});
-    this.parameter('outputCompleteResponsesOnly', {'visibility':'expert'});
+    this.output('headers', {
+        'visibility': 'expert'
+    });
+    this.output('status', {
+        'visibility': 'expert'
+    });
+    this.parameter('outputCompleteResponsesOnly', {
+        'visibility': 'expert'
+    });
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
@@ -100,7 +116,7 @@ exports.filterResponse = function (response) {
             }
             // Extract the last ec value from the JSON record.
             if (parsed.type !== 'ec') {
-                    throw "type of received value is not 'ec'";
+                throw "type of received value is not 'ec'";
             }
             var ec = parseFloat(parsed.value);
             // Send the ec to the 'ec' output.
@@ -114,4 +130,3 @@ exports.filterResponse = function (response) {
     }
     return response;
 };
-

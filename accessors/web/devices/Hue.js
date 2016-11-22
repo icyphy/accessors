@@ -104,9 +104,9 @@ exports.setup = function () {
         value: "ptolemyuser"
     });
     this.parameter('onWrapup', {
-        value : "turn off",
+        value: "turn off",
         type: "string",
-        options : ["none", "restore", "turn off"]
+        options: ["none", "restore", "turn off"]
     });
     this.output('lights');
     this.output('assignedUserName', {
@@ -205,7 +205,7 @@ function Hue() {
                             // Prevent the alert from coming up more than once.
                             alerted = true;
                             alert(userName + " is not a registered user.\n" +
-                                  "Push the link button on the Hue bridge to register.");
+                                "Push the link button on the Hue bridge to register.");
                             // Oddly, the invalid userName, which has the right form,
                             // is not an acceptable parameter value. Since it is invalid
                             // anyway, discard it and replace.
@@ -324,7 +324,7 @@ function Hue() {
         }
         if (isNonEmptyArray(body) && body[0].error) {
             self.error("Server responds with error: " +
-                       body[0].error.description);
+                body[0].error.description);
             return true;
         }
         return false;
@@ -388,9 +388,9 @@ function Hue() {
                     console.log("Hue.js: processCommands() command: " + JSON.stringify(command));
                 }
                 var options = {
-                    body : JSON.stringify(command),
-                    timeout : 10000,
-                    url : url + "/" + userName + "/lights/" + encodeURIComponent(lightID) + "/state/"
+                    body: JSON.stringify(command),
+                    timeout: 10000,
+                    url: url + "/" + userName + "/lights/" + encodeURIComponent(lightID) + "/state/"
                 };
                 if (debug) {
                     console.log("Hue.js: processCommands(): PUT request: options: " + JSON.stringify(options));
@@ -423,7 +423,7 @@ function Hue() {
             setTimeout(contactBridge, retryTimeout);
         } else {
             self.error('Could not reach the Hue Bridge at ' + url +
-                       ' after ' + retryCount + ' attempts.');
+                ' after ' + retryCount + ' attempts.');
             errorOccurred = true;
         }
     };
@@ -439,12 +439,12 @@ function Hue() {
         // http://www.developers.meethue.com/documentation/getting-started
         // (free registration required).
         var registerData = {
-            devicetype : "hue_accessor#" + userName
+            devicetype: "hue_accessor#" + userName
         };
         var options = {
-            body : JSON.stringify(registerData),
+            body: JSON.stringify(registerData),
             timeout: 10000,
-            url : url
+            url: url
         };
         http.post(options, function (response) {
             var rsp = JSON.parse(response.body);
@@ -516,7 +516,9 @@ exports.initialize = function () {
 /** Turn off changed lights on wrapup. */
 exports.wrapup = function () {
     var action = this.getParameter('onWrapup'),
-        cmd = JSON.stringify({on:false}),
+        cmd = JSON.stringify({
+            on: false
+        }),
         debug = false,
         errorLights = [],
         options = {};
@@ -528,9 +530,9 @@ exports.wrapup = function () {
 
             for (var i = 0; i < this.hue.changedLights.length; i++) {
                 options = {
-                    body : cmd,
-                    timeout : 10000,
-                    url : "http://" + this.get("bridgeIP") + "/api/" +
+                    body: cmd,
+                    timeout: 10000,
+                    url: "http://" + this.get("bridgeIP") + "/api/" +
                         this.getParameter("userName") + "/lights/" + this.hue.changedLights[i] +
                         "/state/"
                 };

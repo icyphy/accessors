@@ -70,40 +70,50 @@ exports.setup = function () {
         type: "string",
         value: "all"
     });
-    this.output('iBeacon',{'type':'JSON'});
-    this.output('ALPS',{'type':'JSON'});
-    this.output('IMU',{'type':'JSON'});
-    this.output('WiFi',{'type':'JSON'});
-    this.output('Location',{'type':'JSON'});
+    this.output('iBeacon', {
+        'type': 'JSON'
+    });
+    this.output('ALPS', {
+        'type': 'JSON'
+    });
+    this.output('IMU', {
+        'type': 'JSON'
+    });
+    this.output('WiFi', {
+        'type': 'JSON'
+    });
+    this.output('Location', {
+        'type': 'JSON'
+    });
 };
 
 /* Get all location/sensor data. */
 var getAll = function () {
     this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
-    this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
-    this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
-    this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
-    this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+    this.send('ALPS', httpRequest(url + "/alps", "GET", null, "", timeout));
+    this.send('IMU', httpRequest(url + "/imu", "GET", null, "", timeout));
+    this.send('WiFi', httpRequest(url + "/wifi", "GET", null, "", timeout));
+    this.send('Location', httpRequest(url + "/location", "GET", null, "", timeout));
 };
 
 /* Get data over REST based on dataType input. */
 var getData = function () {
     var type = this.get('dataType');
-    switch(type) {
+    switch (type) {
     case "ibeacon":
         this.send('iBeacon', httpRequest(url + "/ibeacon", "GET", null, "", timeout));
         break;
     case "alps":
-        this.send('ALPS', httpRequest(url  + "/alps", "GET", null, "", timeout));
+        this.send('ALPS', httpRequest(url + "/alps", "GET", null, "", timeout));
         break;
     case "imu":
-        this.send('IMU', httpRequest(url  + "/imu", "GET", null, "", timeout));
+        this.send('IMU', httpRequest(url + "/imu", "GET", null, "", timeout));
         break;
     case "wifi":
-        this.send('WiFi', httpRequest(url  + "/wifi", "GET", null, "", timeout));
+        this.send('WiFi', httpRequest(url + "/wifi", "GET", null, "", timeout));
         break;
     case "location":
-        this.send('Location', httpRequest(url  + "/location", "GET", null, "", timeout));
+        this.send('Location', httpRequest(url + "/location", "GET", null, "", timeout));
         break;
     case "all":
         getAll.call(this);
@@ -118,10 +128,10 @@ exports.initialize = function () {
     var ipAddress = this.get('HostIP');
     var port = this.get('HostPort');
 
-    if (ipAddress === null|| ipAddress.trim() === "") {
+    if (ipAddress === null || ipAddress.trim() === "") {
         throw "No IP Address is given for the localization host.";
     }
-    if (port === null|| port.trim() === "") {
+    if (port === null || port.trim() === "") {
         throw "No Port is given for the localization host.";
     }
 

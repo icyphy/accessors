@@ -44,11 +44,11 @@ exports.setup = function () {
     this.input('subscribe');
     this.input('unsubscribe');
     this.output('connection', {
-            spontaneous: true
+        spontaneous: true
     });
     this.output('subscription');
     this.output('received', {
-            spontaneous: true
+        spontaneous: true
     });
     this.output('receivedTopic');
     this.parameter('brokerHost', {
@@ -56,8 +56,8 @@ exports.setup = function () {
         value: ''
     });
     this.parameter('brokerPort', {
-        type : 'int',
-        value : 1883
+        type: 'int',
+        value: 1883
     });
     this.parameter('qosLevel', {
         type: 'int',
@@ -67,6 +67,7 @@ exports.setup = function () {
 
 var self;
 var mqttClient;
+
 function onMessage(topic, data) {
     self.send('received', data);
     self.send('receivedTopic', topic);
@@ -81,8 +82,7 @@ exports.subscribeInputHandler = function () {
     if (mqttClient.connected) {
         mqttClient.subscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - subscribed');
-    }
-    else {
+    } else {
         self.error('Client is not connected to broker, subscribe failed. Topic: ' + topic);
     }
 };
@@ -92,13 +92,12 @@ exports.unsubscribeInputHandler = function () {
     if (mqttClient.connected) {
         mqttClient.unsubscribe(topic);
         self.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
-    }
-    else {
+    } else {
         self.error('Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
     }
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     self = this;
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
@@ -108,6 +107,6 @@ exports.initialize = function() {
     mqttClient.start();
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     mqttClient.end();
 };

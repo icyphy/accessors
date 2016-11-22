@@ -89,7 +89,7 @@ var iotAuth = require('iotAuth');
 var dataConverter = require('dataConverter');
 var msgType = iotAuth.msgType;
 
-exports.setup = function() {
+exports.setup = function () {
     // Inputs and outputs
     this.input('serverHostPort');
     this.input('toSend');
@@ -98,7 +98,7 @@ exports.setup = function() {
         spontaneous: true
     });
     this.output('received', {
-        type : 'string'
+        type: 'string'
     });
     // Client information
     this.parameter('clientName', {
@@ -107,8 +107,8 @@ exports.setup = function() {
     });
     // For communication with Auth
     this.parameter('authHost', {
-        type : 'string',
-        value : 'localhost'
+        type: 'string',
+        value: 'localhost'
     });
     this.parameter('authPort', {
         value: -1,
@@ -146,21 +146,21 @@ exports.setup = function() {
     });
     // Send/receive type
     this.parameter('receiveType', {
-        type : 'string',
-        value : 'string',
-        options : ['string', 'image', 'byteArray']
+        type: 'string',
+        value: 'string',
+        options: ['string', 'image', 'byteArray']
     });
     this.parameter('sendType', {
-        type : 'string',
-        value : 'string',
-        options : ['string', 'image', 'byteArray']
+        type: 'string',
+        value: 'string',
+        options: ['string', 'image', 'byteArray']
     });
 };
 
 // client communication state
 var clientCommState = {
     IDLE: 0,
-    IN_COMM: 30                    // Session message
+    IN_COMM: 30 // Session message
 };
 
 // local variables
@@ -202,11 +202,9 @@ function onData(data) {
 
     if (receiveType == 'string') {
         self.send('received', data.toString());
-    }
-    else if (receiveType == 'image') {
+    } else if (receiveType == 'image') {
         self.send('received', dataConverter.jsArrayToImage(data.getArray()));
-    }
-    else if (receiveType == 'byteArray') {
+    } else if (receiveType == 'byteArray') {
         self.send('received', data.getArray());
     }
 }
@@ -258,23 +256,24 @@ function sessionKeyResponseCallback(status, distributionKey, sessionKeyList, cal
     }
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-                                     callbackParameters.host, callbackParameters.port);
+            callbackParameters.host, callbackParameters.port);
     }
 }
 
-exports.serverHostPortInputHandler = function() {
+exports.serverHostPortInputHandler = function () {
     var serverHostPort = this.get('serverHostPort');
     if (currentSessionKeyList.length > 0) {
         initSecureCommWithSessionKey(currentSessionKeyList.shift(),
-                                     serverHostPort.host, serverHostPort.port);
-    }
-    else {
+            serverHostPort.host, serverHostPort.port);
+    } else {
         var options = {
             authHost: this.getParameter('authHost'),
             authPort: this.getParameter('authPort'),
             entityName: this.getParameter('clientName'),
             numKeysPerRequest: this.getParameter('numKeysPerRequest'),
-            purpose: {group: this.getParameter('targetServerGroup')},
+            purpose: {
+                group: this.getParameter('targetServerGroup')
+            },
             distributionKey: currentDistributionKey,
             distributionCryptoSpec: this.getParameter('distributionCryptoSpec'),
             publicKeyCryptoSpec: this.getParameter('publicKeyCryptoSpec'),
@@ -294,12 +293,10 @@ exports.toSendInputHandler = function () {
     if (currentSecureClient && currentState == clientCommState.IN_COMM) {
         if (!currentSecureClient.checkSessionKeyValidity()) {
             outputError('session key expired!');
-        }
-        else if (!currentSecureClient.send(toSend)) {
+        } else if (!currentSecureClient.send(toSend)) {
             outputError('Error in sending data');
         }
-    }
-    else {
+    } else {
         console.log('Discarding data because socket is not open.');
     }
 };
@@ -317,9 +314,9 @@ exports.initialize = function () {
     self = this;
 
     this.addInputHandler('serverHostPort',
-                         this.exports.serverHostPortInputHandler.bind(this));
+        this.exports.serverHostPortInputHandler.bind(this));
     this.addInputHandler('toSend',
-                         this.exports.toSendInputHandler.bind(this));
+        this.exports.toSendInputHandler.bind(this));
 };
 
 exports.wrapup = function () {

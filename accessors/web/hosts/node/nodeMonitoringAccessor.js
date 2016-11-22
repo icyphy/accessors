@@ -45,27 +45,29 @@
  *  This is just for initialization and is overridden with the input handler
  *  for sample collection once the first input is provided
  */
-var timer = setInterval(function() {
+var timer = setInterval(function () {
     console.log('[Monitoring] Initialized dummy input handler');
     return undefined;
 }, 5000);
 
-exports.setup = function() {
+exports.setup = function () {
     // Input time period of sampling data.
     this.input('samplePeriodInMs');
 
     // Output for collected sample as a string.
-    this.output('sample', {'type':'string'});
+    this.output('sample', {
+        'type': 'string'
+    });
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     var self = this;
     // Respond to input by updating sampling period for monitoring.
-    this.addInputHandler('samplePeriodInMs', function() {
+    this.addInputHandler('samplePeriodInMs', function () {
         clearInterval(timer);
-        timer = setInterval(function() {
+        timer = setInterval(function () {
             self.send('sample',
-                      JSON.stringify(Accessor.queryActiveAccessors()));
+                JSON.stringify(Accessor.queryActiveAccessors()));
         }, this.get('samplePeriodInMs'));
     });
 };

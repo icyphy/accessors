@@ -40,19 +40,19 @@
 
 /** Set up the accessor by defining the inputs and outputs.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.input('global');
     this.output('lat');
     this.output('lon');
     this.output('alt');
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     var self = this;
     this.addInputHandler('global', function () {
         var raw = self.get('global');
-        self.send('lat',raw.msg.latitude);
-        self.send('lon',raw.msg.longitude);
-        self.send('alt',raw.msg.altitude);
+        self.send('lat', raw.msg.latitude);
+        self.send('lon', raw.msg.longitude);
+        self.send('alt', raw.msg.altitude);
     });
 };

@@ -51,7 +51,7 @@ var discovery = require('discovery');
 var ds;
 try {
     ds = new discovery.DiscoveryService();
-} catch(err) {
+} catch (err) {
     error('Failed to instantiate discovery service: ' + err);
 }
 
@@ -77,7 +77,7 @@ var handle;
  */
 exports.initialize = function () {
     var self = this;
-    handle = this.addInputHandler('hostIP', function() {
+    handle = this.addInputHandler('hostIP', function () {
         if (self.get('useNmap')) {
             ds.discoverDevices(self.get('hostIP'), 'nmap');
         } else {
@@ -94,7 +94,7 @@ exports.wrapup = function () {
 /** When discovery is finished, send a list of devices.  */
 if (ds) {
     var self = this;
-    ds.on('discovered', function(data) {
+    ds.on('discovered', function (data) {
         if (data === "") {
             self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
         } else {

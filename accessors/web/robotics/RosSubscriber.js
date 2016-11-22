@@ -131,32 +131,32 @@ exports.defragmentMessage = (function () {
         fragmentCount = 0,
         processMessage = function (message) {
 
-        //Check for missing fragment
-        if (fragmentCount !== message.num) {
-            console.error("Fragment " +
-                fragmentCount +
-                " of message is missing. Instead received fragment number " +
-                message.num);
-        }
+            //Check for missing fragment
+            if (fragmentCount !== message.num) {
+                console.error("Fragment " +
+                    fragmentCount +
+                    " of message is missing. Instead received fragment number " +
+                    message.num);
+            }
 
-        //Accumulate data from fragment.
-        if (fragmentCount === 0) {
-            originalMessage = message.data;
-            fragmentCount += 1;
-            return null;
-        } else if (fragmentCount < message.total - 1) {
-            originalMessage += message.data;
-            fragmentCount += 1;
-            return null;
-        } else if (fragmentCount == message.total -1) {
-            originalMessage += message.data;
-            fragmentCount = 0;
-            return originalMessage;
-        } else {
-            console.error("Error in reconstructing fragments. Fragment count exceeds indicated total.");
-            return null;
-        }
-    };
+            //Accumulate data from fragment.
+            if (fragmentCount === 0) {
+                originalMessage = message.data;
+                fragmentCount += 1;
+                return null;
+            } else if (fragmentCount < message.total - 1) {
+                originalMessage += message.data;
+                fragmentCount += 1;
+                return null;
+            } else if (fragmentCount == message.total - 1) {
+                originalMessage += message.data;
+                fragmentCount = 0;
+                return originalMessage;
+            } else {
+                console.error("Error in reconstructing fragments. Fragment count exceeds indicated total.");
+                return null;
+            }
+        };
     return processMessage;
 })();
 

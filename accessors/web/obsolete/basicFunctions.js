@@ -67,8 +67,9 @@ function error(message) {
 function httpRequest(url, method, properties, body, timeout) {
     if (debug) {
         console.log("httpRequest(" +
-                    (function (obj) {
-                var result = [], p;
+            (function (obj) {
+                var result = [],
+                    p;
                 for (p in obj) {
                     if (obj.hasOwnProperty(p)) {
                         result.push(JSON.stringify(obj[p]));
@@ -76,7 +77,7 @@ function httpRequest(url, method, properties, body, timeout) {
                 }
                 return result;
             }(arguments)) +
-                    ")");
+            ")");
     }
     var request = new XMLHttpRequest();
     // The third argument specifies a synchronous read.

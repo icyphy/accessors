@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Test Gdp
-*
-*  @accessor gdp/test/TestGdp
-*  @author Christopher Brooks
-*  @version $$Id$$
-*/
+ *
+ *  @accessor gdp/test/TestGdp
+ *  @author Christopher Brooks
+ *  @version $$Id$$
+ */
 
-exports.setup = function() {
+exports.setup = function () {
     var client = this.instantiate('Gdp', 'gdp/GDPLogAppend');
 };
 

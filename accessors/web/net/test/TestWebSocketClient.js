@@ -29,7 +29,7 @@
  *  @version $$Id$$
  */
 
-exports.setup = function() {
+exports.setup = function () {
     var client = this.instantiate('WebSocketClient', 'net/WebSocketClient');
 };
 

@@ -40,7 +40,7 @@ triggerHandler = null;
 
 recording = false;
 
-exports.record = function() {
+exports.record = function () {
     console.log("record funciton triggered...");
     recording = !recording;
     console.log("recording is " + recording);
@@ -53,7 +53,7 @@ exports.record = function() {
     }
 };
 
-exports.setup = function() {
+exports.setup = function () {
     console.log("Audio Capture Setup");
     this.parameter('numInputChannels', {
         type: 'number',
@@ -71,11 +71,11 @@ exports.setup = function() {
     this.output('signal');
 };
 
-exports.onData = function(audioVector) {
+exports.onData = function (audioVector) {
     this.send('signal', audioVector);
 };
 
-exports.initialize = function() {
+exports.initialize = function () {
     console.log("Audio Capture Initialize... Initializing...");
     console.log("Number Input Channels : " + this.getParameter('numInputChannels'));
     console.log("Sampling Rate : " + this.getParameter('samplingRate'));
@@ -86,7 +86,7 @@ exports.initialize = function() {
     recording = false;
 };
 
-exports.wrapup = function() {
+exports.wrapup = function () {
     console.log("Audio Capture Wrapup");
     audio.wrapup();
     this.removeInputHandler('trigger', triggerHandler);

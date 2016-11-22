@@ -48,6 +48,3 @@ exports.inputHandler = function () {
     this.exports.ssuper.inputHandler.call(this);
     this.send('out2', this.exports.baseField);
 };
-
-
-

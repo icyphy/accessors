@@ -98,9 +98,9 @@ var querystring = require('querystring');
 exports.setup = function () {
     this.extend('net/REST');
     this.input('command', {
-        'type':'string',
-        'value':'snapshot',
-        'options':[
+        'type': 'string',
+        'value': 'snapshot',
+        'options': [
             'snapshot',
             'videostream',
             'center',
@@ -108,18 +108,25 @@ exports.setup = function () {
             'left',
             'right',
             'up',
-                    'stop down',
-                    'stop left',
-                    'stop right',
+            'stop down',
+            'stop left',
+            'stop right',
             'stop up',
             'horizontal patrol',
-                    'vertical patrol',
-                    'stop vertical patrol',
-                    'stop horizontal patrol'
-        ]});
+            'vertical patrol',
+            'stop vertical patrol',
+            'stop horizontal patrol'
+        ]
+    });
     // Provide parameters for username and password.
-    this.parameter('username', {'value':'admin', 'type':'string'});
-    this.parameter('password', {'value':'', 'type':'string'});
+    this.parameter('username', {
+        'value': 'admin',
+        'type': 'string'
+    });
+    this.parameter('password', {
+        'value': '',
+        'type': 'string'
+    });
 };
 
 // Alternate command to use, for example to stop the camera.
@@ -128,35 +135,65 @@ var alternateCommand;
 /** Override the base class to construct the path for the URL from.
  *  more user-friendly descriptions of the command.
  */
-exports.encodePath = function() {
+exports.encodePath = function () {
     var command;
     if (!alternateCommand) {
         command = this.get('command');
     }
     var code = -1;
-    switch(command) {
-                case 'up':                      code = 0; break;
-                case 'stop up':                 code = 1; break;
-                case 'down':                    code = 2; break;
-                case 'stop down':               code = 3; break;
-                case 'left':                    code = 4; break;
-                case 'stop left':               code = 5; break;
-                case 'right':                   code = 6; break;
-                case 'stop right':              code = 7; break;
-                case 'center':                  code = 25; break;
-                case 'vertical patrol':         code = 26; break;
-                case 'stop vertical patrol':    code = 27; break;
-                case 'horizontal patrol':       code = 28; break;
-                case 'stop horizontal patrol':  code = 29; break;
-                // FIXME: No idea what the following mean, so not offerred above.
-                case 'io output high':          code = 94; break;
-        case 'io output low':           code = 95; break;
-        }
-        var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
-        if (code >= 0) {
-            command = 'decoder_control';
-            encodedArgs += '&command=' + code;
-        }
+    switch (command) {
+    case 'up':
+        code = 0;
+        break;
+    case 'stop up':
+        code = 1;
+        break;
+    case 'down':
+        code = 2;
+        break;
+    case 'stop down':
+        code = 3;
+        break;
+    case 'left':
+        code = 4;
+        break;
+    case 'stop left':
+        code = 5;
+        break;
+    case 'right':
+        code = 6;
+        break;
+    case 'stop right':
+        code = 7;
+        break;
+    case 'center':
+        code = 25;
+        break;
+    case 'vertical patrol':
+        code = 26;
+        break;
+    case 'stop vertical patrol':
+        code = 27;
+        break;
+    case 'horizontal patrol':
+        code = 28;
+        break;
+    case 'stop horizontal patrol':
+        code = 29;
+        break;
+        // FIXME: No idea what the following mean, so not offerred above.
+    case 'io output high':
+        code = 94;
+        break;
+    case 'io output low':
+        code = 95;
+        break;
+    }
+    var encodedArgs = 'user=' + this.get('username') + '&pwd=' + this.get('password');
+    if (code >= 0) {
+        command = 'decoder_control';
+        encodedArgs += '&command=' + code;
+    }
     var additionalArgs = querystring.stringify(this.get('arguments')).trim();
     if (additionalArgs !== "") {
         encodedArgs += '&' + additionalArgs;

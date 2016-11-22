@@ -46,7 +46,7 @@ var discovery = require('discovery');
 var ds;
 try {
     ds = new discovery.DiscoveryService();
-} catch(err) {
+} catch (err) {
     error('Failed to instantiate discovery service: ' + err);
 }
 
@@ -55,18 +55,18 @@ exports.setup = function () {
 
     this.input('trigger', {
         type: 'boolean'
-      });
+    });
 
     this.output('IPAddress', {
         type: 'string'
-      });
+    });
 };
 
 /** Upon receiving a trigger input, output the host machine's IP address.
  */
 exports.initialize = function () {
     var self = this;
-        this.addInputHandler('trigger', function() {
-                self.send('IPAddress', ds.getHostAddress());
-        });
+    this.addInputHandler('trigger', function () {
+        self.send('IPAddress', ds.getHostAddress());
+    });
 };

@@ -62,17 +62,28 @@ var oldLogname = null;
 
 exports.setup = function () {
     console.log("GDPLogAppend.js: setup()");
-    this.input('data', {'type': 'string'});
-    this.input('logname', {'type': 'string', 'value': 'org.terraswarm.accessors.myLog'});
-    this.input('logdname', {'type': 'string', 'value': 'edu.berkeley.eecs.gdp-01.gdplogd'});
-    this.parameter('debugLevel', {'type': 'string'});
+    this.input('data', {
+        'type': 'string'
+    });
+    this.input('logname', {
+        'type': 'string',
+        'value': 'org.terraswarm.accessors.myLog'
+    });
+    this.input('logdname', {
+        'type': 'string',
+        'value': 'edu.berkeley.eecs.gdp-01.gdplogd'
+    });
+    this.parameter('debugLevel', {
+        'type': 'string'
+    });
 };
 
 /** Append data from the input port 'data' to the log.
  *  If necessary, first create the log.
  */
 exports.append = function () {
-    var logname = this.get('logname'), logdname, dataValues;
+    var logname = this.get('logname'),
+        logdname, dataValues;
     if (logname === '') {
         throw new Error('The logname parameter cannot be empty.');
     }

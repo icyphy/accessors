@@ -16,6 +16,6 @@ var latestOutput = a.latestOutput('output');
 if (latestOutput != 50) {
     throw new Error("duktape/test/testComposite.js: output was " + latestOutput + ", it should have been 50.");
 } else {
-    print ("duktape/test/testComposite.js: OK: output was " + latestOutput + ", which is equal to 50.");
+    print("duktape/test/testComposite.js: OK: output was " + latestOutput + ", which is equal to 50.");
 }
 a.wrapup();
