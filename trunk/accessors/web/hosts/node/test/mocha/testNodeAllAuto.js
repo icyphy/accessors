@@ -26,8 +26,7 @@ var findNodeAutoDirectories = function(dir) {
                         // Add auto directories, but skip certain directories.
                         if (basefile == 'auto') {
                             var skipIt = false;
-                            var skipDirectories = [ 'hosts/browser/test/auto',
-                                                    'gdp/test/auto'];
+                            var skipDirectories = [ 'hosts/browser/test/auto'];
                             skipDirectories.forEach(function(skipDirectory) {
                                     if (file.indexOf(skipDirectory) != -1) {
                                         console.log("testNodeAllAuto.js: Skipping " + skipDirectory);

@@ -93,26 +93,6 @@
     </exec>
   </target>
 
-  <target name="echo-js-files"
-	  description="Echo the .js files that are locally developed">
-    <echo>The .js files are being written to jsfiles.txt</echo>
-    <exec executable="bash"
-	  output="jsfiles.txt">
-      <arg value="-c"/>
-      <arg value="find . -name '*.js' | egrep -v '(duktape-sys|node_modules|vendors)'"/>
-    </exec>
-  </target>	 
-
-  <target name="echo-js-files-copyright"
-	  description="Echo the .js files that should have a copyright">
-    <echo>The .js files are being written to jsFilesCopyright.txt</echo>
-    <exec executable="bash"
-	  output="jsFilesCopyright.txt">
-      <arg value="-c"/>
-      <arg value="find . -name '*.js' | egrep -v '(browser/modules|duk*/examples|duktape-sys|common/modules|node_modules|node/test|test/auto|test/manual|test/mocha|vendors)'"/>
-    </exec>
-  </target>	 
-
   <target name="eduk"
           description="Build the eduk binary.  Requires xxd, make and gcc.">
     <echo>The eduk binary has fewer command line options than the duk binary.
@@ -324,7 +304,7 @@
   <target name="tests.mocha"
           description="Use mocha to test the Node host and generate output on stdout.">
     <echo>
-      ==test.mocha==
+      ==tests.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
       To run just the composites, use "ant tests.mocha.composites"
       This target requires setup:
@@ -347,7 +327,7 @@
   <target name="tests.mocha.composites"
           description="Use mocha to test just the composite accessors and write to stdout.">
     <echo>
-      ==test.mocha.composite==
+      ==tests.mocha.composite==
       This target uses mocha to run the composite accessors via
           hosts/node/test/mocha/testNodeAllAuto.js
       This target requires setup:
@@ -366,8 +346,9 @@
   <target name="tests.mocha.xml"
           description="Use mocha to test the Node Host and generate JUnit-compatible output.">
     <echo>
-      ==test.mocha==
+      ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      The output is in JUnit-compatibile xml.
       This target requires setup:
         sudo npm install -g mocha
         sudo npm install -g mocha-junit-reporter
