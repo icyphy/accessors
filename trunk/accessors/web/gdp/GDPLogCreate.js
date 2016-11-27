@@ -25,6 +25,7 @@
 
 /** Create a Global Data Plane (GDP) log.
  *
+ *  @accessor gdp/GDPLogCreate
  *  @parameter {string} debugLevel The value of the GDP debug flag.  See
  *  gdp/README.md for a complete summary.  The value is typically
  *  "pattern=level", for example "gdplogd.physlog=39".  To see the
