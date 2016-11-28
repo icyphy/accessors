@@ -1,4 +1,4 @@
-// @version: $$Id: testNodeAuto.js 914 2016-08-22 16:00:26Z cxh $$
+// @version: $$Id$$
 // Run the .js files in just one auto directory.
 //
 // Example Usage:

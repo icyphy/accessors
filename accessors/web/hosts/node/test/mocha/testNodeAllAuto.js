@@ -1,4 +1,4 @@
-// @version: $$Id: testNodeAuto.js 914 2016-08-22 16:00:26Z cxh $$
+// @version: $$Id$$
 // Run the .js files accessors/web/*/test/auto/, excluding hosts/browser/test/auto
 // To run this test, do:
 //   sudo npm install -g mocha
