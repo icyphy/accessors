@@ -46,6 +46,11 @@
  *  node nodeHostInvoke.js -timeout 2000 test/TestComposite
  *  </pre>
  *
+ *  To run an accessor for 2 seconds that uses wrapup:
+ *  <pre>
+ *  node nodeHostInvoke.js --accessor -timeout 2000 test/auto/RampJSTest.js
+ *  </pre>
+ *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
  *  @author Christopher Brooks
@@ -56,5 +61,4 @@ var nodeHost = require('./nodeHost.js');
 
 // Remove "node.js" from the array of command line arguments.
 // Remove "nodeHostInvoke.js" from the array of command line arguments.
-//invoke(process.argv);
 main(process.argv.slice(2));
