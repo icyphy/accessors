@@ -131,16 +131,16 @@ instantiate = function (accessorName, accessorClass) {
 };
 
 /** Instantiate and initialize the accessors named by the
- *  accessorNames argument
+ *  accessorNames argument.
  *
- * See invoke() for how this method is used.
+ * See commonHost.main() for how this method is used.
  *
  * Sample usage:
  *
  * nodeHostInvoke.js contains:
  * <pre>
  * require('./nodeHost.js');
- * invoke(process.argv);
+ * invoke(process.argv.slice(2));
  * </pre>
  *
  * To invoke:
@@ -179,43 +179,6 @@ instantiateAndInitialize = function (accessorNames) {
         accessor.initialize();
     }
     return accessors;
-};
-
-/** Invoke a composite accessor.
- *
- *  nodeHostInvoke.js uses invoke() as follows:
- *  <pre>
- *  require('./nodeHost.js');
- *  invoke(process.argv);
- *  </pre>
- *
- *  If the accessors module is installed using npm with
- *  <pre>
- *  npm install @terraswarm/accessors
- *  </pre>
- *  then a composite accessor may be invoked if a file invoke.js contains:
- *  <pre>
- *  require('@terraswarm/accessors');
- *  invoke(process.argv);
- *  </pre>
- *  Then a composite accessor may be invoked with
- *  <pre>
- *  node invoke.js -accessor -timeout 4000 test/auto/RampJSTest.js
- *  </pre>
- *
- *  
- *  @param argv An array of arguments, were the first argument is
- *  typically "node", the second argument is the name of the script
- *  that is invoked, typically "node.js"
- *  See main() commonHost.js for a complete list of command line arguments.
- */
-invoke = function (argv) {
-    // This function is in nodeHost.js so that we can easily invoke a
-    // composite accessor with a very small file.  See the comment for how to do this.
-
-    // Remove "node.js" from the array of command line arguments.
-    // Remove "nodeHostInvoke.js" from the array of command line arguments.
-    return commonHost.main(argv.slice(2));
 };
 
 /** Instantiates and initializes monitoring accessor that periodically
@@ -303,7 +266,6 @@ exports = {
     'getAccessorCode': getAccessorCode,
     //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
-    'invoke': invoke,
     'main': main,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
