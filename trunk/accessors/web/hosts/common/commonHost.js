@@ -1267,7 +1267,18 @@ function main(argv) {
     var usage = "Usage: [-accessor|--accessor] [-h|--h|-help|--help] [-e|--e|-echo|--echo] [-timeout|--timeout milliseconds] [-v|--v|-version|--version]  accessorOrRegularJavaScriptFile1.js [accessorOrRegularJavaScriptFile2.js ...]",
 	i,
 	sawAccessor = false,
+	sawFiles = false,
 	timeout = -1;
+
+    try {
+	// Under Nashorn, argv is a Java Array of Strings, so
+	// we use the Nashorn Java.from().
+	argv = Java.from(argv);
+    } catch (error) {
+	// Ignore
+    }
+
+
     if (argv.length === 0) {
         console.error(usage);
 	return 3;
@@ -1286,7 +1297,7 @@ function main(argv) {
 	case '--e':
 	case '-echo':
 	case '--echo':
-	    console.log(argv);
+	    console.log(argv)
 	    break;
 
 	case '-h':
@@ -1321,6 +1332,7 @@ function main(argv) {
 	    return 0;
 
 	default:
+	    sawFiles = true;
 	    if (timeout === -1) {
 		// Prevent the script from exiting by repeating the empty function
 		// every ~25 days.
@@ -1340,7 +1352,11 @@ function main(argv) {
 	    }
 	}
     }
-};
+    if ( !sawFiles) {
+	throw new Error("No file arguments were present?  Args were: " + argv);
+    }
+    return 0;
+}
 
 /** Merge the specified objects. If the two have common properties, the merged object
  *  will have the properties of the second argument. If the first argument is null,
