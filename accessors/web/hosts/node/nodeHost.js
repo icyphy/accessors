@@ -173,6 +173,7 @@ instantiateAndInitialize = function (accessorNames) {
             accessorName += "_" + (index - 1);
         }
         var accessor = instantiate(accessorName, accessorClass);
+
         // Push the top level accessor so that we can call wrapup later.
         accessors.push(accessor);
         accessor.initialize();
@@ -190,7 +191,7 @@ instantiateAndInitialize = function (accessorNames) {
  *
  *  If the accessors module is installed using npm with
  *  <pre>
- *  npm install @terraswarm/gdp
+ *  npm install @terraswarm/accessors
  *  </pre>
  *  then a composite accessor may be invoked if a file invoke.js contains:
  *  <pre>
@@ -199,56 +200,22 @@ instantiateAndInitialize = function (accessorNames) {
  *  </pre>
  *  Then a composite accessor may be invoked with
  *  <pre>
- *  node invoke.js -timeout 4000 test/auto/RampJSTest.js
+ *  node invoke.js -accessor -timeout 4000 test/auto/RampJSTest.js
  *  </pre>
  *
+ *  
  *  @param argv An array of arguments, were the first argument is
  *  typically "node", the second argument is the name of the script
- *  that is invoked.  If the third argument is "-timeout", then the
- *  fourth argument will be the timeout in ms.  The following
- *  argument(s) are one or more .js files that define a setup() function
- *  that builds a composite accessor.
+ *  that is invoked, typically "node.js"
+ *  See main() commonHost.js for a complete list of command line arguments.
  */
 invoke = function (argv) {
     // This function is in nodeHost.js so that we can easily invoke a
     // composite accessor with a very small file.  See the comment for how to do this.
 
     // Remove "node.js" from the array of command line arguments.
-    argv.shift();
     // Remove "nodeHostInvoke.js" from the array of command line arguments.
-    argv.shift();
-
-    if (argv.length === 0) {
-        console.error("nodeHost.invoke(): Usage: node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]");
-        process.exit(3);
-    }
-
-    // Process the -timeout argument.
-    if (argv.length > 1) {
-        if (argv[0] === "-timeout") {
-            timeout = argv[1];
-            // Remove -timeout and the value.
-            argv.shift();
-            argv.shift();
-            this.accessors = instantiateAndInitialize(argv);
-            setTimeout(function () {
-                // process.exit gets caught by exitHandler() in
-                // nodeHost.js and invokes wrapup().
-                process.exit(0);
-            }, timeout);
-        } else {
-            // Handle multiple composite accessors on the command line.
-            this.accessors = instantiateAndInitialize(argv);
-            // Prevent the script from exiting by repeating the empty function
-            // every ~25 days.
-            setInterval(function () {}, 2147483647);
-        }
-    } else {
-        this.accessors = instantiateAndInitialize(argv);
-        // Prevent the script from exiting by repeating the empty function
-        // every ~25 days.
-        setInterval(function () {}, 2147483647);
-    }
+    return commonHost.main(argv.slice(2));
 };
 
 /** Instantiates and initializes monitoring accessor that periodically
@@ -326,6 +293,7 @@ Accessor = commonHost.Accessor;
 
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
+main = commonHost.main;
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
 
@@ -333,9 +301,10 @@ setParameter = commonHost.setParameter;
 exports = {
     'Accessor': Accessor,
     'getAccessorCode': getAccessorCode,
-    'instantiate': instantiate,
+    //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'invoke': invoke,
+    'main': main,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
 };
@@ -362,15 +331,15 @@ function exitHandler(options, err) {
             // Getting a list of all the accessors seems to be a bit convoluted.
 
             console.log('nodeHost.js: About to invoke wrapup().');
-            //var util = require('util');
+            var util = require('util');
             //console.log(util.inspect(this, {depth: 10}));
-            //console.log('nodeHost.js: this.accessors');
-            //console.log(this.accessors);
+            //console.log('nodeHost.js: accessors');
+            //console.log(accessors);
 
-            for (composite in this.accessors) {
-                for (i in this.accessors[composite].containedAccessors) {
+            for (composite in accessors) {
+                for (i in accessors[composite].containedAccessors) {
                     try {
-                        accessor = this.accessors[composite].containedAccessors[i];
+                        accessor = accessors[composite].containedAccessors[i];
                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
                         if (accessor) {
                             accessor.wrapup();
@@ -478,3 +447,4 @@ process.on('SIGUSR1', exitHandler.bind(null, {
 process.on('uncaughtException', exitHandler.bind(null, {
     exit: true
 }));
+
