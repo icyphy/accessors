@@ -1254,7 +1254,11 @@ Accessor.prototype.latestOutput = function (name) {
  *  -v|--v|-version|--version: Print out the version number
  *
  *  The flags are followed by one or more filenames that are either
- *  composite accessors ore plain JavaScript.
+ *  composite accessors or plain JavaScript.  If --accessors is
+ *  present, then the argument(s) are assumed to be composite
+ *  accessors.  If it --accessors is not present, then the arguments
+ *  are passed to getAccessor(), which looks for the file and returns
+ *  the content.
  *
  *  @param argv An array of arguments, see above.
  *  @return 0 if there were no problems, 3 if there was a command line argument issue.
@@ -1294,12 +1298,13 @@ function main(argv) {
 
 	case '-timeout':
 	case '--timeout':
+	    i += 1;
 	    if (i >= argv.length) {
 		console.error("Argument " + i + "  was " + argv[i] + " but there is no argument for milliseconds.  Args were: " + argv);
 		return 3;
 	    }
-	    i += 1;
 	    timeout = argv[i];
+
             setTimeout(function () {
                 // Under node, process.exit gets caught by exitHandler() in
                 // nodeHost.js and invokes wrapup().
@@ -1327,15 +1332,10 @@ function main(argv) {
 		accessors = instantiateAndInitialize(argv.slice(i));
 		return 0;
 	    } else {
-		// FIXME: Need to read the file and evaluate it.
-		var contents = "";
 		try {
-		    // Node
-		    contents = fs.readFileSync(argv[i]);
-		    eval(contents);
+		    eval(getAccessorCode(argv[i]));
 		} catch (error) {
-		    // Nashorn
-		    load(contents);
+		    throw new Error('Failed to eval "' + argv[i] + '": ' + error);
 		}
 	    }
 	}
