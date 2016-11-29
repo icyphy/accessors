@@ -52,6 +52,9 @@
  *  @version $$Id$$
  */
 
-var commonHost = require('./nodeHost.js');
+var nodeHost = require('./nodeHost.js');
 
-invoke(process.argv);
+// Remove "node.js" from the array of command line arguments.
+// Remove "nodeHostInvoke.js" from the array of command line arguments.
+//invoke(process.argv);
+main(process.argv.slice(2));
