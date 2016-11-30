@@ -7,6 +7,7 @@
 //   cd accessors/web; ant tests.mocha.composites
 
 var nodeHost = require('../nodeHost.js');
+
 var fs = require('fs');
 
 /** Run all the .js tests in a directory using mocha.
@@ -57,9 +58,9 @@ exports.testNodeAuto = function(auto) {
                                 // generate a results file when passed a file path.
                                         // it() is a mocha function.
                                         it ('run accessors/web/' + auto + '/' + accessor + '\n', function (done) {
-                                                var testAccessorName = [ auto +'/' + accessor ];
-                                                var testAccessor = 
-                                                        instantiateAndInitialize(testAccessorName)[0];
+                                            var testAccessorName = [ auto +'/' + accessor ];
+                                            var testAccessor = 
+						instantiateAndInitialize(testAccessorName)[0];
                                 
                                                 var exception = null;
                                                 var exceptionHandler, exitHandler;
