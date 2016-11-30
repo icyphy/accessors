@@ -182,14 +182,22 @@ Accessor = commonHost.Accessor;
 
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
+instantiateAndInitialize = commonHost.instantiateAndInitialize,
 main = commonHost.main;
+
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
+
+console.log("nodeHost.js, about to define foo");
+function foobar (args) {
+    commonHost.instantiateAndInitialize(args);
+}
 
 // In case this gets used a module, create an exports object.
 exports = {
     'Accessor': Accessor,
     'getAccessorCode': getAccessorCode,
+    'instantiateAndInitialize': instantiateAndInitialize,
     'main': main,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
