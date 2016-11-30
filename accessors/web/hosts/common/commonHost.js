@@ -1218,28 +1218,9 @@ function instantiateAccessor(
     var instance = new Accessor(
         accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
-    return instance;
-}
-
-/** Instantiate and return an accessor.
- *  This will throw an exception if there is no such accessor class on the accessor
- *  search path.
- *  @param accessorName The name to give to the instance.
- *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
- */
-function instantiate(accessorName, accessorClass) {
-    // FIXME: The bindings should be a bindings object where require == a requireLocal
-    // function that searches first for local modules.
-    var bindings = {
-        'require': require,
-    };
-    var instance = new instantiateAccessor(
-        accessorName, accessorClass, getAccessorCode, bindings);
-    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
-
     accessors.push(instance);
     return instance;
-};
+}
 
 /** Instantiate and initialize the accessors named by the
  *  accessorNames argument.
@@ -1262,8 +1243,8 @@ function instantiate(accessorName, accessorClass) {
  * @param accessorNames An array of accessor names in a format suitable
  * for getAccessorCode(name).
  */
-function instantiateAndInitialize (accessorNames) {
-    var accessors = [],
+function instantiateAndInitialize(accessorNames) {
+    var accessorsCreated = [],
 	index,
 	length = accessorNames.length;
     for (index = 0; index < length; ++index) {
@@ -1284,13 +1265,22 @@ function instantiateAndInitialize (accessorNames) {
         if (index > 0) {
             accessorName += "_" + (index - 1);
         }
-        var accessor = instantiate(accessorName, accessorClass);
+
+	// FIXME: The bindings should be a bindings object where require == a requireLocal
+	// function that searches first for local modules.
+	var bindings = {
+            'require': require,
+	};
+	var accessor = new instantiateAccessor(
+            accessorName, accessorClass, getAccessorCode, bindings);
+	console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
 
         // Push the top level accessor so that we can call wrapup later.
-        accessors.push(accessor);
+        accessorsCreated.push(accessor);
+
         accessor.initialize();
     }
-    return accessors;
+    return accessorsCreated;
 };
 
 
@@ -1415,7 +1405,8 @@ function main(argv) {
 	    if (sawAccessor) {
 		// FIXME: we need to keep a list of the accessors that are created.
 		// FIXME: accessors is a global, is that right?
-		accessors = instantiateAndInitialize(argv.slice(i));
+		var accessorsCreated = instantiateAndInitialize(argv.slice(i));
+		accessors = accessors.concat(accessorsCreated);
 		return 0;
 	    } else {
 		try {
@@ -1954,4 +1945,5 @@ var _accessorInstanceTable = {};
 exports.Accessor = Accessor;
 exports.accessors = accessors;
 exports.instantiateAccessor = instantiateAccessor;
+exports.instantiateAndInitialize = instantiateAndInitialize;
 exports.main = main;
