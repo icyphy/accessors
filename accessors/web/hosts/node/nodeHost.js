@@ -49,10 +49,13 @@ var commonHost = require('../common/commonHost.js');
  */
 var accessorPath = [path.join(__dirname, '..', '..')];
 
-// Flag to check if monitoring accessor has been setup or not.
+// All the accessors that were instantiated.
+var accessors = [];
+
+// Flag to check if monitoring accessor has been setup or not
 var monitoringSetup = false;
 
-// Stores instance of monitoring accessor that is setup for the host.
+// Stores instance of monitoring accessor that is setup for the host
 var monitoringAccessor;
 
 /////////////////////////////////////////////////
@@ -105,6 +108,77 @@ getAccessorCode = function (name) {
         throw new Error('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
+};
+
+/** Instantiate and return an accessor.
+ *  This will throw an exception if there is no such accessor class on the accessor
+ *  search path.
+ *  @param accessorName The name to give to the instance.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ */
+instantiate = function (accessorName, accessorClass) {
+    // FIXME: The bindings should be a bindings object where require == a requireLocal
+    // function that searches first for local modules.
+    var bindings = {
+        'require': require,
+    };
+    var instance = new commonHost.instantiateAccessor(
+        accessorName, accessorClass, getAccessorCode, bindings);
+    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+
+    accessors.push(instance);
+    return instance;
+};
+
+/** Instantiate and initialize the accessors named by the
+ *  accessorNames argument.
+ *
+ * See commonHost.main() for how this method is used.
+ *
+ * Sample usage:
+ *
+ * nodeHostInvoke.js contains:
+ * <pre>
+ * require('./nodeHost.js');
+ * invoke(process.argv.slice(2));
+ * </pre>
+ *
+ * To invoke:
+ * <pre>
+ *   node nodeHostInvoke.js test/TestComposite
+ * </pre>
+ *
+ * @param accessorNames An array of accessor names in a format suitable
+ * for getAccessorCode(name).
+ */
+instantiateAndInitialize = function (accessorNames) {
+    var accessors = [];
+    var length = accessorNames.length;
+    for (index = 0; index < length; ++index) {
+        // The name of the accessor is basename of the accessorClass.
+        var accessorClass = accessorNames[index];
+        // For example, if the accessorClass is
+        // test/TestComposite, then the accessorName will be
+        // TestComposite.
+
+        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
+        var accessorName = accessorClass.substring(startIndex);
+        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
+            accessorName = accessorName.substring(1);
+        }
+        // If the same accessorClass appears more than once in the
+        // list of arguments, then use different names.
+        // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
+        if (index > 0) {
+            accessorName += "_" + (index - 1);
+        }
+        var accessor = instantiate(accessorName, accessorClass);
+
+        // Push the top level accessor so that we can call wrapup later.
+        accessors.push(accessor);
+        accessor.initialize();
+    }
+    return accessors;
 };
 
 /** Instantiates and initializes monitoring accessor that periodically
@@ -182,21 +256,15 @@ Accessor = commonHost.Accessor;
 
 // Define additional functions that should appear in the global scope
 // so that they can be invoked on the command line.
-instantiateAndInitialize = commonHost.instantiateAndInitialize,
 main = commonHost.main;
-
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
-
-console.log("nodeHost.js, about to define foo");
-function foobar (args) {
-    commonHost.instantiateAndInitialize(args);
-}
 
 // In case this gets used a module, create an exports object.
 exports = {
     'Accessor': Accessor,
     'getAccessorCode': getAccessorCode,
+    //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'main': main,
     'provideInput': commonHost.provideInput,
@@ -227,13 +295,13 @@ function exitHandler(options, err) {
             console.log('nodeHost.js: About to invoke wrapup().');
             var util = require('util');
             //console.log(util.inspect(this, {depth: 10}));
-            //console.log('nodeHost.js: commonHost.accessors');
-            //console.log(commonHost.accessors);
+            //console.log('nodeHost.js: accessors');
+            //console.log(accessors);
 
-            for (composite in commonHost.accessors) {
-                for (i in commonHost.accessors[composite].containedAccessors) {
+            for (composite in accessors) {
+                for (i in accessors[composite].containedAccessors) {
                     try {
-                        accessor = commonHost.accessors[composite].containedAccessors[i];
+                        accessor = accessors[composite].containedAccessors[i];
                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
                         if (accessor) {
                             accessor.wrapup();

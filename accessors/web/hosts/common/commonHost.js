@@ -1218,71 +1218,8 @@ function instantiateAccessor(
     var instance = new Accessor(
         accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
-    accessors.push(instance);
     return instance;
 }
-
-/** Instantiate and initialize the accessors named by the
- *  accessorNames argument.
- *
- * See commonHost.main() for how this method is used.
- *
- * Sample usage:
- *
- * nodeHostInvoke.js contains:
- * <pre>
- * require('./nodeHost.js');
- * invoke(process.argv.slice(2));
- * </pre>
- *
- * To invoke:
- * <pre>
- *   node nodeHostInvoke.js test/TestComposite
- * </pre>
- *
- * @param accessorNames An array of accessor names in a format suitable
- * for getAccessorCode(name).
- */
-function instantiateAndInitialize(accessorNames) {
-    var accessorsCreated = [],
-	index,
-	length = accessorNames.length;
-    for (index = 0; index < length; ++index) {
-        // The name of the accessor is basename of the accessorClass.
-        var accessorClass = accessorNames[index];
-        // For example, if the accessorClass is
-        // test/TestComposite, then the accessorName will be
-        // TestComposite.
-
-        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
-        var accessorName = accessorClass.substring(startIndex);
-        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
-            accessorName = accessorName.substring(1);
-        }
-        // If the same accessorClass appears more than once in the
-        // list of arguments, then use different names.
-        // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
-        if (index > 0) {
-            accessorName += "_" + (index - 1);
-        }
-
-	// FIXME: The bindings should be a bindings object where require == a requireLocal
-	// function that searches first for local modules.
-	var bindings = {
-            'require': require,
-	};
-	var accessor = new instantiateAccessor(
-            accessorName, accessorClass, getAccessorCode, bindings);
-	console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
-
-        // Push the top level accessor so that we can call wrapup later.
-        accessorsCreated.push(accessor);
-
-        accessor.initialize();
-    }
-    return accessorsCreated;
-};
-
 
 /** Return the latest value produced on this output, or null if no
  *  output has been produced.
@@ -1405,8 +1342,7 @@ function main(argv) {
 	    if (sawAccessor) {
 		// FIXME: we need to keep a list of the accessors that are created.
 		// FIXME: accessors is a global, is that right?
-		var accessorsCreated = instantiateAndInitialize(argv.slice(i));
-		accessors = accessors.concat(accessorsCreated);
+		accessors = instantiateAndInitialize(argv.slice(i));
 		return 0;
 	    } else {
 		try {
@@ -1943,7 +1879,5 @@ var _accessorInstanceTable = {};
 //// Exports
 
 exports.Accessor = Accessor;
-exports.accessors = accessors;
 exports.instantiateAccessor = instantiateAccessor;
-exports.instantiateAndInitialize = instantiateAndInitialize;
 exports.main = main;
