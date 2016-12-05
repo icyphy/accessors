@@ -8,10 +8,16 @@ source and/or sink for data and/or commands.
 An accessor host is to the Internet of Things what a browser is to the Internet.
 It renders a remote service by locally executing a proxy for that service.
 
+This work was supported in part by the TerraSwarm Research Center, one
+of six centers supported by the STARnet phase of the Focus Center
+Research Program (FCRP) a Semiconductor Research Corporation program
+sponsored by MARCO and DARPA.
+
 See Also
 --------
 * [TerraSwarm Accessors Main Page](http://www.terraswarm.org/accessors)
 * [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
+
 
 How to update index.json
 ------------------------
