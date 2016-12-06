@@ -59,7 +59,7 @@ exports.testNodeAuto = function(auto) {
                                         it ('run accessors/web/' + auto + '/' + accessor + '\n', function (done) {
                                                 var testAccessorName = [ auto +'/' + accessor ];
                                                 var testAccessor = 
-                                                        instantiateAndInitialize(testAccessorName)[0];
+                                                    instantiateAndInitialize(testAccessorName)[0];
                                 
                                                 var exception = null;
                                                 var exceptionHandler, exitHandler;
