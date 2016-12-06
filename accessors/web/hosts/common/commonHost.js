@@ -1879,5 +1879,6 @@ var _accessorInstanceTable = {};
 //// Exports
 
 exports.Accessor = Accessor;
+exports.accessors = accessors;
 exports.instantiateAccessor = instantiateAccessor;
 exports.main = main;
