@@ -1321,6 +1321,7 @@ function main(argv) {
                 // nodeHost.js and invokes wrapup().
 		// FIXME: what about platforms that do not have exit?
 		// FIXME: Calling exit is not a good idea, how do we test this?
+		console.log("commonHost.js: main(): setTimeout(" + timeout + "): about to call exit.");
                 process.exit(0);
             }, timeout);
 	    break;
@@ -1879,6 +1880,5 @@ var _accessorInstanceTable = {};
 //// Exports
 
 exports.Accessor = Accessor;
-exports.accessors = accessors;
 exports.instantiateAccessor = instantiateAccessor;
 exports.main = main;

@@ -49,6 +49,35 @@ var commonHost = require('../common/commonHost.js');
  */
 var accessorPath = [path.join(__dirname, '..', '..')];
 
+// There are various scoping problems, it seems that the accessors variable
+// needs to be defined and updated in the nodeHost module, not commonHost.
+//
+// One symptom of this problem is that wrapup should be called
+// on contained accessors.  For example,
+
+// Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js --accessor -timeout 2000 test/auto/RampJSTest.js)
+// should generate:
+//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/auto/RampJSTest.js
+//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TestSpontaneous.js
+//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TrainableTest.js
+//   Instantiated accessor RampJSTest.js with class test/auto/RampJSTest.js
+//   nodeHost.js: About to invoke wrapup().
+//   nodeHost.js: invoking wrapup() for accessor: RampJSTest.js.TestSpontaneous
+//   nodeHost.js: invoking wrapup() for accessor: JavaScriptRamp
+//   nodeHost.js: invoking wrapup() for accessor: RampJSTest.js.TrainableTest
+//   TrainableTest.js: wrapup() finished: RampJSTest.js.RampJSTest.js.TrainableTest
+
+// If wrapup is not called on RameJSTest.js.TestSpontaneous, and the output ends with:
+//   Instantiated accessor RampJSTest.js with class test/auto/RampJSTest.js
+//   nodeHost.js: About to invoke wrapup().
+//   TrainableTest.js: wrapup() finished: RampJSTest.js.RampJSTest.js.TrainableTest
+
+// then the problem is that we are not keeping track of accessors that
+// are being created.
+
+// All the accessors that were instantiated.
+var accessors = [];
+
 // Flag to check if monitoring accessor has been setup or not
 var monitoringSetup = false;
 
@@ -107,6 +136,14 @@ getAccessorCode = function (name) {
     return code;
 };
 
+/** Return the accessors that have been created thus far.
+ *  @return an array that names the top level accessors that have been created thus far.
+ */
+getAccessors = function() {
+    // FIXME: Why can't we just export commonHost.accessors here?
+    return commonHost.accessors;
+}
+
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
@@ -117,7 +154,7 @@ instantiate = function (accessorName, accessorClass) {
     // The instantiate() function must be defined in
     // web/hosts/nodeHost/nodeHost.js so that require() knows to look
     // in the web/hosts/nodeHost/node_modules.
-    
+
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
@@ -126,6 +163,8 @@ instantiate = function (accessorName, accessorClass) {
     var instance = new commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+
+    accessors.push(instance);
     return instance;
 };
 
@@ -154,7 +193,6 @@ instantiateAndInitialize = function (accessorNames) {
     var accessorsCreated = [],
 	index,
 	length = accessorNames.length;
-	
     for (index = 0; index < length; ++index) {
         // The name of the accessor is basename of the accessorClass.
         var accessorClass = accessorNames[index];
@@ -265,6 +303,8 @@ setParameter = commonHost.setParameter;
 exports = {
     'Accessor': Accessor,
     'getAccessorCode': getAccessorCode,
+    'getAccessors' : getAccessors,
+    //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'main': main,
     'provideInput': commonHost.provideInput,
@@ -298,10 +338,10 @@ function exitHandler(options, err) {
             //console.log('nodeHost.js: accessors');
             //console.log(accessors);
 
-            for (composite in commonHost.accessors) {
-                for (i in commonHost.accessors[composite].containedAccessors) {
+            for (composite in accessors) {
+                for (i in accessors[composite].containedAccessors) {
                     try {
-                        accessor = commonHost.accessors[composite].containedAccessors[i];
+                        accessor = accessors[composite].containedAccessors[i];
                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
                         if (accessor) {
                             accessor.wrapup();
