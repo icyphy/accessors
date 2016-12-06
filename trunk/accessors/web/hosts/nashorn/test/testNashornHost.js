@@ -35,4 +35,4 @@ a.provideInput('input', 10);
 a.react();
 console.log(a.latestOutput('output')); // Should return 50
 a.wrapup();
-quit();
+//quit();
