@@ -380,6 +380,7 @@
            executable="hosts/nashorn/nashornAccessorHost"
            failonerror="true"
 	   relative="true">
+      <arg value="-e"/>
       <arg value="-timeout"/>
       <arg value="4000"/>
       <fileset dir=".">
