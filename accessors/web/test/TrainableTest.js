@@ -69,7 +69,7 @@ exports.setup = function () {
 // throw an exception in wrapup().
 var inputHandled = false;
 
-// Set to true when initialized() is called.
+// Set to true when initialize() is called.
 var initialized = false;
 
 // The number of input tokens that have been read in.
@@ -78,23 +78,31 @@ var numberOfInputTokensSeen = 0;
 // If trainingMode is true, then inputs that have been seen so far.
 var trainingTokens = [];
 
+// Set to false in initialize() and true at the end of wrapup().
+// FIXME: We should have an exit hook that checks that wrapup() is called for all the actors.
+var wrappedUp = false;
+
+// So we can test this in hosts/node/test/mocha/testMain.js to test that wrapup was called.
+exports.wrappedUp = wrappedUp;
+
 /** Create an input handler to compare the input with the appropriate element(s)
  *  from correctValues.
  */
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
-    var inputHandled = false,
-        inputValueValue,
-        initialized = true,
-        numberOfInputTokensSeen = 0,
+    var inputValueValue,
         trainingTokens = [],
         self = this;
 
+    exports.wrappedUp = false;
+    numberOfInputTokensSeen = 0;
+    
     this.addInputHandler('input', function () {
         var cache = [],
             inputValue = self.get('input'),
             inputValueValue;
         inputHandled = true;
+
         // If the input is not connected, then inputValue will be null.
         if (self.getParameter('trainingMode')) {
             trainingTokens.push(inputValue);
@@ -207,6 +215,7 @@ exports.initialize = function () {
             self.send('output', true);
         }
     });
+    initialized = true;
 };
 
 /** If trainingMode is true, then updated the correctValues. */
@@ -234,8 +243,14 @@ exports.wrapup = function () {
         initialized = false;
     }
     var name = this.accessorName;
-    if (this.container) {
-        name = this.container.accessorName + "." + name;
-    }
-    console.log("TrainableTest.js: wrapup() finished: " + name);
+
+    // FIXME: Should we check to see if the name has no dots in and if
+    // it does not, add the container name?
+
+    //if (this.container) {
+    //    name = this.container.accessorName + "." + name;
+    //}
+    exports.wrappedUp = true;
+    console.log("TrainableTest.js: wrapup() finished: " + name + ", wrappedUp: " + wrappedUp);
+
 };
