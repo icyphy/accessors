@@ -400,7 +400,7 @@
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
            failonerror="true">
-      <arg value="-js"/>
+      <arg value="-e"/>
       <arg value="-timeout"/>
       <arg value="4010"/>
       <fileset dir="hosts">
