@@ -302,7 +302,7 @@
   </target>
 
   <target name="tests.jenkins"
-          depends="tests.browser tests.duk tests.eduk tests.mocha.xml tests.nashorn tests.coverage"
+          depends="tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
