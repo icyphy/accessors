@@ -301,6 +301,23 @@
     </apply>
   </target>
 
+  <target name="tests.jenkins"
+          depends="tests.browser tests.duk tests.eduk tests.mocha.xml tests.nashorn tests.coverage"
+          description="Run the tests for Jenkins continuous integration">
+    <echo>
+      ==tests.jenkins==
+      Run tests for the accessors continuous integration build
+      See http://terra.eecs.berkeley.edu:8080/job/accessors/
+
+      The tests.jenkins target differs from the test target
+      in that the test target depends on test.capecode, and capecode is not distributed
+      with the accessors repo.
+
+      Also, tests.jenkins generates JUnit xml-compatibile output where possible
+      and runs test.coverage.
+    </echo>
+  </target>
+
   <target name="tests.mocha"
           description="Use mocha to test the Node host and generate output on stdout.">
     <echo>
