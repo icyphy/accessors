@@ -75,8 +75,9 @@ var accessorPath = [path.join(__dirname, '..', '..')];
 // then the problem is that we are not keeping track of accessors that
 // are being created.
 
+// FIXME: Remove this comment now that we have moved the accessors variable to commonHost.js
 // All the accessors that were instantiated.
-var accessors = [];
+//var accessors = [];
 
 // Flag to check if monitoring accessor has been setup or not
 var monitoringSetup = false;
@@ -164,7 +165,7 @@ instantiate = function (accessorName, accessorClass) {
         accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
 
-    accessors.push(instance);
+    commonHost.accessors.push(instance);
     return instance;
 };
 
@@ -246,45 +247,51 @@ setupMonitoring = function () {
     return monitoringAccessor;
 };
 
+// FIXME: I'm not sure if this is right, but stop() was moved to
+// commonHost.js.  Some tests expect the node host to define stop() so
+// we redeclare it.
 
-/** Stop execution.
- *
- *  Accessors such as JavaScriptStop would invoke stop as
- *  <pre>
- *  stop.call(this);
- *  </pre>
- *  In the exitHandler() function, exit() is caught and wrapup() is invoked.
- */
-stop = function () {
-    var thiz = this.root;
-    console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName + ": stop() invoked");
+stop = commonHost.stop;
 
-    // Call wrapup() on any accessors in the container.  These accessors should
-    // wrapup() themselves, and ideally emit a 'stopped' event.
-    // TODO:  Listen for all 'stopped' events for a given time before exit.
-    // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
-    // TODO:  Figure out how accessors should signal a stop().  Should probably
-    // not call it directly.
+// FIXME: The code below can be deleted now that it has been moved to commonHost.js
+// /** Stop execution.
+//  *
+//  *  Accessors such as JavaScriptStop would invoke stop as
+//  *  <pre>
+//  *  stop.call(this);
+//  *  </pre>
+//  *  In the exitHandler() function, exit() is caught and wrapup() is invoked.
+//  */
+// stop = function () {
+//     var thiz = this.root;
+//     console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName + ": stop() invoked");
 
-    // Not all Accessors host have container, see
-    // https://www.terraswarm.org/accessors/wiki/Version1/Container
-    if (thiz.container) {
-        for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
-            console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
-            thiz.container.containedAccessors[i].wrapup();
-        }
-    }
+//     // Call wrapup() on any accessors in the container.  These accessors should
+//     // wrapup() themselves, and ideally emit a 'stopped' event.
+//     // TODO:  Listen for all 'stopped' events for a given time before exit.
+//     // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
+//     // TODO:  Figure out how accessors should signal a stop().  Should probably
+//     // not call it directly.
 
-    // If you want to wrapup all the accessors:
-    // for (var i = 0; i < accessors.length; i++) {
-    //        accessors[i].wrapup();
-    //}
+//     // Not all Accessors host have container, see
+//     // https://www.terraswarm.org/accessors/wiki/Version1/Container
+//     if (thiz.container) {
+//         for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
+//             console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
+//             thiz.container.containedAccessors[i].wrapup();
+//         }
+//     }
 
-    // TODO:  Improve on arbitrary timeout.
-    //setTimeout(function () {
-    //        process.exit();
-    //}, 2000);
-};
+//     // If you want to wrapup all the accessors:
+//     // for (var i = 0; i < accessors.length; i++) {
+//     //        accessors[i].wrapup();
+//     //}
+
+//     // TODO:  Improve on arbitrary timeout.
+//     //setTimeout(function () {
+//     //        process.exit();
+//     //}, 2000);
+// };
 
 //////////////////////////////////////////////
 // Visibility and exports below here.
@@ -329,30 +336,36 @@ function exitHandler(options, err) {
         initialThrowable = null;
     if (options.cleanup) {
         try {
+	    // FIXME: We used to do all this stuff below, now we call commonHost.js stop().
+	    commonHost.stop();
+	    
+            // // Getting a list of all the accessors seems to be a bit convoluted.
 
-            // Getting a list of all the accessors seems to be a bit convoluted.
+            // var util = require('util');
+	    // var message = 'nodeHost.js: exitHandler(' + util.inspect(options) + ', ' + err + '): About to invoke wrapup().';
+            // console.log(message);
 
-            console.log('nodeHost.js: About to invoke wrapup().');
-            //var util = require('util');
-            //console.log(util.inspect(this, {depth: 10}));
-            //console.log('nodeHost.js: accessors');
-            //console.log(accessors);
+	    // console.log(new Error(message).stack);
+            // //var util = require('util');
+            // //console.log(util.inspect(this, {depth: 10}));
+            // //console.log('nodeHost.js: accessors');
+            // //console.log(accessors);
 
-            for (composite in accessors) {
-                for (i in accessors[composite].containedAccessors) {
-                    try {
-                        accessor = accessors[composite].containedAccessors[i];
-                        console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-                        if (accessor) {
-                            accessor.wrapup();
-                        }
-                    } catch (error) {
-                        if (initialThrowable === null) {
-                            initialThrowable = error;
-                        }
-                    }
-                }
-            }
+            // for (composite in commonHost.accessors) {
+            //     for (i in commonHost.accessors[composite].containedAccessors) {
+            //         try {
+            //             accessor = commonHost.accessors[composite].containedAccessors[i];
+            //             console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
+            //             if (accessor) {
+            //                 accessor.wrapup();
+            //             }
+            //         } catch (error) {
+            //             if (initialThrowable === null) {
+            //                 initialThrowable = error;
+            //             }
+            //         }
+            //     }
+            // }
 
             //             console.log('nodeHost.js: this.process.mainModule');
             //             console.log(this.process.mainModule);
@@ -424,6 +437,8 @@ function exitHandler(options, err) {
     }
 
     if (options.exit) {
+	// FIXME: need a way to enable and disable this using debug
+	console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" + process.exitCode + "): Here is the stack so we know why: ").stack);
         process.exit(process.exitCode);
     }
 
