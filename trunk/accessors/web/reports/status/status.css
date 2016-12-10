@@ -1,0 +1,40 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: #FFFFFF;
+} 
+
+table {
+	font-size: 1.2em;
+	border-collapse: collapse;
+	width: 80%;
+}
+
+table, th, td {
+   border: 1px solid gray;
+   padding: 0.3em;
+   text-align: center;
+}
+
+tr:hover {background-color: #f5f5f5}
+
+tr:nth-child(even) {background-color: #f2f2f2}
+
+th {
+	background-color: #3B7EA1;
+	color: #FFFFFF;
+}
+
+.page{
+	margin: 2em;
+}
+
+.passed {
+	color: #228b22;
+}
+
+.failed {
+	color: #b22222;
+	font-weight: bold;
+}
