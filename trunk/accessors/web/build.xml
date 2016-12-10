@@ -176,10 +176,11 @@
   </target>
   
   <target name="tests"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha, tests.nashorn"
-          description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
+          depends="tests.browser, tests.capecode, tests.duk, tests.eduk, tests.mocha, tests.nashorn, tests.rusteduk"
+          description="Run the Browser, Cape Code, Duktape, eduk, node, Nashorn and rusteduk host tests">
   </target>
 
+  
   <target name="-ptII-exists" unless="ptII.exists">
     <available property="ptII.exists" file="${env.PTII}"/>
   </target>
@@ -302,18 +303,14 @@
   </target>
 
   <target name="tests.jenkins"
-          depends="tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.coverage"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.rusteduk, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
-      Run tests for the accessors continuous integration build
+      Run tests for the accessors continuous integration build.
       See http://terra.eecs.berkeley.edu:8080/job/accessors/
-
-      The tests.jenkins target differs from the test target
-      in that the test target depends on test.capecode, and capecode is not distributed
-      with the accessors repo.
-
-      Also, tests.jenkins generates JUnit xml-compatibile output where possible
+      
+      This target generates JUnit xml-compatibile output where possible
       and runs test.coverage.
     </echo>
   </target>
@@ -391,7 +388,9 @@
   </target>
   
   <target name="tests.nashorn.auto"
-          description="Execute the nashorn tests in test/auto.">
+          depends="-ptII-exists"
+          description="Execute the nashorn tests in test/auto."
+          if="${ptII.exists}">
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
@@ -409,7 +408,8 @@
 
   <target name="tests.nashorn.test"
           depends="-ptII-exists"
-          description="Execute the Nashorn tests in hosts/nashorn/test.">
+          description="Execute the Nashorn tests in hosts/nashorn/test."
+          if="${ptII.exists}">
     <echo>
       == tests.nashorn ==
       These tests are only run if $PTII exists.
