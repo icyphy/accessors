@@ -12,19 +12,31 @@
   -->
   <property name="eduk.source" value="${basedir}/hosts/duktape/eduk"/>
 
+  <!-- Location of the chai directory. -->
+  <property name="chai.directory" value="${basedir}/node_modules/chai"/>
+  
   <!-- Location of the Duktape sources. -->
   <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
 
+  <!-- Location of the istanbul command, used by tests.coverage -->
+  <property name="istanbul.command" value="${basedir}/node_modules/.bin/istanbul"/>
+  
   <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
   <property name="jsdoc.home" value="vendors/jsdoc" />
 
   <!-- The location of the Node.js binary. -->
   <property name="node.executable" value="node" />
 
+  <!-- Location of the mocha command, used by tests.mocha and tests.mocha.xml -->
+  <property name="mocha.command" value="${basedir}/node_modules/mocha/bin/mocha"/>
+
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
   <property name="rusteduk.source" value="${basedir}/hosts/duktape/rusteduk"/>
+
+  <!-- The @terraswarm.gdp module. -->
+  <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
 
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
@@ -45,6 +57,9 @@
     <patternset refid="accessors.excludes" />
   </fileset>
 
+
+  <!-- Targets below here -->
+  
   <target name="build"
           depends="duktape, jsdoc, ptdoc, rusteduk"
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
@@ -61,6 +76,40 @@
     </echo>
   </target>
   
+  <target name="chai-install"
+	  depends="-check-chai"
+	  unless="chai.directory.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm">
+      <arg value="install"/>
+      <arg value="chai"/>
+    </exec>
+  </target>
+
+  <target name="chai-update"
+	  depends="chai-install">
+    <exec executable="npm">
+      <arg value="update"/>
+      <arg value="chai"/>
+    </exec>
+  </target>
+
+  <target name="-check-chai">
+    <available property="chai.directory.exists" file="${chai.directory}"/>
+  </target>
+
+  <target name="-check-istanbul">
+    <available property="istanbul.command.exists" file="${istanbul.command}"/>
+  </target>
+
+  <target name="-check-mocha">
+    <available property="mocha.command.exists" file="${mocha.command}"/>
+  </target>
+
+  <target name="-check-terraswarm-gdp">
+    <available property="terraswarm.gdp.exists" file="${terraswarm.gdp}"/>
+  </target>
+
   <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
     <available property="vendors.jsdoc.exists" file="${jsdoc.home}/jsdoc"/>
   </target>
@@ -75,7 +124,7 @@
 
   <!-- Build eduk first because it updates the .h files from the .js files
        that are used by eduk and duk.
-    --> 
+  --> 
   <target name="duktape"
           depends="eduk, duk, rusteduk"
           description="Build the duktape binaries">
@@ -85,7 +134,7 @@
 	  depends="eduk"
           description="Build the duk binary.  Requires make and a C compiler.">
     <echo>The duk binary has more command line options that the eduk binary.
-      The duk binary would not be deployed on an embedded machine.
+    The duk binary would not be deployed on an embedded machine.
     </echo>
     <exec dir="${duktape.source}"
 	  failonerror="true"
@@ -96,8 +145,8 @@
   <target name="eduk"
           description="Build the eduk binary.  Requires xxd, make and gcc.">
     <echo>The eduk binary has fewer command line options than the duk binary.
-      The eduk binary is what would be deployed on an embedded machine.
-      The eduk binary can also be run from the command line.
+    The eduk binary is what would be deployed on an embedded machine.
+    The eduk binary can also be run from the command line.
     </echo>
     <exec dir="${eduk.source}"
           executable="make">
@@ -110,6 +159,24 @@
           failonerror="true"
           executable="make">
       <arg value="eduk.tcmalloc"/>
+    </exec>
+  </target>
+
+  <target name="istanbul-install"
+	  depends="-check-istanbul, chai-update"
+	  unless="istanbul.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm">
+      <arg value="install"/>
+      <arg value="istanbul"/>
+    </exec>
+  </target>
+
+  <target name="istanbul-update"
+	  depends="istanbul-install">
+    <exec executable="npm">
+      <arg value="update"/>
+      <arg value="istanbul"/>
     </exec>
   </target>
 
@@ -135,7 +202,27 @@
     </exec>
   </target>
 
-    <target name="ptdoc"
+  <target name="mocha-install"
+	  depends="-check-mocha, chai-update"
+	  unless="mocha.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm">
+      <arg value="install"/>
+      <arg value="mocha"/>
+      <arg value="mocha-junit-reporter"/>
+    </exec>
+  </target>
+
+  <target name="mocha-update"
+	  depends="mocha-install">
+    <exec executable="npm">
+      <arg value="update"/>
+      <arg value="mocha"/>
+      <arg value="mocha-junit-reporter"/>
+    </exec>
+  </target>
+
+  <target name="ptdoc"
           depends="vendors-jsdoc"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
           >
@@ -166,7 +253,7 @@
       https://www.rustup.rs
 
       Then run:
-        rustup default stable
+      rustup default stable
       See https://www.terraswarm.org/accessors/wiki/Main/RustHost
     </echo>
     <exec dir="${rusteduk.source}"
@@ -175,18 +262,35 @@
     </exec>
   </target>
   
-  <target name="tests"
-          depends="tests.browser, tests.capecode, tests.duk, tests.eduk, tests.mocha, tests.nashorn, tests.rusteduk"
-          description="Run the Browser, Cape Code, Duktape, eduk, node, Nashorn and rusteduk host tests">
+  <target name="terraswarm-gdp-install"
+	  depends="-check-terraswarm-gdp"
+	  unless="terraswarm.gdp.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm">
+      <arg value="install"/>
+      <arg value="@terraswarm/gdp"/>
+    </exec>
   </target>
 
-  
+  <target name="terraswarm-gdp-update"
+	  depends="terraswarm-gdp-install">
+    <exec executable="npm">
+      <arg value="update"/>
+      <arg value="@terraswarm/gdp"/>
+    </exec>
+  </target>
+
+  <target name="tests"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha, tests.nashorn"
+          description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
+  </target>
+
   <target name="-ptII-exists" unless="ptII.exists">
     <available property="ptII.exists" file="${env.PTII}"/>
   </target>
 
   <target name="tests.capecode"
-          depends="-ptII-exists"
+          depends="-ptII-exists, terraswarm-gdp-update"
           description="Run the Cape Code tests."
           if="${ptII.exists}">
     <echo>
@@ -220,13 +324,12 @@
   </target>
 
   <target name="tests.coverage"
-          description="Use istanbul and mocha to generate code coverage for JavaScript tests.">
+          description="Use istanbul and mocha to generate code coverage for JavaScript tests."
+	  depends="istanbul-update, mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.coverage==
-      This target uses istanbul and mocha to generate code coverage for JavaScript tests
-      This target requires setup:
-        sudo npm install -g mocha
-        sudo npm install -g istanbul
+      This target uses istanbul and mocha to generate code coverage for JavaScript tests.
+      If necessary, istanbul and mocha are installed in node_modules/
       The output will generated in the coverage/ directory.
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
@@ -235,7 +338,7 @@
 		 pathsep=" "
 		 property="converted"/>
 
-    <exec executable="istanbul">
+    <exec executable="${istanbul.command}">
       <arg value="cover"/>
       <arg value="_mocha"/>
       <arg value="--"/>
@@ -262,7 +365,7 @@
       <fileset dir=".">
 	<!-- eduk does not have a separate eduk test directory, we just
 	     run the accessors in test/auto instead.
-	  --> 
+	--> 
 	<include name="test/auto/*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
@@ -295,7 +398,7 @@
       <fileset dir=".">
 	<!-- eduk does not have a separate eduk test directory, we just
 	     run the accessors in test/auto instead.
-	  --> 
+	--> 
 	<include name="test/auto/*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
@@ -303,29 +406,27 @@
   </target>
 
   <target name="tests.jenkins"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
-      Run tests for the accessors continuous integration build.
+      Run tests for the accessors continuous integration build
       See http://terra.eecs.berkeley.edu:8080/job/accessors/
-      
-      This target generates JUnit xml-compatibile output where possible
-      and runs test.coverage.
 
-      tests.rusteduk is not included right now because it fails.
+      The tests.jenkins target differs from the tests target in that the
+      tests.jenkins target enerates JUnit xml-compatibile output where possible
+      and runs tests.coverage.
     </echo>
   </target>
 
   <target name="tests.mocha"
-          description="Use mocha to test the Node host and generate output on stdout.">
+          description="Use mocha to test the Node host and generate output on stdout."
+	  depends="mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
       To run just the composites, use "ant tests.mocha.composites"
-      This target requires setup:
-        sudo npm install -g mocha
-        sudo npm install -g mocha-junit-reporter
+      If necessary, istanbul and mocha are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
 
@@ -341,15 +442,15 @@
   </target>
 
   <target name="tests.mocha.composites"
-          description="Use mocha to test just the composite accessors and write to stdout.">
+          description="Use mocha to test just the composite accessors and write to stdout."
+	  depends="mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha.composite==
       This target uses mocha to run the composite accessors via
-          hosts/node/test/mocha/testNodeAllAuto.js
-      This target requires setup:
-        sudo npm install -g mocha
+      hosts/node/test/mocha/testNodeAllAuto.js
+      If necessary, mocha is installed in node_modules/
       To run only the composite accessors in one directory:
-        mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
+      mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
@@ -360,14 +461,13 @@
   </target>
 
   <target name="tests.mocha.xml"
-          description="Use mocha to test the Node Host and generate JUnit-compatible output.">
+          description="Use mocha to test the Node Host and generate JUnit-compatible output."
+	  depends="mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
       The output is in JUnit-compatibile xml.
-      This target requires setup:
-        sudo npm install -g mocha
-        sudo npm install -g mocha-junit-reporter
+      If necessary, mocha and mocha-junit-reporter are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
 
@@ -390,9 +490,7 @@
   </target>
   
   <target name="tests.nashorn.auto"
-          depends="-ptII-exists"
-          description="Execute the nashorn tests in test/auto."
-          if="${ptII.exists}">
+          description="Execute the nashorn tests in test/auto.">
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
@@ -410,8 +508,7 @@
 
   <target name="tests.nashorn.test"
           depends="-ptII-exists"
-          description="Execute the Nashorn tests in hosts/nashorn/test."
-          if="${ptII.exists}">
+          description="Execute the Nashorn tests in hosts/nashorn/test.">
     <echo>
       == tests.nashorn ==
       These tests are only run if $PTII exists.
@@ -443,6 +540,10 @@
     </exec>
   </target>
 
+  <!-- Alias for tests.mocha. -->
+  <target name="tests.node"
+	  depends="tests.mocha"/>
+  
   <target name="tests.rusteduk"
           depends="rusteduk"
           description="Execute the rusteduk tests.">
@@ -460,7 +561,7 @@
       <fileset dir=".">
 	<!-- rusteduk does not have a separate rusteduk test directory, we just
 	     run the accessors in test/auto instead.
-	  --> 
+	--> 
 	<include name="test/auto/*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
@@ -474,29 +575,29 @@
     <echo> Clone the git repo.  We use an accessor-specific fork of https://github.com/terraswarm/jsdoc.git,
     made on 12-Jun-2015 so that we can support @accessor, @input, @output, @parameter.
     </echo>
-      <mkdir dir="${basedir}/vendors"/>
-      <exec dir="${basedir}/vendors"
-            executable="git">
-	<!-- We set LD_LIBRARY_PATH to "" and avoid
-     [exec] Cloning into 'jsdoc'...
-     [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
-     [exec]   CAfile: /etc/ssl/certs/ca-certificates.crt
-     [exec]   CApath: none
-     [exec] Result: 128
-	     -->
-	<env key="LD_LIBRARY_PATH"
-	     value=""/>
-        <arg value="clone"/>
-        <arg value="https://github.com/terraswarm/jsdoc.git"/>
-      </exec>
+    <mkdir dir="${basedir}/vendors"/>
+    <exec dir="${basedir}/vendors"
+          executable="git">
+      <!-- We set LD_LIBRARY_PATH to "" and avoid
+	   [exec] Cloning into 'jsdoc'...
+	   [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
+	   [exec]   CAfile: /etc/ssl/certs/ca-certificates.crt
+	   [exec]   CApath: none
+	   [exec] Result: 128
+      -->
+      <env key="LD_LIBRARY_PATH"
+	   value=""/>
+      <arg value="clone"/>
+      <arg value="https://github.com/terraswarm/jsdoc.git"/>
+    </exec>
   </target>
 
-    <target name="vendors-jsdoc-pull"
+  <target name="vendors-jsdoc-pull"
 	  depends="vendors-jsdoc"
 	  description="Do a git pull in vendors/jsdoc">
-      <exec dir="${basedir}/vendors/jsdoc"
-            executable="git">
-        <arg value="pull"/>
-      </exec>
+    <exec dir="${basedir}/vendors/jsdoc"
+          executable="git">
+      <arg value="pull"/>
+    </exec>
   </target>
 </project>
