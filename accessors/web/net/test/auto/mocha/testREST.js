@@ -50,9 +50,13 @@ describe('net/REST.js', function () {
                                     //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
                                     // so we check to see if response is undefined.
                                     var status = instance.latestOutput('status');
-                                    assert.ok(typeof status !== 'undefined');
-                                    status.should.deep.equal(correctOutput);
-                                    done();
+                                    try {
+                                        assert.ok(typeof status !== 'undefined');
+                                        status.should.deep.equal(correctOutput);
+                                        done();
+                                    } catch (err) {
+                                        done(err);
+                                    }
                                 }, 3000);
                     });
         
@@ -79,9 +83,14 @@ describe('net/REST.js', function () {
                                     //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
                                     // so we check to see if response is undefined.
                                     var response = instance.latestOutput('response');
-                                    assert.ok(typeof response !== 'undefined');
-                                    response.should.deep.equal(correctOutput);
-                                    done();
+                                    try {
+                                        assert.ok(typeof response !== 'undefined');
+                                        response.should.deep.equal(correctOutput);
+                                        done();
+                                    } catch (err) {
+                                        done(err);
+                                    }
+
                                 }, 1000);
                     });
         });
