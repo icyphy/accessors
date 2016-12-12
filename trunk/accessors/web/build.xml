@@ -490,7 +490,9 @@
   </target>
   
   <target name="tests.nashorn.auto"
-          description="Execute the nashorn tests in test/auto.">
+          description="Execute the nashorn tests in test/auto."
+          depends="-ptII-exists"
+          if="${ptII.exists}">
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
@@ -508,7 +510,8 @@
 
   <target name="tests.nashorn.test"
           depends="-ptII-exists"
-          description="Execute the Nashorn tests in hosts/nashorn/test.">
+          description="Execute the Nashorn tests in hosts/nashorn/test."
+          if="${ptII.exists}">
     <echo>
       == tests.nashorn ==
       These tests are only run if $PTII exists.
