@@ -123,8 +123,11 @@ exports.initialize = function () {
 
 /** Remove the input handler. */
 exports.wrapup = function () {
-    if (log) {
+    if (log !== null) {
         log.close();
+	// The GDP close() method has a significant bug where calling
+	// close() twice might abort or segfault.
+	log = null;
     }
     if (handle !== null) {
         this.removeInputHandler(handle);

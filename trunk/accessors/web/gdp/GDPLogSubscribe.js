@@ -154,7 +154,10 @@ exports.subscribe = function () {
 
 /** Unsubscribe to the log. */
 exports.wrapup = function () {
-    if (log) {
+    if (log !== null) {
         log.unsubscribe();
+	// The GDP close() method has a significant bug where calling
+	// close() twice might abort or segfault.
+	log = null;
     }
 };
