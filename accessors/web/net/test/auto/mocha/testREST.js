@@ -46,7 +46,14 @@ describe('net/REST.js', function () {
                         // single quotes around 'ok', but deep.equal works.
                         // The assertion generates a promise; return the promise so that
                         // mocha is able to catch any exceptions.
-                        return instance.latestOutput('response').should.deep.equal(correctOutput);
+
+                        // We were getting:
+                        // TypeError: Cannot read property 'should' of undefined
+                        //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
+                        // so we check to see if response is undefined.
+                        var response = instance.latestOutput('response');
+                        assert.ok(typeof response !== 'undefined');
+                        return response.should.deep.equal(correctOutput);
                 }, 3000);
         });
         
