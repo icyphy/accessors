@@ -250,7 +250,9 @@ exports.wrapup = function () {
     //if (this.container) {
     //    name = this.container.accessorName + "." + name;
     //}
+
+    // 
     exports.wrappedUp = true;
-    console.log("TrainableTest.js: wrapup() finished: " + name + ", wrappedUp: " + wrappedUp);
+    // console.log("TrainableTest.js: wrapup() finished: " + name + ", exports.wrappedUp: " + exports.wrappedUp);
 
 };
