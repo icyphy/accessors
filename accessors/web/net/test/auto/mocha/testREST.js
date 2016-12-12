@@ -28,7 +28,7 @@ describe('net/REST.js', function () {
                 
                     });
         
-            it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(){
+            it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done){
                 
                         instance.provideInput('options', 
                                 "{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
@@ -51,13 +51,14 @@ describe('net/REST.js', function () {
                                     // TypeError: Cannot read property 'should' of undefined
                                     //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
                                     // so we check to see if response is undefined.
-                                    var response = instance.latestOutput('response');
-                                    assert.ok(typeof response !== 'undefined');
-                                    return response.should.deep.equal(correctOutput);
+                                    var status = instance.latestOutput('status');
+                                    assert.ok(typeof status !== 'undefined');
+                                    status.should.deep.equal(correctOutput);
+                                    done();
                                 }, 3000);
                     });
         
-            it('Should GET values using the JSON with padding technique', function(){
+            it('Should GET values using the JSON with padding technique', function(done){
         
                         instance.provideInput('options', 
                                 "{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");
@@ -84,8 +85,8 @@ describe('net/REST.js', function () {
                                     // so we check to see if response is undefined.
                                     var response = instance.latestOutput('response');
                                     assert.ok(typeof response !== 'undefined');
-
-                                    return response.should.deep.equal(correctOutput);
+                                    response.should.deep.equal(correctOutput);
+                                    done();
                                 }, 1000);
                     });
         });
