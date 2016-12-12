@@ -44,8 +44,6 @@ describe('net/REST.js', function () {
                                     correctOutput.status = "ok";
                                     // The strict equals should.equal fails for some reason due to the 
                                     // single quotes around 'ok', but deep.equal works.
-                                    // The assertion generates a promise; return the promise so that
-                                    // mocha is able to catch any exceptions.
 
                                     // We were getting:
                                     // TypeError: Cannot read property 'should' of undefined
@@ -75,9 +73,6 @@ describe('net/REST.js', function () {
                                     correctOutput.id = 1;
                                     correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
                                     correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
-
-                                    // The assertion generates a promise; return the promise so that
-                                    // mocha is able to catch any exceptions.
 
                                     // We were getting:
                                     // TypeError: Cannot read property 'should' of undefined
