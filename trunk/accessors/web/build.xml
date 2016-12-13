@@ -30,6 +30,12 @@
   <!-- Location of the mocha command, used by tests.mocha and tests.mocha.xml -->
   <property name="mocha.command" value="${basedir}/node_modules/mocha/bin/mocha"/>
 
+  <!-- Location of the _mocha command, used by tests.mocha and tests.mocha.xml
+       See https://github.com/gotwarlost/istanbul/issues/44 for why we use _mocha
+       instead of mocha: need to get the coverage output.
+  -->
+  <property name="mocha.bar.command" value="${basedir}/node_modules/mocha/bin/_mocha"/>
+
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
@@ -332,18 +338,31 @@
       If necessary, istanbul and mocha are installed in node_modules/
       The output will generated in the coverage/ directory.
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+
     </echo>
 
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
 
+    <!-- Delete the coverage/ directory each time we run. -->
+    <delete dir="coverage"/>
+
+    <echo>
+      Running
+      ${istanbul.command} cover ${mocha.bar.command} -- ${converted}
+    </echo>
+    
     <exec executable="${istanbul.command}">
       <arg value="cover"/>
-      <arg value="_mocha"/>
+      <arg value="${mocha.bar.command}"/>
       <arg value="--"/>
       <arg line="${converted}"/>
     </exec>
+
+    <echo>
+      Note that if any tests fail, then coverage data will not be written.
+    </echo>
   </target>
 
   <target name="tests.duk"
