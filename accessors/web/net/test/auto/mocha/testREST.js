@@ -52,7 +52,9 @@ describe('net/REST.js', function () {
                                     var status = instance.latestOutput('status');
                                     try {
                                         assert.ok(typeof status !== 'undefined');
-                                        status.should.deep.equal(correctOutput);
+					if (typeof status !== 'undefined') {
+                                            status.should.deep.equal(correctOutput);
+					}
                                         done();
                                     } catch (err) {
                                         done(err);
@@ -85,7 +87,9 @@ describe('net/REST.js', function () {
                                     var response = instance.latestOutput('response');
                                     try {
                                         assert.ok(typeof response !== 'undefined');
-                                        response.should.deep.equal(correctOutput);
+					if (typeof response !== 'undefined') {
+                                            response.should.deep.equal(correctOutput);
+					}
                                         done();
                                     } catch (err) {
                                         done(err);
