@@ -39,7 +39,7 @@
 var path = require('path');
 var fs = require('fs');
 
-var commonHost = require('./nodeHost.js');
+var nodeHost = require('./nodeHost.js');
 
 // Indicator of whether the interactive host is already running.
 var interactiveHostRunning = false;
@@ -48,7 +48,7 @@ var interactiveHostRunning = false;
  *  This will produce a prompt on stdout that accepts JavaScript statements
  *  and executes them.
  */
-startHost = function () {
+function startHost() {
     if (interactiveHostRunning) {
         console.log('Interactive host is already running.');
         return;
@@ -83,6 +83,8 @@ startHost = function () {
     // Setup monitoring accessor for host before accepting commands
     eval.call(this, 'var monitoringInstance = setupMonitoring()');
 
+    var self = this;
+    
     // Emitted whenever a command is entered.
     rl.on('line', function (command) {
         // Remove any trailing semicolon.
@@ -121,7 +123,7 @@ startHost = function () {
             // FIXME: A consequence of this approach is that 'require' is not defined.
             // How to fix that? As a workaround, you can invoke a.require(), where
             // a is an accessor instance.
-            console.log(eval.call(this, command));
+            console.log(eval.call(self, command));
         } catch (error) {
             console.log(error);
         }

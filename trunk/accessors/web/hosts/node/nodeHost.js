@@ -40,7 +40,7 @@ var path = require('path');
 var fs = require('fs');
 
 // Locally defined modules.
-var commonHost = require('../common/commonHost.js');
+commonHost = require('../common/commonHost.js');
 
 /** Module variable giving the paths to search for accessors.
  *  By default this module assumes that accessors are stored in
@@ -137,14 +137,6 @@ getAccessorCode = function (name) {
     return code;
 };
 
-/** Return the accessors that have been created thus far.
- *  @return an array that names the top level accessors that have been created thus far.
- */
-getAccessors = function() {
-    // FIXME: Why can't we just export commonHost.accessors here?
-    return commonHost.accessors;
-}
-
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
@@ -165,7 +157,7 @@ instantiate = function (accessorName, accessorClass) {
         accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
 
-    commonHost.accessors.push(instance);
+    commonHost.getTopLevelAccessors().push(instance);
     return instance;
 };
 
@@ -307,10 +299,11 @@ provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
 
 // In case this gets used a module, create an exports object.
-exports = {
+// FIXME: Do we want this???
+module.exports = {
     'Accessor': Accessor,
     'getAccessorCode': getAccessorCode,
-    'getAccessors' : getAccessors,
+    'getTopLevelAccessors' : commonHost.getTopLevelAccessors,
     //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'main': main,
