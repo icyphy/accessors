@@ -72,7 +72,7 @@ describe('hosts/node/test/mocha/testMain.js: commonHost.js main()', function () 
 		done();
 		console.log("mocha/testMain.js --accessors test " + accessorPath + " done !")
 
-		// Assert that getAccessors() has the RampJSTest top
+		// Assert that getTopLevelAccessors() has the RampJSTest top
 		// level, the TrainableTest and that wrapup() was called.
 		
 		var accessor,
@@ -80,10 +80,10 @@ describe('hosts/node/test/mocha/testMain.js: commonHost.js main()', function () 
 		    j,
 		    sawTrueWrappedUp = false,
 		    topLevelAccessor;
-		// FIXME: Why do we have to use getAccessors() instead of accessors?
+		// FIXME: Why do we have to use getTopLevelAccessors() instead of accessors?
 		// both are exported from nodeHost.js
-		for (i = 0; i < getAccessors().length; i += 1) {
-		    topLevelAccessor = getAccessors()[i];
+		for (i = 0; i < nodeHost.getTopLevelAccessors().length; i += 1) {
+		    topLevelAccessor = nodeHost.getTopLevelAccessors()[i];
 		    console.log("mocha/testMain.js: done(): topLevelAccessor: " + topLevelAccessor);
 		    if (topLevelAccessor.accessorName === accessorName) {
 			// FIXME: What if there are multiple runs?
@@ -109,7 +109,7 @@ describe('hosts/node/test/mocha/testMain.js: commonHost.js main()', function () 
     	    var args = [ '--accessor', '--timeout', '5500', accessorPath ];
     	    // FIXME: It would be nice to catch the output here
     	    assert.equal(main(args), 0);
-    	    assert.ok(typeof getAccessors() !== 'undefined',
+    	    assert.ok(typeof nodeHost.getTopLevelAccessors() !== 'undefined',
     		      "nodeHost.accessors is not defined after invoking main " + args);
 	});
     }
