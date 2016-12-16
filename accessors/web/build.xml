@@ -455,7 +455,7 @@
 
     <echo> tests.mocha: running on ${converted}</echo>
 
-    <exec executable="mocha">
+    <exec executable="${mocha.command}">
       <arg line="${converted}"/>
     </exec>
   </target>
@@ -474,7 +474,7 @@
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
     </echo>
 
-    <exec executable="mocha">
+    <exec executable="${mocha.command}">
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
   </target>
@@ -493,7 +493,7 @@
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
-    <exec executable="mocha">
+    <exec executable="${mocha.command}">
       <arg line="--bail"/>
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
