@@ -35,5 +35,25 @@ CCOPTS += -DDUK_OPT_SELF_TESTS
 #CCOPTS += -DDUK_OPT_DPRINT
 # ...
 
-duk:	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) duktapeHost.h
+HFILES =  ./src/duk_config.h \
+	./src/duktape.h \
+	duktapeHost.h \
+	../eduk/RampJSDisplay.h \
+	../eduk/RampJSTest.h \
+	../eduk/RampJSTestDisplay.h \
+	../eduk/TestAdder.h \
+	../eduk/TestComposite.h \
+	../eduk/TestDisplay.h \
+	../eduk/TestGain.h \
+	../eduk/TestSpontaneous.h \
+	../eduk/TrainableTest.h \
+	../eduk/autoTestComposite.h \
+	../eduk/commonHost.h \
+	../eduk/duktapeHost.h \
+	../eduk/ecma_eventloop.h \
+	../eduk/events.h \
+	../eduk/testCommon.h \
+	../eduk/util.h
+
+duk:	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) $(HFILES) Makefile.cmdline makefile
 	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) $(CCLIBS)
