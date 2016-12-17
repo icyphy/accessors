@@ -384,10 +384,14 @@
   <target name="tests.duk.auto"
           depends="duk"
           description="Execute the duk tests in test/auto.">
+    <echo>
+      == tests.duk.auto ==
+      
+    </echo>
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/duktape/duktape/duk"
-           failonerror="false"
+           failonerror="true"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="--accessor"/>
@@ -408,7 +412,7 @@
           description="Execute the duktape tests in duktape/test.">
     <apply dir="hosts"
            executable="duktape/duktape/duk"
-           failonerror="false"
+           failonerror="true"
 	   timeout="${timeout}">
       <fileset dir="hosts">
         <include name="duktape/test/*.js"/>
@@ -423,7 +427,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/eduk/eduk"
-	   failonerror="false"
+	   failonerror="true"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="--timeout"/>
