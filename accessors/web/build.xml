@@ -388,7 +388,8 @@
     <apply dir="."
            executable="hosts/duktape/duktape/duk"
            failonerror="false"
-	   relative="true">
+	   relative="true"
+	   timeout="${timeout}">
       <arg value="--accessor"/>
       <arg value="--timeout"/>
       <arg value="4000"/>
@@ -407,7 +408,8 @@
           description="Execute the duktape tests in duktape/test.">
     <apply dir="hosts"
            executable="duktape/duktape/duk"
-           failonerror="false">
+           failonerror="false"
+	   timeout="${timeout}">
       <fileset dir="hosts">
         <include name="duktape/test/*.js"/>
         <patternset refid="accessors.excludes" />
@@ -422,7 +424,8 @@
     <apply dir="hosts"
            executable="duktape/eduk/eduk"
 	   failonerror="false"
-	   relative="true">
+	   relative="true"
+	   timeout="${timeout}">
       <arg value="--timeout"/>
       <arg value="4000"/>
       <fileset dir=".">
@@ -531,7 +534,8 @@
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
            failonerror="true"
-	   relative="true">
+	   relative="true"
+	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
       <arg value="4000"/>
@@ -553,7 +557,8 @@
     </echo>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
-           failonerror="true">
+           failonerror="true"
+	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
       <arg value="4010"/>
@@ -594,7 +599,8 @@
     <apply dir="hosts"
            executable="duktape/rusteduk/target/debug/examples/rusteduk"
            failonerror="true"
-	   relative="true">
+	   relative="true"
+	   timeout="${timeout}">
       <arg value="--timeout"/>
       <arg value="4000"/>
       <fileset dir=".">
