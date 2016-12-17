@@ -28,7 +28,7 @@ var findNodeAutoDirectories = function(dir) {
                             var skipIt = false;
 			    // 16-Dec-2016: Exclude gdp because GDPLogCreate is failing
                             var skipDirectories = [ 'hosts/browser/test/auto',
-						    'gdp/test/auto'.
+						    'gdp/test/auto',
 						    'node_modules/@terraswarm/gdp/test/mocha'
 						  ];
                             skipDirectories.forEach(function(skipDirectory) {
