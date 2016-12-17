@@ -220,6 +220,12 @@ var accessorHostsEnum = {
 
 var accessorHost = accessorHostsEnum.DEFAULT;
 
+// Be sure to export these variables before any require()s of the util module because util.js
+// require()s commonHost.  Do not put these at the end of the file.
+// To test, run "ant tests.duk"
+exports.accessorHostsEnum = accessorHostsEnum;
+exports.accessorHost = accessorHost;
+
 // In alphabetical order.
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
@@ -1903,9 +1909,8 @@ var _accessorInstanceTable = {};
 ///////////////////////////////////////////////////////////////////
 //// Exports
 
+// Note that there are some exports that occur earlier in this file.
 exports.Accessor = Accessor;
-exports.accessorHostsEnum = accessorHostsEnum;
-exports.accessorHost = accessorHost;
 exports.instantiateAccessor = instantiateAccessor;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.main = main;
