@@ -526,15 +526,14 @@ exports.isPrimitive = isPrimitive;
 
 // See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
 
-// Under Duktape, we can't require() commonHost here because commonHost requires util
-// and when we get to here, the accessorHost variable is not yet defined.
-// So, we duplicate the test for Node here.
-var isNode = false;
-if (typeof process !== 'undefined' && typeof process.version === 'string') {
-    isNode = true;
-}
+var commonHost = require('common/commonHost');
 
-if (isNode) {
+// If commonHost.accessorHost or commonHost.accessorHostEnum.NODE is undefined, the you
+// will get "TypeError: cannot read property 'NODE' of undefined"
+// The problem is that commonHost.js is not exporting accessorHost and
+// accessorHostEnum before the require() of uti.
+
+if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
     exports.isBuffer = require('./support/isBuffer');
 } else {
     // Browser and Duktape
@@ -586,8 +585,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-if (isNode) {
+if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
     exports.inherits = require('inherits');
 } else {
     // Browser and Duktape
