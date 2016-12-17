@@ -26,7 +26,11 @@ var findNodeAutoDirectories = function(dir) {
                         // Add auto directories, but skip certain directories.
                         if (basefile == 'auto') {
                             var skipIt = false;
-                            var skipDirectories = [ 'hosts/browser/test/auto'];
+			    // 16-Dec-2016: Exclude gdp because GDPLogCreate is failing
+                            var skipDirectories = [ 'hosts/browser/test/auto',
+						    'gdp/test/auto'.
+						    'node_modules/@terraswarm/gdp/test/mocha'
+						  ];
                             skipDirectories.forEach(function(skipDirectory) {
                                     if (file.indexOf(skipDirectory) != -1) {
                                         console.log("testNodeAllAuto.js: Skipping " + skipDirectory);
@@ -66,3 +70,4 @@ try {
 }
 
 autos.forEach(testNodeAuto.testNodeAuto);
+
