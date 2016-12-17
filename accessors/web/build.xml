@@ -376,7 +376,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/duktape/duktape/duk"
-           failonerror="true"
+           failonerror="false"
 	   relative="true">
       <arg value="--accessor"/>
       <arg value="--timeout"/>
@@ -396,7 +396,7 @@
           description="Execute the duktape tests in duktape/test.">
     <apply dir="hosts"
            executable="duktape/duktape/duk"
-           failonerror="true">
+           failonerror="false">
       <fileset dir="hosts">
         <include name="duktape/test/*.js"/>
         <patternset refid="accessors.excludes" />
@@ -410,7 +410,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/eduk/eduk"
-           failonerror="true"
+	   failonerror="false"
 	   relative="true">
       <arg value="--timeout"/>
       <arg value="4000"/>
