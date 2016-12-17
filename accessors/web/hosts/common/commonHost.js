@@ -1904,6 +1904,8 @@ var _accessorInstanceTable = {};
 //// Exports
 
 exports.Accessor = Accessor;
+exports.accessorHostsEnum = accessorHostsEnum;
+exports.accessorHost = accessorHost;
 exports.instantiateAccessor = instantiateAccessor;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.main = main;

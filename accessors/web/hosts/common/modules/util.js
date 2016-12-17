@@ -525,9 +525,16 @@ function isPrimitive(arg) {
 exports.isPrimitive = isPrimitive;
 
 // See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
-var commonHost = require('common/commonHost');
 
-if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+// Under Duktape, we can't require() commonHost here because commonHost requires util
+// and when we get to here, the accessorHost variable is not yet defined.
+// So, we duplicate the test for Node here.
+var isNode = false;
+if (typeof process !== 'undefined' && typeof process.version === 'string') {
+    isNode = true;
+}
+
+if (isNode) {
     exports.isBuffer = require('./support/isBuffer');
 } else {
     // Browser and Duktape
@@ -579,7 +586,8 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+if (isNode) {
     exports.inherits = require('inherits');
 } else {
     // Browser and Duktape
