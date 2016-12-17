@@ -1,21 +1,24 @@
 /*
  *  Command line execution tool.  Useful for test cases and manual testing.
  *
- *  To enable readline and other fancy stuff, compile with -DDUK_CMDLINE_FANCY.
+ *  To enable linenoise and other fancy stuff, compile with -DDUK_CMDLINE_FANCY.
  *  It is not the default to maximize portability.  You can also compile in
  *  support for example allocators, grep for DUK_CMDLINE_*.
  */
 
-// Accessors: ___duktapeHost_js is declared in duktapeHost.h. duktapeHost.h is
+#define ACCESSORS
+#if defined(ACCESSORS)
+// Start Accessors: ___duktapeHost_js is declared in duktapeHost.h. duktapeHost.h is
 // created by running xxd -i ../duktapeHost.js duktapeHost.h
 #include "duktapeHost.h"
+#endif /* Accessors */
 
-#include <unistd.h> // For getcwd()
-
-#if !defined(DUK_CMDLINE_FANCY)
-#define NO_READLINE
-#define NO_RLIMIT
-#define NO_SIGNAL
+/* Helper define to enable a feature set; can also use separate defines. */
+#if defined(DUK_CMDLINE_FANCY)
+#define DUK_CMDLINE_LINENOISE
+#define DUK_CMDLINE_LINENOISE_COMPLETION
+#define DUK_CMDLINE_RLIMIT
+#define DUK_CMDLINE_SIGNAL
 #endif
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || \
@@ -42,15 +45,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if !defined(NO_SIGNAL)
+#if defined(DUK_CMDLINE_SIGNAL)
 #include <signal.h>
 #endif
-#if !defined(NO_RLIMIT)
+#if defined(DUK_CMDLINE_RLIMIT)
 #include <sys/resource.h>
 #endif
-#if !defined(NO_READLINE)
-#include <readline/readline.h>
-#include <readline/history.h>
+#if defined(DUK_CMDLINE_LINENOISE)
+#include "linenoise.h"
+#endif
+#if defined(DUK_CMDLINE_FILEIO)
+#include <errno.h>
 #endif
 #if defined(EMSCRIPTEN)
 #include <emscripten.h>
@@ -66,16 +71,18 @@
 #endif
 #include "duktape.h"
 
-// Accessors:
+#if defined(ACCESSORS)
 // Eventually, fileio_register() should be removed.
+#include "unistd.h" // for getcwd().
 extern void fileio_register(duk_context *ctx);
 extern void nofileio_register(duk_context *ctx);
 extern void poll_register(duk_context *ctx);
-
+#endif /* Accessors */
 
 #if defined(DUK_CMDLINE_AJSHEAP)
 /* Defined in duk_cmdline_ajduk.c or alljoyn.js headers. */
 void ajsheap_init(void);
+void ajsheap_free(void);
 void ajsheap_dump(void);
 void ajsheap_register(duk_context *ctx);
 void ajsheap_start_exec_timeout(void);
@@ -96,9 +103,18 @@ void AJS_Free(void *udata, void *ptr);
 #define  MEM_LIMIT_HIGH     (2047*1024*1024)  /* ~2 GB */
 #define  LINEBUF_SIZE       65536
 
+static int main_argc = 0;
+static char **main_argv = NULL;
 static int interactive_mode = 0;
+#if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
+static int debugger_reattach = 0;
+#endif
 
-#if !defined(NO_RLIMIT)
+/*
+ *  Misc helpers
+ */
+
+#if defined(DUK_CMDLINE_RLIMIT)
 static void set_resource_limits(rlim_t mem_limit_value) {
 	int rc;
 	struct rlimit lim;
@@ -127,17 +143,18 @@ static void set_resource_limits(rlim_t mem_limit_value) {
 	fprintf(stderr, "Set RLIMIT_AS to %d\n", (int) mem_limit_value);
 #endif
 }
-#endif  /* NO_RLIMIT */
+#endif  /* DUK_CMDLINE_RLIMIT */
 
-#if !defined(NO_SIGNAL)
+#if defined(DUK_CMDLINE_SIGNAL)
 static void my_sighandler(int x) {
 	fprintf(stderr, "Got signal %d\n", x);
 	fflush(stderr);
 }
 static void set_sigint_handler(void) {
 	(void) signal(SIGINT, my_sighandler);
+	(void) signal(SIGPIPE, SIG_IGN);  /* avoid SIGPIPE killing process */
 }
-#endif  /* NO_SIGNAL */
+#endif  /* DUK_CMDLINE_SIGNAL */
 
 static int get_stack_raw(duk_context *ctx) {
 	if (!duk_is_object(ctx, -1)) {
@@ -291,6 +308,203 @@ static int wrapped_compile_execute(duk_context *ctx) {
 	return 0;  /* duk_safe_call() cleans up */
 }
 
+/*
+ *  Minimal Linenoise completion support
+ */
+
+#if defined(DUK_CMDLINE_LINENOISE_COMPLETION)
+static duk_context *completion_ctx;
+
+static int completion_idpart(unsigned char c) {
+	/* Very simplified "is identifier part" check. */
+	if ((c >= (unsigned char) 'a' && c <= (unsigned char) 'z') ||
+	    (c >= (unsigned char) 'A' && c <= (unsigned char) 'Z') ||
+	    (c >= (unsigned char) '0' && c <= (unsigned char) '9') ||
+	    c == (unsigned char) '$' || c == (unsigned char) '_') {
+		return 1;
+	}
+	return 0;
+}
+
+static int completion_digit(unsigned char c) {
+	return (c >= (unsigned char) '0' && c <= (unsigned char) '9');
+}
+
+static duk_ret_t linenoise_completion_lookup(duk_context *ctx) {
+	duk_size_t len;
+	const char *orig;
+	const unsigned char *p;
+	const unsigned char *p_curr;
+	const unsigned char *p_end;
+	const char *key;
+	const char *prefix;
+	linenoiseCompletions *lc;
+	duk_idx_t idx_obj;
+
+	orig = duk_require_string(ctx, -3);
+	p_curr = (const unsigned char *) duk_require_lstring(ctx, -2, &len);
+	p_end = p_curr + len;
+	lc = duk_require_pointer(ctx, -1);
+
+	duk_push_global_object(ctx);
+	idx_obj = duk_require_top_index(ctx);
+
+	while (p_curr <= p_end) {
+		/* p_curr == p_end allowed on purpose, to handle 'Math.' for example. */
+		p = p_curr;
+		while (p < p_end && p[0] != (unsigned char) '.') {
+			p++;
+		}
+		/* 'p' points to a NUL (p == p_end) or a period. */
+		prefix = duk_push_lstring(ctx, (const char *) p_curr, (duk_size_t) (p - p_curr));
+
+#if 0
+		fprintf(stderr, "Completion check: '%s'\n", prefix);
+		fflush(stderr);
+#endif
+
+		if (p == p_end) {
+			/* 'idx_obj' points to the object matching the last
+			 * full component, use [p_curr,p[ as a filter for
+			 * that object.
+			 */
+
+			duk_enum(ctx, idx_obj, DUK_ENUM_INCLUDE_NONENUMERABLE);
+			while (duk_next(ctx, -1, 0 /*get_value*/)) {
+				key = duk_get_string(ctx, -1);
+#if 0
+				fprintf(stderr, "Key: %s\n", key ? key : "");
+				fflush(stderr);
+#endif
+				if (!key) {
+					/* Should never happen, just in case. */
+					goto next;
+				}
+
+				/* Ignore array index keys: usually not desirable, and would
+				 * also require ['0'] quoting.
+				 */
+				if (completion_digit(key[0])) {
+					goto next;
+				}
+
+				/* XXX: There's no key quoting now, it would require replacing the
+				 * last component with a ['foo\nbar'] style lookup when appropriate.
+				 */
+
+				if (strlen(prefix) == 0) {
+					/* Partial ends in a period, e.g. 'Math.' -> complete all Math properties. */
+					duk_push_string(ctx, orig);  /* original, e.g. 'Math.' */
+					duk_push_string(ctx, key);
+					duk_concat(ctx, 2);
+					linenoiseAddCompletion(lc, duk_require_string(ctx, -1));
+					duk_pop(ctx);
+				} else if (prefix && strcmp(key, prefix) == 0) {
+					/* Full completion, add a period, e.g. input 'Math' -> 'Math.'. */
+					duk_push_string(ctx, orig);  /* original, including partial last component */
+					duk_push_string(ctx, ".");
+					duk_concat(ctx, 2);
+					linenoiseAddCompletion(lc, duk_require_string(ctx, -1));
+					duk_pop(ctx);
+				} else if (prefix && strncmp(key, prefix, strlen(prefix)) == 0) {
+					/* Last component is partial, complete. */
+					duk_push_string(ctx, orig);  /* original, including partial last component */
+					duk_push_string(ctx, key + strlen(prefix));  /* completion to last component */
+					duk_concat(ctx, 2);
+					linenoiseAddCompletion(lc, duk_require_string(ctx, -1));
+					duk_pop(ctx);
+				}
+
+			 next:
+				duk_pop(ctx);
+			}
+			return 0;
+		} else {
+			if (duk_get_prop(ctx, idx_obj)) {
+				duk_to_object(ctx, -1);  /* for properties of plain strings etc */
+				duk_replace(ctx, idx_obj);
+				p_curr = p + 1;
+			} else {
+				/* Not found. */
+				return 0;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static void linenoise_completion(const char *buf, linenoiseCompletions *lc) {
+	duk_context *ctx;
+	const unsigned char *p_start;
+	const unsigned char *p_end;
+	const unsigned char *p;
+	duk_int_t rc;
+
+	if (!buf) {
+		return;
+	}
+	ctx = completion_ctx;
+	if (!ctx) {
+		return;
+	}
+
+	p_start = (const unsigned char *) buf;
+	p_end = (const unsigned char *) (buf + strlen(buf));
+	p = p_end;
+
+	/* Scan backwards for a maximal string which looks like a property
+	 * chain (e.g. foo.bar.quux).
+	 */
+
+	while (--p >= p_start) {
+		if (p[0] == (unsigned char) '.') {
+			if (p <= p_start) {
+				break;
+			}
+			if (!completion_idpart(p[-1])) {
+				/* Catches e.g. 'foo..bar' -> we want 'bar' only. */
+				break;
+			}
+		} else if (!completion_idpart(p[0])) {
+			break;
+		}
+	}
+	/* 'p' will either be p_start - 1 (ran out of buffer) or point to
+	 * the first offending character.
+	 */
+	p++;
+	if (p < p_start || p >= p_end) {
+		return;  /* should never happen, but just in case */
+	}
+
+	/* 'p' now points to a string of the form 'foo.bar.quux'.  Look up
+	 * all the components except the last; treat the last component as
+	 * a partial name which is used as a filter for the previous full
+	 * component.  All lookups are from the global object now.
+	 */
+
+#if 0
+	fprintf(stderr, "Completion starting point: '%s'\n", p);
+	fflush(stderr);
+#endif
+
+	duk_push_string(ctx, (const char *) buf);
+	duk_push_lstring(ctx, (const char *) p, (duk_size_t) (p_end - p));
+	duk_push_pointer(ctx, (void *) lc);
+
+	rc = duk_safe_call(ctx, linenoise_completion_lookup, 3 /*nargs*/, 1 /*nrets*/);
+	if (rc != DUK_EXEC_SUCCESS) {
+		fprintf(stderr, "Completion handling failure: %s\n", duk_safe_to_string(ctx, -1));
+	}
+	duk_pop(ctx);
+}
+#endif  /* DUK_CMDLINE_LINENOISE_COMPLETION */
+
+/*
+ *  Execute from file handle etc
+ */
+
 static int handle_fh(duk_context *ctx, FILE *f, const char *filename, const char *bytecode_filename) {
 	char *buf = NULL;
 	size_t bufsz;
@@ -313,14 +527,16 @@ static int handle_fh(duk_context *ctx, FILE *f, const char *filename, const char
 		avail = bufsz - bufoff;
 		if (avail < 1024) {
 			size_t newsz;
+			char *buf_new;
 #if 0
 			fprintf(stderr, "resizing read buffer: %ld -> %ld\n", (long) bufsz, (long) (bufsz * 2));
 #endif
 			newsz = bufsz + (bufsz >> 2) + 1024;  /* +25% and some extra */
-			buf = (char *) realloc(buf, newsz);
-			if (!buf) {
+			buf_new = (char *) realloc(buf, newsz);
+			if (!buf_new) {
 				goto error;
 			}
+			buf = buf_new;
 			bufsz = newsz;
 		}
 
@@ -406,6 +622,7 @@ static int handle_fh(duk_context *ctx, FILE *f, const char *filename, const char
  cleanup:
 	if (buf) {
 		free(buf);
+		buf = NULL;
 	}
 	return retval;
 
@@ -419,6 +636,11 @@ static int handle_file(duk_context *ctx, const char *filename, const char *bytec
 	FILE *f = NULL;
 	int retval;
 	char fnbuf[256];
+
+	/* Example of sending an application specific debugger notification. */
+	duk_push_string(ctx, "DebuggerHandleFile");
+	duk_push_string(ctx, filename);
+	duk_debugger_notify(ctx, 2);
 
 #if defined(EMSCRIPTEN)
 	if (filename[0] == '/') {
@@ -473,7 +695,78 @@ static int handle_eval(duk_context *ctx, char *code) {
 	return retval;
 }
 
-#if defined(NO_READLINE)
+#if defined(DUK_CMDLINE_LINENOISE)
+static int handle_interactive(duk_context *ctx) {
+	const char *prompt = "duk> ";
+	char *buffer = NULL;
+	int retval = 0;
+	int rc;
+
+	duk_eval_string(ctx, GREET_CODE(" [linenoise]"));
+	duk_pop(ctx);
+
+	linenoiseSetMultiLine(1);
+	linenoiseHistorySetMaxLen(64);
+#if defined(DUK_CMDLINE_LINENOISE_COMPLETION)
+	linenoiseSetCompletionCallback(linenoise_completion);
+#endif
+
+	for (;;) {
+		if (buffer) {
+			linenoiseFree(buffer);
+			buffer = NULL;
+		}
+
+#if defined(DUK_CMDLINE_LINENOISE_COMPLETION)
+		completion_ctx = ctx;
+#endif
+		buffer = linenoise(prompt);
+#if defined(DUK_CMDLINE_LINENOISE_COMPLETION)
+		completion_ctx = NULL;
+#endif
+
+		if (!buffer) {
+			break;
+		}
+
+		if (buffer && buffer[0] != (char) 0) {
+			linenoiseHistoryAdd(buffer);
+		}
+
+		duk_push_pointer(ctx, (void *) buffer);
+		duk_push_uint(ctx, (duk_uint_t) strlen(buffer));
+		duk_push_string(ctx, "input");
+
+		interactive_mode = 1;  /* global */
+
+		rc = duk_safe_call(ctx, wrapped_compile_execute, 3 /*nargs*/, 1 /*nret*/);
+
+#if defined(DUK_CMDLINE_AJSHEAP)
+		ajsheap_clear_exec_timeout();
+#endif
+
+		if (buffer) {
+			linenoiseFree(buffer);
+			buffer = NULL;
+		}
+
+		if (rc != DUK_EXEC_SUCCESS) {
+			/* in interactive mode, write to stdout */
+			print_pop_error(ctx, stdout);
+			retval = -1;  /* an error 'taints' the execution */
+		} else {
+			duk_pop(ctx);
+		}
+	}
+
+	if (buffer) {
+		linenoiseFree(buffer);
+		buffer = NULL;
+	}
+
+	return retval;
+}
+#else  /* DUK_CMDLINE_LINENOISE */
 static int handle_interactive(duk_context *ctx) {
 	const char *prompt = "duk> ";
 	char *buffer = NULL;
@@ -481,7 +774,7 @@ static int handle_interactive(duk_context *ctx) {
 	int rc;
 	int got_eof = 0;
 
-	duk_eval_string(ctx, GREET_CODE(" [no readline]"));
+	duk_eval_string(ctx, GREET_CODE(""));
 	duk_pop(ctx);
 
 	buffer = (char *) malloc(LINEBUF_SIZE);
@@ -544,96 +837,172 @@ static int handle_interactive(duk_context *ctx) {
 
 	return retval;
 }
-#else  /* NO_READLINE */
-static int handle_interactive(duk_context *ctx) {
-	const char *prompt = "duk> ";
-	char *buffer = NULL;
-	int retval = 0;
+#endif  /* DUK_CMDLINE_LINENOISE */
+
+/*
+ *  Simple file read/write bindings
+ */
+
+#if defined(DUK_CMDLINE_FILEIO)
+static duk_ret_t fileio_read_file(duk_context *ctx) {
+	const char *fn;
+	char *buf;
+	size_t len;
+	size_t off;
 	int rc;
+	FILE *f;
 
-	duk_eval_string(ctx, GREET_CODE(""));
-	duk_pop(ctx);
-
-	/*
-	 *  Note: using readline leads to valgrind-reported leaks inside
-	 *  readline itself.  Execute code from an input file (and not
-	 *  through stdin) for clean valgrind runs.
-	 */
-
-	rl_initialize();
-
-	for (;;) {
-		if (buffer) {
-			free(buffer);
-			buffer = NULL;
-		}
-
-		buffer = readline(prompt);
-		if (!buffer) {
-			break;
-		}
-
-		if (buffer && buffer[0] != (char) 0) {
-			add_history(buffer);
-		}
-
-		duk_push_pointer(ctx, (void *) buffer);
-		duk_push_uint(ctx, (duk_uint_t) strlen(buffer));
-		duk_push_string(ctx, "input");
-
-		interactive_mode = 1;  /* global */
-
-		rc = duk_safe_call(ctx, wrapped_compile_execute, 3 /*nargs*/, 1 /*nret*/);
-
-#if defined(DUK_CMDLINE_AJSHEAP)
-		ajsheap_clear_exec_timeout();
-#endif
-
-		if (buffer) {
-			free(buffer);
-			buffer = NULL;
-		}
-
-		if (rc != DUK_EXEC_SUCCESS) {
-			/* in interactive mode, write to stdout */
-			print_pop_error(ctx, stdout);
-			retval = -1;  /* an error 'taints' the execution */
-		} else {
-			duk_pop(ctx);
-		}
+	fn = duk_require_string(ctx, 0);
+	f = fopen(fn, "rb");
+	if (!f) {
+		duk_error(ctx, DUK_ERR_TYPE_ERROR, "cannot open file %s for reading, errno %ld: %s",
+		          fn, (long) errno, strerror(errno));
 	}
 
-	if (buffer) {
-		free(buffer);
-		buffer = NULL;
+	rc = fseek(f, 0, SEEK_END);
+	if (rc < 0) {
+		(void) fclose(f);
+		duk_error(ctx, DUK_ERR_TYPE_ERROR, "fseek() failed for %s, errno %ld: %s",
+		          fn, (long) errno, strerror(errno));
+	}
+	len = (size_t) ftell(f);
+	rc = fseek(f, 0, SEEK_SET);
+	if (rc < 0) {
+		(void) fclose(f);
+		duk_error(ctx, DUK_ERR_TYPE_ERROR, "fseek() failed for %s, errno %ld: %s",
+		          fn, (long) errno, strerror(errno));
 	}
 
-	return retval;
+	buf = (char *) duk_push_fixed_buffer(ctx, (duk_size_t) len);
+	for (off = 0; off < len;) {
+		size_t got;
+		got = fread((void *) (buf + off), 1, len - off, f);
+		if (ferror(f)) {
+			(void) fclose(f);
+			duk_error(ctx, DUK_ERR_TYPE_ERROR, "error while reading %s", fn);
+		}
+		if (got == 0) {
+			if (feof(f)) {
+				break;
+			} else {
+				(void) fclose(f);
+				duk_error(ctx, DUK_ERR_TYPE_ERROR, "error while reading %s", fn);
+			}
+		}
+		off += got;
+	}
+
+	if (f) {
+		(void) fclose(f);
+	}
+
+	return 1;
 }
-#endif  /* NO_READLINE */
+
+static duk_ret_t fileio_write_file(duk_context *ctx) {
+	const char *fn;
+	const char *buf;
+	size_t len;
+	size_t off;
+	FILE *f;
+
+	fn = duk_require_string(ctx, 0);
+	f = fopen(fn, "wb");
+	if (!f) {
+		duk_error(ctx, DUK_ERR_TYPE_ERROR, "cannot open file %s for writing, errno %ld: %s",
+		          fn, (long) errno, strerror(errno));
+	}
+
+	len = 0;
+	buf = (char *) duk_to_buffer(ctx, 1, &len);
+	for (off = 0; off < len;) {
+		size_t got;
+		got = fwrite((const void *) (buf + off), 1, len - off, f);
+		if (ferror(f)) {
+			(void) fclose(f);
+			duk_error(ctx, DUK_ERR_TYPE_ERROR, "error while writing %s", fn);
+		}
+		if (got == 0) {
+			(void) fclose(f);
+			duk_error(ctx, DUK_ERR_TYPE_ERROR, "error while writing %s", fn);
+		}
+		off += got;
+	}
+
+	if (f) {
+		(void) fclose(f);
+	}
+
+	return 0;
+}
+#endif  /* DUK_CMDLINE_FILEIO */
+
+/*
+ *  Duktape heap lifecycle
+ */
 
 #if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
+static duk_idx_t debugger_request(duk_context *ctx, void *udata, duk_idx_t nvalues) {
+	const char *cmd;
+	int i;
+
+	(void) udata;
+
+	if (nvalues < 1) {
+		duk_push_string(ctx, "missing AppRequest argument(s)");
+		return -1;
+	}
+
+	cmd = duk_get_string(ctx, -nvalues + 0);
+
+	if (cmd && strcmp(cmd, "CommandLine") == 0) {
+		if (!duk_check_stack(ctx, main_argc)) {
+			/* Callback should avoid errors for now, so use
+			 * duk_check_stack() rather than duk_require_stack().
+			 */
+			duk_push_string(ctx, "failed to extend stack");
+			return -1;
+		}
+		for (i = 0; i < main_argc; i++) {
+			duk_push_string(ctx, main_argv[i]);
+		}
+		return main_argc;
+	}
+	duk_push_sprintf(ctx, "command not supported");
+	return -1;
+}
+
 static void debugger_detached(void *udata) {
 	duk_context *ctx = (duk_context *) udata;
 	(void) ctx;
 	fprintf(stderr, "Debugger detached, udata: %p\n", (void *) udata);
 	fflush(stderr);
 
-#if 0  /* For manual auto-reattach test */
-	duk_trans_socket_finish();
-	duk_trans_socket_init();
-	duk_trans_socket_waitconn();
-	fprintf(stderr, "Debugger connected, call duk_debugger_attach() and then execute requested file(s)/eval\n");
-	fflush(stderr);
-	duk_debugger_attach(ctx,
-	                    duk_trans_socket_read_cb,
-	                    duk_trans_socket_write_cb,
-	                    duk_trans_socket_peek_cb,
-	                    duk_trans_socket_read_flush_cb,
-	                    duk_trans_socket_write_flush_cb,
-	                    debugger_detached,
-	                    (void *) ctx);
+	/* Ensure socket is closed even when detach is initiated by Duktape
+	 * rather than debug client.
+	 */
+        duk_trans_socket_finish();
+
+	if (debugger_reattach) {
+		/* For automatic reattach testing. */
+		duk_trans_socket_init();
+		duk_trans_socket_waitconn();
+		fprintf(stderr, "Debugger reconnected, call duk_debugger_attach()\n");
+		fflush(stderr);
+#if 0
+		/* This is not necessary but should be harmless. */
+		duk_debugger_detach(ctx);
 #endif
+		duk_debugger_attach_custom(ctx,
+		                           duk_trans_socket_read_cb,
+		                           duk_trans_socket_write_cb,
+		                           duk_trans_socket_peek_cb,
+		                           duk_trans_socket_read_flush_cb,
+		                           duk_trans_socket_write_flush_cb,
+		                           debugger_request,
+		                           debugger_detached,
+		                           (void *) ctx);
+	}
 }
 #endif
 
@@ -730,6 +1099,13 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 	}
 #endif
 
+#if defined(DUK_CMDLINE_FILEIO)
+	duk_push_c_function(ctx, fileio_read_file, 1 /*nargs*/);
+	duk_put_global_string(ctx, "readFile");
+	duk_push_c_function(ctx, fileio_write_file, 2 /*nargs*/);
+	duk_put_global_string(ctx, "writeFile");
+#endif
+
 	if (debugger) {
 #if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
 		fprintf(stderr, "Debugger enabled, create socket and wait for connection\n");
@@ -738,14 +1114,15 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 		duk_trans_socket_waitconn();
 		fprintf(stderr, "Debugger connected, call duk_debugger_attach() and then execute requested file(s)/eval\n");
 		fflush(stderr);
-		duk_debugger_attach(ctx,
-		                    duk_trans_socket_read_cb,
-		                    duk_trans_socket_write_cb,
-		                    duk_trans_socket_peek_cb,
-		                    duk_trans_socket_read_flush_cb,
-		                    duk_trans_socket_write_flush_cb,
-		                    debugger_detached,
-		                    (void *) ctx);
+		duk_debugger_attach_custom(ctx,
+		                           duk_trans_socket_read_cb,
+		                           duk_trans_socket_write_cb,
+		                           duk_trans_socket_peek_cb,
+		                           duk_trans_socket_read_flush_cb,
+		                           duk_trans_socket_write_flush_cb,
+		                           debugger_request,
+		                           debugger_detached,
+		                           (void *) ctx);
 #else
 		fprintf(stderr, "Warning: option --debugger ignored, no debugger support\n");
 		fflush(stderr);
@@ -763,11 +1140,13 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 	}
 #endif
 
-        // Accessors
-        // Eventually, fileio_register() should be removed.
+#if defined(ACCESSORS)
+	// FIXME: Eventually, fileio_register() should be removed.
 	fileio_register(ctx);
         nofileio_register(ctx);
 	poll_register(ctx);
+#endif /* Accessors */
+
 	return ctx;
 }
 
@@ -795,8 +1174,13 @@ static void destroy_duktape_heap(duk_context *ctx, int alloc_provider) {
 		fprintf(stdout, "Pool dump after duk_destroy_heap() (should have zero allocs)\n");
 		ajsheap_dump();
 	}
+	ajsheap_free();
 #endif
 }
+
+/*
+ *  Main
+ */
 
 int main(int argc, char *argv[]) {
 	duk_context *ctx = NULL;
@@ -808,15 +1192,20 @@ int main(int argc, char *argv[]) {
 	int alloc_provider = ALLOC_DEFAULT;
 	int ajsheap_log = 0;
 	int debugger = 0;
-	int echo = 0;
 	int recreate_heap = 0;
 	int no_heap_destroy = 0;
 	int verbose = 0;
 	int run_stdin = 0;
 	const char *compile_filename = NULL;
 	int i;
+#if defined(ACCESSORS)
 	int accessor = 0;
+	int echo = 0;
         int timeout = 0;
+#endif /* Accessors */
+	
+	main_argc = argc;
+	main_argv = (char **) argv;
 
 #if defined(EMSCRIPTEN)
 	/* Try to use NODEFS to provide access to local files.  Mount the
@@ -874,7 +1263,7 @@ int main(int argc, char *argv[]) {
 	 *  Signal handling setup
 	 */
 
-#if !defined(NO_SIGNAL)
+#if defined(DUK_CMDLINE_SIGNAL)
 	set_sigint_handler();
 
 	/* This is useful at the global level; libraries should avoid SIGPIPE though */
@@ -888,6 +1277,7 @@ int main(int argc, char *argv[]) {
 	for (i = 1; i < argc; i++) {
 		char *arg = argv[i];
 		if (!arg) {
+		  fprintf(stderr, "!arg. going to usage\n");
 			goto usage;
 		}
 		if (strcmp(arg, "--restrict-memory") == 0) {
@@ -896,6 +1286,7 @@ int main(int argc, char *argv[]) {
 			interactive = 1;
 		} else if (strcmp(arg, "-c") == 0) {
 			if (i == argc - 1) {
+			  fprintf(stderr, "-c i = %d, argc -1 = %d. going to usage\n", i, argc -1);
 				goto usage;
 			}
 			i++;
@@ -903,9 +1294,12 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(arg, "-e") == 0) {
 			have_eval = 1;
 			if (i == argc - 1) {
+			  fprintf(stderr, "-e i = %d, argc -1 = %d. going to usage\n", i, argc -1);
 				goto usage;
 			}
 			i++;  /* skip code */
+
+#if defined(ACCESSORS)			
 		} else if (strcmp(arg, "--accessor") == 0 || strcmp(arg, "-accessor") == 0) {
                     accessor = 1;
 		} else if (strcmp(arg, "--timeout") == 0 || strcmp(arg, "-timeout") == 0) {
@@ -914,6 +1308,8 @@ int main(int argc, char *argv[]) {
                     }
                     i++;
                     timeout = atoi(argv[i]);
+#endif /* Accessors */
+
 		} else if (strcmp(arg, "--alloc-default") == 0) {
 			alloc_provider = ALLOC_DEFAULT;
 		} else if (strcmp(arg, "--alloc-logging") == 0) {
@@ -928,8 +1324,16 @@ int main(int argc, char *argv[]) {
 			ajsheap_log = 1;
 		} else if (strcmp(arg, "--debugger") == 0) {
 			debugger = 1;
+
+#if defined(ACCESSORS)
 		} else if (strcmp(arg, "--echo") == 0 || strcmp(arg, "-echo") == 0) {
 			echo = 1;
+#endif /* Accessors */
+
+#if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
+		} else if (strcmp(arg, "--reattach") == 0) {
+			debugger_reattach = 1;
+#endif
 		} else if (strcmp(arg, "--recreate-heap") == 0) {
 			recreate_heap = 1;
 		} else if (strcmp(arg, "--no-heap-destroy") == 0) {
@@ -941,6 +1345,7 @@ int main(int argc, char *argv[]) {
 		} else if ((strlen(arg) >= 1 && arg[0] == '-')
 			   || strcmp(arg, "-h") == 0 || strcmp(arg, "--h") == 0
 			   || strcmp(arg, "-help") == 0 || strcmp(arg, "--help") == 0) {
+		  fprintf(stderr, "help i = %d, arg = %s. going to usage\n", i, arg);
 			goto usage;
 		} else {
 			have_files = 1;
@@ -950,7 +1355,7 @@ int main(int argc, char *argv[]) {
 		interactive = 1;
 	}
 
-	
+#if defined(ACCESSORS)
 	if (echo) {
 	  // Accessors: Echo the directory and command so that it can
 	  // be run by hand.  This is helpful when running tests.
@@ -966,11 +1371,13 @@ int main(int argc, char *argv[]) {
 	    perror("getcwd() error");
 	  }
 	}
+#endif /* Accessors */
+	
 	/*
 	 *  Memory limit
 	 */
 
-#if !defined(NO_RLIMIT)
+#if defined(DUK_CMDLINE_RLIMIT)
 	set_resource_limits(memlimit_high ? MEM_LIMIT_HIGH : MEM_LIMIT_NORMAL);
 #else
 	if (memlimit_high == 0) {
@@ -985,7 +1392,8 @@ int main(int argc, char *argv[]) {
 
 	ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
 
-        // Accessors:
+
+#if defined(ACCESSORS)
         // duktapeHost.h is created by running
         // xxd -i ../duktapeHost.js duktapeHost.h
         //fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
@@ -1008,7 +1416,8 @@ int main(int argc, char *argv[]) {
             //printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
             duk_pop(ctx);
         }
-
+#endif /* Accessors */
+	
 	/*
 	 *  Execute any argument file(s)
 	 */
@@ -1033,11 +1442,13 @@ int main(int argc, char *argv[]) {
 			i++;  /* skip filename */
 			continue;
 		} else if (strlen(arg) >= 1 && arg[0] == '-') {
+#if defined(ACCESSORS)
 		  if (strcmp(arg, "--timeout") == 0
 		      || strcmp(arg, "-timeout") == 0) {
-                            // Skip the value of timeout.
-                            i++;
-                        }
+		    // Skip the value of timeout.
+		    i++;
+		  }
+#endif /* Accessors */
 			continue;
 		}
 
@@ -1046,6 +1457,7 @@ int main(int argc, char *argv[]) {
 			fflush(stderr);
 		}
 
+#if defined(ACCESSORS)
                 if (accessor == 1) {
                     // Increase 300 if the snprintf gets changed.
                     int length = strlen(arg) + 300;
@@ -1086,7 +1498,8 @@ int main(int argc, char *argv[]) {
 			goto cleanup;
                     }
                 }
-
+#endif /* Accessors */
+		
 		if (recreate_heap) {
 			if (verbose) {
 				fprintf(stderr, "*** Recreating heap...\n");
@@ -1098,6 +1511,15 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+#if defined(ACCESSORS)
+        //fprintf(stderr, "calling EventLoop.run()\n");
+        if (duk_peval_string(ctx, "EventLoop.run();") != 0) {
+            fprintf(stderr, "%s:%d: Failed to invoke 'EventLoop.run();' Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        }
+        duk_pop(ctx);
+#endif /* Accessors */
+	
 	if (run_stdin) {
 		/* Running stdin like a full file (reading all lines before
 		 * compiling) is useful with emduk:
@@ -1118,14 +1540,6 @@ int main(int argc, char *argv[]) {
 			ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
 		}
 	}
-
-        //fprintf(stderr, "calling EventLoop.run()\n");
-        if (duk_peval_string(ctx, "EventLoop.run();") != 0) {
-            fprintf(stderr, "%s:%d: Failed to invoke 'EventLoop.run();' Error was:\n", __FILE__, __LINE__);
-            print_pop_error(ctx, stderr);
-        }
-        duk_pop(ctx);
-
 
 	/*
 	 *  Enter interactive mode if options indicate it
@@ -1171,8 +1585,12 @@ int main(int argc, char *argv[]) {
 			"   --run-stdin        treat stdin like a file, i.e. compile full input (not line by line)\n"
 			"   --verbose          verbose messages to stderr\n"
 	                "   --restrict-memory  use lower memory limit (used by test runner)\n"
+
+#if defined(ACCESSORS)
                         "   --accessor         run the files as accessors\n"
                         "   -accessor         run the files as accessors\n"
+#endif /* Accessors */
+
 	                "   --alloc-default    use Duktape default allocator\n"
 #if defined(DUK_CMDLINE_ALLOC_LOGGING)
 	                "   --alloc-logging    use logging allocator (writes to /tmp)\n"
@@ -1189,15 +1607,19 @@ int main(int argc, char *argv[]) {
 #endif
 #if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
 			"   --debugger         start example debugger\n"
+			"   --reattach         automatically reattach debugger on detach\n"
 #endif
                         "   --echo             echo the current directory and command line args.\n"		
-                        "   -echo              echo the current directory and command line args.\n"		
-		        "   -h                 print this help message\n"
-			"   --recreate-heap    recreate heap after every file\n"
+                        "   -echo              echo the current directory and command line args.\n"
+		"   --recreate-heap    recreate heap after every file\n"
 			"   --no-heap-destroy  force GC, but don't destroy heap at end (leak testing)\n"
+
+#if defined(ACCESSORS)
                         "   --timeout time     valid only with --accessors\n"
                         "   -timeout time      valid only with --accessors\n"
-		        " See https://www.terraswarm.org/accessors/wiki/Notes/CommandLineArguments\n"
+#endif /* Accessors */
+
+
 	                "\n"
 	                "If <filename> is omitted, interactive mode is started automatically.\n");
 	fflush(stderr);

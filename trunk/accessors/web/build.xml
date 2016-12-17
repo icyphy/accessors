@@ -394,6 +394,7 @@
            failonerror="true"
 	   relative="true"
 	   timeout="${timeout}">
+      <arg value="--echo"/>
       <arg value="--accessor"/>
       <arg value="--timeout"/>
       <arg value="4000"/>
