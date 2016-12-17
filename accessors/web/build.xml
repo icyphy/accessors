@@ -44,6 +44,12 @@
   <!-- The @terraswarm.gdp module. -->
   <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
 
+  <!-- The timeout in milliseconds for test -->
+  <property name="timeout" value="120000" />
+
+    <!-- The timeout in milliseconds for Cape Code test -->
+  <property name="timeout.capecode" value="1200000" />
+
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
     <exclude name="vendors/"/>
@@ -302,13 +308,16 @@
     <echo>
       == tests.capecode ==
       These tests are only run if $PTII exists.
+      target timeout = ${timeout.capecode} ms.
     </echo>
     <exec dir="${env.PTII}/ptolemy/actor/lib/jjs"
-          executable="make">
+          executable="make"
+	  timeout="${timeout.capecode}">
       <arg value="tests" />
     </exec>
     <exec dir="${env.PTII}/org/terraswarm/accessor"
-          executable="make">
+          executable="make"
+	  timeout="${timeout.capecode}">
       <arg value="tests" />
     </exec>
   </target>
@@ -320,11 +329,13 @@
       Run the Browser Accessor Host test
       The output will appear in reports/junit/browserTestResults.xml
       See https://www.terraswarm.org/accessors/wiki/VersionCurrent/RegressionTesting
+      target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/reports/junit"/>
     <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
     <exec dir="hosts/browser/test"
-	  executable="${node.executable}">
+	  executable="${node.executable}"
+	  timeout="${timeout}">
       <arg value="regressionTestScript.js"/>
     </exec>
   </target>
@@ -447,6 +458,7 @@
       To run just the composites, use "ant tests.mocha.composites"
       If necessary, istanbul and mocha are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout} ms.
     </echo>
 
     <pathconvert refid="test.mocha.files"
@@ -455,7 +467,8 @@
 
     <echo> tests.mocha: running on ${converted}</echo>
 
-    <exec executable="${mocha.command}">
+    <exec executable="${mocha.command}"
+	  timeout="${timeout}">
       <arg line="${converted}"/>
     </exec>
   </target>
@@ -472,9 +485,11 @@
       mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout} ms.
     </echo>
 
-    <exec executable="${mocha.command}">
+    <exec executable="${mocha.command}"
+	  timeout="${timeout}">
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
   </target>
@@ -552,10 +567,12 @@
     <echo>
       Running the Nashorn smoke test.  To replicate:
       cd hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
+      target timeout = ${timeout.capecode} ms.
     </echo>
 
     <exec dir="hosts"
-          executable="nashorn/nashornAccessorHost">
+          executable="nashorn/nashornAccessorHost"
+	  timeout="${timeout}">
       <arg value="-timeout"/>
       <arg value="1000"/>
       <arg value="hosts/nashorn/test/testNashornHost.js"/>
