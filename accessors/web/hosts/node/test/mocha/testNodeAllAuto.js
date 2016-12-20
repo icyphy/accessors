@@ -27,6 +27,7 @@ var findNodeAutoDirectories = function(dir) {
                         if (basefile == 'auto') {
                             var skipIt = false;
                             var skipDirectories = [ 'hosts/browser/test/auto',
+						    'gdp/test/auto',
 						    'node_modules/@terraswarm/gdp/test/mocha'
 						  ];
                             skipDirectories.forEach(function(skipDirectory) {
