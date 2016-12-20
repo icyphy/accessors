@@ -48,7 +48,7 @@
   <property name="timeout" value="120000" />
 
     <!-- The timeout in milliseconds for Cape Code test -->
-  <property name="timeout.capecode" value="1200000" />
+  <property name="timeout.longer" value="1200000" />
 
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
@@ -320,16 +320,16 @@
     <echo>
       == tests.capecode ==
       These tests are only run if $PTII exists.
-      target timeout = ${timeout.capecode} ms.
+      target timeout = ${timeout.longer} ms.
     </echo>
     <exec dir="${env.PTII}/ptolemy/actor/lib/jjs"
           executable="make"
-	  timeout="${timeout.capecode}">
+	  timeout="${timeout.longer}">
       <arg value="tests" />
     </exec>
     <exec dir="${env.PTII}/org/terraswarm/accessor"
           executable="make"
-	  timeout="${timeout.capecode}">
+	  timeout="${timeout.longer}">
       <arg value="tests" />
     </exec>
   </target>
@@ -479,7 +479,7 @@
       To run just the composites, use "ant tests.mocha.composites"
       If necessary, istanbul and mocha are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
-      target timeout = ${timeout} ms.
+      target timeout = ${timeout.longer} ms.
     </echo>
 
     <pathconvert refid="test.mocha.files"
@@ -489,7 +489,7 @@
     <echo> tests.mocha: running on ${converted}</echo>
 
     <exec executable="${mocha.command}"
-	  timeout="${timeout}">
+	  timeout="${timeout.longer}">
       <arg line="${converted}"/>
     </exec>
   </target>
@@ -591,7 +591,7 @@
     <echo>
       Running the Nashorn smoke test.  To replicate:
       cd hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
-      target timeout = ${timeout.capecode} ms.
+      target timeout = ${timeout} ms.
     </echo>
 
     <exec dir="hosts"
