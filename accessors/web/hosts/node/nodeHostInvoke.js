@@ -59,6 +59,8 @@
 
 var nodeHost = require('./nodeHost.js');
 
+var accessorMain = require('../util/accessorMain.js');
+
 // Remove "node.js" from the array of command line arguments.
 // Remove "nodeHostInvoke.js" from the array of command line arguments.
-main(process.argv.slice(2));
+accessorMain.accessorMain(process.argv.slice(2));
