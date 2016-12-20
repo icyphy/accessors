@@ -92,7 +92,8 @@
 	  depends="-check-chai"
 	  unless="chai.directory.exists">
     <mkdir dir="${basedir}/node_modules"/>
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="install"/>
       <arg value="chai"/>
     </exec>
@@ -100,7 +101,8 @@
 
   <target name="chai-update"
 	  depends="chai-install">
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="update"/>
       <arg value="chai"/>
     </exec>
@@ -150,7 +152,8 @@
     </echo>
     <exec dir="${duktape.source}"
 	  failonerror="true"
-          executable="make">
+          executable="make"
+          timeout="${timeout}">
     </exec>
   </target>
 
@@ -161,7 +164,8 @@
     The eduk binary can also be run from the command line.
     </echo>
     <exec dir="${eduk.source}"
-          executable="make">
+          executable="make"
+          timeout="${timeout}">
     </exec>
   </target>
 
@@ -169,7 +173,8 @@
           description="Build the eduk with tcmalloc for heap profiling">
     <exec dir="${eduk.source}"
           failonerror="true"
-          executable="make">
+          executable="make"
+          timeout="${timeout}">
       <arg value="eduk.tcmalloc"/>
     </exec>
   </target>
@@ -178,7 +183,8 @@
 	  depends="-check-istanbul, chai-update"
 	  unless="istanbul.command.exists">
     <mkdir dir="${basedir}/node_modules"/>
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="install"/>
       <arg value="istanbul"/>
     </exec>
@@ -186,7 +192,8 @@
 
   <target name="istanbul-update"
 	  depends="istanbul-install">
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="update"/>
       <arg value="istanbul"/>
     </exec>
@@ -200,8 +207,7 @@
     The output appears in doc/jsdoc/index.html
     </echo>
     <exec executable="${jsdoc.home}/jsdoc"
-          timeout="60000"
-          >
+          timeout="${timeout}">
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
       <arg value="--destination" />
@@ -218,7 +224,8 @@
 	  depends="-check-mocha, chai-update"
 	  unless="mocha.command.exists">
     <mkdir dir="${basedir}/node_modules"/>
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="install"/>
       <arg value="mocha"/>
       <arg value="mocha-junit-reporter"/>
@@ -227,7 +234,8 @@
 
   <target name="mocha-update"
 	  depends="mocha-install">
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="update"/>
       <arg value="mocha"/>
       <arg value="mocha-junit-reporter"/>
@@ -244,7 +252,8 @@
     See jsdoc/plugins/accessorJSDocTags.js
     See jsdoc/templates/ptdoc/publish.js
     </echo>
-    <exec executable="${jsdoc.home}/jsdoc">
+    <exec executable="${jsdoc.home}/jsdoc"
+          timeout="${timeout}">
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
       <arg value="--recurse" />
@@ -270,7 +279,8 @@
     </echo>
     <exec dir="${rusteduk.source}"
           failonerror="true"
-          executable="make">
+          executable="make"
+          timeout="${timeout}">
     </exec>
   </target>
   
@@ -278,7 +288,8 @@
 	  depends="-check-terraswarm-gdp"
 	  unless="terraswarm.gdp.exists">
     <mkdir dir="${basedir}/node_modules"/>
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="install"/>
       <arg value="@terraswarm/gdp"/>
     </exec>
@@ -286,7 +297,8 @@
 
   <target name="terraswarm-gdp-update"
 	  depends="terraswarm-gdp-install">
-    <exec executable="npm">
+    <exec executable="npm"
+          timeout="${timeout}">
       <arg value="update"/>
       <arg value="@terraswarm/gdp"/>
     </exec>
@@ -364,7 +376,8 @@
       ${istanbul.command} cover ${mocha.bar.command} -- ${converted}
     </echo>
     
-    <exec executable="${istanbul.command}">
+    <exec executable="${istanbul.command}"
+          timeout="${timeout}">
       <arg value="cover"/>
       <arg value="${mocha.bar.command}"/>
       <arg value="--"/>
@@ -516,7 +529,8 @@
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
-    <exec executable="${mocha.command}">
+    <exec executable="${mocha.command}"
+          timeout="${timeout}">
       <arg line="--bail"/>
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
@@ -627,7 +641,8 @@
     </echo>
     <mkdir dir="${basedir}/vendors"/>
     <exec dir="${basedir}/vendors"
-          executable="git">
+          executable="git"
+          timeout="${timeout}">
       <!-- We set LD_LIBRARY_PATH to "" and avoid
 	   [exec] Cloning into 'jsdoc'...
 	   [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
@@ -646,7 +661,8 @@
 	  depends="vendors-jsdoc"
 	  description="Do a git pull in vendors/jsdoc">
     <exec dir="${basedir}/vendors/jsdoc"
-          executable="git">
+          executable="git"
+          timeout="${timeout}">
       <arg value="pull"/>
     </exec>
   </target>
