@@ -306,7 +306,6 @@ module.exports = {
     'getTopLevelAccessors' : commonHost.getTopLevelAccessors,
     //'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
-    'main': main,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
 };
