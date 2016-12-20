@@ -1,47 +1,48 @@
 // @version: $$Id$$
-// Exercise the main() function
+// Exercise the accessorMain() function
 // To run this test, do:
 //   sudo npm install -g mocha
 //   mocha testMain.js
 
 var nodeHost = require('../../nodeHost.js');
+var accessorMain = require('../../../util/accessorMain.js');
 var assert = require('assert');
-describe('hosts/node/test/mocha/testMain.js: commonHost.js main()', function () {
-    it('main()', function () {
+describe('hosts/node/test/mocha/testMain.js: accessorMain.js accessorMain()', function () {
+    it('accessorMain.accessorMain()', function () {
 	var args = [];
 	// 3 is the error code
-	assert.equal(main(args), 3);
+	assert.equal(accessorMain.accessorMain(args), 3);
     });
 
-    it('main(-h)', function () {
+    it('accessorMain.accessorMain(-h)', function () {
 	var args = [ '-h' ];
 	// FIXME: It would be nice to catch the output here
-	assert.equal(main(args), 0);
+	assert.equal(accessorMain.accessorMain(args), 0);
     });
 
-    it('main(-timeout) with no timeout', function () {
+    it('accessorMain.accessorMain(-timeout) with no timeout', function () {
 	var args = ['-timeout'];
-	assert.equal(main(args), 3);
+	assert.equal(accessorMain.accessorMain(args), 3);
     });
 
-    it('main(-v)', function () {
+    it('accessorMain.accessorMain(-v)', function () {
 	var args = [ '-v' ];
 	// FIXME: It would be nice to catch the output here
-	assert.equal(main(args), 0);
+	assert.equal(accessorMain.accessorMain(args), 0);
     });
 
 
     // Run a composite accessor that has a TrainableTest accessor and check
     // that wrapup is called.
     function runTrainableTestAccessor(accessorPath) {
-	it('main(--accessor)', function (done) {
+	it('accessorMain.accessorMain(--accessor)', function (done) {
     	    // This test is attempting to test that wrapup will get called.
     	    // The first step is to be able to get all the accessors that were created.
     	    //
     	    // One symptom of this problem is that wrapup should be called
     	    // on contained accessors.  For example,
 
-    	    // Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js --accessor -timeout 2000 test/auto/RampJSTest.js)
+    	    // Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js --accessor -timeout 6000 test/auto/RampJSTest.js)
     	    // should generate:
     	    //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/auto/RampJSTest.js
     	    //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TestSpontaneous.js
@@ -108,7 +109,7 @@ describe('hosts/node/test/mocha/testMain.js: commonHost.js main()', function () 
 
     	    var args = [ '--accessor', '--timeout', '5500', accessorPath ];
     	    // FIXME: It would be nice to catch the output here
-    	    assert.equal(main(args), 0);
+    	    assert.equal(accessorMain.accessorMain(args), 0);
     	    assert.ok(typeof nodeHost.getTopLevelAccessors() !== 'undefined',
     		      "nodeHost.accessors is not defined after invoking main " + args);
 	});
