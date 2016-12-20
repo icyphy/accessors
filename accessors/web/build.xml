@@ -524,13 +524,14 @@
       The output is in JUnit-compatibile xml.
       If necessary, mocha and mocha-junit-reporter are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout.longer} ms.
     </echo>
 
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
     <exec executable="${mocha.command}"
-          timeout="${timeout}">
+          timeout="${timeout.longer}">
       <arg line="--bail"/>
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
