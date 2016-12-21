@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 10000 gdp/test/auto/GDPLogCreateAppendReadJS)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 6000 gdp/test/auto/GDPLogCreateAppendReadJS)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
     //  to edit the model, run:
@@ -23,7 +23,7 @@ exports.setup = function() {
 
     // Start: TestSpontaneous: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous = this.instantiate('TestSpontaneous', 'test/TestSpontaneous.js');
-    TestSpontaneous.setParameter('interval', 1500.0);
+    TestSpontaneous.setParameter('interval', 1000.0);
 
     // Start: JavaScriptRamp: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -36,7 +36,7 @@ exports.setup = function() {
 
     // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
-    TestSpontaneous2.setParameter('interval', 2200.0);
+    TestSpontaneous2.setParameter('interval', 1100.0);
 
     // Start: JavaScriptRamp2: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -82,4 +82,4 @@ exports.setup = function() {
     this.connect(TestSpontaneousOnce, 'output', JavaScriptGDPLogName, 'trigger');
     this.connect(GDPLogCreate, 'output', GDPLogAppend2, 'logname');
     this.connect(JavaScriptRamp, 'output', GDPLogAppend2, 'data');
-}
+};
