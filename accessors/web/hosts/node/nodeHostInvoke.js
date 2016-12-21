@@ -28,22 +28,17 @@
  *
  *  Usage:
  *  <pre>
- *  node.js nodeHostInvoke.js [-timeout timeInMs] accessor.js [accessor2.js ...]
+ *  node.js nodeHostInvoke.js [--accessor] [-timeout timeInMs] accessor.js [accessor2.js ...]
  *  </pre>
  *
  *  To run an accessor forever, use:
  *  <pre>
- *  node nodeHostInvoke.js test/TestComposite
+ *  node nodeHostInvoke.js --accessor test/TestComposite
  *  </pre>
  *
  *  To run two instances of the same accessor forever, use:
  *  <pre>
- *  node nodeHostInvoke.js test/TestComposite test/testComposite.js
- *  </pre>
- *
- *  To run an accessor for 2 seconds, use:
- *  <pre>
- *  node nodeHostInvoke.js -timeout 2000 test/TestComposite
+ *  node nodeHostInvoke.js --accessor test/TestComposite test/testComposite.js
  *  </pre>
  *
  *  To run an accessor for 2 seconds that uses wrapup:
