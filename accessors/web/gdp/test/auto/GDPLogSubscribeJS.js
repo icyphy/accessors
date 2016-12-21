@@ -99,4 +99,4 @@ exports.setup = function() {
     this.connect(GDPLogCreate, 'output', GDPLogSubscribe2, 'logname');
     this.connect(GDPLogCreate, 'output', GDPLogAppend2, 'logname');
     this.connect(JavaScriptRamp, 'output', GDPLogAppend2, 'data');
-}
+};
