@@ -23,18 +23,41 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Provide a Node.js swarmlet host.
+/** Node.js swarmlet host module. To use this, issue the following
+ *  command:
+ *  
+ *    var nodeHost = require(path + '/nodeHost.js');
  *
- *  This file reads a command line argument that is expected
- *  to define a composite accessor.  The instantiate() and initialize()
- *  functions are then invoked.
+ *  where path is the path to this nodeHost.js file.
+ *  
+ *  The resulting nodeHost object provides a number of functions,
+ *  including:
+ *  
+ *  * getAccessorCode(accessorClass): Return the source code for
+ *    an accessor, given its fully-qualified class name, e.g. 'net/REST'.
+ *    
+ *  * getTopLevelAccessors(): Return an array of instantiated
+ *    top-level accessors (implemented in commonHost.js).
+ *    
+ *  * instantiate(accessorName, accessorClass): Instantiate an
+ *    accessor with an assigned name (an arbitrary string) and
+ *    its fully-qualified class name, e.g. 'net/REST'.
+ *  
+ *  * startHostShell(): Start an interactive shell on stdin/stdout
+ *    to execute commands. Type 'help' in this shell for a list of
+ *    supported commands.
+ *    
+ *  * stopAllAccessors(): Call wrapup on all top-level accessors.
  *
- *  See nodeHostShell.js for an interactive program.
+ *  See nodeHostShell.js for an example use of this module.
  *
  *  @module nodeHost
  *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$
  */
+
+//////////////////////////////////////////////////////////////////////////
+// Module dependencies.
 
 var path = require('path');
 var fs = require('fs');
@@ -42,48 +65,15 @@ var fs = require('fs');
 // Locally defined modules.
 commonHost = require('../common/commonHost.js');
 
+//////////////////////////////////////////////////////////////////////////
+// Module variables.
+
 /** Module variable giving the paths to search for accessors.
  *  By default this module assumes that accessors are stored in
  *  __dirname/../.., where __dirname is the directory where this
  *  script is located.
  */
 var accessorPath = [path.join(__dirname, '..', '..')];
-
-// There are various scoping problems, it seems that the accessors variable
-// needs to be defined and updated in the nodeHost module, not commonHost.
-//
-// One symptom of this problem is that wrapup should be called
-// on contained accessors.  For example,
-
-// Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js --accessor -timeout 2000 test/auto/RampJSTest.js)
-// should generate:
-//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/auto/RampJSTest.js
-//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TestSpontaneous.js
-//   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TrainableTest.js
-//   Instantiated accessor RampJSTest.js with class test/auto/RampJSTest.js
-//   nodeHost.js: About to invoke wrapup().
-//   nodeHost.js: invoking wrapup() for accessor: RampJSTest.js.TestSpontaneous
-//   nodeHost.js: invoking wrapup() for accessor: JavaScriptRamp
-//   nodeHost.js: invoking wrapup() for accessor: RampJSTest.js.TrainableTest
-//   TrainableTest.js: wrapup() finished: RampJSTest.js.RampJSTest.js.TrainableTest
-
-// If wrapup is not called on RameJSTest.js.TestSpontaneous, and the output ends with:
-//   Instantiated accessor RampJSTest.js with class test/auto/RampJSTest.js
-//   nodeHost.js: About to invoke wrapup().
-//   TrainableTest.js: wrapup() finished: RampJSTest.js.RampJSTest.js.TrainableTest
-
-// then the problem is that we are not keeping track of accessors that
-// are being created.
-
-// FIXME: Remove this comment now that we have moved the accessors variable to commonHost.js
-// All the accessors that were instantiated.
-//var accessors = [];
-
-// Flag to check if monitoring accessor has been setup or not
-var monitoringSetup = false;
-
-// Stores instance of monitoring accessor that is setup for the host
-var monitoringAccessor;
 
 /////////////////////////////////////////////////
 // Functions are defined below here.
@@ -104,7 +94,7 @@ var monitoringAccessor;
  *
  *  @param name Fully qualified accessor name, e.g. 'net/REST'.
  */
-getAccessorCode = function (name) {
+function getAccessorCode(name) {
     var code;
     // Append a '.js' to the name, if needed.
     if (name.indexOf('.js') !== name.length - 3) {
@@ -143,7 +133,7 @@ getAccessorCode = function (name) {
  *  @param accessorName The name to give to the instance.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiate = function (accessorName, accessorClass) {
+function instantiate(accessorName, accessorClass) {
     // The instantiate() function must be defined in
     // web/hosts/nodeHost/nodeHost.js so that require() knows to look
     // in the web/hosts/nodeHost/node_modules.
@@ -156,15 +146,13 @@ instantiate = function (accessorName, accessorClass) {
     var instance = new commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
-
-    commonHost.getTopLevelAccessors().push(instance);
     return instance;
 };
 
+// FIXME: Rework the following and document above.
+
 /** Instantiate and initialize the accessors named by the
  *  accessorNames argument.
- *
- * See commonHost.main() for how this method is used.
  *
  * Sample usage:
  *
@@ -213,114 +201,16 @@ instantiateAndInitialize = function (accessorNames) {
     return accessorsCreated;
 };
 
-/** Instantiates and initializes monitoring accessor that periodically
- *  collects monitoring data for accessors running on the host
- */
-setupMonitoring = function () {
-    // Setup monitoring accessor, if it has not been already for this host
-    if (!monitoringSetup) {
-        try {
-            monitoringAccessor = instantiate('monitoringAccessor',
-                'hosts/node/nodeMonitoringAccessor');
-            monitoringAccessor.initialize();
-
-            // FIXME: Need to remove hardcoding of sampling period for monitoring,
-            // which is currently at 5 seconds
-            monitoringAccessor.provideInput('samplePeriodInMs', 5000);
-            monitoringAccessor.react();
-            monitoringSetup = true;
-        } catch (ex) {
-            // Monitoring setup failure shouldn't interfere with accessor setup
-            // Will simply retry next time an accessor is instantiated
-            console.error("Monitoring setup failure ", ex.message);
-        }
-    }
-
-    return monitoringAccessor;
-};
-
-// FIXME: I'm not sure if this is right, but stop() was moved to
-// commonHost.js.  Some tests expect the node host to define stop() so
-// we redeclare it.
-
-stop = commonHost.stop;
-
-// FIXME: The code below can be deleted now that it has been moved to commonHost.js
-// /** Stop execution.
-//  *
-//  *  Accessors such as JavaScriptStop would invoke stop as
-//  *  <pre>
-//  *  stop.call(this);
-//  *  </pre>
-//  *  In the exitHandler() function, exit() is caught and wrapup() is invoked.
-//  */
-// stop = function () {
-//     var thiz = this.root;
-//     console.log("nodeHost.js: " + thiz.container.accessorName + "." + thiz.accessorName + ": stop() invoked");
-
-//     // Call wrapup() on any accessors in the container.  These accessors should
-//     // wrapup() themselves, and ideally emit a 'stopped' event.
-//     // TODO:  Listen for all 'stopped' events for a given time before exit.
-//     // TODO:  Figure out when to dispose of accessors.  (Always at stop()?)
-//     // TODO:  Figure out how accessors should signal a stop().  Should probably
-//     // not call it directly.
-
-//     // Not all Accessors host have container, see
-//     // https://www.terraswarm.org/accessors/wiki/Version1/Container
-//     if (thiz.container) {
-//         for (var i = 0; i < thiz.container.containedAccessors.length; i++) {
-//             console.log("nodeHost.js: stop(): about to call wrapup on " + thiz.container.containedAccessors[i].accessorName);
-//             thiz.container.containedAccessors[i].wrapup();
-//         }
-//     }
-
-//     // If you want to wrapup all the accessors:
-//     // for (var i = 0; i < accessors.length; i++) {
-//     //        accessors[i].wrapup();
-//     //}
-
-//     // TODO:  Improve on arbitrary timeout.
-//     //setTimeout(function () {
-//     //        process.exit();
-//     //}, 2000);
-// };
-
-//////////////////////////////////////////////
-// Visibility and exports below here.
-
-// Make the Accessor constructor visible so that we may use it in the
-// Cape Code Accessor Code Generator.
-Accessor = commonHost.Accessor;
-
-// Define additional functions that should appear in the global scope
-// so that they can be invoked on the command line.
-main = commonHost.main;
-provideInput = commonHost.provideInput;
-setParameter = commonHost.setParameter;
-
-// In case this gets used a module, create an exports object.
-// FIXME: Do we want this???
-module.exports = {
-    'Accessor': Accessor,
-    'getAccessorCode': getAccessorCode,
-    'getTopLevelAccessors' : commonHost.getTopLevelAccessors,
-    //'instantiate': instantiate,
-    'instantiateAndInitialize': instantiateAndInitialize,
-    'provideInput': commonHost.provideInput,
-    'setParameter': commonHost.setParameter,
-};
-
-/**
- * Handle calls to exit, Control-C, errors and uncaught exceptions.
- * The wrapup() method is invoked for all accessors.  The first
- * exception is reported and process.exitCode is set to non-zero;
- * @param options Properties for the call.  Properties include cleanup and exit.
+/** Handle calls to exit, Control-C, errors and uncaught exceptions.
+ *  The wrapup() method is invoked for all accessors.  The first
+ *  exception is reported and process.exitCode is set to non-zero;
+ *  @param options Properties for the call.  Properties include cleanup and exit.
  */
 function exitHandler(options, err) {
     // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
     // console.log(options);
-    //var myError = new Error("nodeHost.js: In exitHandler()");
-    //console.log(myError.stack);
+    // var myError = new Error("nodeHost.js: In exitHandler()");
+    // console.log(myError.stack);
 
     var accessor,
         composite,
@@ -328,71 +218,14 @@ function exitHandler(options, err) {
         initialThrowable = null;
     if (options.cleanup) {
         try {
-	    // FIXME: We used to do all this stuff below, now we call commonHost.js stop().
-	    commonHost.stop();
-	    
-            // // Getting a list of all the accessors seems to be a bit convoluted.
-
-            // var util = require('util');
-	    // var message = 'nodeHost.js: exitHandler(' + util.inspect(options) + ', ' + err + '): About to invoke wrapup().';
-            // console.log(message);
-
-	    // console.log(new Error(message).stack);
-            // //var util = require('util');
-            // //console.log(util.inspect(this, {depth: 10}));
-            // //console.log('nodeHost.js: accessors');
-            // //console.log(accessors);
-
-            // for (composite in commonHost.accessors) {
-            //     for (i in commonHost.accessors[composite].containedAccessors) {
-            //         try {
-            //             accessor = commonHost.accessors[composite].containedAccessors[i];
-            //             console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-            //             if (accessor) {
-            //                 accessor.wrapup();
-            //             }
-            //         } catch (error) {
-            //             if (initialThrowable === null) {
-            //                 initialThrowable = error;
-            //             }
-            //         }
-            //     }
-            // }
-
-            //             console.log('nodeHost.js: this.process.mainModule');
-            //             console.log(this.process.mainModule);
-            //             console.log('nodeHost.js: this.process.mainModule.exports');
-            //             console.log(this.process.mainModule.exports);
-            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors');
-            //             console.log(this.process.mainModule.exports.accessors);
-            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0]');
-            //             console.log(this.process.mainModule.exports.accessors[0]);
-            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors');
-            //             console.log(this.process.mainModule.exports.accessors[0].containedAccessors);
-            //             console.log('nodeHost.js: this.process.mainModule.exports.accessors[0].containedAccessors.length');
-            //             console.log(this.process.mainModule.exports.accessors[0].containedAccessors.length);
-            //             for (var composite in this.process.mainModule.exports.accessors) {
-            //                 for (var i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
-            //                     var accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
-            //                     try {
-            //                         console.log('nodeHost.js: invoking wrapup() for accessor: ' + accessor.accessorName);
-            //                         if (accessor) {
-            //                             accessor.wrapup();
-            //                         }
-            //                     } catch (error) {
-            //                         if (initialThrowable == null) {
-            //                             initialThrowable = error;
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            // console.log('nodeHost.js: done invoking wrapup() in all accessors.');
+            commonHost.stopAllAccessors();
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
             process.exitCode = 1;
         }
         if (initialThrowable !== null) {
-            console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
+            console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: "
+                    + initialThrowable + ":" + initialThrowable.stack);
             process.exitCode = 1;
         }
     }
@@ -400,7 +233,7 @@ function exitHandler(options, err) {
     if (options.stack) {
         var util = require('util');
         console.log("nodeHost.js: SIGUSR1 was received.");
-        //console.log(util.inspect(this, {depth: 15}));
+        // console.log(util.inspect(this, {depth: 15}));
         for (composite in this.process.mainModule.exports.accessors) {
             for (i in this.process.mainModule.exports.accessors[composite].containedAccessors) {
                 accessor = this.process.mainModule.exports.accessors[composite].containedAccessors[i];
@@ -433,8 +266,166 @@ function exitHandler(options, err) {
 	console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" + process.exitCode + "): Here is the stack so we know why: ").stack);
         process.exit(process.exitCode);
     }
-
 }
+
+// Indicator of whether the interactive host is already running.
+var interactiveHostRunning = false;
+
+/** Start an interactive version of this host as a shell.
+ *  This will produce a prompt on stdout that accepts JavaScript statements
+ *  on stdin and executes them.
+ */
+function startHostShell() {
+    if (interactiveHostRunning) {
+        console.log('Interactive host is already running.');
+        return;
+    }
+    interactiveHostRunning = true;
+    var readline = require('readline');
+
+    // Support auto completion for common commands.
+    function completer(line) {
+        var completions = [
+            'exit',
+            'getTopLevelAccessors()',
+            'help',
+            'instantiate(',
+            'provideInput(',
+            'setParameter(',
+            'quit',
+        ];
+        var hits = completions.filter(function (candidate) {
+            // FIXME: need a better filter.
+            return candidate.indexOf(line) === 0;
+        });
+        // show all completions if none found
+        return [hits.length ? hits : completions, line];
+    }
+    // FIXME: make options passable to startHost()?
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        completer: completer,
+    });
+
+    var self = this;
+    
+    // The next bit of code is quite tricky, and is due to
+    // Axel Rauschmayer. See
+    // https://dzone.com/articles/implementing-command-line-eval
+    // The reason it is tricky is that we want to support statements like
+    // "var foo = 10" on the command line, and we want the variable foo
+    // to be stored as a property of self-contained object so it can be used
+    // in subsequent commands. While this can be done using eval() as an
+    // indirect call, which stores foo in the global scope, this is not
+    // very clean, because it makes it possible to clobber functions and
+    // properties of the global scope.
+    //
+    // This code uses an Ecma 6 "generator," which is a long running
+    // function that pauses at "yield" statements. Each yield statement
+    // sends a value that is returned by a call to next() on the generator.
+    // And each call to next() can pass in a value that will be returned
+    // by the generator.  For a clear explanation of
+    // ES6 generators, see https://davidwalsh.name/es6-generators
+    // The reason that generators solve the problem is that variable
+    // assignments become properties of the generator function evalGenerator
+    // rather than properties of the global scope. Since this function
+    // never returns, its assigned variables are never forgotten.
+    // Also, the functions available on the command line can be provided
+    // here in a controlled way, including overriding any global functions,
+    // if necessary.
+    function *evalGenerator() {
+        var command = yield;
+        
+        // Define functions available to the command line.
+        var getTopLevelAccessors = commonHost.getTopLevelAccessors;
+        var stopAllAccessors = commonHost.stopAllAccessors;
+
+        while(true) {
+            try {
+                var result = eval(command);
+                command = yield result;
+            } catch (e) {
+                command = yield e.toString();
+            }
+        }
+    }
+
+    function Evaluator() {
+        this.evalGen = evalGenerator();
+        this.evalGen.next(); // start
+    }
+    Evaluator.prototype.evaluate = function (str) {
+        return this.evalGen.next(str);
+    };
+    var evaluator = new Evaluator();
+    
+    // Emitted whenever a command is entered on stdin.
+    rl.on('line', function (command) {
+        // Remove any trailing semicolon.
+        command = command.replace(/;$/, '');
+
+        ///////////////
+        // exit and quit functions.
+        // NOTE: \s is whitespace. The 'i' qualifier means 'case insensitive'.
+        // Also, tolerate trailing semicolon.
+        if (command.match(/^\s*quit\s*$/i) ||
+            command.match(/^\s*exit\s*$/i)) {
+            console.log('exit');
+            interactiveHostRunning = false;
+            rl.close();
+            // Invoke process.exit() so that exitHandler() in
+            // nodeHost.js gets invoked and calls wrapup.
+            process.exit();
+            return;
+        }
+        if (command.match(/^\s*help\s*$/i)) {
+            var helpFile = path.join(__dirname, 'nodeHostShellHelp.txt');
+            var helpText = fs.readFileSync(helpFile, 'utf8');
+            console.log(helpText);
+            rl.prompt();
+            return;
+        }
+
+        ///////////////
+        // Evaluate anything else.
+        try {
+            var response = evaluator.evaluate(command);
+            console.log(response.value);
+        } catch (error) {
+            console.log(error);
+        }
+        rl.prompt();
+    });
+    // Emitted whenever the input stream receives a ^C.
+    rl.on('SIGINT', function () {
+        rl.question('Are you sure you want to exit? ', function (answer) {
+            if (answer.match(/^y(es)?$/i)) {
+                rl.close();
+                process.exit();
+                return;
+            } else {
+                console.log('Cancelled.');
+                rl.prompt();
+            }
+        });
+    });
+    // Emitted whenever the input stream is sent to the background with ^Z
+    // and then continued with fg. Does not work on Windows.
+    rl.on('SIGCONT', function () {
+        // `prompt` will automatically resume the stream
+        rl.prompt();
+    });
+
+    console.log('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
+    rl.setPrompt('nsh> ');
+    rl.prompt();
+    
+    return evaluator;
+};
+
+///////////////////////////////////////////////////////////////////////
+// Execution handlers.
 
 // If the node host is exiting, then cleanup, which includes invoking wrapup();
 process.on('exit', exitHandler.bind(null, {
@@ -456,4 +447,23 @@ process.on('SIGUSR1', exitHandler.bind(null, {
 process.on('uncaughtException', exitHandler.bind(null, {
     exit: true
 }));
+
+///////////////////////////////////////////////////////////////////////
+// Export the module functions.
+
+// Exported from this module:
+exports.getAccessorCode = getAccessorCode;
+exports.instantiate = instantiate;
+exports.instantiateAndInitialize = instantiateAndInitialize;
+exports.startHostShell = startHostShell;
+
+// Exported from commonHost:
+exports.Accessor = commonHost.Accessor;
+exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
+exports.stopAllAccessors = commonHost.stopAllAccessors;
+
+// FIXME: Should not be needed:
+//Make the Accessor constructor visible so that we may use it in the
+//Cape Code Accessor Code Generator.
+Accessor = commonHost.Accessor;
 

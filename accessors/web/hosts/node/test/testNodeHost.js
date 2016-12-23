@@ -9,6 +9,6 @@ a.provideInput('input', 10);
 a.react();
 a.latestOutput('output');  // Should return 50
 a.wrapup();
-quit();
+exit
 
 
