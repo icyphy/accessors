@@ -149,58 +149,6 @@ function instantiate(accessorName, accessorClass) {
     return instance;
 };
 
-// FIXME: Rework the following and document above.
-
-/** Instantiate and initialize the accessors named by the
- *  accessorNames argument.
- *
- * Sample usage:
- *
- * nodeHostInvoke.js contains:
- * <pre>
- * require('./nodeHost.js');
- * invoke(process.argv.slice(2));
- * </pre>
- *
- * To invoke:
- * <pre>
- *   node nodeHostInvoke.js test/TestComposite
- * </pre>
- *
- * @param accessorNames An array of accessor names in a format suitable
- * for getAccessorCode(name).
- */
-instantiateAndInitialize = function (accessorNames) {
-    var accessorsCreated = [],
-	index,
-	length = accessorNames.length;
-    for (index = 0; index < length; ++index) {
-        // The name of the accessor is basename of the accessorClass.
-        var accessorClass = accessorNames[index];
-        // For example, if the accessorClass is
-        // test/TestComposite, then the accessorName will be
-        // TestComposite.
-
-        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
-        var accessorName = accessorClass.substring(startIndex);
-        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
-            accessorName = accessorName.substring(1);
-        }
-        // If the same accessorClass appears more than once in the
-        // list of arguments, then use different names.
-        // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
-        if (index > 0) {
-            accessorName += "_" + (index - 1);
-        }
-        var accessor = instantiate(accessorName, accessorClass);
-
-        // Push the top level accessor so that we can call wrapup later.
-        accessorsCreated.push(accessor);
-        accessor.initialize();
-    }
-    return accessorsCreated;
-};
-
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.
  *  The wrapup() method is invoked for all accessors.  The first
  *  exception is reported and process.exitCode is set to non-zero;
@@ -262,10 +210,11 @@ function exitHandler(options, err) {
     }
 
     if (options.exit) {
-        // FIXME: need a way to enable and disable this using debug
+        /*
         console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
                 + process.exitCode
                 + "): Here is the stack so we know why: ").stack);
+        */
         process.exit(process.exitCode);
     }
 }
@@ -456,13 +405,13 @@ process.on('uncaughtException', exitHandler.bind(null, {
 // Exported from this module:
 exports.getAccessorCode = getAccessorCode;
 exports.instantiate = instantiate;
-exports.instantiateAndInitialize = instantiateAndInitialize;
 exports.startHostShell = startHostShell;
 
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
+exports.processCommandLineArguments = commonHost.processCommandLineArguments;
 
 // FIXME: Should not be needed:
 //Make the Accessor constructor visible so that we may use it in the

@@ -24,7 +24,7 @@
 //
 
 /** Instantiate and initialize the accessors named by the command line
- *  arguments.
+ *  arguments.  FIXME: Update docs.
  *
  *  Usage:
  *  <pre>
@@ -53,9 +53,21 @@
  */
 
 var nodeHost = require('./nodeHost.js');
+var fs = require('fs');
 
-var accessorMain = require('../util/accessorMain.js');
-
-// Remove "node.js" from the array of command line arguments.
-// Remove "nodeHostInvoke.js" from the array of command line arguments.
-accessorMain.accessorMain(process.argv.slice(2));
+// Remove "node" and "nodeHostInvoke.js" from the array of command line arguments.
+nodeHost.processCommandLineArguments(process.argv.slice(2),
+        // Argument to read a file.
+        function(filename) {
+            // FIXME: What if the encoding is not utf8?
+            return fs.readFileSync(filename, 'utf8');
+        },
+        // Argument to instantiate an accessor.
+        nodeHost.instantiate,
+        // Function to call upon termination.
+        function() {
+            // Note that in the node host, an exit handler
+            // will call wrapup on all accessors.
+            process.exit(0);
+        }
+);
