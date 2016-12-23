@@ -71,9 +71,11 @@
 
 
   <!-- Targets below here -->
-  
+  <!-- Temporarily don't depend on jsdoc or ptdoc because nodeHost.js uses ecma 6 generators.
+       See  https://github.com/jsdoc3/jsdoc/issues/555
+       -->
   <target name="build"
-          depends="duktape, jsdoc, ptdoc, rusteduk"
+          depends="duktape"
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
