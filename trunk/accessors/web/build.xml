@@ -680,6 +680,13 @@
       <arg value="clone"/>
       <arg value="https://github.com/terraswarm/jsdoc.git"/>
     </exec>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="jsdoc"/>
+      <arg value="marked"/>
+      <arg value="requizzle"/>
+    </exec>
   </target>
 
   <target name="vendors-jsdoc-pull"
@@ -689,6 +696,13 @@
           executable="git"
           timeout="${timeout}">
       <arg value="pull"/>
+    </exec>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="jsdoc"/>
+      <arg value="marked"/>
+      <arg value="requizzle"/>
     </exec>
   </target>
 
