@@ -63,9 +63,9 @@ function accessorPropertiesToMoML(propertyName, elements) {
             var name = element.name,
                 type = element.type,
                 description = element.description;
-            if (type !== undefined) {
-                type = type.toSource();
-            }
+            // if (type !== undefined) {
+            //     type = type.toSource();
+            // }
             if (debugging) {
                 console.error(propertyName + " name: " + name);
                 console.error(propertyName + " type: " + type);
@@ -109,7 +109,7 @@ exports.publish = function (data) {
     }).remove();
     docs = data().get(); // <-- an array of Doclet objects
 
-    //    console.error("ptdoc/public.js: docs: " + docs.toSource());
+    // console.error("ptdoc/public.js: docs: " + util.inspect(docs));
     docs
         .forEach(function (element) {
 
@@ -131,7 +131,8 @@ exports.publish = function (data) {
                     console.error("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
                 }
                 console.error("ptdoc/public.js: element.kind: " + element.kind);
-                console.error("ptdoc/public.js: element:" + element.toSource());
+		var util = require('util');
+                console.error("ptdoc/public.js: element: " + util.inspect(element));
                 //console.error(element);
             }
 
@@ -141,8 +142,9 @@ exports.publish = function (data) {
                 // Alphabetical by tag.
                 if (element.author !== undefined) {
                     // Strip off [" "]
-                    var author = element.author.toSource(),
-                        shortAuthor = author.substring(2, author.length - 2);
+                    var author = element.author[0];
+                    //shortAuthor = author.substring(2, author.length - 2);
+		    shortAuthor = author;
                     moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n' +
                         '    </property>\n';
                 }
@@ -200,6 +202,11 @@ function xmlEscape(bad) {
     if (bad === undefined) {
         return bad;
     }
+
+    if (typeof bad === 'object') {
+	bad = new String(bad.toString());
+    }
+
     return bad.replace(/[\n<>&'"]/g,
         function (c) {
             switch (c) {
