@@ -262,8 +262,10 @@ function exitHandler(options, err) {
     }
 
     if (options.exit) {
-	// FIXME: need a way to enable and disable this using debug
-	console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" + process.exitCode + "): Here is the stack so we know why: ").stack);
+        // FIXME: need a way to enable and disable this using debug
+        console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
+                + process.exitCode
+                + "): Here is the stack so we know why: ").stack);
         process.exit(process.exitCode);
     }
 }
