@@ -119,11 +119,11 @@ function accessorMain(argv) {
     	    }
     	    timeout = argv[i];
 
-    	    console.log("commonHost.js: main(): Setting timout to stop after " + timeout + " ms.");
+    	    console.log("accessorMain.js: main(): Setting timout to stop after " + timeout + " ms.");
     	    setTimeout(function () {
     		// Under node, process.exit gets caught by exitHandler() in
     		// nodeHost.js and invokes wrapup().
-    		console.log("commonHost.js: main(): Maximum time reached. Calling stop().");
+    		console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
     		stop();
     	    }, timeout);
     	    break;
@@ -132,37 +132,34 @@ function accessorMain(argv) {
     	case '--v':
     	case '-version':
     	case '--version':
-    	    console.log("Accessors 1.0, commonHost.js: $Id$");
+    	    console.log("Accessors 1.0, accessorMain.js: $Id$");
     	    return 0;
 
     	default:
     	    sawFiles = true;
     	    if (timeout === -1) {
-    		// Prevent the script from exiting by repeating the empty function
-    		// every ~25 days.
-    		setInterval(function () {}, 2147483647);
+    	        // Prevent the script from exiting by repeating the empty function
+    	        // every ~25 days.
+    	        setInterval(function () {}, 2147483647);
     	    }
     	    if (sawAccessor) {
-    		commonHost.topLevelAccessors = instantiateAndInitialize(argv.slice(i));
-    		return 0;
+    	        commonHost.topLevelAccessors = instantiateAndInitialize(argv.slice(i));
+    	        return 0;
     	    } else {
-    		try {
-    		    // FIXME: Using getAccessorCode here is wrong.
-    		    // That will search a library of accessors.
-    		    // We want to read a regular file.
-    		    // But that can't be done in commonHost without giving every
-    		    // accessor access to the file system. This has to be moved
-    		    // to the host-specific JavaScript.
-    		    // FIXME: Rather than just eval, shouldn't this specify a context?
-    		    eval(getAccessorCode(argv[i]));
-    		} catch (error) {
-    		    throw new Error('Failed to eval "' + argv[i] + '": ' + error);
-    		}
+    	        try {
+    	            // FIXME: Using getAccessorCode here is wrong.
+    	            // That will search a library of accessors.
+    	            // We want to read a regular file.
+    	            // FIXME: Rather than just eval, shouldn't this specify a context?
+    	            eval(getAccessorCode(argv[i]));
+    	        } catch (error) {
+    	            throw new Error('Failed to eval "' + argv[i] + '": ' + error);
+    	        }
     	    }
     	}
     }
     if ( !sawFiles) {
-	throw new Error("No file arguments were present?  Args were: " + argv);
+        throw new Error("No file arguments were present?  Args were: " + argv);
     }
     return 0;
 }
