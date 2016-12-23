@@ -124,7 +124,7 @@ function accessorMain(argv) {
     		// Under node, process.exit gets caught by exitHandler() in
     		// nodeHost.js and invokes wrapup().
     		console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
-    		stop();
+    		commonHost.stop();
     	    }, timeout);
     	    break;
 
