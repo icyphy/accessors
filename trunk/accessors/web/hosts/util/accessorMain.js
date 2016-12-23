@@ -36,28 +36,28 @@
 /** Process command line arguments to evaluate accessors or plain JavaScript.
  *  The command-line arguments can be:
  *
- *  -accessor|--accessor: If present, then the files named as command
- *  line arguments are Composite Accessors to be instantiated an initialized.
- *  If not present, then the files named
- *  as command line arguments are to be interpreted as regular
- *  JavaScript files.
+ *  * -accessor|--accessor: If present, then the files named as command
+ *    line arguments are Composite Accessors to be instantiated an initialized.
+ *    If not present, then the files named
+ *    as command line arguments are to be interpreted as regular
+ *    JavaScript files.
  * 
- *  -e|--e|-echo|--echo: Echo the command that would be run by hand to
- *  replicate the test. This is helpful for use under Ant apply.
+ *  * -e|--e|-echo|--echo: Echo the command that would be run by hand to
+ *    replicate the test. This is helpful for use under Ant apply.
  *  
- *  -h|--h|-help|--help: Print a usage message 
+ *  * -h|--h|-help|--help: Print a usage message 
  *
- *  -timeout|--timeout milliseconds: The maximum amount of time the
- *  script can run. When this time is reached, stop() is called.
+ *  * -timeout|--timeout milliseconds: The maximum amount of time the
+ *    script can run. When this time is reached, stop() is called.
  *
- *  -v|--v|-version|--version: Print out the version number
+ *  * -v|--v|-version|--version: Print out the version number
  *
  *  The flags are followed by one or more filenames that are either
  *  composite accessors or plain JavaScript.  If --accessors is
  *  present, then the argument(s) are assumed to be composite
  *  accessors.  If it --accessors is not present, then the arguments
- *  are passed to getAccessor(), which looks for the file and returns
- *  the content.
+ *  are passed to getAccessor(), which looks for the file and evaluates
+ *  the contents.
  *
  *  @param argv An array of arguments, see above.
  *  @return 0 if there were no problems, 3 if there was a command line argument issue.
