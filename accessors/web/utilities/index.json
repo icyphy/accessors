@@ -1,4 +1,5 @@
 [
     "Browser.js",
-    "Exec.js"
+    "Exec.js",
+    "Stop.js"
 ]
