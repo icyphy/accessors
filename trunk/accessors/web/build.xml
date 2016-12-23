@@ -335,7 +335,8 @@
   </target>
 
   <target name="tests.browser"
-          description="Test the browser host.">
+          description="Test the browser host."
+	  depends="selenium-webdriver-update">
     <echo>
       ==tests.browser==
       Run the Browser Accessor Host test
@@ -631,6 +632,24 @@
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+  </target>
+
+  <target name="selenium-webdriver-install">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="selenium-webdriver"/>
+    </exec>
+  </target>
+
+  <target name="selenium-webdriver-update"
+	  depends="selenium-webdriver-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="selenium-webdriver"/>
+    </exec>
   </target>
 
   <target name="vendors-jsdoc"
