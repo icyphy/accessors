@@ -121,10 +121,10 @@ function accessorMain(argv) {
 
     	    console.log("accessorMain.js: main(): Setting timout to stop after " + timeout + " ms.");
     	    setTimeout(function () {
-    		// Under node, process.exit gets caught by exitHandler() in
-    		// nodeHost.js and invokes wrapup().
-    		console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
-    		commonHost.stop();
+    	        // Under node, process.exit gets caught by exitHandler() in
+    	        // nodeHost.js and invokes wrapup().
+    	        console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
+    	        commonHost.stopAllAccessors();
     	    }, timeout);
     	    break;
 
