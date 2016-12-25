@@ -22,7 +22,7 @@
   <property name="istanbul.command" value="${basedir}/node_modules/.bin/istanbul"/>
   
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
-  <property name="jsdoc.home" value="node_modules/jsdoc" />
+  <property name="jsdoc.home" value="node_modules/@terraswarm/jsdoc" />
 
     <!-- The location of the jsdoc command, used by the jsdoc target. -->
   <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
