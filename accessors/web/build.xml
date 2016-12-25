@@ -21,10 +21,10 @@
   <!-- Location of the istanbul command, used by tests.coverage -->
   <property name="istanbul.command" value="${basedir}/node_modules/.bin/istanbul"/>
   
-  <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
-  <property name="jsdoc.home" value="vendors/jsdoc" />
+  <!-- The location of the jsdoc installation, used by the jsdoc target. -->
+  <property name="jsdoc.home" value="node_modules/jsdoc" />
 
-    <!-- The location of the jsdoc distribution, used by the jsdoc target. -->
+    <!-- The location of the jsdoc command, used by the jsdoc target. -->
   <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
 
   <!-- The location of the Node.js binary. -->
@@ -121,16 +121,16 @@
     <available property="istanbul.command.exists" file="${istanbul.command}"/>
   </target>
 
+  <target name="-check-jsdoc">
+    <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
+  </target>
+
   <target name="-check-mocha">
     <available property="mocha.command.exists" file="${mocha.command}"/>
   </target>
 
   <target name="-check-terraswarm-gdp">
     <available property="terraswarm.gdp.exists" file="${terraswarm.gdp}"/>
-  </target>
-
-  <target name="-check-vendors-jsdoc" unless="vendors.jsdoc.exists">
-    <available property="vendors.jsdoc.exists" file="${jsdoc.command}"/>
   </target>
 
   <target name="cleanAll" 
@@ -205,7 +205,7 @@
   </target>
 
   <target name="jsdoc"
-          depends="vendors-jsdoc-pull"
+          depends="jsdoc-update"
           description="Run jsdoc to generate documentation for JavaScript files."
           >
     <echo>Invoke jsdoc to generate documentation for .js files.
@@ -224,6 +224,27 @@
       <arg value="." />
     </exec>
   </target>
+
+  <target name="jsdoc-install"
+	  depends="-check-jsdoc"
+	  unless="jsdoc.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="@terraswarm/jsdoc"/>
+    </exec>
+  </target>
+
+  <target name="jsdoc-update"
+	  depends="jsdoc-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="@terraswarm/jsdoc"/>
+    </exec>
+  </target>
+
 
   <target name="mocha-install"
 	  depends="-check-mocha, chai-update"
@@ -248,7 +269,7 @@
   </target>
 
   <target name="ptdoc"
-          depends="vendors-jsdoc-pull"
+          depends="jsdoc-update"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
           >
     <echo>Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
@@ -654,55 +675,6 @@
           timeout="${timeout}">
       <arg value="update"/>
       <arg value="selenium-webdriver"/>
-    </exec>
-  </target>
-
-  <target name="vendors-jsdoc"
-	  depends="-check-vendors-jsdoc"
-	  description="Check out jsdoc using git to create vendors/jsdoc."
-	  unless="${vendors.jsdoc.exists}">
-    <echo> Clone the git repo.  We use an accessor-specific fork of https://github.com/terraswarm/jsdoc.git,
-    made on 12-Jun-2015 so that we can support @accessor, @input, @output, @parameter.
-    </echo>
-    <mkdir dir="${basedir}/vendors"/>
-    <exec dir="${basedir}/vendors"
-          executable="git"
-          timeout="${timeout}">
-      <!-- We set LD_LIBRARY_PATH to "" and avoid
-	   [exec] Cloning into 'jsdoc'...
-	   [exec] fatal: unable to access 'https://github.com/terraswarm/jsdoc.git/': error setting certificate verify locations:
-	   [exec]   CAfile: /etc/ssl/certs/ca-certificates.crt
-	   [exec]   CApath: none
-	   [exec] Result: 128
-      -->
-      <env key="LD_LIBRARY_PATH"
-	   value=""/>
-      <arg value="clone"/>
-      <arg value="https://github.com/terraswarm/jsdoc.git"/>
-    </exec>
-    <exec executable="npm"
-          timeout="${timeout}">
-      <arg value="install"/>
-      <arg value="jsdoc"/>
-      <arg value="marked"/>
-      <arg value="requizzle"/>
-    </exec>
-  </target>
-
-  <target name="vendors-jsdoc-pull"
-	  depends="vendors-jsdoc"
-	  description="Do a git pull in vendors/jsdoc">
-    <exec dir="${basedir}/vendors/jsdoc"
-          executable="git"
-          timeout="${timeout}">
-      <arg value="pull"/>
-    </exec>
-    <exec executable="npm"
-          timeout="${timeout}">
-      <arg value="update"/>
-      <arg value="jsdoc"/>
-      <arg value="marked"/>
-      <arg value="requizzle"/>
     </exec>
   </target>
 
