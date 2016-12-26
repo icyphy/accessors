@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js --accessor -timeout 6000 test/auto/RampJSTest)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js test/auto/RampJSTest)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTest.xml
     //  to edit the model, run:
@@ -22,13 +22,17 @@ exports.setup = function() {
     JavaScriptRamp.setParameter('init', 0.0);
     JavaScriptRamp.setParameter('step', 1.0);
 
-    // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', [1,2,3,4,5]);
-    TrainableTest.setParameter('trainingMode', false);
-    TrainableTest.setParameter('tolerance', 1.0E-9);
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
+
+    // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
+    TrainableTest2.setParameter('correctValues', [1,2,3,4]);
+    TrainableTest2.setParameter('tolerance', 1.0E-9);
+    TrainableTest2.setParameter('trainingMode', false);
 
     // Connections: RampJSTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
-    this.connect(JavaScriptRamp, 'output', TrainableTest, 'input');
+    this.connect(TrainableTest2, 'output', Stop, 'stop');
+    this.connect(JavaScriptRamp, 'output', TrainableTest2, 'input');
 };

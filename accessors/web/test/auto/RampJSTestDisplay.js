@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js --accessor -timeout 6000 test/auto/RampJSTestDisplay)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js -timeout 6000 test/auto/RampJSTestDisplay)
     //  To regenerate this composite accessor, run:
     //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
     //  to edit the model, run:
@@ -25,6 +25,9 @@ exports.setup = function() {
     // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
 
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
+
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
     TrainableTest.setParameter('correctValues', [1,2,3,4,5]);
@@ -34,5 +37,6 @@ exports.setup = function() {
     // Connections: RampJSTestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
+    this.connect(TrainableTest, 'output', Stop, 'stop');
     this.connect(JavaScriptRamp, 'output', TrainableTest, 'input');
 };
