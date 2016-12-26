@@ -1707,15 +1707,26 @@ function mergeObjects(first, second) {
  *  accessors or to evaluate plain JavaScript within the context of an
  *  accessor host. This is provided here in commonHost so that all
  *  accessor hosts that provide a command-line usage have the same
- *  command-line argument structure.  This function takes up to four arguments,
- *  where only the first is required. The first argument is an array of
- *  command-line arguments (as detailed below). The second (optional)
+ *  command-line argument structure. 
+ *  
+ *  This function takes up to four arguments,
+ *  where only the first is required.
+ *  
+ *  The first argument is an array of
+ *  command-line arguments (as detailed below).
+ *  
+ *  The second (optional)
  *  argument is a function that given a file name, returns the contents
  *  of the file as a string. The second argument is needed only if
  *  plain JavaScript files are to be evaluated using the -js command-line
- *  argument. The third (optional) argument is an instantiate function that
+ *  argument. 
+ *  
+ *  The third (optional) argument is an instantiate function that
  *  takes two arguments, an accessor name (an arbitrary string) and an
- *  accessor class name.  The fourth (optional) argument is a callback function to
+ *  accessor class name. This argument is needed only if accessors class
+ *  names are given on the command line to instantiate and initialize.
+ *  
+ *  The fourth (optional) argument is a callback function to
  *  invoke when either a specified timeout is reached (if a timeout
  *  is provided), or all instantiated accessors have wrapped up
  *  and all specified JavaScript files have been evaluated. This argument
@@ -1777,6 +1788,7 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
     }
 
     var accessorCount = 0;
+    var accessorsWrappedUp = 0;
     for (var i = 0; i < argv.length; i++) {
         switch (argv[i]) {
 
@@ -1868,7 +1880,13 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
             // Initialize the accessor.
             accessor.initialize();
             
-            // FIXME: Watch for wrapup and when all accessors have terminated, call terminate.
+            accessor.on('wrapup', function() {
+                accessorsWrappedUp++;
+                if (terminator && accessorsWrappedUp >= accessorCount) {
+                    // All initialized accessors have wrapped up.
+                    terminator.call(this);
+                }
+            });
         }
     }
     // All command-line arguments have been processed.
@@ -1877,7 +1895,7 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
     // then set a timeout to keep the process from exiting.
     if (accessorCount > 0 && timeout === -1) {
         // Prevent the script from exiting by repeating the empty function
-        // every ~25 days. This will be cancelled if the terminate argument
+        // every ~25 days. This will be cancelled if the terminator argument
         // is specified and all accessors have wrapped up.
         timerHandle = setInterval(function () {}, 2147483647);
     }
@@ -1903,22 +1921,25 @@ function pushIfNotPresent(item, list) {
  */
 function nullHandlerFunction() {}
 
-/** Stop execution by invoking wrapup() on all top-level accessors.
+/** Stop execution by invoking wrapup() on all top-level accessors
+ *  that have been initialized and not wrapped up.
  */
 function stopAllAccessors() {
     var accessors = getTopLevelAccessors();
     var initialThrowable = null;
     for (var i = 0; i < accessors.length; i++ ) {
         var composite = accessors[i];
-    	try {
-			console.log('commonHost.js: invoking wrapup() for accessor: ' + composite.accessorName);
-			composite.wrapup();
-    	} catch (error) {
-			console.error('commonHost.js: wrapup failed for accessor: ' + composite.accessorName);
-    		if (initialThrowable === null) {
-    			initialThrowable = error;
-    		}
-    	}
+        if (composite.initialized) {
+            try {
+                console.log('commonHost.js: invoking wrapup() for accessor: ' + composite.accessorName);
+                composite.wrapup();
+            } catch (error) {
+                console.error('commonHost.js: wrapup failed for accessor: ' + composite.accessorName);
+                if (initialThrowable === null) {
+                    initialThrowable = error;
+                }
+            }
+        }
     }
     if (initialThrowable !== null) {
     	throw new Error("commonHost.js: stopAllAccessors(): while invoking wrapup() of all accessors," +

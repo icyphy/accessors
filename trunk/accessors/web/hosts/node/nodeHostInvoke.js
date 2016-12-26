@@ -23,32 +23,90 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Instantiate and initialize the accessors named by the command line
- *  arguments.  FIXME: Update docs.
- *
- *  Usage:
+/** Instantiate and initialize accessors specified by command line
+ *  arguments. The arguments can also include plain JavaScript files to evaluate
+ *  before, after, or between instantiations and initialization of accessors.
+ *  The general usage pattern is:
  *  <pre>
- *  node.js nodeHostInvoke.js [--accessor] [-timeout timeInMs] accessor.js [accessor2.js ...]
+ *    node.js nodeHostInvoke.js [-js JavaScriptFile.js] [-t timeInMs] AccessorClass1 [AccessorClass2 ...]
  *  </pre>
- *
- *  To run an accessor forever, use:
+ *  For example, the following command instantiates and initializes
+ *  a composite accessor that stops its own execution using a Stop accessor
+ *  after about 3 seconds.
  *  <pre>
- *  node nodeHostInvoke.js --accessor test/TestComposite
+ *    node nodeHostInvoke.js test/auto/Stop
  *  </pre>
- *
- *  To run two instances of the same accessor forever, use:
+ *  You can run two instances of an accessor simultaneously:
  *  <pre>
- *  node nodeHostInvoke.js --accessor test/TestComposite test/testComposite.js
+ *    node nodeHostInvoke.js test/auto/Stop test/auto/Stop
  *  </pre>
- *
- *  To run an accessor for 2 seconds that uses wrapup:
+ *  The above command will return when both accessors have completed execution.
+ *  
+ *  The following instantiates and initializes an accessor that does not stop its own execution:
  *  <pre>
- *  node nodeHostInvoke.js --accessor -timeout 2000 test/auto/RampJSTest.js
+ *    node nodeHostInvoke.js test/TestSpontaneous
  *  </pre>
+ *  The above command will not return, so you will need to stop it with control-C.
+ *  The above TestSpontaneous accessor produces a sequence of outputs, one per second, but
+ *  those outputs are not being monitored by anything, so the execution is
+ *  not very interesting.  You can follow instantiation of the accessor with a JavaScript
+ *  file that monitors the outputs or stops the execution as follows:
+ *  <pre>
+ *    node nodeHostInvoke.js test/TestSpontaneous monitor.js
+ *  </pre>
+ *  where, for example, monitor.js is a file containing the following code:
+ *  <pre>
+ *    var accessor = getTopLevelAccessors()[0];
+ *    var count = 0;
+ *    accessor.on('output', function() {
+ *        console.log(accessor.latestOutput('output'));
+ *        if (count++ >= 4) {
+ *            accessor.wrapup();
+ *        }
+ *    });
+ *  </pre>
+ *  The first line retrieves the accessor from the host using its getTopLevelAccessors() function.
+ *  This script then monitors the output named 'output', and whenever the accessor produces
+ *  such an output, it prints the value of the output. In addition, after five outputs have been
+ *  produced, it invokes the wrapup() function, which stops execution of the accessor.
+ *  
+ *  To run an accessor for three seconds and then terminate, specify a timeout option:
+ *  <pre>
+ *    node nodeHostInvoke.js -timeout 3000 test/auto/RampJSDisplay
+ *  </pre>
+ *  The RampJSDisplay accessor is a composite accessor that produces a counting sequence and
+ *  then displays it on the standard output.
+ *  
+ *  You can create automated tests using the TrainableTest accessor.
+ *  For example, test/auto/RampJSTestDisplay is a composite accessor
+ *  with a TrainableTest accessor in it:
+ *  <pre>
+ *    node nodeHostInvoke.js test/auto/RampJSTestDisplay
+ *  </pre>
+ *  This accessor generates a counting sequence, checks that the counting
+ *  sequence is correct, and terminates upon receiving all expected values.
+ *  It also displays the output values on standard out.
+ *
+ *  The command-line arguments are file names, accessor class names (such as
+ *  net/REST), or any of the following options:
+ *
+ *  * -e|--e|-echo|--echo: Echo the command-line arguments.
+ *    This is helpful for use under Ant apply.
+ *  
+ *  * -h|--h|-help|--help: Print a usage message.
+ *
+ *  * -j|--j|-js|--js: Interpret the next argument as the name of a regular
+ *    JavaScript file to evaluate.
+ *    
+ *  * -t|--t|-timeout|--timeout milliseconds: The maximum amount of time the
+ *    script can run. When this time is reached, stop() is called on all
+ *    accessors that have been instantiated, and then 
+ *
+ *  * -v|--v|-version|--version: Print out the version number
  *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
- *
- *  @author Christopher Brooks
+ *  
+ *  @author Christopher Brooks and Edward A. Lee
  *  @version $$Id$$
  */
 
