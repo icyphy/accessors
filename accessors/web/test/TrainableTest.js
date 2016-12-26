@@ -21,12 +21,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 /** Compare the input with a known good input.
- *
- *  This actor is based on the NonStrictTest actor, but currently only
- *  handles numeric and string input.
+ *  If you set ''trainingMode'' to true and provide inputs, then the
+ *  inputs will be recorded in the ''correctValues'' parameters.
+ *  Otherwise, the inputs will be compared against those in the
+ *  ''correctValue'' parameter.
  *
  *  @accessor test/TrainableTest
- *  @input input The input value
+ *  @input input The input value.
  *  @output output False as long as there is data to compare against the input
  *  @param correctValues a JSON array of the correct values.
  *  @param trainingMode true if the input is being trained.
@@ -43,11 +44,8 @@
 'use strict';
 
 exports.setup = function () {
-    // FIXME: this only supports numbers and strings, unlike the Cape Code Test
-    // actor, which supports many types.
     this.parameter('correctValues', {
-        'type': 'JSON',
-        'value': '{0}'
+        'value': [0]
     });
     this.input('input');
     this.output('output', {
@@ -91,9 +89,9 @@ exports.wrappedUp = wrappedUp;
 exports.initialize = function () {
     //console.log("Test initialize(): typeof correctValues: " + typeof this.getParameter('correctValues'))
     var inputValueValue,
-        trainingTokens = [],
         self = this;
 
+    trainingTokens = [];
     exports.wrappedUp = false;
     numberOfInputTokensSeen = 0;
     
