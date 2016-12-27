@@ -4,7 +4,7 @@
 // This file requires mocha and chai.  MochaTest handles the mocha require.
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance;
-var nodeHost = require('../../../../hosts/node/nodeHost.js');
+var host = require('../../../../hosts/node/nodeHost.js');
 var chai = require('chai');
 var assert = chai.assert;        
 var should = chai.should();
@@ -18,7 +18,7 @@ describe('net/REST.js', function () {
                         // Read the accessor source code.
                         try {
                             console.log('instantiate ' + typeof instantiate);
-                            instance = nodeHost.instantiate('REST', 'net/REST');
+                            instance = host.instantiate('REST', 'net/REST');
                         } catch(err){
                             console.log(err);
                         }
