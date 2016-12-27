@@ -18,7 +18,7 @@ describe('net/REST.js', function () {
                         // Read the accessor source code.
                         try {
                             console.log('instantiate ' + typeof instantiate);
-                            instance = instantiate('REST', 'net/REST');
+                            instance = nodeHost.instantiate('REST', 'net/REST');
                         } catch(err){
                             console.log(err);
                         }
