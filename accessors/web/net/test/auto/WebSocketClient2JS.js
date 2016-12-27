@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd C:\workspaceluna\ptII\org\terraswarm\accessor\accessors\web\net\test\auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/WebSocketClient2JS)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/WebSocketClient2JS)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode file:/C:/workspaceluna/ptII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
+    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
 
     // Ports: WebSocketClient2JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -47,24 +47,20 @@ exports.setup = function() {
     TrainableTest.setParameter('trainingMode', true);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
-    // Start: JavaScriptStop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
-    // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
-    // We probably need to do something with the bindings.
-    var JavaScriptStop = new Accessor('JavaScriptStop', 'exports.setup = function() {\n  this.input(\'input\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'input\', handler.bind(this));\n}\n\nfunction handler() {\n    var value = this.get(\'input\');\n    if (value === true) {\n        console.log(\"JavaScriptStop: about to call stop().\");\n        // stop() is defined for all accessors, though it might not actually do anything.\n        stop.call(this);\n        // An accessor host might not get to the next line.\n        console.log(\"JavaScriptStop: done calling stop() on container\");\n    }\n}\n \nexports.wrapup = function() {\n    console.log(\"JavaScriptStop.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
-    JavaScriptStop.container = this;
-    this.containedAccessors.push(JavaScriptStop);
-
     // Start: JavaScriptTrueToken: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScriptTrueToken = new Accessor('JavaScriptTrueToken', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\');\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     self.send(\'output\', true);\n  });\n}\n\nexports.wrapup = function() {\n    console.log(\"JavaScriptTrueToken.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
+    var JavaScriptTrueToken = new Accessor('JavaScriptTrueToken', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\', {\'type\': \'boolean\'});\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     self.send(\'output\', true);\n  });\n}\n\nexports.wrapup = function() {\n    console.log(\"JavaScriptTrueToken.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
     JavaScriptTrueToken.container = this;
     this.containedAccessors.push(JavaScriptTrueToken);
+
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
 
     // Connections: WebSocketClient2JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScript, 'toSend', WebSocketClient, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript, 'connectionReady');
     this.connect(WebSocketServer, 'received', TrainableTest, 'input');
-    this.connect(JavaScriptTrueToken, 'output', JavaScriptStop, 'input');
     this.connect(TrainableTest, 'output', JavaScriptTrueToken, 'input');
-}
+    this.connect(JavaScriptTrueToken, 'output', Stop, 'stop');
+};
