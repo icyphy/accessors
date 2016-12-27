@@ -63,7 +63,12 @@ var path = require('path');
 var fs = require('fs');
 
 // Locally defined modules.
-commonHost = require('../common/commonHost.js');
+var commonHost = require('../common/commonHost.js');
+
+// This Node host allows trusted accessors, which means that any
+// accessor whose class name begins with 'trusted/' can invoke the
+// function getTopLevelAccessors().
+commonHost.allowTrustedAccessors(true);
 
 //////////////////////////////////////////////////////////////////////////
 // Module variables.
@@ -337,6 +342,10 @@ function startHostShell() {
     // Also, the functions available on the command line can be provided
     // here in a controlled way, including overriding any global functions,
     // if necessary.
+    //
+    // Note that one side effect of this strategy is that all context variables
+    // here (nodeHost, fs, path, accessorPath, etc.) are available in the shell.
+    // These are not available to accessors, however, so this seems OK.
     function *evalGenerator() {
         var command = yield;
         

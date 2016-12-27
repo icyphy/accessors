@@ -208,6 +208,10 @@
 // and also including interfaces and accessors that are extended).
 var allAccessors = [];
 
+// If set to true, then accessors whose class name begins with 'trusted/'
+// will have a binding for the getTopLevelAccessors() function.
+var trustedAccessorsAllowed = false;
+
 // Determine which accessor host is in use.
 // See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
 // See https://stijndewitt.com/2014/01/26/enums-in-javascript/
@@ -1553,6 +1557,18 @@ Accessor.prototype.stop = function() {
 //////////////////////////////////////////////////////////////////////////////////
 //// Module functions.
 
+/** If called with argument true, then accessors that are subsequently
+ *  instantiated whose class name begins with 'trusted/' will have a
+ *  binding for the getTopLevelAccessors() function. Such accessors
+ *  can see and manipulate peer accessors, so a host that allows such
+ *  trusted accessors should ensure that all trusted accessors are
+ *  locally defined rather than downloaded from untrusted sources.
+ *  @param allow True to allow trusted accessors, false otherwise.
+ */
+function allowTrustedAccessors(allow) {
+    trustedAccessorsAllowed = allow;
+}
+
 /** Convert the specified type to the type expected by the specified input,
  *  or throw an exception if no such conversion is possible.
  *  @param value The value to convert.
@@ -1667,6 +1683,14 @@ function getTopLevelAccessors() {
 function instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
+    if (trustedAccessorsAllowed && accessorClass.startsWith('trusted/')) {
+        bindings['getTopLevelAccessors'] = getTopLevelAccessors;
+    } else {
+        bindings['getTopLevelAccessors'] = function() {
+            throw new Error('getTopLevelAccessors(): Accessors are not permitted'
+                    + ' to access peer accessors in this host.');
+        };
+    }
     var instance = new Accessor(
         accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
@@ -2006,6 +2030,7 @@ var _accessorInstanceTable = {};
 // Note that there are some exports that occur earlier in this file.
 // FIXME: Why?
 exports.Accessor = Accessor;
+exports.allowTrustedAccessors = allowTrustedAccessors;
 exports.instantiateAccessor = instantiateAccessor;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
