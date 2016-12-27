@@ -22,7 +22,9 @@ JS_H_FILES = \
 	RampJSDisplay.h \
 	RampJSTest.h \
 	RampJSTestDisplay.h \
+	Stop.h \
 	autoTestComposite.h \
+	autoTestStop.h \
 	testCommon.h \
 	TestAdder.h \
 	TestComposite.h \
@@ -104,8 +106,17 @@ RampJSTest.h: ../../../test/auto/RampJSTest.js makefile
 	./js2h $< $@
 RampJSTestDisplay.h: ../../../test/auto/RampJSTestDisplay.js makefile
 	./js2h $< $@
+
+Stop.h: ../../../utilities/Stop.js makefile
+	./js2h $< $@
+
 autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
 	./js2h $< $@
+
+autoTestStop.h: ../../../test/auto/Stop.js makefile
+	./js2h $< $@
+
+autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
 
 # Used by ../duktape/duktape tests
 testCommon.h: ../../common/test/testCommon.js makefile
