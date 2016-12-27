@@ -3,7 +3,7 @@
 //    cd ..
 //    node nodeHostShell.js
 // and copy and paste the following into it.
-var a = this.instantiate('TestComposite', 'test/TestComposite');
+var a = instantiate('TestComposite', 'test/TestComposite');
 a.initialize();
 a.provideInput('input', 10);
 a.react();

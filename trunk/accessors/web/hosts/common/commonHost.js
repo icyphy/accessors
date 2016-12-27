@@ -1075,7 +1075,9 @@ Accessor.prototype.input = function (name, options) {
  *  This will throw an exception if no getAccessorCode() function
  *  has been specified.
  *  @param instanceName A name to give to this instance, which will be prepended
- *   with the container name, separated by a period.
+ *   with the container name, separated by a period. If the container already
+ *   contains an object with that name, then an index will be appended to the name,
+ *   starting with 2, to ensure that the name is unique in the container.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
 Accessor.prototype.instantiate = function (instanceName, accessorClass) {
@@ -1095,6 +1097,7 @@ Accessor.prototype.instantiate = function (instanceName, accessorClass) {
         'setTimeout': this.setTimeout,
     };
     instanceName = this.accessorName + '.' + instanceName;
+    instanceName = uniqueName(instanceName, this);
     var containedInstance = instantiateAccessor(
         instanceName, accessorClass, this.getAccessorCode, insideBindings);
     containedInstance.container = this;
@@ -1703,6 +1706,11 @@ function mergeObjects(first, second) {
     return {};
 }
 
+/** Default empty function to use if the function argument to
+ *  addInputHandler is null.
+ */
+function nullHandlerFunction() {}
+
 /** Process command line arguments to instantiate and initialize
  *  accessors or to evaluate plain JavaScript within the context of an
  *  accessor host. This is provided here in commonHost so that all
@@ -1874,7 +1882,7 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
             }
             accessorCount++;
             // Name for the accessor.
-            var name = "accessor" + accessorCount;
+            var name = uniqueName(argv[i]);
             var accessor = instantiate.call(this, name, argv[i]);
             
             // Initialize the accessor.
@@ -1916,11 +1924,6 @@ function pushIfNotPresent(item, list) {
     list.push(item);
 }
 
-/** Default empty function to use if the function argument to
- *  addInputHandler is null.
- */
-function nullHandlerFunction() {}
-
 /** Stop execution by invoking wrapup() on all top-level accessors
  *  that have been initialized and not wrapped up.
  */
@@ -1947,6 +1950,45 @@ function stopAllAccessors() {
     }
 };
 
+/** Return a name that is unique in the specified container based on the specified
+ *  seed. If no container is given, then return a name that is unique among top-level
+ *  accessors. If the seed contains slashes, as in an accessor class name like net/REST,
+ *  then everything before the last slash is removed. If the seed ends with an extension
+ *  .js, then everything after and including the last period is removed. The remaining
+ *  seed will be used as is if the name is unique. Otherwise, it will have a number, starting
+ *  with 2, appended so as to ensure that it is unique.
+ */
+function uniqueName(seed, container) {
+    var startIndex = (seed.indexOf('\\') >= 0 ? seed.lastIndexOf('\\') :
+        seed.lastIndexOf('/'));
+    if (startIndex >= 0) {
+        seed = seed.substring(startIndex + 1);
+    }
+    if (seed.endsWith('.js') > 0) {
+        seed = seed.substring(0, seed.length - 3);
+    }
+    var accessors = getTopLevelAccessors();
+    if (container && container.containedAccessors) {
+        accessors = container.containedAccessors;
+    }
+    // Convert the list into an object for quick lookup.
+    var names = {};
+    for (var i = 0; i < accessors.length; i++) {
+        if (accessors[i].accessorName) {
+            names[accessors[i].accessorName] = true;
+        }
+    }
+    if (!names[seed]) {
+        return seed;
+    } else {
+        var count = 2;
+        while(names['' + seed + count]) {
+            count++;
+        }
+        return '' + seed + count;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////
 //// Module variables.
 
@@ -1968,3 +2010,4 @@ exports.instantiateAccessor = instantiateAccessor;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.stopAllAccessors = stopAllAccessors;
+exports.uniqueName = uniqueName;

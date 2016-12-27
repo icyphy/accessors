@@ -143,7 +143,7 @@ function instantiate(accessorName, accessorClass) {
     var bindings = {
         'require': require,
     };
-    var instance = new commonHost.instantiateAccessor(
+    var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
     console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
@@ -343,6 +343,7 @@ function startHostShell() {
         // Define functions available to the command line.
         var getTopLevelAccessors = commonHost.getTopLevelAccessors;
         var stopAllAccessors = commonHost.stopAllAccessors;
+        var uniqueName = commonHost.uniqueName;
 
         while(true) {
             try {
@@ -464,6 +465,7 @@ exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.processCommandLineArguments = commonHost.processCommandLineArguments;
+exports.uniqueName = commonHost.uniqueName;
 
 // FIXME: Should not be needed:
 //Make the Accessor constructor visible so that we may use it in the
