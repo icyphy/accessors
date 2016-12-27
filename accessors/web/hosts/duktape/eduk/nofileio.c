@@ -82,7 +82,7 @@
 
 #ifdef EDUK_FULL
 #define EDUK_RAMPJSDISPLAY
-#define FILE_ENTRIES_SIZE 15
+#define FILE_ENTRIES_SIZE 17
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
 #define FILE_ENTRIES_SIZE 6
@@ -112,7 +112,9 @@
 // These are used by the tests and would not be needed in production.
 #include "RampJSTest.h"
 #include "RampJSTestDisplay.h"
+#include "Stop.h"
 #include "autoTestComposite.h"
+#include "autoTestStop.h"
 #include "testCommon.h"
 #include "TestAdder.h"
 #include "TestComposite.h"
@@ -221,10 +223,17 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = _________test_auto_RampJSTestDisplay_js;
     fileEntries[n].length = _________test_auto_RampJSTestDisplay_js_len;
 
+    fileEntries[++n].name = "./utilities/Stop.js";
+    fileEntries[n].contents = _________utilities_Stop_js;
+    fileEntries[n].length = _________utilities_Stop_js_len;
+
     fileEntries[++n].name = "./test/auto/TestComposite.js";
     fileEntries[n].contents = _________test_auto_TestComposite_js;
     fileEntries[n].length = _________test_auto_TestComposite_js_len;
 
+    fileEntries[++n].name = "./test/auto/Stop.js";
+    fileEntries[n].contents = _________test_auto_Stop_js;
+    fileEntries[n].length = _________test_auto_Stop_js_len;
 
     // Used by ../duktape/duktape tests.
     fileEntries[++n].name = "common/test/testCommon.js";
