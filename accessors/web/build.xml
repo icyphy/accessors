@@ -451,6 +451,11 @@
   <target name="tests.duk.test"
           depends="duk"
           description="Execute the duktape tests in duktape/test.">
+    <echo>
+      == tests.duk.test ==
+      To replicate:
+      (cd hosts; duktape/duktape/duk duktape/test/*.js)
+    </echo>      
     <apply dir="hosts"
            executable="duktape/duktape/duk"
            failonerror="true"
