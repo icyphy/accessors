@@ -1988,10 +1988,11 @@ function uniqueName(seed, container) {
     if (startIndex >= 0) {
         seed = seed.substring(startIndex + 1);
     }
-    if (seed.endsWith('.js') > 0) {
+    // Don't use endsWith() here, duktape does not support ECMA6 endsWith().
+    if (seed.indexOf('.js') === seed.length - 3) {
         seed = seed.substring(0, seed.length - 3);
     }
-    var accessors = getTopLevelAccessors();
+    var accessors = this.getTopLevelAccessors();
     if (container && container.containedAccessors) {
         accessors = container.containedAccessors;
     }
