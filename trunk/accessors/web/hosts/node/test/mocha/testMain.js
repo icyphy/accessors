@@ -7,25 +7,25 @@
 var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 
-describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArguments()', function () {
-    it('nodeHost.processCommandLineArguments()', function () {
+describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArguments().\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testMain.js)', function () {
+    it('nodeHost.processCommandLineArguments(). Expect a usage message.', function () {
         var args = [];
         // 3 is the error code
         assert.equal(nodeHost.processCommandLineArguments(args), 3);
     });
 
-    it('nodeHost.processCommandLineArguments(-h)', function () {
+    it('nodeHost.processCommandLineArguments(-h). Expect a usage message.', function () {
         var args = [ '-h' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
     });
 
-    it('nodeHost.processCommandLineArguments(-timeout) with no timeout', function () {
+    it('nodeHost.processCommandLineArguments(-timeout) with no timeout. Expect a usage message.', function () {
         var args = ['-timeout'];
         assert.equal(nodeHost.processCommandLineArguments(args), 3);
     });
 
-    it('nodeHost.processCommandLineArguments(-v)', function () {
+    it('nodeHost.processCommandLineArguments(-v). Expect a version message.', function () {
         var args = [ '-v' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
@@ -64,7 +64,7 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
             this.timeout(6500);
             setTimeout(function () {
                 done();
-                console.log("mocha/testMain.js accessors test " + accessorPath + " done !");
+                // console.log("mocha/testMain.js accessors test " + accessorPath + " done !");
 
                 // Assert that getTopLevelAccessors() has the RampJSTest top
                 // level, the TrainableTest and that wrapup() was called.
@@ -74,11 +74,11 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
                 
                 for (var i = 0; i < accessors.length; i += 1) {
                     var topLevelAccessor = accessors[i];
-                    console.log("mocha/testMain.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
+                    //console.log("mocha/testMain.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
                     // FIXME: What if there are multiple runs?
                     for (var j = 0; j < topLevelAccessor.containedAccessors.length; j += 1) {
                         var accessor = topLevelAccessor.containedAccessors[j];
-                        console.log("mocha/testMain.js: done(): accessor: " + accessor + " " + accessor.accessorName);
+                        //console.log("mocha/testMain.js: done(): accessor: " + accessor + " " + accessor.accessorName);
                         // Check that all instances of TrainableTest have been wrapped up.
                         // FIXME: This is hard coding the name of
                         // the TrainableTest actor, we should search by
