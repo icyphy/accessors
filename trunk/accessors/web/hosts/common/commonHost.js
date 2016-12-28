@@ -1683,6 +1683,8 @@ function getTopLevelAccessors() {
 function instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
+    // In case bindings is not defined.
+    bindings = bindings || {};
     if (trustedAccessorsAllowed && accessorClass.startsWith('trusted/')) {
         bindings['getTopLevelAccessors'] = getTopLevelAccessors;
     } else {
@@ -1884,7 +1886,7 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
                 // If a terminator function is given use it.
                 // Otherwise, invoke wrapup on all accessors.
                 if (terminator) {
-                    terminator.call(this);
+                    terminator();
                 } else {
                     stopAllAccessors();
                 }
@@ -1907,7 +1909,7 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
             accessorCount++;
             // Name for the accessor.
             var name = uniqueName(argv[i]);
-            var accessor = instantiate.call(this, name, argv[i]);
+            var accessor = instantiate(name, argv[i]);
             
             // Initialize the accessor.
             accessor.initialize();
@@ -1916,11 +1918,13 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
                 accessorsWrappedUp++;
                 if (terminator && accessorsWrappedUp >= accessorCount) {
                     // All initialized accessors have wrapped up.
-                    terminator.call(this);
+                    clearInterval(timerHandle);
+                    terminator();
                 }
             });
         }
     }
+
     // All command-line arguments have been processed.
     var timerHandle;
     // If any accessors have been initialized and no timeout has been specified,
@@ -1992,7 +1996,7 @@ function uniqueName(seed, container) {
     if (seed.indexOf('.js') === seed.length - 3) {
         seed = seed.substring(0, seed.length - 3);
     }
-    var accessors = this.getTopLevelAccessors();
+    var accessors = getTopLevelAccessors();
     if (container && container.containedAccessors) {
         accessors = container.containedAccessors;
     }
