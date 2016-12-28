@@ -233,6 +233,7 @@ exports.accessorHostsEnum = accessorHostsEnum;
 exports.accessorHost = accessorHost;
 
 // In alphabetical order.
+// FIXME: This should not be needed!!! Remove it.
 if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
     accessorHost = accessorHostsEnum.BROWSER;
 } else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
@@ -426,8 +427,6 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
 
     // Need to provide all the functions that are allowed to be invoked
     // as top-level functions in the accessor specification.
-    // FIXME: Probably need to include setInterval, clearInterval,
-    // setTimeout, clearTimeout, because these will need to overridden.
     if (bindings && bindings.setInterval) {
         this.setInterval = bindings.setInterval;
     } else if (typeof setInterval !== 'undefined') {
@@ -1212,7 +1211,7 @@ Accessor.prototype.provideInput = function (name, value) {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function (name) {
-    // console.log(this.accessorName + ": react(" + name + ")");
+    // console.log(this.accessorName + ": ================== react(" + name + ")");
     this.emit('reactStart');
 
     var thiz = this.root;
@@ -1259,10 +1258,6 @@ Accessor.prototype.react = function (name) {
                             }
                         }
 
-                        // FIXME: We should probably subclass Error
-                        // and have a version that takes an exception
-                        // as an argument and reads the value of
-                        // exception.stack.
                         throw new Error('commonHost.js, react(), invoking a specific handler for \"' +
                             name + '\": Exception occurred in input handler,' +
                             ' which has now has been removed.  Exception was: ' +
@@ -1854,7 +1849,8 @@ function processCommandLineArguments(argv, fileReader, instantiate, terminator) 
             try {
                 eval(fileReader(argv[i]));
             } catch (error) {
-                throw new Error('Failed to eval "' + argv[i] + '": ' + error);
+                throw new Error('Failed to eval "' + argv[i] + '": ' + error
+                        + ":" + error.stack);
             }
             
             break;
