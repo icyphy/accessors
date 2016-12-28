@@ -119,7 +119,7 @@ function getAccessorCode(name) {
         var location = path.join(accessorPath[i], name);
         try {
             code = fs.readFileSync(location, 'utf8');
-            console.log('Reading accessor at: ' + location);
+            //console.log('Reading accessor at: ' + location);
             break;
         } catch (error) {
             console.log(error);
