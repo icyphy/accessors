@@ -8,24 +8,24 @@ var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 
 describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArguments().\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testMain.js)', function () {
-    it('nodeHost.processCommandLineArguments(). Expect a usage message.', function () {
+    it('nodeHost.processCommandLineArguments(). Should have generated a usage message.', function () {
         var args = [];
         // 3 is the error code
         assert.equal(nodeHost.processCommandLineArguments(args), 3);
     });
 
-    it('nodeHost.processCommandLineArguments(-h). Expect a usage message.', function () {
+    it('nodeHost.processCommandLineArguments(-h). Should have generated a usage message.', function () {
         var args = [ '-h' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
     });
 
-    it('nodeHost.processCommandLineArguments(-timeout) with no timeout. Expect a usage message.', function () {
+    it('nodeHost.processCommandLineArguments(-timeout) with no timeout. Should have generated an error message.', function () {
         var args = ['-timeout'];
         assert.equal(nodeHost.processCommandLineArguments(args), 3);
     });
 
-    it('nodeHost.processCommandLineArguments(-v). Expect a version message.', function () {
+    it('nodeHost.processCommandLineArguments(-v). Should have generated a version message.', function () {
         var args = [ '-v' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
