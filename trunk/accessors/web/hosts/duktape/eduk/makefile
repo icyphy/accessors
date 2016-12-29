@@ -51,8 +51,9 @@ CCLIBS	= -lm
 # Uncomment the next line to compile with debugging
 #CCOPTS	= -ggdb -pedantic -std=c99 -Wall
 
+EDUK_DEFINES = -DEDUK_FULL -DEDUK_RAMPJSDISPLAY
 eduk: $(C_FILES) $(H_FILES)
-	$(CC) -o $@ $(DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
+	$(CC) -o $@ $(DEFINES) $(EDUK_DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
 # Convert from C to Rust, see https://github.com/jameysharp/corrode
 eduk.rs:

@@ -43,7 +43,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <sys/time.h>
+#ifndef __ARM_EABI__
 #include <poll.h>
+#endif
 #define __USE_BSD
 // Accessors:  Needed to include unistd.h for usleep()
 #include <unistd.h>
@@ -85,7 +87,9 @@ static int timer_count;  /* last timer at timer_count - 1 */
 static int64_t timer_next_id = 1;
 
 /* Socket poll state. */
+#ifndef __ARM_EABI__
 static struct pollfd poll_list[MAX_FDS];
+#endif
 static int poll_count = 0;
 
 /* Misc */
@@ -252,6 +256,7 @@ static void expire_timers(duk_context *ctx) {
 }
 
 static void compact_poll_list(void) {
+#ifndef __ARM_EABI__
 	int i, j, n;
 
 	/* i = input index
@@ -289,6 +294,7 @@ static void compact_poll_list(void) {
 	}
 
 	poll_count = j;
+#endif /* __ARM_EABI__*/
 }
 
 int eventloop_run(duk_context *ctx) {
@@ -400,7 +406,9 @@ int eventloop_run(duk_context *ctx) {
 
 
 		n = (rc == 0 ? 0 : poll_count);  /* if timeout, no need to check pollfd */
+#ifndef __ARM_EABI__
 		for (i = 0; i < n; i++) {
+
 			struct pollfd *pfd = poll_list + i;
 
 			if (pfd->fd == 0) {
@@ -430,6 +438,7 @@ int eventloop_run(duk_context *ctx) {
 			}
 
 		}
+#endif /*  __ARM_EABI__ */
 	}
 
 	duk_pop_n(ctx, 3);
@@ -582,6 +591,7 @@ static int listen_fd(duk_context *ctx) {
 	int fd = duk_require_int(ctx, 0);
 	int events = duk_require_int(ctx, 1);
 	int i, n;
+#ifndef __ARM_EABI__
 	struct pollfd *pfd;
 
 #if 0
@@ -623,7 +633,7 @@ static int listen_fd(duk_context *ctx) {
 	pfd->events = events;
 	pfd->revents = 0;
 	poll_count++;
-
+#endif /* __ARM_EABI__*/
 	return 0;
 }
 
@@ -644,8 +654,9 @@ static duk_function_list_entry eventloop_funcs[] = {
 void eventloop_register(duk_context *ctx) {
 	memset((void *) timer_list, 0, MAX_TIMERS * sizeof(ev_timer));
 	memset((void *) &timer_expiring, 0, sizeof(ev_timer));
+#ifndef __ARM_EABI__
 	memset((void *) poll_list, 0, MAX_FDS * sizeof(struct pollfd));
-
+#endif
 	/* Set global 'EventLoop'. */
 	duk_push_global_object(ctx);
 	duk_push_object(ctx);
