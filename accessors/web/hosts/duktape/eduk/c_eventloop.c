@@ -95,17 +95,29 @@ static int poll_count = 0;
 /* Misc */
 static int exit_requested = 0;
 
+#ifdef __ARM_EABI__
+int _gettimeofday(struct timeval *tp, void *tzp) {
+  return 0;
+}
+#endif
+
 /* Get Javascript compatible 'now' timestamp (millisecs since 1970). */
 static double get_now(void) {
 	struct timeval tv;
 	int rc;
 
+#ifdef __ARM_EABI__
+	// FIXME: Need gettimeofday(), see https://www.terraswarm.org/accessors/wiki/Main/DuktapeEclipseARMCortexM4#TimerSetup
+	return 0.0;
+#else
 	rc = gettimeofday(&tv, NULL);
 	if (rc != 0) {
 		/* Should never happen, so return whatever. */
 		return 0.0;
 	}
 	return ((double) tv.tv_sec) * 1000.0 + ((double) tv.tv_usec) / 1000.0;
+#endif
+
 }
 
 static ev_timer *find_nearest_timer(void) {
@@ -378,7 +390,10 @@ int eventloop_run(duk_context *ctx) {
 
 // Accessors: Use usleep() here instead of poll().
 		//printf("timeout -> %d \n", timeout);
+#ifndef __ARM_EABI__
+		// FIXME: Need usleep()
 		usleep(timeout*1000);
+#endif
 		//rc = poll(poll_list, poll_count, timeout);
 		rc = 0;
 #if 0
