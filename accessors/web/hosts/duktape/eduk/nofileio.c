@@ -127,7 +127,7 @@
 
 struct fileEntry {
     char * name;
-    char * contents;
+    const char * contents;
     int length;
 };
 
