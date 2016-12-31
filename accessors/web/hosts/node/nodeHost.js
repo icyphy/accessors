@@ -193,7 +193,7 @@ function instantiateTopLevel(accessorName, accessorClass) {
  *  @param options Properties for the call.  Properties include cleanup and exit.
  */
 function exitHandler(options, err) {
-    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ")");
+    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ") process.exitCode:" +  process.exitCode);
     // console.log(options);
     // var myError = new Error("nodeHost.js: In exitHandler()");
     // console.log(myError.stack);
@@ -244,15 +244,20 @@ function exitHandler(options, err) {
         err = new Error("SIGUSR1 was received, here's the stack.");
     }
     if (err) {
-        console.log(err.stack);
+	if (process.exitCode === undefined) {
+	    process.exitCode = 1;
+	}
+	if (err.stack === undefined) {
+	    console.log("err: \"" + err + "\" has no stack.");
+	} else {
+            console.log("NodeHost.js: Error: " + err.stack);
+	}
     }
 
     if (options.exit) {
-        /*
-        console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
-                + process.exitCode
-                + "): Here is the stack so we know why: ").stack);
-        */
+        // console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
+        //        + process.exitCode
+        //        + "): Here is the stack so we know why: ").stack);
         process.exit(process.exitCode);
     }
 }
