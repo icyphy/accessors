@@ -522,6 +522,7 @@
     <echo> tests.mocha: running on ${converted}</echo>
 
     <exec executable="${mocha.command}"
+	  failonerror="true"
 	  timeout="${timeout.longer}">
       <arg line="${converted}"/>
     </exec>
