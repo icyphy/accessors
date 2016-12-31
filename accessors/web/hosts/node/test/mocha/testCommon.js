@@ -6,7 +6,7 @@
 
 var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
-describe('hosts/node/test/mocha/testCommon.js: testCommon', function () {
+describe('hosts/node/test/mocha/testCommon.js: testCommon.\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)', function () {
     it('load testCommon', function () {
         var testCommon = require('../../../../hosts/common/test/testCommon.js');
     });
