@@ -124,7 +124,9 @@ function test(testName, expression, expectedValue) {
             .replace(/^\s+at\s+/gm, '')
             .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
             .split('\n');
-        console.log(stack);
+        console.log("==== testCommon.js: test Failed: \"" + testName + "\"\n\tExpression     \"" + expression + "\" is !=\n\tExpectedValue: \"" + expectedValue + "\"");
+	console.log("\tThe stack was:");
+	console.log(stack);
 
         throw ('Test failed: ' + testName +
             '. Expected: ' + expectedValue +
