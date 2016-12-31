@@ -24,6 +24,7 @@ extern int eventloop_run(duk_context *ctx);  /* Duktape/C function, safe called 
 // don't have file systems.
 //extern int fileio_register(duk_context *ctx);
 
+extern void ledcontrol_register(duk_context *ctx);
 extern void modSearch_register(duk_context *ctx);
 extern void nofileio_register(duk_context *ctx);
 extern void print_pop_error(duk_context *ctx, FILE *f);
@@ -147,7 +148,6 @@ int main(int argc, char *argv[]) {
 
     const char *accessorFileName;
     duk_context *ctx = NULL;
-    int i;
     int timeout = -1;
     int foundFile = 0;
 
@@ -158,9 +158,22 @@ int main(int argc, char *argv[]) {
     eventloop_register(ctx);
     // FIXME: fileio_register() should go away eventually.
     //fileio_register(ctx);
+
+#ifdef _TOCK_OS_
+    ledControl_register(ctx);
+#endif
+
     modSearch_register(ctx);
     nofileio_register(ctx);
 
+
+    // Set accessorFileName to the name of the accessor or process the
+    // command line arguments.
+#ifdef EDUK_RUN_RAMPJSDISPLAY
+    foundFile = 1;
+    accessorFileName = strdup("test/auto/RampJSDisplay.js");
+#else
+    int i;
     for (i = 1; i < argc; i++) {
         char *arg = argv[i];
         if (!arg) {
@@ -177,6 +190,7 @@ int main(int argc, char *argv[]) {
             accessorFileName = arg;
         }
     }
+#endif
 
     int returnValue = 0;
     if (foundFile == 1) {
@@ -188,9 +202,10 @@ int main(int argc, char *argv[]) {
     }
     duk_destroy_heap(ctx);
     return returnValue;
-
+#ifndef EDUK_RUN_RAMPJSDISPLAY
  usage: 
     duk_destroy_heap(ctx);
     fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
     return 1;
+#endif
 }

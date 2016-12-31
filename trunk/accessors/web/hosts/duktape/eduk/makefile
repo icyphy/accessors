@@ -52,8 +52,8 @@ CCLIBS	= -lm
 #CCOPTS	= -ggdb -pedantic -std=c99 -Wall
 
 EDUK_DEFINES = -DEDUK_FULL -DEDUK_RAMPJSDISPLAY
-eduk: $(C_FILES) $(H_FILES)
-	$(CC) -o $@ $(DEFINES) $(EDUK_DEFINES) $(CCOPTS) $(C_FILES) $(CCLIBS)
+eduk: $(C_FILES) $(H_FILES) 
+	$(CC) -o $@ $(DEFINES) $(EDUK_DEFINES) $(SWARMLET) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
 # Convert from C to Rust, see https://github.com/jameysharp/corrode
 eduk.rs:
