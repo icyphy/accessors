@@ -154,56 +154,37 @@ function instantiate(accessorName, accessorClass) {
     return instance;
 };
 
-// FIXME: Remove this once obsolete.
-
-/** Instantiate and initialize the accessors named by the
- *  accessorNames argument.
- *
- * Sample usage:
- *
- * nodeHostInvoke.js contains:
- * <pre>
- * require('./nodeHost.js');
- * invoke(process.argv.slice(2));
- * </pre>
- *
- * To invoke:
- * <pre>
- *   node nodeHostInvoke.js test/TestComposite
- * </pre>
- *
- * @param accessorNames An array of accessor names in a format suitable
- * for getAccessorCode(name).
+/** Instantiate and return a top-level accessor.
+ *  This will throw an exception if there is no such accessor class on the accessor
+ *  search path.
+ *  @param accessorName The name to give to the instance.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-instantiateAndInitialize = function (accessorNames) {
-    var accessorsCreated = [],
-	index,
-	length = accessorNames.length;
-    for (index = 0; index < length; ++index) {
-        // The name of the accessor is basename of the accessorClass.
-        var accessorClass = accessorNames[index];
-        // For example, if the accessorClass is
-        // test/TestComposite, then the accessorName will be
-        // TestComposite.
-
-        var startIndex = (accessorClass.indexOf('\\') >= 0 ? accessorClass.lastIndexOf('\\') : accessorClass.lastIndexOf('/'));
-        var accessorName = accessorClass.substring(startIndex);
-        if (accessorName.indexOf('\\') === 0 || accessorName.indexOf('/') === 0) {
-            accessorName = accessorName.substring(1);
-        }
-        // If the same accessorClass appears more than once in the
-        // list of arguments, then use different names.
-        // To replicate: node nodeHostInvoke.js test/TestComposite test/TestComposite
-        if (index > 0) {
-            accessorName += "_" + (index - 1);
-        }
-        var accessor = instantiate(accessorName, accessorClass);
-
-        // Push the top level accessor so that we can call wrapup later.
-        accessorsCreated.push(accessor);
-        accessor.initialize();
+function instantiateTopLevel(accessorName, accessorClass) {
+    var instance = instantiate(accessorName, accessorClass);
+    
+    // A top-level accessor expects its environment to make it react.
+    // For this host, whenever scheduleEvent() is invoked on the accessor,
+    // we want to request a reaction using setTimeout(). We want to aggregate
+    // these requests so that if multiple events are scheduled, only one
+    // reaction is triggered.
+    instance.reactRequestedAlready = false;
+    var originalScheduleEvent = instance.scheduleEvent;
+    var originalReact = instance.react;
+    instance.react = function() {
+        instance.reactRequestedAlready = false;
+        originalReact.call(instance);
     }
-    return accessorsCreated;
+    instance.scheduleEvent = function(accessor) {
+        if (!instance.reactRequestedAlready) {
+            instance.reactRequestedAlready = true;
+            setTimeout(function () {
+                instance.react();
+            }, 0);
+        }
+        originalScheduleEvent.call(instance, accessor);
+    }
+    return instance;
 };
 
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.
@@ -467,6 +448,7 @@ process.on('uncaughtException', exitHandler.bind(null, {
 // Exported from this module:
 exports.getAccessorCode = getAccessorCode;
 exports.instantiate = instantiate;
+exports.instantiateTopLevel = instantiateTopLevel;
 exports.startHostShell = startHostShell;
 
 // Exported from commonHost:
