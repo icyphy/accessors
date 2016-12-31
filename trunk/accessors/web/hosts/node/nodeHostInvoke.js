@@ -121,7 +121,7 @@ nodeHost.processCommandLineArguments(process.argv.slice(2),
             return fs.readFileSync(filename, 'utf8');
         },
         // Argument to instantiate an accessor.
-        nodeHost.instantiate,
+        nodeHost.instantiateTopLevel,
         // Function to call upon termination.
         function() {
             // Note that in the node host, an exit handler

@@ -3,7 +3,7 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js -timeout 6000 test/auto/RampJSTestDisplay)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
     //  to edit the model, run:
     //  $PTII/bin/vergil -capecode $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
 
