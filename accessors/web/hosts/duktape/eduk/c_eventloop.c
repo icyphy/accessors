@@ -96,8 +96,9 @@ static int poll_count = 0;
 static int exit_requested = 0;
 
 #ifdef __ARM_EABI__
+#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
 int _gettimeofday(struct timeval *tp, void *tzp) {
-  return 0;
+  return timer_read();
 }
 #endif
 
@@ -106,18 +107,12 @@ static double get_now(void) {
 	struct timeval tv;
 	int rc;
 
-#ifdef __ARM_EABI__
-	// FIXME: Need gettimeofday(), see https://www.terraswarm.org/accessors/wiki/Main/DuktapeEclipseARMCortexM4#TimerSetup
-	return 0.0;
-#else
 	rc = gettimeofday(&tv, NULL);
 	if (rc != 0) {
 		/* Should never happen, so return whatever. */
 		return 0.0;
 	}
 	return ((double) tv.tv_sec) * 1000.0 + ((double) tv.tv_usec) / 1000.0;
-#endif
-
 }
 
 static ev_timer *find_nearest_timer(void) {
@@ -309,6 +304,37 @@ static void compact_poll_list(void) {
 #endif /* __ARM_EABI__*/
 }
 
+
+#ifdef __ARM_EABI__
+/* Delay for for the given microseconds (approximately).
+ *
+ * For a 16 MHz CPU, 1us == 16 instructions (assuming each instruction takes
+ * one cycle).
+ * Source: https://github.com/helena-project/tock/blob/master/userland/examples/blink_sync/main.c
+ */
+static void busy_delay_us(int duration) {
+  // The inner loop instructions are: 14 NOPs + 1 SUBS/ADDS + 1 CMP
+  while (duration-- != 0) {
+    __asm volatile (
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+      "nop\n"
+    );
+  }
+}
+#endif /* __ARM_EABI__*/
+
 int eventloop_run(duk_context *ctx) {
 	ev_timer *t;
 	double now;
@@ -390,8 +416,10 @@ int eventloop_run(duk_context *ctx) {
 
 // Accessors: Use usleep() here instead of poll().
 		//printf("timeout -> %d \n", timeout);
-#ifndef __ARM_EABI__
-		// FIXME: Need usleep()
+
+#ifdef __ARM_EABI__
+		busy_delay_us(timeout*1000);
+#else
 		usleep(timeout*1000);
 #endif
 		//rc = poll(poll_list, poll_count, timeout);
