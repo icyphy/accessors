@@ -118,17 +118,22 @@ console.log('Instance of TestAccessor: %j\nTests:', instance);
 
 function test(testName, expression, expectedValue) {
     if (expression != expectedValue) {
-        // Print a stack trace.
-        var e = new Error('dummy');
-        var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-            .replace(/^\s+at\s+/gm, '')
-            .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-            .split('\n');
-        console.log("==== testCommon.js: test Failed: \"" + testName + "\"\n\tExpression     \"" + expression + "\" is !=\n\tExpectedValue: \"" + expectedValue + "\"");
-	console.log("\tThe stack was:");
-	console.log(stack);
 
-        throw ('Test failed: ' + testName +
+	// Don't print a stack trace here, it is confusing.  Instead,
+	// throw a new Error(), which will have the stack
+
+        // // Print a stack trace.
+        // var e = new Error('dummy');
+        // var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+        //     .replace(/^\s+at\s+/gm, '')
+        //     .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+        //     .split('\n');
+        // console.log("==== testCommon.js: test Failed: \"" + testName + "\"\n\tExpression     \"" + expression + "\" is !=\n\tExpectedValue: \"" + expectedValue + "\"");
+	// console.log("\tThe stack was:");
+	// console.log(stack);
+
+	// Use throw new Error() here so that we get a stack
+        throw new Error('Test failed: ' + testName +
             '. Expected: ' + expectedValue +
             ', but got: ' + expression);
     } else {
