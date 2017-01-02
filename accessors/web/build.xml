@@ -47,6 +47,9 @@
   <!-- The @terraswarm.gdp module. -->
   <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
 
+  <!-- If true, then if a test returns non-zero, the build will fail an no other tests will run -->
+  <property name="tests.failOnError" value="false"/>
+
   <!-- The timeout in milliseconds for test -->
   <property name="timeout" value="120000" />
 
@@ -432,7 +435,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/duktape/duktape/duk"
-           failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="--echo"/>
@@ -455,14 +458,14 @@
     <echo>
       == tests.duk.test ==
       To replicate:
-      (cd hosts; duktape/duktape/duk duktape/test/*.js)
+      (cd hosts; duktape/duktape/duk duktape/test/test*.js)
     </echo>      
     <apply dir="hosts"
            executable="duktape/duktape/duk"
-           failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   timeout="${timeout}">
       <fileset dir="hosts">
-        <include name="duktape/test/*.js"/>
+        <include name="duktape/test/test*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
@@ -474,7 +477,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/eduk/eduk"
-	   failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="--timeout"/>
@@ -522,7 +525,7 @@
     <echo> tests.mocha: running on ${converted}</echo>
 
     <exec executable="${mocha.command}"
-	  failonerror="true"
+	  failonerror="${tests.failonerror}"
 	  timeout="${timeout.longer}">
       <arg line="${converted}"/>
     </exec>
@@ -587,7 +590,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
-           failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="-e"/>
@@ -611,7 +614,7 @@
     </echo>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
-           failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
@@ -652,7 +655,7 @@
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="hosts"
            executable="duktape/rusteduk/target/debug/examples/rusteduk"
-           failonerror="true"
+	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   timeout="${timeout}">
       <arg value="--timeout"/>
