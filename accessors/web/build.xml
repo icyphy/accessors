@@ -160,8 +160,8 @@
     The duk binary would not be deployed on an embedded machine.
     </echo>
     <exec dir="${duktape.source}"
-	  failonerror="true"
           executable="make"
+	  failonerror="true"
           timeout="${timeout}">
     </exec>
   </target>
@@ -181,8 +181,8 @@
   <target name="eduk.tcmalloc"
           description="Build the eduk with tcmalloc for heap profiling">
     <exec dir="${eduk.source}"
-          failonerror="true"
           executable="make"
+          failonerror="true"
           timeout="${timeout}">
       <arg value="eduk.tcmalloc"/>
     </exec>
@@ -308,8 +308,8 @@
       See https://www.terraswarm.org/accessors/wiki/Main/RustHost
     </echo>
     <exec dir="${rusteduk.source}"
-          failonerror="true"
           executable="make"
+          failonerror="true"
           timeout="${timeout}">
     </exec>
   </target>
@@ -437,6 +437,7 @@
            executable="hosts/duktape/duktape/duk"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="--echo"/>
       <arg value="--accessor"/>
@@ -450,6 +451,15 @@
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
   </target>
   
   <target name="tests.duk.test"
@@ -463,12 +473,22 @@
     <apply dir="hosts"
            executable="duktape/duktape/duk"
 	   failonerror="${tests.failonerror}"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <fileset dir="hosts">
         <include name="duktape/test/test*.js"/>
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
   </target>
 
   <target name="tests.eduk"
@@ -479,6 +499,7 @@
            executable="duktape/eduk/eduk"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="--timeout"/>
       <arg value="4000"/>
@@ -490,6 +511,15 @@
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
   </target>
 
   <target name="tests.jenkins"
@@ -504,6 +534,15 @@
       tests.jenkins target enerates JUnit xml-compatibile output where possible
       and runs tests.coverage.
     </echo>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
   </target>
 
   <target name="tests.mocha"
@@ -526,9 +565,19 @@
 
     <exec executable="${mocha.command}"
 	  failonerror="${tests.failonerror}"
+	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
       <arg line="${converted}"/>
     </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
   </target>
 
   <target name="tests.mocha.composites"
@@ -547,9 +596,20 @@
     </echo>
 
     <exec executable="${mocha.command}"
+	  failonerror="${tests.failonerror}"
+	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+    
   </target>
 
   <target name="tests.mocha.xml"
@@ -568,6 +628,8 @@
 		 pathsep=" "
 		 property="converted"/>
     <exec executable="${mocha.command}"
+	  failonerror="${tests.failonerror}"
+	  resultproperty="tests.resultproperty"
           timeout="${timeout.longer}">
       <arg line="--bail"/>
       <arg value="--reporter"/>
@@ -576,6 +638,15 @@
       <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
       <arg line="${converted}"/>
     </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+    
   </target>
 
   <target name="tests.nashorn"
@@ -592,6 +663,7 @@
            executable="hosts/nashorn/nashornAccessorHost"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
@@ -601,6 +673,15 @@
         <patternset refid="accessors.excludes" />
       </fileset>
     </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+    
   </target>
 
   <target name="tests.nashorn.test"
@@ -615,6 +696,7 @@
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
 	   failonerror="${tests.failonerror}"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
@@ -627,6 +709,14 @@
     </apply>
 
     <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
+    <echo>
       Running the Nashorn smoke test.  To replicate:
       cd hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
       target timeout = ${timeout} ms.
@@ -634,11 +724,22 @@
 
     <exec dir="hosts"
           executable="nashorn/nashornAccessorHost"
+	  failonerror="${tests.failonerror}"
+	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
       <arg value="-timeout"/>
       <arg value="1000"/>
       <arg value="hosts/nashorn/test/testNashornHost.js"/>
     </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+    
   </target>
 
   <!-- Alias for tests.mocha. -->
@@ -657,6 +758,7 @@
            executable="duktape/rusteduk/target/debug/examples/rusteduk"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
+	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="--timeout"/>
       <arg value="4000"/>
