@@ -61,7 +61,7 @@ exports.testNodeAuto = function(auto) {
                                                 var testAccessorName = auto +'/' + accessor;
 					    
 					        // Remove the .js from the name
- 					        if (testAccessorName.substring(accessor.length - 3, testAccessorName.length) === ".js") {
+ 					        if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
 					            testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
 						}
                                                 var testAccessor = 

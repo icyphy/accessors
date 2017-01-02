@@ -30,7 +30,7 @@
 //   cd accessors/web
 //   ant tests.nashorn
 
-var capeCodeHost = require('capeCodeHost');
+var nashornHost = require('nashornHost');
 
 // Generate a list of auto files in ../test/auto
 var File = Java.type('java.io.File');
@@ -42,10 +42,11 @@ var i;
 for (i = 0; i < directoryFiles.length; i += 1) {
     var fileName = directoryFiles[i].getPath();
     if (fileName.endsWith('.js')) {
-        jsFiles.push(fileName);
+ 	if (fileName.substring(fileName.length - 3, fileName.length) === ".js") {
+	    fileName = fileName.substring(0, fileName.length -3);
+	}
+        instantiateTopLevel(fileName, fileName);
     }
 }
-
-instantiateAndInitialize(jsFiles);
 
 console.log("nashorn/test/testNashornAuto.js: end");
