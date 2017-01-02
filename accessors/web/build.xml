@@ -667,7 +667,8 @@
 	   timeout="${timeout}">
       <arg value="-e"/>
       <arg value="-timeout"/>
-      <arg value="4000"/>
+      <!-- RampJSTestDisplay requires 5000 ms. -->
+      <arg value="5000"/>
       <fileset dir=".">
 	<include name="test/auto/*.js"/>
         <patternset refid="accessors.excludes" />
