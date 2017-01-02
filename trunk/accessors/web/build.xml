@@ -631,8 +631,8 @@
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
           timeout="${timeout.longer}">
-      <!-- Don't use --bail because some of the commonHosts tests are failing. -->
-      <!-- arg line="--bail"/ -->
+      <!-- Don't use nail because some of the commonHosts tests are failing. -->
+      <!-- arg line=" bail"/ -->
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
