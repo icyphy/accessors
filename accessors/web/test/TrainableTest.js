@@ -145,7 +145,7 @@ exports.initialize = function () {
             }
             if (typeof referenceToken === 'number') {
                 if (Math.abs(inputValue - referenceToken) > self.getParameter('tolerance')) {
-                    throw new Error('The input "' + inputValue + '" is not within "' +
+                    throw new Error(self.accessorName + ': The input "' + inputValue + '" is not within "' +
                         self.getParameter('tolerance') +
                         '" of the expected value "' +
                         referenceToken + '"');
