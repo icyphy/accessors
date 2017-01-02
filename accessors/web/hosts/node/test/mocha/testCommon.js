@@ -8,13 +8,14 @@ var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 describe('hosts/node/test/mocha/testCommon.js: testCommon.\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)', function () {
     it('load testCommon', function () {
-        var testCommon = require('../../../../hosts/common/test/testCommon.js');
+        // var testCommon = require('../../../../hosts/common/test/testCommon.js');
+	assert.equal(true, false, "Temporarily failing while we figure out commonHost.");
     });
 
-    it('Wait 3 seconds until the Spontaneous tests complete', function(done) {
-        // See https://mochajs.org/#timeouts
-        this.timeout(4000);
-        setTimeout(function () {done(); console.log("mocha/testCommon.js done");}, 3000);
-
-    });
+    //it('Wait 3 seconds until the Spontaneous tests complete', function(done) {
+    //    // See https://mochajs.org/#timeouts
+    //    this.timeout(4000);
+    //    setTimeout(function () {done(); console.log("mocha/testCommon.js done");}, 3000);
+    //
+    //});
 });
