@@ -2,9 +2,9 @@
 // Run the tests in accessors/web/test/auto.
 // To run this test, do:
 //   sudo npm install -g mocha
-//   mocha testNodeAuto.js
+//   (cd mocha; mocha testNodeAllAuto.js)
 // or
-//   cd accessors/web; ant tests.mocha.composites
+//   (cd ../../../; ant tests.mocha.composites)
 
 var nodeHost = require('../nodeHost.js');
 var fs = require('fs');
@@ -27,7 +27,7 @@ exports.testNodeAuto = function(auto) {
     var mochaListener;
     
     // describe() is a mocha function.
-    describe('NodeHost' , function() {
+    describe('hosts/node/test/testNodeAuto.js: running tests in ' + auto  , function() {
             this.timeout(20000); // Increase default timeout.  Originally 2000ms.
             
             before(function() {        
@@ -40,8 +40,9 @@ exports.testNodeAuto = function(auto) {
             });
     
                     accessors.forEach(function(accessor) {
+			var testTimeout = 500;
                             if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
-                            accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
+				accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
                                 accessor.indexOf('~') == -1 &&
                                 accessor.substring(0,4) != '.svn' &&
                                 accessor.substring(0,4) != '.log') {
@@ -55,11 +56,17 @@ exports.testNodeAuto = function(auto) {
                                 // mocha-junit-reporter or try a different reporter.  
                                 // Tried mocha-jenkins-reporter, but it does not seem to 
                                 // generate a results file when passed a file path.
-                                        // it() is a mocha function.
-                                        it ('run accessors/web/' + auto + '/' + accessor + '\n.  To replicate: (cd hosts/node; node nodeHostInvoke ' + auto + '/' + accessor + ')\n', function (done) {
-                                                var testAccessorName = [ auto +'/' + accessor ];
+                                // it() is a mocha function.
+                                        it ('run accessors/web/' + auto + '/' + accessor + '\n.  To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')\n', function (done) {
+                                                var testAccessorName = auto +'/' + accessor;
+					    
+					        // Remove the .js from the name
+ 					        if (testAccessorName.substring(accessor.length - 3, testAccessorName.length) === ".js") {
+					            testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
+						}
                                                 var testAccessor = 
-                                                    instantiateAndInitialize(testAccessorName)[0];
+                                                    nodeHost.instantiateTopLevel(nodeHost.uniqueName(testAccessorName),
+										 testAccessorName);
                                 
                                                 var exception = null;
                                                 var exceptionHandler, exitHandler;
@@ -99,7 +106,7 @@ exports.testNodeAuto = function(auto) {
                                                                         done();
                                                                 }, 500);
                                                         }
-                                                    }, 11000);
+                                                    }, testTimeout);
                                             });
                             }
                     });

@@ -2,30 +2,30 @@
 // Exercise the nodeHost.processCommandLineArguments() function
 // To run this test, do:
 //   sudo npm install -g mocha
-//   mocha testMain.js
+//   mocha testProcessCommandLineArguments.js
 
 var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 
-describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArguments().\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testMain.js)', function () {
-    it('nodeHost.processCommandLineArguments(). Should have generated a usage message.', function () {
+describe('hosts/node/test/mocha/testProcessCommandLineArguments.js: nodeHost.js processCommandLineArguments().\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha mocha/testProcessCommandLineArguments.js)\n', function () {
+    it('testProcessCommandLineArguments.js 1.1: nodeHost.processCommandLineArguments().  Should have generated a usage message.', function () {
         var args = [];
         // 3 is the error code
-        assert.equal(nodeHost.processCommandLineArguments(args), 3);
+        assert.equal(nodeHost.processCommandLineArguments(args), false);
     });
 
-    it('nodeHost.processCommandLineArguments(-h). Should have generated a usage message.', function () {
+    it('testProcessCommandLineArguments.js 1.2: nodeHost.processCommandLineArguments(-h). Should have generated a usage message.', function () {
         var args = [ '-h' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
     });
 
-    it('nodeHost.processCommandLineArguments(-timeout) with no timeout. Should have generated an error message.', function () {
+    it('testProcessCommandLineArguments.js 1.3: nodeHost.processCommandLineArguments(-timeout) with no timeout. Should have generated an error message.', function () {
         var args = ['-timeout'];
-        assert.equal(nodeHost.processCommandLineArguments(args), 3);
+        assert.equal(nodeHost.processCommandLineArguments(args), false);
     });
 
-    it('nodeHost.processCommandLineArguments(-v). Should have generated a version message.', function () {
+    it('testProcessCommandLineArguments.js 1.4: nodeHost.processCommandLineArguments(-v). Should have generated a version message.', function () {
         var args = [ '-v' ];
         // FIXME: It would be nice to catch the output here
         assert.equal(nodeHost.processCommandLineArguments(args), 0);
@@ -34,7 +34,7 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
     // Run a composite accessor that has a TrainableTest accessor and check
     // that wrapup is called.
     function runTrainableTestAccessor(accessorPath) {
-        it('nodeHost.processCommandLineArguments(' + accessorPath + ')', function (done) {
+        it('testProcessCommandLineArguments.js 2.0: nodeHost.processCommandLineArguments(' + accessorPath + ')', function (done) {
             // This test is attempting to test that wrapup will get called.
             // The first step is to be able to get all the accessors that were created.
             //
@@ -42,7 +42,9 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
             // on contained accessors.  For example,
 
             // Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js -timeout 6000 test/auto/RampJSTest)
-            // should generate:
+            // should generate the following:
+	    // FIXME: The output has changed, we need to add better debugging that will print when wrapup() is called
+	    //
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/auto/RampJSTest.js
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TestSpontaneous.js
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TrainableTest.js
@@ -64,7 +66,7 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
             this.timeout(6500);
             setTimeout(function () {
                 done();
-                // console.log("mocha/testMain.js accessors test " + accessorPath + " done !");
+                // console.log("mocha/testProcessCommandLineArguments.js accessors test " + accessorPath + " done !");
 
                 // Assert that getTopLevelAccessors() has the RampJSTest top
                 // level, the TrainableTest and that wrapup() was called.
@@ -74,11 +76,11 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
                 
                 for (var i = 0; i < accessors.length; i += 1) {
                     var topLevelAccessor = accessors[i];
-                    //console.log("mocha/testMain.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
+                    //console.log("mocha/testProcessCommandLineArguments.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
                     // FIXME: What if there are multiple runs?
                     for (var j = 0; j < topLevelAccessor.containedAccessors.length; j += 1) {
                         var accessor = topLevelAccessor.containedAccessors[j];
-                        //console.log("mocha/testMain.js: done(): accessor: " + accessor + " " + accessor.accessorName);
+                        //console.log("mocha/testProcessCommandLineArguments.js: done(): accessor: " + accessor + " " + accessor.accessorName);
                         // Check that all instances of TrainableTest have been wrapped up.
                         // FIXME: This is hard coding the name of
                         // the TrainableTest actor, we should search by
@@ -99,7 +101,7 @@ describe('hosts/node/test/mocha/testMain.js: nodeHost.js processCommandLineArgum
 
             var args = [ '--timeout', '5500', accessorPath ];
             // FIXME: It would be nice to catch the output here
-            assert.equal(nodeHost.processCommandLineArguments(args, null, nodeHost.instantiate), 0);
+            assert.equal(nodeHost.processCommandLineArguments(args, null, nodeHost.instantiateTopLevel), true);
             assert.ok(typeof nodeHost.getTopLevelAccessors() !== 'undefined',
                     "nodeHost.accessors is not defined after invoking main " + args);
         });
