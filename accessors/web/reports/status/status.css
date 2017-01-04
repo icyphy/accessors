@@ -6,27 +6,41 @@ body {
 } 
 
 table {
-	font-size: 1.2em;
-	border-collapse: collapse;
+	font-size: 1em;
 	width: 80%;
+	margin: 0em;
+	border-spacing: 0em;
+	border-collapse: collapse;
 }
 
-table, th, td {
+th, td {
    border: 1px solid gray;
    padding: 0.3em;
    text-align: center;
 }
 
-tr:hover {background-color: #f5f5f5}
+td.name {text-align: left;}
 
-tr:nth-child(even) {background-color: #f2f2f2}
+td.testname {
+	text-align: left;
+	padding-left: 2em;
+}
+
+#table tr:hover {background-color: #B8D5E4;}
+
+/* Test cases */
+tr.hidden, tr.visible {background-color: #f2f2f2;}
+
+tr.hidden {
+	visibility: collapse;
+}
 
 th {
 	background-color: #3B7EA1;
 	color: #FFFFFF;
 }
 
-.page{
+.page {
 	margin: 2em;
 }
 
@@ -36,5 +50,10 @@ th {
 
 .failed {
 	color: #b22222;
+	font-weight: bold;
+}
+
+.supported {
+	color: #3B7EA1;
 	font-weight: bold;
 }
