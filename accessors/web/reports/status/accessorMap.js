@@ -120,8 +120,6 @@ module.exports = (function () {
 		//var pattern = '{**/*.js, !(**/hosts/**/*.*)}';
 		var pattern = '{**!(hosts)/*.js}';
 		glob('!(demo|hosts|jsdoc|library|obsolete|reports|styles|wiki)**/*.js', function(err, files) {
-			// Don't think we have to eliminate any?
-			console.log('accessors ' + files);
 			accessors = files;	// So we can check all finished later.
 			
 			// Accessors to modules:
@@ -139,7 +137,6 @@ module.exports = (function () {
 		// Test cases to accessors:
 		// Any file under a /test/auto directory with a .js extension.
 		glob('**/test/auto/*.js', function(err, files) {
-			 console.log('files ' + files);
 			 testcases = files;	// So we can check all finished later.
 
 			files.forEach(function(filepath) {
@@ -179,7 +176,8 @@ module.exports = (function () {
 						// quotes or single quotes.  Ignore whitespace.
 						// This will return, for example:
 						// require('cameras'
-						var exp = /require\(\s*['"]\s*\w+\s*['"]/;
+						// Use /g at the end to find all matches.
+						var exp = /require\(\s*['"]\s*-*\w+-*\w*\s*['"]/g;
 					
 						var matches = data.match(exp);
 						
