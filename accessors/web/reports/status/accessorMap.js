@@ -279,6 +279,12 @@ module.exports = (function () {
 			console.log('Error tabulating modules.  Cannot read hosts directory.');
 		}
 		
+		// Add native node modules.
+		if (hostsToModules.node !== null && 
+				typeof hostsToModules.node !== 'undefined') {
+			hostsToModules.node.push('querystring');
+		}
+		
 		checkIfDone();
 	};
 
