@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Accessor Status</title>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="../status.css">
+	<script src="sampleStatus.js"> </script>
+</head>
+<body>
+
+<!-- Legend -->
+<div class="page">
+	<table id="legend"> 
+		<tr> <td> <span style='color:#228b22;'>  &#9899; </span>: Supported </td> 
+			 <td> <span style='color:#ee7600;'>  &#9650; </span>: Some Problems </td> 
+		     <td> <span style='color:#b22222;font-weight:bold;'> x </span>: Failing </td>
+		     <td> <span style='color:#3B7EA1;font-weight:bold;'> o </span>: Modules Implemented; No Test Case </td>
+		     <td> Blank : Not supported </td>
+		</tr>
+	</table>
+	<br>
+	<div> Click + to show test cases. </div>
+	<br>
+	<table id="table">
+		<tr> <th> Accessor </th> <th> Browser </th> <th> Node </th> </tr>
+	</table>
+</div>
+
+</body>
+</html>
