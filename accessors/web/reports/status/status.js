@@ -8,8 +8,6 @@ var accessorMap;
 $(window).on("load", function() {
 	testResults = {};
 	
-	var url = "browserhost.txt";
-	
 	// Callback calls parseNodeResults.  Nesting the callbacks ensures all 
 	// results are parsed before creating the table.
 	$.ajax({
