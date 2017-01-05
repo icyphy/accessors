@@ -59,7 +59,19 @@ exports.testNodeAuto = function(auto) {
                 // Tried mocha-jenkins-reporter, but it does not seem to 
                 // generate a results file when passed a file path.
                 // it() is a mocha function.
-                it ('NodeHost run accessors/web/' + auto + '/' + accessor + '\n.  To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')\n', function (done) {
+		
+                var testAccessorName = auto +'/' + accessor;
+		    
+		// Remove the .js from the name
+ 		if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
+		    testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
+		}
+		// Remove ./ because the last . is all that matters for Jenkins.  Also replace // with /
+		var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
+                it ('./accessors/web/' + dotlessTestAccessorName, function (done) {
+
+		    var replicationMessage = 'To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
+		    
                     var testAccessorName = auto +'/' + accessor;
 		    
 		    // Remove the .js from the name
