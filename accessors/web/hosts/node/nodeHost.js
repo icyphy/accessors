@@ -150,7 +150,7 @@ function instantiate(accessorName, accessorClass) {
     };
     var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
-    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    //console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };
 
