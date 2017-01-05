@@ -11,7 +11,10 @@ var chai = require('chai');
 var assert = chai.assert;        
 var should = chai.should();
 
-describe('net/test/auto/mocha/testREST.js.\n    To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)', function () {
+// describe() is a mocha function.
+// IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
+// See https://www.terraswarm.org/accessors/wiki/Notes/Status
+describe('NodeHost', function () {
     // Increase default timeout (originally 2000ms).
     this.timeout(10000);
 
@@ -23,7 +26,7 @@ describe('net/test/auto/mocha/testREST.js.\n    To replicate: (cd net/test/auto/
         
     });
     
-    it('Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done){
+    it('NodeHost run accessors/web/net/test/auto/mocha/testRest.js\n  Should GET values from a Cross-Origin Resource Sharing (CORS) site.\n  To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)', function(done){
         
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
@@ -57,7 +60,7 @@ describe('net/test/auto/mocha/testREST.js.\n    To replicate: (cd net/test/auto/
         }, 3000);
     });
     
-    it('Should GET values using the JSON with padding technique', function(done){
+    it('NodeHost run accessors/web/net/test/auto/mocha/testRest.js\n  Should GET values using the JSON with padding technique\n  To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)', function(done){
         
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");
