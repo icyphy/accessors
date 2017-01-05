@@ -627,6 +627,8 @@
     <pathconvert refid="test.mocha.files"
 		 pathsep=" "
 		 property="converted"/>
+
+    <echo> tests.mocha.xml: running on ${converted}</echo>
     <exec executable="${mocha.command}"
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
