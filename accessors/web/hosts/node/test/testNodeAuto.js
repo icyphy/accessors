@@ -28,7 +28,7 @@ exports.testNodeAuto = function(auto) {
     
     // describe() is a mocha function.
     // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
-    // See 
+    // See https://www.terraswarm.org/accessors/wiki/Notes/Status
     describe('NodeHost' , function() {
         this.timeout(20000); // Increase default timeout.  Originally 2000ms.
         
