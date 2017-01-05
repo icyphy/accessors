@@ -59,7 +59,7 @@ exports.testNodeAuto = function(auto) {
                 // Tried mocha-jenkins-reporter, but it does not seem to 
                 // generate a results file when passed a file path.
                 // it() is a mocha function.
-                it ('run accessors/web/' + auto + '/' + accessor + '\n.  To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')\n', function (done) {
+                it ('NodeHost run accessors/web/' + auto + '/' + accessor + '\n.  To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')\n', function (done) {
                     var testAccessorName = auto +'/' + accessor;
 		    
 		    // Remove the .js from the name
