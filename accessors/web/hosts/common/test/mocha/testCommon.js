@@ -8,7 +8,7 @@
 var assert = require('assert');
 describe('NodeHost', function() {
     // hosts/browser/common/test/mocha/testCommon.js or hosts/common/test/mocha/testCommon.js (symlink): CommonTests', function () {
-    it('NodeHost./accessors/web/hosts/browser/common/test/mocha/testCommon or accessors/web/hosts/common/test/mocha/testCommon.js (symlink)', function () {
+    it('NodeHost./accessors/web/hosts/browser/common/test/mocha/testCommon or accessors/web/hosts/common/test/mocha/testCommon (symlink)', function () {
         // var testCommon = require('../testCommon.js');
 	assert.equal(true, false, "Temporarily failing while we figure out commonHost.");
     });
