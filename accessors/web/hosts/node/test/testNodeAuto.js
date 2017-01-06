@@ -68,7 +68,7 @@ exports.testNodeAuto = function(auto) {
 		}
 		// Remove ./ because the last . is all that matters for Jenkins.  Also replace // with /
 		var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
-                it ('./accessors/web/' + dotlessTestAccessorName, function (done) {
+                it ('NodeHost./accessors/web/' + dotlessTestAccessorName, function (done) {
 
 		    var replicationMessage = 'To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
 		    
