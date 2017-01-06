@@ -13,6 +13,9 @@ if [ ! -f $UGLIFYJS ]; then
     npm install uglify-js
 fi
 
+# If we installed from a jar file, then uglifyjs might not be executable.
+chmod a+x $UGLIFYJS
+
 if [ $# -ne 2 ]; then
     echo "$0: Usage: $0 inputFile outputFile"
     exit 3
