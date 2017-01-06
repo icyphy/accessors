@@ -70,7 +70,7 @@ exports.testNodeAuto = function(auto) {
 		var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
-		    var replicationMessage = 'To replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
+		    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
 		    
                     var testAccessorName = auto +'/' + accessor;
 		    
@@ -87,6 +87,7 @@ exports.testNodeAuto = function(auto) {
                     
                     // Treat exceptions and calls to 'exit' as failures.
                     process.once('uncaughtException', exceptionHandler = function(error) { 
+			error += replicationMessage;
                         exception = error;
                         done(error);
                     });
