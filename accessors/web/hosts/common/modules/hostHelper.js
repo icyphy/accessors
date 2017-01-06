@@ -22,26 +22,62 @@
 //CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 //ENHANCEMENTS, OR MODIFICATIONS.
 
-exports.instantiate = function() {
+
+exports.HostHelper = function() {
+	this.mochaListener = null;
+	
+	if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
+	    exports.HostHelper.prototype.instantiate = instantiate;
+	} else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+		exports.HostHelper.prototype.instantiate = function() {
+			console.log('The hostHelper module is not yet supported on Cape Code.');
+		}
+	} else if (typeof Duktape === 'object') {
+		exports.HostHelper.prototype.instantiate = function() {
+			console.log('The hostHelper module is not yet supported on Duktape.');
+		}
+	} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+		exports.HostHelper.prototype.instantiate = function() {
+			console.log('The hostHelper module is not yet supported on Nashorn.');
+		}
+	} else if (typeof process !== 'undefined' && typeof process.version === 'string') {
+		var host = require('./../../node/nodeHost.js');
+		exports.HostHelper.prototype.instantiate = host.instantiate;
+		
+		exports.HostHelper.prototype.before = function() {
+            // Remove the mocha listener (restore later) and 
+            // use our own handlers.
+            this.mochaListener = process.listeners('uncaughtException').pop();
+            
+            process.removeAllListeners('exit');
+            process.removeAllListeners('uncaughtException');
+		}
+		
+		exports.HostHelper.prototype.after = function() {
+			 process.listeners('uncaughtException').push(this.mochaListener);
+		}
+		
+		exports.HostHelper.prototype.wrapup = function() {
+            // Wait to see if any exceptions occur in wrapup.
+            setTimeout(function() {
+                process.removeListener('uncaughtException', exceptionHandler);
+                process.removeListener('exit', exitHandler);
+                
+                done();
+            }, 500);
+		}
+	}
+};
+
+// In node, a custom uncaught exception handler must be used to avoid crashing 
+// the build.
+exports.HostHelper.prototype.after = function() {};
+exports.HostHelper.prototype.before = function() {};
+exports.HostHelper.prototype.wrapup = function() {};
+
+// hostHelper provides the proper instantiate function for this host.
+exports.HostHelper.prototype.instantiate = function() {
 	console.log('The hostHelper module is not yet supported on this host.');
 }
 
-if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
-    exports.instantiate = instantiate;
-} else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
-	exports.instantiate = function() {
-		console.log('The hostHelper module is not yet supported on Cape Code.');
-	}
-} else if (typeof Duktape === 'object') {
-	exports.instantiate = function() {
-		console.log('The hostHelper module is not yet supported on Duktape.');
-	}
-} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
-	exports.instantiate = function() {
-		console.log('The hostHelper module is not yet supported on Nashorn.');
-	}
-    accessorHost = accessorHostsEnum.NASHORN;
-} else if (typeof process !== 'undefined' && typeof process.version === 'string') {
-	var host = require('./../../node/nodeHost.js');
-	exports.instantiate = host.instantiate;
-}
+
