@@ -8,7 +8,7 @@ var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 
 describe('hosts/node/test/mocha/testProcessCommandLineArguments.js: nodeHost.js processCommandLineArguments().\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha mocha/testProcessCommandLineArguments.js)\n', function () {
-    it('NodeHost testProcessCommandLineArguments.js 1.1: nodeHost.processCommandLineArguments().  Should have generated a usage message.', function () {
+    it('NodeHost./accessors/web/hosts/node/test/mocha/testProcessCommandLineArguments.js nodeHost.processCommandLineArguments().  Should have generated a usage message.', function () {
 	assert.equal(true, false, "nodeHost.js processCommandLineArguments is not testable because it calls exit.");
     });
     

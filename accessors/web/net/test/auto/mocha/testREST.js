@@ -26,7 +26,10 @@ describe('NodeHost', function () {
         
     });
     
-    it('NodeHost run accessors/web/net/test/auto/mocha/testRest.js\n  Should GET values from a Cross-Origin Resource Sharing (CORS) site.\n  To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)', function(done){
+    // 
+    it('NodeHost./accessors/web/net/test/auto/mocha/testRest Should GET values from a Cross-Origin Resource Sharing (CORS) site.', function(done) {
+
+	var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
         
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
@@ -60,7 +63,9 @@ describe('NodeHost', function () {
         }, 3000);
     });
     
-    it('NodeHost run accessors/web/net/test/auto/mocha/testRest.js\n  Should GET values using the JSON with padding technique\n  To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)', function(done){
+    it('NodeHost./accessors/web/net/test/auto/mocha/testRest Should GET values using the JSON with padding technique', function(done) {
+
+	var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
         
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");

@@ -8,7 +8,7 @@ var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 describe('hosts/node/test/mocha/testNodeHost.js: testComposite', function () {
     describe('test/TestComposite()', function () {
-        it('NodeHost.test/TestComposite: Create a test composite and run it', function () {
+        it('NodeHost./accessors/web/test/TestComposite', function () {
             var a = /*this.*/nodeHost.instantiate('TestComposite', 'test/TestComposite');
             a.initialize();
             a.provideInput('input', 10);
