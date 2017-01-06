@@ -44,6 +44,9 @@
   -->
   <property name="rusteduk.source" value="${basedir}/hosts/duktape/rusteduk"/>
 
+  <!-- Location of the selenium-webdriver directory. -->
+  <property name="selenium-webdriver.directory" value="${basedir}/node_modules/selenium-webdriver"/>
+
   <!-- The @terraswarm.gdp module. -->
   <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
 
@@ -131,6 +134,10 @@
 
   <target name="-check-mocha">
     <available property="mocha.command.exists" file="${mocha.command}"/>
+  </target>
+
+  <target name="-check-selenium-webdriver">
+    <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
   </target>
 
   <target name="-check-terraswarm-gdp">
@@ -793,7 +800,9 @@
     </apply>
   </target>
 
-  <target name="selenium-webdriver-install">
+  <target name="selenium-webdriver-install"
+	  depends="-check-selenium-webdriver"
+	  unless="selenium-webdriver.directory.exists">
     <mkdir dir="${basedir}/node_modules"/>
     <exec executable="npm"
           timeout="${timeout}">
