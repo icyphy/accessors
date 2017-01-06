@@ -10,6 +10,7 @@ var host = require('../../../../hosts/node/nodeHost.js');
 var chai = require('chai');
 var assert = chai.assert;        
 var should = chai.should();
+var hostHelper = require('../../../../hosts/common/modules/hostHelper.js');
 
 // describe() is a mocha function.
 // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
@@ -20,7 +21,7 @@ describe('NodeHost', function () {
 
     before(function() {
         // Read the accessor source code.
-        instance = host.instantiate('REST', 'net/REST');
+        instance = hostHelper.instantiate('REST', 'net/REST');
         // Invoke the initialize function.
         instance.initialize();
         
@@ -51,16 +52,12 @@ describe('NodeHost', function () {
             // TypeError: Cannot read property 'should' of undefined
             //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
             // so we check to see if response is undefined.
-            var status = instance.latestOutput('status');
-            try {
-                assert.ok(typeof status !== 'undefined');
-		if (typeof status !== 'undefined') {
-                    status.should.deep.equal(correctOutput);
-		}
-                done();
-            } catch (err) {
-                done(err);
-            }
+            var response = instance.latestOutput('response');
+            
+            assert(response !== null);
+            assert(typeof response !== 'undefined');
+            response.should.deep.equal(correctOutput);
+            done();
         }, 3000);
     });
     
@@ -89,15 +86,11 @@ describe('NodeHost', function () {
             //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
             // so we check to see if response is undefined.
             var response = instance.latestOutput('response');
-            try {
-                assert.ok(typeof response !== 'undefined');
-		if (typeof response !== 'undefined') {
-                    response.should.deep.equal(correctOutput);
-		}
-                done();
-            } catch (err) {
-                done(err);
-            }
+            
+            assert(response !== null);
+            assert(typeof response !== 'undefined');
+            response.should.deep.equal(correctOutput);
+            done();
 
         }, 1000);
     });
