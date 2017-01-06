@@ -27,7 +27,7 @@ describe('NodeHost', function () {
     });
     
     // 
-    it('NodeHost./accessors/web/net/test/auto/mocha/testRest Should GET values from a Cross-Origin Resource Sharing (CORS) site.', function(done) {
+    it('NodeHost./accessors/web/net/test/auto/mocha/testRest Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done) {
 
 	var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
         
