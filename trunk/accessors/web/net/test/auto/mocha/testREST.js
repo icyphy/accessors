@@ -9,7 +9,8 @@ var code, instance;
 var chai = require('chai');
 var assert = chai.assert;        
 var should = chai.should();
-var hostHelper = require('../../../../hosts/common/modules/hostHelper.js');
+var HostHelper = require('../../../../hosts/common/modules/hostHelper.js');
+var hostHelper = new HostHelper.HostHelper();
 
 // describe() is a mocha function.
 // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
@@ -24,6 +25,14 @@ describe('NodeHost', function () {
         // Invoke the initialize function.
         instance.initialize();
         
+        // Use custom exception handlers to avoid crashing the build on error.
+        hostHelper.before();
+        
+    });
+    
+    after(function() {
+    	// Use custom exception handlers to avoid crashing the build on error.
+    	hostHelper.after();
     });
     
     var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
@@ -56,6 +65,9 @@ describe('NodeHost', function () {
             assert(response !== null);
             assert(typeof response !== 'undefined');
             response.should.deep.equal(correctOutput);
+            
+         // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.wrapup();
             done();
         }, 3000);
     });
@@ -89,6 +101,9 @@ describe('NodeHost', function () {
             assert(response !== null);
             assert(typeof response !== 'undefined');
             response.should.deep.equal(correctOutput);
+            
+         // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.wrapup();
             done();
 
         }, 1000);
