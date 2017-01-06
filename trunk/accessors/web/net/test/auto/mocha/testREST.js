@@ -15,7 +15,7 @@ var hostHelper = new HostHelper.HostHelper();
 // describe() is a mocha function.
 // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
 // See https://www.terraswarm.org/accessors/wiki/Notes/Status
-describe('NodeHost', function () {
+describe(hostHelper.hostname, function () {
     // Increase default timeout (originally 2000ms).
     this.timeout(10000);
 
@@ -39,8 +39,10 @@ describe('NodeHost', function () {
         
 
     // 
-    it('NodeHost./accessors/web/net/test/auto/mocha/testREST Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done) {
-
+    it(hostHelper.hostname + './accessors/web/net/test/auto/mocha/testREST Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done) {
+    	// Use custom exception handlers to avoid crashing the build on error.
+    	hostHelper.eachTestStart(done);
+    	
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
         instance.provideInput('command', "");
@@ -63,25 +65,22 @@ describe('NodeHost', function () {
             var response = instance.latestOutput('response');
             
             // This test is breaking the build, so commenting it out for now.
-            /*
             assert(response !== null);
             assert(typeof response !== 'undefined');
             response.should.deep.equal(correctOutput);
-            */
             
-            var isTrue = true;
-            isTrue.should.equal(true);
-            
-         // Use custom exception handlers to avoid crashing the build on error.
-            //hostHelper.wrapup();
+            // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.eachTestEnd(done);
             done();
         }, 3000);
     });
     
-    it('NodeHost./accessors/web/net/test/auto/mocha/testRest Should GET values using the JSON with padding technique', function(done) {
+    it(hostHelper.hostname + './accessors/web/net/test/auto/mocha/testRest Should GET values using the JSON with padding technique', function(done) {
 
 	var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
-        
+		// Use custom exception handlers to avoid crashing the build on error.
+		hostHelper.eachTestStart(done);
+		
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");
         instance.provideInput('command', "");
@@ -93,6 +92,7 @@ describe('NodeHost', function () {
         // FIXME:  Possible to add listener to send()?  Or callback to react()?                                
         setTimeout(function() {
             var correctOutput = {};
+            
             correctOutput.userId = 1;
             correctOutput.id = 1;
             correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
@@ -104,19 +104,13 @@ describe('NodeHost', function () {
             // so we check to see if response is undefined.
             var response = instance.latestOutput('response');
             
-            // This test is breaking the build, so commenting it out for now.
-            /*
             assert(response !== null);
             assert(typeof response !== 'undefined');
             response.should.deep.equal(correctOutput);
-			*/
             
-            var isTrue = true;
-            isTrue.should.equal(true);
-            
-         // Use custom exception handlers to avoid crashing the build on error.
-           // hostHelper.wrapup();
-            done();
+            // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.eachTestStart(done);
+            //done();
 
         }, 3000);
     });
