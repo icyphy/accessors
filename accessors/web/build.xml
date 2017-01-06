@@ -217,6 +217,8 @@
     <echo>Invoke jsdoc to generate documentation for .js files.
     The output appears in doc/jsdoc/index.html
     </echo>
+    <chmod file="${jsdoc.command}"
+	   perm="a+x"/>
     <exec executable="${jsdoc.command}"
           timeout="${timeout}">
       <arg value="--configure" />
@@ -284,6 +286,8 @@
     See jsdoc/plugins/accessorJSDocTags.js
     See jsdoc/templates/ptdoc/publish.js
     </echo>
+    <chmod file="${jsdoc.command}"
+	   perm="a+x"/>
     <exec executable="${jsdoc.command}"
           timeout="${timeout}">
       <arg value="--configure" />
@@ -409,6 +413,8 @@
       ${istanbul.command} cover ${mocha.bar.command} -- ${converted}
     </echo>
     
+    <chmod file="${istanbul.command}"
+	   perm="a+x"/>
     <exec executable="${istanbul.command}"
           timeout="${timeout}">
       <arg value="cover"/>
@@ -565,6 +571,8 @@
 
     <echo> tests.mocha: running on ${converted}</echo>
 
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
     <exec executable="${mocha.command}"
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
@@ -597,6 +605,8 @@
       target timeout = ${timeout} ms.
     </echo>
 
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
     <exec executable="${mocha.command}"
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
@@ -631,6 +641,9 @@
 		 property="converted"/>
 
     <echo> tests.mocha.xml: running on ${converted}</echo>
+
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
     <exec executable="${mocha.command}"
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
@@ -728,6 +741,8 @@
       target timeout = ${timeout} ms.
     </echo>
 
+    <chmod file="nashorn/nashornAccessorHost"
+	   perm="a+x"/>
     <exec dir="hosts"
           executable="nashorn/nashornAccessorHost"
 	  failonerror="${tests.failonerror}"
