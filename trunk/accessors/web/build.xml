@@ -71,7 +71,7 @@
   <fileset id="test.mocha.files" dir="${basedir}">
     <include name="**/mocha/test*.js"/>
     <!-- hosts/browser/common is a symbolic link -->
-    <exclude name="hosts/browser/common/test/mocha/test*.js"/>
+    <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
     <exclude name="**/node_modules/**/*.js"/>
     <patternset refid="accessors.excludes" />
   </fileset>

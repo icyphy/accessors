@@ -8,11 +8,11 @@ var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
 describe('NodeHost./accessors/web/hosts/node/test/mocha/testCommon', function() {
 
-    var replicationMessage = 'To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)';
+    var replicationMessage = '\n\tTo replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)';
 
     it('NodeHost./accessors/web/hosts/node/test/mocha/testCommon load testCommon', function () {
         // var testCommon = require('../../../../hosts/common/test/testCommon.js');
-	assert.equal(true, false, "Temporarily failing while we figure out commonHost.");
+	assert.equal(true, false, 'Temporarily failing while we figure out commonHost.' + replicationMessage);
     });
 
     //it('Wait 3 seconds until the Spontaneous tests complete', function(done) {
