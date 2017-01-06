@@ -5,8 +5,8 @@
 //   mocha testNodeHostInvoke.js
 
 var nodeHost = require('../../nodeHost.js');
-describe('NodeHost./accessors/hosts/node/test/mocha/testNodeHostInvoke.js: nodeHost instantiateTopLevel()', function () {
-    it('nodeHost.instantiateTopLevel("TestComposite", "test/TestComposite")', function () {
+describe('NodeHost./accessors/web/hosts/node/test/mocha/testNodeHostInstantiateTopLevel nodeHost instantiateTopLevel()', function () {
+    it('NodeHost./accessors/web/hosts/node/test/mocha/testNodeHostInstantiateTopLevel instantiateTopLevel()', function () {
 	nodeHost.instantiateTopLevel("TestComposite", "test/TestComposite");
 
     });
