@@ -25,6 +25,9 @@
 
 exports.HostHelper = function() {
 	this.mochaListener = null;
+	this.exception = null;
+	this.exceptionHandler = null;
+	this.exitHandler = null;
 	
 	if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
 	    exports.HostHelper.prototype.instantiate = instantiate;
@@ -51,6 +54,19 @@ exports.HostHelper = function() {
             
             process.removeAllListeners('exit');
             process.removeAllListeners('uncaughtException');
+            
+            // Treat exceptions and calls to 'exit' as failures.
+            process.once('uncaughtException', this.exceptionHandler = function(error) { 
+                exception = error;
+                // FIXME:  What to do here?
+                //done(error);
+            });
+            
+            process.once('exit', this.exitHandler = function(error) { 
+                exception = error;
+                // FIXME:  What to do here?
+                //done(error);
+            });
 		}
 		
 		exports.HostHelper.prototype.after = function() {
@@ -60,8 +76,8 @@ exports.HostHelper = function() {
 		exports.HostHelper.prototype.wrapup = function() {
             // Wait to see if any exceptions occur in wrapup.
             setTimeout(function() {
-                process.removeListener('uncaughtException', exceptionHandler);
-                process.removeListener('exit', exitHandler);
+                process.removeListener('uncaughtException', this.exceptionHandler);
+                process.removeListener('exit', this.exitHandler);
                 
                 done();
             }, 500);
