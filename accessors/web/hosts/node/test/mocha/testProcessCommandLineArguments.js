@@ -9,10 +9,10 @@ var assert = require('assert');
 
 describe('NodeHost', function() {
 
-    var replicationMessage = 'To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha mocha/testProcessCommandLineArguments.js)';
+    var replicationMessage = '\n\tTo replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha mocha/testProcessCommandLineArguments.js)';
 
     it('NodeHost./accessors/web/hosts/node/test/mocha/testProcessCommandLineArguments', function() {
-	assert.equal(true, false, "nodeHost.js processCommandLineArguments is not testable because it calls exit.");
+	assert.equal(true, false, 'nodeHost.js processCommandLineArguments is not testable because it calls exit.' + replicationMessage);
     });
     
     // it('testProcessCommandLineArguments.js 1.1: nodeHost.processCommandLineArguments().  Should have generated a usage message.', function () {
