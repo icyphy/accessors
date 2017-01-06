@@ -6,7 +6,7 @@
 
 var nodeHost = require('../../nodeHost.js');
 var assert = require('assert');
-describe('hosts/node/test/mocha/testCommon.js: testCommon.\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)', function () {
+describe('NodeHost./accessors/web/hosts/node/test/mocha/testCommon.js: testCommon.\n    To replicate: (cd hosts/node/test; ../../../node_modules/.bin/mocha testCommon.js)', function () {
     it('load testCommon', function () {
         // var testCommon = require('../../../../hosts/common/test/testCommon.js');
 	assert.equal(true, false, "Temporarily failing while we figure out commonHost.");
