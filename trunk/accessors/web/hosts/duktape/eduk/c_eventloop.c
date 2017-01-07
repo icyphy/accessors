@@ -95,13 +95,6 @@ static int poll_count = 0;
 /* Misc */
 static int exit_requested = 0;
 
-#ifdef __ARM_EABI__
-#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
-int _gettimeofday(struct timeval *tp, void *tzp) {
-  return timer_read();
-}
-#endif
-
 /* Get Javascript compatible 'now' timestamp (millisecs since 1970). */
 static double get_now(void) {
 	struct timeval tv;

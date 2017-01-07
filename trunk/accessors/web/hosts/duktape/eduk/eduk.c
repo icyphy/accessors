@@ -9,6 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __ARM_EABI__
+//#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
+int _gettimeofday(struct timeval *tp, void *tzp) {
+  return 0;
+  //return timer_read();
+}
+#endif
+
+#ifndef HAIL_PRINT
 #include "duktape.h"
 
 // c_eventloop.h is created with xxd, see the makefile.
@@ -16,7 +25,9 @@
 
 // duktapeHost.h is created with xxd, see the makefile.
 #include "duktapeHost.h"
+#endif // HAIL_PRINT
 
+#ifndef EDUK_MIN
 extern void eventloop_register(duk_context *ctx);
 extern int eventloop_run(duk_context *ctx);  /* Duktape/C function, safe called */
 
@@ -130,6 +141,16 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     return 0;
 }
 
+#endif // EDUK_MIN
+
+#ifdef HAIL_PRINT
+#ifdef __ARM_EABI__
+#include <console.h>
+#endif
+char hello[] = "Hello World!\r\n";
+void nop() {}
+#endif
+
 /** Run an accessor.
  *
  *  Usage:
@@ -143,6 +164,16 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
  */
 //main(void)
 int main(int argc, char *argv[]) {
+#ifdef HAIL_PRINT
+
+#ifdef __ARM_EABI__
+  putnstr_async(hello, sizeof(hello), nop, NULL);
+#else
+  printf("%s", hello);
+#endif // __ARM_EABI
+  return 0;
+
+#else //HAIL_PRINT
     // FIXME: a truly embedded version will not parse command line
     // arguments.  The accessor code will be compiled in.
 
@@ -150,10 +181,25 @@ int main(int argc, char *argv[]) {
     duk_context *ctx = NULL;
     int timeout = -1;
     int foundFile = 0;
+    int returnValue = 0;
 
     // Create duktape environment
     ctx = duk_create_heap_default();
 
+#ifdef EDUK_MIN
+       int length = 100;
+    char buf[length];
+
+    snprintf(buf, length, "print('hello from duktape');\n");
+
+    if (duk_peval_string(ctx, buf) != 0) {
+        fprintf(stderr, "%s:%d: Failed to invoke print.  Command was:\n%s\nError was:\n", __FILE__, __LINE__, buf);
+        print_pop_error(ctx, stderr);
+        return 3;
+    } else {
+        duk_pop(ctx);
+    }
+#else // EDUK_MIN
     // Register Modules
     eventloop_register(ctx);
     // FIXME: fileio_register() should go away eventually.
@@ -190,9 +236,8 @@ int main(int argc, char *argv[]) {
             accessorFileName = arg;
         }
     }
-#endif
+#endif // EDUK_RUN_RAMPJSDISPLAY
 
-    int returnValue = 0;
     if (foundFile == 1) {
         fprintf(stderr, "eduk: About to run %s\n", accessorFileName);
         returnValue = runAccessorHost(ctx, accessorFileName, timeout);
@@ -200,12 +245,15 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "eduk: No file passed as a command line argument?");
         returnValue = 1;
     }
-    duk_destroy_heap(ctx);
+#endif // EDUK_MIN
+    //duk_destroy_heap(ctx);
     return returnValue;
+
 #ifndef EDUK_RUN_RAMPJSDISPLAY
  usage: 
     duk_destroy_heap(ctx);
     fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
     return 1;
 #endif
+#endif // HAIL_PRINT
 }
