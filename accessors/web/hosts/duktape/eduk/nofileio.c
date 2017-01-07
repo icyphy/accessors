@@ -52,6 +52,7 @@
  * @version $Id$
  */
 
+#ifndef EDUK_MIN
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -268,3 +269,4 @@ void nofileio_register(duk_context *ctx) {
     duk_put_prop_string(ctx, -2, "NoFileIo");
     duk_pop(ctx);
 }
+#endif // EDUK_MIN
