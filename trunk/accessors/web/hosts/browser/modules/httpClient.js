@@ -261,14 +261,12 @@ ClientRequest.prototype.end = function() {
 
 	// TODO:  Implement keep-alive and write a test case
 	// This is sent as a header field in jQuery
-	// TODO:  Implement body and write a test case
 	/*
 	this.options.headers['Keep-Alive'] = this.options.keepAlive;
 	 */
 
 	// Check for a JSONP request.  URL will end with ?callback=?
 	// TODO:  Support named callbacks (e.g. ?callback=myMethod) if needed.
-	// Named 
 	if (this.options.method === "GET" && urlString.length > 11 
 			&& urlString.substring(urlString.length - 11, urlString.length) === "?callback=?") {
 		jQuery.getJSON(urlString, function(data, textStatus, xhr) {
