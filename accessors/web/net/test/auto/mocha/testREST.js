@@ -7,6 +7,7 @@
 // Note that chai's expect() does not work in strict mode; assert and should do.
 var code, instance;
 var chai = require('chai');
+chai.use(require('chai-string'));
 var assert = chai.assert;        
 var should = chai.should();
 var HostHelper = require('../../../../hosts/common/modules/hostHelper.js');
@@ -53,8 +54,8 @@ describe(hostHelper.hostname, function () {
         // Wait a bit for request to complete.
         // FIXME:  Possible to add listener to send()?  Or callback to react()?                                
         setTimeout(function() {
-            var correctOutput = {};
-            correctOutput.status = "ok";
+            var correctResponse = {};
+            correctResponse.status = "ok";
             // The strict equals should.equal fails for some reason due to the 
             // single quotes around 'ok', but deep.equal works.
 
@@ -64,13 +65,18 @@ describe(hostHelper.hostname, function () {
             // so we check to see if response is undefined.
             var response = instance.latestOutput('response');
             
-            // This test is breaking the build, so commenting it out for now.
             assert(response !== null);
             assert(typeof response !== 'undefined');
-            response.should.deep.equal(correctOutput);
+            
+            // FIXME: The browser returns an object.  Node returns a string.
+            var responseObject = response;
+            if (typeof response === 'string') {
+            	responseObject = JSON.parse(response);
+            } 
+            responseObject.should.deep.equal(correctResponse);
             
             // Use custom exception handlers to avoid crashing the build on error.
-            hostHelper.eachTestEnd(done);
+            hostHelper.eachTestEnd();
             done();
         }, 3000);
     });
@@ -91,13 +97,23 @@ describe(hostHelper.hostname, function () {
         // Wait a bit for request to complete.
         // FIXME:  Possible to add listener to send()?  Or callback to react()?                                
         setTimeout(function() {
-            var correctOutput = {};
+        	// Browser returns an object; node returns a string.
+            var correctResponseObject = {};
             
-            correctOutput.userId = 1;
-            correctOutput.id = 1;
-            correctOutput.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-            correctOutput.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
+            correctResponseObject.userId = 1;
+            correctResponseObject.id = 1;
+            correctResponseObject.title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
+            correctResponseObject.body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
 
+            var correctResponseString = 
+                "/**/ typeof  === 'function' && ({" + 
+                	  "\"userId\": 1," + 
+                	  "\"id\": 1," + 
+                	  "\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\"," +
+                	  "\"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae" + 
+                	 "ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"" +
+                	"});";
+            
             // We were getting:
             // TypeError: Cannot read property 'should' of undefined
             //     at Timeout._onTimeout (/home/jenkins/workspace/accessors/web/net/test/auto/mocha/testREST.js:73:53)
@@ -106,11 +122,16 @@ describe(hostHelper.hostname, function () {
             
             assert(response !== null);
             assert(typeof response !== 'undefined');
-            response.should.deep.equal(correctOutput);
+
+            if (typeof response === 'string') {
+            	response.should.equalIgnoreSpaces(correctResponseString);
+            } else {
+            	response.should.deep.equal(correctResponseObject);
+            }
             
             // Use custom exception handlers to avoid crashing the build on error.
             hostHelper.eachTestStart(done);
-            //done();
+            done();
 
         }, 3000);
     });
