@@ -80,11 +80,9 @@ exports.HostHelper = function() {
             });
 		}
 		
-		exports.HostHelper.prototype.eachTestEnd = function(done) {
+		exports.HostHelper.prototype.eachTestEnd = function() {
             process.removeListener('uncaughtException', this.exceptionHandler);
             process.removeListener('exit', this.exitHandler);
-            
-            done();
 		}
 		
 		exports.HostHelper.prototype.after = function() {
