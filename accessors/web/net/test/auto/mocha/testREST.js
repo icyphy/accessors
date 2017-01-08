@@ -130,7 +130,7 @@ describe(hostHelper.hostname, function () {
             }
             
             // Use custom exception handlers to avoid crashing the build on error.
-            hostHelper.eachTestStart(done);
+            hostHelper.eachTestEnd();
             done();
 
         }, 3000);
