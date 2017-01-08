@@ -15,6 +15,9 @@
   <!-- Location of the chai directory. -->
   <property name="chai.directory" value="${basedir}/node_modules/chai"/>
   
+  <!-- Location of the chai-string directory. -->
+  <property name="chai-string.directory" value="${basedir}/node_modules/chai-string"/>
+
   <!-- Location of the Duktape sources. -->
   <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
 
@@ -125,10 +128,34 @@
     </exec>
   </target>
 
+  <target name="chai-string-install"
+	  depends="-check-chai-string"
+	  unless="chai-string.directory.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="chai-string"/>
+    </exec>
+  </target>
+
+  <target name="chai-string-update"
+	  depends="chai-string-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="chai-string"/>
+    </exec>
+  </target>
+
   <target name="-check-chai">
     <available property="chai.directory.exists" file="${chai.directory}"/>
   </target>
 
+  <target name="-check-chai-string">
+    <available property="chai-string.directory.exists" file="${chai-string.directory}"/>
+  </target>
+  
   <target name="-check-istanbul">
     <available property="istanbul.command.exists" file="${istanbul.command}"/>
   </target>
@@ -661,7 +688,7 @@
 
   <target name="tests.mocha.xml"
           description="Use mocha to test the Node Host and generate JUnit-compatible output."
-	  depends="mocha-update, mocha-junit-reporter-update, terraswarm-gdp-update">
+	  depends="chai-string-update, mocha-update, mocha-junit-reporter-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
