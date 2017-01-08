@@ -774,7 +774,8 @@
       These tests are only run if $PTII exists.
       The Nashorn accessor host is a subset of the Cape Code accessor host
     </echo>
-    <chmod file="nashorn/nashornAccessorHost"
+
+    <chmod file="hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
@@ -805,7 +806,7 @@
       target timeout = ${timeout} ms.
     </echo>
 
-    <chmod file="nashorn/nashornAccessorHost"
+    <chmod file="hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <exec dir="hosts"
           executable="nashorn/nashornAccessorHost"
