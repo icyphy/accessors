@@ -39,6 +39,11 @@
   -->
   <property name="mocha.bar.command" value="${basedir}/node_modules/mocha/bin/_mocha"/>
 
+  <!-- Location of the mocha-junit-reporter index.js, used by tests.mocha.xml -->
+  <property name="mocha-junit-reporter.index.js" value="${basedir}/node_modules/mocha-junit-reporter/index.js"/>
+
+
+
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
@@ -135,6 +140,10 @@
   <target name="-check-mocha">
     <available property="mocha.command.exists" file="${mocha.command}"/>
   </target>
+
+  <target name="-check-mocha-junit-reporter">
+    <available property="mocha-junit-reporter.index.js.exists" file="${mocha-junit-reporter.index.js}"/>
+  </target>  
 
   <target name="-check-selenium-webdriver">
     <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
@@ -269,7 +278,6 @@
           timeout="${timeout}">
       <arg value="install"/>
       <arg value="mocha"/>
-      <arg value="mocha-junit-reporter"/>
     </exec>
   </target>
 
@@ -279,10 +287,30 @@
           timeout="${timeout}">
       <arg value="update"/>
       <arg value="mocha"/>
+    </exec>
+  </target>
+
+  <target name="mocha-junit-reporter-install"
+	  depends="-check-mocha-junit-reporter, chai-update"
+	  unless="mocha-junit-reporter.index.js.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
       <arg value="mocha-junit-reporter"/>
     </exec>
   </target>
 
+  <target name="mocha-junit-reporter-update"
+	  depends="mocha-junit-reporter-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="mocha-junit-reporter"/>
+    </exec>
+  </target>
+
+  
   <target name="ptdoc"
           depends="jsdoc-update"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
@@ -633,7 +661,7 @@
 
   <target name="tests.mocha.xml"
           description="Use mocha to test the Node Host and generate JUnit-compatible output."
-	  depends="mocha-update, terraswarm-gdp-update">
+	  depends="mocha-update, mocha-junit-reporter-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
@@ -719,6 +747,8 @@
       These tests are only run if $PTII exists.
       The Nashorn accessor host is a subset of the Cape Code accessor host
     </echo>
+    <chmod file="nashorn/nashornAccessorHost"
+	   perm="a+x"/>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
 	   failonerror="${tests.failonerror}"
