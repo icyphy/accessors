@@ -116,9 +116,6 @@ module.exports = (function () {
 	 */
 	var findAccessors = function(){
 		// Find *.js files not in /test/auto or in any excluded directory.
-		//var pattern = '{**/*.js, !(**/test/auto/*.js), !(./demo/**/*.js), !(./hosts/**/*.js) }';
-		//var pattern = '{**/*.js, !(**/hosts/**/*.*)}';
-		var pattern = '{**!(hosts)/*.js}';
 		glob('!(demo|hosts|jsdoc|library|obsolete|reports|styles|wiki)**/*.js', function(err, files) {
 			accessors = files;	// So we can check all finished later.
 			
@@ -136,7 +133,7 @@ module.exports = (function () {
 	var findTestCases = function(){
 		// Test cases to accessors:
 		// Any file under a /test/auto directory with a .js extension.
-		glob('**/test/auto/*.js', function(err, files) {
+		glob('**/test/auto/**(/)*.js', function(err, files) {
 			 testcases = files;	// So we can check all finished later.
 
 			files.forEach(function(filepath) {
@@ -315,7 +312,8 @@ module.exports = (function () {
 					
 						var matches = data.match(exp);
 						
-						if (matches.length > 0) {
+						if (matches !== null && typeof matches !== 'undefined' &&
+								matches.length > 0) {
 							if (!testsToAccessors.hasOwnProperty(filepath)) {
 								testsToAccessors[filepath] = [];
 							}

@@ -70,9 +70,16 @@ function parseResults(data, host) {
 		// Skip hosts/ tests; these do not relate to a specific accessor.
 		if (longtestname.indexOf('hosts/') === -1) {
 			if (host === 'node') {
-				// Some node tests begin with NodeHost run accessors/web/.
-				// Remove this.
+				// Remove any NodeHost run . 
 				if (longtestname.indexOf('NodeHost') >= 0) {
+					var dot = longtestname.indexOf('.');
+					if (dot > 0) {
+						longtestname = longtestname.substring(dot + 1);
+					}
+				}
+			} else if (host === 'browser') {
+				// Remove any BrowserHost BrowserHost .
+				if (longtestname.indexOf('BrowserHost') >= 0) {
 					var dot = longtestname.indexOf('.');
 					if (dot > 0) {
 						longtestname = longtestname.substring(dot + 1);
@@ -88,16 +95,44 @@ function parseResults(data, host) {
 				testname = longtestname;
 			}
 			
+			// Remove any accessors/web/
+			var index = testname.indexOf('accessors/web/');
+			if (index !== -1) {
+				testname = testname.substring(index + 14); 
+			}
+			
 			// Remove any leading slashes (node host has these, browser does not).
 			if (testname[0] === '/') {
 				testname = testname.substring(1);
+			}
+			
+			// Add .js at the end if not present.
+			if (testname.substring(testname.length -3, testname.length) !== '.js') {
+				testname += '.js';
 			}
 			
 			if (testResults[testname] === null || 
 					typeof testResults[testname] === 'undefined') {
 				testResults[testname] = {};
 			} 
-			testResults[testname][host] = $(entries[2]).text();
+			// Columns start with 0
+			// Browser columns are Class Duration Status
+			// Node columns are Class Duration Fail diff Skip diff Pass diff Total diff 	
+			
+			if (host === 'browser') {
+				testResults[testname][host] = $(entries[2]).text();
+			} else if (host === 'node') {
+				if ($(entries[4]).text() === "1") {
+					testResults[testname][host] = "Skipped";
+				} else if (($(entries[6]).text() === "1")) {
+					testResults[testname][host] = "Passed";
+				} else {
+					// Consider any test not passed or skipped as failed.
+					testResults[testname][host] = "Failed";
+				}
+			} else {
+				testResults[testname][host] = $(entries[2]).text();
+			}
 		}
 	});
 };
