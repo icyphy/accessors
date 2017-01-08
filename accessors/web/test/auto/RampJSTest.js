@@ -3,7 +3,7 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js test/auto/RampJSTest)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTest.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTest.xml
     //  to edit the model, run:
     //  $PTII/bin/vergil -capecode $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTest.xml
 
@@ -28,8 +28,8 @@ exports.setup = function() {
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
     TrainableTest2.setParameter('correctValues', [1,2,3,4]);
-    TrainableTest2.setParameter('tolerance', 1.0E-9);
     TrainableTest2.setParameter('trainingMode', false);
+    TrainableTest2.setParameter('tolerance', 1.0E-9);
 
     // Connections: RampJSTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
