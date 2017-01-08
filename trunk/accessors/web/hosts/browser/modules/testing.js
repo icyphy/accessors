@@ -223,11 +223,6 @@ exports.Testing.prototype.run = function() {
 					"name=\"" + suite.title + "\" tests=\"" + 
 					suite.tests.length + "\"" + ">\n");
 			
-			console.log('printing suite properties ');
-			for (var prop in suite){
-				console.log("suite prop " + prop);
-			}
-			
 			// If suite has no tests or suites, print closing tag.
 			// NOTE: A "suite" event does not seem to be generated in this case.
 			// Check just in case.
