@@ -41,7 +41,11 @@ var mqtt = require('mqtt');
 
 exports.setup = function () {
     // Inputs and outputs
-    this.input('subscribe');
+    // FIXME: Should be renamed topic
+    this.input('subscribe', {
+        'type':'string',
+        'value':''
+    });
     this.input('unsubscribe');
     this.output('connection', {
         spontaneous: true
@@ -65,25 +69,31 @@ exports.setup = function () {
     });
 };
 
-var self;
 var mqttClient;
 
 function onMessage(topic, data) {
-    self.send('received', data);
-    self.send('receivedTopic', topic);
+    this.send('received', data);
+    this.send('receivedTopic', topic);
 }
 
 function onConnect() {
-    self.send('connection', 'connected to broker');
+    this.send('connection', 'connected to broker');
+    // In case there is a topic, subscribe to it.
+    exports.subscribeInputHandler.call(this);
 }
 
 exports.subscribeInputHandler = function () {
+    // FIXME: Unsubscribe to previous topic.
     var topic = this.get('subscribe');
+    if (topic === '') {
+        // No topic is given.
+        return;
+    }
     if (mqttClient.connected) {
         mqttClient.subscribe(topic);
-        self.send('subscription', 'Topic: ' + topic + ' - subscribed');
+        this.send('subscription', 'Topic: ' + topic + ' - subscribed');
     } else {
-        self.error('Client is not connected to broker, subscribe failed. Topic: ' + topic);
+        this.error('Client is not connected to broker, subscribe failed. Topic: ' + topic);
     }
 };
 
@@ -91,19 +101,18 @@ exports.unsubscribeInputHandler = function () {
     var topic = this.get('unsubscribe');
     if (mqttClient.connected) {
         mqttClient.unsubscribe(topic);
-        self.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
+        this.send('subscription', 'Topic: ' + topic + ' - unsubscribed');
     } else {
-        self.error('Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
+        this.error('Client is not connected to broker, unsubscribe failed. Topic: ' + topic);
     }
 };
 
 exports.initialize = function () {
-    self = this;
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
-    mqttClient = mqtt.createClient(self.getParameter('brokerPort'), self.getParameter('brokerHost'));
-    mqttClient.on('connect', onConnect);
-    mqttClient.on('message', onMessage);
+    mqttClient = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
+    mqttClient.on('connect', onConnect.bind(this));
+    mqttClient.on('message', onMessage.bind(this));
     mqttClient.start();
 };
 
