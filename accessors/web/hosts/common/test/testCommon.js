@@ -23,6 +23,9 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
+// Simple script to test the common host. To run it, in this directory,
+// just do:
+//     node testCommon.js
 
 // The file system module 'fs', is not available under Duktape, CapeCode or Nashorn.
 //if (typeof Duktape !== 'object') {
@@ -37,6 +40,7 @@ if (hasFsModule) {
     var fs = require('fs');
 }
 
+// Provide the required getAccessorCode function that every host needs.
 // Search for a .js file in a search path.
 getAccessorCode = function (name) {
     // We need this so that we can run the test from ant using mocha.
