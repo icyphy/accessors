@@ -49,7 +49,7 @@ exports.setup = function () {
     // Server information
     this.parameter('brokerHost', {
         type: 'string',
-        value: ''
+        value: 'localhost'
     });
     this.parameter('brokerPort', {
         type: 'int',
