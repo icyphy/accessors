@@ -161,30 +161,8 @@ function instantiate(accessorName, accessorClass) {
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
 function instantiateTopLevel(accessorName, accessorClass) {
-    var instance = instantiate(accessorName, accessorClass);
-    
-    // A top-level accessor expects its environment to make it react.
-    // For this host, whenever scheduleEvent() is invoked on the accessor,
-    // we want to request a reaction using setTimeout(). We want to aggregate
-    // these requests so that if multiple events are scheduled, only one
-    // reaction is triggered.
-    instance.reactRequestedAlready = false;
-    var originalScheduleEvent = instance.scheduleEvent;
-    var originalReact = instance.react;
-    instance.react = function() {
-        instance.reactRequestedAlready = false;
-        originalReact.call(instance);
-    }
-    instance.scheduleEvent = function(accessor) {
-        if (!instance.reactRequestedAlready) {
-            instance.reactRequestedAlready = true;
-            setTimeout(function () {
-                instance.react();
-            }, 0);
-        }
-        originalScheduleEvent.call(instance, accessor);
-    }
-    return instance;
+    // FIXME: See if we can get rid of instantiateTopLevel
+    return instantiate(accessorName, accessorClass);
 };
 
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.

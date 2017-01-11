@@ -24,7 +24,7 @@
 //
 // To run this:
 //   cd accessors/web/hosts
-//   ./nashorn/nashornAccessorHost -js -timeout 5000 nashorn/test/testNashornAuto.js
+//   ./nashorn/nashornAccessorHost  -timeout 5000 -js nashorn/test/testNashornAuto.js
 //
 // Or, use ant!
 //   cd accessors/web
@@ -45,7 +45,7 @@ for (i = 0; i < directoryFiles.length; i += 1) {
  	if (fileName.substring(fileName.length - 3, fileName.length) === ".js") {
 	    fileName = fileName.substring(0, fileName.length -3);
 	}
-        instantiateTopLevel(fileName, fileName);
+        instantiate(fileName, fileName);
     }
 }
 
