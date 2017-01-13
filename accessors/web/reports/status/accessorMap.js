@@ -111,7 +111,6 @@ module.exports = (function () {
 			}
 		}
 	}
-	
 	/** Find all accessor source files.
 	 */
 	var findAccessors = function(){
@@ -231,7 +230,7 @@ module.exports = (function () {
 						
 						try {
 							var dirStats = fs.statSync(baseDir + "/" + modulesDir);
-							if (dirStats !== null && typeof stats !== 'undefined' && 
+							if (dirStats !== null && typeof dirStats !== 'undefined' && 
 									dirStats.isDirectory()) {
 								modules = fs.readdirSync(baseDir + "/" + modulesDir);
 							}

@@ -44,16 +44,22 @@ th {
 	margin: 2em;
 }
 
-.passed {
-	color: #228b22;
-}
-
 .failed {
 	color: #b22222;
 	font-weight: bold;
+}
+
+.partial {
+	color: #ee7600;
+}
+
+.passed {
+	color: #228b22;
 }
 
 .supported {
 	color: #3B7EA1;
 	font-weight: bold;
 }
+
+
