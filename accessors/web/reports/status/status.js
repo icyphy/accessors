@@ -1,12 +1,18 @@
-// An object to store the test results, as testResults['testName'].host = status
-// e.g. testResults['net/REST'].node = passed;
-var testResults;
+// Objects to store the testsToAccessors and accessorsToHosts.
+// Cape Code uses a separate test suite, so these results are stored separately.
 var accessorMap;
+var capeCodeAccessorMap;
+
+//An object to store the test results, as testResults['testName'].host = status
+//e.g. testResults['net/REST'].node = passed;
+var testResults;
 
 /** After the page has loaded, import test results and create a table.
  */
 $(window).on("load", function() {
 	testResults = {};
+	accessorMap = {};
+	capeCodeAccessorMap = {};
 	
 	// Callback calls parseNodeResults.  Nesting the callbacks ensures all 
 	// results are parsed before creating the table.
@@ -37,11 +43,81 @@ function parseNodeResults(data) {
 	parseResults(data, 'node');
 	
 	$.ajax({
+        url: "capecodehost.txt",
+        type: "GET",
+        success: parseCapeCodeResults
+     });
+};
+
+/** Parse Cape Code test results web page.
+ * 
+ * @param data The web page.
+ * @param host The accessor host (e.g. 'node').
+ */
+function parseCapeCodeResults(data) {
+	var index;
+	
+	// Retrieve table rows.  Pop the first (header) row.
+	($($.parseHTML(data))).find('#testresult').find('tr').slice(1)
+		.each(function(index) {
+			
+		// Each row contains three <td>s.
+		// Test name, duration, result (passed / failed).
+		var entries = $(this).find('td');  
+		var testname = $(entries[0]).text();
+		
+		// The Cape Code page contains many tests unrelated to accessors.
+		// Check for an accessor test directory.
+		
+		if (testname.indexOf('org/terraswarm/accessor/test/auto') !== -1 || 
+				testname.indexOf('ptolemy/actor/lib/jjs/modules') !== -1) {
+			
+			// Remove /home/jenkins/workspace/ptII/ 
+			index = testname.indexOf('/home/jenkins/workspace/ptII');
+			if (index !== -1) {
+				testname = testname.substring(index + 29);
+			}
+			
+			// Remove (RunModel) from the end.
+			index = testname.indexOf(' ');
+			if (index !== -1) {
+				testname = testname.substring(0, index);
+			}
+			
+			if (testResults[testname] === null || 
+					typeof testResults[testname] === 'undefined') {
+				testResults[testname] = {};
+			}
+			
+			// Columns start with 0.
+			// Columns are Test name Duration Status
+			testResults[testname]['capecode'] = $(entries[2]).text();
+		}
+	});
+	
+	$.ajax({
         url: "accessorMap.txt",
         type: "GET",
         success: function(data) {
         	accessorMap = JSON.parse(data);
-        	fillTable();
+        	
+        	$.ajax({
+                url: "accessorMapCapeCode.txt",
+                type: "GET",
+                success: function(data) {
+                	capeCodeAccessorMap = JSON.parse(data);
+                	Object.assign(accessorMap.testsToAccessors, capeCodeAccessorMap.testsToAccessors);
+                	for (var accessor in capeCodeAccessorMap.accessorsToHosts) {
+                		if (capeCodeAccessorMap.accessorsToHosts[accessor].includes('capecode')) {
+                			if (!accessorMap.accessorsToHosts.hasOwnProperty(accessor)) {
+                				accessorMap.accessorsToHosts[accessor] = [];
+                			}
+                			accessorMap.accessorsToHosts[accessor].push('capecode');
+                		}
+                	}
+                	fillTable();
+                }
+             });
         }
      });
 };
@@ -115,7 +191,7 @@ function parseResults(data, host) {
 					typeof testResults[testname] === 'undefined') {
 				testResults[testname] = {};
 			} 
-			// Columns start with 0
+			// Columns start with 0.
 			// Browser columns are Class Duration Status
 			// Node columns are Class Duration Fail diff Skip diff Pass diff Total diff 	
 			
@@ -189,6 +265,7 @@ function fillTable(){
 		allTests = {};
 		allTests.browser = '';
 		allTests.node = '';
+		allTests.capecode = '';
 		
 		if (tests !== null && typeof tests !== 'undefined' && tests.length > 0){
 			tests.forEach(function(test) {
@@ -206,13 +283,14 @@ function fillTable(){
 				
 				supported = {};
 				supported.browser = true;
+				supported.capecode = true;
 				supported.node = true;
 				
 				// Last first.
 				cells.node = row.insertCell(1);
+				cells.capecode = row.insertCell(1);
 				cells.browser = row.insertCell(1);
 				
-				// Print each test result.
 				testResult = testResults[test];
 				
 				// Check if the host supports ALL accessors in the test case.
@@ -226,6 +304,9 @@ function fillTable(){
 						if (!hosts.includes('node')) {
 							supported.node = false;
 						}
+						if (!hosts.includes('capecode')) {
+							supported.capecode = false;
+						}
 					}
 				});
 				
@@ -237,7 +318,6 @@ function fillTable(){
 					Object.keys(testResult).forEach(function(host) {
 						if (testResult[host] !== null && 
 								typeof testResult[host] !== 'undefined') {
-							
 							if (testResult[host] === 'Passed') {
 								if (allTests[host] === '') {
 									allTests[host] = 'passed';
@@ -272,6 +352,7 @@ function fillTable(){
 		
 		// Last first.
 		cells.node = row.insertCell(1);
+		cells.capecode = row.insertCell(1);
 		cells.browser = row.insertCell(1);
 		
 		fillSummary(accessorname, cells, allTests);
@@ -292,7 +373,6 @@ function fillTable(){
 				if(testResult !== null && typeof testResult !== 'undefined' && 
 						testResult[host] !== null && 
 						typeof testResult[host] !== 'undefined') {
-					
 					if (testResult[host] === 'Passed') {
 						cells[host].className += 'passed ';
 						cells[host].innerHTML = '&#9899';
@@ -301,6 +381,9 @@ function fillTable(){
 						cells[host].innerHTML = 'x';
 					}
 				}
+				// Leave blank if no test result. 
+				// Cape Code has a separate test suite from browser and node, 
+				// so a test will not be run on all hosts.
 			}	
 			// Leave blank if not supported, even if test case fails.
 			// In some cases tests may be run on a host that doesn't support them.
