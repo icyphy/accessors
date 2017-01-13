@@ -738,6 +738,7 @@
           description="Execute the nashorn tests in test/auto."
           depends="-ptII-exists"
           if="${ptII.exists}">
+
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
            executable="hosts/nashorn/nashornAccessorHost"
@@ -770,9 +771,9 @@
           description="Execute the Nashorn tests in hosts/nashorn/test."
           if="${ptII.exists}">
     <echo>
-      == tests.nashorn ==
+      == tests.nashorn.test ==
       These tests are only run if $PTII exists.
-      The Nashorn accessor host is a subset of the Cape Code accessor host
+      The Nashorn accessor host is a subset of the Cape Code accessor host.
     </echo>
 
     <chmod file="hosts/nashorn/nashornAccessorHost"
@@ -783,6 +784,9 @@
 	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
       <arg value="-e"/>
+      <arg value="-timeout"/>
+      <arg value="10000"/>
+      <!-- Note that the name of the JavaScript file must follow the -js command line argument. -->
       <arg value="-js"/>
       <fileset dir="hosts">
         <include name="nashorn/test/*.js"/>
@@ -801,7 +805,7 @@
 
     <echo>
       Running the Nashorn smoke test.  To replicate:
-      cd hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/nashorn/test/testNashornHost.js
+      (cd hosts; ./nashorn/nashornAccessorHost -timeout 1000 -js nashorn/test/testNashornHost.js)
       target timeout = ${timeout} ms.
     </echo>
 
@@ -813,8 +817,11 @@
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
       <arg value="-e"/>
+      <arg value="-timeout"/>
+      <arg value="1000"/>
+      <!-- Note that the name of the JavaScript file must follow the -js command line argument. -->
       <arg value="-js"/>
-      <arg value="hosts/nashorn/test/testNashornHost.js"/>
+      <arg value="nashorn/test/testNashornHost.js"/>
     </exec>
 
     <echo>
