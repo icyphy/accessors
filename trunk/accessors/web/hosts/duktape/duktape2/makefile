@@ -33,4 +33,4 @@ duk2: $(CFILES) $(HFILES) makefile Makefile.cmdline
 duktapeHost.h: ../duktapeHost.js
 	xxd -i ../duktapeHost.js | sed 's/unsigned //' > duktapeHost.h
 clean:
-	rm -f duk
+	rm -f duk2
