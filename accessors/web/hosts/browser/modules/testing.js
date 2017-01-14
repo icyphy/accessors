@@ -52,6 +52,10 @@ exports.Testing = function() {
 };
 util.inherits(exports.Testing, EventEmitter);
 
+/** Load chai and make it visible.
+ */
+exports.Testing.prototype.chai = require('chai');
+
 /** Mark completed suites.  A suite is completed if it has no more test 
  * cases and no sub-suites.  If a suite is completed, check if parent is 
  * also now completed.  

@@ -88,6 +88,10 @@ try {
 try {
     var Testing = require('testing');
     var testing = new Testing.Testing();
+    
+    var assert = testing.chai.assert;
+    var expect = testing.chai.expect;
+    var should = testing.chai.should();
 } catch (err) {
     if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
         // Needed for node host.
