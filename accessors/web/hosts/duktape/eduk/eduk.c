@@ -55,7 +55,9 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     // Use duk_peval_string_noresult() and avoid interning the string.  Good
     // for low memory, see
     // http://duktape.org/api.html#duk_peval_string_noresult
+    // Note that c_eventloop_js must be null-terminated.
     if (duk_peval_string(ctx, c_eventloop_js) != 0) {
+        //fprintf(stderr, "c_eventloop_js: %s\n", c_eventloop_js);
         fprintf(stderr, "%s:%d: Loading C version of c_eventloop failed.  Error was:\n", __FILE__, __LINE__);
         print_pop_error(ctx, stderr);
         return 1;
@@ -67,6 +69,7 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     // Use duk_peval_string_noresult() and avoid interning the string.  Good
     // for low memory, see
     // http://duktape.org/api.html#duk_peval_string_noresult
+    // Note that ___duktapeHost_js must be null-terminated.
     if (duk_peval_string(ctx, ___duktapeHost_js) != 0) {
         fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
         print_pop_error(ctx, stderr);
@@ -112,6 +115,7 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     }
 
     // Eval the command, avoid interning the string.
+    // Note that buf must be null-terminated.
     if (duk_peval_string(ctx, buf) != 0) {
         fprintf(stderr, "%s:%d: Failed to invoke accessor %s.  Command was:\n%s\nError was:\n", __FILE__, __LINE__, accessorFileName, buf);
         print_pop_error(ctx, stderr);

@@ -156,8 +156,17 @@ static int nofileio_readfile(duk_context *ctx) {
         fprintf(stderr, "%s:%d filename: %s, name: %s\n", __FILE__, __LINE__, filename, fileEntries[i].name);
 #endif
         if (strcmp(filename, fileEntries[i].name) == 0) {
-            buf = duk_push_fixed_buffer(ctx, (size_t) fileEntries[i].length);
-            strncpy(buf, fileEntries[i].contents, fileEntries[i].length);
+            int length = fileEntries[i].length;
+            // If the last character is a null, then decrement
+            // the length.  Duktape does not expect buffers to be
+            // null terminated.  If there is a null, then
+            // the error message "invalid token" will result.
+            if (fileEntries[i].contents[length - 1] == 0) {
+                length--;
+            }
+            buf = duk_push_fixed_buffer(ctx, (size_t) length);
+            strncpy(buf, fileEntries[i].contents, length);
+
 #ifdef DEBUG_NOFILEIO
             fprintf(stderr, "%s:%d filename: %s, returning buf of size %lu\n", __FILE__, __LINE__, filename, strlen(buf));
 #endif
