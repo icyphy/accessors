@@ -704,7 +704,7 @@
 
   <target name="tests.mocha"
           description="Use mocha to test the Node host and generate output on stdout."
-	  depends="mocha-update, terraswarm-gdp-update">
+	  depends="chai-string-update, mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
