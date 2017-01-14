@@ -6,11 +6,13 @@ var capeCodeAccessorMap;
 //An object to store the test results, as testResults['testName'].host = status
 //e.g. testResults['net/REST'].node = passed;
 var testResults;
+var testLinks;
 
 /** After the page has loaded, import test results and create a table.
  */
 $(window).on("load", function() {
 	testResults = {};
+	testLinks = {};
 	accessorMap = {};
 	capeCodeAccessorMap = {};
 	
@@ -65,14 +67,17 @@ function parseCapeCodeResults(data) {
 		// Test name, duration, result (passed / failed).
 		var entries = $(this).find('td');  
 		var testname = $(entries[0]).text();
-		
+			
 		// The Cape Code page contains many tests unrelated to accessors.
 		// Check for an accessor test directory.
 		
 		if (testname.indexOf('org/terraswarm/accessor/test/auto') !== -1 || 
 				testname.indexOf('ptolemy/actor/lib/jjs/modules') !== -1) {
 			
-			// Remove /home/jenkins/workspace/ptII/ 
+			var exp = /[/() \[\]\.\-]/g;
+			var link = "http://terra.eecs.berkeley.edu:8080/job/ptII/lastCompletedBuild/testReport/ptolemy.util.test.junit/AutoTests/" + 
+				testname.replace(exp, '_') + '/';
+			
 			index = testname.indexOf('/home/jenkins/workspace/ptII');
 			if (index !== -1) {
 				testname = testname.substring(index + 29);
@@ -92,6 +97,7 @@ function parseCapeCodeResults(data) {
 			// Columns start with 0.
 			// Columns are Test name Duration Status
 			testResults[testname]['capecode'] = $(entries[2]).text();
+			testLinks[testname] = link;
 		}
 	});
 	
@@ -145,7 +151,13 @@ function parseResults(data, host) {
 		
 		// Skip hosts/ tests; these do not relate to a specific accessor.
 		if (longtestname.indexOf('hosts/') === -1) {
+			
+			var exp = /[/() \[\]\.\-]/g;
+			var link;
+			
 			if (host === 'node') {
+				link = "http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/NodeHost/" + 
+				  	longtestname.replace(exp, '_') + '/';
 				// Remove any NodeHost run . 
 				if (longtestname.indexOf('NodeHost') >= 0) {
 					var dot = longtestname.indexOf('.');
@@ -154,6 +166,8 @@ function parseResults(data, host) {
 					}
 				}
 			} else if (host === 'browser') {
+				link = "http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/(root)/BrowserHost/" + 
+					longtestname.replace(exp, '_') + '/';
 				// Remove any BrowserHost BrowserHost .
 				if (longtestname.indexOf('BrowserHost') >= 0) {
 					var dot = longtestname.indexOf('.');
@@ -190,6 +204,7 @@ function parseResults(data, host) {
 			if (testResults[testname] === null || 
 					typeof testResults[testname] === 'undefined') {
 				testResults[testname] = {};
+				testLinks[testname] = link;
 			} 
 			// Columns start with 0.
 			// Browser columns are Class Duration Status
@@ -274,7 +289,13 @@ function fillTable(){
 				row.className += ' ' + accessorname;	// To expand/collapse tests.
 				
 				cell0 = row.insertCell(0);
-				cell0.innerHTML = test;
+
+				if (testLinks[test] !== null && 
+						typeof testLinks[test] !== 'undefined') {
+					cell0.innerHTML = "<a href=\"" + testLinks[test] + "\"> " + test + "</a>";
+				} else {
+					cell0.innerHTML = test;
+				}
 				cell0.className += 'testname ';	// For left-justifying in table.
 				
 				// TODO:  Add more hosts.
@@ -340,12 +361,29 @@ function fillTable(){
 			});
 		}
 		
-		// Columns are browser, node.
+		// Columns are browser, cape code, node.
 		row = table.insertRow(1);
-		row.className += 'collapsed';
 		row.id = accessorname;
 		cell0 = row.insertCell(0);
-		cell0.innerHTML = "+ " + accessorname;
+
+		var link = "https://www.terraswarm.org/accessors/doc/jsdoc/accessor-" + 
+			accessorname.replace('/', '_').replace('.js', '.html');
+		
+		// Add + sign to expand if there are test cases.
+		var expandable = false
+		Object.keys(allTests).forEach(function (host){
+			if (allTests[host] !== '') {
+				expandable = true;
+			}
+		});
+		
+		if (expandable) {
+			cell0.innerHTML = "+ " + "<a href=\"" + link + "\">" + 
+				accessorname  + "</a>";
+			row.className += 'collapsed';
+		} else {
+			cell0.innerHTML = "<a href=\"" + link + "\">" + accessorname + "</a>";
+		}
 		cell0.className += 'name';
 		
 		cells = {};
@@ -373,7 +411,8 @@ function fillTable(){
 				if(testResult !== null && typeof testResult !== 'undefined' && 
 						testResult[host] !== null && 
 						typeof testResult[host] !== 'undefined') {
-					if (testResult[host] === 'Passed') {
+					if (testResult[host] === 'Passed' || 
+							testResult[host] === 'Fixed') {
 						cells[host].className += 'passed ';
 						cells[host].innerHTML = '&#9899';
 					} else {
@@ -428,7 +467,8 @@ function addRowHandlers() {
 			if (this.classList.contains('collapsed')) {
 				this.classList.remove('collapsed');
 				this.classList.add('expanded');
-				this.children[0].innerHTML = '- ' + this.id;
+				this.children[0].innerHTML = '-' + 
+					this.children[0].innerHTML.substring(1);
 				
 				for (var j = 0; j < testrows.length; j++) {
 					testrows[j].classList.remove('hidden');
@@ -438,7 +478,9 @@ function addRowHandlers() {
 			} else {
 				this.classList.remove('expanded');
 				this.classList.add('collapsed');
-				this.children[0].innerHTML = '+ ' + this.id;
+				this.classList.add('expanded');
+				this.children[0].innerHTML = '+' + 
+					this.children[0].innerHTML.substring(1);
 				
 				for (var j = 0; j < testrows.length; j++) {
 					testrows[j].classList.remove('visible');
