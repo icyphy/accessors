@@ -19,10 +19,12 @@ JS_H_FILES = \
 	events.h \
 	util.h \
 	ecma_eventloop.h \
+	AccessorStatus.h \
 	RampJSDisplay.h \
 	RampJSTest.h \
 	RampJSTestDisplay.h \
 	Stop.h \
+	autoAccessorStatusTest.h \
 	autoTestComposite.h \
 	autoTestStop.h \
 	testCommon.h \
@@ -112,6 +114,9 @@ RampJSTestDisplay.h: ../../../test/auto/RampJSTestDisplay.js makefile
 Stop.h: ../../../utilities/Stop.js makefile
 	./js2h $< $@
 
+autoAccessorStatusTest.h: ../../../test/auto/AccessorStatusTest.js makefile
+	./js2h $< $@
+
 autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
 	./js2h $< $@
 
@@ -124,6 +129,8 @@ autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
 testCommon.h: ../../common/test/testCommon.js makefile
 	./js2h $< $@
 # Accessors
+AccessorStatus.h: ../../../trusted/AccessorStatus.js makefile
+	./js2h $< $@
 TestAdder.h: ../../../test/TestAdder.js makefile
 	./js2h $< $@
 TestComposite.h: ../../../test/TestComposite.js makefile
