@@ -21,6 +21,13 @@
  *    support for example allocators, grep for DUK_CMDLINE_*.
  */
 
+#define ACCESSORS
+#if defined(ACCESSORS)
+// Start Accessors: ___duktapeHost_js is declared in duktapeHost.h. duktapeHost.h is
+// created by running xxd -i ../duktapeHost.js duktapeHost.h
+#include "duktapeHost.h"
+#endif /* Accessors */
+
 /* Helper define to enable a feature set; can also use separate defines. */
 #if defined(DUK_CMDLINE_FANCY)
 #define DUK_CMDLINE_LINENOISE
@@ -84,6 +91,14 @@
 #include "duk_alloc_hybrid.h"
 #endif
 #include "duktape.h"
+
+#if defined(ACCESSORS)
+// Eventually, fileio_register() should be removed.
+#include "unistd.h" // for getcwd().
+extern void fileio_register(duk_context *ctx);
+extern void nofileio_register(duk_context *ctx);
+extern void poll_register(duk_context *ctx);
+#endif /* Accessors */
 
 #if defined(DUK_CMDLINE_AJSHEAP)
 /* Defined in duk_cmdline_ajduk.c or alljoyn.js headers. */
@@ -1230,6 +1245,13 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 	}
 #endif
 
+#if defined(ACCESSORS)
+	// FIXME: Eventually, fileio_register() should be removed.
+	fileio_register(ctx);
+        nofileio_register(ctx);
+	poll_register(ctx);
+#endif /* Accessors */
+
 	return ctx;
 }
 
@@ -1281,6 +1303,11 @@ int main(int argc, char *argv[]) {
 	int run_stdin = 0;
 	const char *compile_filename = NULL;
 	int i;
+#if defined(ACCESSORS)
+	int accessor = 0;
+	int echo = 0;
+        int timeout = 0;
+#endif /* Accessors */
 
 	main_argc = argc;
 	main_argv = (char **) argv;
@@ -1373,6 +1400,18 @@ int main(int argc, char *argv[]) {
 				goto usage;
 			}
 			i++;  /* skip code */
+
+#if defined(ACCESSORS)			
+		} else if (strcmp(arg, "--accessor") == 0 || strcmp(arg, "-accessor") == 0) {
+                    accessor = 1;
+		} else if (strcmp(arg, "--timeout") == 0 || strcmp(arg, "-timeout") == 0) {
+                    if (i == argc - 1) {
+                        goto usage;
+                    }
+                    i++;
+                    timeout = atoi(argv[i]);
+#endif /* Accessors */
+
 		} else if (strcmp(arg, "--alloc-default") == 0) {
 			alloc_provider = ALLOC_DEFAULT;
 		} else if (strcmp(arg, "--alloc-logging") == 0) {
@@ -1385,6 +1424,12 @@ int main(int argc, char *argv[]) {
 			alloc_provider = ALLOC_AJSHEAP;
 		} else if (strcmp(arg, "--ajsheap-log") == 0) {
 			ajsheap_log = 1;
+
+#if defined(ACCESSORS)
+		} else if (strcmp(arg, "--echo") == 0 || strcmp(arg, "-echo") == 0) {
+			echo = 1;
+#endif /* Accessors */
+
 		} else if (strcmp(arg, "--debugger") == 0) {
 			debugger = 1;
 #if defined(DUK_CMDLINE_DEBUGGER_SUPPORT)
@@ -1409,6 +1454,25 @@ int main(int argc, char *argv[]) {
 		interactive = 1;
 	}
 
+#if defined(ACCESSORS)
+	if (echo) {
+	  // Accessors: Echo the directory and command so that it can
+	  // be run by hand.  This is helpful when running tests.
+	  char cwd[1024];
+	  if (getcwd(cwd, sizeof(cwd)) != NULL) {
+	    printf("--------------- (cd %s;", cwd);
+	    int i;
+	    for (i = 0; i < argc; i++) {
+	      printf(" %s", argv[i]);
+	    }
+	    printf(")\n");
+	  } else {
+	    perror("getcwd() error");
+	  }
+	}
+#endif /* Accessors */
+
+	
 	/*
 	 *  Memory limit
 	 */
@@ -1427,6 +1491,31 @@ int main(int argc, char *argv[]) {
 	 */
 
 	ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
+
+#if defined(ACCESSORS)
+        // duktapeHost.h is created by running
+        // xxd -i ../duktapeHost.js duktapeHost.h
+        //fprintf(stderr, "%s Loading C version of duktapeHost\n", __FILE__);
+
+        // Use duk_peval_string_noresult() and avoid interning the string.  Good
+        // for low memory, see
+        // http://duktape.org/api.html#duk_peval_string_noresult
+        if (duk_peval_string(ctx, ___duktapeHost_js) != 0) {
+            fprintf(stderr, "%s:%d: Loading C version of duktapeHost failed.  Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        } else {
+            //printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+            //duk_pop(ctx);
+        }
+
+        if (duk_peval_string(ctx, "var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');") != 0) {
+            fprintf(stderr, "%s:%d: Failed to require ecma_eventloop.js.  Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        } else {
+            //printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
+            duk_pop(ctx);
+        }
+#endif /* Accessors */
 
 	/*
 	 *  Execute any argument file(s)
@@ -1452,6 +1541,15 @@ int main(int argc, char *argv[]) {
 			i++;  /* skip filename */
 			continue;
 		} else if (strlen(arg) >= 1 && arg[0] == '-') {
+
+#if defined(ACCESSORS)
+		  if (strcmp(arg, "--timeout") == 0
+		      || strcmp(arg, "-timeout") == 0) {
+		    // Skip the value of timeout.
+		    i++;
+		  }
+#endif /* Accessors */
+
 			continue;
 		}
 
@@ -1460,10 +1558,49 @@ int main(int argc, char *argv[]) {
 			fflush(stderr);
 		}
 
-		if (handle_file(ctx, arg, compile_filename) != 0) {
+#if defined(ACCESSORS)
+                if (accessor == 1) {
+                    // Increase 300 if the snprintf gets changed.
+                    int length = strlen(arg) + 300;
+                    char buf[length];
+                    fprintf(stderr, "duk: About to instantiate %s\n", arg);
+                    fflush(stderr);
+                    if (timeout > 0) {
+		      printf("timeout %d\n", timeout);
+                        // Timeout.
+
+                        // While exiting, invoke wrapup() on any accessors that were
+                        // created.  The TrainableTest accessor expects wrapup to be
+                        // called so that it can report an error if fire() was never
+                        // called.
+
+                        // requestEventLoopExit() is defined in ecma_eventloop.js
+                        snprintf(buf, length,
+                                "var args = ['%s'];\n var thiz=this;\n thiz.accessors = instantiateAndInitialize(args);\n setTimeout(function () {\n  if (thiz.accessors && thiz.accessors.length > 0) {\n   for (var i in thiz.accessors) {\n    thiz.accessors[i].wrapup();\n   }\n  }\n  requestEventLoopExit()}, %d);",
+                                arg, timeout);
+                    } else {
+                        // Prevent the script from exiting by repeating the empty function
+                        // every ~25 days.
+                        snprintf(buf, length, "var args = ['%s'];instantiateAndInitialize(args); setInterval(function () {}, 2147483647);", arg);
+                    }
+                    if (duk_peval_string(ctx, buf) != 0) {
+                        fprintf(stderr, "%s:%d: Failed to invoke accessor.  Command was:%s\n Error was:\n", __FILE__, __LINE__, buf);
+                        print_pop_error(ctx, stderr);
+                        retval = 1;
+                        goto cleanup;
+                    } else {
+                        duk_pop(ctx);
+                    }
+                } else {
+                    fprintf(stderr, "duk: About to eval %s\n", arg);
+                    fflush(stderr);
+                    if (handle_file(ctx, arg, compile_filename) != 0) {
 			retval = 1;
 			goto cleanup;
-		}
+                    }
+                }
+#endif /* Accessors */
+
 
 		if (recreate_heap) {
 			if (verbose) {
@@ -1475,6 +1612,15 @@ int main(int argc, char *argv[]) {
 			ctx = create_duktape_heap(alloc_provider, debugger, ajsheap_log);
 		}
 	}
+
+#if defined(ACCESSORS)
+        //fprintf(stderr, "calling EventLoop.run()\n");
+        if (duk_peval_string(ctx, "EventLoop.run();") != 0) {
+            fprintf(stderr, "%s:%d: Failed to invoke 'EventLoop.run();' Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        }
+        duk_pop(ctx);
+#endif /* Accessors */
 
 	if (run_stdin) {
 		/* Running stdin like a full file (reading all lines before
@@ -1542,6 +1688,12 @@ int main(int argc, char *argv[]) {
 			"   --run-stdin        treat stdin like a file, i.e. compile full input (not line by line)\n"
 			"   --verbose          verbose messages to stderr\n"
 	                "   --restrict-memory  use lower memory limit (used by test runner)\n"
+
+#if defined(ACCESSORS)
+                        "   --accessor         run the files as accessors\n"
+                        "   -accessor         run the files as accessors\n"
+#endif /* Accessors */
+
 	                "   --alloc-default    use Duktape default allocator\n"
 #if defined(DUK_CMDLINE_ALLOC_LOGGING)
 	                "   --alloc-logging    use logging allocator (writes to /tmp)\n"
@@ -1562,6 +1714,12 @@ int main(int argc, char *argv[]) {
 #endif
 			"   --recreate-heap    recreate heap after every file\n"
 			"   --no-heap-destroy  force GC, but don't destroy heap at end (leak testing)\n"
+
+#if defined(ACCESSORS)
+                        "   --timeout time     valid only with --accessors\n"
+                        "   -timeout time      valid only with --accessors\n"
+#endif /* Accessors */
+
 	                "\n"
 	                "If <filename> is omitted, interactive mode is started automatically.\n");
 	fflush(stderr);
