@@ -83,7 +83,7 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 17
+#define FILE_ENTRIES_SIZE 19
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
 #define FILE_ENTRIES_SIZE 6
@@ -110,10 +110,13 @@
 // For production use, this would not need to be shipped.
 #include "ecma_eventloop.h"
 
+#include "AccessorStatus.h"
+
 // These are used by the tests and would not be needed in production.
 #include "RampJSTest.h"
 #include "RampJSTestDisplay.h"
 #include "Stop.h"
+#include "autoAccessorStatusTest.h"
 #include "autoTestComposite.h"
 #include "autoTestStop.h"
 #include "testCommon.h"
@@ -216,6 +219,10 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].length = ___duktape_examples_eventloop_ecma_eventloop_js_len;
 
     // Composite accessors in test/auto/ that are used for testing
+    fileEntries[++n].name = "./test/auto/AccessorStatusTest.js";
+    fileEntries[n].contents = _________test_auto_AccessorStatusTest_js;
+    fileEntries[n].length = _________test_auto_AccessorStatusTest_js_len;
+
     fileEntries[++n].name = "./test/auto/RampJSTest.js";
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
@@ -260,6 +267,10 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[++n].name = "./test/TrainableTest.js";
     fileEntries[n].contents = _________test_TrainableTest_js;
     fileEntries[n].length = _________test_TrainableTest_js_len;
+
+    fileEntries[++n].name = "./trusted/AccessorStatus.js";
+    fileEntries[n].contents = _________trusted_AccessorStatus_js;
+    fileEntries[n].length = _________trusted_AccessorStatus_js_len;
 #endif
 
     /* Set global 'NoFileIo'. */
