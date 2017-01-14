@@ -21,6 +21,9 @@
   <!-- Location of the Duktape sources. -->
   <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
 
+  <!-- Location of the Duktape-2.x sources. -->
+  <property name="duktape2.source" value="${basedir}/hosts/duktape/duktape2"/>
+
   <!-- Location of the istanbul command, used by tests.coverage -->
   <property name="istanbul.command" value="${basedir}/node_modules/.bin/istanbul"/>
   
@@ -211,11 +214,11 @@
 
   <target name="duk2"
           description="Build the duk2 binary.  Requires make and a C compiler.">
-    <echo>The duk2 binary is uses duktape 2.x.
+    <echo>The duk2 binary uses duktape 2.x.
     The duk2 binary has more command line options that the eduk binary.
     The duk2 binary would not be deployed on an embedded machine.
     </echo>
-    <exec dir="${duktape.source}"
+    <exec dir="${duktape2.source}"
           executable="make"
 	  failonerror="true"
           timeout="${timeout}">
