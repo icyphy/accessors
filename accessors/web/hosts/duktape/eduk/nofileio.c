@@ -139,7 +139,14 @@ struct fileEntry fileEntries [FILE_ENTRIES_SIZE];
 
 static int nofileio_readfile(duk_context *ctx) {
     const char *filename = duk_to_string(ctx, 0);
+
+    // Under Duktape 2.x, we started getting [object Uint8Array] back
+    // from readFile() so we use strings here instead of fixed
+    // buffers.
+#ifdef NOFILEIO_USE_FIXED_BUFFER
     void *buf;
+#endif
+
 
     if (!filename) {
         fprintf(stderr, "%s:%d filename was null?\n", __FILE__, __LINE__);
@@ -164,8 +171,13 @@ static int nofileio_readfile(duk_context *ctx) {
             if (fileEntries[i].contents[length - 1] == 0) {
                 length--;
             }
+#ifdef NOFILEIO_USE_FIXED_BUFFER
             buf = duk_push_fixed_buffer(ctx, (size_t) length);
             strncpy(buf, fileEntries[i].contents, length);
+#else
+	    // Duktape 2.x
+	    duk_push_lstring(ctx, fileEntries[i].contents, length);
+#endif // NOFILEIO_USE_FIXED_BUFFER
 
 #ifdef DEBUG_NOFILEIO
             fprintf(stderr, "%s:%d filename: %s, returning buf of size %lu\n", __FILE__, __LINE__, filename, strlen(buf));
