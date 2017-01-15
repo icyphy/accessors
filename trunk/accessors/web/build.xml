@@ -250,7 +250,7 @@
     The eduk binary is what would be deployed on an embedded machine.
     The eduk binary can also be run from the command line.
     </echo>
-    <chmod file="${eduk.source}/js2h"
+    <chmod file="${eduk2.source}/js2h"
 	   perm="a+x"/>
     <exec dir="${eduk2.source}"
           executable="make"
