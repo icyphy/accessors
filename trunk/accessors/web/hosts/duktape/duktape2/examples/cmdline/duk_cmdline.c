@@ -26,6 +26,7 @@
 // Start Accessors: ___duktapeHost_js is declared in duktapeHost.h. duktapeHost.h is
 // created by running xxd -i ../duktapeHost.js duktapeHost.h
 #include "duktapeHost.h"
+extern const char ___duktape_examples_eventloop_ecma_eventloop_js[];
 #endif /* Accessors */
 
 /* Helper define to enable a feature set; can also use separate defines. */
@@ -1246,9 +1247,14 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
 #endif
 
 #if defined(ACCESSORS)
+
+#if defined(DUK_CMDLINE_FILEIO)
 	// FIXME: Eventually, fileio_register() should be removed.
 	fileio_register(ctx);
+#else
         nofileio_register(ctx);
+#endif //DUK_CMDLINE_FILEIO)
+
 	poll_register(ctx);
 #endif /* Accessors */
 
@@ -1505,16 +1511,28 @@ int main(int argc, char *argv[]) {
             print_pop_error(ctx, stderr);
         } else {
             //printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
-            //duk_pop(ctx);
-        }
-
-        if (duk_peval_string(ctx, "var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');") != 0) {
-            fprintf(stderr, "%s:%d: Failed to require ecma_eventloop.js.  Error was:\n", __FILE__, __LINE__);
-            print_pop_error(ctx, stderr);
-        } else {
-            //printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__);
             duk_pop(ctx);
         }
+
+        // Use duk_peval_string_noresult() and avoid interning the string.  Good
+        // for low memory, see
+        // http://duktape.org/api.html#duk_peval_string_noresult
+        if (duk_peval_string(ctx, ___duktape_examples_eventloop_ecma_eventloop_js) != 0) {
+            fprintf(stderr, "%s:%d: Loading C version of ecma_eventloop failed.  Error was:\n", __FILE__, __LINE__);
+            print_pop_error(ctx, stderr);
+        } else {
+            //printf("%s: Loading C version of ecma_eventloop worked\n", __FILE__);
+            duk_pop(ctx);
+        }
+
+        /* if (duk_peval_string(ctx, "var ecma_eventloop = require('duktape/duktape/examples/eventloop/ecma_eventloop');") != 0) { */
+        /*     fprintf(stderr, "%s:%d: Failed to require ecma_eventloop.js.  Error was:\n", __FILE__, __LINE__); */
+        /*     print_pop_error(ctx, stderr); */
+        /* } else { */
+        /*     printf("%s: Loading require ecma_eventloop.js worked\n", __FILE__); */
+        /*     //duk_eval_string(ctx, "print('duk_cmdline.c print test');"); */
+	/*     duk_pop(ctx); */
+        /* } */
 #endif /* Accessors */
 
 	/*
