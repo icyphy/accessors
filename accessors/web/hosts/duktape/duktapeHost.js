@@ -98,6 +98,7 @@ Duktape.modSearch = function (id, require, exports, module) {
     } else if (typeof src === 'object') {
      	// Duktape 2.0 returns objects.
      	// print('loaded Ecmascript:' + name + ", src is of type object");
+     	// print('loaded Ecmascript:' + name + ", src.length(): " + src.length);
 	return src;
     }
 
@@ -236,6 +237,7 @@ instantiateAndInitialize = function (accessorNames) {
         if (index > 0) {
             accessorName += "_" + (index - 1);
         }
+        // print("duktapeHost.js: instantiateAndInitialize(): about to call instantiate(" + accessorName + ", " + accessorClass + ")");
         var accessor = instantiate(accessorName, accessorClass);
         // print("duktapeHost.js: instantiateAndInitialize(): about to call initialize on " + accessor);
         accessor.initialize();
