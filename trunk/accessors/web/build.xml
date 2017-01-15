@@ -12,6 +12,12 @@
   -->
   <property name="eduk.source" value="${basedir}/hosts/duktape/eduk"/>
 
+  <!-- Location of the Duktape 2.x eduk sources.  eduk is the embedded duktape
+       binary that does not use a file system.  Duktape is an embedded
+       JavaScript interpreter.
+  -->
+  <property name="eduk2.source" value="${basedir}/hosts/duktape/eduk2"/>  
+
   <!-- Location of the chai directory. -->
   <property name="chai.directory" value="${basedir}/node_modules/chai"/>
   
@@ -47,8 +53,6 @@
 
   <!-- Location of the mocha-junit-reporter index.js, used by tests.mocha.xml -->
   <property name="mocha-junit-reporter.index.js" value="${basedir}/node_modules/mocha-junit-reporter/index.js"/>
-
-
 
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
@@ -195,7 +199,7 @@
        that are used by eduk and duk.
   --> 
   <target name="duktape"
-          depends="eduk, duk, rusteduk"
+          depends="eduk, duk, eduk2, duk2, rusteduk"
           description="Build the duktape binaries">
   </target>
 
@@ -213,6 +217,7 @@
   </target>
 
   <target name="duk2"
+	  depends="eduk2"
           description="Build the duk2 binary.  Requires make and a C compiler.">
     <echo>The duk2 binary uses duktape 2.x.
     The duk2 binary has more command line options that the eduk binary.
@@ -239,6 +244,20 @@
     </exec>
   </target>
 
+  <target name="eduk2"
+          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc.">
+    <echo>The eduk2 binary has fewer command line options than the duk binary.
+    The eduk binary is what would be deployed on an embedded machine.
+    The eduk binary can also be run from the command line.
+    </echo>
+    <chmod file="${eduk.source}/js2h"
+	   perm="a+x"/>
+    <exec dir="${eduk2.source}"
+          executable="make"
+          timeout="${timeout}">
+    </exec>
+  </target>
+  
   <target name="eduk.tcmalloc"
           description="Build the eduk with tcmalloc for heap profiling">
     <exec dir="${eduk.source}"
@@ -419,7 +438,7 @@
   </target>
 
   <target name="tests"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha, tests.nashorn"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
           description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
   </target>
 
@@ -679,6 +698,37 @@
 
   </target>
 
+  <target name="tests.eduk2"
+          depends="eduk2"
+          description="Execute the eduk2 tests.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="hosts"
+           executable="duktape/eduk2/eduk2"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk2 does not have a separate eduk2 test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+    </echo>
+
+  </target>
+  
   <target name="tests.jenkins"
           depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
