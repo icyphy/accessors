@@ -193,6 +193,14 @@
       <fileset dir="${basedir}" includes="reports/**" defaultexcludes="false"/>
       <fileset dir="${basedir}" includes="doc/jsdoc/**" defaultexcludes="false"/>
     </delete>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/duktape/duk"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/duktape2/duk2"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/eduk/eduk"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/eduk2/eduk2"/>
   </target>
 
   <!-- Build eduk first because it updates the .h files from the .js files
