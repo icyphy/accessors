@@ -188,11 +188,16 @@
   </target>
 
   <target name="cleanAll" 
+	  depends="clean.duktape"
 	  description="Remove the reports/ and doc/jsdoc directories.">
     <delete quiet="true" verbose="no" includeemptydirs="true">
       <fileset dir="${basedir}" includes="reports/**" defaultexcludes="false"/>
       <fileset dir="${basedir}" includes="doc/jsdoc/**" defaultexcludes="false"/>
     </delete>
+  </target>
+
+  <target name="clean.duktape" 
+	  description="Remove the duktape binaries.">
     <delete quiet="true" verbose="no"
 	    file="hosts/duktape/duktape/duk"/>
     <delete quiet="true" verbose="no"
