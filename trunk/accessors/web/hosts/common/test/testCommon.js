@@ -137,7 +137,7 @@ function test(testName, expression, expectedValue) {
 	// console.log(stack);
 
 	// Use throw new Error() here so that we get a stack
-        throw new Error('Test failed: ' + testName +
+        throw new Error('*** Test failed: ' + testName +
             '. Expected: ' + expectedValue +
             ', but got: ' + expression);
     } else {
@@ -202,11 +202,11 @@ var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous'
 
 b.initialize();
 setTimeout(function () {
-    test('TestSpontaneous: spontaneous accessor produces 0 after 1 second',
+    test('TestSpontaneous: Test that spontaneous accessor produces 0 after 1 second',
         b.latestOutput('output'), 0);
 }, 1500);
 setTimeout(function () {
-    test('TestSpontaneous: spontaneous accessor produces 1 after 2 seconds',
+    test('TestSpontaneous: Test that spontaneous accessor produces 1 after 2 seconds',
         b.latestOutput('output'), 1);
     b.wrapup();
 }, 2500);
@@ -216,11 +216,11 @@ var c = commonHost.instantiateAccessor(
     'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
 c.initialize();
 setTimeout(function () {
-    test('TestCompositeSpontaneous: composite spontaneous accessor produces 0 after 1 second',
+    test('TestCompositeSpontaneous: Test that composite spontaneous accessor produces 0 after 1 second',
         c.latestOutput('output'), 0);
 }, 1500);
 setTimeout(function () {
-    test('TestCompositeSpontaneous: composite spontaneous accessor produces 4 after 2 seconds',
+    test('TestCompositeSpontaneous: Test that composite spontaneous accessor produces 4 after 2 seconds',
         c.latestOutput('output'), 4);
     c.wrapup();
 }, 2500);
