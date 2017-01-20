@@ -62,7 +62,7 @@ var log = null;
 var oldLogname = null;
 
 exports.setup = function () {
-    console.log("GDPLogAppend.js: setup()");
+    //console.log("GDPLogAppend.js: setup()");
     this.input('data', {
         'type': 'string'
     });
