@@ -30,9 +30,6 @@
   <!-- Location of the Duktape-2.x sources. -->
   <property name="duktape2.source" value="${basedir}/hosts/duktape/duktape2"/>
 
-  <!-- Location of the istanbul command, used by tests.coverage -->
-  <property name="istanbul.command" value="${basedir}/node_modules/.bin/istanbul"/>
-  
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
   <property name="jsdoc.home" value="node_modules/@terraswarm/jsdoc" />
 
@@ -54,6 +51,9 @@
   <!-- Location of the mocha-junit-reporter index.js, used by tests.mocha.xml -->
   <property name="mocha-junit-reporter.index.js" value="${basedir}/node_modules/mocha-junit-reporter/index.js"/>
 
+  <!-- Location of the nyc command, used by tests.coverage -->
+  <property name="nyc.command" value="${basedir}/node_modules/.bin/nyc"/>
+  
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
@@ -163,10 +163,6 @@
     <available property="chai-string.directory.exists" file="${chai-string.directory}"/>
   </target>
   
-  <target name="-check-istanbul">
-    <available property="istanbul.command.exists" file="${istanbul.command}"/>
-  </target>
-
   <target name="-check-jsdoc">
     <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
   </target>
@@ -178,6 +174,10 @@
   <target name="-check-mocha-junit-reporter">
     <available property="mocha-junit-reporter.index.js.exists" file="${mocha-junit-reporter.index.js}"/>
   </target>  
+
+  <target name="-check-nyc">
+    <available property="nyc.command.exists" file="${nyc.command}"/>
+  </target>
 
   <target name="-check-selenium-webdriver">
     <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
@@ -281,26 +281,6 @@
     </exec>
   </target>
 
-  <target name="istanbul-install"
-	  depends="-check-istanbul, chai-update"
-	  unless="istanbul.command.exists">
-    <mkdir dir="${basedir}/node_modules"/>
-    <exec executable="npm"
-          timeout="${timeout}">
-      <arg value="install"/>
-      <arg value="istanbul"/>
-    </exec>
-  </target>
-
-  <target name="istanbul-update"
-	  depends="istanbul-install">
-    <exec executable="npm"
-          timeout="${timeout}">
-      <arg value="update"/>
-      <arg value="istanbul"/>
-    </exec>
-  </target>
-
   <target name="jsdoc"
           depends="jsdoc-update"
           description="Run jsdoc to generate documentation for JavaScript files."
@@ -385,7 +365,26 @@
     </exec>
   </target>
 
-  
+  <target name="nyc-install"
+	  depends="-check-nyc, chai-update"
+	  unless="nyc.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="nyc"/>
+    </exec>
+  </target>
+
+  <target name="nyc-update"
+	  depends="nyc-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="nyc"/>
+    </exec>
+  </target>
+
   <target name="ptdoc"
           depends="jsdoc-update"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
@@ -500,12 +499,12 @@
   </target>
 
   <target name="tests.coverage"
-          description="Use istanbul and mocha to generate code coverage for JavaScript tests."
-	  depends="istanbul-update, mocha-update, terraswarm-gdp-update">
+          description="Use istanbul/nyc and mocha to generate code coverage for JavaScript tests."
+	  depends="nyc-update, mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.coverage==
-      This target uses istanbul and mocha to generate code coverage for JavaScript tests.
-      If necessary, istanbul and mocha are installed in node_modules/
+      This target uses istanbul/nyc and mocha to generate code coverage for JavaScript tests.
+      If necessary, istanbul/nyc and mocha are installed in node_modules/
       The output will generated in the coverage/ directory.
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
 
@@ -520,21 +519,21 @@
 
     <echo>
       Running
-      ${istanbul.command} cover ${mocha.bar.command} -- ${converted}
+      ${nyc.command} cover ${mocha.bar.command} -- ${converted}
     </echo>
     
-    <chmod file="${istanbul.command}"
+    <chmod file="${nyc.command}"
 	   perm="a+x"/>
-    <exec executable="${istanbul.command}"
+    <exec executable="${nyc.command}"
           timeout="${timeout}">
-      <arg value="cover"/>
-      <arg value="${mocha.bar.command}"/>
-      <arg value="--"/>
+      <arg value="--reporter=html"/>
+      <arg value="--reporter=text"/>
+      <arg value="mocha"/>
       <arg line="${converted}"/>
     </exec>
 
     <echo>
-      Note that if any tests fail, then coverage data will not be written.
+      See coverage/index.html for the coverage output.
     </echo>
   </target>
 
@@ -772,7 +771,7 @@
       ==tests.mocha==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
       To run just the composites, use "ant tests.mocha.composites"
-      If necessary, istanbul and mocha are installed in node_modules/
+      If necessary, chai and mocha are installed in node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
       target timeout = ${timeout.longer} ms.
     </echo>
