@@ -1,5 +1,6 @@
 [
     "AprilTags.js",
+    "CharacterRecognition.js",
     "FaceDetector.js",
     "ImageAnnotate.js",
     "ImageFilter.js",
