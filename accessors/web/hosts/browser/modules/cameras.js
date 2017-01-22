@@ -130,7 +130,7 @@ exports.Camera = function (name) {
 	// Create a div to contain the live streaming video and the snapshot.
 	var container = document.createElement('div');
 	container.style.width = '95';
-	container.style.margin = '2em';
+	container.style.margin = '1em';
 	container.style.padding = '1em';
 	
 	this.videoContainer = document.createElement('div');
@@ -153,11 +153,18 @@ exports.Camera = function (name) {
 	var accessorDiv = document.getElementById('Camera');
 
 	if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-		document.body.insertBefore(container, accessorDiv);
+		var parent = accessorDiv.parentNode;
+		if (parent !== null && typeof parent !== 'undefined') {
+			parent.insertBefore(container, accessorDiv);
+		} else {
+			document.body.insertBefore(container, accessorDiv);
+		}
 	} else {
 		if (document.body.firstChild !== null && typeof document.body.firstChild !== 'undefined') {
+			console.log('firstchild');
 				document.body.insertBefore(container, document.body.firstChild);
 		} else {
+			console.log('append');
 			document.body.appendChild(container);
 		}
 	}
