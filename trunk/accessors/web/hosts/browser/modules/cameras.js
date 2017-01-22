@@ -161,10 +161,8 @@ exports.Camera = function (name) {
 		}
 	} else {
 		if (document.body.firstChild !== null && typeof document.body.firstChild !== 'undefined') {
-			console.log('firstchild');
 				document.body.insertBefore(container, document.body.firstChild);
 		} else {
-			console.log('append');
 			document.body.appendChild(container);
 		}
 	}
@@ -266,6 +264,8 @@ exports.Camera.prototype.snapshot = function () {
 	// FIXME:  Should use ratio of video container to canvas container.
 	// They're equal in this example, but that isn't necessarily always the case.
 	context.drawImage(this.video, 0, 0, this.canvas.width, this.videoContainer.clientHeight);
+	
+	return context.getImageData(0, 0, this.canvas.width, this.videoContainer.clientHeight);
 	
 };
 
