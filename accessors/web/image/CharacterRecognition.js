@@ -47,7 +47,12 @@
 /*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
 /*jshint globalstrict: true */
 
-var Tesseract = require('tesseract'); 
+var Tesseract = null
+try {
+    Tesseract = require('tesseract'); 
+} catch (error) {
+    console.log("The tesseract module was not present.  The CharacterRecognition accessor is not supported on this accessor host.");
+}
 
 exports.setup = function() {
     this.input('input');
