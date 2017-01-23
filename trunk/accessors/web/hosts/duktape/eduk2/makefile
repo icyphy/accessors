@@ -10,7 +10,7 @@ DUKTAPE_SOURCES += $(DUKTAPE)/extras/print-alert/duk_print_alert.c
 C_FILES = \
 	c_eventloop.c \
 	duk_stack.c \
-	eduk.c \
+	eduk2.c \
 	modSearch.c \
 	nofileio.c \
 	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES)
@@ -65,9 +65,15 @@ CCLIBS	= -lm
 #CCOPTS	= -ggdb -pedantic -std=c99 -Wall
 
 EDUK_DEFINES = -DEDUK_FULL -DEDUK_RAMPJSDISPLAY
-# EDUK_DEFINES = -DEDUK_MIN -DHAIL_PRINT
+EDUK_MIN_DEFINES = -DEDUK_MIN -DHAIL_PRINT
+# EDUK_DEFINES = $(EDUK_MIN_DEFINES)
 eduk2: $(C_FILES) $(H_FILES) 
 	$(CC) -o $@ $(DEFINES) $(EDUK_DEFINES) $(SWARMLET) $(CCOPTS) $(C_FILES) $(CCLIBS)
+
+
+# Version of eduk that does not load up the accessors.
+eduk2.min: $(C_FILES) $(H_FILES) 
+	$(CC) -o $@ $(DEFINES) $(EDUK_MIN_DEFINES) $(SWARMLET) $(CCOPTS) $(C_FILES) $(CCLIBS)
 
 # Convert from C to Rust, see https://github.com/jameysharp/corrode
 eduk2.rs:
