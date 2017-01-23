@@ -47,7 +47,7 @@
 /*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
 /*jshint globalstrict: true */
 
-var Tesseract = null
+var Tesseract = null;
 try {
     Tesseract = require('tesseract'); 
 } catch (error) {
