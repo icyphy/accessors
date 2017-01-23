@@ -25,8 +25,9 @@
 #include <stdio.h>
 #include "duktape.h"
 
-#ifdef TOCK_OS
-#include "led.h" // Tock
+#ifdef __ARM_EABI__
+#include <led.h>
+#include <timer.h>
 #endif
 
 /**
@@ -38,8 +39,22 @@
 static int ledcontrol_toggle(duk_context *ctx) {
     const int led  = duk_to_int(ctx, 0);
 
-#ifdef TOCK_OS
-    led_toggle(led);
+#ifdef __ARM_EABI__
+    //  led_toggle(led);
+
+    // From tock/userland/examples/blink/main.c:
+    int num_leds = led_count();
+    for (int count = 0; ; count++) {
+      for (int i = 0; i < num_leds; i++) {
+	if (count & (1 << i)) {
+	  led_on(i);
+	} else {
+	  led_off(i);
+	}
+      }
+      delay_ms(250);
+    }
+
     return 1;
 #else
     fprintf(stderr, "%s:%d led not supported?\n", __FILE__, __LINE__);

@@ -170,7 +170,7 @@ void nop() {}
  *    eduk [--timeout time] accessorFileName\n");
  *
  *  Sample usage:
- *  cd ../..; duktape/eduk/eduk --timeout 4000 ../test/auto/RampJSDisplay.js
+ *  ./eduk2 --timeout 4000 test/auto/RampJSDisplay.js
  *
  *  @param argc The number of arguments.
  *  @param argv The arguments.
@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 
     if (duk_peval_string(ctx, buf) != 0) {
         fprintf(stderr, "%s:%d: Failed to invoke print.  Command was:\n%s\nError was:\n", __FILE__, __LINE__, buf);
-        print_pop_error(ctx, stderr);
+        //print_pop_error(ctx, stderr);
         return 3;
     } else {
         duk_pop(ctx);
