@@ -95,7 +95,7 @@ exports.setup = function () {
     this.output('status', {
         'visibility': 'expert'
     });
-    this.parameter('outputCompleteResponsesOnly', {
+    this.parameter('outputCompleteResponseOnly', {
         'visibility': 'expert'
     });
 };
