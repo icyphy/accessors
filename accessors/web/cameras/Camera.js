@@ -99,12 +99,18 @@ exports.initialize = function () {
     var self = this;
     if (this.getParameter('triggered')) {
         handle = this.addInputHandler('trigger', function () {
-            self.send('image', camera.snapshot());
+        	// Request a snapshot.  Note the video stream might not be playing.
+        	// An event will be generated when a snapshot is available.
+            camera.on('snapshot', function (image) {
+                self.send('image', image);
+            });
+        	
+        	camera.snapshot();
         });
     } else {
-        camera.on('image', function (image) {
-            self.send('image', image);
-        });
+	    camera.on('image', function (image) {
+	            self.send('image', image);
+	    });
     }
 };
 
