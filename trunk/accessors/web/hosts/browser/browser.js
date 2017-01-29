@@ -326,17 +326,6 @@ function generateAccessorHTML(path, id) {
         return getInputOrParameter(name, 'input', id);
     }
 
-    // Get data from a parameter. This implementation assumes that the document
-    // has an element with attribute 'id' equal to ```id.name```.
-    // Such an attribute is created by the generate() function.
-    // This implementation also assumes that the window object has a field
-    // ```accessors``` with a property whose name matches id
-    // whose value is an instance of the Accessor class of the common/commonHost.js
-    // module.
-    function getParameter(name) {
-        return getInputOrParameter(name, 'parameter', id);
-    }
-
     // Return a resource, which in this implementation just attempts to read the
     // resource using HTTP.
     // @param uri The uri to be read.
@@ -613,10 +602,14 @@ function generateAccessorHTML(path, id) {
                 return;
             } else {
                 // Function bindings for the accessor:
+            	// We will bind getParameter() later.
+            	// The browser's getParameter() retrieves values from the HTML page.
+            	// However, an accessor might call getParameter() in setup()
+            	// before the page has been created.  In this case, we want to 
+            	// get whatever value the accessor has provided in setup().
                 var bindings = {
                     'error': error,
                     'get': get,
-                    'getParameter': getParameter,
                     'getResource': getResource,
                     'httpRequest': httpRequest,
                     'readURL': readURL,
@@ -671,6 +664,7 @@ function generateAccessorHTML(path, id) {
             generateAccessorCodeElement(code, id);
 
             // Generate tables for the accessor.
+            // getParameter() is overriden here.
             generateTables(instance, id);
 
             // If the accessor has no inputs, then there will be no
@@ -822,6 +816,20 @@ function generateAccessorDocumentation(path, id) {
  *  @param id The id of the accessor.
  */
 function generateTables(instance, id) {
+	
+	// Declare getParameter() here so we can override accessor's getParameter()
+	// just after HTML page has been created.
+    // Get data from a parameter. This implementation assumes that the document
+    // has an element with attribute 'id' equal to ```id.name```.
+    // Such an attribute is created by the generate() function.
+    // This implementation also assumes that the window object has a field
+    // ```accessors``` with a property whose name matches id
+    // whose value is an instance of the Accessor class of the common/commonHost.js
+    // module.
+    function getParameter(name) {
+        return getInputOrParameter(name, 'parameter', id);
+    }
+    
     var promises = [];
 
     // Generate a table for parameters.
@@ -844,6 +852,12 @@ function generateTables(instance, id) {
     // is done.  This would probably require Promises everywhere...
     Promise.all(promises).then(function () {
         window.dispatchEvent(new Event('accessorTableDone'));
+        
+        // Override getParameter().
+        if (window.accessors[id] !== null && 
+        		typeof window.accessors[id] !== 'undefined') {
+        	window.accessors[id].getParameter = getParameter;
+        }
     });
 
     // Generate a list of contained accessors, if any.
@@ -1019,6 +1033,7 @@ function generateTable(title, names, contents, role, id) {
  *  @param visible True to make the table row visible.
  *  @param role Can be parameter, input or output.
  */
+
 function generateTableRow(table, name, id, options, editable, visible, role) {
     return new Promise(function (resolve, reject) {
         var row = document.createElement("tr");
