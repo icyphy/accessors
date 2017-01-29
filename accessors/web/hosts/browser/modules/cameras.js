@@ -115,6 +115,9 @@ exports.defaultCamera = function () {
  *  @param name The camera name, or null to use the default camera.
  */
 exports.Camera = function (name) {
+	var self = this;
+	
+	this.isPlaying = false;
 	
 	// Create a hidden video element on the page.
 	// FIXME:  Make sure to generate a unique name.  Right now name is hard-coded.
@@ -133,9 +136,31 @@ exports.Camera = function (name) {
 	container.style.margin = '1em';
 	container.style.padding = '1em';
 	
+	var labels = document.createElement('div');
+	labels.style.fontSize = '1.5em';
+	labels.style.width = '100%';
+	
+	var videoLabel = document.createElement('div');
+	videoLabel.innerHTML = "Live Video";
+	videoLabel.style.width = '45%';
+	videoLabel.style.float = 'left';
+	videoLabel.style.textAlign = 'center';
+	
+	var snapshotLabel = document.createElement('div');
+	snapshotLabel.innerHTML = "Snapshot";
+	snapshotLabel.style.width = '45%';
+	snapshotLabel.style.float = 'right';
+	snapshotLabel.style.textAlign = 'center';
+	snapshotLabel.style.verticalAlign = 'top';
+	
+	labels.appendChild(videoLabel);
+	labels.appendChild(snapshotLabel);
+	
 	this.videoContainer = document.createElement('div');
 	this.videoContainer.style.display = 'inline-block';
 	this.videoContainer.style.width = '45%';
+	var videoLabel = document.createElement('div');
+	videoLabel.innerHTML = "Live Video";
 	
 	this.snapshotContainer = document.createElement('div');
 	this.snapshotContainer.style.float = 'right';
@@ -144,15 +169,17 @@ exports.Camera = function (name) {
 	container.appendChild(this.videoContainer);
 	this.videoContainer.appendChild(this.video);
 	container.appendChild(this.snapshotContainer);
+	container.appendChild(labels);
 	
-	// TODO:  Figure out a display strategy.
-	// Currently this is hard-coded and assumes the accessor is named 'Camera'.
-	// If not found, it will insert video at the top.
-	// It will only work for a single camera accessor.
+	// Place video and snapshot above Camera accessor.
+	// If not found (e.g. a composite accessor), place above the first accessor.
+	// If not found, insert at page top.
+	// Currently only supports a single Camera accessor.
 	
 	var accessorDiv = document.getElementById('Camera');
 
 	if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+		// Found Camera accessor.
 		var parent = accessorDiv.parentNode;
 		if (parent !== null && typeof parent !== 'undefined') {
 			parent.insertBefore(container, accessorDiv);
@@ -160,7 +187,17 @@ exports.Camera = function (name) {
 			document.body.insertBefore(container, accessorDiv);
 		}
 	} else {
-		if (document.body.firstChild !== null && typeof document.body.firstChild !== 'undefined') {
+		// No Camera accessor.  Find any accessor.  If none, use page top.
+		accessorDiv = document.getElementsByClassName('accessor');
+		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+			accessorDiv = accessorDiv[0];
+			var parent = accessorDiv.parentNode;
+			if (parent !== null && typeof parent !== 'undefined') {
+				parent.insertBefore(container, accessorDiv);
+			} else {
+				document.body.insertBefore(container, accessorDiv);
+			}
+		} else if (document.body.firstChild !== null && typeof document.body.firstChild !== 'undefined') {
 				document.body.insertBefore(container, document.body.firstChild);
 		} else {
 			document.body.appendChild(container);
@@ -194,6 +231,7 @@ exports.Camera.prototype.close = function () {
 	this.stream.getTracks.forEach(function(track) {
 		track.stop();
 	});
+	this.isPlaying = false;
 };
 
 /** Return the current view size for this camera, a JSON string
@@ -255,18 +293,37 @@ exports.Camera.prototype.setViewSize = function (size) {
 };
 
 exports.Camera.prototype.snapshot = function () {
-	// FIXME:  Doesn't work if snapshotted before initialize. 
-	// (I.e. if you enter 'true' for triggered input before clicking
-	// react to inputs first time.
-	this.canvas.height = this.videoContainer.clientHeight;
-	var context = this.canvas.getContext('2d');
+	var self = this;
 	
-	// FIXME:  Should use ratio of video container to canvas container.
-	// They're equal in this example, but that isn't necessarily always the case.
-	context.drawImage(this.video, 0, 0, this.canvas.width, this.videoContainer.clientHeight);
+	var playingHandler = function() {
+		self.isPlaying = true;
+		// This listener removes itself since we only want one snapshot returned
+		// per request.
+		self.video.removeEventListener('playing', playingHandler);
+		
+		self.canvas.height = self.videoContainer.clientHeight;
+		var context = self.canvas.getContext('2d');
+		
+		// FIXME:  Should use ratio of video container to canvas container.
+		// They're equal in this example, but that isn't necessarily always the case.
+		context.drawImage(self.video, 0, 0, self.canvas.width, self.videoContainer.clientHeight);
+		self.emit('snapshot', context.getImageData(0, 0, self.canvas.width, self.videoContainer.clientHeight));
+	}
 	
-	return context.getImageData(0, 0, this.canvas.width, this.videoContainer.clientHeight);
-	
+	if (!this.isPlaying) {
+		this.video.addEventListener('playing', playingHandler);
+	} else {
+		// FIXME:  Doesn't work if snapshotted before initialize. 
+		// (I.e. if you enter 'true' for triggered input before clicking
+		// react to inputs first time.
+		this.canvas.height = this.videoContainer.clientHeight;
+		var context = this.canvas.getContext('2d');
+		
+		// FIXME:  Should use ratio of video container to canvas container.
+		// They're equal in this example, but that isn't necessarily always the case.
+		context.drawImage(this.video, 0, 0, this.canvas.width, this.videoContainer.clientHeight);
+		this.emit('snapshot', context.getImageData(0, 0, this.canvas.width, this.videoContainer.clientHeight));
+	}
 };
 
 /** Return an array of view sizes supported by this camera,
