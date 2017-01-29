@@ -4,18 +4,22 @@
 <meta charset="UTF-8">
 <title>Camera Accessor Demo</title>
  <script src="/accessors/hosts/browser/browser.js"></script>
- 
+  <script>
+ 	var initialValues = {};
+  	initialValues["TextFromCamera.trigger"] = true; 
+ </script>
 </head>
   
 <body>
 <div>
-Instructions:
-<ol> <li> Under "Inputs", please click "react to inputs".  This initializes the webcam. </li>
-	<li> A dialog box will pop up.  Select your webcam and click "Share Selected Device". </li>
-	<li> Under "Inputs", type in true for "trigger". </li>
+Read text from your webcam!
+<ol>
+	<li> Scroll down to "Inputs".  Click "react to inputs". </li>
+	<li> A dialog box will pop up.  Select a webcam and click "Share Selected Device". </li>
+	<li> The video feed and a still image will appear. </li>
 	<li> Hold up some text to the webcam.  Make sure the video feed contains only text. </li>
 	<li> Click "react to inputs".  The detected text will appear under "Outputs", "text" output. </li>
-</ol>
+</ol>  
 </div>
 <div class="accessor"
    src="image/demo/TextFromCamera/TextFromCamera"
