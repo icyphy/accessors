@@ -18,11 +18,15 @@
 //  { latitude: 37.8718992, longitude: -122.2585399 }
 // Previously, it produced "undefined".
 
-var a = instantiate('a', 'services/GeoCoder');
-a.setParameter('key', 'AIzaSyBIu5hgbcSmP2f5frGdHpFNDJkDnTsFJyc');
-a.initialize();
-a.provideInput('address', 'berkeley');
-a.react();
+var assert = require('assert');
+
+var testGeoCoder = instantiate('testGeoCoder', 'services/GeoCoder');
+testGeoCoder.setParameter('key', 'AIzaSyBIu5hgbcSmP2f5frGdHpFNDJkDnTsFJyc');
+testGeoCoder.initialize();
+testGeoCoder.provideInput('address', 'berkeley');
+testGeoCoder.react();
 setTimeout(function() {
-        console.log(a.latestOutput('location'));
-    }, 2000);
+    //console.log(a.latestOutput('location'));
+    var locationOutput = JSON.stringify(testGeoCoder.latestOutput('location'));
+    assert.equal(locationOutput, '{"latitude":37.8718992,"longitude":-122.2585399}');
+}, 2000);
