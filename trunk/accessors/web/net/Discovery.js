@@ -23,7 +23,7 @@
 
 /** This accessor discovers devices on the local area network.
  *  It requires the discovery module.  Please see:
- *  https://www.terraswarm.org/accessors/wiki/Version0/Discovery
+ *  https://www.icyphy.org/accessors/wiki/Version0/Discovery
  *
  *  @accessor net/Discovery
  *  @author Elizabeth Latronico (beth@berkeley.edu)

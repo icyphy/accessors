@@ -31,7 +31,7 @@
  *  to identify text in the image.  The text is sent to the output.
  *  
  *  Try it out in the browser:
- *  https://www.terraswarm.org/accessors/hosts/browser/demo/textfromcamera/textfromcamera.html
+ *  https://www.icyphy.org/accessors/hosts/browser/demo/textfromcamera/textfromcamera.html
  *  
  *  @accessor image/demo/TextFromCamera
  *  @input trigger Trigger the Camera accessor to take a snapshot.

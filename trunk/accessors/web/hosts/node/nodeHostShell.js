@@ -31,7 +31,7 @@
  *  This shell may be started from any directory as long as the path to
  *  to this nodeHostShell.js file is provided.
  *  
- *  See <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
+ *  See <a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
  *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$

@@ -7,4 +7,4 @@ To build:
 To run a test:
     (cd ../..; duktape/rusteduk/target/debug/examples/rusteduk duktape/test/testComposite.js)
     
-See https://www.terraswarm.org/accessors/wiki/Main/RustHost
+See https://www.icyphy.org/accessors/wiki/Main/RustHost

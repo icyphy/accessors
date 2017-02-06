@@ -1,4 +1,4 @@
-This copyright file is at http://terraswarm.org/accessors/copyright.txt
+This copyright file is at https://www.icyphy.org/accessors/copyright.txt
 and applies to any source files that refer to it.
 
 Copyright (c) 2014-2016 The Regents of the University of California.
