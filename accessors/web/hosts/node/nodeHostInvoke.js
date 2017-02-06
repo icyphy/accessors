@@ -104,7 +104,7 @@
  *
  *  * -v|--v|-version|--version: Print out the version number
  *
- *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
+ *  See the <a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *  
  *  @author Christopher Brooks and Edward A. Lee
  *  @version $$Id$$

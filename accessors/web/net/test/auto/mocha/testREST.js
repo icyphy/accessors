@@ -15,7 +15,7 @@ var hostHelper = new HostHelper.HostHelper();
 
 // describe() is a mocha function.
 // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
-// See https://www.terraswarm.org/accessors/wiki/Notes/Status
+// See https://www.icyphy.org/accessors/wiki/Notes/Status
 describe(hostHelper.hostname, function () {
     // Increase default timeout (originally 2000ms).
     this.timeout(10000);

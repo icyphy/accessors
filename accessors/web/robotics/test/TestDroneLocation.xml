@@ -27,7 +27,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.terraswarm.org/accessors/robotics/DroneLocation.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/robotics/DroneLocation.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10;such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10;In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10;Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &amp;quot;rosed mavros apm2.launch&amp;quot;&#10;and launch the node using the command &amp;quot;roslaunch mavros apm2.launch&amp;quot;. The accessor uses a websocket to access ros.&#10;Thus, you need also to install rosbridge_server and launch &amp;quot;roslaunch rosbridge_server rosbridge_websocket.launch&amp;quot;.&lt;/p&gt;">

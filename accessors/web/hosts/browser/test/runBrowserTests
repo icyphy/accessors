@@ -4,7 +4,7 @@
 # runBrowserTests - run the browser tests and generate the output in
 # ../../../reports/junit/browserJUnit.xml
 
-# See https://www.terraswarm.org/accessors/wiki/Version0/RegressionTesting
+# See https://www.icyphy.org/accessors/wiki/Version0/RegressionTesting
 
 if [ ! -f testServer.js ]; then
     echo "$0: testServer.js not found in `pwd`.  $0 must be run in accessors/web/hosts/browser/tes"

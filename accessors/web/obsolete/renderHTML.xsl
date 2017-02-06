@@ -145,7 +145,7 @@ var <xsl:value-of select="@name"/> = <xsl:value-of select="@name"/>Closure();
       <h2>Notes and Limitations</h2>
       <p>
       <ul>
-      <li> See <a href="http://terraswarm.org/accessors">further information about accessors</a>.</li>
+      <li> See <a href="https://www.icyphy.org/accessors">further information about accessors</a>.</li>
       <li> The action buttons above are placeholders only. This is a mockup of browser swarmlet host.</li>
       <li> HTML embedded in the documentation doesn't render in Firefox. Use another browser or suggest a solution. </li>
       </ul>

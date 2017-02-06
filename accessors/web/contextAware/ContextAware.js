@@ -25,7 +25,7 @@
  * This accessor discovers REST services on the web and and generates a concrete
  * REST accessor for the service. It requires the contextAware module and
  * interface definition of concrete REST services. Please see:
- * https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
+ * https://www.icyphy.org/accessors/wiki/Version0/ContextAware
  *
  * Example usage of ContextAware accessor:
  *

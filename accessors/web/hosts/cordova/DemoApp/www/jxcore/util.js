@@ -533,7 +533,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-// See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
+// See https://www.icyphy.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
 var commonHost = require('common/commonHost');
 
 if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {

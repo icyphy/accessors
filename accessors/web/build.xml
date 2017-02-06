@@ -420,7 +420,7 @@
 
       Then run:
       rustup default stable
-      See https://www.terraswarm.org/accessors/wiki/Main/RustHost
+      See https://www.icyphy.org/accessors/wiki/Main/RustHost
     </echo>
     <exec dir="${rusteduk.source}"
           executable="make"
@@ -486,7 +486,7 @@
       ==tests.browser==
       Run the Browser Accessor Host test
       The output will appear in reports/junit/browserTestResults.xml
-      See https://www.terraswarm.org/accessors/wiki/VersionCurrent/RegressionTesting
+      See https://www.icyphy.org/accessors/wiki/VersionCurrent/RegressionTesting
       target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/reports/junit"/>

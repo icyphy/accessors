@@ -54,7 +54,7 @@
  *  https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
  *
  *  For an overview of the testing capabilities of different hosts, please see:
- *  https://www.terraswarm.org/accessors/wiki/Main/Testing
+ *  https://www.icyphy.org/accessors/wiki/Main/Testing
  *
  *  Test results are send to the output port and logged to the console.
  *  A future improvement is to format results JUnit-style.
