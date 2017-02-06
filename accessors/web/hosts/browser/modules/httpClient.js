@@ -62,7 +62,7 @@ var util = require('util');
  *  policy in a browser host.  Therefore sites will be blocked unless the 
  *  server supports cross-origin requests or supports JSON with padding.
  *  For more details please see: 
- *  https://www.terraswarm.org/accessors/wiki/Version0/HttpClient
+ *  https://www.icyphy.org/accessors/wiki/Version0/HttpClient
  *
  *  This implementation ensures that for any accessor that calls this function,
  *  the callback functions are called in the same order as

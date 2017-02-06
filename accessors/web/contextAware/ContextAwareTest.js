@@ -23,7 +23,7 @@
 
 /** This accessor discovers IOT services on web.
  *  It requires the contextAware module.  Please see:
- *  https://www.terraswarm.org/accessors/wiki/Version0/ContextAware
+ *  https://www.icyphy.org/accessors/wiki/Version0/ContextAware
  *
  *  @accessor contextAware/contextAwareTest
  *  @author Anne H. Ngu (angu@btxstate.edu)

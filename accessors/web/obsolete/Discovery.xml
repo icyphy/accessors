@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
 <!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
-    "https://www.terraswarm.org/accessors/obsolete/Accessor_1.dtd">
+    "https://www.icyphy.org/accessors/obsolete/Accessor_1.dtd">
 <class name="DeviceDiscovery" extends="org.terraswarm.jjs.JSAccessor">
   <version>0.1</version>
   <author>Elizabeth Latronico</author>
@@ -26,7 +26,7 @@
     <![CDATA[
     This accessor discovers devices on the local area network.
     It requires the discovery module.  Please see:
-    https://www.terraswarm.org/accessors/wiki/Version0/Discovery
+    https://www.icyphy.org/accessors/wiki/Version0/Discovery
 	This accessor discovers devices on the local area network.
 	]]>
   </description>

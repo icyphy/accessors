@@ -52,7 +52,7 @@
  *  /accessors/web/reports/junit/browserTestResults.xml
  *
  *  For more details and examples, please see the wiki:
- *  https://www.terraswarm.org/accessors/wiki/Version0/RegressionTesting
+ *  https://www.icyphy.org/accessors/wiki/Version0/RegressionTesting
  */
 
 var childProcess = require('child_process');
@@ -65,7 +65,7 @@ var startPort = 8089;
 /** A class for running regression tests in the browser.  This class starts a
  *  web server, starts the selenium browser driver, then runs tests in the
  *  accessor tree.  Please see:
- *  https://www.terraswarm.org/accessors/wiki/Version0/RegressionTesting
+ *  https://www.icyphy.org/accessors/wiki/Version0/RegressionTesting
  */
 var RegressionTester = (function () {
 

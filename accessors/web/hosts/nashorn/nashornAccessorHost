@@ -4,11 +4,11 @@
 # Usage: nashornAccessorHost [-timeout timeoutInMilliseconds] compositeAccessor1.js [compositeAccessor2.js ...]
 #
 # Example: (cd $PTII/org/terraswarm/accessor/accessors/web/hosts; ./nashorn/nashornAccessorHost -timeout 10000 hosts/node/test/testNodeHost.js)
-# See https://www.terraswarm.org/accessors/wiki/Notes/Notes
+# See https://www.icyphy.org/accessors/wiki/Notes/Notes
 #
 # This script is syntactic sugar for the Ptolemy II command.
 
-installMessage="$0: \$PTII/bin/ptinvoke could not be found.  Perhaps you need to install Cape Code (aka Ptolemy II?) See https://www.terraswarm.org/accessors/wiki/Main/PtolemyII"
+installMessage="$0: \$PTII/bin/ptinvoke could not be found.  Perhaps you need to install Cape Code (aka Ptolemy II?) See https://www.icyphy.org/accessors/wiki/Main/PtolemyII"
 if [ -z $PTII ]; then
     echo "$0: \$PTII was not set"
     dirname=`dirname $0`
