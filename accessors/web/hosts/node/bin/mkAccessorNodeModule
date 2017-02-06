@@ -4,7 +4,7 @@
 # Usage: mkAccessorNodeModule nodemodule
 #
 # This script is used to build a skeleton of a node module for use with Accessors.
-# See https://www.terraswarm.org/accessors/wiki/Main/HowToCreateANodeModule
+# See https://www.icyphy.org/accessors/wiki/Main/HowToCreateANodeModule
 
 YEAR=`date +%Y`
 copyright="// Copyright (c) $YEAR The Regents of the University of California.

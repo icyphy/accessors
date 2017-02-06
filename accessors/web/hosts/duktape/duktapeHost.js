@@ -112,7 +112,7 @@ Duktape.modSearch = function (id, require, exports, module) {
 };
 
 // We expect to run duk from the hosts directory.  See
-// https://www.terraswarm.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
+// https://www.icyphy.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
 
 var commonHost = require("common/commonHost");
 
@@ -248,7 +248,7 @@ instantiateAndInitialize = function (accessorNames) {
 
 // Make the Accessor constructor visible so that we may use it in the
 // Cape Code Accessor Code Generator.
-// See https://www.terraswarm.org/accessors/wiki/Main/ResourcesForHostAuthors#ExportAccessor
+// See https://www.icyphy.org/accessors/wiki/Main/ResourcesForHostAuthors#ExportAccessor
 Accessor = commonHost.Accessor;
 
 // Define additional functions that should appear in the global scope

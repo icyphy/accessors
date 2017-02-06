@@ -366,7 +366,7 @@ function fillTable(){
 		row.id = accessorname;
 		cell0 = row.insertCell(0);
 
-		var link = "https://www.terraswarm.org/accessors/doc/jsdoc/accessor-" + 
+		var link = "https://www.icyphy.org/accessors/doc/jsdoc/accessor-" + 
 			accessorname.replace('/', '_').replace('.js', '.html');
 		
 		// Add + sign to expand if there are test cases.

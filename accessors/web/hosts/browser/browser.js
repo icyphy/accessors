@@ -107,7 +107,7 @@ if (!window.hasOwnProperty('browserJSLoaded')) {
 // Check the URL for a querystring specifying an accessor to load (optional).
 // This code assumes that "accessor" is the only querystring parameter passed.
 // Multiple parameters are not supported.
-// E.g. https://www.terraswarm.org/accessors/library/index.html?accessor=services.StockTick
+// E.g. https://www.icyphy.org/accessors/library/index.html?accessor=services.StockTick
 // The querystring uses . instead of / since / is a special character in URLs. -->
 window.onload = function () {
     var url = window.location.href;

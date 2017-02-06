@@ -23,9 +23,9 @@
 /** This accessor reads or writes data to a key-value store web service.
  *  A URL for the service is specified by the <i>storeLocation</i> parameter.
  *  A Ptolemy II model that provides such a key-value store service can be found
- *  at http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml.
+ *  at https://www.icyphy.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml.
  *  A demo client that uses this accessor is provided at
- *  http://terraswarm.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml.
+ *  https://www.icyphy.org/accessors/demo/KeyValueStore/KeyValueStoreClient.xml.
  *
  *  The key and the value are both text items provided as inputs.
  *  If <i>remove</i> is true and the <i>key</i> is non-empty, then upon firing, this actor

@@ -1,5 +1,5 @@
 This folder contains a demo application that is an accessor host for running accessors on Apache Cordova framework. 
-The details below and more are also available at https://www.terraswarm.org/accessors/wiki/Main/CordovaHost
+The details below and more are also available at https://www.icyphy.org/accessors/wiki/Main/CordovaHost
 
 1) INSTALLATION
    - Make sure Android SDK, Jave JDK are installed with environment variables like ANDROID_HOME and JAVA_HOME updated.  

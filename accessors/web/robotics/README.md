@@ -61,4 +61,4 @@ roslaunch scarab dop.launch robot:=lucy map_file:=dop.yaml
 The `scarab` code on the robot is in sync with
 [the repository](https://github.com/nebgnahz/scarab/tree/dop). More instructions
 on setting up the robot are available on the accessor wiki:
-[configuring the scarab robot](https://www.terraswarm.org/accessors/wiki/Main/ConfiguringTheScarabRobot).
+[configuring the scarab robot](https://www.icyphy.org/accessors/wiki/Main/ConfiguringTheScarabRobot).

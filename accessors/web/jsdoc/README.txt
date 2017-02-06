@@ -22,6 +22,6 @@ See Also
 --------
 * https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems - Overview of JSDoc systems
 ** https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems#JSDocCustomTagPlugin - How @accessor, @input etc. are supported.
-* https://www.terraswarm.org/accessors/wiki/Main/JSDoc - Information for Accessor writers
+* https://www.icyphy.org/accessors/wiki/Main/JSDoc - Information for Accessor writers
 * https://www.npmjs.com/package/@terraswarm/jsdoc - The @terraswarm/jsdoc npm module
 * https://github.com/terraswarm/jsdoc - sources for the @terraswarm/jsdoc npm module

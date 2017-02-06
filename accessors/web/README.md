@@ -15,7 +15,7 @@ sponsored by MARCO and DARPA.
 
 See Also
 --------
-* [TerraSwarm Accessors Main Page](http://www.terraswarm.org/accessors)
+* [TerraSwarm Accessors Main Page](https://www.icyphy.org/accessors)
 * [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
 
 
@@ -38,7 +38,7 @@ To update the docs by hand, run
 
 An automated build on terra.eecs.berkeley.edu updates the docs by checking the accessors repo every 5 minutes.
 
-See [https://www.terraswarm.org/accessors/wiki/Main/JSDoc](https://www.terraswarm.org/accessors/wiki/Main/JSDoc).
+See [https://www.icyphy.org/accessors/wiki/Main/JSDoc).
 
 This file may be found at accessors/web/README.md and is included in the JSDoc output automatically because accessors/web/build.xml is invoked with -R README.md
 
