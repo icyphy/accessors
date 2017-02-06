@@ -107,7 +107,7 @@ function getAccessorCode(name) {
     }
 
     // Look for the accessor as a regular file.
-    // See https://www.terraswarm.org/accessors/wiki/Main/DeploymentNotes#SSHScript
+    // See https://www.icyphy.org/accessors/wiki/Main/DeploymentNotes#SSHScript
     try {
         code = fs.readFileSync(name, 'utf8');
         return code;
