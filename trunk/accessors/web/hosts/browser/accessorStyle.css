@@ -26,7 +26,7 @@
 	width:170px;
 	text-indent: 10px;
 	color:#e7c254;
-	background:#252c58;
+	background:#33060FF;
 	text-decoration:none;
 }
 
@@ -49,7 +49,7 @@
 }
 /* Table style. */
 .accessorTableHeader {
-    background-color: #252c58;
+    background-color: #33060FF;
     color: #f8da73;
     text-align: left;
     padding: 3px;
