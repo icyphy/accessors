@@ -1,10 +1,11 @@
 /********** Following are specifically for accessor displays. *********/
 
 /* Directory will be light on dark. */
+/* This is where the menu on the left gets its colors. */
 .accessorDirectory {
     padding: 10px;
     font-size: 100%;
-    background-color: #252c58;
+    background-color: #33060FF;
     color: #f8da73;
 }
 
