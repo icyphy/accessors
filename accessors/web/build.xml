@@ -108,10 +108,13 @@
     <property environment="env" />
     <available file="cargo"
 	       filepath="${env.PATH}"
-	       property="cargo.path"/>
+	       property="cargo.present"/>
     <echo>
-      cargo binary found: ${cargo.path}
-      path: ${env.PATH}
+      Checking to see if the cargo binary is present.
+      cargo is used for the rusteduk target.
+      Rusteduk is a Duktape-based Java Interpreter that can be called from rust.
+      If cargo is not found, then rusteduk won't compile.
+      Rusteduk is not required by Accessors.
     </echo>
   </target>
   
@@ -206,6 +209,13 @@
 	    file="hosts/duktape/eduk/eduk"/>
     <delete quiet="true" verbose="no"
 	    file="hosts/duktape/eduk2/eduk2"/>
+    <exec dir="${rusteduk.source}"
+          executable="make"
+          failonerror="true"
+          timeout="${timeout}">
+      <arg value="clean"/>
+    </exec>
+
   </target>
 
   <!-- Build eduk first because it updates the .h files from the .js files
@@ -411,7 +421,8 @@
 
   <target name="rusteduk"
 	  depends="-cargo-in-path"
-          description="Build the rusteduk binary.  Requires rustc.">
+          description="Build the rusteduk binary.  Requires rustc."
+	  if="${cargo.present}">
     <echo>
       The rusteduk binary is a Rust binary that invokes the C-based
       duktape JavaScript interpreter.  Rusteduk requires cargo and
@@ -421,6 +432,8 @@
       Then run:
       rustup default stable
       See https://www.icyphy.org/accessors/wiki/Main/RustHost
+
+      cargo.present: ${cargo.present}
     </echo>
     <exec dir="${rusteduk.source}"
           executable="make"
