@@ -137,11 +137,7 @@ exports.publish = function (data) {
             }
 
             if (element.kind === 'accessor') {
-                moml += '<?xml version="1.0" standalone="yes"?>\n' +
-			'<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
-			'    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +
-			'    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(element.description) + '">\n' +
-		    '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
+                moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
                 // Alphabetical by tag.
                 if (element.author !== undefined) {
