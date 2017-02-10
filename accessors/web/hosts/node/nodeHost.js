@@ -150,7 +150,7 @@ function instantiate(accessorName, accessorClass) {
     };
     var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
-    //console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };
 
@@ -163,6 +163,28 @@ function instantiate(accessorName, accessorClass) {
 function instantiateTopLevel(accessorName, accessorClass) {
     // FIXME: See if we can get rid of instantiateTopLevel
     return instantiate(accessorName, accessorClass);
+};
+
+/** Instantiate and return a mutableAccessor.
+ *  This will throw an exception if there is no such accessor class on the accessor
+ *  search path.
+ *  @param accessorName The name to give to the instance.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ */
+function instantiateMutable(accessorName, accessorClass) {
+    // The instantiate() function must be defined in
+    // web/hosts/nodeHost/nodeHost.js so that require() knows to look
+    // in the web/hosts/nodeHost/node_modules.
+
+    // FIXME: The bindings should be a bindings object where require == a requireLocal
+    // function that searches first for local modules.
+    var bindings = {
+        'require': require,
+    };
+    var instance = commonHost.instantiateAccessor(
+        accessorName, accessorClass, getAccessorCode, bindings, null, null, true);
+    console.log('Instantiated mutableAccessor ' + accessorName + ' with class ' + accessorClass);
+    return instance;
 };
 
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.
@@ -432,10 +454,12 @@ process.on('uncaughtException', exitHandler.bind(null, {
 exports.getAccessorCode = getAccessorCode;
 exports.instantiate = instantiate;
 exports.instantiateTopLevel = instantiateTopLevel;
+exports.instantiateMutable = instantiateMutable;
 exports.startHostShell = startHostShell;
 
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
+exports.getMonitoringInformation = commonHost.getMonitoringInformation;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.processCommandLineArguments = commonHost.processCommandLineArguments;
