@@ -27,7 +27,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/robotics/RosSubscriber.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/robotics/RosSubscriber.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor subscribes to a pre-established ROS topic.&lt;br&gt;&#10; It communicates to ROS through the rosbridge web socket, and extends the &#10; WebSocketClient accessor to do so. &#10; It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.&lt;br&gt;. &#10; The other parameters configure how the data is to be received according&#10; to the rosbridge specification:&#10; https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe&lt;/p&gt;">
@@ -138,7 +138,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/robotics/Global2LatLonAlt.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/robotics/Global2LatLonAlt.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor takes a mavros global_position/global message and retrieves the corresponding Latitude, Longitude, and Altitude&lt;/p&gt;">

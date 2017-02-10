@@ -56,7 +56,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/devices/AdsB.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/devices/AdsB.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an &#10;aircraft determines its position via satellite navigation and periodically broadcasts it, enabling it to be tracked.&lt;/p&gt;">
