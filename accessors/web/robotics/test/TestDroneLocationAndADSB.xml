@@ -47,7 +47,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/robotics/DroneLocation.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/robotics/DroneLocation.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10;such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10;In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10;Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &amp;quot;rosed mavros apm2.launch&amp;quot;&#10;and launch the node using the command &amp;quot;roslaunch mavros apm2.launch&amp;quot;. The accessor uses a websocket to access ros.&#10;Thus, you need also to install rosbridge_server and launch &amp;quot;roslaunch rosbridge_server rosbridge_websocket.launch&amp;quot;.&lt;/p&gt;">
@@ -102,7 +102,7 @@
                 </property>
             </property>
         </property>
-        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://www.icyphy.org/accessors/devices/AdsB.js">
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/devices/AdsB.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
             <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an &#10;aircraft periodically broadcasts its state such as location, altitude, heading, etc.&#10;In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090, &#10;plug your SDR USB dongle, and run ./dump1090 --net --interactive&lt;/p&gt;">
