@@ -26,18 +26,20 @@
 /**
  * This swarmlet example, running on node Host, illustrates the notion of 
  * mutableAccessor.
- * 
- *  
+ * See https://www.icyphy.org/accessors/wiki/Modules/Mutable
  */
 
-var nodeHost = require('../hosts/node/nodeHost.js');
+
+var nodeHost = require('../../../hosts/node/nodeHost.js');
 
 
 var ma = nodeHost.instantiateMutable('ma','./mutable/MutableTestGain.js');
 
-// Two concretizations are tested 
+// Two concretizations are tested
 var a1 = nodeHost.instantiate('a1','./mutable/TestGain1.js');
 var a2 = nodeHost.instantiate('a2','./mutable/TestGain2.js');
+
+console.log('# In the above, we use node to run the example, which create the mutuableAccessor (ma) and the two different implementations (a1 and a2)'); 
 
 var _input = 1;
 
@@ -56,7 +58,9 @@ if (ma.reifiableBy(a1)){
 			ma.react();
 			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
 	};
-} else console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a1.accessorName);
+} else {
+    console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a1.accessorName);
+}
 
 
 // remove accessor a1 as reification
@@ -80,7 +84,9 @@ if (ma.removeReification()) {
 			ma.react();
 			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
 		}
-	} else console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a2.accessorName);
+	} else {
+            console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a2.accessorName);
+        }
 };
 	
 // Try to run with and without the following instruction
