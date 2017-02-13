@@ -69,7 +69,7 @@ var faceDetector = require('objectDetection');
 exports.setup = function () {
     this.input('input');
     this.output('output');
-    this.output('faceCount');
+    this.output('faceCount', {'type': 'int'});
     this.input('options', {
         'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
         'type': 'JSON'
