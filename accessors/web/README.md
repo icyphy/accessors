@@ -8,10 +8,12 @@ source and/or sink for data and/or commands.
 An accessor host is to the Internet of Things what a browser is to the Internet.
 It renders a remote service by locally executing a proxy for that service.
 
-This work was supported in part by the TerraSwarm Research Center, one
-of six centers supported by the STARnet phase of the Focus Center
+This work was supported in part by the [TerraSwarm Research Center](https://www.terraswarm.org),
+one of six centers supported by the STARnet phase of the Focus Center
 Research Program (FCRP) a Semiconductor Research Corporation program
 sponsored by MARCO and DARPA.
+
+This work is also supported by the [Industrial Cyber-Physical Systems (iCyPhy) Center](https://www.icyphy.org).
 
 See Also
 --------
