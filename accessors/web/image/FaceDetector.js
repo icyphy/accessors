@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -21,40 +21,22 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** A motion detector accessor.
- *  This accessor compares each input image against the previous
- *  input image. There are three outputs.
- *  The one named 'output' is a modified image that graphically illustrates
- *  the center of gravity of motion, if motion is detected.
- *  If enough of the pixels differ by enough, then the 'cog'
- *  output will produce the center of gravity of the pixels that
- *  differ by enough.
- *  Finally, the 'area' output produces the percentage of area
- *  covered by motion in the input image, where 0 means no motion
- *  and 100 means full image motion.
+/** A face detector accessor.
+ *  This accessor detects faces in an input stream.
  *
  *  The options parameter can include the following fields:
- *  * _PixelThreshold_: Intensity threshold whereby a pixel is
- *    deemed to different (an int in the range of 0 to 255, with default 25).
- *  * _AreaThreshold_: The percentage threshold of image
- *    that has different pixels for motion to be detected
- *    (a double 0-100, with default 0.2).
- *  * _ModifyImage_: If true (the default), the modify the
- *    provided image with a visual indication of the location
- *    and amount of motion.
+ *  * _value_: The MinFaceSize and MaxFaceSize, which defaults to 50 and 400.
+ *  * _type_: If set to 'JSON'
  *
- *  The implementation for the Ptolemy II host is taken from
- *  the webcam-capture package by Bartosz Firyn (SarXos), available from
- *  [https://github.com/sarxos/webcam-capture](https://github.com/sarxos/webcam-capture).
- *  The webcam-capture package is licensed under the MIT License.
+ *  The implementation for the Ptolemy II host uses 
+ *  [https://opencv.org](openCV) which is licensed under a BSD 3-clause license.
  *
- *  @accessor image/MotionDetector
+ *  @accessor image/FaceDetector
  *  @input input A stream of images.
- *  @input {{"PixelThreshold": number, "AreaThreshold": number}} options The options controlling the filter.
- *  @output {array<{'horizontal': 'number', 'vertical': 'number'}>} cog The horizontal and vertical position of the center of gravity of motion, in pixels.
- *  @output {Object} output The filtered image.
- *  @output {number} area The percentage of area covered by motion.
- *  @author Edward A. Lee
+ *  @input options The value and type options.
+ *  @output output The results of filtering the image according to the options
+ *  @output {int} faceCount The number of faces
+ *  @author Ilge Akkaya.  Contributor: Christopher Brooks
  *  @version $$Id$$
  */
 
