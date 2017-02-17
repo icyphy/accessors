@@ -107,7 +107,7 @@ function getAccessorCode(name) {
     }
 
     // Look for the accessor as a regular file.
-    // See https://www.icyphy.org/accessors/wiki/Main/DeploymentNotes#SSHScript
+    // See https://www.terraswarm.org/accessors/wiki/Main/DeploymentNotes#SSHScript
     try {
         code = fs.readFileSync(name, 'utf8');
         return code;
@@ -150,7 +150,7 @@ function instantiate(accessorName, accessorClass) {
     };
     var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
-    console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    //console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };
 
@@ -163,28 +163,6 @@ function instantiate(accessorName, accessorClass) {
 function instantiateTopLevel(accessorName, accessorClass) {
     // FIXME: See if we can get rid of instantiateTopLevel
     return instantiate(accessorName, accessorClass);
-};
-
-/** Instantiate and return a mutableAccessor.
- *  This will throw an exception if there is no such accessor class on the accessor
- *  search path.
- *  @param accessorName The name to give to the instance.
- *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
- */
-function instantiateMutable(accessorName, accessorClass) {
-    // The instantiate() function must be defined in
-    // web/hosts/nodeHost/nodeHost.js so that require() knows to look
-    // in the web/hosts/nodeHost/node_modules.
-
-    // FIXME: The bindings should be a bindings object where require == a requireLocal
-    // function that searches first for local modules.
-    var bindings = {
-        'require': require,
-    };
-    var instance = commonHost.instantiateAccessor(
-        accessorName, accessorClass, getAccessorCode, bindings, null, null, true);
-    console.log('Instantiated mutableAccessor ' + accessorName + ' with class ' + accessorClass);
-    return instance;
 };
 
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.
@@ -447,6 +425,46 @@ process.on('uncaughtException', exitHandler.bind(null, {
     exit: true
 }));
 
+
+/** Instantiate and invoke a composite accessor.
+ *
+ *  This function is useful for invoking the Node
+ *  host on a composite accessor.
+ *  This function calls process.exit() upon termination
+ *  of the accessor.
+ *
+ *  @param args An array of command line arguments.
+ *  The first two are discarded.  See the documentation
+ *  for commonHost.processCommandLineArguments().
+ */
+function processCommandLineArgumentsNode(args) {
+
+    // We use a simple version of this so that nodeHostInvoke.js and
+    // the Cape Code AccessorSSHCodeGenerator are both very small and
+    // not likely to change.  By having one function defined
+    // in the host, we avoid code duplication.
+
+    // This script is Node-specific because it uses fs.
+
+    // Remove "node" and the script name (i.e. "nodeHostInvoke.js")
+    // from the array of command line arguments.
+    commonHost.processCommandLineArguments(args.slice(2),
+        // Argument to read a file.
+        function(filename) {
+            // FIXME: What if the encoding is not utf8?
+            return fs.readFileSync(filename, 'utf8');
+        },
+        // Argument to instantiate an accessor.
+        instantiateTopLevel,
+        // Function to call upon termination.
+        function() {
+            // Note that in the node host, an exit handler
+            // will call wrapup on all accessors.
+            process.exit(0);
+        }
+                                                );
+};
+
 ///////////////////////////////////////////////////////////////////////
 // Export the module functions.
 
@@ -454,12 +472,11 @@ process.on('uncaughtException', exitHandler.bind(null, {
 exports.getAccessorCode = getAccessorCode;
 exports.instantiate = instantiate;
 exports.instantiateTopLevel = instantiateTopLevel;
-exports.instantiateMutable = instantiateMutable;
+exports.processCommandLineArgumentsNode = processCommandLineArgumentsNode;
 exports.startHostShell = startHostShell;
 
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
-exports.getMonitoringInformation = commonHost.getMonitoringInformation;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.processCommandLineArguments = commonHost.processCommandLineArguments;

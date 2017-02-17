@@ -104,28 +104,11 @@
  *
  *  * -v|--v|-version|--version: Print out the version number
  *
- *  See the <a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
+ *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *  
  *  @author Christopher Brooks and Edward A. Lee
  *  @version $$Id$$
  */
 
 var nodeHost = require('./nodeHost.js');
-var fs = require('fs');
-
-// Remove "node" and "nodeHostInvoke.js" from the array of command line arguments.
-nodeHost.processCommandLineArguments(process.argv.slice(2),
-        // Argument to read a file.
-        function(filename) {
-            // FIXME: What if the encoding is not utf8?
-            return fs.readFileSync(filename, 'utf8');
-        },
-        // Argument to instantiate an accessor.
-        nodeHost.instantiateTopLevel,
-        // Function to call upon termination.
-        function() {
-            // Note that in the node host, an exit handler
-            // will call wrapup on all accessors.
-            process.exit(0);
-        }
-);
+nodeHost.processCommandLineArgumentsNode(process.argv);
