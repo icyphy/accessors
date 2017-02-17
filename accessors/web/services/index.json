@@ -1,5 +1,6 @@
 [
     "GeoCoder.js",
+    "Heartbeat.js",
     "StockTick.js",
     "Weather.js"
 ]
