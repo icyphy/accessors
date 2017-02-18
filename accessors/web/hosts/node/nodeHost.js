@@ -1,6 +1,6 @@
 // Node.js swarmlet host.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -132,6 +132,30 @@ function getAccessorCode(name) {
     return code;
 };
 
+/** Get a resource.
+ *  Below are the types of resources that are handled
+ *  all other resources will cause an error.
+ *
+ *  * $KEYSTORE is replaced with $HOME/.ptKeystore
+ *
+ *  @param uri A specification for the resource.
+ *  @param timeout The timeout in milliseconds, not used 
+ */
+getResource = function(uri, timeout) {
+    if (uri.startsWith('$KEYSTORE') === true) {
+        var home = process.env.HOME;
+        if (home === undefined) {
+            throw new Error('Could not get $HOME from the environment to expand ' + uri);
+        } else {
+            uri = uri.replace('$KEYSTORE', home + path.sep + '.ptKeystore')
+            code = fs.readFileSync(uri, 'utf8');
+            return code
+        }
+    }
+    throw new Error('getResouce(' + uri + ', ' + timeout + ') only supports $KEYSTORE, not ' +
+                    uri);
+}
+
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
@@ -146,6 +170,7 @@ function instantiate(accessorName, accessorClass) {
     // FIXME: The bindings should be a bindings object where require == a requireLocal
     // function that searches first for local modules.
     var bindings = {
+        'getResource': getResource,
         'require': require,
     };
     var instance = commonHost.instantiateAccessor(
@@ -437,7 +462,6 @@ process.on('uncaughtException', exitHandler.bind(null, {
  *  for commonHost.processCommandLineArguments().
  */
 function processCommandLineArguments(args) {
-
     // We use a simple version of this so that nodeHostInvoke.js and
     // ptolemy/cg/kernel/generic/accessor/accessorInvokeSSH in the
     // Cape Code AccessorSSHCodeGenerator are both very small and not
