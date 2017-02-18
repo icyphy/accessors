@@ -23,11 +23,17 @@
 
 /** Send a heartbeat to a mothership monitoring web server.
  *
- * The Mothership server require a key string.
- * This accessor looks for key in $HOME/.heartbeatKey
+ * This accessor is not of much use because it requires the Mothership
+ * server, which is not yet available.
+ *
+ * The Mothership server require a key string from the Heartbeat client.
+ *
+ * This accessor looks for key in $KEYSTORE/heartbeatKey, which
+ * resolves to $HOME/.ptKeystore/heartbeatKey.
+ *
  * The key is found in the swarmbox git repo, which not public.
  * Look for swarmbox/heartbeat/key
- *  See https://www.terraswarm.org/testbeds/wiki/Main/SwarmboxGitRepo
+ * See https://www.terraswarm.org/testbeds/wiki/Main/SwarmboxGitRepo
  *
  * To download the repo using a repo.eecs.berkeley.edu username and
  * password (possibly different than your terraswarm website username
@@ -52,16 +58,11 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var fs = require('fs');
 var http = require('httpClient');
 var os = require('os');
-var process = require('process');
 
-
-var keyFile = process.env.HOME + '/.heartbeatKey';
-console.log("Heartbeat.js: keyFile: " + keyFile);
-var key = fs.readFileSync(keyFile, 'utf8').trim();
-
+// Mothership expects the Heartbeat clients to use a key.
+var key = '';
 
 function Heartbeat() {
     var heartbeat = {};
@@ -133,9 +134,23 @@ function Heartbeat() {
  */
 exports.setup = function () {
     this.input('ipAddress', {type: "string"});
+
+    // See the accessor comment for how to get the key.
+    var keyFile = '$KEYSTORE/heartbeatKey';
+    try {
+        key = getResource('$KEYSTORE/heartbeatKey', 1000).trim();
+    } catch (e) {
+        console.log('Heartbeat: Could not get ' + keyFile + ":  " + e +
+                    '\nThe key is not public, so this accessor is only useful ' +
+                    'If you have the key.  See ' +
+                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.Heartbeat');
+        key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheHeartbeatAccessorDocs';
+    }
 };
 
-/** Initialize the accessor by attaching an input handler to the *symbol* input. */
+/** Initialize the accessor by attaching an input handler to the
+ *  the *ipAddress* input.
+ */
 exports.initialize = function () {
     this.heartbeat = Heartbeat.call(this);
     this.addInputHandler('ipAddress', this.heartbeat.pingMothership);
