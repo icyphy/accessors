@@ -425,7 +425,6 @@ process.on('uncaughtException', exitHandler.bind(null, {
     exit: true
 }));
 
-
 /** Instantiate and invoke a composite accessor.
  *
  *  This function is useful for invoking the Node
@@ -434,21 +433,19 @@ process.on('uncaughtException', exitHandler.bind(null, {
  *  of the accessor.
  *
  *  @param args An array of command line arguments.
- *  The first two are discarded.  See the documentation
+ *  For the values of the arguments, see the documentation
  *  for commonHost.processCommandLineArguments().
  */
-function processCommandLineArgumentsNode(args) {
+function processCommandLineArguments(args) {
 
     // We use a simple version of this so that nodeHostInvoke.js and
-    // the Cape Code AccessorSSHCodeGenerator are both very small and
-    // not likely to change.  By having one function defined
-    // in the host, we avoid code duplication.
+    // ptolemy/cg/kernel/generic/accessor/accessorInvokeSSH in the
+    // Cape Code AccessorSSHCodeGenerator are both very small and not
+    // likely to change.  By having one function defined in the host,
+    // we avoid code duplication.  nashornHost defines a similar method
 
     // This script is Node-specific because it uses fs.
-
-    // Remove "node" and the script name (i.e. "nodeHostInvoke.js")
-    // from the array of command line arguments.
-    commonHost.processCommandLineArguments(args.slice(2),
+    var result = commonHost.processCommandLineArguments(args,
         // Argument to read a file.
         function(filename) {
             // FIXME: What if the encoding is not utf8?
@@ -462,7 +459,13 @@ function processCommandLineArgumentsNode(args) {
             // will call wrapup on all accessors.
             process.exit(0);
         }
-                                                );
+                                          );
+    if (!result) {
+	// No accessors were initialized and the keepalive argument
+	// was not given, so there is presumably no more to do.
+	print('No standalone accessors were instantiated');
+        //process.exit(0);
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -472,14 +475,13 @@ function processCommandLineArgumentsNode(args) {
 exports.getAccessorCode = getAccessorCode;
 exports.instantiate = instantiate;
 exports.instantiateTopLevel = instantiateTopLevel;
-exports.processCommandLineArgumentsNode = processCommandLineArgumentsNode;
+exports.processCommandLineArguments = processCommandLineArguments;
 exports.startHostShell = startHostShell;
 
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
-exports.processCommandLineArguments = commonHost.processCommandLineArguments;
 exports.uniqueName = commonHost.uniqueName;
 
 // FIXME: Should not be needed:

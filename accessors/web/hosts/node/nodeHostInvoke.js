@@ -1,6 +1,6 @@
 // Node.js swarmlet host.
 //
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -111,4 +111,6 @@
  */
 
 var nodeHost = require('./nodeHost.js');
-nodeHost.processCommandLineArgumentsNode(process.argv);
+// Remove "node" and the script name (i.e. "nodeHostInvoke.js")                                                       
+// from the array of command line arguments. 
+nodeHost.processCommandLineArguments(process.argv.slice(2));
