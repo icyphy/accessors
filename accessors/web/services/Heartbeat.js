@@ -23,6 +23,22 @@
 
 /** Send a heartbeat to a mothership monitoring web server.
  *
+ * The Mothership server require a key string.
+ * This accessor looks for key in $HOME/.heartbeatKey
+ * The key is found in the swarmbox git repo, which not public.
+ * Look for swarmbox/heartbeat/key
+ *  See https://www.terraswarm.org/testbeds/wiki/Main/SwarmboxGitRepo
+ *
+ * To download the repo using a repo.eecs.berkeley.edu username and
+ * password (possibly different than your terraswarm website username
+ * and password):
+ *
+ *   git clone https://repo.eecs.berkeley.edu/git/projects/terraswarm/swarmbox.git
+ *
+ * If you uploaded your SSH key to repo.eecs, then use:
+ *
+ *   git clone repoman@repo.eecs.berkeley.edu:projects/terraswarm/swarmbox.git
+ *
  *  @accessor services/Heartbeat
  *  @author Christopher Brooks, based on heartbeat.js by Marten Lohstroh.
  *  @version $$Id$$
@@ -36,32 +52,24 @@
 /*jshint globalstrict: true*/
 'use strict';
 
+var fs = require('fs');
 var http = require('httpClient');
+var os = require('os');
+var process = require('process');
 
-// FIXME: We need to figure out how to access the key without checking
-// it in to the public repo.
 
-//var key = fs.readFileSync('key', 'utf8').trim();
-// Get the key from swarmbox/heartbeat/key
-// See https://www.terraswarm.org/testbeds/wiki/Main/SwarmboxGitRepo
+var keyFile = process.env.HOME + '/.heartbeatKey';
+console.log("Heartbeat.js: keyFile: " + keyFile);
+var key = fs.readFileSync(keyFile, 'utf8').trim();
 
-// To download the repo using a repo.eecs.berkeley.edu username and
-// password (possibly different than your terraswarm website username
-// and password):
-//
-//   git clone https://repo.eecs.berkeley.edu/git/projects/terraswarm/swarmbox.git
-// If you uploaded your SSH key to repo.eecs, then use:
-//
-//   git clone repoman@repo.eecs.berkeley.edu:projects/terraswarm/swarmbox.git
-
-var key = "xxxxx";
 
 function Heartbeat() {
     var heartbeat = {};
     heartbeat.pingMothership = function () {
         console.log("HeartBeat: pingMothership");
         var config = {};
-        config.hostname = "moog.eecs.berkeley.edu";
+        config.hostname = os.hostname();
+        config.timestamp_sent = Math.floor(new Date()); // in ms
         var configString = JSON.stringify(config);
         var headers = {
             'Content-Type' : 'application/json',
@@ -125,8 +133,6 @@ function Heartbeat() {
  */
 exports.setup = function () {
     this.input('ipAddress', {type: "string"});
-    this.input('trigger', {'type': 'number'});
-
 };
 
 /** Initialize the accessor by attaching an input handler to the *symbol* input. */
