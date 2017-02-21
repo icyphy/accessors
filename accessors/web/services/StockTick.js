@@ -75,7 +75,7 @@ exports.setup = function () {
     });
     this.input('arguments', {
         'visibility': 'expert',
-        'value': '{"env":"http://datatables.org/alltables.env", "format":"json"}'
+        'value': '{"env":"store://datatables.org/alltableswithkeys", "format":"json"}'
     });
     this.input('body', {
         'visibility': 'expert'
