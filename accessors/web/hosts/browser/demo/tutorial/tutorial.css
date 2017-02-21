@@ -1,0 +1,72 @@
+html {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.accessorTable th {
+	background-color: #003262;
+}
+
+.accessorTableHeader, .accessorTableData {
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+.accessorDocumentation {
+	width: 40%;
+}
+
+.codebox {
+	width: 40%;
+	float: left;
+	padding: 1em;
+}
+
+.CodeMirror {
+	border-top: 1px solid black;
+    border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom:  1px solid lightgray;
+}
+
+.copy {
+	width: 40%;
+	float: right;
+}
+
+.error {
+	color: #b22222;
+	font-weight: bold;
+	float: right;
+}
+
+.errorMessage {
+	padding : 0.5em;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom:  1px solid black;
+	color: #b22222;
+}
+
+#accessorboxRevealCode, #accessorboxDocumentation {
+	display: none;
+}
+
+#accessorTitle {
+	font-size: 1.5em;
+}
+
+.accessorTableTitle {
+	font-size: 1.2em;
+	maring: 0.1em;
+}
+
+#accessorboxTables {
+	float: left;
+	margin: 0.1em;
+	padding: 0.1em;
+}
+
+
+
