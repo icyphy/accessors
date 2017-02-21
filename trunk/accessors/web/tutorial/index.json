@@ -1,0 +1,19 @@
+[
+    "MochaTest.js",
+    "TestAccessor.js",
+    "TestAdder.js",
+    "TestBaseC.js",
+    "TestComposite.js",
+    "TestCompositeSpontaneous.js",
+    "TestDisplay.js",
+    "TestDerivedAgainA.js",
+    "TestDerivedC.js",
+    "TestFunctions.js",
+    "TestGain.js",
+    "TestImplement.js",
+    "TestInheritance.js",
+    "TestRequire.js",
+    "TestSpontaneous.js",
+    "TestSpontaneousOnce.js",
+    "TrainableTest.js"
+]
