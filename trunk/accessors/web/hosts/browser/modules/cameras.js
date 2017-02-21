@@ -177,30 +177,58 @@ exports.Camera = function (name) {
 	// Currently only supports a single Camera accessor.
 	
 	var accessorDiv = document.getElementById('Camera');
-
+	var parent;
+	
 	if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
 		// Found Camera accessor.
-		var parent = accessorDiv.parentNode;
+		console.log('found camera accessor');
+		parent = accessorDiv.parentNode;
+		
 		if (parent !== null && typeof parent !== 'undefined') {
+			console.log('inserting before camera accessor');
 			parent.insertBefore(container, accessorDiv);
 		} else {
+			console.log('inserting at top of body, not camera');
 			document.body.insertBefore(container, accessorDiv);
 		}
 	} else {
-		// No Camera accessor.  Find any accessor.  If none, use page top.
-		accessorDiv = document.getElementsByClassName('accessor');
+		// Look for accessorDirectoryTarget, as in terraswarm library page.
+		accessorDiv = document.getElementById('accessorDirectoryTarget');
+		
 		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-			accessorDiv = accessorDiv[0];
-			var parent = accessorDiv.parentNode;
+			console.log('found accessor directory target');
+			parent = accessorDiv.parentNode;
+			
 			if (parent !== null && typeof parent !== 'undefined') {
+				console.log('inserting before target');
 				parent.insertBefore(container, accessorDiv);
 			} else {
+				console.log('inserting at top of body, not target');
 				document.body.insertBefore(container, accessorDiv);
 			}
-		} else if (document.body.firstChild !== null && typeof document.body.firstChild !== 'undefined') {
-				document.body.insertBefore(container, document.body.firstChild);
 		} else {
-			document.body.appendChild(container);
+			// No Camera accessor.  Find any accessor.  If none, use page top.
+			accessorDiv = document.getElementsByClassName('accessor');
+			if (accessorDiv !== null && typeof accessorDiv !== 'undefined' && 
+					accessorDiv.length > 0) {
+				console.log('found accessor');
+				accessorDiv = accessorDiv[0];
+				var parent = accessorDiv.parentNode;
+				if (parent !== null && typeof parent !== 'undefined') {
+					console.log('inserting before accessor');
+					parent.insertBefore(container, accessorDiv);
+				} else {
+					console.log('inserting at top of body, not accessor');
+					document.body.insertBefore(container, accessorDiv);
+				}
+			} else if (document.body.firstChild !== null && 
+					typeof document.body.firstChild !== 'undefined') {
+					console.log('no div found inserting at page top');
+					document.body.insertBefore(container, document.body.firstChild);
+			} else {
+				console.log('no first child found appending at bottom');
+				document.body.appendChild(container);
+			}
 		}
 	}
 	
