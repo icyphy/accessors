@@ -231,12 +231,18 @@ function generate() {
  *  function will invoke its wrapup() function, if it defines one, before
  *  generating the HTML. It will also clear the target element (which has
  *  the same id as the accessor).
+ *  
+ *  Optoinally, this method can accept the full text of an accessor via the 
+ *  text parameter.  This is used to create accessors on-the-fly.  The tutorial
+ *  instantiates accessors this way.
  *
  *  @path The path to the accessor.
  *  @param id The id of the accessor, which is also the id of the target element
  *   on the web page into which to insert the generated HTML.
+ *  @param text (Optional) The text of the accessor, to be used instead of 
+ *   retrieving an accessor from the filesystem. 
  */
-function generateAccessorHTML(path, id) {
+function generateAccessorHTML(path, id, text) {
 
     // Unless an error occurs or required modules are missing,
     // assume the accessor is executable.
@@ -259,8 +265,13 @@ function generateAccessorHTML(path, id) {
     // Clear any previous contents in the target element.
     var target = document.getElementById(id);
     target.innerHTML = '';
-
-    var code = getAccessorCode(path);
+    
+    var code;
+    if (text !== null && typeof text !== 'undefined') {
+    	code = text;
+    } else {
+    	code = getAccessorCode(path);
+    }
 
     // Create a header.
     target = document.getElementById(id);
