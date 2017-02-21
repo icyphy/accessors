@@ -139,9 +139,15 @@ function getAccessorCode(name) {
  *  * $KEYSTORE is replaced with $HOME/.ptKeystore
  *
  *  @param uri A specification for the resource.
- *  @param timeout The timeout in milliseconds, not used 
  */
-getResource = function(uri, timeout) {
+getResource = function(uri) {
+
+    // We might want the Node host (and in fact all hosts) to allow access to
+    // resources that are given with relative paths. By default, these would
+    // get resolved relative to the location of the file defining the swarmlet.
+    // This might even work in the Browser host with the same source
+    // policy. 
+
     if (uri.startsWith('$KEYSTORE') === true) {
         var home = process.env.HOME;
         if (home === undefined) {
