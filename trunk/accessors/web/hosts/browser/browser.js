@@ -149,6 +149,10 @@ var commonHost;
 // and mocha test cases.
 var Accessor, instantiate;
 
+//Needed by computervision module.
+var Module = {};
+var i = 0;
+
 /** Local function controlling how standard elements are rendered in the
  *  document with an optional label.
  *  @param target The target document element id.
