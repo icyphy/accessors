@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Computer Vision Demo</title>
+ <script src="/accessors/hosts/browser/browser.js"></script>
+ 
+ <script>
+ 	var initialValues = {};
+  	initialValues["ComputerVision.input"] = 
+  		"/accessors/hosts/browser/demo/computerVision/corgi.jpg"; 
+ </script>
+</head>
+  
+<body>
+<div id="instructions">
+<p> Welcome!  Click 'react to inputs' to find edges in a test image. </p>
+<p> If running locally, please download these 2 files: </p>
+<p>
+<a href="http://ucisysarch.github.io/opencvjs/examples/cv.js"> 
+http://ucisysarch.github.io/opencvjs/examples/cv.js</a>
+and place in <pre> /accessors/web/hosts/browser/modules</pre>
+</p>
+<p>
+<a href="https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data">
+https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data </a>
+and place in <pre> /accessors/web/hosts/browser/demo/computerVision</pre>
+</p>
+
+</div>
+<div class="accessor"
+   src="image/ComputerVision"
+   id="ComputerVision"></div>
+</body>
+</html>
