@@ -128,14 +128,49 @@ exports.CV = function () {
 	container.appendChild(this.resultContainer);
 	container.appendChild(labels);
 	
-	// TODO: Page placement
-	// Right now - just put at page top.
+	var accessorDiv = document.getElementById('Camera');
+	var parent;
 	
-	if (document.body.firstChild !== null && 
-			typeof document.body.firstChild !== 'undefined') {
-		document.body.insertBefore(container, document.body.firstChild);
+	if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+		// Found Camera accessor.
+		parent = accessorDiv.parentNode;
+		
+		if (parent !== null && typeof parent !== 'undefined') {
+			parent.insertBefore(container, accessorDiv);
+		} else {
+			document.body.insertBefore(container, accessorDiv);
+		}
 	} else {
-		document.body.appendChild(container);
+		// Look for accessorDirectoryTarget, as in terraswarm library page.
+		accessorDiv = document.getElementById('accessorDirectoryTarget');
+		
+		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+			parent = accessorDiv.parentNode;
+			
+			if (parent !== null && typeof parent !== 'undefined') {
+				parent.insertBefore(container, accessorDiv);
+			} else {
+				document.body.insertBefore(container, accessorDiv);
+			}
+		} else {
+			// No Camera accessor.  Find any accessor.  If none, use page top.
+			accessorDiv = document.getElementsByClassName('accessor');
+			if (accessorDiv !== null && typeof accessorDiv !== 'undefined' && 
+					accessorDiv.length > 0) {
+				accessorDiv = accessorDiv[0];
+				var parent = accessorDiv.parentNode;
+				if (parent !== null && typeof parent !== 'undefined') {
+					parent.insertBefore(container, accessorDiv);
+				} else {
+					document.body.insertBefore(container, accessorDiv);
+				}
+			} else if (document.body.firstChild !== null && 
+					typeof document.body.firstChild !== 'undefined') {
+					document.body.insertBefore(container, document.body.firstChild);
+			} else {
+				document.body.appendChild(container);
+			}
+		}
 	}
 	
 	// From https://github.com/ucisysarch/opencvjs
