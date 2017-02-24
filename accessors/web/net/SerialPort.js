@@ -148,6 +148,13 @@ exports.initialize = function () {
     var self = this;
 
     port.on('data', function (data) {
+        if (this.getParameter('receiveType') === 'JSON') {
+            try {
+                data = JSON.parse(data);
+            } catch {
+                self.send('invalid', data);
+            }
+        }
         self.send('received', data);
     });
 
