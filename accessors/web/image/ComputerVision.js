@@ -34,15 +34,6 @@
  *  
  *  To run, please point your browser to:
  *  https://www.terraswarm.org/accessors/hosts/browser/demo/computervision/computervision.html
- *
- *  To run locally, please download these 2 files:
- *  http://ucisysarch.github.io/opencvjs/examples/cv.js
- *  and place in 
- *  /accessors/web/hosts/browser/modules
- *  
- *  https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data
- *  and place in the directory with your demo, e.g.
- *  /accessors/web/hosts/browser/demo/computerVision/computerVision
  *  
  *  @accessor image/ComputerVision
  *  @input input (string or image) An image or path to a local image.  Remote 
@@ -102,8 +93,10 @@ exports.initialize = function() {
         	var options = self.getParameter('options');
         	var transform = self.getParameter('transform');
         	
+        	// TODO:  Perhaps load all these into object fields, for more
+        	// concise code?
         	if (transform === 'findEdges') {
-        		cv.imgproc().findEdges(options);
+        		cv.imgproc().findEdges();
         	} else {
         		error('Unsupported transform ' + transform);
         	}
