@@ -9,12 +9,19 @@
  	var initialValues = {};
   	initialValues["ComputerVision.input"] = 
   		"/accessors/hosts/browser/demo/computerVision/corgi.jpg"; 
+  	
+  	// Wait until tables have loaded, then simulate click on reactToInputs().
+  	window.addEventListener('accessorTableDone', function() {
+  		reactIfExecutable('ComputerVision');
+  	});
  </script>
 </head>
   
 <body>
 <div id="instructions">
-<p> Welcome!  Click 'react to inputs' to find edges in a test image. </p>
+<p> This demo finds edges in a test image.  It loads the image specified as 
+"input" and applies the transform "transform" by simulating a click to 
+"react to inputs". </p>
 </div>
 <div class="accessor"
    src="image/ComputerVision"
