@@ -1113,8 +1113,41 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
 
         } else {
             // Either a parameter or input.  Outputs are not editable.
-            var valueInput = document.createElement("input");
-
+        	var valueInput;
+        	
+        	if (options.options !== null && 
+        			typeof options.options !== 'undefined') {
+        		valueInput = document.createElement('select');
+        		
+            	var selectMe, optionElement;
+            	
+            	if (value !== null && typeof value !== 'undefined' && 
+            			options.options.includes(value)) {
+            		selectMe = value;
+            	} else {
+            		selectMe = options.options[0];
+            	}
+            	
+            	options.options.forEach(function(option){
+        			optionElement = document.createElement('option');
+        			optionElement.text = option;
+        			optionElement.value = option;
+        			if (option === selectMe) {
+        				optionElement.selected = true;
+        				optionElement.defaultSelected = true;
+        			} else {
+        				optionElement.selected = false;
+        				optionElement.defaultSelected = false;
+        			}
+        			
+        			valueInput.add(optionElement);
+            	});
+        	} else {
+        		valueInput = document.createElement("input");
+        		valueInput.setAttribute('type', 'text');
+        		valueInput.setAttribute('value', value);
+        	}
+            
             if (role === 'input') {
                 // Do not invoke any handlers on input change.  The user must
                 // initiate invoctaion with the "react to inputs" button.
@@ -1129,9 +1162,7 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
             // Set a unique ID so that this input can be retrieved by the get()
             // function defined in local.js.
             valueInput.setAttribute('id', id + '.' + name);
-            valueInput.setAttribute('type', 'text');
             valueInput.setAttribute('name', name);
-            valueInput.setAttribute('value', value);
 
             valueCell.appendChild(valueInput);
         }
