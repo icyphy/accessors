@@ -14,7 +14,7 @@ var nodeHost = require('../../../../hosts/node/nodeHost.js');
 describe('NodeHost' , function() {
     
     it ('NodeHost./accessors/web/mutable/test/auto/mocha/testSimpleMutable', function () {
-        var ma = nodeHost.instantiateMutable('ma','./mutable/MutableTestGain.js');
+        var ma = nodeHost.instantiate('ma','./mutable/MutableTestGain.js');
 
         // Two concretizations are tested
         var a1 = nodeHost.instantiate('a1','./mutable/TestGain1.js');

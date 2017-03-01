@@ -511,6 +511,7 @@ exports.startHostShell = startHostShell;
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
+exports.getMonitoringInformation = commonHost.getMonitoringInformation; 
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.uniqueName = commonHost.uniqueName;
 
@@ -519,3 +520,55 @@ exports.uniqueName = commonHost.uniqueName;
 //Cape Code Accessor Code Generator.
 Accessor = commonHost.Accessor;
 
+/**
+ *  Below is the creation of a web server that retrieves all the accessors
+ *  monitoring information and returns them as a JSON object.
+ *  
+ *  In order to test this service, you need first to decomment the code below.
+ *  After running your swarmlet on a node host, you can request from your 
+ *  browser a web page with the following URL: http://127.0.0.1:8082/monitor/
+ *  
+ *  A JSON object is provided. It shows for each accessor: its name, its 'type'
+ *  and all the monitoring information that is stored. 
+ */
+
+/*var http = require('http');
+var url = require('url');
+
+// Create a server
+http.createServer(function (request, response) {
+
+	var reqParts = request.url.split("/");
+
+	console.log(reqParts);
+
+	if (reqParts[1] == "monitor") {
+		// HTTP Status: 200 : OK
+		// Content Type: text/plain
+		response.writeHead(200, {'Content-Type': 'text/html'});
+		// Write the content of the file to response body
+		
+		//console.log(commonHost.getMonitoringInformation());
+
+		// Retrieve all monitoring information
+		var allMonitoringInformation = commonHost.getMonitoringInformation();
+		
+		// Parse the elements and send them one by one
+		Object.keys(allMonitoringInformation).forEach(function (accName) {
+			var accMonitoringInformation = {};
+			accMonitoringInformation[accName] = allMonitoringInformation[accName];
+			console.log(JSON.stringify(accMonitoringInformation));
+			response.write(JSON.stringify(accMonitoringInformation));
+		});
+	} else {
+		response.writeHead(404, {'Content-Type': 'text/html'});
+		response.write("Hello, nothing received information!");
+	}
+	// Send the response body
+	response.end();
+	
+}).listen(8082);
+
+// Console will print the message
+console.log('Server running at http://127.0.0.1:8082/');
+*/

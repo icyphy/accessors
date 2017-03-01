@@ -33,7 +33,7 @@
 var nodeHost = require('../../../hosts/node/nodeHost.js');
 
 
-var ma = nodeHost.instantiateMutable('ma','./mutable/MutableTestGain.js');
+var ma = nodeHost.instantiate('ma','./mutable/MutableTestGain.js');
 
 // Two concretizations are tested
 var a1 = nodeHost.instantiate('a1','./mutable/TestGain1.js');
