@@ -54,10 +54,12 @@
 
 var CV = null;
 var cv = null;
+var imgproc = null;
 
 try {
     CV = require('computerVision');
     cv = new CV.CV();
+    imgproc = cv.imgproc();
 } catch (error) {
     console.log("The CV module was not present.  The ComputerVision accessor " +
     		"is not supported on this accessor host.");
@@ -72,7 +74,7 @@ exports.setup = function() {
     });
     this.parameter('transform', {
     	type: 'string',
-    	options: ['findEdges'],
+    	options: Object.keys(imgproc), 
     	value: 'findEdges'
     });
     this.output('output');
@@ -93,10 +95,12 @@ exports.initialize = function() {
         	var options = self.getParameter('options');
         	var transform = self.getParameter('transform');
         	
-        	// TODO:  Perhaps load all these into object fields, for more
-        	// concise code?
-        	if (transform === 'findEdges') {
-        		cv.imgproc().findEdges();
+        	// Check if value is a supported transform.
+        	// TODO:  Expand to multiple libraries (imgroc, face detection, ...)
+        	var supported = Object.keys(imgproc);
+        	
+        	if (supported.includes(transform)) {
+        		imgproc[transform](options);
         	} else {
         		error('Unsupported transform ' + transform);
         	}
