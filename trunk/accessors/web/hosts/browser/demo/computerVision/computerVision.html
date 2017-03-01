@@ -12,6 +12,9 @@
   	
   	// Wait until tables have loaded, then simulate click on reactToInputs().
   	window.addEventListener('accessorTableDone', function() {
+  		
+  		// Wait a bit for the computer vision library to load.
+  		// Is there a way to detect this?
   		reactIfExecutable('ComputerVision');
   	});
  </script>
@@ -19,9 +22,16 @@
   
 <body>
 <div id="instructions">
-<p> This demo finds edges in a test image.  It loads the image specified as 
-"input" and applies the transform "transform" by simulating a click to 
-"react to inputs". </p>
+<p> This demo applies image transforms to a test image.  Select a transform, 
+enter any options, and click 'react to inputs'.</p>
+<p> Supported options: 
+	<ul> 
+		<li> {"blurSize" :  1 - 25} (blur, gaussianBlur, medianBlur) </li>
+		<li> {"cannyThreshold" : 10 - 150} (findContours, findEdges) </li>
+		<li> {"erosionSize" : 0-21} (dilate, erode) </li>
+	</ul>
+
+</p>
 </div>
 <div class="accessor"
    src="image/ComputerVision"
