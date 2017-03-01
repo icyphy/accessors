@@ -80,7 +80,12 @@ var cv = require('cv.js');
 
 exports.CV = function () {
 	this.defaultOptions = {};
-	this.defaultOptions.canny_threshold = 75;
+	this.defaultOptions.blurSize = 10;
+	this.defaultOptions.cannyThreshold = 75;
+	this.defaultOptions.erosionSize = 1;
+	
+	// Store the trained face detector.  Loaded when first called.
+	this.face_cascade = null;
 	
 	// Create a pair of canvases to show original image and result.
 	this.originalCanvas = document.createElement('canvas');
@@ -237,22 +242,157 @@ exports.CV.prototype.getResultImage = function(){
 
 /** Image processing functions.  Functions are categorized according to OpenCV
  *  API, http://docs.opencv.org/3.0-beta/modules/refman.html .
+ *  Functions from http://ucisysarch.github.io/opencvjs/examples/img_proc.html
  */
 
 exports.CV.prototype.imgproc = function() {
 	var self = this;
 
-	/** Find edges.  From https://github.com/ucisysarch/opencvjs .
-	 *  @param options The threshold for the canny edge detector, as 
-	 *  	options.canny_threshold.  Optional.
+	/** Blur the original image.
 	 */
-	var findEdges = function(options) {
-		var cthresh = self.defaultOptions.canny_threshold;
+	function blur(options) {
+		var raw = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = new cv.Mat();
+
+		cv.cvtColor(raw, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+		var blurred = new cv.Mat();
+		var blurSize = self.defaultOptions.blurSize;
 		
 		if (options !== null && typeof options !== 'undefined' &&
-				options.canny_threshold !== null && 
-				typeof options.canny_threshold !== 'undefined') {
-			cthresh = options.canny_threshold;
+				options.blurSize !== null && 
+				typeof options.blurSize !== 'undefined') {
+			blurSize = options.blurSize;
+		}
+
+		cv.blur(src, blurred, [blurSize, blurSize], [-1, -1], cv.BORDER_DEFAULT);
+		self.setResult(blurred, self.resultCanvas);
+		raw.delete();
+		src.delete();
+		blurred.delete();
+	}
+	
+	/** Dilate the image.
+	 */
+	function dilate(options) {
+		//var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+		var borderValue = cv.Scalar.all(Number.MIN_VALUE);
+
+		var erosion_type = cv.MorphShapes.MORPH_RECT.value;
+		var erosionOption = self.defaultOptions.erosionSize;
+	
+		if (options !== null && typeof options !== 'undefined' &&
+				options.erosionSize !== null && 
+				typeof options.erosionSize !== 'undefined') {
+			erosionOption = options.erosionSize;
+		}
+		
+	    var erosion_size = [2*erosionOption+1, 2*erosionOption+1];
+		var element = cv.getStructuringElement(erosion_type, erosion_size, [-1, -1]);
+		var dst = new cv.Mat();
+		cv.dilate(src, dst, element, [-1, -1], 1, cv.BORDER_CONSTANT, borderValue);
+		self.setResult(dst, self.resultCanvas);
+		src.delete();
+		dst.delete();
+	}
+	
+	/** Erode the image.
+	 */
+	function erode(options) {
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+        var borderValue = cv.Scalar.all(Number.MAX_VALUE);
+
+		var erosion_type = cv.MorphShapes.MORPH_RECT.value;
+		var erosionOption = self.defaultOptions.erosionSize;
+		
+		if (options !== null && typeof options !== 'undefined' &&
+				options.erosionSize !== null && 
+				typeof options.erosionSize !== 'undefined') {
+			erosionOption = options.erosionSize;
+		}
+		
+	    var erosion_size = [2*erosionOption+1, 2*erosionOption+1];
+		var element = cv.getStructuringElement(erosion_type, erosion_size, [-1, -1]);
+		var dst = new cv.Mat();
+		cv.erode(src, dst, element, [-1, -1], 1, cv.BORDER_CONSTANT, borderValue);
+		self.setResult(dst, self.resultCanvas);
+		src.delete();
+		dst.delete();
+	}
+	
+	/** Find contours in the image.
+	 */
+	function findContours(options) {
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+		var canny_output = new cv.Mat();
+		var blurred = new cv.Mat();
+		var cthresh = self.defaultOptions.cannyThreshold;
+		
+		if (options !== null && typeof options !== 'undefined' &&
+				options.cannyThreshold !== null && 
+				typeof options.cannyThreshold !== 'undefined') {
+			cthresh = options.cannyThreshold;
+		}
+		
+		cv.blur(src, blurred, [5, 5], [-1, -1], cv.BORDER_DEFAULT);
+
+		cv.Canny(blurred, canny_output, cthresh, cthresh*2, 3, 0);
+
+		/// Find contours
+		var contours = new cv.MatVector();
+		var hierarchy = new cv.Mat();
+		cv.findContours(canny_output, contours, hierarchy, 3, 2, [0, 0]);
+
+		// Convex hull
+		var hull = new cv.MatVector();
+		for( i = 0; i < contours.size(); i++ )
+		{
+			var item = new cv.Mat();
+			cv.convexHull(contours.get(i), item, false, true);
+			hull.push_back(item);
+			item.delete();
+		}
+
+		// Draw contours + hull results
+		var size = canny_output.size();
+		var drawing = cv.Mat.zeros(size.get(0), size.get(1), cv.CV_8UC4);
+		for(i = 0; i< contours.size(); i++ )
+		{
+			var color = new cv.Scalar(Math.random()*255, Math.random()*255, Math.random()*255);
+			cv.drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, [0, 0]);
+			var green = new cv.Scalar(30, 150, 30);
+			cv.drawContours(drawing, hull, i, green, 1, 8, new cv.Mat(), 0, [0, 0]);
+			color.delete();
+			green.delete();
+		}
+
+		self.setResult(canny_output, self.resultCanvas);
+		src.delete();
+		blurred.delete();
+		drawing.delete();
+		hull.delete();
+		contours.delete();
+		hierarchy.delete();
+		canny_output.delete();
+	}
+	
+	/** Find edges.  From https://github.com/ucisysarch/opencvjs .
+	 *  @param options The threshold for the canny edge detector, as 
+	 *  	options.cannyThreshold.  Optional.
+	 */
+	function findEdges(options) {
+		var cthresh = self.defaultOptions.cannyThreshold;
+		
+		if (options !== null && typeof options !== 'undefined' &&
+				options.cannyThreshold !== null && 
+				typeof options.cannyThreshold !== 'undefined') {
+			cthresh = options.cannyThreshold;
 		}
 		
 		var data = self.getOriginalImage();
@@ -271,7 +411,180 @@ exports.CV.prototype.imgproc = function() {
 		canny_output.delete();
 	}
 	
-	return { findEdges : findEdges};
+	/** Apply a gaussian blur to the original image.
+	 */
+	function gaussianBlur(options) {
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+		var blurred = new cv.Mat();
+		var blurSize = self.defaultOptions.blurSize;
+		
+		if (options !== null && typeof options !== 'undefined' &&
+				options.blurSize !== null && 
+				typeof options.blurSize !== 'undefined') {
+			blurSize = options.blurSize;
+		}
+		var size = [2*blurSize+1, 2*blurSize+1];
+
+		cv.GaussianBlur(src, blurred, size, 0, 0, cv.BORDER_DEFAULT);
+		self.setResult(blurred, self.resultCanvas);
+		src.delete();
+		blurred.delete();
+	}
+	
+	/** Create a histogram from the image.
+	 */
+	// TODO:  Add a key for what the lines are.
+	function histogram() {
+		var numBins = 255 ;
+
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4); // 24 for rgba
+		var rgbPlanes = new cv.MatVector();
+		cv.split(src, rgbPlanes);
+
+		var planes = new cv.IntVector();
+
+		var ranges = new cv.FloatVector();
+		ranges.push_back(0);
+		ranges.push_back(255);
+
+		var histSize = new cv.IntVector();
+		histSize.push_back(numBins);
+
+		var histr = new cv.Mat();
+		var histg = new cv.Mat();
+		var histb = new cv.Mat();
+		planes.push_back(0);
+		cv.calcHist(rgbPlanes, planes, new cv.Mat(), histr, histSize, ranges, false);
+		planes.set(0,1);
+		cv.calcHist(rgbPlanes, planes, new cv.Mat(), histg, histSize, ranges, false);
+		planes.set(0,2);
+		cv.calcHist(rgbPlanes, planes, new cv.Mat(), histb, histSize, ranges, false);
+
+		var total = 0 ;
+		for (var i = 0 ; i < numBins ; ++i ){
+			total += histr.get_float_at(i);
+		}
+
+		// Normalize
+
+		var noArray = new cv.Mat();
+
+		cv.normalize(histr, histr, 1, 0, cv.NORM_L2, -1, noArray);
+		cv.normalize(histg, histg, 1, 0, cv.NORM_L2, -1, noArray);
+		cv.normalize(histb, histb, 1, 0, cv.NORM_L2, -1, noArray);
+
+		// Draw histogram
+		var hist_w = 300;
+		var hist_h = 300;
+		var bin_w = hist_w/numBins|0 ;
+		var histImage = cv.Mat.ones([hist_h, hist_w], cv.CV_8UC4);
+
+		for(var i = 1; i < numBins	 ; i++ )
+		{
+			cv.line(histImage,
+						[bin_w*(i-1), hist_h - histr.get_float_at(i-1)*hist_h],
+						[bin_w*(i), hist_h - histr.get_float_at(i)*hist_h],
+						new cv.Scalar(255, 0, 0),
+						1, cv.LineTypes.LINE_8.value, 0
+					);
+			cv.line(histImage,
+						[bin_w*(i-1), hist_h - histg.get_float_at(i-1)*hist_h],
+						[bin_w*(i), hist_h - histg.get_float_at(i)*hist_h],
+						new cv.Scalar(0, 255, 0),
+						1, cv.LineTypes.LINE_8.value, 0
+					);
+			cv.line(histImage,
+						[bin_w*(i-1), hist_h - histb.get_float_at(i-1)*hist_h],
+						[bin_w*(i), hist_h - histb.get_float_at(i)*hist_h],
+						new cv.Scalar(0, 0, 255),
+						1, cv.LineTypes.LINE_8.value, 0
+					);
+		}
+		self.setResult(histImage, self.resultCanvas);
+	}
+	
+	/** Convert image to BGRA (Blue, Green, Red, Alpha) colorspace.
+	 */
+	function makeBGRA() {
+		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var res = new cv.Mat();
+		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGBA2BGRA.value, 0);
+		self.setResult(res, self.resultCanvas);
+		src.delete();
+		res.delete();
+	}
+	
+	/** Convert image to grayscale.
+	 */
+	function makeGray() {
+		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var res = new cv.Mat();
+		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+		self.setResult(res, self.resultCanvas);
+		src.delete();
+		res.delete();
+	}
+
+	/** Convert image to HSV (Hue, Saturation, Value) colorspace.
+	 */
+	function makeHSV() {
+		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var tmp = new cv.Mat();
+		var res = new cv.Mat();
+		cv.cvtColor(src, tmp, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+		cv.cvtColor(tmp, res, cv.ColorConversionCodes.COLOR_RGB2HSV.value, 0);
+		self.setResult(res, self.resultCanvas);
+		tmp.delete();
+		src.delete();
+		res.delete();
+	}
+
+	/** Convert image to YUV (Luminance, Chroma) colorspace.
+	 */
+	function makeYUV() {
+		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var res = new cv.Mat();
+		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGB2YUV.value, 0 )
+		self.setResult(res, self.resultCanvas);
+		src.delete();
+		res.delete();
+	}
+	
+	/** Blur the image.
+	 */
+
+	function medianBlur(options){
+		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+		var blurred = new cv.Mat();
+		
+		var blurSize = self.defaultOptions.blurSize;
+		
+		if (options !== null && typeof options !== 'undefined' &&
+				options.blurSize !== null && 
+				typeof options.blurSize !== 'undefined') {
+			blurSize = options.blurSize;
+		}
+
+		cv.medianBlur(src, blurred, 2*blurSize+1);
+		self.setResult(blurred, self.resultCanvas);
+		src.delete();
+		blurred.delete();
+	}
+	
+	return { blur : blur,
+			 dilate : dilate,
+			 erode :  erode,
+		     gaussianBlur : gaussianBlur,
+		     histogram : histogram,
+		     findContours : findContours,
+		     findEdges : findEdges, 
+			 makeBGRA : makeBGRA,
+			 makeGray : makeGray,
+			 makeHSV : makeYUV,
+			 medianBlur : medianBlur};
 };
 
 /** Set the input image.
