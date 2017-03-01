@@ -41,7 +41,8 @@
 "use strict";
 
 exports.setup = function () {
-    this.input('input', {
+	this.mutable('true');
+	this.input('input', {
         'type': 'number',
         'value': 0
     });
