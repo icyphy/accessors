@@ -15,7 +15,9 @@
   		
   		// Wait a bit for the computer vision library to load.
   		// Is there a way to detect this?
-  		reactIfExecutable('ComputerVision');
+  		setTimeout(function() {
+  			reactIfExecutable('ComputerVision');
+  		}, 	4000);
   	});
  </script>
 </head>
