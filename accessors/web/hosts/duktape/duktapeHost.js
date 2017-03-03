@@ -163,6 +163,15 @@ function getAccessorCode(name) {
     return code;
 }
 
+/** Get a resource.
+ *
+ *  @param uri A specification for the resource.
+ */
+getResource = function(uri) {
+    // See nodeHost.js for an implementation.
+    throw new Error('getResouce(' + uri + ') not yet implemented');
+}
+
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
