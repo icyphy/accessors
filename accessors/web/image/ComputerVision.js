@@ -43,7 +43,7 @@
  *  @parameter options (JSON) Options for the selected transform, if any.
  *  @parameter transform (string) The transform to apply to the image.  Selected
  *   from a list.
- *  @author Elizabeth Osyk
+ *  @author Sajjad Taheri (CV code), Elizabeth Osyk (accesorization)
  *  @version $$Id$$
  */
 
