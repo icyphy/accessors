@@ -23,27 +23,31 @@
 //
 // This module uses the UC Irvine computer vision library; see cvlicense.txt.
 // Based on code from examples in:  https://github.com/ucisysarch/opencvjs
-//
-// The API follows the OpenCV API:
-// http://docs.opencv.org/3.0-beta/modules/refman.html
 
 /**
  * A module for computer vision.  This module offers functionality from the 
  * OpenCV computer vision framework.
  * 
  *  To run, please point your browser to:
- *  https://www.terraswarm.org/accessors/hosts/browser/demo/computervision/computervision.html
+ *  <a href="https://accessors.org/hosts/browser/demo/computerVision/computerVision.html#in_browser">https://accessors.org/hosts/browser/demo/computerVision/computerVision.html</a>
  *
  *  To run locally, please download these 2 files:
- *  http://ucisysarch.github.io/opencvjs/examples/cv.js
+ *  <a href="http://ucisysarch.github.io/opencvjs/examples/cv.js#in_browser">http://ucisysarch.github.io/opencvjs/examples/cv.js</a>
  *  and place in 
  *  /accessors/web/hosts/browser/modules
  *  
- *  https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data
+ *  <a href="https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data#in_browser">https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data</a>
  *  and place in the directory with your demo, e.g.
  *  /accessors/web/hosts/browser/demo/computervision/computervision
  *  
- * @module computervision
+ *  This module uses the UC Irvine computer vision library; see <a href="https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser">https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser"></a>
+ *
+ *  Based on code from examples in:  <a href="https://github.com/ucisysarch/opencvjs#in_browser">/hosts/browser/demo/computerVision/computerVision.html</a>
+ *
+ *  The API follows the OpenCV API:
+ *  <a href="http://docs.opencv.org/3.0-beta/modules/refman.html#in_browser">/hosts/browser/demo/computerVision/computerVision.html</a>
+ *
+re * @module computervision
  * @author Sajjad Taheri (CV code), Elizabeth Osyk (accesorization)  
  */
 
