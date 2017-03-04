@@ -244,6 +244,17 @@ exports.CV.prototype.getResultImage = function(){
 	return this.getImage(this.resultCanvas);
 }
 
+
+/** Face detection functions.  
+ */
+exports.CV.prototype.face = function() {
+	var self = this;
+	
+
+	
+	return { detectface : detectface };
+}
+
 /** Image processing functions.  Functions are categorized according to OpenCV
  *  API, http://docs.opencv.org/3.0-beta/modules/refman.html .
  *  Functions from http://ucisysarch.github.io/opencvjs/examples/img_proc.html
@@ -252,6 +263,49 @@ exports.CV.prototype.getResultImage = function(){
 exports.CV.prototype.imgproc = function() {
 	var self = this;
 
+	function detectFace(){
+		
+		if(self.face_cascade == undefined ){
+			self.face_cascade = new cv.CascadeClassifier();
+			self.face_cascade.load('haarcascade_frontalface_default.xml');
+		}
+		
+		
+		var img = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var img_gray = new cv.Mat();
+		var img_color = new cv.Mat(); // Opencv likes RGB
+		
+		
+		cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+		cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+		
+		var faces = new cv.RectVector();
+		var s1 = [0, 0];
+		var s2 = [0, 0];
+		self.face_cascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
+		
+		
+		for (var i = 0 ;i < faces.size(); i+=1 )
+		{
+			var faceRect = faces.get(i);
+			x = faceRect.x ;
+			y = faceRect.y ;
+			w = faceRect.width ;
+			h = faceRect.height;
+			var p1 = [x, y];
+			var p2 = [x+w, y+h];
+			var color = new cv.Scalar(255,0,0);
+			cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
+			faceRect.delete();
+			color.delete();
+		}
+		self.setResult(img_color, self.resultCanvas);
+		img.delete();
+		img_color.delete();
+		faces.delete();
+		img_gray.delete();
+	}
+	
 	/** Blur the original image.
 	 */
 	function blur(options) {
@@ -579,6 +633,7 @@ exports.CV.prototype.imgproc = function() {
 	}
 	
 	return { blur : blur,
+			 detectFace : detectFace,
 			 dilate : dilate,
 			 erode :  erode,
 		     gaussianBlur : gaussianBlur,
