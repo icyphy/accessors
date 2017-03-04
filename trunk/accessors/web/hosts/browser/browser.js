@@ -149,9 +149,11 @@ var commonHost;
 // and mocha test cases.
 var Accessor, instantiate;
 
-//Needed by computervision module.
+// Needed by computervision module.  The computer vision code did not originally
+// use strict mode. Declare variables here to avoid 'undeclared variable' error.
 var Module = {};
 var i = 0;
+var h, w, x, y;
 
 /** Local function controlling how standard elements are rendered in the
  *  document with an optional label.
