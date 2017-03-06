@@ -277,6 +277,8 @@ if (accessorHost === accessorHostsEnum.DUKTAPE) {
     var EventEmitter = require('events').EventEmitter;
 }
 
+var deterministicTemporalSemantics = require('../common/modules/deterministicTemporalSemantics.js');
+
 //////////////////////////////////////////////////////////////////////////////////
 //// Accessor class and its functions.
 
@@ -527,7 +529,8 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.setInterval) {
         this.setInterval = bindings.setInterval;
     } else if (typeof setInterval !== 'undefined') {
-        this.setInterval = setInterval;
+        // this.setInterval = setInterval;
+    	this.setInterval = deterministicTemporalSemantics.setIntervalDet;
     } else {
         throw new Error('Host does not define required setInterval function.');
     }
@@ -535,7 +538,8 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.setTimeout) {
         this.setTimeout = bindings.setTimeout;
     } else if (typeof setTimeout !== 'undefined') {
-        this.setTimeout = setTimeout;
+        // this.setTimeout = setTimeout;
+    	this.setTimeout = deterministicTemporalSemantics.setTimeoutDet;
     } else {
         throw new Error('Host does not define required setTimeout function.');
     }
@@ -1333,11 +1337,9 @@ Accessor.prototype.module = {
     'id': 'unspecified'
 };
 
-/** Default implementation of the function to define an accessor input.
- *  Accessors that override this should probably invoke this default explicitly
- *  by referencing the prototype.
- *  @param name The name of the input.
- *  @param options The options for the input.
+/** Default implementation of the function to define a mutableAccessor.
+ *  If this is a mutableAccessor, then add the corresponding properties.
+ *  @param value The value, which should be 'true'
  */
 Accessor.prototype.mutable = function (value) {
     if (value === 'true') {
