@@ -277,7 +277,12 @@ if (accessorHost === accessorHostsEnum.DUKTAPE) {
     var EventEmitter = require('events').EventEmitter;
 }
 
-var deterministicTemporalSemantics = require('../common/modules/deterministicTemporalSemantics.js');
+var deterministicTemporalSemantics;
+if (accessorHost === accessorHostsEnum.BROWSER) {
+	deterministicTemporalSemantics = require('/accessors/hosts/common/modules/deterministicTemporalSemantics');
+} else {
+	deterministicTemporalSemantics = require('../common/modules/deterministicTemporalSemantics.js');
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //// Accessor class and its functions.
