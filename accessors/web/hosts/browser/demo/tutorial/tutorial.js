@@ -1,6 +1,11 @@
 $(document).ready(function() {
 	 var text;
 	 
+	 // Register listener for instantiate button.
+	 document.getElementById('button').addEventListener('click', function(){
+		instantiateFunction();
+	 });
+	 
 	// Provide an example accessor.
 	  document.getElementById('code').value = 
 		  "/** An accessor that outputs Hello, name . \n" +   
@@ -44,7 +49,10 @@ $(document).ready(function() {
 	}
   generateAccessorHTML(id, 'accessorbox', text);
   
-  editor.on('change', function(changeObject) {
+  /** Instantiate the code in the editor textbox.  The function is named
+   * instantiateFunction so as not to override any global instantiate().
+   */
+  var instantiateFunction = function() {
 	  var line;
 	  var text = editor.getValue();
 	  var errorNode;
@@ -53,6 +61,8 @@ $(document).ready(function() {
 	  
 	  for (var i = 0; i < editor.lineCount(); i++) {
 		  line = editor.getLine(i);
+		  console.log(line);
+		  console.log(checkInput(line));
 		  if (!checkInput(line)) {
 			  errorMarker = document.createElement('span');
 			  errorMarker.innerHTML = '*';
@@ -85,7 +95,8 @@ $(document).ready(function() {
 			}
 		  generateAccessorHTML(id, 'accessorbox', text);
 	  }
-	});
+  }
+
 });
 
 // TODO:  Also run code through javascript-lint to detect syntax errors.
@@ -101,7 +112,6 @@ function checkInput(text) {
 	// No < or > allowed (see XSS page).  We can change later if we need them.
 	// \w includes underscore.
 	var blacklist = /[^\w\s{}\[\]().!=;'"|&*+%@,\/\\$:-]/;
-	
 	var matches = text.match(blacklist);
 	if (matches !== null && typeof matches !== 'undefined' && 
 			matches.length > 0) {
@@ -110,15 +120,9 @@ function checkInput(text) {
 		return false;
 	}
 	
-	// No loops. DoS.
+	// No loops. Prevent Denial of Service.
 	blacklist = /for\s|forEach|while\s/; 
 	matches = text.match(blacklist);
-	if (matches !== null && typeof matches !== 'undefined' && 
-			matches.length > 0) {
-		errorMessage.innerHTML = 'Error: Accessing ' + matches[0] + 
-					' is not permitted.';
-		return false;
-	}
 	matches = text.match(blacklist);
 	if (matches !== null && typeof matches !== 'undefined' && 
 			matches.length > 0) {
@@ -126,7 +130,7 @@ function checkInput(text) {
 		return false;
 	}
 	
-	// No access to window. or document. User data.
+	// No access to window. or document. Prevent unauthorized use of user data.
 	blacklist = /window.|document./;
 	matches = text.match(blacklist);
 	if (matches !== null && typeof matches !== 'undefined' && 
@@ -136,7 +140,7 @@ function checkInput(text) {
 		return false;
 	}	
 	
-	// No regular expressions. DoS.
+	// No regular expressions. Prevent Denial of Service.
 	blacklist = /.match/;
 	
 	matches = text.match(blacklist);
@@ -146,7 +150,7 @@ function checkInput(text) {
 	   return false;
 	}
 	
-	// No setInterval. DoS.
+	// No setInterval. Prevent Denial of Service.
 	blacklist = /setInterval/;
 	
 	matches = text.match(blacklist);
