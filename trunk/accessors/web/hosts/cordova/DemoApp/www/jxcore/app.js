@@ -23,7 +23,7 @@
 var fs = require('fs');
 var path = require('path');
 
-console.log('Running accessor on iOS!');
+Mobile('log').call("Running accessor on Android!");
 
 var commonHost = require('./commonHost');
 var accessorPath = [path.join(__dirname)];
