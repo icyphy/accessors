@@ -1289,10 +1289,11 @@ Accessor.prototype.input = function (name, options) {
  *   starting with 2, to ensure that the name is unique in the container.
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  */
-Accessor.prototype.instantiate = function (instanceName, accessorClass) {
+Accessor.prototype.instantiate = function (instanceName, accessorClass, accessorCode) {
     if (!this.getAccessorCode) {
         throw new Error('instantiate() is not supported by this swarmlet host.');
     }
+
     // For functions that access ports, etc., we want the default implementation
     // when instantiating the contained accessor.
     var insideBindings = {
@@ -1310,8 +1311,15 @@ Accessor.prototype.instantiate = function (instanceName, accessorClass) {
     // FIXME: Do we need to ensure that 'actor' or 'accessor' is bound here?
     instanceName = this.accessorName + '.' + instanceName;
     instanceName = uniqueName(instanceName, this);
-    var containedInstance = instantiateAccessor(
+
+    var containedInstance = null;
+    if (!accessorClass && accessorCode) {
+        containedInstance = new Accessor(instanceName, accessorCode, null, insideBindings);
+    } else {
+        containedInstance = instantiateAccessor(
         instanceName, accessorClass, this.getAccessorCode, insideBindings);
+    }
+    
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
     return containedInstance;
