@@ -298,9 +298,17 @@ exports.setup = function () {
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
+    exports.send(this.get('toSend'));
+};
+
+/** Send the specified data if the client has been set and otherwise either
+ *  discard or queue the data to send later depending on the value of
+ *  `discardMessagesBeforeOpen`.
+ */
+exports.send = function(data) {
     // May be receiving inputs before client has been set.
     if (client) {
-        client.send(this.get('toSend'));
+        client.send(data);
     } else {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             var maxUnsentMessages = this.getParameter('maxUnsentMessages');
@@ -310,7 +318,7 @@ exports.toSendInputHandler = function () {
                     ". Consider setting discardMessagesBeforeOpen to true.");
                 return;
             }
-            pendingSends.push(this.get('toSend'));
+            pendingSends.push(data);
         } else {
             console.log('Discarding data because socket is not open.');
         }
@@ -326,7 +334,7 @@ exports.toSendInputHandler = function () {
 exports.initialize = function () {
     this.addInputHandler('host', this.exports.connect.bind(this));
     this.addInputHandler('port', this.exports.connect.bind(this));
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
     this.exports.connect.call(this);
     running = true;
 };
