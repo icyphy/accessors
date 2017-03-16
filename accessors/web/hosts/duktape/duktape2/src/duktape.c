@@ -44219,7 +44219,7 @@ duk_heap *duk_heap_alloc(duk_alloc_function alloc_func,
 #if defined(DUK_USE_DEBUG)
 	duk__dump_misc_options();
 	duk__dump_type_sizes();
-	duk__dump_type_limits();
+	// duk__dump_type_limits();
 #endif
 
 	/*
