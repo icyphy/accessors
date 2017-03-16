@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __MBED__
+#include "mbed.h"
+#endif
+
 #ifdef __ARM_EABI__
 //#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
 int _gettimeofday(struct timeval *tp, void *tzp) {
