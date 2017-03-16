@@ -1255,7 +1255,12 @@ static duk_context *create_duktape_heap(int alloc_provider, int debugger, int aj
         nofileio_register(ctx);
 #endif //DUK_CMDLINE_FILEIO)
 
+#ifdef __MBED__
+
+#else
 	poll_register(ctx);
+#endif
+
 #endif /* Accessors */
 
 	return ctx;
@@ -1461,6 +1466,7 @@ int main(int argc, char *argv[]) {
 	}
 
 #if defined(ACCESSORS)
+#ifndef __MBED__
 	if (echo) {
 	  // Accessors: Echo the directory and command so that it can
 	  // be run by hand.  This is helpful when running tests.
@@ -1476,6 +1482,7 @@ int main(int argc, char *argv[]) {
 	    perror("getcwd() error");
 	  }
 	}
+#endif /* __MBED__ */
 #endif /* Accessors */
 
 	
