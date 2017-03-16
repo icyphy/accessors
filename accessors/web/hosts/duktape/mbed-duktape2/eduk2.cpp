@@ -3,11 +3,23 @@
  *
  *  Runs a given script from file or stdin inside an eventloop.  The
  *  script can then access setTimeout() etc.
+ *
+ *  To compile for mbed, run make.
+ *
+ *  To compile for the host, run
+ *    gcc ../duktape2/src/duktape.c ../eduk2/duk_stack.c ../eduk2/nofileio.c ../eduk2/c_eventloop.c ../eduk2/modSearch.c ../duktape2/extras/print-alert/duk_print_alert.c ../duktape2/extras/console/duk_console.c ../duktape2/extras/logging/duk_logging.c ../duktape2/extras/module-duktape/duk_module_duktape.c   -I../duktape2/src  -I../eduk2 -I../duktape2 -c
+ *    g++ -DEDUK_RUN_RAMPJSDISPLAY *.o *.cpp -I../duktape2/src  -I../eduk2 -I../duktape2
+ *    ./a.out
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __MBED__
+#include "mbed.h"
+#include "rtos.h"
+#endif
 
 #ifdef __ARM_EABI__
 //#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
@@ -17,7 +29,10 @@ int _gettimeofday(struct timeval *tp, void *tzp) {
 }
 #endif
 
-#ifndef HAIL_PRINT
+// PRINT_ONLY was part of an experiment to get the accessor code to
+// work on a Hail board, which turned out to be too small.
+// See https://www.icyphy.org/accessors/wiki/TockOS/Hail
+#ifndef PRINT_ONLY
 #include "duktape.h"
 
 // c_eventloop.h is created with xxd, see the makefile.
@@ -25,7 +40,7 @@ int _gettimeofday(struct timeval *tp, void *tzp) {
 
 // duktapeHost.h is created with xxd, see the makefile.
 #include "duktapeHost.h"
-#endif // HAIL_PRINT
+#endif // PRINT_ONLY
 
 #ifndef EDUK_MIN
 
@@ -44,7 +59,6 @@ extern "C" {
 // Use NoFileIo instead of FileIo because small embedded systems
 // don't have file systems.
 //extern int fileio_register(duk_context *ctx);
-
 
 extern "C" {
   /*extern*/ void ledcontrol_register(duk_context *ctx);
@@ -160,7 +174,7 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
 
 #endif // EDUK_MIN
 
-#ifdef HAIL_PRINT
+#ifdef PRINT_ONLY
 #ifdef __ARM_EABI__
 #include <console.h>
 #endif
@@ -169,11 +183,22 @@ void nop() {}
 #endif
 
 
+#ifdef __MBED__
 #include "mbed_memory_status.h"
+#endif
 
+/** Set up the accessor host and parse files.
+ */
 void inner_main() {
 
-#ifdef HAIL_PRINT
+  // This code is in a separate function so that it can
+  // be called in a separate thread.
+
+  // FIXME: If EDUK_RUN_RAMPJSDISPLAY is not defined,
+  // then compilation will fail because we are not
+  // passing in the argc and argv.
+
+#ifdef PRINT_ONLY
 
 #ifdef __ARM_EABI__
   putnstr_async(hello, sizeof(hello), nop, NULL);
@@ -182,7 +207,7 @@ void inner_main() {
 #endif // __ARM_EABI
   return 0;
 
-#else //HAIL_PRINT
+#else //PRINT_ONLY
   // FIXME: a truly embedded version will not parse command line
   // arguments.  The accessor code will be compiled in.
 
@@ -272,10 +297,12 @@ void inner_main() {
     returnValue = 1;
   }
 #endif // EDUK_MIN
+
+#ifdef __MBED__
   fprintf(stderr, "%s:%d: about to print thread info\n", __FILE__, __LINE__);
   print_all_thread_info();
   print_heap_and_isr_stack_info();
-
+#endif
   //duk_destroy_heap(ctx);
   return;
   //return returnValue;
@@ -286,9 +313,22 @@ void inner_main() {
   fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
   //return 1;
 #endif
-#endif // HAIL_PRINT
+#endif // PRINT_ONLY
 }
 
+
+#ifdef __MBED__
+DigitalOut led1(LED1);
+DigitalOut led2(LED2);
+Thread thread;
+
+void led2_thread() {
+  while (true) {
+    led2 = !led2;
+    Thread::wait(1000);
+  }
+}
+#endif
 
 /** Run an accessor.
  *
@@ -301,30 +341,16 @@ void inner_main() {
  *  @param argc The number of arguments.
  *  @param argv The arguments.
  */
-//main(void)
-
-#include "mbed.h"
-#include "rtos.h"
-
-
-DigitalOut led1(LED1);
-DigitalOut led2(LED2);
-Thread thread;
-
-void led2_thread() {
-  while (true) {
-    led2 = !led2;
-    Thread::wait(1000);
-  }
-}
-
 int main(int argc, char *argv[]) {
   fprintf(stderr, "eduk2.cpp main() start\n");
+
+  // Under MBED, we create a thread with a non-standard
+  // amount of stack, then create a thread for the LEDs.
+#ifdef __MBED__
   Thread t(osPriorityNormal, 200 * 1024);
 
   thread.start(led2_thread);
     
-
   fprintf(stderr, "eduk2.cpp main() Thread t: max_stack:%ld\n", t.max_stack());
   print_all_thread_info();
   print_heap_and_isr_stack_info();
@@ -333,10 +359,14 @@ int main(int argc, char *argv[]) {
   t.start(&inner_main);
   fprintf(stderr, "eduk2.cpp main() started duktape thread\n");
 
+  // This needs to be at the end to keep from exiting.
   while (true) {
     led1 = !led1;
     Thread::wait(500);
   }  
-
+#else
+  // On the host, we just call inner_main().
+  inner_main();
+#endif  
 }
 
