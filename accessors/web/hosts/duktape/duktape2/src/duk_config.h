@@ -2667,7 +2667,6 @@ typedef struct duk_hthread duk_context;
 #define DUK_USE_DEBUGGER_THROW_NOTIFY
 #undef DUK_USE_DEBUGGER_TRANSPORT_TORTURE
 #define DUK_USE_DEBUG_BUFSIZE 65536L
-#define DUK_USE_DEBUG_LEVEL 0
 #undef DUK_USE_DEBUG_WRITE
 #define DUK_USE_DOUBLE_LINKED_HEAP
 #define DUK_USE_DUKTAPE_BUILTIN
@@ -2797,6 +2796,58 @@ typedef struct duk_hthread duk_context;
  */
 
 /* __OVERRIDE_DEFINES__ */
+
+
+/*
+#define DUK_USE_DEBUG
+#define DUK_USE_DEBUG_LEVEL 0
+#define DUK_USE_DEBUG_WRITE(level,file,line,func,msg) do {    \
+		fprintf(stderr, "D%ld %s:%ld (%s): %s\n", \
+		        (long) (level), (file), (long) (line), (func), (msg)); \
+	} while (0)
+*/
+
+#undef DUK_USE_AUGMENT_ERRORS
+/*#undef DUK_USE_TRACEBACKS*/
+/* #undef DUK_USE_VERBOSE_ERRORS */
+/*#undef DUK_USE_VERBOSE_EXECUTOR_ERRORS*/
+#undef DUK_USE_PC2LINE
+
+#undef DUK_USE_LEXER_SLIDING_WINDOW
+
+
+#undef DUK_USE_JSON_STRINGIFY_FASTPATH
+#undef DUK_USE_JSON_QUOTESTRING_FASTPATH
+#undef DUK_USE_JSON_DECSTRING_FASTPATH
+#undef DUK_USE_JSON_DECNUMBER_FASTPATH
+#undef DUK_USE_JSON_EATWHITE_FASTPATH
+
+#undef DUK_USE_JX
+#undef DUK_USE_JC
+
+
+#undef DUK_USE_ES6_OBJECT_SETPROTOTYPEOF
+#undef DUK_USE_ES6_OBJECT_PROTO_PROPERTY
+/* #undef DUK_USE_ES6_PROXY */
+
+#undef DUK_USE_BYTECODE_DUMP_SUPPORT
+
+#define DUK_USE_DEBUG_BUFSIZE 2048
+
+#define DUK_USE_LIGHTFUNC_BUILTINS
+
+#undef DUK_USE_REFERENCE_COUNTING
+#undef DUK_USE_DOUBLE_LINKED_LIST
+
+
+#define DUK_USE_REFCOUNT16
+#define DUK_USE_STRHASH16
+#define DUK_USE_STRLEN16
+#define DUK_USE_BUFLEN16
+#define DUK_USE_OBJSIZES16
+#undef DUK_USE_HSTRING_CLEN
+
+#define DUK_USE_EXTERNAL_STRINGS
 
 /*
  *  Date provider selection
