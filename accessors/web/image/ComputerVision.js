@@ -68,17 +68,21 @@ try {
 /** Create inputs, outputs and parameters for the accessor.
  */
 exports.setup = function() {
-    this.input('input');
-    this.parameter('options', {
-    	type: 'JSON'
-    });
-    this.parameter('transform', {
-    	type: 'string',
-    	options: Object.keys(imgproc), 
-    	value: 'findEdges'
-    });
-    this.output('output');
-    
+	if (imgproc !== null) {
+	    this.input('input');
+	    this.parameter('options', {
+	    	type: 'JSON'
+	    });
+	    this.parameter('transform', {
+	    	type: 'string',
+	    	options: Object.keys(imgproc), 
+	    	value: 'findEdges'
+	    });
+	    this.output('output');
+	} else {
+	    console.log("The CV module was not present.  The ComputerVision accessor " +
+		"is not supported on this accessor host.");
+	}
 };
 
 /** Register an input handler to apply the selected transformation on each input 
@@ -88,24 +92,30 @@ exports.initialize = function() {
 	var self = this;
 	
     this.addInputHandler('input', function() {
-    	cv.setInput(self.get('input'));
-    	
-    	cv.once('ready', function(){
-        	// Apply the selected transform.
-        	var options = self.getParameter('options');
-        	var transform = self.getParameter('transform');
+    	// Check for null cv variable to avoid problems in Cape Code.
+    	if (cv !== null) {
+        	cv.setInput(self.get('input'));
         	
-        	// Check if value is a supported transform.
-        	// TODO:  Expand to multiple libraries (imgroc, face detection, ...)
-        	var supported = Object.keys(imgproc);
-        	
-        	if (supported.includes(transform)) {
-        		imgproc[transform](options);
-        	} else {
-        		error('Unsupported transform ' + transform);
-        	}
-        	
-        	self.send('output', cv.getResultImage());
-    	});
+        	cv.once('ready', function(){
+            	// Apply the selected transform.
+            	var options = self.getParameter('options');
+            	var transform = self.getParameter('transform');
+            	
+            	// Check if value is a supported transform.
+            	// TODO:  Expand to multiple libraries (imgroc, face detection, ...)
+            	var supported = Object.keys(imgproc);
+            	
+            	if (supported.includes(transform)) {
+            		imgproc[transform](options);
+            	} else {
+            		error('Unsupported transform ' + transform);
+            	}
+            	
+            	self.send('output', cv.getResultImage());
+        	});
+    	} else {
+    	    console.log("The CV module was not present.  The ComputerVision accessor " +
+    		"is not supported on this accessor host.");
+    	}
     });
 };
