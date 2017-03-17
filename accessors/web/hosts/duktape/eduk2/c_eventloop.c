@@ -352,6 +352,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  Expire timers.
 		 */
 
+		fprintf(stderr, "%s:%d: expire_timers()\n", __FILE__, __LINE__);
 		expire_timers(ctx);
 
 		/*
@@ -359,7 +360,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 */
 
 		if (exit_requested) {
-#if 0
+#if 1
 			fprintf(stderr, "exit requested, exiting event loop\n");
 			fflush(stderr);
 #endif
@@ -389,7 +390,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 			timeout = (int) diff;  /* clamping ensures that fits */
 		} else {
 			if (poll_count == 0) {
-#if 0
+#if 1
 				fprintf(stderr, "no timers and no sockets to poll, exiting\n");
 				fflush(stderr);
 #endif
@@ -402,17 +403,19 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  Poll for activity or timeout.
 		 */
 
-#if 0
+#if 1
 		fprintf(stderr, "going to poll, timeout %d ms, pollfd count %d\n", timeout, poll_count);
 		fflush(stderr);
 #endif
 
 // Accessors: Use usleep() here instead of poll().
-		//printf("timeout -> %d \n", timeout);
+		printf("timeout -> %d \n", timeout);
 
 #ifdef __ARM_EABI__
+		fprintf(stderr, "%s:%d: busy_delay_us()\n", __FILE__, __LINE__);
 		busy_delay_us(timeout*1000);
 #else
+		fprintf(stderr, "%s:%d: usleep()\n", __FILE__, __LINE__);
 		usleep(timeout*1000);
 #endif
 		//rc = poll(poll_list, poll_count, timeout);
@@ -438,7 +441,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  removing them from the poll list.  This ensures indices are not
 		 *  disturbed.  The poll list is compacted before next poll().
 		 */
-		//printf("RC -> %d \n", rc);
+		fprintf(stderr, "%s:%d: RC -> %d \n", __FILE__, __LINE__, rc);
 
 
 		n = (rc == 0 ? 0 : poll_count);  /* if timeout, no need to check pollfd */
@@ -453,7 +456,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 			}
 
 			if (pfd->revents) {
-#if 0
+#if 1
 				fprintf(stderr, "fd %d has revents: %d\n", (int) pfd->fd, (int) pfd->revents);
 				fflush(stderr);
 #endif
@@ -463,7 +466,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 				duk_push_int(ctx, pfd->revents);
 				rc = duk_pcall_method(ctx, 2 /*nargs*/);
 				if (rc) {
-#if 0
+#if 1
 					fprintf(stderr, "fd callback failed for fd %d: %s\n", (int) pfd->fd, duk_to_string(ctx, -1));
 					fflush(stderr);
 #endif
@@ -479,6 +482,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 
 	duk_pop_n(ctx, 3);
 
+        fprintf(stderr, "%s:%d: return 0\n", __FILE__, __LINE__);
 	return 0;
 }
 
