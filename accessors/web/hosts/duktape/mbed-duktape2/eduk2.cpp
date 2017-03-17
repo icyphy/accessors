@@ -7,8 +7,9 @@
  *  To compile for mbed, run make.
  *
  *  To compile for the host, run
- *    gcc ../duktape2/src/duktape.c ../eduk2/duk_stack.c ../eduk2/nofileio.c ../eduk2/c_eventloop.c ../eduk2/modSearch.c ../duktape2/extras/print-alert/duk_print_alert.c ../duktape2/extras/console/duk_console.c ../duktape2/extras/logging/duk_logging.c ../duktape2/extras/module-duktape/duk_module_duktape.c   -I../duktape2/src  -I../eduk2 -I../duktape2 -c
- *    g++ -DEDUK_RUN_RAMPJSDISPLAY *.o *.cpp -I../duktape2/src  -I../eduk2 -I../duktape2
+ *      make clean
+ *   	gcc ../duktape2/src/duktape.c ../eduk2/duk_stack.c ../eduk2/nofileio.c ../eduk2/c_eventloop.c ../eduk2/modSearch.c ../duktape2/extras/print-alert/duk_print_alert.c ../duktape2/extras/console/duk_console.c ../duktape2/extras/logging/duk_logging.c ../duktape2/extras/module-duktape/duk_module_duktape.c   -I../duktape2/src  -I../eduk2 -I../duktape2 -c -DDUK_CMDLINE_PRINTALERT_SUPPORT -DDUK_CMDLINE_MODULE_SUPPORT -DEDUK_RAMPJSDISPLAY
+ *    	g++ -DEDUK_RUN_RAMPJSDISPLAY *.o *.cpp -I../duktape2/src  -I../duktape2/extras/module-duktape -I../duktape2/extras/print-alert -I../eduk2 -I../duktape2 -DDUK_CMDLINE_PRINTALERT_SUPPORT -DDUK_CMDLINE_MODULE_SUPPORT -DEDUK_RAMPJSDISPLAY
  *    ./a.out
  */
 
@@ -35,20 +36,30 @@ int _gettimeofday(struct timeval *tp, void *tzp) {
 #ifndef PRINT_ONLY
 #include "duktape.h"
 
-// c_eventloop.h is created with xxd, see the makefile.
+// c_eventloop.h is created with xxd, see ../eduk2/makefile.
 #include "c_eventloop.h"
 
-// duktapeHost.h is created with xxd, see the makefile.
+// duktapeHost.h is created with xxd, see ../eduk2/makefile.
 #include "duktapeHost.h"
+
+// deterministicTemporalSemantics.h is created with xdd, see ../eduk2/makefile.
+#include "deterministicTemporalSemantics.h"
 #endif // PRINT_ONLY
 
 #ifndef EDUK_MIN
 
 #if defined(DUK_CMDLINE_PRINTALERT_SUPPORT)
+extern "C" {
+  // https://github.com/svaarala/duktape/tree/master/extras/print-alert
 #include "duk_print_alert.h"
+}
 #endif
 #if defined(DUK_CMDLINE_MODULE_SUPPORT)
+extern "C" {
+  // See Duktape 1.x compatible module loading framework at
+  // https://github.com/svaarala/duktape/tree/master/extras/module-duktape
 #include "duk_module_duktape.h"
+}
 #endif
 
 extern "C" {
@@ -103,6 +114,19 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
     return 2;
   } else {
     printf("%s: Loading C version of duktapeHost worked\n", __FILE__);
+    duk_pop(ctx);
+  }
+
+  // Use duk_peval_string_noresult() and avoid interning the string.  Good
+  // for low memory, see
+  // http://duktape.org/api.html#duk_peval_string_noresult
+  // Note that _________hosts_common_modules_deterministicTemporalSemantics_js must be null-terminated.
+  if (duk_peval_string(ctx, _________hosts_common_modules_deterministicTemporalSemantics_js) != 0) {
+    fprintf(stderr, "%s:%d: Loading C version of deterministicTemporalSemantics failed.  Error was:\n", __FILE__, __LINE__);
+    print_pop_error(ctx, stderr);
+    return 2;
+  } else {
+    printf("%s: Loading C version of deterministicTemporalSemantics worked\n", __FILE__);
     duk_pop(ctx);
   }
 
@@ -163,6 +187,7 @@ int runAccessorHost(duk_context *ctx, const char *accessorFileName, int timeout)
   /* duk_pop(ctx); */
 
 
+  fprintf(stderr, "%s:%d: %s: About to invoke eventloop_run()\n", __FILE__, __LINE__, accessorFileName);
   rc = duk_safe_call(ctx, eventloop_run, NULL, 0 /*nargs*/, 1 /*nrets*/);
   if (rc != 0) {
     fprintf(stderr, "%s:%d: %s: Failed invoke eventloop_run()\n", __FILE__, __LINE__, accessorFileName);
@@ -249,6 +274,9 @@ void inner_main() {
   fprintf(stderr, "eduk2.cpp main() done with eventloop_register()\n");
 
   /* Register require() (removed in Duktape 2.x). */
+  // Duktape 1.x compatible module loading framework.
+  // https://github.com/svaarala/duktape/tree/master/extras/module-duktape
+
 #if defined(DUK_CMDLINE_MODULE_SUPPORT)
   duk_module_duktape_init(ctx);
 #endif
@@ -290,10 +318,10 @@ void inner_main() {
 #endif // EDUK_RUN_RAMPJSDISPLAY
 
   if (foundFile == 1) {
-    fprintf(stderr, "eduk: About to run %s\n", accessorFileName);
+    fprintf(stderr, "eduk2: About to run %s\n", accessorFileName);
     returnValue = runAccessorHost(ctx, accessorFileName, timeout);
   } else {
-    fprintf(stderr, "eduk: No file passed as a command line argument?");
+    fprintf(stderr, "eduk2: No file passed as a command line argument?");
     returnValue = 1;
   }
 #endif // EDUK_MIN
@@ -310,7 +338,7 @@ void inner_main() {
 #ifndef EDUK_RUN_RAMPJSDISPLAY
  usage: 
   duk_destroy_heap(ctx);
-  fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
+  fprintf(stderr, "Usage: eduk2 [--timeout time] accessorFileName\n");
   //return 1;
 #endif
 #endif // PRINT_ONLY

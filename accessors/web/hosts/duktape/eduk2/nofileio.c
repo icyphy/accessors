@@ -83,12 +83,12 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 19
+#define FILE_ENTRIES_SIZE 20
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 6
+#define FILE_ENTRIES_SIZE 7
 #else // EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 3
+#define FILE_ENTRIES_SIZE 4
 #endif // EDUK_RAMPJSDISPLAY 
 #endif //EDUK_FULL
 
@@ -98,6 +98,7 @@
 #include "commonHost.h"
 #include "events.h"
 #include "util.h"
+#include "deterministicTemporalSemantics.h"
 
 #ifdef EDUK_RAMPJSDISPLAY
 #include "RampJSDisplay.h"
@@ -179,8 +180,14 @@ static int nofileio_readfile(duk_context *ctx) {
 	    duk_push_lstring(ctx, fileEntries[i].contents, length);
 #endif // NOFILEIO_USE_FIXED_BUFFER
 
+#ifdef NOFILEIO_USE_FIXED_BUFFER
 #ifdef DEBUG_NOFILEIO
             fprintf(stderr, "%s:%d filename: %s, returning buf of size %lu\n", __FILE__, __LINE__, filename, strlen(buf));
+#endif
+#else
+#ifdef DEBUG_NOFILEIO
+            fprintf(stderr, "%s:%d filename: %s, returning 1\n", __FILE__, __LINE__, filename);
+#endif
 #endif
             return 1;
         }
@@ -208,12 +215,18 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].name = "common/commonHost.js"; 
     fileEntries[n].contents = ______common_commonHost_js;
     fileEntries[n].length = ______common_commonHost_js_len;
+
     fileEntries[++n].name = "common/modules/events.js";
     fileEntries[n].contents = ______common_modules_events_js;
     fileEntries[n].length = ______common_modules_events_js_len;
+
     fileEntries[++n].name = "common/modules/util.js";
     fileEntries[n].contents = ______common_modules_util_js;
     fileEntries[n].length = ______common_modules_util_js_len;
+
+    fileEntries[++n].name = "common/modules/deterministicTemporalSemantics.js";
+    fileEntries[n].contents = _________hosts_common_modules_deterministicTemporalSemantics_js;
+    fileEntries[n].length = _________hosts_common_modules_deterministicTemporalSemantics_js_len;
 
 #ifdef EDUK_RAMPJSDISPLAY
     fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
