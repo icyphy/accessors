@@ -24,21 +24,31 @@
 //
 
 /**
- * This "swarmlet" example, running on node Host, illustrates the deterministric
- * temporal semantics implementation
- * See https://www.icyphy.org/accessors/wiki/Modules/Mutable
+ *  This "swarmlet" example, running on node Host, illustrates the deterministric
+ *  temporal semantics implementation
+ * 
+ *  @author Chadlia Jerad
+ *  @version $$Id: simpleDTSswarmlet.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 
 var nodeHost = require('../../hosts/node/nodeHost.js');
 
-var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpantaneousAcc1.js');
-var spAcc2 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpantaneousAcc2.js');
-var spAcc3 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpantaneousAcc3.js');
-var spOnceAcc = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpantaneousOnceAcc.js');
+var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc1.js');
+var spAcc2 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc2.js');
+var spAcc3 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc3.js');
+var spOnceAcc = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousOnceAcc.js');
+
+var synchLabel = 'SL';
+
+spAcc1.setParameter('synchronizationLabel', synchLabel);
+spAcc2.setParameter('synchronizationLabel', synchLabel);
+spAcc3.setParameter('synchronizationLabel', synchLabel);
+spOnceAcc.setParameter('synchronizationLabel', synchLabel);
 
 spAcc1.initialize();
 spAcc2.initialize();
 spAcc3.initialize();
 spOnceAcc.initialize();
+
 
