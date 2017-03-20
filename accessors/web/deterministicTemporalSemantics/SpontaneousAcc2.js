@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This a spantaneous accessor that outputs how many times it fired each
- *  3000 ms.
+/** This is a spontaneous accessor that outputs how many times it fired each
+ *  4000 ms.
  *    
- *  @accessor deterministicTemporalSemantics/SpantaneousAcc3
+ *  @accessor deterministicTemporalSemantics/SpontaneousAcc2
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpantaneousAcc3.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SpontaneousAcc2.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -46,13 +46,29 @@ exports.setup = function () {
         'type': 'number',
         'value': 0
     });
+    this.parameter('synchronizationLabel', {
+    	'type': 'string',
+    	'value': 'SynchInitialization'
+    });
 };
 
 exports.initialize = function () {
 	var numberOfFirings = 0;
 	var thiz = this;
-    thiz.setInterval(function(){
-    	console.log("I am SpantenousAccessor3, my period is 3000 ms.");
+	
+	var f1 = function(){
+    	console.log("SpontaneousAccessor2 executing with period 4000 ms.");
     	thiz.send('output', ++numberOfFirings);
-    }, 3000, thiz)
+	};
+	
+	thiz.setInterval(f1, 4000, thiz.getParameter('synchronizationLabel'), thiz);
+	
+    var f2 = function() {
+    	thiz.clearInterval(f1);
+    	console.log('SpontaneousAccessor2 setInterval cleared.')
+    };
+    
+    thiz.setTimeout(f2, 12000, 'end');
 };
+
+
