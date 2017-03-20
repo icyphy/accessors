@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This a spantaneous accessor that outputs how many times it fired each
- *  2000 ms.
+/** This is a spontaneous accessor that outputs how many times it fired each
+ *  3000 ms. Spontaneous firings stop after 12500 ms 
  *    
- *  @accessor deterministicTemporalSemantics/SpantaneousAcc1
+ *  @accessor deterministicTemporalSemantics/SpontaneousAcc3
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpantaneousAcc1.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SpontaneousAcc3.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -46,13 +46,28 @@ exports.setup = function () {
         'type': 'number',
         'value': 0
     });
+    this.parameter('synchronizationLabel', {
+    	'type': 'string',
+    	'value': 'SynchInitialization'
+    });
 };
 
 exports.initialize = function () {
 	var numberOfFirings = 0;
 	var thiz = this;
-    thiz.setInterval(function(){
-    	console.log("I am SpantenousAccessor1, my period is 2000 ms.");
+    
+	var f1 = function(){
+    	console.log("SpontaneousAccessor3 executing with period 3000 ms.");
     	thiz.send('output', ++numberOfFirings);
-    }, 2000, thiz)
+    };
+    
+	thiz.setInterval(f1, 3000, thiz.getParameter('synchronizationLabel'), thiz);
+    
+	var f2 = function() {
+    	thiz.clearInterval(f1);
+    	console.log('SpontaneousAccessor3 setInterval cleared.')
+    };
+    
+    thiz.setTimeout(f2, 12000, 'end');
+
 };

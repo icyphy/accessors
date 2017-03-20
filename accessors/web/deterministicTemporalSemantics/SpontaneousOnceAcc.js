@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This a spantaneous accessor that outputs how many times it fired each
- *  4000 ms.
+/** This is a spontaneous accessor that fires spontaneously only once after
+ *  1200 ms.
  *    
- *  @accessor deterministicTemporalSemantics/SpantaneousAcc2
+ *  @accessor deterministicTemporalSemantics/SpontaneousOnceAcc.js
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpantaneousAcc2.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SpontaneousOnceAcc.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -46,15 +46,18 @@ exports.setup = function () {
         'type': 'number',
         'value': 0
     });
+    this.parameter('synchronizationLabel', {
+    	'type': 'string',
+    	'value': 'SynchInitialization'
+    });
 };
 
 exports.initialize = function () {
 	var numberOfFirings = 0;
 	var thiz = this;
-	thiz.setInterval(function(){
-    	console.log("I am SpantenousAccessor2, my period is 4000 ms.");
+	
+    thiz.setTimeout(function() {
+    	console.log("SpontaneousOnceAcc executing with timeout 1200 ms.");
     	thiz.send('output', ++numberOfFirings);
-	}, 4000, thiz)
+    }, 1200, thiz.getParameter('synchronizationLabel'), thiz);
 };
-
-
