@@ -548,6 +548,23 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     } else {
         throw new Error('Host does not define required setTimeout function.');
     }
+    
+    if (bindings && bindings.clearInterval) {
+        this.clearInterval = bindings.clearInterval;
+    } else if (typeof clearInterval !== 'undefined') {
+    	this.clearInterval = deterministicTemporalSemantics.clearIntervalDet;
+    } else {
+        throw new Error('Host does not define required clearInterval function.');
+    }
+
+    if (bindings && bindings.clearTimeout) {
+        this.clearTimeout = bindings.clearTimeout;
+    } else if (typeof clearTimeout !== 'undefined') {
+        // this.setTimeout = setTimeout;
+    	this.clearTimeout = deterministicTemporalSemantics.clearTimeoutDet;
+    } else {
+        throw new Error('Host does not define required clearTimeout function.');
+    }
 
     if (bindings && bindings.alert) {
         this.alert = bindings.alert;
@@ -571,7 +588,9 @@ httpRequest, \
 readURL, \
 require, \
 setInterval, \
-setTimeout',
+setTimeout, \
+clearInterval, \
+clearTimeout',
         code);
     wrapper.call(this,
         this.alert,
@@ -582,7 +601,9 @@ setTimeout',
         this.readURL,
         this.require,
         this.setInterval,
-        this.setTimeout);
+        this.setTimeout,
+        this.clearInterval,
+        this.clearTimeout);
 
     // Mark that the accessor has not been initialized
     this.initialized = false;
