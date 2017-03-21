@@ -23,12 +23,17 @@
 #endif
 
 #ifdef __ARM_EABI__
+#ifdef __MBED__
+// Use mbed-time/source/time.cpp from https://github.com/ARMmbed/mbed-time
+#else // __MBED__
 //#include "timer.h" // TockOS specific, see https://github.com/helena-project/tock/blob/master/userland/libtock/timer.h
 int _gettimeofday(struct timeval *tp, void *tzp) {
+  fprintf(stderr, "%s:%d: _gettimeofday(): Not filling up timeval arg!! Returning 0.\n", __FILE__, __LINE__);
   return 0;
   //return timer_read();
 }
-#endif
+#endif // __MBED__
+#endif // __ARM_EABI__
 
 // PRINT_ONLY was part of an experiment to get the accessor code to
 // work on a Hail board, which turned out to be too small.
@@ -208,8 +213,11 @@ void nop() {}
 #endif
 
 
+#define MBED_MEMORY
 #ifdef __MBED__
+#ifdef MBED_MEMORY
 #include "mbed_memory_status.h"
+#endif
 #endif
 
 /** Set up the accessor host and parse files.
@@ -327,9 +335,11 @@ void inner_main() {
 #endif // EDUK_MIN
 
 #ifdef __MBED__
+#ifdef MBED_MEMORY
   fprintf(stderr, "%s:%d: about to print thread info\n", __FILE__, __LINE__);
   print_all_thread_info();
   print_heap_and_isr_stack_info();
+#endif // MBED_MEMORY
 #endif
   //duk_destroy_heap(ctx);
   return;
