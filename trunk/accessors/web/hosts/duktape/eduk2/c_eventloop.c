@@ -95,6 +95,8 @@ static int poll_count = 0;
 /* Misc */
 static int exit_requested = 0;
 
+extern int errno;
+
 /* Get Javascript compatible 'now' timestamp (millisecs since 1970). */
 static double get_now(void) {
 	struct timeval tv;
@@ -102,10 +104,16 @@ static double get_now(void) {
 
 	rc = gettimeofday(&tv, NULL);
 	if (rc != 0) {
+          // Invoke perror() before invoking fprintf in case fprintf updates errno.
+          perror("gettimeofday() failed");
+          // For ARM, ./src/newlib/newlib/libc/include/sys/errno.h.  Errno 88 is function not implemented.
+          fprintf(stderr, "%s:%d: WARNING: gettimeofday() returned %d!!  get_now will return 0.0? This is bad. errno = %d. Note that errno on the target platform might be different.  \n", __FILE__, __LINE__, rc, errno);
 		/* Should never happen, so return whatever. */
 		return 0.0;
 	}
-	return ((double) tv.tv_sec) * 1000.0 + ((double) tv.tv_usec) / 1000.0;
+        double returnValue = ((double) tv.tv_sec) * 1000.0 + ((double) tv.tv_usec) / 1000.0;
+        fprintf(stderr, "%s:%d: get_now() returning %g.\n", __FILE__, __LINE__, returnValue);
+	return returnValue;
 }
 
 static ev_timer *find_nearest_timer(void) {
