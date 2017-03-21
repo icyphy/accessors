@@ -66,7 +66,7 @@ var timedCallbacks;
 
 // This variable records the amount of time that elapses between two consecutive ticks  
 var timeChunck = 0;
- 
+
 // This variable records the instant at which occurred the latest tick
 var lastTimeChunckInstant;
 
@@ -83,16 +83,16 @@ var tick;
  *  @param synchronizationLabel label for synchronization purposes
  */
 function setIntervalDet(callback, timeout, synchronizationLabel) {
-	// Construct a new object
-	var newTimedCallback = {};
-	newTimedCallback.callbackFunction = callback;
-	newTimedCallback.interval = timeout;
-	newTimedCallback.periodic = true;
-	newTimedCallback.remainingTime = timeout;
-	newTimedCallback.execNumber = 0;
-	
-	// Update the next tick
-	updateNextTick(newTimedCallback, synchronizationLabel);
+    // Construct a new object
+    var newTimedCallback = {};
+    newTimedCallback.callbackFunction = callback;
+    newTimedCallback.interval = timeout;
+    newTimedCallback.periodic = true;
+    newTimedCallback.remainingTime = timeout;
+    newTimedCallback.execNumber = 0;
+    
+    // Update the next tick
+    updateNextTick(newTimedCallback, synchronizationLabel);
 }
 
 /** This function is to be binded to setTimeout() function. The aim is to 
@@ -105,16 +105,16 @@ function setIntervalDet(callback, timeout, synchronizationLabel) {
  *  @param synchronizationLabel label for synchronization purposes
  */
 function setTimeoutDet(callback, timeout, synchronizationLabel) {
-	// Construct a new object
-	var newTimedCallback = {};
-	newTimedCallback.callbackFunction = callback;
-	newTimedCallback.interval = timeout;
-	newTimedCallback.periodic = false;
-	newTimedCallback.remainingTime = timeout;
-	newTimedCallback.execNumber = 0;
-	
-	// Update the next tick
-	updateNextTick(newTimedCallback, synchronizationLabel);
+    // Construct a new object
+    var newTimedCallback = {};
+    newTimedCallback.callbackFunction = callback;
+    newTimedCallback.interval = timeout;
+    newTimedCallback.periodic = false;
+    newTimedCallback.remainingTime = timeout;
+    newTimedCallback.execNumber = 0;
+    
+    // Update the next tick
+    updateNextTick(newTimedCallback, synchronizationLabel);
 }
 
 /** In case setIntervalDet or setTimeoutDet is called, then the new constructed timed
@@ -127,80 +127,80 @@ function setTimeoutDet(callback, timeout, synchronizationLabel) {
  */
 
 function updateNextTick(newTimedCallback, synchronizationLabel) {
-	// If this is the first element in the list, then  set the timeChunck 
-	// and set the next tick 
-	if (!timedCallbacks) {
-		timedCallbacks = {};
-		timedCallbacks[synchronizationLabel] = [];
-		timedCallbacks[synchronizationLabel].push(newTimedCallback);
-		timeChunck = newTimedCallback.interval;
-		lastTimeChunckInstant = Date.now();
-		tick = setTimeout(executeAndSetNextTick, timeChunck);
-		return;
-	}
-	
-	// If this is not the first element, then find out how to update 
-	// record the time for this
-	var elapsedTimeSinceLastTick = Date.now() - lastTimeChunckInstant;
-	
-	// Case if the synchronization label is already defined 
-	if (timedCallbacks[synchronizationLabel]) {
-		// Then we compute the remaining time according to the ref
-		if (timedCallbacks[synchronizationLabel][0].interval == newTimedCallback.interval) {
-			// If both timedCallbacks have the same interval, 
-			// then they have the same remainingTime
-			newTimedCallback.remainingTime = timedCallbacks[synchronizationLabel][0].remainingTime - elapsedTimeSinceLastTick;
-			newTimedCallback.execNumber = timedCallbacks[synchronizationLabel][0].execNumber;
-		} 
-		else {
-			// If the interval of the timedCallback ref for synchronization 
-			// is less than the new one, then adjust the remaining time of the new
-			// by removing the elapsed time.
-			var totalElapsedLogicalTime = 
-				timedCallbacks[synchronizationLabel][0].interval * (timedCallbacks[synchronizationLabel][0].execNumber +1)
-					- timedCallbacks[synchronizationLabel][0].remainingTime + elapsedTimeSinceLastTick;
-			newTimedCallback.remainingTime = 0 - totalElapsedLogicalTime;
-			
-			// Here the remaining time of the new cb is computed
-			// Note that the remaining time is measured according to now()!!!
-			do {
-				newTimedCallback.remainingTime += newTimedCallback.interval;
-				newTimedCallback.execNumber++;
-			} while(newTimedCallback.remainingTime < 0) ;
-		}
-	}
-	// Case if this is a new synchronization label
-	else {
-		timedCallbacks[synchronizationLabel] = [];
-	}
+    // If this is the first element in the list, then  set the timeChunck 
+    // and set the next tick 
+    if (!timedCallbacks) {
+        timedCallbacks = {};
+        timedCallbacks[synchronizationLabel] = [];
+        timedCallbacks[synchronizationLabel].push(newTimedCallback);
+        timeChunck = newTimedCallback.interval;
+        lastTimeChunckInstant = Date.now();
+        tick = setTimeout(executeAndSetNextTick, timeChunck);
+        return;
+    }
+    
+    // If this is not the first element, then find out how to update 
+    // record the time for this
+    var elapsedTimeSinceLastTick = Date.now() - lastTimeChunckInstant;
+    
+    // Case if the synchronization label is already defined 
+    if (timedCallbacks[synchronizationLabel]) {
+        // Then we compute the remaining time according to the ref
+        if (timedCallbacks[synchronizationLabel][0].interval == newTimedCallback.interval) {
+            // If both timedCallbacks have the same interval, 
+            // then they have the same remainingTime
+            newTimedCallback.remainingTime = timedCallbacks[synchronizationLabel][0].remainingTime - elapsedTimeSinceLastTick;
+            newTimedCallback.execNumber = timedCallbacks[synchronizationLabel][0].execNumber;
+        } 
+        else {
+            // If the interval of the timedCallback ref for synchronization 
+            // is less than the new one, then adjust the remaining time of the new
+            // by removing the elapsed time.
+            var totalElapsedLogicalTime = 
+                timedCallbacks[synchronizationLabel][0].interval * (timedCallbacks[synchronizationLabel][0].execNumber +1)
+                - timedCallbacks[synchronizationLabel][0].remainingTime + elapsedTimeSinceLastTick;
+            newTimedCallback.remainingTime = 0 - totalElapsedLogicalTime;
+            
+            // Here the remaining time of the new cb is computed
+            // Note that the remaining time is measured according to now()!!!
+            do {
+                newTimedCallback.remainingTime += newTimedCallback.interval;
+                newTimedCallback.execNumber++;
+            } while(newTimedCallback.remainingTime < 0) ;
+        }
+    }
+    // Case if this is a new synchronization label
+    else {
+        timedCallbacks[synchronizationLabel] = [];
+    }
 
-	// Add the new timed callback
-	timedCallbacks[synchronizationLabel].push(newTimedCallback);
-	
-	// Update executeAndSetNextTick if necessary.
-	
-	// This is the case when a new timedCallback needs to execute before the scheduled coming tick
-	if ((newTimedCallback.remainingTime) < (timeChunck - elapsedTimeSinceLastTick)) {
-		// Adjust the remaining time of all the callbacks (except the new one) 
-		// by deducing the amount of time that elapsed
-		clearTimeout(tick);
-		Object.keys(timedCallbacks).forEach(function(key) {
-			timedCallbacks[key].forEach(function(varTimedCallback) {
-				if (varTimedCallback !== newTimedCallback) {
-					varTimedCallback.remainingTime -= elapsedTimeSinceLastTick;
-				}
-			});
-		});
-		
-		// Then update the nextTick
-		timeChunck = newTimedCallback.remainingTime;
-		lastTimeChunckInstant = Date.now();
-		tick = setTimeout(executeAndSetNextTick, timeChunck);
-	}
-	// Otherwise, align the remaining time with the last tick
-	else {
-		newTimedCallback.remainingTime += elapsedTimeSinceLastTick; 	
-	}
+    // Add the new timed callback
+    timedCallbacks[synchronizationLabel].push(newTimedCallback);
+    
+    // Update executeAndSetNextTick if necessary.
+    
+    // This is the case when a new timedCallback needs to execute before the scheduled coming tick
+    if ((newTimedCallback.remainingTime) < (timeChunck - elapsedTimeSinceLastTick)) {
+        // Adjust the remaining time of all the callbacks (except the new one) 
+        // by deducing the amount of time that elapsed
+        clearTimeout(tick);
+        Object.keys(timedCallbacks).forEach(function(key) {
+            timedCallbacks[key].forEach(function(varTimedCallback) {
+                if (varTimedCallback !== newTimedCallback) {
+                    varTimedCallback.remainingTime -= elapsedTimeSinceLastTick;
+                }
+            });
+        });
+        
+        // Then update the nextTick
+        timeChunck = newTimedCallback.remainingTime;
+        lastTimeChunckInstant = Date.now();
+        tick = setTimeout(executeAndSetNextTick, timeChunck);
+    }
+    // Otherwise, align the remaining time with the last tick
+    else {
+        newTimedCallback.remainingTime += elapsedTimeSinceLastTick;         
+    }
 }
 
 /** This function implements callbacks execution and update. It is called only by the
@@ -211,40 +211,40 @@ function updateNextTick(newTimedCallback, synchronizationLabel) {
  *  callbacks. And finally, the next timeChunck is computed and the next tick is set.
  */
 var executeAndSetNextTick = function() {
-	console.log('-----executeAndSetNextTick(): At time = ' + lastTimeChunckInstant % 10000
-			+ ' Nbr Labels = ' + Object.size(timedCallbacks)
-			+ ' with timeChunck = ' + timeChunck);
+    //console.log('-----executeAndSetNextTick(): At time = ' + lastTimeChunckInstant % 10000
+    //                + ' Nbr Labels = ' + Object.size(timedCallbacks)
+    //                + ' with timeChunck = ' + timeChunck);
 
-	// Handling a corner case: if somehow it happens that timedCallbacks is empty
-	if (!timedCallbacks || (timedCallbacks && (Object.size(timedCallbacks) == 0))) {
-		timedCallbacks = null;
-		return;
-	}
-	
-	// After the timeChunck has passed, update the remainingTime of all the elements
-	// in timedCallbacks
-	Object.keys(timedCallbacks).forEach(function(key) {
-		timedCallbacks[key].forEach(function(varTimedCallback) {
-			varTimedCallback.remainingTime -= timeChunck;
-		});
-	});
-	
-	// Execute callbacks
-	executeCallbacks();
-	
-	// Handling a corner case: if somehow it happens that timedCallbacks is empty
-	if (!timedCallbacks || (timedCallbacks && (Object.size(timedCallbacks) == 0))) {
-		timedCallbacks = null;
-		return;
-	}
-	
-	// Compute the next timeChunck
-	timeChunck = computeNextTimeChunck();
-	
-	// And now, set the next tick (timeChunck) to execute time...
-	// Here, we call the host's setTimeout function.
-	lastTimeChunckInstant = Date.now();
-	tick = setTimeout(executeAndSetNextTick, timeChunck);	
+    // Handling a corner case: if somehow it happens that timedCallbacks is empty
+    if (!timedCallbacks || (timedCallbacks && (Object.size(timedCallbacks) == 0))) {
+        timedCallbacks = null;
+        return;
+    }
+    
+    // After the timeChunck has passed, update the remainingTime of all the elements
+    // in timedCallbacks
+    Object.keys(timedCallbacks).forEach(function(key) {
+        timedCallbacks[key].forEach(function(varTimedCallback) {
+            varTimedCallback.remainingTime -= timeChunck;
+        });
+    });
+    
+    // Execute callbacks
+    executeCallbacks();
+    
+    // Handling a corner case: if somehow it happens that timedCallbacks is empty
+    if (!timedCallbacks || (timedCallbacks && (Object.size(timedCallbacks) == 0))) {
+        timedCallbacks = null;
+        return;
+    }
+    
+    // Compute the next timeChunck
+    timeChunck = computeNextTimeChunck();
+    
+    // And now, set the next tick (timeChunck) to execute time...
+    // Here, we call the host's setTimeout function.
+    lastTimeChunckInstant = Date.now();
+    tick = setTimeout(executeAndSetNextTick, timeChunck);        
 }
 
 /** This function executes timed callback such that the remaining time is 0.
@@ -252,167 +252,162 @@ var executeAndSetNextTick = function() {
  *  if not periodic. Labels are also deleted if the corresponding array is empty.
  */
 function executeCallbacks() {
-	var i;
-	Object.keys(timedCallbacks).forEach(function(key) {
-		for (i = 0 ; i < timedCallbacks[key].length ; i++) {
-			// If the remainingTime becomes 0, this means that the respective callback should
-			// be executed.
-			//console.log('exec: ' + key + ' index: ' + i + ' remaining: '+timedCallbacks[key][i].remainingTime);
-			if (timedCallbacks[key][i].remainingTime == 0) {
-				timedCallbacks[key][i].callbackFunction.call();
-				timedCallbacks[key][i].execNumber++;
+    var i;
+    Object.keys(timedCallbacks).forEach(function(key) {
+        for (i = 0 ; i < timedCallbacks[key].length ; i++) {
+            // If the remainingTime becomes 0, this means that the respective callback should
+            // be executed.
+            //console.log('exec: ' + key + ' index: ' + i + ' remaining: '+timedCallbacks[key][i].remainingTime);
+            if (timedCallbacks[key][i].remainingTime == 0) {
+                timedCallbacks[key][i].callbackFunction.call();
+                timedCallbacks[key][i].execNumber++;
 
-				// After executing the callbacks, if the timedCallback is periodic  
-				// then reinitialize the remainingTime to the interval value.
-				if (timedCallbacks[key][i].periodic == true) { 
-					timedCallbacks[key][i].remainingTime = timedCallbacks[key][i].interval;
-				}
-				else {
-					// All the executed callbacks that are not periodic (case where remainingTime remained
-					// equal to zero) need to be removed from the List.
-					timedCallbacks[key].splice(i, 1);
-					i--;
-				}
-			}
-		}
+                // After executing the callbacks, if the timedCallback is periodic  
+                // then reinitialize the remainingTime to the interval value.
+                if (timedCallbacks[key][i].periodic == true) { 
+                    timedCallbacks[key][i].remainingTime = timedCallbacks[key][i].interval;
+                }
+                else {
+                    // All the executed callbacks that are not periodic (case where remainingTime remained
+                    // equal to zero) need to be removed from the List.
+                    timedCallbacks[key].splice(i, 1);
+                    i--;
+                }
+            }
+        }
 
-		// If timedCallback of the key label is empty, then remove it
-		if (timedCallbacks[key].length == 0) {
-			delete(timedCallbacks[key]);
-		}
-	});
+        // If timedCallback of the key label is empty, then remove it
+        if (timedCallbacks[key].length == 0) {
+            delete(timedCallbacks[key]);
+        }
+    });
 
-	// Check if there are callbacks in the list
-	if (Object.size(timedCallbacks) == 0) {
-		timedCallbacks = null;
-	}
+    // Check if there are callbacks in the list
+    if (Object.size(timedCallbacks) == 0) {
+        timedCallbacks = null;
+    }
 }
 
 /**
  *  Compute the next time chunk that should elapse. It is the minimum of all
- *	remaining times of callbacks in timedCallbacks.
+ *        remaining times of callbacks in timedCallbacks.
  *
  *  @return the minimum of remainingTime of all timed callbacks
  */ 
 function computeNextTimeChunck() {
-	// init is used just to initialize the min of the remainingTime
-	var init = 0;
-	var min;
-	if (timedCallbacks) {
-		Object.keys(timedCallbacks).forEach(function(key) {
-			timedCallbacks[key].forEach(function(varTimedCallback) {
-				if (init) {
-					if (min > varTimedCallback.remainingTime) {
-						min = varTimedCallback.remainingTime;
-					}
-				}
-				else {
-					min = varTimedCallback.remainingTime;
-					init = 1;
-				}
-			});
-		});
-	}
-	return min;
+    // init is used just to initialize the min of the remainingTime
+    var init = 0;
+    var min;
+    if (timedCallbacks) {
+        Object.keys(timedCallbacks).forEach(function(key) {
+            timedCallbacks[key].forEach(function(varTimedCallback) {
+                if (init) {
+                    if (min > varTimedCallback.remainingTime) {
+                        min = varTimedCallback.remainingTime;
+                    }
+                } else {
+                    min = varTimedCallback.remainingTime;
+                    init = 1;
+                }
+            });
+        });
+    }
+    return min;
 }
 
 /** This function is to be binded to clearInterval() function. The aim is to 
  *  make the execution deterministic. It just calls clearTick() with the right
  *  parameters.
  *  @param option this parameter is optional. It can be a callback function, a label
- *  	or nothing 
+ *          or nothing 
  */
 function clearIntervalDet(option){
-	clearTick(option, true);
+    clearTick(option, true);
 }
 
 /** This function is to be binded to clearTimeout() function. The aim is to 
  *  make the execution deterministic. It just calls clearTick() with the right
  *  parameters.  
  *  @param option this parameter is optional. It can be a callback function, a label
- *  	or nothing 
+ *          or nothing 
  */
 function clearTimeoutDet(option){
-	clearTick(option, false);
+    clearTick(option, false);
 }
 
 /** clearTick() can be called with one of the following options:
  *   *  If a callback function is passed, then parse all the timed callbacks 
- *   	and remove it when found. The passed callback should be periodic, 
- *   	otherwise, print an error message. 
- *   * 	If a label is passed, then remove all the periodic timedCallbacks
- *   	with that label.
- *   * 	If nothing is passed, then clear all periodic timedCallbacks.  
+ *           and remove it when found. The passed callback should be periodic, 
+ *           otherwise, print an error message. 
+ *   *         If a label is passed, then remove all the periodic timedCallbacks
+ *           with that label.
+ *   *         If nothing is passed, then clear all periodic timedCallbacks.  
  *    
  *  @param option this parameter is optional. It can be either of the above
  *  @param periodic boolean value: true if periodic (called from clearIntervalDet), 
- *  	false otherwise
+ *          false otherwise
  */
-function clearTick(option, periodic) {	 
-	if (option && timedCallbacks) {
-		// First case: clear 'periodic' timedCallbacks s.t. callBackFunction == option
-		if (typeof(option) === 'function') {
-			Object.keys(timedCallbacks).forEach(function(key) {
-				for (i = 0 ; i < (timedCallbacks[key]).length ; i++) {
-					if (timedCallbacks[key][i].callbackFunction === option) {
-						if (timedCallbacks[key][i].periodic == periodic) {
-							timedCallbacks[key].splice(i, 1);
-							i--;
-						}
-						else {
-							console.log('clear(): check if callback function is periodic.');
-						}
-					}
-				}
-				// If timedCallback of the key label is empty, then remove it
-				if (timedCallbacks[key].length == 0) {
-					delete(timedCallbacks[key]);
-				}
-			});
-		}
-		// Second case: clear 'periodic' timedCallbacks s.t. synchronization label == option
-		else if (typeof (option) === 'string') {
-			if (timedCallbacks[option]) {
-				for (i = 0 ; i < timedCallbacks[option].length ; i++) {
-					if (timedCallbacks[option][i].periodic == periodic) {
-						(timedCallbacks[option]).splice(i, 1);
-						i--;
-					}
-				}
-				// If timedCallback of the key label is empty, then remove it
-				if ((timedCallbacks[option]).length == 0) {
-					delete(timedCallbacks[option]);
-				}
-			}
-			else {
-				console.log('clear(): no such synchronization label: ' + option);
-			}
-		}
-		else {
-			console.log('clear(): no such function or synchronization label: ' + option);
-		}
-	}
-	// Third case: clear all timedCallbacks s.t. periodic  
-	else {
-		Object.keys(timedCallbacks).forEach(function(key) {
-			for (i = 0 ; i < timedCallbacks[key].length ; i++) {
-				if (timedCallbacks[key][i].periodic == periodic) {
-					(timedCallbacks[key]).splice(i, 1);
-					i--;
-				}
-			}
-			
-			// If timedCallback of the key label is empty, then remove it
-			if ((timedCallbacks[key]).length == 0) {
-				delete(timedCallbacks[key]);
-			}
-		});
-	}
-	
-	// Check if there are still callbacks in the list
-	if (Object.size(timedCallbacks) == 0) {
-		timedCallbacks = null;
-	}
+function clearTick(option, periodic) {         
+    if (option && timedCallbacks) {
+        // First case: clear 'periodic' timedCallbacks s.t. callBackFunction == option
+        if (typeof(option) === 'function') {
+            Object.keys(timedCallbacks).forEach(function(key) {
+                for (i = 0 ; i < (timedCallbacks[key]).length ; i++) {
+                    if (timedCallbacks[key][i].callbackFunction === option) {
+                        if (timedCallbacks[key][i].periodic == periodic) {
+                            timedCallbacks[key].splice(i, 1);
+                            i--;
+                        } else {
+                            console.log('clear(): check if callback function is periodic.');
+                        }
+                    }
+                }
+                // If timedCallback of the key label is empty, then remove it
+                if (timedCallbacks[key].length == 0) {
+                    delete(timedCallbacks[key]);
+                }
+            });
+        } else if (typeof (option) === 'string') {
+            // Second case: clear 'periodic' timedCallbacks s.t. synchronization label == option
+
+            if (timedCallbacks[option]) {
+                for (i = 0 ; i < timedCallbacks[option].length ; i++) {
+                    if (timedCallbacks[option][i].periodic == periodic) {
+                        (timedCallbacks[option]).splice(i, 1);
+                        i--;
+                    }
+                }
+                // If timedCallback of the key label is empty, then remove it
+                if ((timedCallbacks[option]).length == 0) {
+                    delete(timedCallbacks[option]);
+                }
+            } else {
+                console.log('clear(): no such synchronization label: ' + option);
+            }
+        } else {
+            console.log('clear(): no such function or synchronization label: ' + option);
+        }
+    } else {
+        // Third case: clear all timedCallbacks s.t. periodic  
+        Object.keys(timedCallbacks).forEach(function(key) {
+            for (i = 0 ; i < timedCallbacks[key].length ; i++) {
+                if (timedCallbacks[key][i].periodic == periodic) {
+                    (timedCallbacks[key]).splice(i, 1);
+                    i--;
+                }
+            }
+            
+            // If timedCallback of the key label is empty, then remove it
+            if ((timedCallbacks[key]).length == 0) {
+                delete(timedCallbacks[key]);
+            }
+        });
+    }
+    
+    // Check if there are still callbacks in the list
+    if (Object.size(timedCallbacks) == 0) {
+        timedCallbacks = null;
+    }
 }
 
 /** This function is used to return the number of an object entries.
@@ -424,7 +419,7 @@ Object.size = function(obj) {
     var size = 0, key;
     
     if (obj == null) {
-    	return 0;
+        return 0;
     }
     
     for (key in obj) {
