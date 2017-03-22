@@ -144,7 +144,36 @@ exports.initialize = function () {
                     typeof inputValue + ' with value ' + inputValueValue);
             }
             if (typeof referenceToken === 'number') {
-                if (Math.abs(inputValue - referenceToken) > self.getParameter('tolerance')) {
+                // If the input not a number, then throw an error.
+                if (typeof inputValue !== 'number') {
+            	    var inputValueValue = inputValue;
+            	    if (typeof inputValue === 'object') {
+            		inputValueValue = JSON.stringify(inputValue, function (key, value) {
+                            if (typeof value === 'object' && value !== null) {
+                                if (cache.indexOf(value) !== -1) {
+                                    // Circular reference found, discard key
+                                    return;
+                                }
+                                // Store value in our collection
+                                cache.push(value);
+                            }
+                            return value;
+                        });
+            	    }
+            	    throw new Error(self.accessorName + ': the input "' + inputValueValue +
+                                    '" is not a number, it is a ' +
+            		            typeof inputValue + '.  The expected value was "' +
+                                    referenceToken + '"');
+            	}
+
+                var difference = Math.abs(inputValue - referenceToken);
+                if (difference === NaN) {
+                    throw new Error(self.accessorName + ': The absolute value of the input "' +
+                                    inputValue + '" - the referenceToken "' +
+                                    referenceToken + '" is NaN?  It should be less than ' +
+                                    self.getParameter('tolerance'));
+                }
+                if (difference > self.getParameter('tolerance')) {
                     throw new Error(self.accessorName + ': The input "' + inputValue + '" is not within "' +
                         self.getParameter('tolerance') +
                         '" of the expected value "' +
