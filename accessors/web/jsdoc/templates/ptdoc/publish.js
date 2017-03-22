@@ -137,10 +137,25 @@ exports.publish = function (data) {
             }
 
             if (element.kind === 'accessor') {
-                moml += '<?xml version="1.0" standalone="yes"?>\n' +
-		    '<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
-		    '    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +
-		    '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
+                // The *PtDoc.xml files should have a well-formed
+                // header that includes <?xml and the DOCTYPE so that
+                // these can be parsed.  The Ptolemy doc files like
+                // doc/codeDoc/ptolemy/actor/lib/Ramp.xml have a
+                // similar structure.
+
+                // However, if we start the *PtDoc.xml file with <!DOCTYPE, then in
+                // JSAccessor, the '<input source="..."/>' will fail.
+
+                // I believe we need the file to be well formed if the redirection
+                // of accessors.org is going to work.
+                
+                // However, in the near term, we will try it without the header.
+                
+                // moml += '<?xml version="1.0" standalone="yes"?>\n' +
+		//    '<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
+		//    '    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +
+		//    '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
+                moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
                 // Alphabetical by tag.
                 if (element.author !== undefined) {
