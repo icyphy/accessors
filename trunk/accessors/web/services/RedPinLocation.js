@@ -100,7 +100,7 @@ exports.setup = function () {
         'value': "terra.eecs.berkeley.edu"
     });
     this.input('port', {
-        'value': "8090"
+        'value': 8090
     });
 };
 
