@@ -173,7 +173,7 @@
  *    understood by the Ptolemy host, e.g. paths beginning with $CLASSPATH/.
  *    FIXME: Need to be a list of paths for certificates rather than a single path.
  *
- *  @author Edward A. Lee, Hokeun Kim
+ *  @author Edward A. Lee, Hokeun Kim, Contributor: Matt Weber
  *  @version $$Id$$
  */
 
@@ -184,6 +184,7 @@
 "use strict";
 
 var socket = require('socket');
+var openSocket = false; // state variable used for isOpen function.
 var client = null;
 var running = false;
 var pendingSends = [];
@@ -296,22 +297,27 @@ exports.setup = function () {
     }
 };
 
-/** Handle input on 'toSend' by sending the specified data to the server. */
-exports.toSendInputHandler = function () {
-    exports.send(this.get('toSend'));
-};
 
-/** Send the specified data if the client has been set and otherwise either
+/** Send the specified data if the client is set and open,
+ *  reconnect the client if the socket is closed, and otherwise either
  *  discard or queue the data to send later depending on the value of
  *  `discardMessagesBeforeOpen`.
  */
-exports.send = function(data) {
+exports.send = function (data){
     // May be receiving inputs before client has been set.
-    if (client) {
+
+    if (client && exports.isOpen()){
         client.send(data);
-    } else {
-        if (!this.getParameter('discardMessagesBeforeOpen')) {
-            var maxUnsentMessages = this.getParameter('maxUnsentMessages');
+    } 
+    else {
+        if(client){
+            //In case the server has closed the socket, reconnect.
+            this.exports.connect.call(this);
+            client.send(data);
+        }
+        if (!getParameter('discardMessagesBeforeOpen')) {
+            var maxUnsentMessages = getParameter('maxUnsentMessages');
+
             if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
                 this.error("Maximum number of unsent messages has been exceeded: " +
                     maxUnsentMessages +
@@ -323,6 +329,11 @@ exports.send = function(data) {
             console.log('Discarding data because socket is not open.');
         }
     }
+};
+
+/** Handle input on 'toSend' by sending the specified data to the server. */
+exports.toSendInputHandler = function () {
+    exports.send(this.get('toSend'));
 };
 
 /** Set up input handlers, and if the current value of the 'port' input is
@@ -339,6 +350,15 @@ exports.initialize = function () {
     running = true;
 };
 
+
+/** Function is called by client when data has been received over the connection.
+*   This has been refactored out of exports.connect to facilitate overriding by an 
+*   extending accessor.
+*/
+exports.dataReceivedHandler = function (data) {
+        this.send('received', data);
+    };
+
 /** Initiate a connection to the server using the current parameter values,
  *  set up handlers for for establishment of the connection, incoming data,
  *  errors, and closing from the server, and set up a handler for inputs
@@ -353,7 +373,7 @@ exports.connect = function () {
     if (portValue < 0) {
         // No port is specified. This could be a signal to close a previously
         // open socket.
-        if (client && client.isOpen()) {
+        if (client && exports.isOpen()) {
             client.close();
         }
         previousPort = null;
@@ -371,7 +391,7 @@ exports.connect = function () {
     previousHost = hostValue;
     previousPort = portValue;
 
-    if (client && client.isOpen()) {
+    if (client && exports.isOpen()) {
         // Either the host or the port has changed. Close the previous socket.
         client.close();
     }
@@ -411,10 +431,9 @@ exports.connect = function () {
             client.send(pendingSends[i]);
         }
         pendingSends = [];
+        openSocket = true; //Update state variable
     });
-    client.on('data', function (data) {
-        self.send('received', data);
-    });
+    client.on('data', self.exports.dataReceivedHandler.bind(self)  );
     client.on('close', function () {
         previousHost = null;
         previousPort = null;
@@ -425,6 +444,7 @@ exports.connect = function () {
         if (running) {
             self.send('connected', false);
         }
+        openSocket = false; //Update state variable
     });
     client.on('error', function (message) {
         previousHost = null;
@@ -437,7 +457,7 @@ exports.connect = function () {
 
 /** Return true if this client has an open connection to the server. */
 exports.isOpen = function () {
-    return client.isOpen();
+    return openSocket;
 };
 
 /** Close the web socket connection. */
