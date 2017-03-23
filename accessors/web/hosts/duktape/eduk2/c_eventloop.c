@@ -95,7 +95,7 @@ static int poll_count = 0;
 /* Misc */
 static int exit_requested = 0;
 
-extern int errno;
+#include <errno.h>
 
 /* Get Javascript compatible 'now' timestamp (millisecs since 1970). */
 static double get_now(void) {
