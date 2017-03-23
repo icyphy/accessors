@@ -1,6 +1,5 @@
 [
     "GeographicLocationByIP.xml",
     "Location.js",
-    "mapRepo.js",
-    "RedPinLocation"
+    "mapRepo.js"
 ]
