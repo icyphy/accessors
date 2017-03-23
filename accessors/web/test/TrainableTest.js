@@ -214,16 +214,32 @@ exports.initialize = function () {
                 });
 
                 cache = null; // Enable garbage collection
-                if (inputValueValue.length > 100) {
-                    inputValueValue = inputValueValue.substring(0, 100) + '...';
+
+                // If we are comparing longs from CapeCode, then the values will be like "1L",
+                // and stringify will return undefined.
+                if (inputValueValue === undefined) {
+                    inputValueValue = inputValue;
                 }
-                if (referenceTokenValue.length > 100) {
-                    referenceTokenValue = referenceTokenValue.substring(0, 100) + '...';
+                if (referenceTokenValue == undefined) {
+                    referenceTokenValue  = referenceToken;
                 }
+
                 if (inputValueValue !== referenceTokenValue) {
-                    throw new Error('The input "' + inputValueValue + '" is !== "' +
-                        '" to the expected value "' +
-                        referenceTokenValue + '"');
+                    // inputValueValue could still be undefined here if inputValue
+                    // was undefined.
+                    if (inputValueValue !== undefined && inputValueValue.length > 100) {
+                        inputValueValue = inputValueValue.substring(0, 100) + '...';
+                    }
+                    if (referenceTokenValue !== undefined && referenceTokenValue.length > 100) {
+                        referenceTokenValue = referenceTokenValue.substring(0, 100) + '...';
+                    }
+                    // Deal with referenceTokens with value 1L.
+                    if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
+                        inputValueValue.toString() !== referenceTokenValue.toString) {
+                        throw new Error('The input "' + inputValueValue + 
+                                        '" is !== to the expected value "' +
+                                        referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
+                    }
                 }
             } else {
                 throw new Error('After seeing ' + numberOfInputTokensSeen +
