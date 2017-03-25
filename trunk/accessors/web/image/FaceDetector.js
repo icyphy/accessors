@@ -46,7 +46,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var faceDetector = require('objectDetection');
+var faceDetector = require('faceDetector');
 
 exports.setup = function () {
     this.input('input');
