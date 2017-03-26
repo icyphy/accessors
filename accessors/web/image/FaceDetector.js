@@ -59,12 +59,15 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
+	var self = this;
+	
     this.addInputHandler('input', function () {
         var options = this.get('options');
         var image = this.get('input');
-        var result = faceDetector.filter(image, options);
-        this.send('output', result);
-        var numFaces = faceDetector.numberOfFaces();
-        this.send('faceCount', numFaces);
+        var result = faceDetector.filter(image, options, function(result) {
+        	self.send('output', result);
+            var numFaces = faceDetector.numberOfFaces();
+            self.send('faceCount', numFaces);
+        });
     });
 };
