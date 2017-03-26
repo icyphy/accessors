@@ -102,7 +102,6 @@ exports.initialize = function() {
             	var transform = self.getParameter('transform');
             	
             	// Check if value is a supported transform.
-            	// TODO:  Expand to multiple libraries (imgroc, face detection, ...)
             	var supported = Object.keys(imgproc);
             	
             	if (supported.includes(transform)) {
@@ -111,7 +110,7 @@ exports.initialize = function() {
             		error('Unsupported transform ' + transform);
             	}
             	
-            	self.send('output', cv.getResultImage());
+            	self.send('output', cv.getResult());
         	});
     	} else {
     	    console.log("The CV module was not present.  The ComputerVision accessor " +
