@@ -30,24 +30,15 @@
  * 
  *  To run, please point your browser to:
  *  <a href="https://accessors.org/hosts/browser/demo/computerVision/computerVision.html#in_browser">https://accessors.org/hosts/browser/demo/computerVision/computerVision.html</a>
- *
- *  To run locally, please download these 2 files:
- *  <a href="http://ucisysarch.github.io/opencvjs/examples/cv.js#in_browser">http://ucisysarch.github.io/opencvjs/examples/cv.js</a>
- *  and place in 
- *  /accessors/web/hosts/browser/modules
- *  
- *  <a href="https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data#in_browser">https://github.com/ucisysarch/opencvjs/blob/master/build/cv.data</a>
- *  and place in the directory with your demo, e.g.
- *  /accessors/web/hosts/browser/demo/computervision/computervision
  *  
  *  This module uses the UC Irvine computer vision library; see <a href="https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser">https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser"></a>
  *
- *  Based on code from examples in:  <a href="https://github.com/ucisysarch/opencvjs#in_browser">/hosts/browser/demo/computerVision/computerVision.html</a>
+ *  Based on code from examples in:  <a href="https://github.com/ucisysarch/opencvjs#in_browser">https://github.com/ucisysarch/opencvjs</a>
  *
  *  The API follows the OpenCV API:
  *  <a href="http://docs.opencv.org/3.0-beta/modules/refman.html#in_browser">/hosts/browser/demo/computerVision/computerVision.html</a>
  *
-re * @module computervision
+re * @module computerVision
  * @author Sajjad Taheri (CV code), Elizabeth Osyk (accesorization)  
  */
 
@@ -81,131 +72,22 @@ re * @module computervision
 
 var EventEmitter = require('events').EventEmitter;
 var cv = require('cv.js');
+var ImageProcessingDisplay = require('imageProcessingDisplay');
 
 exports.CV = function () {
+	var self = this;
+	
+	// Creates pair of canvases to display before and after images.
+	this.display = new ImageProcessingDisplay.ImageProcessingDisplay();
+	
 	this.defaultOptions = {};
 	this.defaultOptions.blurSize = 10;
 	this.defaultOptions.cannyThreshold = 75;
 	this.defaultOptions.erosionSize = 1;
-	
-	// Store the trained face detector.  Loaded when first called.
-	this.face_cascade = null;
-	
-	// Create a pair of canvases to show original image and result.
-	this.originalCanvas = document.createElement('canvas');
-	this.resultCanvas = document.createElement('canvas');
-	this.image = null;
-	
-	// Create a div to contain the canvases.
-	var container = document.createElement('div');
-	container.style.width = '95';
-	container.style.margin = '1em';
-	container.style.padding = '1em';
-	
-	var labels = document.createElement('div');
-	labels.style.fontSize = '1.5em';
-	labels.style.width = '100%';
-	
-	var originalLabel = document.createElement('div');
-	originalLabel.innerHTML = "Original Image";
-	originalLabel.style.width = '45%';
-	originalLabel.style.float = 'left';
-	originalLabel.style.textAlign = 'center';
-	
-	var resultLabel = document.createElement('div');
-	resultLabel.innerHTML = "Result";
-	resultLabel.style.width = '45%';
-	resultLabel.style.float = 'right';
-	resultLabel.style.textAlign = 'center';
-	resultLabel.style.verticalAlign = 'top';
-	
-	labels.appendChild(originalLabel);
-	labels.appendChild(resultLabel);
-	
-	this.originalContainer = document.createElement('div');
-	this.originalContainer.style.display = 'inline-block';
-	this.originalContainer.style.width = '45%';
-	
-	this.resultContainer = document.createElement('div');
-	this.resultContainer.style.float = 'right';
-	this.resultContainer.style.width = '45%';
-
-	
-	this.originalContainer.appendChild(this.originalCanvas);
-	this.resultContainer.appendChild(this.resultCanvas);
-	container.appendChild(this.originalContainer);
-	container.appendChild(this.resultContainer);
-	container.appendChild(labels);
-	
-	var accessorDiv = document.getElementById('Camera');
-	var parent;
-	
-	if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-		// Found Camera accessor.
-		parent = accessorDiv.parentNode;
 		
-		if (parent !== null && typeof parent !== 'undefined') {
-			parent.insertBefore(container, accessorDiv);
-		} else {
-			document.body.insertBefore(container, accessorDiv);
-		}
-	} else {
-		// Look for accessorDirectoryTarget, as in terraswarm library page.
-		accessorDiv = document.getElementById('accessorDirectoryTarget');
-		
-		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-			parent = accessorDiv.parentNode;
-			
-			if (parent !== null && typeof parent !== 'undefined') {
-				parent.insertBefore(container, accessorDiv);
-			} else {
-				document.body.insertBefore(container, accessorDiv);
-			}
-		} else {
-			// No Camera accessor.  Find any accessor.  If none, use page top.
-			accessorDiv = document.getElementsByClassName('accessor');
-			if (accessorDiv !== null && typeof accessorDiv !== 'undefined' && 
-					accessorDiv.length > 0) {
-				accessorDiv = accessorDiv[0];
-				var parent = accessorDiv.parentNode;
-				if (parent !== null && typeof parent !== 'undefined') {
-					parent.insertBefore(container, accessorDiv);
-				} else {
-					document.body.insertBefore(container, accessorDiv);
-				}
-			} else if (document.body.firstChild !== null && 
-					typeof document.body.firstChild !== 'undefined') {
-					document.body.insertBefore(container, document.body.firstChild);
-			} else {
-				document.body.appendChild(container);
-			}
-		}
-	}
-	
-	// From https://github.com/ucisysarch/opencvjs
-	// TODO:  Refactor so this has local scope?
-	this.setResult = function(mat, canvas) {
-		var data = mat.data(); 	// output is a Uint8Array that aliases directly into the Emscripten heap
-
-		var channels = mat.channels();
-		var channelSize = mat.elemSize1();
-
-		var ctx = canvas.getContext("2d");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		canvas.width = mat.cols;
-		canvas.height = mat.rows;
-
-		var imdata = ctx.createImageData(mat.cols, mat.rows);
-
-		for (var i = 0,j=0; i < data.length; i += channels, j+=4) {
-			imdata.data[j] = data[i];
-			imdata.data[j + 1] = data[i+1%channels];
-			imdata.data[j + 2] = data[i+2%channels];
-			imdata.data[j + 3] = 255;
-		}
-		ctx.putImageData(imdata, 0, 0);
-	}
+	this.display.on('ready', function(data) {
+		self.emit('ready', data);
+	})
 };
 
 util.inherits(exports.CV, EventEmitter);
@@ -218,43 +100,6 @@ exports.CV.prototype.done = function() {
 	
 };
 
-/** Get the image on the specified canvas. See also getOriginalImage() and
- * getResultImage().
- * @parameter canvas  The canvas to return image data from.
- * @return The image on the specified canvas.
- */
-// TODO:  Locally scope this?
-exports.CV.prototype.getImage = function(canvas) {
-	var ctx = canvas.getContext('2d');
-	var image =  ctx.getImageData(0, 0, canvas.width, canvas.height);
-	return image;
-}
-
-/** Get the original image.
- * @return The original image.
- */ 
-exports.CV.prototype.getOriginalImage = function(){
-	return this.getImage(this.originalCanvas);
-}
-
-/** Get the result image.
- * @return The result image.
- */
-exports.CV.prototype.getResultImage = function(){
-	return this.getImage(this.resultCanvas);
-}
-
-
-/** Face detection functions.  
- */
-exports.CV.prototype.face = function() {
-	var self = this;
-	
-
-	
-	return { detectface : detectface };
-}
-
 /** Image processing functions.  Functions are categorized according to OpenCV
  *  API, http://docs.opencv.org/3.0-beta/modules/refman.html .
  *  Functions from http://ucisysarch.github.io/opencvjs/examples/img_proc.html
@@ -262,54 +107,11 @@ exports.CV.prototype.face = function() {
 
 exports.CV.prototype.imgproc = function() {
 	var self = this;
-
-	function detectFace(){
-		
-		if(self.face_cascade == undefined ){
-			self.face_cascade = new cv.CascadeClassifier();
-			self.face_cascade.load('haarcascade_frontalface_default.xml');
-		}
-		
-		
-		var img = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
-		var img_gray = new cv.Mat();
-		var img_color = new cv.Mat(); // Opencv likes RGB
-		
-		
-		cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
-		cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
-		
-		var faces = new cv.RectVector();
-		var s1 = [0, 0];
-		var s2 = [0, 0];
-		self.face_cascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
-		
-		
-		for (var i = 0 ;i < faces.size(); i+=1 )
-		{
-			var faceRect = faces.get(i);
-			x = faceRect.x ;
-			y = faceRect.y ;
-			w = faceRect.width ;
-			h = faceRect.height;
-			var p1 = [x, y];
-			var p2 = [x+w, y+h];
-			var color = new cv.Scalar(255,0,0);
-			cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
-			faceRect.delete();
-			color.delete();
-		}
-		self.setResult(img_color, self.resultCanvas);
-		img.delete();
-		img_color.delete();
-		faces.delete();
-		img_gray.delete();
-	}
 	
 	/** Blur the original image.
 	 */
 	function blur(options) {
-		var raw = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var raw = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		var src = new cv.Mat();
 
 		cv.cvtColor(raw, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
@@ -323,7 +125,7 @@ exports.CV.prototype.imgproc = function() {
 		}
 
 		cv.blur(src, blurred, [blurSize, blurSize], [-1, -1], cv.BORDER_DEFAULT);
-		self.setResult(blurred, self.resultCanvas);
+		self.display.setMatResult(blurred);
 		raw.delete();
 		src.delete();
 		blurred.delete();
@@ -332,8 +134,8 @@ exports.CV.prototype.imgproc = function() {
 	/** Dilate the image.
 	 */
 	function dilate(options) {
-		//var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		//var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 
 		var borderValue = cv.Scalar.all(Number.MIN_VALUE);
@@ -351,7 +153,7 @@ exports.CV.prototype.imgproc = function() {
 		var element = cv.getStructuringElement(erosion_type, erosion_size, [-1, -1]);
 		var dst = new cv.Mat();
 		cv.dilate(src, dst, element, [-1, -1], 1, cv.BORDER_CONSTANT, borderValue);
-		self.setResult(dst, self.resultCanvas);
+		self.display.setMatResult(dst);
 		src.delete();
 		dst.delete();
 	}
@@ -359,7 +161,7 @@ exports.CV.prototype.imgproc = function() {
 	/** Erode the image.
 	 */
 	function erode(options) {
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 
         var borderValue = cv.Scalar.all(Number.MAX_VALUE);
@@ -377,7 +179,7 @@ exports.CV.prototype.imgproc = function() {
 		var element = cv.getStructuringElement(erosion_type, erosion_size, [-1, -1]);
 		var dst = new cv.Mat();
 		cv.erode(src, dst, element, [-1, -1], 1, cv.BORDER_CONSTANT, borderValue);
-		self.setResult(dst, self.resultCanvas);
+		self.display.setMatResult(dst);
 		src.delete();
 		dst.delete();
 	}
@@ -385,7 +187,7 @@ exports.CV.prototype.imgproc = function() {
 	/** Find contours in the image.
 	 */
 	function findContours(options) {
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 
 		var canny_output = new cv.Mat();
@@ -430,7 +232,7 @@ exports.CV.prototype.imgproc = function() {
 			green.delete();
 		}
 
-		self.setResult(canny_output, self.resultCanvas);
+		self.display.setMatResult(canny_output);
 		src.delete();
 		blurred.delete();
 		drawing.delete();
@@ -453,7 +255,7 @@ exports.CV.prototype.imgproc = function() {
 			cthresh = options.cannyThreshold;
 		}
 		
-		var data = self.getOriginalImage();
+		var data = self.display.getOriginal();
 		
 		var src = cv.matFromArray(data, cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
@@ -463,7 +265,7 @@ exports.CV.prototype.imgproc = function() {
 		
 		cv.blur(src, blurred, [5, 5], [-1, -1], 4);
 		cv.Canny(blurred, canny_output, cthresh, cthresh*2, 3, 0);
-		self.setResult(canny_output, self.resultCanvas);
+		self.display.setMatResult(canny_output);
 		src.delete();
 		blurred.delete();
 		canny_output.delete();
@@ -472,7 +274,7 @@ exports.CV.prototype.imgproc = function() {
 	/** Apply a gaussian blur to the original image.
 	 */
 	function gaussianBlur(options) {
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 
 		var blurred = new cv.Mat();
@@ -486,7 +288,7 @@ exports.CV.prototype.imgproc = function() {
 		var size = [2*blurSize+1, 2*blurSize+1];
 
 		cv.GaussianBlur(src, blurred, size, 0, 0, cv.BORDER_DEFAULT);
-		self.setResult(blurred, self.resultCanvas);
+		self.display.setMatResult(blurred);
 		src.delete();
 		blurred.delete();
 	}
@@ -497,7 +299,7 @@ exports.CV.prototype.imgproc = function() {
 	function histogram() {
 		var numBins = 255 ;
 
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4); // 24 for rgba
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4); // 24 for rgba
 		var rgbPlanes = new cv.MatVector();
 		cv.split(src, rgbPlanes);
 
@@ -560,16 +362,16 @@ exports.CV.prototype.imgproc = function() {
 						1, cv.LineTypes.LINE_8.value, 0
 					);
 		}
-		self.setResult(histImage, self.resultCanvas);
+		self.display.setMatResult(histImage);
 	}
 	
 	/** Convert image to BGRA (Blue, Green, Red, Alpha) colorspace.
 	 */
 	function makeBGRA() {
-		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var src = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
 		var res = new cv.Mat();
 		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGBA2BGRA.value, 0);
-		self.setResult(res, self.resultCanvas);
+		self.display.setMatResult(res);
 		src.delete();
 		res.delete();
 	}
@@ -577,10 +379,10 @@ exports.CV.prototype.imgproc = function() {
 	/** Convert image to grayscale.
 	 */
 	function makeGray() {
-		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var src = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
 		var res = new cv.Mat();
 		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
-		self.setResult(res, self.resultCanvas);
+		self.display.setMatResult(res);
 		src.delete();
 		res.delete();
 	}
@@ -588,12 +390,12 @@ exports.CV.prototype.imgproc = function() {
 	/** Convert image to HSV (Hue, Saturation, Value) colorspace.
 	 */
 	function makeHSV() {
-		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var src = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
 		var tmp = new cv.Mat();
 		var res = new cv.Mat();
 		cv.cvtColor(src, tmp, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 		cv.cvtColor(tmp, res, cv.ColorConversionCodes.COLOR_RGB2HSV.value, 0);
-		self.setResult(res, self.resultCanvas);
+		self.display.setMatResult(res);
 		tmp.delete();
 		src.delete();
 		res.delete();
@@ -602,10 +404,10 @@ exports.CV.prototype.imgproc = function() {
 	/** Convert image to YUV (Luminance, Chroma) colorspace.
 	 */
 	function makeYUV() {
-		var src = cv.matFromArray(self.getOriginalImage(), 24); // 24 for rgba
+		var src = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
 		var res = new cv.Mat();
 		cv.cvtColor(src, res, cv.ColorConversionCodes.COLOR_RGB2YUV.value, 0 )
-		self.setResult(res, self.resultCanvas);
+		self.display.setMatResult(res);
 		src.delete();
 		res.delete();
 	}
@@ -614,7 +416,7 @@ exports.CV.prototype.imgproc = function() {
 	 */
 
 	function medianBlur(options){
-		var src = cv.matFromArray(self.getOriginalImage(), cv.CV_8UC4);
+		var src = cv.matFromArray(self.display.getOriginal(), cv.CV_8UC4);
 		cv.cvtColor(src, src, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
 		var blurred = new cv.Mat();
 		
@@ -627,13 +429,12 @@ exports.CV.prototype.imgproc = function() {
 		}
 
 		cv.medianBlur(src, blurred, 2*blurSize+1);
-		self.setResult(blurred, self.resultCanvas);
+		self.display.setMatResult(blurred);
 		src.delete();
 		blurred.delete();
 	}
 	
 	return { blur : blur,
-			 detectFace : detectFace,
 			 dilate : dilate,
 			 erode :  erode,
 		     gaussianBlur : gaussianBlur,
@@ -646,31 +447,21 @@ exports.CV.prototype.imgproc = function() {
 			 medianBlur : medianBlur};
 };
 
+/** Get the result image.
+ */
+exports.CV.prototype.getResult = function () {
+	return this.display.getResult();
+};
+
 /** Set the input image.
  * @parameter input The image or path to a local image.  Remote images are not
  * supported due to browser security restrictions - a browser will not allow a
  * remote image to be exported from a canvas.
  */
+// TODO:  Rename to setOriginal
 exports.CV.prototype.setInput = function(input) {
-	
-	var self = this;
-	var context = this.originalCanvas.getContext("2d");
-	
-	if (input !== null && typeof input === 'string') {
-		var imageObj = new Image();
-		imageObj.src = input;
-
-		// TODO:  Catch bad input strings?
-		imageObj.onload = function () {
-			self.originalCanvas.width = imageObj.width;
-			self.originalCanvas.height = imageObj.height;
-			context.drawImage(imageObj, 0, 0);
-			self.emit('ready', true);
-		};
-	} else {
-		// TODO:  Implement this.
-	}
-}
+	this.display.setOriginal(input);
+};
 
 
 
