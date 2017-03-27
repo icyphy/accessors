@@ -1,6 +1,7 @@
 [
     "GeoCoder.js",
     "Heartbeat.js",
+    "NaturalLanguage.js",
     "RedPinLocation.js",
     "StockTick.js",
     "Weather.js"
