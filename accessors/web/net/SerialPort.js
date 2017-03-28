@@ -120,7 +120,16 @@ exports.setup = function () {
             'options': serial.supportedSendTypes()
         });
     } catch (err) {
-        error(err);
+        console.log("SerialPort.js setup(): error: '" + err + "'");
+        // If we are under Nashorn, try to print a stack trace.
+        try {
+            console.log(err.printStackTrace());
+        } catch (err2) {
+            console.log("could not get stack trace" + err2);
+        }
+        console.log(err.stack);
+        
+        throw new Error(err);
     }
 };
 
