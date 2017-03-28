@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -48,15 +48,16 @@
  *  To obtain WiFi scan data on a mac, you can use the command line tool
  *  $/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s
  *
+ *  The format of the wifiReadings parameter is consistent with the
+ *  RedPin interface specification at
+ *  http://redpin.org/resources/docu/interface_spec.pdf for the
+ *  "getLocation" action.  E.g. [{ "ssid": "AirBears2", "bssid":
+ *  "e8:65:49:e9:16:3b", "wepEnabled": false, "rssi": -88,
+ *  "isInfrastructure": true }, {...} ]. This input triggers a raw TCP
+ *  socket connection to the RedPin server running at host and port.
+ *
  *  @accessor services/RedPinLocation
- *  @input wifiReadings A JSON string array of RSSI readings. 
- *    The format is consistent with the RedPin interface specification at
- *    http://redpin.org/resources/docu/interface_spec.pdf
- *    for the "getLocation" action. 
- *    E.g. [{ "ssid": "AirBears2", "bssid": "e8:65:49:e9:16:3b", "wepEnabled": 
- *    false, "rssi": -88, "isInfrastructure": true }, {...} ]. This input
- *    triggers a raw TCP socket connection to the RedPin server running at 
- *    host and port.
+ *  @input wifiReadings A JSON string array of RSSI readings. See the comment above.
  *  @input {string} host The IP address or domain name of the RedPin server. 
  *    Defaults to 'terra.eecs.berkeley.edu' for the Berkeley server.   
  *  @input {int} port The port on the RedPin server to connect to. Defaults to 
