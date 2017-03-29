@@ -62,10 +62,10 @@ exports.initialize = function () {
     	thiz.send('output', ++numberOfFirings);
     };
     
-    thiz.setInterval(f1, 2000, thiz.getParameter('synchronizationLabel'), thiz);
+    var interv = thiz.setInterval(f1, 2000, thiz.getParameter('synchronizationLabel'), thiz);
     
     var f2 = function() {
-    	thiz.clearInterval(f1);
+    	thiz.clearInterval(interv);
     	console.log('SpontaneousAccessor1 setInterval cleared.')
     };
     thiz.setTimeout(f2, 12000, 'end');
