@@ -13,8 +13,11 @@ var fs = require('fs');
  *  It is expected that the .js file define composite accessors.
  *  @param auto The directory that contains the .js files.
  */
-exports.testNodeAuto = function(auto) {
-    console.log("testNodeAuto.js: testNodeAuto(" + auto + ")");
+exports.testNodeAuto = function(auto, testTimeout) {
+    if (typeof testTimeout === 'undefined' || testTimeout < 500) {
+        testTimeout = 5500;
+    }
+    console.log("testNodeAuto.js: testNodeAuto(" + auto + ", " + testTimeout + ")");
     var accessors;
     try {
         // If run in accessors/web/hosts/node/test/mocha/
@@ -42,7 +45,7 @@ exports.testNodeAuto = function(auto) {
         });
 	
         accessors.forEach(function(accessor) {
-	    var testTimeout = 500;
+
             if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
 		accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
                 accessor.indexOf('~') == -1 &&
@@ -71,7 +74,7 @@ exports.testNodeAuto = function(auto) {
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
 		    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
-		    
+		    console.log(replicationMessage);
                     var testAccessorName = auto +'/' + accessor;
 		    
 		    // Remove the .js from the name
@@ -81,7 +84,8 @@ exports.testNodeAuto = function(auto) {
                     var testAccessor = 
                         nodeHost.instantiateTopLevel(nodeHost.uniqueName(testAccessorName),
 						     testAccessorName);
-                    
+                    testAccessor.initialize();
+
                     var exception = null;
                     var exceptionHandler, exitHandler;
                     

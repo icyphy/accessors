@@ -67,5 +67,7 @@ try {
     }
 }
 
-autos.forEach(testNodeAuto.testNodeAuto);
+for (var i = 0, length = autos.length; i < length; i++) {
+    testNodeAuto.testNodeAuto(autos[i], 5000);
+}
 
