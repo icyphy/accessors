@@ -282,6 +282,10 @@ exports.setup = function () {
         type: 'string',
         value: ''
     });
+    this.parameter('suppressPeerResetErrors', {
+        type: 'boolean',
+        value: false
+    });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
@@ -449,7 +453,11 @@ exports.connect = function () {
     client.on('error', function (message) {
         previousHost = null;
         previousPort = null;
+        if( self.get('suppressPeerResetErrors') && message == "java.io.IOException: Connection reset by peer"){
+            console.log(message)
+        } else {
         self.error(message);
+        }
     });
 
     client.open();
