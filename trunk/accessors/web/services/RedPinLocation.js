@@ -103,6 +103,9 @@ exports.setup = function () {
     this.input('port', {
         'value': 8090
     });
+    this.parameter('suppressPeerResetErrors', {
+    	'value':true
+    });
 };
 
 exports.initialize = function(){
