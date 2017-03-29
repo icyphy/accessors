@@ -157,11 +157,13 @@ exports.initialize = function () {
     var self = this;
 
     port.on('data', function (data) {
+        // console.log('SerialPort.js data: ' + data);
         if (self.getParameter('receiveType') === 'json') {
             try {
                 data = JSON.parse(data);
                 self.send('received', data);
             } catch(err) {
+                console.log('SerialPort: invalid data: ' + data + ', error: ' + err);
                 self.send('invalid', data);
             }
         } else {
