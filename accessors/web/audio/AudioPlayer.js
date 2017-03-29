@@ -21,11 +21,25 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-
 /** Accessor to play an audio signal.
- *  FIXME: This accessor is a placeholder.
- *  It just plays 2 seconds of fixed audio in initialize().
- *  You should update it to accept an input and play that.
+ *  This accessor accepts as input an array of arrays of audio samples,
+ *  one per channel. The samples are numbers in the range between -1.0 to 1.0.
+ *  It queues the data in the array to be played by the audio system.
+ *  When the data has been accepted by the audio system to be played,
+ *  it produces an output with value true. That output should be used
+ *  as a trigger to provide more output data. If that new output data
+ *  is provided before the previously data has been drained by the audio
+ *  queue, then continuous audio with no gaps is possible.
+ *  If on the other hand input data is provided too quickly, then it
+ *  will overwrite the data in the output buffer, thereby creating
+ *  considerable distortion.
+ *  
+ *  FIXME: This accessor is incomplete. It should accept more formats
+ *  compatible with AudioCapture.
+ *  
+ *  @input input The audio data.
+ *  @output accepted An indicator that the audio data has been queued
+ *   to the audio system.
  *
  *  @accessor audio/AudioPlayer
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
@@ -40,31 +54,30 @@
 
 // Set up the accessor.
 exports.setup = function () {
-    // FIXME: Define your inputs and outputs here.
+    this.input('input');
+    this.output('accepted', {
+        type: 'boolean',
+        spontaneous: true,
+    });
 };
 
 var player = null;
 var audio = require("audio");
 
 exports.initialize = function () {
-        // Create an empty array.
-        var sinusoid = [];
-        // As a test, produce about 2 seconds of sound in 128-sample chunks.
-        var n = 0;
-        player = new audio.Player();
-        for (var j = 0; j < 128; j++) {
-            for (var i = 0; i < 128; i++) {
-                // Note that in JavaScript, arrays don't have fixed size.
-                // They grow as needed.
-                sinusoid[i] = Math.sin(2 * Math.PI * 440 * n++/ 8000);
-                }
-                player.play(sinusoid);
-            }
-        };
+    var self = this;
+    player = new audio.Player(null, "raw");
+    self.addInputHandler('input', function() {
+        // FIXME: Input format.
+        player.play(self.get('input'), function() {
+            self.send('accepted', true);
+        });
+    });
+};
 
-        exports.wrapup = function () {
-            if (player !== null) {
-                player.stop();
-                player = null;
-            }
-        };
+exports.wrapup = function () {
+    if (player !== null) {
+        player.stop();
+        player = null;
+    }
+};
