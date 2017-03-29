@@ -21,7 +21,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** An accessor for playing a sound clip.
+/** An accessor for playing a sound clip from a URL.
  *
  *  @accessor audio/ClipPlayer
  *  @author Elizabeth Osyk (beth@berkeley.edu)
@@ -29,7 +29,7 @@
  *   The value is ignored and can be anything.
  *  @input stop A trigger to stop playback.
  *   The value is ignored and can be anything.
- *  @parameter clipURL The URL to retrieve the sound clip from.
+ *  @input clipURL The URL to retrieve the sound clip from.
  *  @version $$Id$$
  */
 
@@ -42,40 +42,60 @@
 
 var audio = require("audio");
 
-
 exports.setup = function () {
-    this.input('start', {
-        'value': true
-    });
+    this.input('start');
     this.input('stop');
-    this.output('output');
-    this.output('signal', {
-        'type': 'number'
-    });
-    this.parameter('clipURL', {
+    this.input('clipURL', {
         'type': 'string',
         'value': 'http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3'
     });
 };
 
+var playerPlaying = null;
+var previousURL = null;
+
 exports.initialize = function () {
     var self = this;
-    self.player = new audio.ClipPlayer();
-    self.player.load(this.getParameter('clipURL'));
+    
+    function updateURL() {
+        var url = self.get('clipURL');
+        if (url && url !== previousURL) {
+            console.log('Got a new URL: ' + url);
+            self.player = new audio.ClipPlayer(url);
+            previousURL = url;
+        }
+    };
+    updateURL();
 
+    this.addInputHandler('clipURL', function () {
+        updateURL();
+    });
+    
     this.addInputHandler('start', function () {
+        // In case there is a new URL...
+        updateURL();
+        
+        if (playerPlaying) {
+            playerPlaying.stop();
+        }
+        if (!self.player) {
+            error('No clip specified.');
+            return;
+        }
         self.player.play();
-        self.send('output', true);
+        playerPlaying = self.player;
     });
 
     this.addInputHandler('stop', function () {
-        self.player.stop();
-        self.send('output', false);
+        if (playerPlaying) {
+            playerPlaying.stop();
+            playerPlaying = null;
+        }
     });
 };
 
 exports.wrapup = function () {
-    if (this.player !== null) {
-        this.player.stop();
+    if (playerPlaying) {
+        playerPlaying.stop();
     }
 };
