@@ -249,7 +249,12 @@ var executeAndSetNextTick = function() {
 	// Update logical Time
     logicalTime += timeChunk;
     
-	console.log('--executeAndSetNextTick(): At time = ' + logicalTime + ' with timeChunk = ' + timeChunk);
+    // Record time in order to measure callbacks execution
+    var timeBeforeCallbacksExecution = Date.now();
+    
+	console.log('--Execute: At logical time: ' + logicalTime 
+			+ ' At real time: ' + timeBeforeCallbacksExecution % 100000 
+			+ ' with timeChunk: ' + timeChunk);
     
     // Execute callbacks
     executeCallbacks();
@@ -260,10 +265,20 @@ var executeAndSetNextTick = function() {
         return;
     }
     
-    // Compute the next timeChunk, mark the wall clock time and then set the 
-    // next tick
+    // Compute the next timeChunk, save the real time
     timeChunk = computeNextTimeChunk();
     lastTimeChunkInstant = Date.now();
+    
+    // Update next tick to include the callbacks execution time
+    var callbacksExecutionTime = lastTimeChunkInstant - timeBeforeCallbacksExecution;
+    if (timeChunk >= callbacksExecutionTime) {
+    	timeChunk -= callbacksExecutionTime;
+    	logicalTime += callbacksExecutionTime;
+    }
+    else {
+    	logicalTime += timeChunk;
+    	timeChunk = 0;
+    }
     tick = setTimeout(executeAndSetNextTick, timeChunk);        
 }
 
