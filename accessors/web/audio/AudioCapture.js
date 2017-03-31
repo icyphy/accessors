@@ -35,18 +35,12 @@
  *  should appear on the output. The available formats may include:
  *  
  *  * "raw": The output is a byte array representing audio data exactly as
- *    captured in the specified capture format. This is the default and is
+ *    captured by default on the host. This is the default and is
  *    supported by all hosts.
- *  * "array": The audio data is converted into arrays of numbers (one per
- *    channel), where each number is in the range from -1.0 to 1.0.
+ *  * "array": The audio data is converted into an array of arrays of numbers (one
+ *    array per channel), where each number is in the range from -1.0 to 1.0.
  *    The output is an array of arrays, where the first index specifies
  *    the channel number.
- *  * "samples": The audio data is converted into numbers, where
- *    each number is in the range from -1.0 to 1.0, and each individual sample
- *    is produced on the output as a number (if there is only one channel) or
- *    as an array of numbers (if there is more than one channel).
- *    Note that this format introduces quite a lot of overhead, and probably
- *    your swarmlet will not able to capture continuous audio.
  *  * "aiff": The audio data is converted into the AIFF file format historically
  *    associated with Apple computers.
  *  * "aifc": The audio data is converted into the AIFF-C, a compressed version
@@ -56,7 +50,7 @@
  *  * "wav": The audio data is converted into the WAVE file format historically
  *    associated with Windows PCs.
  *  
- *  The _captureFormat_ argument is an object with the following properties,
+ *  The _captureFormat_ parameter is an object with the following properties,
  *  all of which are optional:
  *  
  *  * _bitsPerSample_: The number of bits per sample. This is an integer that
@@ -74,6 +68,8 @@
  *  @input trigger A trigger input for triggered mode.
  *   The value is ignored and can be anything.
  *  @output {Object} signal The audio output.
+ *  @parameter captureFormat The details of the audio format as an object.
+ *   This defaults to {bitsPerSample: 16, channels: 1, sampleRate: 8000}.
  *  @parameter {int} captureTime The length of time for each audio capture
  *   (in milliseconds).
  *   This defaults to 1000, capturing 1 second of audio at a time.
@@ -123,7 +119,7 @@ exports.setup = function () {
         this.parameter('outputFormat', {
             type: 'string',
             value: 'raw',
-            'options': audio.outputFormats()
+            'options': audio.byteFormats()
         });
     } catch (err) {
         error(err);
