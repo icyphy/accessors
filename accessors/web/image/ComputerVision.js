@@ -80,7 +80,7 @@ exports.initialize = function() {
         var options = this.getParameter('options');
         var transform = this.getParameter('transform');
         
-        var result = cv.filter(image, transform, options, function(result) {
+        cv.filter(image, transform, options, function(result) {
         	self.send('output', result);
         });
     });
