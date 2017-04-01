@@ -52,37 +52,21 @@
 /*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
 /*jshint globalstrict: true */
 
-var CV = null;
-var cv = null;
-var imgproc = null;
-
-try {
-    CV = require('computerVision');
-    cv = new CV.CV();
-    imgproc = cv.imgproc();
-} catch (error) {
-    console.log("The CV module was not present.  The ComputerVision accessor " +
-    		"is not supported on this accessor host.");
-}
+var cv = require("computerVision");
 
 /** Create inputs, outputs and parameters for the accessor.
  */
 exports.setup = function() {
-	if (imgproc !== null) {
-	    this.input('input');
-	    this.parameter('options', {
-	    	type: 'JSON'
-	    });
-	    this.parameter('transform', {
-	    	type: 'string',
-	    	options: Object.keys(imgproc), 
-	    	value: 'findEdges'
-	    });
-	    this.output('output');
-	} else {
-	    console.log("The CV module was not present.  The ComputerVision accessor " +
-		"is not supported on this accessor host.");
-	}
+    this.input('input');
+    this.parameter('options', {
+    	type: 'JSON'
+    });
+    this.parameter('transform', {
+    	type: 'string',
+    	options: cv.filters,
+    	value: 'makeGray'
+    });
+    this.output('output');
 };
 
 /** Register an input handler to apply the selected transformation on each input 
@@ -92,29 +76,12 @@ exports.initialize = function() {
 	var self = this;
 	
     this.addInputHandler('input', function() {
-    	// Check for null cv variable to avoid problems in Cape Code.
-    	if (cv !== null) {
-        	cv.setInput(self.get('input'));
-        	
-        	cv.once('ready', function(){
-            	// Apply the selected transform.
-            	var options = self.getParameter('options');
-            	var transform = self.getParameter('transform');
-            	
-            	// Check if value is a supported transform.
-            	var supported = Object.keys(imgproc);
-            	
-            	if (supported.includes(transform)) {
-            		imgproc[transform](options);
-            	} else {
-            		error('Unsupported transform ' + transform);
-            	}
-            	
-            	self.send('output', cv.getResult());
-        	});
-    	} else {
-    	    console.log("The CV module was not present.  The ComputerVision accessor " +
-    		"is not supported on this accessor host.");
-    	}
+        var image = this.get('input');
+        var options = this.getParameter('options');
+        var transform = this.getParameter('transform');
+        
+        var result = cv.filter(image, transform, options, function(result) {
+        	self.send('output', result);
+        });
     });
 };
