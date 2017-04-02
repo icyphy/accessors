@@ -35,10 +35,41 @@
  *
  *  Based on code from examples in:  <a href="https://github.com/ucisysarch/opencvjs#in_browser">https://github.com/ucisysarch/opencvjs</a>
  *
- *  The API follows the OpenCV API:
- *  <a href="http://docs.opencv.org/3.0-beta/modules/refman.html#in_browser">/hosts/browser/demo/computerVision/computerVision.html</a>
+ * To use, import the module:
+ * var cv = require('computerVision');
+ * 
+ * To obtain a list of filters:
+ * var filters = cv.filters;
+ * 
+ * Invoke a filter and handle the result.  For example, in an accessor with an 
+ * input "image" and output "result", to run findEdges():
+ * 
+ * var self = this;
+ * 
+ * this.addinputHandler('input', function() {
+ * 	var image = this.get('input');
+ *  var options = {};
+ *  options.cannyThreshold = 20;
+ *  
+ *  cv.filter(image, 'findEdges', options, function(result) {
+ *  	self.send('output', result);
+ *  });
+ * });
  *
-re * @module computerVision
+ * The module supports these transforms:
+ * Filter.blur(options): Blur the image, optionally passing in options.blurSize (1-25).
+ * Filter.dilate(options): Dilate the image, optionally passing in options.erosionSize (0-21).
+ * Filter.erode(options): Erode the image, optionally passing in options.erosionSize (0-21).
+ * Filter.findContours(options): Find contours of an image, optionally passing in options.cannyThreshold (10-150).
+ * Filter.findEdges(options): Find edges of an image, optionally passing in options.cannyThreshold (10-150).
+ * Filter.gaussianBlur(options): Blur the image, optionally passing in options.blurSize (1-25).
+ * Filter.histogram(): Create a histogram from the image showing red, green and blue content.
+ * Filter.makeBGRA(): Convert image to blue, green, red, alpha colorspace.
+ * Filter.makeGray(): Convert image to grayscale.
+ * Filter.makeHSV(): Convert image to hue, saturation, value colorspace.
+ * Filter.makeYUV(): Convert image to luminance, chroma colorspace. 
+ *
+ * @module computerVision
  * @author Sajjad Taheri (CV code), Elizabeth Osyk (accesorization)  
  */
 
@@ -48,32 +79,14 @@ re * @module computerVision
 /*jshint globalstrict: true*/
 "use strict";
 
-/** Construct an instance of a CV object type. This should be instantiated in 
- *  your JavaScript code as:
- *  <pre>
- *     var CV = require("computerVision");
- *     var cv = new CV.CV();
- *  </pre>
- *  
- *  The CV object offers image processing functions categorized according to the
- *  OpenCV API, http://docs.opencv.org/3.0-beta/modules/refman.html .
- *  For example, to call the findEdges function:
- *  <pre>
- *  	cv.imgproc().findEdges(options);
- *  </pre>
- *  Where options is optional and contains any function-specific options, such 
- *  as thresholds.
- *  
- *  An instance of the CV object type implements the following functions:
- *  <ul>
- *  <li> imgproc().findEdges(options): Find edges using the canny edge detector.
- *  </ul>
- */
-
 var EventEmitter = require('events').EventEmitter;
 var cv = require('cv.js');
 var ImageProcessingDisplay = require('imageProcessingDisplay');
 
+/** Construct a Filter object that creates a pair of displays and allows 
+ * access to various image processing filters.
+ * @returns A Filter object.
+ */
 function Filter() {
 	var self = this;
 	
