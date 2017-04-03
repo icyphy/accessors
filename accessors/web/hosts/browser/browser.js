@@ -524,7 +524,12 @@ function generateAccessorHTML(path, id, text) {
             var modules = document.getElementById(id + 'Modules');
             var text = modules.innerHTML;
             // No need to mention deterministicTemporalSemantics in the list of modules.
-            if (path.indexOf('deterministicTemporalSemantics') === -1) {
+            if (path.indexOf('deterministicTemporalSemantics') !== -1) {
+                if (text) {
+		    // Remove the trailing '</p>'
+                    text = text.replace('</p>', '');
+                }
+            } else {
                 if (!text) {
                     text = '<p><b>Modules required:</b> ' + path;
                 } else {
