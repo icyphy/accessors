@@ -189,7 +189,7 @@ exports.Camera = function (name) {
 			document.body.insertBefore(container, accessorDiv);
 		}
 	} else {
-		// Look for accessorDirectoryTarget, as in terraswarm library page.
+		// Look for accessorDirectoryTarget, as in accessors library page.
 		accessorDiv = document.getElementById('accessorDirectoryTarget');
 		
 		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
