@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -78,7 +78,7 @@ server.on('request', function (request, response) {
         } else {
             // Otherwise, look for a file
 
-            // This test server may be used to test pages for terraswarm.org.
+            // This test server may be used to test pages for icyphy.org.
             // The URLS for these pages have a leading 'accessors/'. Remove it.
             if (url.indexOf('accessors/') === 0) {
                 url = url.substring(10);

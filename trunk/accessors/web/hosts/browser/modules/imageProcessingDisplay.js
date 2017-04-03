@@ -1,5 +1,5 @@
 // A module to display source and result images for image processing accessors.
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -140,7 +140,7 @@ exports.ImageProcessingDisplay = function (options) {
 			document.body.insertBefore(container, accessorDiv);
 		}
 	} else {
-		// Look for accessorDirectoryTarget, as in terraswarm library page.
+		// Look for accessorDirectoryTarget, as in accessors library page.
 		accessorDiv = document.getElementById('accessorDirectoryTarget');
 		
 		if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
