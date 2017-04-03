@@ -314,8 +314,8 @@ exports.send = function (data){
         client.send(data);
     } 
     else {
-        if(client){
-            //In case the server has closed the socket, reconnect.
+        if (client){
+            // In case the server has closed the socket, reconnect.
             this.exports.connect.call(this);
             client.send(data);
         }
@@ -337,7 +337,7 @@ exports.send = function (data){
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-    exports.send(this.get('toSend'));
+    this.exports.send.call(this, this.get('toSend'));
 };
 
 /** Set up input handlers, and if the current value of the 'port' input is
