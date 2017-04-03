@@ -1,6 +1,6 @@
 // Browser host implementation of host-specific functions.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -1503,7 +1503,7 @@ function normalizePath(path) {
     }
 
     // Make sure the path starts with /accessors so that it will work
-    // with the TerraSwarm accessor host.
+    // with the accessor host.
     if (path.indexOf('/') === 0) {
         path = path.substring(1);
     }
