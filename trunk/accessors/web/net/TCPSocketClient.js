@@ -282,10 +282,6 @@ exports.setup = function () {
         type: 'string',
         value: ''
     });
-    this.parameter('suppressPeerResetErrors', {
-        type: 'boolean',
-        value: false
-    });
 
     // Attempt to add a list of options for types, but do not error out
     // if the socket module is not supported by the host.
@@ -318,19 +314,20 @@ exports.send = function (data){
             // In case the server has closed the socket, reconnect.
             this.exports.connect.call(this);
             client.send(data);
-        }
-        if (!getParameter('discardMessagesBeforeOpen')) {
-            var maxUnsentMessages = getParameter('maxUnsentMessages');
-
-            if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
-                this.error("Maximum number of unsent messages has been exceeded: " +
-                    maxUnsentMessages +
-                    ". Consider setting discardMessagesBeforeOpen to true.");
-                return;
-            }
-            pendingSends.push(data);
         } else {
-            console.log('Discarding data because socket is not open.');
+            if (!getParameter('discardMessagesBeforeOpen')) {
+                var maxUnsentMessages = getParameter('maxUnsentMessages');
+
+                if (maxUnsentMessages > 0 && pendingSends.length >= maxUnsentMessages) {
+                    this.error("Maximum number of unsent messages has been exceeded: " +
+                        maxUnsentMessages +
+                        ". Consider setting discardMessagesBeforeOpen to true.");
+                    return;
+                }
+                pendingSends.push(data);
+            } else {
+                console.log('Discarding data because TCP Socket Client has not yet been set up.');
+            }
         }
     }
 };
@@ -453,11 +450,7 @@ exports.connect = function () {
     client.on('error', function (message) {
         previousHost = null;
         previousPort = null;
-        if( self.get('suppressPeerResetErrors') && message == "java.io.IOException: Connection reset by peer"){
-            console.log(message)
-        } else {
         self.error(message);
-        }
     });
 
     client.open();
