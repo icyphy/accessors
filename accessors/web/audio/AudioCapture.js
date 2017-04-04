@@ -63,13 +63,15 @@
  *  not be provided by an accessor host. Moreover, a host may not support
  *  all capture formats and all output formats.
  *
+ *  The default captureFormat is  {bitsPerSample: 16, channels: 1, sampleRate: 8000}.
+ *
  *  @accessor audio/AudioCapture
  *  @author  Edward A. Lee and Ilge Akkya
  *  @input trigger A trigger input for triggered mode.
  *   The value is ignored and can be anything.
  *  @output {Object} signal The audio output.
  *  @parameter captureFormat The details of the audio format as an object.
- *   This defaults to {bitsPerSample: 16, channels: 1, sampleRate: 8000}.
+ *   See the accessor comment for the default.
  *  @parameter {int} captureTime The length of time for each audio capture
  *   (in milliseconds).
  *   This defaults to 1000, capturing 1 second of audio at a time.
