@@ -1,5 +1,5 @@
 // A computer vision accessor.
-// Copyright (c) 2015 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -51,6 +51,7 @@
 // space between the / and the * and global.
 /*globals addInputHandler, exports, get, getParameter, input, output, removeInputHandler, require, send  */
 /*jshint globalstrict: true */
+"use strict";
 
 var cv = require("computerVision");
 

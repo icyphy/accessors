@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -87,7 +87,7 @@
 
 // Stop extra messages from jslint and jshint.  Note that there should be no
 // space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals addInputHandler, exports, input, output, removeInputHandler, require, send */
+/*globals addInputHandler, error, exports, input, output, removeInputHandler, require, send */
 /*jshint globalstrict: true*/
 "use strict";
 

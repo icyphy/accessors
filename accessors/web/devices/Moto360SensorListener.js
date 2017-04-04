@@ -84,7 +84,7 @@
 var UDPSocket = require('udpSocket');
 
 // FIXME: Use built in debug capability.
-var debug = false;
+var debug = true;
 
 // Initialize these to large numbers so that the first output always appears.
 // Accelerometer values.
