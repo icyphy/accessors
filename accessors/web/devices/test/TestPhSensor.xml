@@ -65,6 +65,18 @@
         </property>
         <property name="outputCompleteResponsesOnly" class="ptolemy.data.expr.Parameter">
         </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;Retrieves the latest ph measurement from your garden&lt;/p&gt;&#10;&lt;p&gt; This accessor does not block waiting for the response, but if any additional&#10; &lt;em&gt;symbol&lt;/em&gt; input is received before a pending request has received a response&#10; or timed out, then the new request will be queued and sent out only after&#10; the pending request has completed. This strategy ensures that outputs are&#10; produced in the same order as the input requests.&lt;/p&gt;&#10;&lt;p&gt; This accessor requires the optional 'httpClient' module, which may or may&#10; not be provided by an accessor host. Most hosts will provide this module.&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Matt Weber (matt.weber@eecs.berkeley.edu)">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: PhSensor.js 1121 2016-11-28 05:49:50Z cxh $$">
+            </property>
+            <property name="trigger (port)" class="ptolemy.kernel.util.StringAttribute" value="An input to trigger data acqusition.">
+            </property>
+            <property name="ph (port)" class="ptolemy.kernel.util.StringAttribute" value="The latest measured pH value.">
+            </property>
+        </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
             <property name="defaultValue" class="ptolemy.data.expr.Parameter">
