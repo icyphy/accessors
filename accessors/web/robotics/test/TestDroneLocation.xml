@@ -34,7 +34,7 @@
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
             </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: DroneLocation.js 1 2016-03-06 16:00:00Z eloi $$">
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: DroneLocation.js 1121 2016-11-28 05:49:50Z cxh $$">
             </property>
             <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
             </property>
@@ -45,6 +45,16 @@
             <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The port of the web server created by dump1090">
             </property>
             <property name="timeToLiveIfNotUpdated (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
+            </property>
+            <property name="lat (port)" class="ptolemy.kernel.util.StringAttribute" value="Latitude of the drone">
+            </property>
+            <property name="lon (port)" class="ptolemy.kernel.util.StringAttribute" value="Longitude of the drone">
+            </property>
+            <property name="alt (port)" class="ptolemy.kernel.util.StringAttribute" value="Altitude of the drone">
+            </property>
+            <property name="rosbridgeServer (parameter)" class="ptolemy.kernel.util.StringAttribute" value="RosBridge server address">
+            </property>
+            <property name="rosbridgePort (parameter)" class="ptolemy.kernel.util.StringAttribute" value="RosBridge server port">
             </property>
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[140.0, 215.0]">
@@ -85,11 +95,11 @@
         <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/geodesy/Lla2Ecef.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor takes a WG-84 location (latitude, longitude, and altitude) and converts it to ECEF (Earth-Centered, Earth-Fixed) cartesian coordinates&lt;/p&gt;">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor takes a WG-84 location (latitude, longitude, and altitude)&#10;and converts it to ECEF (Earth-Centered, Earth-Fixed) cartesian coordinates.&#10; Based on http://danceswithcode.net/engineeringnotes/geodetic_to_ecef/geodetic_to_ecef.html&lt;/p&gt;">
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
             </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: Lla2Ecef.js 1 2016-03-06 16:00:00Z eloi $$">
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: Lla2Ecef.js 1121 2016-11-28 05:49:50Z cxh $$">
             </property>
             <property name="latitude (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
             </property>
@@ -97,11 +107,17 @@
             </property>
             <property name="altitude (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
             </property>
-            <property name="x (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            <property name="x (port)" class="ptolemy.kernel.util.StringAttribute" value="ecef x coordinate">
             </property>
-            <property name="y (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            <property name="y (port)" class="ptolemy.kernel.util.StringAttribute" value="ecef y coordinate">
             </property>
-            <property name="z (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            <property name="z (port)" class="ptolemy.kernel.util.StringAttribute" value="ecef z coordinate">
+            </property>
+            <property name="lat (port)" class="ptolemy.kernel.util.StringAttribute" value="latitude">
+            </property>
+            <property name="lon (port)" class="ptolemy.kernel.util.StringAttribute" value="longitude">
+            </property>
+            <property name="alt (port)" class="ptolemy.kernel.util.StringAttribute" value="altitude">
             </property>
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[320.0, 370.0]">
