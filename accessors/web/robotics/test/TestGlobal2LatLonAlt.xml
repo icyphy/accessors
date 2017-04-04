@@ -30,11 +30,11 @@
         <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/robotics/RosSubscriber.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor subscribes to a pre-established ROS topic.&lt;br&gt;&#10; It communicates to ROS through the rosbridge web socket, and extends the &#10; WebSocketClient accessor to do so. &#10; It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.&lt;br&gt;. &#10; The other parameters configure how the data is to be received according&#10; to the rosbridge specification:&#10; https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe&lt;/p&gt;">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor subscribes to a pre-established ROS topic.&lt;br&gt;&#10; It communicates to ROS through the rosbridge web socket, and extends the&#10; WebSocketClient accessor to do so.&#10; It has a 'topic' parameter, that must be prefixed with a '/' eg: '/noise'.&lt;br&gt;.&#10; The other parameters configure how the data is to be received according&#10; to the rosbridge specification:&#10; https://github.com/RobotWebTools/rosbridge_suite/blob/develop/ROSBRIDGE_PROTOCOL.md#344-subscribe&lt;/p&gt;">
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Marcus Pan, Matt Weber">
             </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: RosSubscriber.js 546 2016-02-03 02:07:57Z cxh $$">
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: RosSubscriber.js 1117 2016-11-23 00:59:47Z cxh $$">
             </property>
             <property name="connected (port)" class="ptolemy.kernel.util.StringAttribute" value="The status of the web socket connection.">
             </property>
@@ -145,7 +145,7 @@
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
             </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: GlobalPosition2LatLonAlt.js 1 2016-03-06 16:00:00Z eloi $$">
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: Global2LatLonAlt.js 1121 2016-11-28 05:49:50Z cxh $$">
             </property>
             <property name="global (port)" class="ptolemy.kernel.util.StringAttribute" value="maveros message">
             </property>
@@ -154,6 +154,12 @@
             <property name="longitude (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
             </property>
             <property name="altitude (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            </property>
+            <property name="lat (port)" class="ptolemy.kernel.util.StringAttribute" value="latitude">
+            </property>
+            <property name="lon (port)" class="ptolemy.kernel.util.StringAttribute" value="longitude">
+            </property>
+            <property name="alt (port)" class="ptolemy.kernel.util.StringAttribute" value="altitude">
             </property>
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[345.0, 250.0]">

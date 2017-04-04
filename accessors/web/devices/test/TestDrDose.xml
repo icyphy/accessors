@@ -76,6 +76,22 @@
         </property>
         <property name="outputCompleteResponsesOnly" class="ptolemy.data.expr.Parameter">
         </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor controls acid, base, and nutrient dosing for your garden.&#10; When a duration in miliseconds is sent to the accessor, it doses&#10; the corresponding type of fluid. As of this time, simultaneous dosing commands will be send independtly&#10; in some arbitrary order.&lt;/p&gt;&#10;&lt;p&gt; This accessor reacts to a &lt;em&gt;symbol&lt;/em&gt; input by issuing a query to a web server&#10; for the most recent trade prices of the common stock whose symbol is given&#10; by the input. When the server replies, this accessor produces the most&#10; recent trade price on the &lt;em&gt;price&lt;/em&gt; output.&lt;/p&gt;&#10;&lt;p&gt; This accessor does not block waiting for the response, but if any additional&#10; &lt;em&gt;symbol&lt;/em&gt; input is received before a pending request has received a response&#10; or timed out, then the new request will be queued and sent out only after&#10; the pending request has completed. This strategy ensures that outputs are&#10; produced in the same order as the input requests.&lt;/p&gt;&#10;&lt;p&gt; This accessor requires the optional 'httpClient' module, which may or may&#10; not be provided by an accessor host. Most hosts will provide this module.&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Matt Weber (matt.weber@eecs.berkeley.edu)">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: DrDose.js 1121 2016-11-28 05:49:50Z cxh $$">
+            </property>
+            <property name="Acid (port)" class="ptolemy.kernel.util.StringAttribute" value="Duration The desired dosing time in miliseconds.">
+            </property>
+            <property name="Base (port)" class="ptolemy.kernel.util.StringAttribute" value="Duration The desired dosing time in miliseconds.">
+            </property>
+            <property name="Nutrient (port)" class="ptolemy.kernel.util.StringAttribute" value="Duration The desired dosing time in miliseconds.">
+            </property>
+            <property name="Response (port)" class="ptolemy.kernel.util.StringAttribute" value="Confirmation from Dr. Dose that it has received the request.">
+            </property>
+        </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
             <property name="defaultValue" class="ptolemy.data.expr.Parameter">

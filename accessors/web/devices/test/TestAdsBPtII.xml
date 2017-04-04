@@ -59,15 +59,33 @@
         <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/devices/AdsB.js">
         </property>
         <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an &#10;aircraft determines its position via satellite navigation and periodically broadcasts it, enabling it to be tracked.&lt;/p&gt;">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an&#10;aircraft periodically broadcasts its state such as location, altitude, heading, etc.&#10;In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090,&#10;plug your SDR USB dongle, and run ./dump1090 --net --interactive&#10;One can also feed the accessor with a reference location (e.g. from an autopilot) and a threshold parameter.&#10;If a reference location is provided, the accessor retrieves all the aircrafts within the threshold distance in the output &amp;quot;traffic&amp;quot;&lt;/p&gt;">
             </property>
             <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
             </property>
-            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: AdsB.js 1 2016-02-22 02:15:27Z eloi $$">
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: AdsB.js 1121 2016-11-28 05:49:50Z cxh $$">
             </property>
             <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
             </property>
             <property name="an (port)" class="ptolemy.kernel.util.StringAttribute" value="array of objects containing the aircraft information">
+            </property>
+            <property name="latRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Latitude of the reference location">
+            </property>
+            <property name="lonRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Longitude of the reference location">
+            </property>
+            <property name="altRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Altitude of the reference location">
+            </property>
+            <property name="aircrafts (port)" class="ptolemy.kernel.util.StringAttribute" value="An object mapping aircraft flight IDs to aircraft state">
+            </property>
+            <property name="traffic (port)" class="ptolemy.kernel.util.StringAttribute" value="Aircrafts within a threshold distance of the reference location">
+            </property>
+            <property name="dump1090Server (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The address of the web server created by dump1090">
+            </property>
+            <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The port of the web server created by dump1090">
+            </property>
+            <property name="timeToLiveIfNotUpdated (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
+            </property>
+            <property name="threshold (parameter)" class="ptolemy.kernel.util.StringAttribute" value="Threshold distance in kilometers">
             </property>
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[335.0, 245.0]">
