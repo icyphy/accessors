@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -36,7 +36,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals exports, output, require, send */
+/*globals console, error, exports, output, require, send */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -64,7 +64,7 @@ exports.initialize = function () {
             self.player = new audio.ClipPlayer(url);
             previousURL = url;
         }
-    };
+    }
     updateURL();
 
     this.addInputHandler('clipURL', function () {
