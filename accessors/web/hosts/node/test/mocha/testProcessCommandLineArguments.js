@@ -13,25 +13,25 @@ describe('NodeHost', function() {
 
     it('testProcessCommandLineArguments.js 1.1: nodeHost.processCommandLineArguments().  Should have generated a usage message.', function () {
         var args = [];
-        // 3 is the error code
-        assert.equal(nodeHost.processCommandLineArguments(args), false);
+        // FIXME: We should capture stdout here, like we do with Tcl.
+        assert.equal(nodeHost.processCommandLineArguments(args), undefined);
     });
 
     it('testProcessCommandLineArguments.js 1.2: nodeHost.processCommandLineArguments(-h). Should have generated a usage message.', function () {
         var args = [ '-h' ];
         // FIXME: It would be nice to catch the output here
-        assert.equal(nodeHost.processCommandLineArguments(args), 0);
+        assert.equal(nodeHost.processCommandLineArguments(args), undefined);
     });
 
     it('testProcessCommandLineArguments.js 1.3: nodeHost.processCommandLineArguments(-timeout) with no timeout. Should have generated an error message.', function () {
         var args = ['-timeout'];
-        assert.equal(nodeHost.processCommandLineArguments(args), false);
+        assert.equal(nodeHost.processCommandLineArguments(args), undefined);
     });
 
     it('testProcessCommandLineArguments.js 1.4: nodeHost.processCommandLineArguments(-v). Should have generated a version message.', function () {
         var args = [ '-v' ];
         // FIXME: It would be nice to catch the output here
-        assert.equal(nodeHost.processCommandLineArguments(args), 0);
+        assert.equal(nodeHost.processCommandLineArguments(args), undefined);
     });
 
     // Run a composite accessor that has a TrainableTest accessor and check
@@ -104,7 +104,7 @@ describe('NodeHost', function() {
 
             var args = [ '--timeout', '5500', accessorPath ];
             // FIXME: It would be nice to catch the output here
-            assert.equal(nodeHost.processCommandLineArguments(args, null, nodeHost.instantiateTopLevel), true);
+            assert.equal(nodeHost.processCommandLineArguments(args, null, nodeHost.instantiateTopLevel), undefined);
             assert.ok(typeof nodeHost.getTopLevelAccessors() !== 'undefined',
                     "nodeHost.accessors is not defined after invoking main " + args);
         });
