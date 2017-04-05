@@ -806,6 +806,8 @@
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
+      <arg line="--retries"/>
+      <arg line="2"/>
       <arg line="${converted}"/>
     </exec>
 
@@ -823,6 +825,7 @@
           description="Use mocha to test just the composite accessors and write to stdout."
 	  depends="mocha-update, terraswarm-gdp-update">
     <echo>
+
       ==tests.mocha.composite==
       This target uses mocha to run the composite accessors via
       hosts/node/test/mocha/testNodeAllAuto.js
@@ -840,6 +843,8 @@
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
+      <arg line="--retries"/>
+      <arg line="2"/>
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
@@ -883,6 +888,8 @@
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
       <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
+      <arg line="--retries"/>
+      <arg line="2"/>
       <arg line="${converted}"/>
     </exec>
 
