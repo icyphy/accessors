@@ -1,6 +1,6 @@
 // Without requiring a file system, given a file name, return the contents of the file.
 
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 // 
 // Permission is hereby granted, without written agreement and without
