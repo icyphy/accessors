@@ -63,7 +63,7 @@
  *   *  callbackFunction: the callback function
  *   *  interval: that is the triggering timeout
  *   *  periodic: if set to true, the callback needs to execute every interval time,
- *   	otherwise, it executes only once.
+ *           otherwise, it executes only once.
  *   *  nextExecutionTime: records the next time at which the callback should be
  *      executed.
  *        
@@ -136,7 +136,7 @@ function setIntervalDet(callback, timeout, synchronizationLabel) {
  *  @return the unique Id of setTimeout call
  */
 function setTimeoutDet(callback, timeout, synchronizationLabel) {
-	// Construct a new object
+    // Construct a new object
     var newTimedCallback = {};
     newTimedCallback.cbFunction = callback;
     newTimedCallback.interval = timeout;
@@ -166,9 +166,9 @@ function updateNextTick(newTimedCallback, synchronizationLabel, cbId) {
     // If this is the first element in the list, then  set the timeChunk 
     // and set the next tick 
     if (!timedCallbacks) {
-    	newTimedCallback.nextExecutionTime = newTimedCallback.interval;
-    	
-    	// add to the labeled list
+        newTimedCallback.nextExecutionTime = newTimedCallback.interval;
+        
+        // add to the labeled list
         timedCallbacks = {};
         timedCallbacks[synchronizationLabel] = {};
         timedCallbacks[synchronizationLabel]["shift"] = logicalTime;
@@ -194,23 +194,23 @@ function updateNextTick(newTimedCallback, synchronizationLabel, cbId) {
     // The choice here is that we keep the arrival time within the logical time chunk.
     // thus, it is rounded to the time chunck
     if (elapsedTimeSinceLastTick > timeChunk) {
-    	elapsedTimeSinceLastTick = timeChunk;
+        elapsedTimeSinceLastTick = timeChunk;
     }
     
     // Case if the synchronization label is already defined 
     if (timedCallbacks[synchronizationLabel]) {
         // Then we compute the remaining time according to the reference
-    	var shift = timedCallbacks[synchronizationLabel]["shift"];
+        var shift = timedCallbacks[synchronizationLabel]["shift"];
         newTimedCallback.nextExecutionTime = shift;
         do {
-        	newTimedCallback.nextExecutionTime += newTimedCallback.interval;
+            newTimedCallback.nextExecutionTime += newTimedCallback.interval;
         } while (newTimedCallback.nextExecutionTime < logicalTime + elapsedTimeSinceLastTick);
     } else {
-    	// Case if this is a new synchronization label
+        // Case if this is a new synchronization label
         timedCallbacks[synchronizationLabel] = {};
         timedCallbacks[synchronizationLabel]["shift"] = logicalTime + elapsedTimeSinceLastTick;
         newTimedCallback.nextExecutionTime = newTimedCallback.interval
-        	+ logicalTime + elapsedTimeSinceLastTick;
+            + logicalTime + elapsedTimeSinceLastTick;
     }
 
     // Add the new timed callback
@@ -222,8 +222,8 @@ function updateNextTick(newTimedCallback, synchronizationLabel, cbId) {
     if (computeNextTimeChunk() < timeChunk) {
         // Adjust the remaining time of all the callbacks (except the new one) 
         // by deducing the amount of time that elapsed
-    	logicalTime += elapsedTimeSinceLastTick;
-    	clearTimeout(tick);
+        logicalTime += elapsedTimeSinceLastTick;
+        clearTimeout(tick);
         
         // Then update the nextTick
         timeChunk = computeNextTimeChunk();
@@ -245,16 +245,16 @@ var executeAndSetNextTick = function() {
         timedCallbacks = null;
         return;
     }
-	
-	// Update logical Time
+    
+    // Update logical Time
     logicalTime += timeChunk;
     
     // Record time in order to measure callbacks execution
     var timeBeforeCallbacksExecution = Date.now();
     
-	console.log('--Execute: At logical time: ' + logicalTime 
-			+ ' At real time: ' + timeBeforeCallbacksExecution % 100000 
-			+ ' with timeChunk: ' + timeChunk);
+    console.log('--Execute: At logical time: ' + logicalTime 
+                + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
+                + ' with timeChunk: ' + timeChunk);
     
     // Execute callbacks
     executeCallbacks();
@@ -272,12 +272,11 @@ var executeAndSetNextTick = function() {
     // Update next tick to include the callbacks execution time
     var callbacksExecutionTime = lastTimeChunkInstant - timeBeforeCallbacksExecution;
     if (timeChunk >= callbacksExecutionTime) {
-    	timeChunk -= callbacksExecutionTime;
-    	logicalTime += callbacksExecutionTime;
-    }
-    else {
-    	logicalTime += timeChunk;
-    	timeChunk = 0;
+        timeChunk -= callbacksExecutionTime;
+        logicalTime += callbacksExecutionTime;
+    } else {
+        logicalTime += timeChunk;
+        timeChunk = 0;
     }
     tick = setTimeout(executeAndSetNextTick, timeChunk);        
 }
@@ -287,39 +286,36 @@ var executeAndSetNextTick = function() {
  *  if not periodic. Labels are also deleted if the corresponding array is empty.
  */
 function executeCallbacks() {
-	var done = false;
-	do {
-		var key = sortedTimedCallbackList[0]["label"];
-		var id = sortedTimedCallbackList[0]["id"];
-		
-		if (timedCallbacks[key][id].nextExecutionTime === logicalTime) {
-			sortedTimedCallbackList.splice (0, 1);
-			
-			timedCallbacks[key][id].cbFunction.call();
-		    
-			// then reinitialize the remainingTime to the interval value.
-		    if (timedCallbacks[key][id].periodic == true) {
-		    	timedCallbacks[key][id].nextExecutionTime += timedCallbacks[key][id].interval;
-		    	addToSortedCallbacks(key, id);
-		    }
-		    else {
-		    	// All the executed callbacks that are not periodic (case where remainingTime remained
-		        // equal to zero) need to be removed from the List.
-		        delete(timedCallbacks[key][id]);
-		    
-		        // If timedCallback of the key label is empty, then remove it
-		        if (Object.size(timedCallbacks[key]) == 1) {
-		            delete(timedCallbacks[key]);
-		        }
-		    }
-		}
-		else if (timedCallbacks[key][id].nextExecutionTime > logicalTime) {
-			done = true;
-		}
-		else {
-			throw new Error('executeCallbacks(): Callbacks are not sorted!');
-		}
-	} while(!done && sortedTimedCallbackList.length != 0); 
+    var done = false;
+    do {
+        var key = sortedTimedCallbackList[0]["label"];
+        var id = sortedTimedCallbackList[0]["id"];
+        
+        if (timedCallbacks[key][id].nextExecutionTime === logicalTime) {
+            sortedTimedCallbackList.splice (0, 1);
+            
+            timedCallbacks[key][id].cbFunction.call();
+            
+            // then reinitialize the remainingTime to the interval value.
+            if (timedCallbacks[key][id].periodic == true) {
+                timedCallbacks[key][id].nextExecutionTime += timedCallbacks[key][id].interval;
+                addToSortedCallbacks(key, id);
+            } else {
+                // All the executed callbacks that are not periodic (case where remainingTime remained
+                // equal to zero) need to be removed from the List.
+                delete(timedCallbacks[key][id]);
+                
+                // If timedCallback of the key label is empty, then remove it
+                if (Object.size(timedCallbacks[key]) == 1) {
+                    delete(timedCallbacks[key]);
+                }
+            }
+        } else if (timedCallbacks[key][id].nextExecutionTime > logicalTime) {
+            done = true;
+        } else {
+            throw new Error('executeCallbacks(): Callbacks are not sorted!');
+        }
+    } while(!done && sortedTimedCallbackList.length != 0); 
 
     // Check if there are callbacks in the list
     if (Object.size(timedCallbacks) == 0) {
@@ -335,10 +331,10 @@ function executeCallbacks() {
  */ 
 function computeNextTimeChunk() {
     // Get the label and id of the first element in the sorted list
-	var label = sortedTimedCallbackList[0]["label"];
-	var id = sortedTimedCallbackList[0]["id"];
-	
-	return (timedCallbacks[label][id].nextExecutionTime - logicalTime);
+    var label = sortedTimedCallbackList[0]["label"];
+    var id = sortedTimedCallbackList[0]["id"];
+    
+    return (timedCallbacks[label][id].nextExecutionTime - logicalTime);
 }
 
 /** This function is to be binded to clearInterval() function. The aim is to 
@@ -370,39 +366,39 @@ function clearTimeoutDet(cbId){
  */
 function clearTick(cbId, periodic) {
     if (!timedCallbacks || (typeof cbId !== "number") || (typeof periodic !== "boolean")) {
-    	return;
+        return;
     }
     
     var label;
     
     // Parse looking for the identifier
     Object.keys(timedCallbacks).forEach(function(key) {
-    	if (timedCallbacks[key][cbId] && timedCallbacks[key][cbId].periodic === periodic) {
-    		label = key;
-    	}
+        if (timedCallbacks[key][cbId] && timedCallbacks[key][cbId].periodic === periodic) {
+            label = key;
+        }
     });
 
-	if (label) {
-		// Delete from timedCallbacks
-		delete timedCallbacks[label][cbId];
+    if (label) {
+        // Delete from timedCallbacks
+        delete timedCallbacks[label][cbId];
 
-		// Delete from sortedTimedCallbackList
-		var index = sortedTimedCallbackList.indexOf({"label": label, "id": cbId});
-		sortedTimedCallbackList.splice(index , 1);
-		
-		// Clean up timedCallbacks
-		if (Object.size(timedCallbacks[label]) === 1) {
-			delete(timedCallbacks[label]);
-			// Check if there are still callbacks in the list
-	        if (Object.size(timedCallbacks) == 0) {
-	            timedCallbacks = null;
-	            clearTimeout(tick);
-	        }
-		}
-		return;
-	}
+        // Delete from sortedTimedCallbackList
+        var index = sortedTimedCallbackList.indexOf({"label": label, "id": cbId});
+        sortedTimedCallbackList.splice(index , 1);
+        
+        // Clean up timedCallbacks
+        if (Object.size(timedCallbacks[label]) === 1) {
+            delete(timedCallbacks[label]);
+            // Check if there are still callbacks in the list
+            if (Object.size(timedCallbacks) == 0) {
+                timedCallbacks = null;
+                clearTimeout(tick);
+            }
+        }
+        return;
+    }
     
-	// Display an error message if no timed callback to remove 
+    // Display an error message if no timed callback to remove 
     console.log('clear(): wrong arguments.');
 }
 
@@ -432,28 +428,35 @@ Object.size = function(obj) {
  *  @param id the unique id of  of the timedCallback to add
  */
 function addToSortedCallbacks(label, id) {
-	// Construct the object to add to the list
-	var obj = {"label": label, "id": id};
-	
-	// Case if the list is already empty
-	if (sortedTimedCallbackList.length === 0) {
-		sortedTimedCallbackList.push(obj);
-		return;
-	}
-	
-	// Insert the object in the appropriate position 
-	var index = 0;
-	var labelInList, idInList;
-	do {
-		labelInList = sortedTimedCallbackList[index]["label"];
-		idInList = sortedTimedCallbackList[index]["id"];
-	} while(timedCallbacks[label][id].nextExecutionTime > timedCallbacks[labelInList][idInList].nextExecutionTime
-			&& (++index) < sortedTimedCallbackList.length);
-	sortedTimedCallbackList.splice(index, 0, obj);
+    // Construct the object to add to the list
+    var obj = {"label": label, "id": id};
+    
+    // Case if the list is already empty
+    if (sortedTimedCallbackList.length === 0) {
+        sortedTimedCallbackList.push(obj);
+        return;
+    }
+    
+    // Insert the object in the appropriate position 
+    var index = 0;
+    var labelInList, idInList;
+    do {
+        labelInList = sortedTimedCallbackList[index]["label"];
+        idInList = sortedTimedCallbackList[index]["id"];
+        if (timedCallbacks[labelInList][idInList] === undefined) {
+            throw new Error('addToSortedCallbacks(' + label + ', ' + id +
+                            '): timedCallbacks[' + labelInList + '][' +
+                            idInList + '] is undefined?  index was: ' + index +
+                            'The failure happen when the user do not provide \'synchronization labels\' when calling this.setTimeout() or this.setInterval(), which is obvious when a user is not aware of this mechanism. This is the reason behind the \'undefined\' value.  A fix is being worked on.');
+
+        }
+    } while(timedCallbacks[label][id].nextExecutionTime > timedCallbacks[labelInList][idInList].nextExecutionTime
+            && (++index) < sortedTimedCallbackList.length);
+    sortedTimedCallbackList.splice(index, 0, obj);
 }
 
 ///////////////////////////////////////////////////////////////////
-////Exports
+//// Exports
 
 exports.setTimeoutDet = setTimeoutDet;
 exports.clearTimeoutDet = clearTimeoutDet;
