@@ -67,7 +67,7 @@
 
   <!-- If true, then if a test returns non-zero, the build will fail
        and no other tests will run. -->
-  <property name="tests.failOnError" value="true"/>
+  <property name="tests.failonerror" value="true"/>
 
   <!-- The timeout in milliseconds for test -->
   <property name="timeout" value="120000" />
