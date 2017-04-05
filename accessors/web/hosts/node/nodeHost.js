@@ -119,9 +119,10 @@ function getAccessorCode(name) {
         var location = path.join(accessorPath[i], name);
         try {
             code = fs.readFileSync(location, 'utf8');
-            //console.log('Reading accessor at: ' + location);
+            //console.log('nodeHost.js: Reading accessor at: ' + location);
             break;
         } catch (error) {
+            //console.log('nodeHost.js: getAccessorCode(' + name + '): error:');
             console.log(error);
             continue;
         }
@@ -181,7 +182,7 @@ function instantiate(accessorName, accessorClass) {
     };
     var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
-    //console.log('Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
+    //console.log('nodeHost.js: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
 };
 
@@ -202,7 +203,7 @@ function instantiateTopLevel(accessorName, accessorClass) {
  *  @param options Properties for the call.  Properties include cleanup and exit.
  */
 function exitHandler(options, err) {
-    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ") process.exitCode:" +  process.exitCode);
+    // console.log("nodeHost.js: exitHandler(" + options + ", " + err + ") process.exitCode: " +  process.exitCode + ' options: ');
     // console.log(options);
     // var myError = new Error("nodeHost.js: In exitHandler()");
     // console.log(myError.stack);
@@ -216,12 +217,16 @@ function exitHandler(options, err) {
             commonHost.stopAllAccessors();
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
-            process.exitCode = 1;
+            if (process.exitCode == undefined) {
+                process.exitCode = 1;
+            }
         }
         if (initialThrowable !== null) {
             console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: "
                     + initialThrowable + ":" + initialThrowable.stack);
-            process.exitCode = 1;
+            if (process.exitCode == undefined) {
+                process.exitCode = 1;
+            }
         }
     }
     // Use kill -30 to display a stack
@@ -253,16 +258,25 @@ function exitHandler(options, err) {
         err = new Error("SIGUSR1 was received, here's the stack.");
     }
     if (err) {
+	if (err.stack === undefined) {
+            if (err !== process.exitCode) {
+	        console.log("nodeHost.js: err: \"" + err + "\" has no stack.");
+            }
+	} else {
+            console.log("nodeHost.js: Error: " + err.stack);
+	}
 	if (process.exitCode === undefined) {
 	    process.exitCode = 1;
 	}
-	if (err.stack === undefined) {
-	    console.log("err: \"" + err + "\" has no stack.");
-	} else {
-            console.log("NodeHost.js: Error: " + err.stack);
-	}
     }
 
+    if (process.exitCode !== 0) {
+        console.log('nodeHost.js: Error: Node will exit and return ' +
+                    process.exitCode + ', which should be zero.');
+    }
+
+    // If we the exitHandler was called with 'cleanup', then we won't exit here,
+    // but will exit later.
     if (options.exit) {
         // console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
         //        + process.exitCode
