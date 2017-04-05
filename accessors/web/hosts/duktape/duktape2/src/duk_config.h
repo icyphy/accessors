@@ -2666,7 +2666,12 @@ typedef struct duk_hthread duk_context;
 #undef DUK_USE_DEBUGGER_SUPPORT
 #define DUK_USE_DEBUGGER_THROW_NOTIFY
 #undef DUK_USE_DEBUGGER_TRANSPORT_TORTURE
-#define DUK_USE_DEBUG_BUFSIZE 65536L
+
+// Accessors on the Maxim Pegasus
+/* #define DUK_USE_DEBUG_BUFSIZE 65536L */
+
+#define DUK_USE_DEBUG_BUFSIZE 2048
+
 #undef DUK_USE_DEBUG_WRITE
 #define DUK_USE_DOUBLE_LINKED_HEAP
 #define DUK_USE_DUKTAPE_BUILTIN
@@ -2831,8 +2836,6 @@ typedef struct duk_hthread duk_context;
 /* #undef DUK_USE_ES6_PROXY */
 
 #undef DUK_USE_BYTECODE_DUMP_SUPPORT
-
-#define DUK_USE_DEBUG_BUFSIZE 2048
 
 #define DUK_USE_LIGHTFUNC_BUILTINS
 
