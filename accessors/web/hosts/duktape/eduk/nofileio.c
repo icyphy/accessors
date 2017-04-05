@@ -1,6 +1,6 @@
 // Without requiring a file system, given a file name, return the contents of the file.
 
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 // 
 // Permission is hereby granted, without written agreement and without
@@ -83,12 +83,12 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 19
+#define FILE_ENTRIES_SIZE 20
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 6
+#define FILE_ENTRIES_SIZE 7
 #else // EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 3
+#define FILE_ENTRIES_SIZE 4
 #endif // EDUK_RAMPJSDISPLAY 
 #endif //EDUK_FULL
 
@@ -98,6 +98,7 @@
 #include "commonHost.h"
 #include "events.h"
 #include "util.h"
+#include "deterministicTemporalSemantics.h"
 
 #ifdef EDUK_RAMPJSDISPLAY
 #include "RampJSDisplay.h"
@@ -214,6 +215,9 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[++n].name = "common/modules/util.js";
     fileEntries[n].contents = ______common_modules_util_js;
     fileEntries[n].length = ______common_modules_util_js_len;
+    fileEntries[++n].name = "common/modules/deterministicTemporalSemantics.js";
+    fileEntries[n].contents = _________hosts_common_modules_deterministicTemporalSemantics_js;
+    fileEntries[n].length = _________hosts_common_modules_deterministicTemporalSemantics_js_len;
 
 #ifdef EDUK_RAMPJSDISPLAY
     fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
