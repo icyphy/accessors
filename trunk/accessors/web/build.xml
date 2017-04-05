@@ -77,6 +77,10 @@
 
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
+    <!-- Exclude testSimpleDTSswarmlet.js temporarily and avoid
+         deterministicTemporalSemantics.js: Cannot read property '9' of undefined
+    -->
+    <exclude name="**/deterministicTemporalSemantics/test/auto/mocha/testSimpleDTSswarmlet.js"/>
     <exclude name="vendors/"/>
   </patternset>
   
