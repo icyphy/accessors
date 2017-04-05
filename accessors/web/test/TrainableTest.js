@@ -269,7 +269,7 @@ exports.wrapup = function () {
         if (initialized) {
             if (!inputHandled) {
                 initialized = false;
-                throw new Error(this.accessorName + 'The input handler of this accessor was never invoked. ' +
+                throw new Error(this.accessorName + ': The input handler of this accessor was never invoked. ' +
                     'Usually, this is an error indicating that ' +
                     'starvation is occurring.');
             }
