@@ -13,27 +13,28 @@ C_FILES = \
 
 # .h files that contain the contents of .js files
 JS_H_FILES = \
-	c_eventloop.h \
-	duktapeHost.h \
-	commonHost.h \
-	events.h \
-	util.h \
-	ecma_eventloop.h \
 	AccessorStatus.h \
 	RampJSDisplay.h \
 	RampJSTest.h \
 	RampJSTestDisplay.h \
 	Stop.h \
-	autoAccessorStatusTest.h \
-	autoTestComposite.h \
-	autoTestStop.h \
-	testCommon.h \
 	TestAdder.h \
 	TestComposite.h \
 	TestDisplay.h \
 	TestGain.h \
 	TestSpontaneous.h \
-	TrainableTest.h
+	TrainableTest.h \
+	autoAccessorStatusTest.h \
+	autoTestComposite.h \
+	autoTestStop.h \
+	c_eventloop.h \
+	commonHost.h \
+	deterministicTemporalSemantics.h \
+	duktapeHost.h \
+	ecma_eventloop.h \
+	events.h \
+	testCommon.h \
+	util.h
 
 
 H_FILES = \
@@ -124,6 +125,9 @@ autoTestStop.h: ../../../test/auto/Stop.js makefile
 	./js2h $< $@
 
 autoTestComposite.h: ../../../test/auto/TestComposite.js makefile
+
+deterministicTemporalSemantics.h: ../../../hosts/common/modules/deterministicTemporalSemantics.js makefile
+	./js2h $< $@
 
 # Used by ../duktape/duktape tests
 testCommon.h: ../../common/test/testCommon.js makefile
