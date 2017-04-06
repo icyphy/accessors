@@ -1,6 +1,6 @@
-// A simple test for the mutable accessors.
-// $Id: testSimpleMutable.js 1365 2017-03-01 00:44:19Z chadlia.jerad $
-// See https://www.icyphy.org/accessors/wiki/Modules/Mutable
+// A simple test for illustrating the deterministic temporal semantics 
+// $Id: testSimpleDTSswarmlet.js 1365 2017-04-06 00:44:19Z chadlia.jerad $
+// See https://www.icyphy.org/accessors/wiki/...
 
 // To run this test:
 //    ../../../../node_modules/.bin/mocha testSimpleMutable.js
@@ -13,7 +13,7 @@ var nodeHost = require('../../../../hosts/node/nodeHost.js');
 // See https://www.icyphy.org/accessors/wiki/Notes/Status
 describe('NodeHost' , function() {
     
-    it ('NodeHost./accessors/web/mutable/test/auto/mocha/testSimpleMutable', function () {
+    it ('NodeHost./accessors/web/deterministicTemporalSemantics/test/auto/mocha/testSimpleDTSswarmlet', function () {
 
         // Instantiating the accessors
         var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousPeriodic.js');

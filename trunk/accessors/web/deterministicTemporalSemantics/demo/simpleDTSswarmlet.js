@@ -1,4 +1,4 @@
-// Swarmlets that instantiates, parameterizes and initializes 3 periodic
+// Swarmlet that instantiates, parameterizes and initializes 3 periodic
 // accessors and one aperiodic accessor
 //
 // Copyright (c) 2016-2017 The Regents of the University of California.
@@ -29,7 +29,7 @@
  *  temporal semantics implementation
  * 
  *  @author Chadlia Jerad
- *  @version $$Id: simpleDTSswarmlet.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: simpleDTSswarmlet.js 1137 2017-04-05 22:13:55Z cxh $$
  */
 
 
