@@ -115,7 +115,7 @@ exports.initialize = function () {
             //+ ", referenceToken: " + referenceToken);
             if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
                 if (inputValue === null) {
-                    throw new Error('After seeing ' + numberOfInputTokensSeen +
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
                         ' tokens, the value of the input was null?  ' +
                         'Perhaps the input is not connected?'
                     );
@@ -138,7 +138,7 @@ exports.initialize = function () {
                 cache = null; // Enable garbage collection
 
 
-                throw new Error('After seeing ' + numberOfInputTokensSeen +
+                throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
                     ' tokens, the input "' + inputValue +
                     '" is neither a number nor a string, it is a ' +
                     typeof inputValue + ' with value ' + inputValueValue);
@@ -181,9 +181,7 @@ exports.initialize = function () {
                 }
             } else if (typeof referenceToken === 'string') {
                 if (inputValue !== referenceToken) {
-                    console.log('typeof inputValue ' + typeof inputValue);
-                    console.log('typeof referenceToken ' + typeof referenceToken);
-                    throw new Error('The input "' + inputValue + '" is !== ' +
+                    throw new Error(self.accessorName + ': The input "' + inputValue + '" is !== ' +
                         ' to the expected value "' +
                         referenceToken + '"');
                 }
@@ -236,13 +234,13 @@ exports.initialize = function () {
                     // Deal with referenceTokens with value 1L.
                     if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
                         inputValueValue.toString() !== referenceTokenValue.toString) {
-                        throw new Error('The input "' + inputValueValue + 
+                        throw new Error(self.accessorName + ': The input "' + inputValueValue + 
                                         '" is !== to the expected value "' +
                                         referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
                     }
                 }
             } else {
-                throw new Error('After seeing ' + numberOfInputTokensSeen +
+                throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
                     ' tokens, the referenceToken "' + referenceToken +
                     '" is not a number, it is a ' +
                     typeof referenceToken);
