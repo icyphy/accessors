@@ -26,7 +26,10 @@ var findNodeAutoDirectories = function(dir) {
                         // Add auto directories, but skip certain directories.
                         if (basefile == 'auto') {
                             var skipIt = false;
-                            var skipDirectories = [ 'hosts/browser/test/auto',
+                            var skipDirectories = [
+                                                    // Exclude gdp because it is crashes.  06-Apr-2017
+                                                    'gdp/test/auto',
+                                                    'hosts/browser/test/auto',
 						    'node_modules/@terraswarm/gdp/test/mocha'
 						  ];
                             skipDirectories.forEach(function(skipDirectory) {
