@@ -806,8 +806,6 @@
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
-      <arg line="--retries"/>
-      <arg line="2"/>
       <arg line="${converted}"/>
     </exec>
 
@@ -843,8 +841,6 @@
 	  failonerror="${tests.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
-      <arg line="--retries"/>
-      <arg line="2"/>
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
@@ -888,8 +884,6 @@
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
       <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
-      <arg line="--retries"/>
-      <arg line="2"/>
       <arg line="${converted}"/>
     </exec>
 
