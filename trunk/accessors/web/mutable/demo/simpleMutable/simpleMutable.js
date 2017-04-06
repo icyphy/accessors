@@ -45,19 +45,19 @@ var _input = 1;
 
 // First: use of a1
 if (ma.reifiableBy(a1)){
-	console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a1.accessorName);
-	if (ma.reify(a1)) {
-			ma.initialize();
+    console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a1.accessorName);
+    if (ma.reify(a1)) {
+	ma.initialize();
 			
-			ma.provideInput('input', _input);
-			ma.react();
-			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
+	ma.provideInput('input', _input);
+	ma.react();
+	console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
 			
-			_input += 5;
-			ma.provideInput('input', _input);
-			ma.react();
-			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
-	};
+	_input += 5;
+	ma.provideInput('input', _input);
+	ma.react();
+	console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
+	} 
 } else {
     console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a1.accessorName);
 }
@@ -65,10 +65,10 @@ if (ma.reifiableBy(a1)){
 
 // remove accessor a1 as reification
 if (ma.removeReification()) {
-	console.log('Successfully removed previous reification. Go for substitution...');
-
-	// go and test for reification with a2
-	if (ma.reifiableBy(a2)){
+    console.log('Successfully removed previous reification. Go for substitution...');
+    
+    // go and test for reification with a2
+    if (ma.reifiableBy(a2)){
 		console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
 		if (ma.reify()) {
 			ma.initialize();
