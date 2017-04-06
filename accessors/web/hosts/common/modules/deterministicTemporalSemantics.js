@@ -194,8 +194,8 @@ function clearTick(cbId, periodic) {
         return;
     }
     
-    // Display an error message if no timed callback to remove 
-    console.log('clear(): wrong arguments.');
+    // Display an error message if no timed callback to remove.
+    console.log('deterministicTermporalSemantics.js: clear(): wrong arguments.');
 }
 
 /** This function is to be binded to clearTimeout() function. The aim is to 
@@ -241,9 +241,9 @@ var executeAndSetNextTick = function() {
     // Record time in order to measure callbacks execution
     var timeBeforeCallbacksExecution = Date.now();
     
-    console.log('--Execute: At logical time: ' + logicalTime 
-                + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
-                + ' with timeChunk: ' + timeChunk);
+    // console.log('--Execute: At logical time: ' + logicalTime 
+    //            + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
+    //            + ' with timeChunk: ' + timeChunk);
     
     // Execute callbacks
     executeCallbacks();
