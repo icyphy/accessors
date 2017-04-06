@@ -1,4 +1,5 @@
-// Test accessor that multiplies its input by a scale factor.
+// Swarmlets that instantiates, parameterizes and initializes 3 periodic
+// accessors and one aperiodic accessor
 //
 // Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
@@ -34,21 +35,29 @@
 
 var nodeHost = require('../../hosts/node/nodeHost.js');
 
-var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc1.js');
-var spAcc2 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc2.js');
-var spAcc3 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousAcc3.js');
-var spOnceAcc = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousOnceAcc.js');
+// Instantiating the accessors
+var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spAcc2 = nodeHost.instantiate('spAcc2','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spAcc3 = nodeHost.instantiate('spAcc3','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spOnceAcc = nodeHost.instantiate('spOnce','./deterministicTemporalSemantics/SpontaneousAperiodic.js');
 
+// Setting the synchronization label
 var synchLabel = 'SL';
-
 spAcc1.setParameter('synchronizationLabel', synchLabel);
 spAcc2.setParameter('synchronizationLabel', synchLabel);
 spAcc3.setParameter('synchronizationLabel', synchLabel);
 spOnceAcc.setParameter('synchronizationLabel', synchLabel);
 
+// Setting the periods and timeouts
+spAcc1.setParameter('period', 2000);
+spAcc2.setParameter('period', 4000);
+spAcc3.setParameter('period', 1200);
+spOnceAcc.setParameter('timeout', 1500);
+
+// Initializing the spontaneous accessors
 spAcc1.initialize();
 spAcc2.initialize();
 spAcc3.initialize();
 spOnceAcc.initialize();
 
-
+// Note: The periodic accessors will stop at 12000 by clearing the timers.  
