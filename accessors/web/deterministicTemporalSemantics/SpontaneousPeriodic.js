@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This a spontaneous accessor that outputs how many times it fired each
- *  2000 ms.
+/** This is a spontaneous accessor that outputs how many times it fired each
+ *  4000 ms.
  *    
- *  @accessor deterministicTemporalSemantics/SpontaneousAcc1
+ *  @accessor deterministicTemporalSemantics/SpontaneousAcc2
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpontaneousAcc1.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SpontaneousAcc2.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -40,33 +40,40 @@
 
 exports.setup = function () {
     this.realize('periodic', {
-    	'ontology': 'url'
+        'ontology': 'url'
     });
     this.output('output', {
         'type': 'number',
         'value': 0
     });
     this.parameter('synchronizationLabel', {
-    	'type': 'string',
-    	'value': 'SynchInitialization'
+        'type': 'string',
+        'value': 'SynchInitialization'
     });
+    this.parameter('period', {
+        'type': 'number',
+        'value': 1000
+    });
+
 };
 
 exports.initialize = function () {
-	var numberOfFirings = 0;
-	var thiz = this;
-    
-	
+    var numberOfFirings = 0;
+    var thiz = this;
+
     var f1 = function() {
-    	console.log("SpontaneousAccessor1 executing with period 2000 ms.");
-    	thiz.send('output', ++numberOfFirings);
+        thiz.send('output', ++numberOfFirings);
+        console.log(thiz.accessorName + " :: period = " +thiz.getParameter('period') + 
+                ' with output = ' + thiz.latestOutput('output'));	
     };
-    
-    var interv = thiz.setInterval(f1, 2000, thiz.getParameter('synchronizationLabel'), thiz);
+
+    var inter = thiz.setInterval(f1, thiz.getParameter('period'), 
+            thiz.getParameter('synchronizationLabel'), thiz);
     
     var f2 = function() {
-    	thiz.clearInterval(interv);
-    	console.log('SpontaneousAccessor1 setInterval cleared.')
+    	thiz.clearInterval(inter);
+    	console.log('SpontaneousAccessor2 setInterval cleared.');
     };
+    
     thiz.setTimeout(f2, 12000, 'end');
 };

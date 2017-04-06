@@ -23,13 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This is a spontaneous accessor that outputs how many times it fired each
- *  3000 ms. Spontaneous firings stop after 12500 ms 
+/** This is a spontaneous accessor that fires spontaneously only once after
+ *  1200 ms.
  *    
- *  @accessor deterministicTemporalSemantics/SpontaneousAcc3
+ *  @accessor deterministicTemporalSemantics/SpontaneousOnceAcc.js
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpontaneousAcc3.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SpontaneousOnceAcc.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -50,24 +50,19 @@ exports.setup = function () {
     	'type': 'string',
     	'value': 'SynchInitialization'
     });
+    this.parameter('timeout', {
+        'type': 'number',
+        'value': 1000
+    });    
 };
 
 exports.initialize = function () {
 	var numberOfFirings = 0;
 	var thiz = this;
-    
-	var f1 = function(){
-    	console.log("SpontaneousAccessor3 executing with period 3000 ms.");
-    	thiz.send('output', ++numberOfFirings);
-    };
-    
-	var interv = thiz.setInterval(f1, 3000, thiz.getParameter('synchronizationLabel'), thiz);
-    
-	var f2 = function() {
-    	thiz.clearInterval(interv);
-    	console.log('SpontaneousAccessor3 setInterval cleared.')
-    };
-    
-    thiz.setTimeout(f2, 12000, 'end');
-
+	
+    thiz.setTimeout(function() {
+        thiz.send('output', ++numberOfFirings);
+        console.log(thiz.accessorName + " :: period = " +thiz.getParameter('timeout') + 
+                ' :: output = ' + thiz.latestOutput('output'));
+    }, thiz.getParameter('timeout'), thiz.getParameter('synchronizationLabel'), thiz);
 };
