@@ -352,7 +352,7 @@ exports.initialize = function () {
 
 
 /** Function is called by client when data has been received over the connection.
- *   This has been refactored out of exports.connect to facilitate overriding by an 
+ *   This has been refactored out of exports.connect to facilitate overriding by an
  *   extending accessor.
  */
 exports.dataReceivedHandler = function (data) {

@@ -21,26 +21,26 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** 
+/**
  *  This accessor obtains the location corresponding to a WiFi fingerprint
  *  from a RedPin localalization server http://redpin.org/. The RedPin server
- *  must first be configured with a map and trained with 
+ *  must first be configured with a map and trained with
  *  (fingerprint, location) matchings before it can be used with this accessor.
- *  For now, the easiest way to accomplish this is by walking around and 
- *  tagging locations with the RedPin Android app available at 
+ *  For now, the easiest way to accomplish this is by walking around and
+ *  tagging locations with the RedPin Android app available at
  *  https://github.com/MaKeAppDev/Redpin. Unfortunately, the
  *  iPhone app has difficulty obtaining fingerprint values from the phone.
- *  
+ *
  *  This accessor is triggered by an input to the wifiReadings input, at which
- *  time a getLocation action is sent to the RedPin server over a raw TCP 
+ *  time a getLocation action is sent to the RedPin server over a raw TCP
  *  socket with specified host URL and port. These values default to those for
  *  the RedPin server running at "terra.eecs.berkeley.edu" on port 8090.
- *  Upon receiving a response from the server, the accessor parses out the 
- *  "symbolicID" and "mapName" fields and outputs them on the location 
+ *  Upon receiving a response from the server, the accessor parses out the
+ *  "symbolicID" and "mapName" fields and outputs them on the location
  *  and MapName outputs respectively.
- *  
- *  It appears the RedPin server doesn't validate its input 
- *  and will return a location response to this accessor even if 
+ *
+ *  It appears the RedPin server doesn't validate its input
+ *  and will return a location response to this accessor even if
  *  the wifiReadings array is ill formed. However, this accessor will
  *  raise an error if an element of the wifiReadings array is missing a
  *  field.
@@ -58,15 +58,15 @@
  *
  *  @accessor services/RedPinLocation
  *  @input wifiReadings A JSON string array of RSSI readings. See the comment above.
- *  @input {string} host The IP address or domain name of the RedPin server. 
- *    Defaults to 'terra.eecs.berkeley.edu' for the Berkeley server.   
- *  @input {int} port The port on the RedPin server to connect to. Defaults to 
- *    8090 for the Berkeley server.    
- *    
- *  @output {string} mapName  The name of the map determined by the RedPin 
+ *  @input {string} host The IP address or domain name of the RedPin server.
+ *    Defaults to 'terra.eecs.berkeley.edu' for the Berkeley server.
+ *  @input {int} port The port on the RedPin server to connect to. Defaults to
+ *    8090 for the Berkeley server.
+ *
+ *  @output {string} mapName  The name of the map determined by the RedPin
  *    server to be the best fit for wifiReadings.
  *  @output {string} location The symbolic name of the location determined
- *    by the RedPin server to be the best match for wifiReadings according to 
+ *    by the RedPin server to be the best match for wifiReadings according to
  *    its kNN/SVM algorithm.
  *  @author Matt Weber and Edward A. Lee
  *  @version $$Id$$

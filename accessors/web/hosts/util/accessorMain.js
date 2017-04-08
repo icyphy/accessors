@@ -41,11 +41,11 @@
  *    If not present, then the files named
  *    as command line arguments are to be interpreted as regular
  *    JavaScript files.
- * 
+ *
  *  * -e|--e|-echo|--echo: Echo the command that would be run by hand to
  *    replicate the test. This is helpful for use under Ant apply.
- *  
- *  * -h|--h|-help|--help: Print a usage message 
+ *
+ *  * -h|--h|-help|--help: Print a usage message
  *
  *  * -timeout|--timeout milliseconds: The maximum amount of time the
  *    script can run. When this time is reached, stop() is called.
