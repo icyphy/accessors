@@ -94,7 +94,11 @@ exports.setup = function () {
         options: ['raw', 'array', 'encoded']
     });
     this.parameter('playbackOptions', {
-        value: {bitsPerSample: 16, channels: 1, sampleRate: 8000}
+        value: {
+            bitsPerSample: 16,
+            channels: 1,
+            sampleRate: 8000
+        }
     });
 };
 
@@ -104,11 +108,11 @@ var audio = require("audio");
 exports.initialize = function () {
     var self = this;
     player = new audio.Player(
-            self.getParameter('inputFormat'),
-            self.getParameter('playbackOptions'));
-    self.addInputHandler('input', function() {
+        self.getParameter('inputFormat'),
+        self.getParameter('playbackOptions'));
+    self.addInputHandler('input', function () {
         // FIXME: Input format.
-        player.play(self.get('input'), function() {
+        player.play(self.get('input'), function () {
             self.send('accepted', true);
         });
     });

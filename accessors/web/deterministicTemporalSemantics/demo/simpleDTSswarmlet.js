@@ -36,10 +36,10 @@
 var nodeHost = require('../../hosts/node/nodeHost.js');
 
 // Instantiating the accessors
-var spAcc1 = nodeHost.instantiate('spAcc1','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
-var spAcc2 = nodeHost.instantiate('spAcc2','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
-var spAcc3 = nodeHost.instantiate('spAcc3','./deterministicTemporalSemantics/SpontaneousPeriodic.js');
-var spOnceAcc = nodeHost.instantiate('spOnce','./deterministicTemporalSemantics/SpontaneousAperiodic.js');
+var spAcc1 = nodeHost.instantiate('spAcc1', './deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spAcc2 = nodeHost.instantiate('spAcc2', './deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spAcc3 = nodeHost.instantiate('spAcc3', './deterministicTemporalSemantics/SpontaneousPeriodic.js');
+var spOnceAcc = nodeHost.instantiate('spOnce', './deterministicTemporalSemantics/SpontaneousAperiodic.js');
 
 // Setting the synchronization label
 var synchLabel = 'SL';
@@ -60,4 +60,4 @@ spAcc2.initialize();
 spAcc3.initialize();
 spOnceAcc.initialize();
 
-// Note: The periodic accessors will stop at 12000 by clearing the timers.  
+// Note: The periodic accessors will stop at 12000 by clearing the timers.
