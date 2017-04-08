@@ -37,7 +37,7 @@ describe('NodeHost', function() {
     // Run a composite accessor that has a TrainableTest accessor and check
     // that wrapup is called.
     function runTrainableTestAccessor(accessorPath) {
-        it('testProcessCommandLineArguments.js 2.0: nodeHost.processCommandLineArguments(' + accessorPath + ')', function (done) {
+        it.skip('testProcessCommandLineArguments.js 2.0: nodeHost.processCommandLineArguments(' + accessorPath + ')', function (done) {
             // This test is attempting to test that wrapup will get called.
             // The first step is to be able to get all the accessors that were created.
             //
@@ -69,7 +69,7 @@ describe('NodeHost', function() {
             this.timeout(6500);
             setTimeout(function () {
                 done();
-                // console.log("mocha/testProcessCommandLineArguments.js accessors test " + accessorPath + " done !");
+                console.log("mocha/testProcessCommandLineArguments.js accessors test " + accessorPath + " done !");
 
                 // Assert that getTopLevelAccessors() has the RampJSTest top
                 // level, the TrainableTest and that wrapup() was called.
@@ -79,7 +79,7 @@ describe('NodeHost', function() {
                 
                 for (var i = 0; i < accessors.length; i += 1) {
                     var topLevelAccessor = accessors[i];
-                    //console.log("mocha/testProcessCommandLineArguments.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
+                    console.log("mocha/testProcessCommandLineArguments.js: done(): topLevelAccessor: " + topLevelAccessor.accessorName);
                     // FIXME: What if there are multiple runs?
                     for (var j = 0; j < topLevelAccessor.containedAccessors.length; j += 1) {
                         var accessor = topLevelAccessor.containedAccessors[j];
