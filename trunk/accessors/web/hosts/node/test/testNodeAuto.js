@@ -73,34 +73,59 @@ exports.testNodeAuto = function(auto, testTimeout) {
 		var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
-		    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
-		    console.log(replicationMessage);
-                    var testAccessorName = auto +'/' + accessor;
-		    
-		    // Remove the .js from the name
- 		    if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
-			testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
-		    }
+				    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
+				    console.log(replicationMessage);
+		                    var testAccessorName = auto +'/' + accessor;
+				    
+				    // Remove the .js from the name
+		 		    if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
+		 		    	testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
+				    }
+		            var exception = null;
+		            var exceptionHandler, exitHandler;
+		            var isDone = false;
+		            
+		            // Treat exceptions and calls to 'exit' as failures.
+		            // Multiple exceptions might occur.  Catch them all, but
+		            // only call 'done' once.
+		            process.on('uncaughtException', exceptionHandler = function(error) { 
+			error += replicationMessage;
+		                exception = error;
+		                if (!isDone) {
+		                	isDone = true;
+		                	if (error !== null && typeof error !== 'undefined') {
+		                		if (error instanceof Error) {
+		                			done(error);
+		                		} else {
+		                			done(new Error(error.toString()));
+		                		}
+		                	} else {
+		                		done(new Error('Error: Uncaught exception.'));
+		                	}
+		                }
+		            });
+		            
+		            process.once('exit', exitHandler = function(error) { 
+		                exception = error;
+		                if (!isDone) {
+		                	isDone = true;
+		                	if (error !== null && typeof error !== 'undefined') {
+		                		if (error instanceof Error) {
+		                			done(error);
+		                		} else {
+		                			done(new Error(error.toString()));
+		                		}
+		                	} else {
+		                		done(new Error('Error: Exit.'));
+		                	}
+		                }
+		            });
+            
                     var testAccessor = 
                         nodeHost.instantiateTopLevel(nodeHost.uniqueName(testAccessorName),
 						     testAccessorName);
                     testAccessor.initialize();
 
-                    var exception = null;
-                    var exceptionHandler, exitHandler;
-                    
-                    // Treat exceptions and calls to 'exit' as failures.
-                    process.once('uncaughtException', exceptionHandler = function(error) { 
-			error += replicationMessage;
-                        exception = error;
-                        done(error);
-                    });
-                    
-                    process.once('exit', exitHandler = function(error) { 
-                        exception = error;
-                        done(error);
-                    });
-                    
                     setTimeout(function(){
                         // A test is considered successful if no errors 
                         // occur within a given timeout.
@@ -121,7 +146,6 @@ exports.testNodeAuto = function(auto, testTimeout) {
                             setTimeout(function() {
                                 process.removeListener('uncaughtException', exceptionHandler);
                                 process.removeListener('exit', exitHandler);
-                                
                                 done();
                             }, 500);
                         }
