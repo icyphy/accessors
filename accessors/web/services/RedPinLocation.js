@@ -75,7 +75,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals addInputHandler, get, getParameter, error, exports, extend, get, input, output, parameter, require, send */
+/*globals addInputHandler, console, get, getParameter, error, exports, extend, get, input, output, parameter, require, send */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -119,7 +119,7 @@ exports.wifiReadingsInputHandler = function () {
     //Throw an error if input is incorrectly structured
     try {
         var wifiTest = JSON.parse(wifiArray);
-        for (var i = 0; i < wifiTest.length; i++) {
+        for (var i = 0; i < wifiTest.length; i += 1) {
             if (typeof wifiTest[i].ssid !== "string") {
                 throw "missing ssid string in " + i + "th element of wifiReadings: " + wifiArray;
             }
@@ -148,7 +148,9 @@ exports.wifiReadingsInputHandler = function () {
     exports.ssuper.send.call(this, redPinRequest);
 };
 
+// FIXME: jshint says: "If a strict mode function is executed using function invocation, its 'this' value will be undefined."
 var self = this;
+
 //Copying "this" to "self" is needed because dataReceivedHandler will be passed
 // as a callback to "client" in TCPSocketClient
 exports.dataReceivedHandler = function (data) {
