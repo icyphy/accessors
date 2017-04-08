@@ -41,7 +41,7 @@
  *    node nodeHostInvoke.js test/auto/Stop test/auto/Stop
  *  </pre>
  *  The above command will return when both accessors have completed execution.
- *  
+ *
  *  The following instantiates and initializes an accessor that does not stop its own execution:
  *  <pre>
  *    node nodeHostInvoke.js test/TestSpontaneous
@@ -69,14 +69,14 @@
  *  This script then monitors the output named 'output', and whenever the accessor produces
  *  such an output, it prints the value of the output. In addition, after five outputs have been
  *  produced, it invokes the wrapup() function, which stops execution of the accessor.
- *  
+ *
  *  To run an accessor for three seconds and then terminate, specify a timeout option:
  *  <pre>
  *    node nodeHostInvoke.js -timeout 3000 test/auto/RampJSDisplay
  *  </pre>
  *  The RampJSDisplay accessor is a composite accessor that produces a counting sequence and
  *  then displays it on the standard output.
- *  
+ *
  *  You can create automated tests using the TrainableTest accessor.
  *  For example, test/auto/RampJSTestDisplay is a composite accessor
  *  with a TrainableTest accessor in it:
@@ -92,25 +92,25 @@
  *
  *  * -e|--e|-echo|--echo: Echo the command-line arguments.
  *    This is helpful for use under Ant apply.
- *  
+ *
  *  * -h|--h|-help|--help: Print a usage message.
  *
  *  * -j|--j|-js|--js: Interpret the next argument as the name of a regular
  *    JavaScript file to evaluate.
- *    
+ *
  *  * -t|--t|-timeout|--timeout milliseconds: The maximum amount of time the
  *    script can run. When this time is reached, stop() is called on all
- *    accessors that have been instantiated, and then 
+ *    accessors that have been instantiated, and then
  *
  *  * -v|--v|-version|--version: Print out the version number
  *
  *  See the <a href="https://www.terraswarm.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
- *  
+ *
  *  @author Christopher Brooks and Edward A. Lee
  *  @version $$Id$$
  */
 
 var nodeHost = require('./nodeHost.js');
-// Remove "node" and the script name (i.e. "nodeHostInvoke.js")                                                       
-// from the array of command line arguments. 
+// Remove "node" and the script name (i.e. "nodeHostInvoke.js")
+// from the array of command line arguments.
 nodeHost.processCommandLineArguments(process.argv.slice(2));

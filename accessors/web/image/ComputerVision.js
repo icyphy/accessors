@@ -23,21 +23,21 @@
 
 /** A computer vision accessor.  This accessor takes an input image, applies
  *  a computer vision transformation, and outputs the modified image.
- *  
+ *
  *  The input may be an image or a path to a local image.  Remote images are not
  *  supported due to browser security restrictions - a browser will not allow
  *  a remote image to be exported from a canvas.
- * 
- *  This accessor uses the computer vision library from UC Irvine, 
+ *
+ *  This accessor uses the computer vision library from UC Irvine,
  *  https://github.com/ucisysarch/opencvjs
  *  Please cvlicense.txt in /accessor/web/hosts/browser/modules/cvlicense.txt
- *  
+ *
  *  To run, please point your browser to:
  *  https://www.terraswarm.org/accessors/hosts/browser/demo/computervision/computervision.html
- *  
+ *
  *  @accessor image/ComputerVision
- *  @input input (string or image) An image or path to a local image.  Remote 
- *  images are not supported due to browser security restrictions - a browser 
+ *  @input input (string or image) An image or path to a local image.  Remote
+ *  images are not supported due to browser security restrictions - a browser
  *  will not allow a remote image to be exported from a canvas.
  *  @output output (image) A modified image.
  *  @parameter options (JSON) Options for the selected transform, if any.
@@ -70,7 +70,7 @@ exports.setup = function () {
     this.output('output');
 };
 
-/** Register an input handler to apply the selected transformation on each input 
+/** Register an input handler to apply the selected transformation on each input
  * image.
  */
 exports.initialize = function () {

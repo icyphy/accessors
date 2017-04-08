@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** An accessor that outputs Hello, name .  
+/** An accessor that outputs Hello, name .
  * @accessor tutorial/Hello
  * @input name The user's name.
  * @output greeting Hello, name .

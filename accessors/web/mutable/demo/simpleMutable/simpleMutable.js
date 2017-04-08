@@ -24,7 +24,7 @@
 //
 
 /**
- * This swarmlet example, running on node Host, illustrates the notion of 
+ * This swarmlet example, running on node Host, illustrates the notion of
  * mutableAccessor.
  * See https://www.icyphy.org/accessors/wiki/Modules/Mutable
  */
