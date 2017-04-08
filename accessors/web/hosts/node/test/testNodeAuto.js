@@ -43,11 +43,11 @@ exports.testNodeAuto = function(auto, testTimeout) {
             process.removeAllListeners('exit');
             process.removeAllListeners('uncaughtException');
         });
-	
+        
         accessors.forEach(function(accessor) {
 
             if (accessor.length > 3 && accessor.indexOf('.') > 0 && 
-		accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
+                accessor.substring(accessor.length - 3, accessor.length) === ".js" &&
                 accessor.indexOf('~') == -1 &&
                 accessor.substring(0,4) != '.svn' &&
                 accessor.substring(0,4) != '.log') {
@@ -62,68 +62,68 @@ exports.testNodeAuto = function(auto, testTimeout) {
                 // Tried mocha-jenkins-reporter, but it does not seem to 
                 // generate a results file when passed a file path.
                 // it() is a mocha function.
-		
+                
                 var testAccessorName = auto +'/' + accessor;
-		    
-		// Remove the .js from the name
- 		if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
-		    testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
-		}
-		// Remove ./ because the last . is all that matters for Jenkins.  Also replace // with /
-		var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
+                
+                // Remove the .js from the name
+                if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
+                    testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
+                }
+                // Remove ./ because the last . is all that matters for Jenkins.  Also replace // with /
+                var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
-				    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
-				    console.log(replicationMessage);
-		                    var testAccessorName = auto +'/' + accessor;
-				    
-				    // Remove the .js from the name
-		 		    if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
-		 		    	testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
-				    }
-		            var exception = null;
-		            var exceptionHandler, exitHandler;
-		            var isDone = false;
-		            
-		            // Treat exceptions and calls to 'exit' as failures.
-		            // Multiple exceptions might occur.  Catch them all, but
-		            // only call 'done' once.
-		            process.on('uncaughtException', exceptionHandler = function(error) { 
-			error += replicationMessage;
-		                exception = error;
-		                if (!isDone) {
-		                	isDone = true;
-		                	if (error !== null && typeof error !== 'undefined') {
-		                		if (error instanceof Error) {
-		                			done(error);
-		                		} else {
-		                			done(new Error(error.toString()));
-		                		}
-		                	} else {
-		                		done(new Error('Error: Uncaught exception.'));
-		                	}
-		                }
-		            });
-		            
-		            process.once('exit', exitHandler = function(error) { 
-		                exception = error;
-		                if (!isDone) {
-		                	isDone = true;
-		                	if (error !== null && typeof error !== 'undefined') {
-		                		if (error instanceof Error) {
-		                			done(error);
-		                		} else {
-		                			done(new Error(error.toString()));
-		                		}
-		                	} else {
-		                		done(new Error('Error: Exit.'));
-		                	}
-		                }
-		            });
-            
+                    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
+                    console.log(replicationMessage);
+                    var testAccessorName = auto +'/' + accessor;
+                    
+                    // Remove the .js from the name
+                    if (testAccessorName.substring(testAccessorName.length - 3, testAccessorName.length) === ".js") {
+                        testAccessorName = testAccessorName.substring(0, testAccessorName.length -3);
+                    }
+                    var exception = null;
+                    var exceptionHandler, exitHandler;
+                    var isDone = false;
+                    
+                    // Treat exceptions and calls to 'exit' as failures.
+                    // Multiple exceptions might occur.  Catch them all, but
+                    // only call 'done' once.
+                    process.on('uncaughtException', exceptionHandler = function(error) { 
+                        error += replicationMessage;
+                        exception = error;
+                        if (!isDone) {
+                            isDone = true;
+                            if (error !== null && typeof error !== 'undefined') {
+                                if (error instanceof Error) {
+                                    done(error);
+                                } else {
+                                    done(new Error(error.toString()));
+                                }
+                            } else {
+                                done(new Error('Error: Uncaught exception.'));
+                            }
+                        }
+                    });
+                    
+                    process.once('exit', exitHandler = function(error) { 
+                        exception = error;
+                        if (!isDone) {
+                            isDone = true;
+                            if (error !== null && typeof error !== 'undefined') {
+                                if (error instanceof Error) {
+                                    done(error);
+                                } else {
+                                    done(new Error(error.toString()));
+                                }
+                            } else {
+                                done(new Error('Error: Exit.'));
+                            }
+                        }
+                    });
+                    
                     var testAccessor = 
                         nodeHost.instantiateTopLevel(nodeHost.uniqueName(testAccessorName),
-						     testAccessorName);
+                                                     testAccessorName);
                     testAccessor.initialize();
 
                     setTimeout(function(){
