@@ -94,7 +94,7 @@ exports.initialize = function () {
     trainingTokens = [];
     exports.wrappedUp = false;
     numberOfInputTokensSeen = 0;
-    
+
     this.addInputHandler('input', function () {
         var cache = [],
             inputValue = self.get('input'),
@@ -146,9 +146,9 @@ exports.initialize = function () {
             if (typeof referenceToken === 'number') {
                 // If the input not a number, then throw an error.
                 if (typeof inputValue !== 'number') {
-                        var inputValueValue = inputValue;
-                        if (typeof inputValue === 'object') {
-                            inputValueValue = JSON.stringify(inputValue, function (key, value) {
+                    var inputValueValue = inputValue;
+                    if (typeof inputValue === 'object') {
+                        inputValueValue = JSON.stringify(inputValue, function (key, value) {
                             if (typeof value === 'object' && value !== null) {
                                 if (cache.indexOf(value) !== -1) {
                                     // Circular reference found, discard key
@@ -159,19 +159,19 @@ exports.initialize = function () {
                             }
                             return value;
                         });
-                        }
-                        throw new Error(self.accessorName + ': the input "' + inputValueValue +
-                                    '" is not a number, it is a ' +
-                                        typeof inputValue + '.  The expected value was "' +
-                                    referenceToken + '"');
                     }
+                    throw new Error(self.accessorName + ': the input "' + inputValueValue +
+                        '" is not a number, it is a ' +
+                        typeof inputValue + '.  The expected value was "' +
+                        referenceToken + '"');
+                }
 
                 var difference = Math.abs(inputValue - referenceToken);
                 if (difference === NaN) {
                     throw new Error(self.accessorName + ': The absolute value of the input "' +
-                                    inputValue + '" - the referenceToken "' +
-                                    referenceToken + '" is NaN?  It should be less than ' +
-                                    self.getParameter('tolerance'));
+                        inputValue + '" - the referenceToken "' +
+                        referenceToken + '" is NaN?  It should be less than ' +
+                        self.getParameter('tolerance'));
                 }
                 if (difference > self.getParameter('tolerance')) {
                     throw new Error(self.accessorName + ': The input "' + inputValue + '" is not within "' +
@@ -219,7 +219,7 @@ exports.initialize = function () {
                     inputValueValue = inputValue;
                 }
                 if (referenceTokenValue == undefined) {
-                    referenceTokenValue  = referenceToken;
+                    referenceTokenValue = referenceToken;
                 }
 
                 if (inputValueValue !== referenceTokenValue) {
@@ -234,9 +234,9 @@ exports.initialize = function () {
                     // Deal with referenceTokens with value 1L.
                     if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
                         inputValueValue.toString() !== referenceTokenValue.toString) {
-                        throw new Error(self.accessorName + ': The input "' + inputValueValue + 
-                                        '" is !== to the expected value "' +
-                                        referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
+                        throw new Error(self.accessorName + ': The input "' + inputValueValue +
+                            '" is !== to the expected value "' +
+                            referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
                     }
                 }
             } else {

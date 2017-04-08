@@ -69,58 +69,60 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-exports.setup = function() {
-        this.input('textQuery', {type: 'string'});
-        this.output('response');
-        this.output('fulfillment', {
-                type: 'string',
-                spontaneous: true
-        });
-        this.parameter('clientAccessToken', {
-                type: 'string',
-                value: '<-- your client access token here -->'
-        });
+exports.setup = function () {
+    this.input('textQuery', {
+        type: 'string'
+    });
+    this.output('response');
+    this.output('fulfillment', {
+        type: 'string',
+        spontaneous: true
+    });
+    this.parameter('clientAccessToken', {
+        type: 'string',
+        value: '<-- your client access token here -->'
+    });
 }
 
 var apiai = require('apiai');
 var util = require('util');
 
-exports.initialize = function() {
-         var self = this;
-         var token = this.get('clientAccessToken');
-         if (token === '<-- your client access token here -->') {
-             error('You need to set clientAccessToken to a hex string that identifies\n'
-                 + 'an agent at https://api.ai. For a tutorial on creating an agent, see\n'
-                 + 'https://developers.google.com/actions/develop/apiai/tutorials/getting-started');
-             return;
-         }
-    var app = apiai(this.get('clientAccessToken'));
-    
-         self.addInputHandler('textQuery', function() {
-             // The session ID, I guess, disambiguates multiple users of the same
-             // agent. Here, I'm just using a fixed session ID, which is risky.
-                var request = app.textRequest(self.get('textQuery'), {
-                    sessionId: 'textQuery'
-                });
-                request.on('response', function(response) {
-                    self.send('response', response);
-                    self.send('fulfillment', extractFulfillment(response));
-                });
-                request.on('error', function(message) {
-                    error(message);
-                });
-                request.end();        
-         });
-}
-/** Given a response structure, find the fulfillment speech within it
- *  and return that. If there is no fulfillment speech in the response,
- *  then just return the entire response formatted using util.inspect().
- */
-function extractFulfillment(response) {
-        if (response.result
-                        && response.result.fulfillment
-                        && response.result.fulfillment.speech) {
-                return response.result.fulfillment.speech;
+exports.initialize = function () {
+        var self = this;
+        var token = this.get('clientAccessToken');
+        if (token === '<-- your client access token here -->') {
+            error('You need to set clientAccessToken to a hex string that identifies\n' +
+                'an agent at https://api.ai. For a tutorial on creating an agent, see\n' +
+                'https://developers.google.com/actions/develop/apiai/tutorials/getting-started');
+            return;
         }
-        return util.inspect(response);
+        var app = apiai(this.get('clientAccessToken'));
+
+        self.addInputHandler('textQuery', function () {
+            // The session ID, I guess, disambiguates multiple users of the same
+            // agent. Here, I'm just using a fixed session ID, which is risky.
+            var request = app.textRequest(self.get('textQuery'), {
+                sessionId: 'textQuery'
+            });
+            request.on('response', function (response) {
+                self.send('response', response);
+                self.send('fulfillment', extractFulfillment(response));
+            });
+            request.on('error', function (message) {
+                error(message);
+            });
+            request.end();
+        });
+    }
+    /** Given a response structure, find the fulfillment speech within it
+     *  and return that. If there is no fulfillment speech in the response,
+     *  then just return the entire response formatted using util.inspect().
+     */
+function extractFulfillment(response) {
+    if (response.result &&
+        response.result.fulfillment &&
+        response.result.fulfillment.speech) {
+        return response.result.fulfillment.speech;
+    }
+    return util.inspect(response);
 }

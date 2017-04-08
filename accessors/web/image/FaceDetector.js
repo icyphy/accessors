@@ -51,7 +51,9 @@ var faceDetector = require('faceDetector');
 exports.setup = function () {
     this.input('input');
     this.output('output');
-    this.output('faceCount', {'type': 'int'});
+    this.output('faceCount', {
+        'type': 'int'
+    });
     this.input('options', {
         'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
         'type': 'JSON'
@@ -59,13 +61,13 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
-        var self = this;
-        
+    var self = this;
+
     this.addInputHandler('input', function () {
         var options = this.get('options');
         var image = this.get('input');
-        var result = faceDetector.filter(image, options, function(result) {
-                self.send('output', result);
+        var result = faceDetector.filter(image, options, function (result) {
+            self.send('output', result);
             var numFaces = faceDetector.numberOfFaces();
             self.send('faceCount', numFaces);
         });

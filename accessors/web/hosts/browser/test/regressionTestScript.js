@@ -330,12 +330,12 @@ var RegressionTester = (function () {
                                     'directory': testNames[count].directory,
                                     'result': text
                                 });
-                                
+
                                 // Check for any failures.
                                 if (text.indexOf("<failure") > 0) {
-                                        resolve('failed');
+                                    resolve('failed');
                                 } else {
-                                        resolve('passed');
+                                    resolve('passed');
                                 }
                             }).catch(function (err) {
                                 console.log(testName + ' failed');

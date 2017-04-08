@@ -57,15 +57,15 @@ var cv = require("computerVision");
 
 /** Create inputs, outputs and parameters for the accessor.
  */
-exports.setup = function() {
+exports.setup = function () {
     this.input('input');
     this.parameter('options', {
-            type: 'JSON'
+        type: 'JSON'
     });
     this.parameter('transform', {
-            type: 'string',
-            options: cv.filters,
-            value: 'makeGray'
+        type: 'string',
+        options: cv.filters,
+        value: 'makeGray'
     });
     this.output('output');
 };
@@ -73,16 +73,16 @@ exports.setup = function() {
 /** Register an input handler to apply the selected transformation on each input 
  * image.
  */
-exports.initialize = function() {
-        var self = this;
-        
-    this.addInputHandler('input', function() {
+exports.initialize = function () {
+    var self = this;
+
+    this.addInputHandler('input', function () {
         var image = this.get('input');
         var options = this.getParameter('options');
         var transform = this.getParameter('transform');
-        
-        cv.filter(image, transform, options, function(result) {
-                self.send('output', result);
+
+        cv.filter(image, transform, options, function (result) {
+            self.send('output', result);
         });
     });
 };

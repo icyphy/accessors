@@ -303,14 +303,13 @@ exports.setup = function () {
  *  discard or queue the data to send later depending on the value of
  *  `discardMessagesBeforeOpen`.
  */
-exports.send = function (data){
+exports.send = function (data) {
     // May be receiving inputs before client has been set.
 
-    if (client && exports.isOpen()){
+    if (client && exports.isOpen()) {
         client.send(data);
-    } 
-    else {
-        if (client){
+    } else {
+        if (client) {
             // In case the server has closed the socket, reconnect.
             this.exports.connect.call(this);
             client.send(data);
@@ -353,12 +352,12 @@ exports.initialize = function () {
 
 
 /** Function is called by client when data has been received over the connection.
-*   This has been refactored out of exports.connect to facilitate overriding by an 
-*   extending accessor.
-*/
+ *   This has been refactored out of exports.connect to facilitate overriding by an 
+ *   extending accessor.
+ */
 exports.dataReceivedHandler = function (data) {
-        this.send('received', data);
-    };
+    this.send('received', data);
+};
 
 /** Initiate a connection to the server using the current parameter values,
  *  set up handlers for for establishment of the connection, incoming data,
@@ -434,7 +433,7 @@ exports.connect = function () {
         pendingSends = [];
         openSocket = true; //Update state variable
     });
-    client.on('data', self.exports.dataReceivedHandler.bind(self)  );
+    client.on('data', self.exports.dataReceivedHandler.bind(self));
     client.on('close', function () {
         previousHost = null;
         previousPort = null;
