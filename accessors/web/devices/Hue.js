@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -296,7 +296,7 @@ function Hue() {
      *  @param high The high value.
      */
     function limit(value, low, high) {
-        var parsed = parseInt(value);
+        var parsed = parseInt(value, 10);
         if (typeof parsed === 'undefined') {
             parsed = parseFloat(value);
             if (typeof parsed === 'undefined') {
