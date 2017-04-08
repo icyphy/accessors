@@ -54,7 +54,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals addInputHandler, get, error, exports, extend, get, input, output, parameter, require, send */
+/*globals addInputHandler, console, error, exports, extend, get, getResource, input, output, parameter, require, send */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -82,7 +82,7 @@ function Heartbeat() {
             port: 8088,
             path: '/check-in?key=' + key,
             protocol: 'https'
-        }
+        };
         var options = {
             url: url,
             method: 'POST',
@@ -125,7 +125,7 @@ function Heartbeat() {
             console.log('Request problem: Unable to check in with server: ' + e);
         });
 
-    }
+    };
 
     return heartbeat;
 }
