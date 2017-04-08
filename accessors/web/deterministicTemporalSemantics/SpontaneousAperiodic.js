@@ -26,7 +26,7 @@
 /** This is a spontaneous accessor that fires spontaneously only once after
  *  1200 ms.
  *
- *  @accessor deterministicTemporalSemantics/SpontaneousOnceAcc.js
+ *  @accessor deterministicTemporalSemantics/SpontaneousAperiodic
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
  *  @version $$Id$$
