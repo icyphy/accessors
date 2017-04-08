@@ -29,7 +29,7 @@
  *  @accessor deterministicTemporalSemantics/SpontaneousAcc2
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
- *  @version $$Id: SpontaneousAcc2.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
