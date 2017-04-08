@@ -593,6 +593,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -622,6 +628,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -664,6 +676,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -693,6 +711,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -724,6 +748,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -755,12 +785,20 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
   
+  <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
+  
   <target name="tests.jenkins"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.mocha.xml, tests.nashorn, tests.coverage"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.nashorn, tests.mocha.xml, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
@@ -778,6 +816,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -815,6 +859,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -850,6 +900,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
     
   </target>
@@ -893,6 +949,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
     
   </target>
@@ -930,6 +992,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
     
   </target>
@@ -969,6 +1037,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
 
     <echo>
@@ -998,6 +1072,12 @@
       Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
       though tests may have failed.  To have ant fail when this occurs, run:
       ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
     </echo>
     
   </target>
