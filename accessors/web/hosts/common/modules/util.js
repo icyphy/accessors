@@ -19,6 +19,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+/**
+ *  Utility functions.
+ *
+ *  @module util
+ *  @author Edward A. Lee
+ *  @version $$Id$$
+ */
+
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
     if (!isString(f)) {

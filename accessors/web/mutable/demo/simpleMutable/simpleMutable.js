@@ -26,7 +26,11 @@
 /**
  * This swarmlet example, running on node Host, illustrates the notion of
  * mutableAccessor.
- * See https://www.icyphy.org/accessors/wiki/Modules/Mutable
+ * See [https://accessors.org/accessors/wiki/Modules/Mutable](https://accessors.org/accessors/wiki/Modules/Mutable)
+ 
+ * @module simpleMutable
+ * @author Chadlia Haj Hmida
+ * @version $$Id$$
  */
 
 
