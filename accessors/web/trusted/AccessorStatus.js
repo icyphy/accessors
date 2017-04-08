@@ -1,6 +1,6 @@
 // Accessor that outputs the current status of all top-level accessors.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -64,11 +64,11 @@ exports.initialize = function () {
     this.addInputHandler('query', function () {
         var accessors = this.getTopLevelAccessors();
         var result = [];
-        for (var i = 0; i < accessors.length; i++) {
+        for (var i = 0; i < accessors.length; i += 1) {
             result.push({
                 'accessorName': accessors[i].accessorName,
                 'accessorClass': accessors[i].accessorClass,
-                'initialized': accessors[i].initialized,
+                'initialized': accessors[i].initialized
             });
         }
 

@@ -40,10 +40,11 @@
 exports.setup = function () {
     this.input('name');
     this.output('greeting');
-}
+};
 
 exports.initialize = function () {
     this.addInputHandler('name', function () {
         this.send('greeting', 'Hello, ' + this.get('name'));
     });
-}
+};
+
