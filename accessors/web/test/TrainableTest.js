@@ -167,7 +167,7 @@ exports.initialize = function () {
                 }
 
                 var difference = Math.abs(inputValue - referenceToken);
-                if (isNan(difference)) {
+                if (isNaN(difference)) {
                     throw new Error(self.accessorName + ': The absolute value of the input "' +
                         inputValue + '" - the referenceToken "' +
                         referenceToken + '" is NaN?  It should be less than ' +
