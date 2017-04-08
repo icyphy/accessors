@@ -1,6 +1,6 @@
-// Interactive shell for Node.js swarmlet host.
+// Interactive shell for Node.js accessor host.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -33,6 +33,7 @@
  *
  *  See <a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
+ *  @module nodeHostShell
  *  @author Edward A. Lee, Chris Shaver, Christopher Brooks
  *  @version $$Id$$
  */

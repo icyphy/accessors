@@ -301,7 +301,6 @@
           description="Run jsdoc to generate documentation for JavaScript files."
           >
     <echo>Invoke jsdoc to generate documentation for .js files.
-    The output appears in doc/jsdoc/index.html
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
@@ -317,6 +316,10 @@
       <arg value="--verbose" />
       <arg value="." />
     </exec>
+
+    <echo>The jsdoc output may be found in doc/jsdoc/index.html
+    </echo>
+
   </target>
 
   <target name="jsdoc-install"

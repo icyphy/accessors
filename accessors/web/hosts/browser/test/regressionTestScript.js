@@ -1,6 +1,6 @@
 // Automatic test script for the browser host, using node.js execution platform.
 //
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -53,6 +53,10 @@
  *
  *  For more details and examples, please see the wiki:
  *  https://www.icyphy.org/accessors/wiki/Version0/RegressionTesting
+ *
+ *  @module regressionTestScript
+ *  @author Beth Osyk
+ *  @version $$Id$$
  */
 
 var childProcess = require('child_process');
