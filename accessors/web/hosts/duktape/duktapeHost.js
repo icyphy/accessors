@@ -96,9 +96,9 @@ Duktape.modSearch = function (id, require, exports, module) {
         // print('loaded Ecmascript:', name);
         return src.toString();
     } else if (typeof src === 'object') {
-             // Duktape 2.0 returns objects.
-             // print('loaded Ecmascript:' + name + ", src is of type object");
-             // print('loaded Ecmascript:' + name + ", src.length(): " + src.length);
+        // Duktape 2.0 returns objects.
+        // print('loaded Ecmascript:' + name + ", src is of type object");
+        // print('loaded Ecmascript:' + name + ", src.length(): " + src.length);
         return src;
     }
 
@@ -167,7 +167,7 @@ function getAccessorCode(name) {
  *
  *  @param uri A specification for the resource.
  */
-getResource = function(uri) {
+getResource = function (uri) {
     // See nodeHost.js for an implementation.
     throw new Error('getResouce(' + uri + ') not yet implemented');
 }

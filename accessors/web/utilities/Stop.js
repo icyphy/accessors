@@ -47,7 +47,7 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
-    this.addInputHandler('stop', function() {
+    this.addInputHandler('stop', function () {
         var stop = this.get('stop');
         if (stop) {
             this.stop();

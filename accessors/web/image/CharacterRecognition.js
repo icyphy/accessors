@@ -50,30 +50,30 @@
 
 var Tesseract = null;
 try {
-    Tesseract = require('tesseract'); 
+    Tesseract = require('tesseract');
 } catch (error) {
     console.log("The tesseract module was not present.  The CharacterRecognition accessor is not supported on this accessor host.");
 }
 
-exports.setup = function() {
+exports.setup = function () {
     this.input('input');
-    this.input('options');        // FIXME:  Handle options.  Does nothing currently.
+    this.input('options'); // FIXME:  Handle options.  Does nothing currently.
     this.output('text', {
         'type': 'string'
     });
 };
 
-exports.initialize = function() {
-        var self = this;
-        this.window = {};
-    this.addInputHandler('input', function() {
+exports.initialize = function () {
+    var self = this;
+    this.window = {};
+    this.addInputHandler('input', function () {
         var image = this.get('input');
-        
+
         Tesseract.recognize(image)
-                // Optionally: Log progress.
+            // Optionally: Log progress.
             // .progress(function(p) {console.log('progress', p);})
-                .then(function(result){
-                        self.send('text', result.text);
-                });
+            .then(function (result) {
+                self.send('text', result.text);
+            });
     });
 };

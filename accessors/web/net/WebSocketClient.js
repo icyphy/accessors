@@ -389,7 +389,7 @@ exports.wrapup = function () {
     if (client) {
         client.close();
         if (debug) {
-            console.log(this.accessorName + 'WebSocketClient.js: Status: Connection closed in wrapup.'); 
+            console.log(this.accessorName + 'WebSocketClient.js: Status: Connection closed in wrapup.');
         }
     }
 };

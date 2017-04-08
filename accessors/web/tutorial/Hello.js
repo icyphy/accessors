@@ -37,13 +37,13 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-exports.setup = function() {
-        this.input('name');
-        this.output('greeting');
+exports.setup = function () {
+    this.input('name');
+    this.output('greeting');
 }
 
-exports.initialize = function() {
-        this.addInputHandler('name', function() {
-                this.send('greeting', 'Hello, ' + this.get('name'));
-        });
+exports.initialize = function () {
+    this.addInputHandler('name', function () {
+        this.send('greeting', 'Hello, ' + this.get('name'));
+    });
 }

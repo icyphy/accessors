@@ -73,27 +73,27 @@ function Heartbeat() {
         config.timestamp_sent = Math.floor(new Date()); // in ms
         var configString = JSON.stringify(config);
         var headers = {
-            'Content-Type' : 'application/json',
-            'Content-Length' : configString.length
+            'Content-Type': 'application/json',
+            'Content-Length': configString.length
         };
 
         var url = {
-            host : 'terra.eecs.berkeley.edu',
-            port : 8088,
-            path : '/check-in?key=' + key,
+            host: 'terra.eecs.berkeley.edu',
+            port: 8088,
+            path: '/check-in?key=' + key,
             protocol: 'https'
         }
         var options = {
-            url : url,
-            method : 'POST',
-            headers : headers,
-            rejectUnauthorized : false,
+            url: url,
+            method: 'POST',
+            headers: headers,
+            rejectUnauthorized: false,
             body: configString
-            // We're using a self-signed certificate at the moment.
+                // We're using a self-signed certificate at the moment.
         };
 
         // Prepare request handler.
-        var req = http.request(options, function(res) {
+        var req = http.request(options, function (res) {
             if (res === null) {
                 console.log("Heartbeat.pingMothership: request handler: res == null");
                 return;
@@ -120,8 +120,8 @@ function Heartbeat() {
         // httpClient does this for us because the body is in the options.
         //req.write(configString);
         req.end();
-        
-        req.on('error', function(e) {
+
+        req.on('error', function (e) {
             console.log('Request problem: Unable to check in with server: ' + e);
         });
 
@@ -133,7 +133,9 @@ function Heartbeat() {
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
-    this.input('ipAddress', {type: "string"});
+    this.input('ipAddress', {
+        type: "string"
+    });
 
     // See the accessor comment for how to get the key.
     var keyFile = '$KEYSTORE/heartbeatKey';
@@ -141,9 +143,9 @@ exports.setup = function () {
         key = getResource('$KEYSTORE/heartbeatKey', 1000).trim();
     } catch (e) {
         console.log('Heartbeat: Could not get ' + keyFile + ":  " + e +
-                    '\nThe key is not public, so this accessor is only useful ' +
-                    'If you have the key.  See ' +
-                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.Heartbeat');
+            '\nThe key is not public, so this accessor is only useful ' +
+            'If you have the key.  See ' +
+            'https://www.icyphy.org/accessors/library/index.html?accessor=services.Heartbeat');
         key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheHeartbeatAccessorDocs';
     }
 };
