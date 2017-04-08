@@ -25,7 +25,7 @@ testGeoCoder.setParameter('key', 'REDACTED');
 testGeoCoder.initialize();
 testGeoCoder.provideInput('address', 'berkeley');
 testGeoCoder.react();
-setTimeout(function() {
+setTimeout(function () {
     //console.log(a.latestOutput('location'));
     var locationOutput = JSON.stringify(testGeoCoder.latestOutput('location'));
     assert.equal(locationOutput, '{"latitude":37.8718992,"longitude":-122.2585399}');

@@ -106,35 +106,35 @@ server.on('request', function (request, response) {
                     });
                 } else {
                     fs.readFile(location, function (error, data) {
-                            var contentType = 'text/plain; charset=UTF-8';
-                            var periodIndex = location.lastIndexOf('.');
-                            
-                            var extension = "";
-                            
-                            if (periodIndex !== -1) {
-                                    extension = location.substring(periodIndex + 1);
-                            }
-                            
-                            if (extension === 'css') {
-                                    contentType = 'text/css';
-                            } else if (extension === 'html') {
-                                    contentType = 'text/html;charset=UTF-8'
-                            } else if (extension === 'js') {
-                                    contentType = 'text/javascript';
-                            } else if (extension === 'xml') {
-                                    contentType = 'text/xml';
-                            }
-                            
+                        var contentType = 'text/plain; charset=UTF-8';
+                        var periodIndex = location.lastIndexOf('.');
+
+                        var extension = "";
+
+                        if (periodIndex !== -1) {
+                            extension = location.substring(periodIndex + 1);
+                        }
+
+                        if (extension === 'css') {
+                            contentType = 'text/css';
+                        } else if (extension === 'html') {
+                            contentType = 'text/html;charset=UTF-8'
+                        } else if (extension === 'js') {
+                            contentType = 'text/javascript';
+                        } else if (extension === 'xml') {
+                            contentType = 'text/xml';
+                        }
+
                         if (error) {
                             response.statusCode = 404;
                             response.end(error.message);
                             return;
                         }
-                        
-                            response.writeHead(200, {
-                                    'Content-Type': contentType,
-                                    'Content-Length': data.length
-                            });
+
+                        response.writeHead(200, {
+                            'Content-Type': contentType,
+                            'Content-Length': data.length
+                        });
                         response.write(data);
                         response.end();
                     });

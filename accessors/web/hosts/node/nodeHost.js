@@ -141,7 +141,7 @@ function getAccessorCode(name) {
  *
  *  @param uri A specification for the resource.
  */
-getResource = function(uri) {
+getResource = function (uri) {
 
     // We might want the Node host (and in fact all hosts) to allow access to
     // resources that are given with relative paths. By default, these would
@@ -160,7 +160,7 @@ getResource = function(uri) {
         }
     }
     throw new Error('getResouce(' + uri + ', ' + timeout + ') only supports $KEYSTORE, not ' +
-                    uri);
+        uri);
 }
 
 /** Instantiate and return an accessor.
@@ -222,8 +222,8 @@ function exitHandler(options, err) {
             }
         }
         if (initialThrowable !== null) {
-            console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: "
-                    + initialThrowable + ":" + initialThrowable.stack);
+            console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " +
+                initialThrowable + ":" + initialThrowable.stack);
             if (process.exitCode == undefined) {
                 process.exitCode = 1;
             }
@@ -272,7 +272,7 @@ function exitHandler(options, err) {
 
     if (process.exitCode !== 0) {
         console.log('nodeHost.js: Error: Node will exit and return ' +
-                    process.exitCode + ', which should be zero.');
+            process.exitCode + ', which should be zero.');
     }
 
     // If we the exitHandler was called with 'cleanup', then we won't exit here,
@@ -326,7 +326,7 @@ function startHostShell() {
     });
 
     var self = this;
-    
+
     // The next bit of code is quite tricky, and is due to
     // Axel Rauschmayer. See
     // https://dzone.com/articles/implementing-command-line-eval
@@ -355,15 +355,15 @@ function startHostShell() {
     // Note that one side effect of this strategy is that all context variables
     // here (nodeHost, fs, path, accessorPath, etc.) are available in the shell.
     // These are not available to accessors, however, so this seems OK.
-    function *evalGenerator() {
+    function* evalGenerator() {
         var command = yield;
-        
+
         // Define functions available to the command line.
         var getTopLevelAccessors = commonHost.getTopLevelAccessors;
         var stopAllAccessors = commonHost.stopAllAccessors;
         var uniqueName = commonHost.uniqueName;
 
-        while(true) {
+        while (true) {
             try {
                 var result = eval(command);
                 command = yield result;
@@ -381,7 +381,7 @@ function startHostShell() {
         return this.evalGen.next(str);
     };
     var evaluator = new Evaluator();
-    
+
     // Emitted whenever a command is entered on stdin.
     rl.on('line', function (command) {
         // Remove any trailing semicolon.
@@ -442,7 +442,7 @@ function startHostShell() {
     console.log('Welcome to the Node swarmlet host (nsh). Type exit to exit, help for help.');
     rl.setPrompt('nsh> ');
     rl.prompt();
-    
+
     return evaluator;
 };
 
@@ -491,19 +491,19 @@ function processCommandLineArguments(args) {
     // This script is Node-specific because it uses fs.
     var result = commonHost.processCommandLineArguments(args,
         // Argument to read a file.
-        function(filename) {
+        function (filename) {
             // FIXME: What if the encoding is not utf8?
             return fs.readFileSync(filename, 'utf8');
         },
         // Argument to instantiate an accessor.
         instantiateTopLevel,
         // Function to call upon termination.
-        function() {
+        function () {
             // Note that in the node host, an exit handler
             // will call wrapup on all accessors.
             process.exit(0);
         }
-                                          );
+    );
     if (!result) {
         // No accessors were initialized and the keepalive argument
         // was not given, so there is presumably no more to do.
@@ -525,7 +525,7 @@ exports.startHostShell = startHostShell;
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
-exports.getMonitoringInformation = commonHost.getMonitoringInformation; 
+exports.getMonitoringInformation = commonHost.getMonitoringInformation;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.uniqueName = commonHost.uniqueName;
 

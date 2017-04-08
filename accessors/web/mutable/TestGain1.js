@@ -55,7 +55,7 @@ exports.setup = function () {
         'value': 2
     });
     this.realize('gain', {
-            'ontology': 'url'
+        'ontology': 'url'
     });
 };
 

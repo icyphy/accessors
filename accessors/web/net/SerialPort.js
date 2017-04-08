@@ -105,7 +105,7 @@ exports.setup = function () {
     // if the socket module is not supported by the host.
     try {
         var self = this;
-        serial.hostSerialPorts(function(serialPorts) {
+        serial.hostSerialPorts(function (serialPorts) {
             if (serialPorts) {
                 self.parameter('port', {
                     'options': serialPorts,
@@ -128,7 +128,7 @@ exports.setup = function () {
             console.log("could not get stack trace" + err2);
         }
         console.log(err.stack);
-        
+
         throw new Error(err);
     }
 };
@@ -147,8 +147,8 @@ exports.initialize = function () {
     port = new serial.SerialPort(
         this.get('port'),
         this.accessorName, // FIXME: Using an undocumented feature.
-        2000,    // FIXME: Replace with timeout parameter.
-        {        // Options.
+        2000, // FIXME: Replace with timeout parameter.
+        { // Options.
             'baudRate': this.getParameter('baudRate'),
             'receiveType': this.getParameter('receiveType'),
             'sendType': this.getParameter('sendType')
@@ -162,7 +162,7 @@ exports.initialize = function () {
             try {
                 data = JSON.parse(data);
                 self.send('received', data);
-            } catch(err) {
+            } catch (err) {
                 console.log('SerialPort: invalid data: ' + data + ', error: ' + err);
                 self.send('invalid', data);
             }
@@ -172,7 +172,7 @@ exports.initialize = function () {
     });
 
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
-    
+
     port.open();
 };
 

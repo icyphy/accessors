@@ -61,7 +61,7 @@ exports.setup = function () {
 
 exports.initialize = function () {
     var self = this;
-    this.addInputHandler('query', function() {
+    this.addInputHandler('query', function () {
         var accessors = this.getTopLevelAccessors();
         var result = [];
         for (var i = 0; i < accessors.length; i++) {
@@ -71,7 +71,7 @@ exports.initialize = function () {
                 'initialized': accessors[i].initialized,
             });
         }
-        
+
         console.log('FIXME ' + result);
         this.send('status', result);
     });

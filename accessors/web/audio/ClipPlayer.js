@@ -56,7 +56,7 @@ var previousURL = null;
 
 exports.initialize = function () {
     var self = this;
-    
+
     function updateURL() {
         var url = self.get('clipURL');
         if (url && url !== previousURL) {
@@ -70,11 +70,11 @@ exports.initialize = function () {
     this.addInputHandler('clipURL', function () {
         updateURL();
     });
-    
+
     this.addInputHandler('start', function () {
         // In case there is a new URL...
         updateURL();
-        
+
         if (playerPlaying) {
             playerPlaying.stop();
         }

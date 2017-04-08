@@ -148,9 +148,9 @@ exports.publish = function (data) {
 
                 // I believe we need the file to be well formed if the redirection
                 // of accessors.org is going to work.
-                
+
                 // However, in the near term, we will try it without the header.
-                
+
                 // moml += '<?xml version="1.0" standalone="yes"?>\n' +
                 //    '<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
                 //    '    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +

@@ -78,7 +78,7 @@
 /*globals addInputHandler, get, getParameter, error, exports, extend, get, input, output, parameter, require, send */
 /*jshint globalstrict: true*/
 'use strict';
- 
+
 exports.setup = function () {
     this.extend('net/TCPSocketClient');
     this.input('wifiReadings');
@@ -105,38 +105,38 @@ exports.setup = function () {
     });
 };
 
-exports.initialize = function(){
+exports.initialize = function () {
     exports.ssuper.initialize.call(this);
     this.addInputHandler('wifiReadings', this.exports.wifiReadingsInputHandler.bind(this));
     //exports.ssuper.tempFunc.call(this);// .call(this);
 };
 
-exports.wifiReadingsInputHandler = function() {
+exports.wifiReadingsInputHandler = function () {
     //The RedPin server closes its connection after each location request
     //so it must be reestablished whenever we wish to make a new one.
-    
+
     var wifiArray = this.get('wifiReadings');
     //Throw an error if input is incorrectly structured
-    try{
+    try {
         var wifiTest = JSON.parse(wifiArray);
-        for (var i = 0; i < wifiTest.length; i++){
-            if(typeof wifiTest[i].ssid !== "string"){
+        for (var i = 0; i < wifiTest.length; i++) {
+            if (typeof wifiTest[i].ssid !== "string") {
                 throw "missing ssid string in " + i + "th element of wifiReadings: " + wifiArray;
             }
-            if(typeof wifiTest[i].bssid !== "string"){
+            if (typeof wifiTest[i].bssid !== "string") {
                 throw "missing bssid string in " + i + "th element of wifiReadings: " + wifiArray;
             }
-            if(typeof wifiTest[i].wepEnabled !== "boolean"){
+            if (typeof wifiTest[i].wepEnabled !== "boolean") {
                 throw "missing wepEnabled boolean in " + i + "th element of wifiReadings: " + wifiArray;
             }
-            if(typeof wifiTest[i].rssi !== "number"){
+            if (typeof wifiTest[i].rssi !== "number") {
                 throw "missing rssi number in " + i + "th element of wifiReadings: " + wifiArray;
             }
-             if(typeof wifiTest[i].isInfrastructure !== "boolean"){
+            if (typeof wifiTest[i].isInfrastructure !== "boolean") {
                 throw "missing isInfrastructure boolean in " + i + "th element of wifiReadings: " + wifiArray;
             }
-        }       
-    } catch(error) {
+        }
+    } catch (error) {
         this.error(error);
     }
     //Format of request matches the protocol document here:
@@ -151,7 +151,7 @@ exports.wifiReadingsInputHandler = function() {
 var self = this;
 //Copying "this" to "self" is needed because dataReceivedHandler will be passed
 // as a callback to "client" in TCPSocketClient
-exports.dataReceivedHandler = function(data) {
+exports.dataReceivedHandler = function (data) {
     var serverResponse = JSON.parse(data);
     var locationID = serverResponse.data.symbolicID;
     var mapName = serverResponse.data.map.mapName;
