@@ -108,7 +108,7 @@ exports.defineTags = function (dictionary) {
                 // Add the type names and other type properties (such as `optional`).
                 // Don't overwrite existing properties.
                 Object.keys(tag.value).forEach(function (prop) {
-                    if (!ObjecthasOwnProperty.call(doclet, prop)) {
+                    if (!Object.hasOwnProperty.call(doclet, prop)) {
                         doclet[prop] = tag.value[prop];
                     }
                 });
