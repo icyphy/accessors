@@ -68,13 +68,13 @@
  *   *  callbackFunction: the callback function
  *   *  interval: that is the triggering timeout
  *   *  periodic: if set to true, the callback needs to execute every interval time,
- *           otherwise, it executes only once.
+ *      otherwise, it executes only once.
  *   *  nextExecutionTime: records the next time at which the callback should be
  *      executed.
  *        
  *  FIXME: Proof!
  *  
- *  @module deterministicTemporalSemantics.js
+ *  @module deterministicTemporalSemantics
  *  @author Chadlia Jerad
  *  @version $$Id: deterministicTemporalSemantics.js 2017-03-06 10:29:30Z chadlia.jerad $$   
  */
