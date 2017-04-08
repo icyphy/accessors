@@ -1,5 +1,4 @@
-
-// Copyright (c) 2015-2017 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -20,7 +19,6 @@
 // PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
-//
 
 /**
  * Calculate maps of accessors to test cases and accessors to hosts,
@@ -32,10 +30,10 @@
  *
  * See https://github.com/isaacs/node-glob
  *
+ * @module accessorMap
  * @author Beth Osyk
  * @version: $$Id$$
  */
-
 
 var fs = require('fs');
 var glob = require('glob');

@@ -47,6 +47,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE
 
+/** An accessor host for small embedded systems that uses the Duktape JavaScript
+ *  interpreter.
+ *
+ *  See [https://accessors.org/accessors/wiki/Main/DuktapeHost](https://accessors.org/wiki/Main/DuktapeHost).
+ *
+ *  @module duktapeHost
+ *  @author Christopher Brooks
+ *  @version $$Id$$
+ */
 // FIXME: Move the Duktape code elsewhere so as to avoid copyright issues.
 /** Search for a module.
  */

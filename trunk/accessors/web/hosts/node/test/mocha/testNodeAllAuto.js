@@ -1,17 +1,44 @@
-// @version: $$Id$$
-// Run the .js files accessors/web/*/test/auto/, excluding hosts/browser/test/auto
-// To run this test, do:
-//   sudo npm install -g mocha
-//   mocha testNodeAllAuto.js
-// or
-//   (cd ../../..; ant tests.mocha.composites)
+// Copyright (c) 2016-2017 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission is hereby granted, without written agreement and without
+// license or royalty fees, to use, copy, modify, and distribute this
+// software and its documentation for any purpose, provided that the above
+// copyright notice and the following two paragraphs appear in all copies
+// of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+// SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+// ENHANCEMENTS, OR MODIFICATIONS.
 
+/** 
+ * Run the .js files in the auto/ directories.
+ *
+ * To run this test, do:
+ *   sudo npm install -g mocha
+ *   mocha testNodeAllAuto.js
+ * or
+ *   (cd ../../..; ant tests.mocha.composites)
+ *
+ * @module testNodeAllAuto
+ * @author: Christopher Brooks
+ * @version: $$Id$$
+ */
 var testNodeAuto = require('../testNodeAuto.js');
 
 var fs = require('fs');
 
 /** Find the auto directories for Node tests.
- *  hosts/browser/test/auto is excluded
+ *  The hosts/browser/test/auto directory is excluded.
  *  @return an array of auto/ directories.
  */
 var findNodeAutoDirectories = function(dir) {

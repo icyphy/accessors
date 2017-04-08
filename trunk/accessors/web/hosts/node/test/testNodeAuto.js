@@ -1,10 +1,14 @@
-// @version: $$Id$$
-// Run the tests in accessors/web/test/auto.
-// To run this test, do:
-//   sudo npm install -g mocha
-//   (cd mocha; mocha testNodeAllAuto.js)
-// or
-//   (cd ../../../; ant tests.mocha.composites)
+/**
+ * Run the tests in accessors/web/test/auto.
+ * To run this test, do:
+ *   sudo npm install -g mocha
+ *   (cd mocha; mocha testNodeAllAuto.js)
+ * or
+ *   (cd ../../../; ant tests.mocha.composites)
+ * @module testNodeAuto
+ * @author Christopher Brooks, Beth Osyk
+ * @version: $$Id$$
+ */
 
 var nodeHost = require('../nodeHost.js');
 var fs = require('fs');
