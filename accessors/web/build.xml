@@ -67,7 +67,7 @@
 
   <!-- If true, then if a test returns non-zero, the build will fail
        and no other tests will run. -->
-  <property name="tests.failonerror" value="true"/>
+  <property name="tests.failonerror" value="false"/>
 
   <!-- The timeout in milliseconds for test -->
   <property name="timeout" value="120000" />
@@ -543,7 +543,8 @@
     <chmod file="${nyc.command}"
 	   perm="a+x"/>
     <exec executable="${nyc.command}"
-          timeout="${timeout}">
+          failonerror="${tests.failonerror}"
+          timeout="${timeout.longer}">
       <arg value="--reporter=html"/>
       <arg value="--reporter=text"/>
       <arg value="mocha"/>
