@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -86,7 +86,7 @@ exports.setup = function () {
     this.input('input');
     this.output('accepted', {
         type: 'boolean',
-        spontaneous: true,
+        spontaneous: true
     });
     this.parameter('inputFormat', {
         type: 'string',
