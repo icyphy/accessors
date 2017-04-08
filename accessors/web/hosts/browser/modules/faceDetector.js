@@ -55,23 +55,23 @@ var ImageProcessingDisplay = require('imageProcessingDisplay');
  * to store the face detection classifier.
  */
 var Filter = function() {
-	EventEmitter.call(this);
-	
-	var self = this;
-	
-	// Creates pair of canvases to display before and after images.
-	this.display = new ImageProcessingDisplay.ImageProcessingDisplay();
-	
-	this.defaultOptions = {};
-	
-	// Store the trained face detector.  Loaded when first called.
-	this.faceCascade = null;
-	this.faceCount = 0;
-	this.image = null;
-	
-	this.display.on('ready', function(data) {
-		self.emit('ready', data);
-	})
+        EventEmitter.call(this);
+        
+        var self = this;
+        
+        // Creates pair of canvases to display before and after images.
+        this.display = new ImageProcessingDisplay.ImageProcessingDisplay();
+        
+        this.defaultOptions = {};
+        
+        // Store the trained face detector.  Loaded when first called.
+        this.faceCascade = null;
+        this.faceCount = 0;
+        this.image = null;
+        
+        this.display.on('ready', function(data) {
+                self.emit('ready', data);
+        })
 };
 
 util.inherits(Filter, EventEmitter);
@@ -82,48 +82,48 @@ util.inherits(Filter, EventEmitter);
  * @return The image with squares around any faces.
  */ 
 Filter.prototype.filter = function() {
-	var self = this;
-	
-	if(self.faceCascade == undefined ){
-		self.faceCascade = new cv.CascadeClassifier();
-		self.faceCascade.load('haarcascade_frontalface_default.xml');
-	}
-	
-	var img = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
-	var img_gray = new cv.Mat();
-	var img_color = new cv.Mat(); // Opencv likes RGB
-	
-	
-	cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
-	cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
-	
-	var faces = new cv.RectVector();
-	var s1 = [0, 0];
-	var s2 = [0, 0];
-	self.faceCascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
-	self.faceCount = faces.size();
-	
-	for (var i = 0 ;i < faces.size(); i+=1 )
-	{
-		var faceRect = faces.get(i);
-		x = faceRect.x ;
-		y = faceRect.y ;
-		w = faceRect.width ;
-		h = faceRect.height;
-		var p1 = [x, y];
-		var p2 = [x+w, y+h];
-		var color = new cv.Scalar(255,0,0);
-		cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
-		faceRect.delete();
-		color.delete();
-	}
-	self.display.setMatResult(img_color);
-	img.delete();
-	img_color.delete();
-	faces.delete();
-	img_gray.delete();
-	
-	return self.display.getResult();
+        var self = this;
+        
+        if(self.faceCascade == undefined ){
+                self.faceCascade = new cv.CascadeClassifier();
+                self.faceCascade.load('haarcascade_frontalface_default.xml');
+        }
+        
+        var img = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
+        var img_gray = new cv.Mat();
+        var img_color = new cv.Mat(); // Opencv likes RGB
+        
+        
+        cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+        cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+        
+        var faces = new cv.RectVector();
+        var s1 = [0, 0];
+        var s2 = [0, 0];
+        self.faceCascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
+        self.faceCount = faces.size();
+        
+        for (var i = 0 ;i < faces.size(); i+=1 )
+        {
+                var faceRect = faces.get(i);
+                x = faceRect.x ;
+                y = faceRect.y ;
+                w = faceRect.width ;
+                h = faceRect.height;
+                var p1 = [x, y];
+                var p2 = [x+w, y+h];
+                var color = new cv.Scalar(255,0,0);
+                cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
+                faceRect.delete();
+                color.delete();
+        }
+        self.display.setMatResult(img_color);
+        img.delete();
+        img_color.delete();
+        faces.delete();
+        img_gray.delete();
+        
+        return self.display.getResult();
 };
 
 var filter = new Filter();
@@ -144,13 +144,13 @@ var filter = new Filter();
  *  @return The image with blue squares around any faces.
  */
 exports.filter = function (image, options, callback) {
-	filter.display.setOriginal(image);
+        filter.display.setOriginal(image);
 
-	// TODO: Implement options for MinFaceSize and MaxFaceSize.
-	filter.on('ready', function() {
-		filter.filter(options);
-		callback(filter.display.getResult());
-	});
+        // TODO: Implement options for MinFaceSize and MaxFaceSize.
+        filter.on('ready', function() {
+                filter.filter(options);
+                callback(filter.display.getResult());
+        });
 };
 
 /** Return number of detected faces

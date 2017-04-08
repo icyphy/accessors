@@ -7,7 +7,7 @@
 var nodeHost = require('../../nodeHost.js');
 describe('NodeHost./accessors/web/hosts/node/test/mocha/testNodeHostInstantiateTopLevel nodeHost instantiateTopLevel()', function () {
     it('NodeHost./accessors/web/hosts/node/test/mocha/testNodeHostInstantiateTopLevel instantiateTopLevel()', function () {
-	nodeHost.instantiateTopLevel("TestComposite", "test/TestComposite");
+        nodeHost.instantiateTopLevel("TestComposite", "test/TestComposite");
 
     });
 });

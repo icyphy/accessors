@@ -47,17 +47,17 @@ var _input = 1;
 if (ma.reifiableBy(a1)){
     console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a1.accessorName);
     if (ma.reify(a1)) {
-	ma.initialize();
-			
-	ma.provideInput('input', _input);
-	ma.react();
-	console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
-			
-	_input += 5;
-	ma.provideInput('input', _input);
-	ma.react();
-	console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
-	} 
+        ma.initialize();
+                        
+        ma.provideInput('input', _input);
+        ma.react();
+        console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
+                        
+        _input += 5;
+        ma.provideInput('input', _input);
+        ma.react();
+        console.log('Latest output of ' + ma.accessorName + ' reified by ' + a1.accessorName +': ' + ma.latestOutput('scaled'));
+        } 
 } else {
     console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a1.accessorName);
 }
@@ -69,26 +69,26 @@ if (ma.removeReification()) {
     
     // go and test for reification with a2
     if (ma.reifiableBy(a2)){
-		console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
-		if (ma.reify()) {
-			ma.initialize();
-			ma.provideInput('input', _input);
-			ma.react();
-			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
-			
-			// At this point, ma is mutable, a1 is composite and a2 in top level
-			console.dir(nodeHost.getMonitoringInformation());
-			
-			_input += 5;
-			ma.provideInput('input', _input);
-			ma.react();
-			console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
-		}
-	} else {
+                console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
+                if (ma.reify()) {
+                        ma.initialize();
+                        ma.provideInput('input', _input);
+                        ma.react();
+                        console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
+                        
+                        // At this point, ma is mutable, a1 is composite and a2 in top level
+                        console.dir(nodeHost.getMonitoringInformation());
+                        
+                        _input += 5;
+                        ma.provideInput('input', _input);
+                        ma.react();
+                        console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
+                }
+        } else {
             console.log('Sorry, ' + ma.accessorName + ' cannot be reified by the accessor ' + a2.accessorName);
         }
 };
-	
+        
 // Try to run with and without the following instruction
 // You will notice how wrapping up in performed!
 ma.removeReification();

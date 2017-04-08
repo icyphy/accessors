@@ -19,7 +19,7 @@ exports.setup = function() {
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScript = new Accessor('JavaScript', 'exports.setup = function() {\n	this.input(\'input\', {\'type\':\'number\'});\n	this.output(\'output\', {\'type\':\'boolean\'});\n}\nexports.initialize = function() {\n	this.addInputHandler(\'input\', function() {\n		var input = this.get(\'input\');\n		if (input >= 3) {\n			this.send(\'output\', true);\n		}\n	});\n}\n', null, null, null, null);
+    var JavaScript = new Accessor('JavaScript', 'exports.setup = function() {\n        this.input(\'input\', {\'type\':\'number\'});\n        this.output(\'output\', {\'type\':\'boolean\'});\n}\nexports.initialize = function() {\n        this.addInputHandler(\'input\', function() {\n                var input = this.get(\'input\');\n                if (input >= 3) {\n                        this.send(\'output\', true);\n                }\n        });\n}\n', null, null, null, null);
     JavaScript.container = this;
     this.containedAccessors.push(JavaScript);
 

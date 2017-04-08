@@ -258,16 +258,16 @@ function exitHandler(options, err) {
         err = new Error("SIGUSR1 was received, here's the stack.");
     }
     if (err) {
-	if (err.stack === undefined) {
+        if (err.stack === undefined) {
             if (err !== process.exitCode) {
-	        console.log("nodeHost.js: err: \"" + err + "\" has no stack.");
+                console.log("nodeHost.js: err: \"" + err + "\" has no stack.");
             }
-	} else {
+        } else {
             console.log("nodeHost.js: Error: " + err.stack);
-	}
-	if (process.exitCode === undefined) {
-	    process.exitCode = 1;
-	}
+        }
+        if (process.exitCode === undefined) {
+            process.exitCode = 1;
+        }
     }
 
     if (process.exitCode !== 0) {
@@ -505,9 +505,9 @@ function processCommandLineArguments(args) {
         }
                                           );
     if (!result) {
-	// No accessors were initialized and the keepalive argument
-	// was not given, so there is presumably no more to do.
-	console.log('No standalone accessors were instantiated');
+        // No accessors were initialized and the keepalive argument
+        // was not given, so there is presumably no more to do.
+        console.log('No standalone accessors were instantiated');
         //process.exit(0);
     }
 };
@@ -552,35 +552,35 @@ var url = require('url');
 // Create a server
 http.createServer(function (request, response) {
 
-	var reqParts = request.url.split("/");
+        var reqParts = request.url.split("/");
 
-	console.log(reqParts);
+        console.log(reqParts);
 
-	if (reqParts[1] == "monitor") {
-		// HTTP Status: 200 : OK
-		// Content Type: text/plain
-		response.writeHead(200, {'Content-Type': 'text/html'});
-		// Write the content of the file to response body
-		
-		//console.log(commonHost.getMonitoringInformation());
+        if (reqParts[1] == "monitor") {
+                // HTTP Status: 200 : OK
+                // Content Type: text/plain
+                response.writeHead(200, {'Content-Type': 'text/html'});
+                // Write the content of the file to response body
+                
+                //console.log(commonHost.getMonitoringInformation());
 
-		// Retrieve all monitoring information
-		var allMonitoringInformation = commonHost.getMonitoringInformation();
-		
-		// Parse the elements and send them one by one
-		Object.keys(allMonitoringInformation).forEach(function (accName) {
-			var accMonitoringInformation = {};
-			accMonitoringInformation[accName] = allMonitoringInformation[accName];
-			console.log(JSON.stringify(accMonitoringInformation));
-			response.write(JSON.stringify(accMonitoringInformation));
-		});
-	} else {
-		response.writeHead(404, {'Content-Type': 'text/html'});
-		response.write("Hello, nothing received information!");
-	}
-	// Send the response body
-	response.end();
-	
+                // Retrieve all monitoring information
+                var allMonitoringInformation = commonHost.getMonitoringInformation();
+                
+                // Parse the elements and send them one by one
+                Object.keys(allMonitoringInformation).forEach(function (accName) {
+                        var accMonitoringInformation = {};
+                        accMonitoringInformation[accName] = allMonitoringInformation[accName];
+                        console.log(JSON.stringify(accMonitoringInformation));
+                        response.write(JSON.stringify(accMonitoringInformation));
+                });
+        } else {
+                response.writeHead(404, {'Content-Type': 'text/html'});
+                response.write("Hello, nothing received information!");
+        }
+        // Send the response body
+        response.end();
+        
 }).listen(8082);
 
 // Console will print the message

@@ -42,9 +42,9 @@ var i;
 for (i = 0; i < directoryFiles.length; i += 1) {
     var fileName = directoryFiles[i].getPath();
     if (fileName.endsWith('.js')) {
- 	if (fileName.substring(fileName.length - 3, fileName.length) === ".js") {
-	    fileName = fileName.substring(0, fileName.length -3);
-	}
+         if (fileName.substring(fileName.length - 3, fileName.length) === ".js") {
+            fileName = fileName.substring(0, fileName.length -3);
+        }
         instantiate(fileName, fileName);
     }
 }

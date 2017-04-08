@@ -24,52 +24,52 @@
 
 
 exports.HostHelper = function() {
-	this.mochaListener = null;
-	this.exception = null;
-	this.exceptionHandler = null;
-	this.exitHandler = null;
-	this.hostname = "default";
-	
-	if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
-	    exports.HostHelper.prototype.instantiate = instantiate;
-	    this.hostname = "BrowserHost";
-	} else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
-		exports.HostHelper.prototype.instantiate = function() {
-			console.log('The hostHelper module is not yet supported on Cape Code.');
-		}
-		this.hostname = "CapeCodeHost";
-	} else if (typeof Duktape === 'object') {
-		exports.HostHelper.prototype.instantiate = function() {
-			console.log('The hostHelper module is not yet supported on Duktape.');
-		}
-		this.hostname = "DuktapeHost";
-	} else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
-		exports.HostHelper.prototype.instantiate = function() {
-			console.log('The hostHelper module is not yet supported on Nashorn.');
-		}
-		this.hostname = "NashornHost";
-	} else if (typeof process !== 'undefined' && typeof process.version === 'string') {
-		this.hostname = "NodeHost";
-		var host = require('./../../node/nodeHost.js');
-		exports.HostHelper.prototype.instantiate = host.instantiate;
-		
-		exports.HostHelper.prototype.before = function() {
+        this.mochaListener = null;
+        this.exception = null;
+        this.exceptionHandler = null;
+        this.exitHandler = null;
+        this.hostname = "default";
+        
+        if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
+            exports.HostHelper.prototype.instantiate = instantiate;
+            this.hostname = "BrowserHost";
+        } else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+                exports.HostHelper.prototype.instantiate = function() {
+                        console.log('The hostHelper module is not yet supported on Cape Code.');
+                }
+                this.hostname = "CapeCodeHost";
+        } else if (typeof Duktape === 'object') {
+                exports.HostHelper.prototype.instantiate = function() {
+                        console.log('The hostHelper module is not yet supported on Duktape.');
+                }
+                this.hostname = "DuktapeHost";
+        } else if (typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
+                exports.HostHelper.prototype.instantiate = function() {
+                        console.log('The hostHelper module is not yet supported on Nashorn.');
+                }
+                this.hostname = "NashornHost";
+        } else if (typeof process !== 'undefined' && typeof process.version === 'string') {
+                this.hostname = "NodeHost";
+                var host = require('./../../node/nodeHost.js');
+                exports.HostHelper.prototype.instantiate = host.instantiate;
+                
+                exports.HostHelper.prototype.before = function() {
             // Remove the mocha listener (restore later) and 
             // use our own handlers.
             this.mochaListener = process.listeners('uncaughtException').pop();
             
             process.removeAllListeners('exit');
             process.removeAllListeners('uncaughtException');
-		}
-		
-		exports.HostHelper.prototype.eachTestStart = function(done) {
+                }
+                
+                exports.HostHelper.prototype.eachTestStart = function(done) {
             this.exception = null;
             this.exceptionHandler = null;
             this.exitHandler = null;
             
             // Treat exceptions and calls to 'exit' as failures.
             process.once('uncaughtException', 
-            		this.exceptionHandler = function(error) { 
+                            this.exceptionHandler = function(error) { 
                 exception = error;
                 done(error);
             });
@@ -78,18 +78,18 @@ exports.HostHelper = function() {
                 exception = error;
                 done(error);
             });
-		}
-		
-		exports.HostHelper.prototype.eachTestEnd = function() {
+                }
+                
+                exports.HostHelper.prototype.eachTestEnd = function() {
             process.removeListener('uncaughtException', this.exceptionHandler);
             process.removeListener('exit', this.exitHandler);
-		}
-		
-		exports.HostHelper.prototype.after = function() {
-			 process.listeners('uncaughtException').push(this.mochaListener);
-		}
-		
-	}
+                }
+                
+                exports.HostHelper.prototype.after = function() {
+                         process.listeners('uncaughtException').push(this.mochaListener);
+                }
+                
+        }
 };
 
 // In node, a custom uncaught exception handler must be used to avoid crashing 
@@ -101,7 +101,7 @@ exports.HostHelper.prototype.eachTestEnd = function() {};
 
 // Placeholder for proper instantiate function for each host.
 exports.HostHelper.prototype.instantiate = function() {
-	console.log('The hostHelper module is not yet supported on this host.');
+        console.log('The hostHelper module is not yet supported on this host.');
 }
 
 
