@@ -1,7 +1,7 @@
 // Swarmlet that instantiates, parameterizes and initializes 3 periodic
 // accessors and one aperiodic accessor
 //
-// Copyright (c) 2016-2017 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -28,6 +28,7 @@
  *  This "swarmlet" example, running on node Host, illustrates the deterministric
  *  temporal semantics implementation
  *
+ *  @module smpleDTSswarmlet
  *  @author Chadlia Jerad
  *  @version $$Id$$
  */

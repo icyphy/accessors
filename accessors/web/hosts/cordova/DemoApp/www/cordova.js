@@ -18,6 +18,12 @@
  specific language governing permissions and limitations
  under the License.
 */
+
+/** Apache Cordova.
+ *  @module cordova
+ *  @author Joyent
+ *  @version $$Id$$
+ */
 ;
 (function () {
     var PLATFORM_VERSION_BUILD_LABEL = '5.1.1';
