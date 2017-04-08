@@ -129,8 +129,8 @@ exports.supportedSendTypes = function () {
  *  @param options The options.
  */
 exports.Client = function (options) {
-	EventEmitter.call(this);
-	
+        EventEmitter.call(this);
+        
     if (!('WebSocket' in window)) {
         throw 'Browser does not support web sockets.';
     }

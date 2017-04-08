@@ -30,8 +30,8 @@ var findNodeAutoDirectories = function(dir) {
                                                     // Exclude gdp because it is crashes.  06-Apr-2017
                                                     'gdp/test/auto',
                                                     'hosts/browser/test/auto',
-						    'node_modules/@terraswarm/gdp/test/mocha'
-						  ];
+                                                    'node_modules/@terraswarm/gdp/test/mocha'
+                                                  ];
                             skipDirectories.forEach(function(skipDirectory) {
                                     if (file.indexOf(skipDirectory) != -1) {
                                         console.log("testNodeAllAuto.js: Skipping " + skipDirectory);

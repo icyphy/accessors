@@ -61,12 +61,12 @@ exports.Player = function (options) {
  *  @param data An array of numbers in the range -1 to 1 to be played.
  */
 exports.Player.prototype.play = function (data) {
-	error("Player not yet implemented for browser host.");
+        error("Player not yet implemented for browser host.");
 };
 
 /** Stop the player and free audio resources. */
 exports.Player.prototype.stop = function () {
-	error("Player not yet implemented for browser host.");
+        error("Player not yet implemented for browser host.");
 };
 
 
@@ -87,36 +87,36 @@ exports.Player.prototype.stop = function () {
 /** Create a ClipPlayer.
  */
 exports.ClipPlayer = function() {
-	this.clip = null;
+        this.clip = null;
 };
 
 /** Load audio from the specified URL.
  * @param url  The URL to load audio from.
  */
 exports.ClipPlayer.prototype.load = function(url) {
-	
-	try {
-		this.clip = new Audio(url);
+        
+        try {
+                this.clip = new Audio(url);
 
-	} catch(err) {
-		error("Error connecting to audio URL " + url);
-	} 
+        } catch(err) {
+                error("Error connecting to audio URL " + url);
+        } 
 };
 
 /** Play currently loaded audio clip.
  */
 exports.ClipPlayer.prototype.play = function() {
     if (this.clip !== null) {
-    	this.clip.play();
+            this.clip.play();
     } else {
-    	error("No audio clip to play.  Please load a url first.");
+            error("No audio clip to play.  Please load a url first.");
     }
 };
 
 /** Stop playback. */
 exports.ClipPlayer.prototype.stop = function() {
     if (this.clip !== null) {
-    	this.clip.pause();
+            this.clip.pause();
     }
 };
 
@@ -147,10 +147,10 @@ exports.Capture = function (options) {
  *  @return An array of numbers in the range -1 to 1 captured from the audio.
  */
 exports.Capture.prototype.get = function (data) {
-	error("Capture not yet implemented for the browser host.");
+        error("Capture not yet implemented for the browser host.");
 };
 
 /** Stop the capture and free audio resources. */
 exports.Capture.prototype.stop = function () {
-	error("Capture not yet implemented for the browser host.");
+        error("Capture not yet implemented for the browser host.");
 };

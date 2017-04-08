@@ -46,8 +46,8 @@ describe('NodeHost', function() {
 
             // Invoking (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke.js -timeout 6000 test/auto/RampJSTest)
             // should generate the following:
-    	    // FIXME: The output has changed, we need to add better debugging that will print when wrapup() is called
-    	    //
+                // FIXME: The output has changed, we need to add better debugging that will print when wrapup() is called
+                //
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/auto/RampJSTest.js
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TestSpontaneous.js
             //   Reading accessor at: /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/test/TrainableTest.js
