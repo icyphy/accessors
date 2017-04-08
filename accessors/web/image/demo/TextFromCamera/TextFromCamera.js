@@ -23,16 +23,16 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Optical Character Recognition (OCR) demo using Camera and 
+/** Optical Character Recognition (OCR) demo using Camera and
  *  CharacterRecognition accessors.
- *  
- *  This accessor captures a snapshot from a webcam using the Camera accessor 
+ *
+ *  This accessor captures a snapshot from a webcam using the Camera accessor
  *  and feeds this image to the CharacterRecognition accessor, which attempts
  *  to identify text in the image.  The text is sent to the output.
- *  
+ *
  *  Try it out in the browser:
  *  https://www.icyphy.org/accessors/hosts/browser/demo/textfromcamera/textfromcamera.html
- *  
+ *
  *  @accessor image/demo/TextFromCamera
  *  @input trigger Trigger the Camera accessor to take a snapshot.
  *  @output text Text detected in the snapshot.

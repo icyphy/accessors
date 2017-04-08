@@ -24,18 +24,18 @@
 //
 
 /** Accessor that outputs the current status of all top-level accessors.
- * 
+ *
  *  Upon receiving an input, this accessor outputs an array of objects,
  *  one for each top-level accessor. Each object has the following fields:
  *  * accessorName: The name of the accessor.
  *  * accessorClass: The class of the accessor, e.g. net/REST.
  *  * initialized: True if the accessor has been initialized and not wrapped up.
- * 
+ *
  *  This accessor can only be used in a host that allows trusted accessors.
  *  Trusted accessors must have class names beginning with 'trusted/'
  *  and are allowed to invoke the function getTopLevelAccessors() to
  *  obtain access to peer accessors.
- *  
+ *
  *  FIXME: This is really just a bare minimum starting point. The query
  *  input should be able to specify various operations, such as watching
  *  accessors for their event emissions, timing the execution of accessors,

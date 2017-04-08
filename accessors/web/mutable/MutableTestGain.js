@@ -25,7 +25,7 @@
 
 /** Test mutableAccessor that describes the realized feature and the interface
  *  of an accessor that multiplies its input by a scale factor.
- *  
+ *
  *  @accessor mutable/MutableTestGain
  *  @param gain The gain, a number with default 4.
  *  @param input The input, a number with default 0.

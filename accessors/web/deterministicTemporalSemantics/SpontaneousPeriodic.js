@@ -25,7 +25,7 @@
 
 /** This is a spontaneous accessor that outputs how many times it fired each
  *  4000 ms.
- *    
+ *
  *  @accessor deterministicTemporalSemantics/SpontaneousAcc2
  *  @output output The output, the number of times the accessor fired
  *  @author Chadlia Jerad
