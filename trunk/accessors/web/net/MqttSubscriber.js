@@ -43,8 +43,8 @@ exports.setup = function () {
     // Inputs and outputs
     // FIXME: Should be renamed topic
     this.input('subscribe', {
-        'type':'string',
-        'value':''
+        'type': 'string',
+        'value': ''
     });
     this.input('unsubscribe');
     this.output('connection', {

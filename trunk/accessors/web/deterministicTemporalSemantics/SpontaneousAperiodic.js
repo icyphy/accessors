@@ -40,29 +40,29 @@
 
 exports.setup = function () {
     this.realize('periodic', {
-            'ontology': 'url'
+        'ontology': 'url'
     });
     this.output('output', {
         'type': 'number',
         'value': 0
     });
     this.parameter('synchronizationLabel', {
-            'type': 'string',
-            'value': 'SynchInitialization'
+        'type': 'string',
+        'value': 'SynchInitialization'
     });
     this.parameter('timeout', {
         'type': 'number',
         'value': 1000
-    });    
+    });
 };
 
 exports.initialize = function () {
-        var numberOfFirings = 0;
-        var thiz = this;
-        
-    thiz.setTimeout(function() {
+    var numberOfFirings = 0;
+    var thiz = this;
+
+    thiz.setTimeout(function () {
         thiz.send('output', ++numberOfFirings);
-        console.log(thiz.accessorName + " :: period = " +thiz.getParameter('timeout') + 
-                ' :: output = ' + thiz.latestOutput('output'));
+        console.log(thiz.accessorName + " :: period = " + thiz.getParameter('timeout') +
+            ' :: output = ' + thiz.latestOutput('output'));
     }, thiz.getParameter('timeout'), thiz.getParameter('synchronizationLabel'), thiz);
 };

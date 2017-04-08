@@ -98,7 +98,11 @@ var audio = require("audio");
 exports.setup = function () {
     this.input('trigger');
     this.parameter('captureFormat', {
-        value: {bitsPerSample: 16, channels: 1, sampleRate: 8000}
+        value: {
+            bitsPerSample: 16,
+            channels: 1,
+            sampleRate: 8000
+        }
     });
     this.parameter('captureTime', {
         type: 'int',
@@ -113,7 +117,7 @@ exports.setup = function () {
         value: true
     });
     this.output('signal');
-    
+
     // Retrieve the supported outputFormat options from the audio module.
     // This is in a try-catch so that this accessor can be instantiated even if the
     // host does not provide a audio module.
@@ -134,19 +138,19 @@ var cacheLength = 128;
 exports.initialize = function () {
     var self = this;
     recorder = new audio.Capture(
-            self.getParameter('captureTime'),
-            self.getParameter('outputFormat'),
-            self.getParameter('captureFormat')
+        self.getParameter('captureTime'),
+        self.getParameter('outputFormat'),
+        self.getParameter('captureFormat')
     );
-    recorder.on('capture', function(audioData) {
+    recorder.on('capture', function (audioData) {
         self.send('signal', audioData);
         if (self.getParameter('triggered')) {
             recorder.stop();
         }
     });
-    
+
     if (self.getParameter('triggered')) {
-        this.addInputHandler("trigger", function() {
+        this.addInputHandler("trigger", function () {
             recorder.start();
         });
     } else {

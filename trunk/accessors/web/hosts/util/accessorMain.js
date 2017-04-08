@@ -67,7 +67,7 @@ function accessorMain(argv) {
     // accessorMain() is not in commonHost.js because we want to
     // ensure that commonHost cannot read arbitrary files from the
     // file system.
-    
+
     var usage = "Usage: [-accessor|--accessor] [-h|--h|-help|--help] [-e|--e|-echo|--echo] [-timeout|--timeout milliseconds] [-v|--v|-version|--version]  accessorOrRegularJavaScriptFile1.js [accessorOrRegularJavaScriptFile2.js ...]",
         i,
         sawAccessor = false,
@@ -88,77 +88,77 @@ function accessorMain(argv) {
     }
 
     for (i = 0; i < argv.length; i++) {
-            switch (argv[i]) {
-            case '-accessor':
-            case '--accessor':
-            case '-accessors':
-            case '--accessors':
-                sawAccessor = true;
-                break;
+        switch (argv[i]) {
+        case '-accessor':
+        case '--accessor':
+        case '-accessors':
+        case '--accessors':
+            sawAccessor = true;
+            break;
 
-            case '-e':
-            case '--e':
-            case '-echo':
-            case '--echo':
-                console.log(argv)
-                break;
+        case '-e':
+        case '--e':
+        case '-echo':
+        case '--echo':
+            console.log(argv)
+            break;
 
-            case '-h':
-            case '--h':
-            case '-help':
-            case '--help':
-                console.log(usage);
+        case '-h':
+        case '--h':
+        case '-help':
+        case '--help':
+            console.log(usage);
+            return 0;
+
+        case '-timeout':
+        case '--timeout':
+            i += 1;
+            if (i >= argv.length) {
+                console.error("Argument " + i + "  was " + argv[i] + " but there is no argument for milliseconds.  Args were: " + argv);
+                return 3;
+            }
+            timeout = argv[i];
+
+            console.log("accessorMain.js: main(): Setting timout to stop after " + timeout + " ms.");
+            setTimeout(function () {
+                // Under node, process.exit gets caught by exitHandler() in
+                // nodeHost.js and invokes wrapup().
+                console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
+                commonHost.stopAllAccessors();
+            }, timeout);
+            break;
+
+        case '-v':
+        case '--v':
+        case '-version':
+        case '--version':
+            console.log("Accessors 1.0, accessorMain.js: $Id$");
+            return 0;
+
+        default:
+            sawFiles = true;
+            if (timeout === -1) {
+                // Prevent the script from exiting by repeating the empty function
+                // every ~25 days.
+                setInterval(function () {}, 2147483647);
+            }
+            if (sawAccessor) {
+                commonHost.topLevelAccessors = instantiateAndInitialize(argv.slice(i));
                 return 0;
-
-            case '-timeout':
-            case '--timeout':
-                i += 1;
-                if (i >= argv.length) {
-                    console.error("Argument " + i + "  was " + argv[i] + " but there is no argument for milliseconds.  Args were: " + argv);
-                    return 3;
-                }
-                timeout = argv[i];
-
-                console.log("accessorMain.js: main(): Setting timout to stop after " + timeout + " ms.");
-                setTimeout(function () {
-                    // Under node, process.exit gets caught by exitHandler() in
-                    // nodeHost.js and invokes wrapup().
-                    console.log("accessorMain.js: main(): Maximum time reached. Calling stop().");
-                    commonHost.stopAllAccessors();
-                }, timeout);
-                break;
-
-            case '-v':
-            case '--v':
-            case '-version':
-            case '--version':
-                console.log("Accessors 1.0, accessorMain.js: $Id$");
-                return 0;
-
-            default:
-                sawFiles = true;
-                if (timeout === -1) {
-                    // Prevent the script from exiting by repeating the empty function
-                    // every ~25 days.
-                    setInterval(function () {}, 2147483647);
-                }
-                if (sawAccessor) {
-                    commonHost.topLevelAccessors = instantiateAndInitialize(argv.slice(i));
-                    return 0;
-                } else {
-                    try {
-                        // FIXME: Using getAccessorCode here is wrong.
-                        // That will search a library of accessors.
-                        // We want to read a regular file.
-                        // FIXME: Rather than just eval, shouldn't this specify a context?
-                        eval(getAccessorCode(argv[i]));
-                    } catch (error) {
-                        throw new Error('Failed to eval "' + argv[i] + '": ' + error);
-                    }
+            } else {
+                try {
+                    // FIXME: Using getAccessorCode here is wrong.
+                    // That will search a library of accessors.
+                    // We want to read a regular file.
+                    // FIXME: Rather than just eval, shouldn't this specify a context?
+                    eval(getAccessorCode(argv[i]));
+                } catch (error) {
+                    throw new Error('Failed to eval "' + argv[i] + '": ' + error);
                 }
             }
+        }
     }
-    if ( !sawFiles) {
+    if (!sawFiles) {
         throw new Error("No file arguments were present?  Args were: " + argv);
     }
     return 0;
