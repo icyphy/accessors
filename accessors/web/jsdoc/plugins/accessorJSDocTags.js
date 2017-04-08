@@ -1,5 +1,5 @@
 // JavaScript definition of accessor-specific JSDoc tags.
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -108,7 +108,7 @@ exports.defineTags = function (dictionary) {
                 // Add the type names and other type properties (such as `optional`).
                 // Don't overwrite existing properties.
                 Object.keys(tag.value).forEach(function (prop) {
-                    if (!hasOwnProperty.call(doclet, prop)) {
+                    if (!ObjecthasOwnProperty.call(doclet, prop)) {
                         doclet[prop] = tag.value[prop];
                     }
                 });
