@@ -25,12 +25,12 @@
 
 /** Instantiate a Node.js host and start an interactive shell using stdin
  *  and stdout to execute commands. To start this shell, on a command line, do
- *  
+ *
  *    node nodeHostShell.js
  *
  *  This shell may be started from any directory as long as the path to
  *  to this nodeHostShell.js file is provided.
- *  
+ *
  *  See <a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node Host wiki page</a>.
  *
  *  @author Edward A. Lee, Chris Shaver, Christopher Brooks

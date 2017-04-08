@@ -24,7 +24,7 @@
 /** Accessor to play an audio signal.
  *  This accessor accepts as input in a variety of formats and plays
  *  back the audio encoded in those input values.
- *  
+ *
  *  This accessor queues the data to be played by the audio system.
  *  When the data has been accepted by the audio system to be played,
  *  it produces an output with value true. That output should be used
@@ -38,32 +38,32 @@
  *
  *  The _inputFormat_ parameter specifies the form in which the audio
  *  input will be provided. The available formats include:
- *  
+ *
  *  * "raw": The input is a byte array representing audio data exactly as
  *    captured by default on the host.
  *  * "array": The audio input data is an array of arrays of numbers,
  *    where each number is in the range from -1.0 to 1.0.
  *    The first index of the input specifies the channel number.
  *  * "encoded": The audio input data is a byte array containing audio
- *    data encoded in one of the file format standards such as 
+ *    data encoded in one of the file format standards such as
  *    AIFF (historically associated with Apple computers),
  *    AIFF-C (a compressed version of AIFF),
  *    AU (historically associated with Sun Microsystems and Unix computers), or
  *    WAVE (historically associated with Windows PCs).
- *  
+ *
  *  The _playbackOptions_ parameter is an object with the following properties,
  *  all of which are optional:
- *  
+ *
  *  * _bitsPerSample_: The number of bits per sample. This is an integer that
  *    defaults to 16.
  *  * _channels_: The number of channels. This defaults to 1.
  *  * _sampleRate_: The sample rate. This is an integer that defaults to 8000.
  *    Typical supported sample rates are 8000, 11025, 22050, 44100, and 48000.
- *   
+ *
  *  This accessor requires the optional 'audio' module, which may or may
  *  not be provided by an accessor host. Moreover, a host may not support
  *  all capture formats and all output formats.
- *  
+ *
  *  @input input The audio data.
  *  @output accepted An indicator that the audio data has been queued
  *   to the audio system.

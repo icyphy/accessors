@@ -23,17 +23,17 @@
 
 /** Capture audio from the default audio source on the host (typically the
  *  microphone or line in).
- *  
+ *
  *  If the _triggered_ parameter is true (the default), then capture starts
  *  when an event appears on the _trigger_ input port and stops after capturing
  *  one segment of audio. Otherwise, the accessor continuously captures segments
  *  of audio, initiating a new capture after each segment is completed.
  *  The _captureTime_ parameter specifies the duration of each segment
  *  of audio that is captured (in milliseconds).
- *  
+ *
  *  The _outputFormat_ parameter specifies the form in which the audio
  *  should appear on the output. The available formats may include:
- *  
+ *
  *  * "raw": The output is a byte array representing audio data exactly as
  *    captured by default on the host. This is the default and is
  *    supported by all hosts.
@@ -49,16 +49,16 @@
  *    associated with Sun Microsystems and Unix computers.
  *  * "wav": The audio data is converted into the WAVE file format historically
  *    associated with Windows PCs.
- *  
+ *
  *  The _captureFormat_ parameter is an object with the following properties,
  *  all of which are optional:
- *  
+ *
  *  * _bitsPerSample_: The number of bits per sample. This is an integer that
  *    defaults to 16.
  *  * _channels_: The number of channels. This defaults to 1.
  *  * _sampleRate_: The sample rate. This is an integer that defaults to 8000.
  *    Typical supported sample rates are 8000, 11025, 22050, 44100, and 48000.
- *   
+ *
  *  This accessor requires the optional 'audio' module, which may or may
  *  not be provided by an accessor host. Moreover, a host may not support
  *  all capture formats and all output formats.

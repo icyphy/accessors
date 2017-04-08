@@ -25,14 +25,14 @@
 
 /** Test accessor that multiplies its input by a scale factor.
  *  This is a modified copy of TestGain.js
- *  
+ *
  *  First, the parameter is initialized to a different value.
- *  
+ *
  *  Second, there is an additional output, that sends the opposite of the
  *  obtained value. This second output is echoed using console.log.
- *  
- *  Third, there are 2 realized features, witch are 'gain' and 'opposite'.  
- *  
+ *
+ *  Third, there are 2 realized features, witch are 'gain' and 'opposite'.
+ *
  *  @accessor mutable/TestGain2
  *  @param gain The gain, a number with default 4.
  *  @param input The input, a number with default 0.

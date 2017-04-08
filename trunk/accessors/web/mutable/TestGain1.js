@@ -27,7 +27,7 @@
  *  This is a slightly modified copy of TestGain.js
  *  The realized feature is added using this.realizes, the feature
  *  being 'gain'.
- *   
+ *
  *  @accessor mutable/TestGain1
  *  @param gain The gain, a number with default 2.
  *  @param input The input, a number with default 0.

@@ -28,7 +28,7 @@
  *  * _value_: The MinFaceSize and MaxFaceSize, which defaults to 50 and 400.
  *  * _type_: If set to 'JSON'
  *
- *  The implementation for the Ptolemy II host uses 
+ *  The implementation for the Ptolemy II host uses
  *  [https://opencv.org](openCV) which is licensed under a BSD 3-clause license.
  *
  *  @accessor image/FaceDetector
