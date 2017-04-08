@@ -75,8 +75,8 @@
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
 /*globals clearTimeout, console, error, exports, httpRequest, require, setTimeout  */
-/*jshint globalstrict: true, bitwise: true */
-/*jslint bitwise: true */
+/*jshint globalstrict: true, bitwise: false, -W016*/
+/*jslint bitwise: false*/
 "use strict";
 
 // This accessor requires the optional 'udpSocket' module, which may or may
