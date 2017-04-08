@@ -48,10 +48,10 @@ var rootParent = {}
  */
 // Accessors:  Edited to check for undefined global also.
 if (typeof(global) !== "undefined" && 
-		typeof(global.TYPED_ARRAY_SUPPORT) !== "undefined") {
-	Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT;
+                typeof(global.TYPED_ARRAY_SUPPORT) !== "undefined") {
+        Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT;
 } else {
-	Buffer.TYPED_ARRAY_SUPPORT = typedArraySupport();
+        Buffer.TYPED_ARRAY_SUPPORT = typedArraySupport();
 }
 
 /*

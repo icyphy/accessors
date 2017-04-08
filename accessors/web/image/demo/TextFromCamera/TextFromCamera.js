@@ -54,7 +54,7 @@ exports.setup = function () {
 
     var camera = this.instantiate('Camera', 'cameras/Camera'),
         ocr = this.instantiate('CharacterRecognition', 
-        		'image/CharacterRecognition');
+                        'image/CharacterRecognition');
 
     this.connect('trigger', camera, 'trigger');
     this.connect(camera, 'image', ocr, 'input');

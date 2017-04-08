@@ -56,17 +56,17 @@ exports.setup = function () {
         'type': 'number'
     });
     this.output('opScaled', {
-    	'type': 'number'
+            'type': 'number'
     });
     this.parameter('gain', {
         'type': 'number',
         'value': 4
     });
     this.realize('gain', {
-    	'ontology': 'url'
+            'ontology': 'url'
     });
     this.realize('opposite', {
-    	'ontology': 'url2'
+            'ontology': 'url2'
     });
 };
 

@@ -984,8 +984,8 @@
             if (timerType(timer) === ttype) {
                 delete clock.timers[timerId];
             } else {
-				throw new Error("Cannot clear timer: timer created with set" + ttype + "() but cleared with clear" + timerType(timer) + "()");
-			}
+                                throw new Error("Cannot clear timer: timer created with set" + ttype + "() but cleared with clear" + timerType(timer) + "()");
+                        }
         }
     }
 

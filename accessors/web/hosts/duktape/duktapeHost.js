@@ -96,10 +96,10 @@ Duktape.modSearch = function (id, require, exports, module) {
         // print('loaded Ecmascript:', name);
         return src.toString();
     } else if (typeof src === 'object') {
-     	// Duktape 2.0 returns objects.
-     	// print('loaded Ecmascript:' + name + ", src is of type object");
-     	// print('loaded Ecmascript:' + name + ", src.length(): " + src.length);
-	return src;
+             // Duktape 2.0 returns objects.
+             // print('loaded Ecmascript:' + name + ", src is of type object");
+             // print('loaded Ecmascript:' + name + ", src.length(): " + src.length);
+        return src;
     }
 
     /* Must find either a DLL or an Ecmascript file (or both) */

@@ -41,8 +41,8 @@
 "use strict";
 
 exports.setup = function () {
-	this.mutable('true');
-	this.input('input', {
+        this.mutable('true');
+        this.input('input', {
         'type': 'number',
         'value': 0
     });
@@ -54,6 +54,6 @@ exports.setup = function () {
         'value': 2
     });
     this.realize('gain', {
-    	'ontology': 'url'
+            'ontology': 'url'
     });
 };

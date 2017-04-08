@@ -98,19 +98,19 @@ exports.initialize = function () {
     camera.open();
     var self = this;
     if (this.getParameter('triggered')) {
-    	// Request a snapshot.  Note the video stream might not be playing.
-    	// An event will be generated when a snapshot is available.
+            // Request a snapshot.  Note the video stream might not be playing.
+            // An event will be generated when a snapshot is available.
         camera.on('snapshot', function (image) {
             self.send('image', image);
         });
         
         handle = this.addInputHandler('trigger', function () {
-        	camera.snapshot();
+                camera.snapshot();
         });
     } else {
-	    camera.on('image', function (image) {
-	            self.send('image', image);
-	    });
+            camera.on('image', function (image) {
+                    self.send('image', image);
+            });
     }
 };
 
