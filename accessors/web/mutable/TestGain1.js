@@ -33,7 +33,7 @@
  *  @param input The input, a number with default 0.
  *  @param scaled The output, the result of input * gain.
  *  @author Edward A. Lee
- *  @version $$Id: TestGain.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
