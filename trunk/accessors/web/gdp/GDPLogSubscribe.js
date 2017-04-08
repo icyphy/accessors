@@ -156,8 +156,8 @@ exports.subscribe = function () {
 exports.wrapup = function () {
     if (log !== null) {
         log.unsubscribe();
-	// The GDP close() method has a significant bug where calling
-	// close() twice might abort or segfault.
-	log = null;
+        // The GDP close() method has a significant bug where calling
+        // close() twice might abort or segfault.
+        log = null;
     }
 };

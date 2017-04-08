@@ -333,9 +333,9 @@ var RegressionTester = (function () {
                                 
                                 // Check for any failures.
                                 if (text.indexOf("<failure") > 0) {
-                                	resolve('failed');
+                                        resolve('failed');
                                 } else {
-                                	resolve('passed');
+                                        resolve('passed');
                                 }
                             }).catch(function (err) {
                                 console.log(testName + ' failed');

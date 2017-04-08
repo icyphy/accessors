@@ -131,7 +131,7 @@ exports.publish = function (data) {
                     console.error("ptdoc/public.js: docs.meta.filename: " + element.meta.filename);
                 }
                 console.error("ptdoc/public.js: element.kind: " + element.kind);
-		var util = require('util');
+                var util = require('util');
                 console.error("ptdoc/public.js: element: " + util.inspect(element));
                 //console.error(element);
             }
@@ -152,9 +152,9 @@ exports.publish = function (data) {
                 // However, in the near term, we will try it without the header.
                 
                 // moml += '<?xml version="1.0" standalone="yes"?>\n' +
-		//    '<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
-		//    '    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +
-		//    '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
+                //    '<!DOCTYPE doc PUBLIC "-//UC Berkeley//DTD DocML 1//EN"\n' +
+                //    '    "http://ptolemy.eecs.berkeley.edu/xml/dtd/DocML_1.dtd">\n' +
+                //    '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
                 moml += '<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">\n';
 
                 // Alphabetical by tag.
@@ -162,7 +162,7 @@ exports.publish = function (data) {
                     // Strip off [" "]
                     var author = element.author[0];
                     //shortAuthor = author.substring(2, author.length - 2);
-		    shortAuthor = author;
+                    shortAuthor = author;
                     moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n' +
                         '    </property>\n';
                 }
@@ -222,7 +222,7 @@ function xmlEscape(bad) {
     }
 
     if (typeof bad === 'object') {
-	bad = new String(bad.toString());
+        bad = new String(bad.toString());
     }
 
     return bad.replace(/[\n<>&'"]/g,

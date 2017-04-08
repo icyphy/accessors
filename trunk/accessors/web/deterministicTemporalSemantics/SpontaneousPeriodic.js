@@ -64,15 +64,15 @@ exports.initialize = function () {
     var f1 = function() {
         thiz.send('output', ++numberOfFirings);
         console.log(thiz.accessorName + " :: period = " +thiz.getParameter('period') + 
-                ' with output = ' + thiz.latestOutput('output'));	
+                ' with output = ' + thiz.latestOutput('output'));        
     };
 
     var inter = thiz.setInterval(f1, thiz.getParameter('period'), 
             thiz.getParameter('synchronizationLabel'), thiz);
     
     var f2 = function() {
-    	thiz.clearInterval(inter);
-    	console.log('SpontaneousAccessor2 setInterval cleared.');
+            thiz.clearInterval(inter);
+            console.log('SpontaneousAccessor2 setInterval cleared.');
     };
     
     thiz.setTimeout(f2, 12000, 'end');

@@ -274,9 +274,9 @@ function generateAccessorHTML(path, id, text) {
     
     var code;
     if (text !== null && typeof text !== 'undefined') {
-    	code = text;
+            code = text;
     } else {
-    	code = getAccessorCode(path);
+            code = getAccessorCode(path);
     }
 
     // Create a header.
@@ -526,7 +526,7 @@ function generateAccessorHTML(path, id, text) {
             // No need to mention deterministicTemporalSemantics in the list of modules.
             if (path.indexOf('deterministicTemporalSemantics') !== -1) {
                 if (text) {
-		    // Remove the trailing '</p>'
+                    // Remove the trailing '</p>'
                     text = text.replace('</p>', '');
                 }
             } else {
@@ -627,11 +627,11 @@ function generateAccessorHTML(path, id, text) {
                 return;
             } else {
                 // Function bindings for the accessor:
-            	// We will bind getParameter() later.
-            	// The browser's getParameter() retrieves values from the HTML page.
-            	// However, an accessor might call getParameter() in setup()
-            	// before the page has been created.  In this case, we want to 
-            	// get whatever value the accessor has provided in setup().
+                    // We will bind getParameter() later.
+                    // The browser's getParameter() retrieves values from the HTML page.
+                    // However, an accessor might call getParameter() in setup()
+                    // before the page has been created.  In this case, we want to 
+                    // get whatever value the accessor has provided in setup().
                 var bindings = {
                     'error': error,
                     'get': get,
@@ -841,9 +841,9 @@ function generateAccessorDocumentation(path, id) {
  *  @param id The id of the accessor.
  */
 function generateTables(instance, id) {
-	
-	// Declare getParameter() here so we can override accessor's getParameter()
-	// just after HTML page has been created.
+        
+        // Declare getParameter() here so we can override accessor's getParameter()
+        // just after HTML page has been created.
     // Get data from a parameter. This implementation assumes that the document
     // has an element with attribute 'id' equal to ```id.name```.
     // Such an attribute is created by the generate() function.
@@ -880,8 +880,8 @@ function generateTables(instance, id) {
         
         // Override getParameter().
         if (window.accessors[id] !== null && 
-        		typeof window.accessors[id] !== 'undefined') {
-        	window.accessors[id].getParameter = getParameter;
+                        typeof window.accessors[id] !== 'undefined') {
+                window.accessors[id].getParameter = getParameter;
         }
     });
 
@@ -1123,40 +1123,40 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
 
         } else {
             // Either a parameter or input.  Outputs are not editable.
-        	var valueInput;
-        	
-        	if (options.options !== null && 
-        			typeof options.options !== 'undefined') {
-        		valueInput = document.createElement('select');
-        		
-            	var selectMe, optionElement;
-            	
-            	if (value !== null && typeof value !== 'undefined' && 
-            			options.options.includes(value)) {
-            		selectMe = value;
-            	} else {
-            		selectMe = options.options[0];
-            	}
-            	
-            	options.options.forEach(function(option){
-        			optionElement = document.createElement('option');
-        			optionElement.text = option;
-        			optionElement.value = option;
-        			if (option === selectMe) {
-        				optionElement.selected = true;
-        				optionElement.defaultSelected = true;
-        			} else {
-        				optionElement.selected = false;
-        				optionElement.defaultSelected = false;
-        			}
-        			
-        			valueInput.add(optionElement);
-            	});
-        	} else {
-        		valueInput = document.createElement("input");
-        		valueInput.setAttribute('type', 'text');
-        		valueInput.setAttribute('value', value);
-        	}
+                var valueInput;
+                
+                if (options.options !== null && 
+                                typeof options.options !== 'undefined') {
+                        valueInput = document.createElement('select');
+                        
+                    var selectMe, optionElement;
+                    
+                    if (value !== null && typeof value !== 'undefined' && 
+                                    options.options.includes(value)) {
+                            selectMe = value;
+                    } else {
+                            selectMe = options.options[0];
+                    }
+                    
+                    options.options.forEach(function(option){
+                                optionElement = document.createElement('option');
+                                optionElement.text = option;
+                                optionElement.value = option;
+                                if (option === selectMe) {
+                                        optionElement.selected = true;
+                                        optionElement.defaultSelected = true;
+                                } else {
+                                        optionElement.selected = false;
+                                        optionElement.defaultSelected = false;
+                                }
+                                
+                                valueInput.add(optionElement);
+                    });
+                } else {
+                        valueInput = document.createElement("input");
+                        valueInput.setAttribute('type', 'text');
+                        valueInput.setAttribute('value', value);
+                }
             
             if (role === 'input') {
                 // Do not invoke any handlers on input change.  The user must
