@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -162,7 +162,7 @@ exports.publish = function (data) {
                     // Strip off [" "]
                     var author = element.author[0];
                     //shortAuthor = author.substring(2, author.length - 2);
-                    shortAuthor = author;
+                    var shortAuthor = author;
                     moml += '    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="' + xmlEscape(shortAuthor) + '">\n' +
                         '    </property>\n';
                 }
@@ -222,7 +222,7 @@ function xmlEscape(bad) {
     }
 
     if (typeof bad === 'object') {
-        bad = new String(bad.toString());
+        bad = bad.toString();
     }
 
     return bad.replace(/[\n<>&'"]/g,

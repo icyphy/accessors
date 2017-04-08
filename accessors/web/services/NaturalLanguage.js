@@ -65,7 +65,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals exports, require */
+/*globals error, exports, extractFulfillment, require */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -82,42 +82,43 @@ exports.setup = function () {
         type: 'string',
         value: '<-- your client access token here -->'
     });
-}
+};
 
 var apiai = require('apiai');
 var util = require('util');
 
 exports.initialize = function () {
-        var self = this;
-        var token = this.get('clientAccessToken');
-        if (token === '<-- your client access token here -->') {
-            error('You need to set clientAccessToken to a hex string that identifies\n' +
-                'an agent at https://api.ai. For a tutorial on creating an agent, see\n' +
-                'https://developers.google.com/actions/develop/apiai/tutorials/getting-started');
-            return;
-        }
-        var app = apiai(this.get('clientAccessToken'));
-
-        self.addInputHandler('textQuery', function () {
-            // The session ID, I guess, disambiguates multiple users of the same
-            // agent. Here, I'm just using a fixed session ID, which is risky.
-            var request = app.textRequest(self.get('textQuery'), {
-                sessionId: 'textQuery'
-            });
-            request.on('response', function (response) {
-                self.send('response', response);
-                self.send('fulfillment', extractFulfillment(response));
-            });
-            request.on('error', function (message) {
-                error(message);
-            });
-            request.end();
-        });
+    var self = this;
+    var token = this.get('clientAccessToken');
+    if (token === '<-- your client access token here -->') {
+        error('You need to set clientAccessToken to a hex string that identifies\n' +
+              'an agent at https://api.ai. For a tutorial on creating an agent, see\n' +
+              'https://developers.google.com/actions/develop/apiai/tutorials/getting-started');
+        return;
     }
-    /** Given a response structure, find the fulfillment speech within it
-     *  and return that. If there is no fulfillment speech in the response,
-     *  then just return the entire response formatted using util.inspect().
-     */
+    var app = apiai(this.get('clientAccessToken'));
+
+    self.addInputHandler('textQuery', function () {
+        // The session ID, I guess, disambiguates multiple users of the same
+        // agent. Here, I'm just using a fixed session ID, which is risky.
+        var request = app.textRequest(self.get('textQuery'), {
+            sessionId: 'textQuery'
+        });
+        request.on('response', function (response) {
+            self.send('response', response);
+            self.send('fulfillment', extractFulfillment(response));
+        });
+        request.on('error', function (message) {
+            error(message);
+        });
+        request.end();
+    });
+};
+
+/** Given a response structure, find the fulfillment speech within it
+ *  and return that. If there is no fulfillment speech in the response,
+ *  then just return the entire response formatted using util.inspect().
+ */
 function extractFulfillment(response) {
     if (response.result &&
         response.result.fulfillment &&
