@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -146,7 +146,7 @@ exports.initialize = function () {
             if (typeof referenceToken === 'number') {
                 // If the input not a number, then throw an error.
                 if (typeof inputValue !== 'number') {
-                    var inputValueValue = inputValue;
+                    inputValueValue = inputValue;
                     if (typeof inputValue === 'object') {
                         inputValueValue = JSON.stringify(inputValue, function (key, value) {
                             if (typeof value === 'object' && value !== null) {
@@ -167,7 +167,7 @@ exports.initialize = function () {
                 }
 
                 var difference = Math.abs(inputValue - referenceToken);
-                if (difference === NaN) {
+                if (difference.isNan()) {
                     throw new Error(self.accessorName + ': The absolute value of the input "' +
                         inputValue + '" - the referenceToken "' +
                         referenceToken + '" is NaN?  It should be less than ' +
