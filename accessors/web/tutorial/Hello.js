@@ -1,6 +1,6 @@
 // A accessor that outputs Hello, <name>
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -38,12 +38,12 @@
 "use strict";
 
 exports.setup = function() {
-	this.input('name');
-	this.output('greeting');
+        this.input('name');
+        this.output('greeting');
 }
 
 exports.initialize = function() {
-	this.addInputHandler('name', function() {
-		this.send('greeting', 'Hello, ' + this.get('name'));
-	});
+        this.addInputHandler('name', function() {
+                this.send('greeting', 'Hello, ' + this.get('name'));
+        });
 }

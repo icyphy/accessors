@@ -5,82 +5,82 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
 function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
+        if (val === null || val === undefined) {
+                throw new TypeError('Object.assign cannot be called with null or undefined');
+        }
 
-	return Object(val);
+        return Object(val);
 }
 
 function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
+        try {
+                if (!Object.assign) {
+                        return false;
+                }
 
-		// Detect buggy property enumeration order in older V8 versions.
+                // Detect buggy property enumeration order in older V8 versions.
 
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
+                // https://bugs.chromium.org/p/v8/issues/detail?id=4118
+                var test1 = new String('abc');  // eslint-disable-line
+                test1[5] = 'de';
+                if (Object.getOwnPropertyNames(test1)[0] === '5') {
+                        return false;
+                }
 
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
+                // https://bugs.chromium.org/p/v8/issues/detail?id=3056
+                var test2 = {};
+                for (var i = 0; i < 10; i++) {
+                        test2['_' + String.fromCharCode(i)] = i;
+                }
+                var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+                        return test2[n];
+                });
+                if (order2.join('') !== '0123456789') {
+                        return false;
+                }
 
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
+                // https://bugs.chromium.org/p/v8/issues/detail?id=3056
+                var test3 = {};
+                'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+                        test3[letter] = letter;
+                });
+                if (Object.keys(Object.assign({}, test3)).join('') !==
+                                'abcdefghijklmnopqrst') {
+                        return false;
+                }
 
-		return true;
-	} catch (e) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
+                return true;
+        } catch (e) {
+                // We don't expect any of the above to throw, but better to be safe.
+                return false;
+        }
 }
 
 module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
+        var from;
+        var to = toObject(target);
+        var symbols;
 
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
+        for (var s = 1; s < arguments.length; s++) {
+                from = Object(arguments[s]);
 
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
+                for (var key in from) {
+                        if (hasOwnProperty.call(from, key)) {
+                                to[key] = from[key];
+                        }
+                }
 
-		if (Object.getOwnPropertySymbols) {
-			symbols = Object.getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
+                if (Object.getOwnPropertySymbols) {
+                        symbols = Object.getOwnPropertySymbols(from);
+                        for (var i = 0; i < symbols.length; i++) {
+                                if (propIsEnumerable.call(from, symbols[i])) {
+                                        to[symbols[i]] = from[symbols[i]];
+                                }
+                        }
+                }
+        }
 
-	return to;
+        return to;
 };
 
 },{}],2:[function(require,module,exports){
@@ -610,96 +610,96 @@ var objectAssign = require('object-assign');
 var version = require('../package.json').version;
 
 function create(workerOptions) {
-	workerOptions = workerOptions || {};
-	var worker = new TesseractWorker(objectAssign({}, adapter.defaultOptions, workerOptions));
-	worker.create = create;
-	worker.version = version;
-	return worker;
+        workerOptions = workerOptions || {};
+        var worker = new TesseractWorker(objectAssign({}, adapter.defaultOptions, workerOptions));
+        worker.create = create;
+        worker.version = version;
+        return worker;
 }
 
 var TesseractWorker = function () {
-	function TesseractWorker(workerOptions) {
-		_classCallCheck(this, TesseractWorker);
+        function TesseractWorker(workerOptions) {
+                _classCallCheck(this, TesseractWorker);
 
-		this.worker = null;
-		this.workerOptions = workerOptions;
-		this._currentJob = null;
-		this._queue = [];
-	}
+                this.worker = null;
+                this.workerOptions = workerOptions;
+                this._currentJob = null;
+                this._queue = [];
+        }
 
-	_createClass(TesseractWorker, [{
-		key: 'recognize',
-		value: function recognize(image, options) {
-			var _this = this;
+        _createClass(TesseractWorker, [{
+                key: 'recognize',
+                value: function recognize(image, options) {
+                        var _this = this;
 
-			return this._delay(function (job) {
-				if (typeof options === 'string') {
-					options = { lang: options };
-				} else {
-					options = options || {};
-					options.lang = options.lang || 'eng';
-				}
+                        return this._delay(function (job) {
+                                if (typeof options === 'string') {
+                                        options = { lang: options };
+                                } else {
+                                        options = options || {};
+                                        options.lang = options.lang || 'eng';
+                                }
 
-				job._send('recognize', { image: image, options: options, workerOptions: _this.workerOptions });
-			});
-		}
-	}, {
-		key: 'detect',
-		value: function detect(image, options) {
-			var _this2 = this;
+                                job._send('recognize', { image: image, options: options, workerOptions: _this.workerOptions });
+                        });
+                }
+        }, {
+                key: 'detect',
+                value: function detect(image, options) {
+                        var _this2 = this;
 
-			options = options || {};
-			return this._delay(function (job) {
-				job._send('detect', { image: image, options: options, workerOptions: _this2.workerOptions });
-			});
-		}
-	}, {
-		key: 'terminate',
-		value: function terminate() {
-			if (this.worker) adapter.terminateWorker(this);
-			this.worker = null;
-		}
-	}, {
-		key: '_delay',
-		value: function _delay(fn) {
-			var _this3 = this;
+                        options = options || {};
+                        return this._delay(function (job) {
+                                job._send('detect', { image: image, options: options, workerOptions: _this2.workerOptions });
+                        });
+                }
+        }, {
+                key: 'terminate',
+                value: function terminate() {
+                        if (this.worker) adapter.terminateWorker(this);
+                        this.worker = null;
+                }
+        }, {
+                key: '_delay',
+                value: function _delay(fn) {
+                        var _this3 = this;
 
-			if (!this.worker) this.worker = adapter.spawnWorker(this, this.workerOptions);
+                        if (!this.worker) this.worker = adapter.spawnWorker(this, this.workerOptions);
 
-			var job = new TesseractJob(this);
-			this._queue.push(function (e) {
-				_this3._queue.shift();
-				_this3._currentJob = job;
-				fn(job);
-			});
-			if (!this._currentJob) this._dequeue();
-			return job;
-		}
-	}, {
-		key: '_dequeue',
-		value: function _dequeue() {
-			this._currentJob = null;
-			if (this._queue.length > 0) {
-				this._queue[0]();
-			}
-		}
-	}, {
-		key: '_recv',
-		value: function _recv(packet) {
+                        var job = new TesseractJob(this);
+                        this._queue.push(function (e) {
+                                _this3._queue.shift();
+                                _this3._currentJob = job;
+                                fn(job);
+                        });
+                        if (!this._currentJob) this._dequeue();
+                        return job;
+                }
+        }, {
+                key: '_dequeue',
+                value: function _dequeue() {
+                        this._currentJob = null;
+                        if (this._queue.length > 0) {
+                                this._queue[0]();
+                        }
+                }
+        }, {
+                key: '_recv',
+                value: function _recv(packet) {
 
-			if (packet.status === 'resolve' && packet.action === 'recognize') {
-				packet.data = circularize(packet.data);
-			}
+                        if (packet.status === 'resolve' && packet.action === 'recognize') {
+                                packet.data = circularize(packet.data);
+                        }
 
-			if (this._currentJob.id === packet.jobId) {
-				this._currentJob._handle(packet);
-			} else {
-				console.warn('Job ID ' + packet.jobId + ' not known.');
-			}
-		}
-	}]);
+                        if (this._currentJob.id === packet.jobId) {
+                                this._currentJob._handle(packet);
+                        } else {
+                                console.warn('Job ID ' + packet.jobId + ' not known.');
+                        }
+                }
+        }]);
 
-	return TesseractWorker;
+        return TesseractWorker;
 }();
 
 var DefaultTesseract = create();
@@ -707,4 +707,4 @@ var DefaultTesseract = create();
 module.exports = DefaultTesseract;
 
 },{"../package.json":3,"./common/circularize.js":5,"./common/job":6,"./node/index.js":4,"object-assign":1}]},{},[7])(7)
-});
+                                                                                                                                                                                                                                                                                                                                               });

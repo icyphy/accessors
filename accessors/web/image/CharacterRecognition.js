@@ -57,23 +57,23 @@ try {
 
 exports.setup = function() {
     this.input('input');
-    this.input('options');	// FIXME:  Handle options.  Does nothing currently.
+    this.input('options');        // FIXME:  Handle options.  Does nothing currently.
     this.output('text', {
         'type': 'string'
     });
 };
 
 exports.initialize = function() {
-	var self = this;
-	this.window = {};
+        var self = this;
+        this.window = {};
     this.addInputHandler('input', function() {
         var image = this.get('input');
         
         Tesseract.recognize(image)
-        	// Optionally: Log progress.
+                // Optionally: Log progress.
             // .progress(function(p) {console.log('progress', p);})
-        	.then(function(result){
-        		self.send('text', result.text);
-        	});
+                .then(function(result){
+                        self.send('text', result.text);
+                });
     });
 };

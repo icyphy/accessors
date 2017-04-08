@@ -32,8 +32,8 @@ describe(hostHelper.hostname, function () {
     });
     
     after(function() {
-    	// Use custom exception handlers to avoid crashing the build on error.
-    	hostHelper.after();
+            // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.after();
     });
     
     var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
@@ -41,9 +41,9 @@ describe(hostHelper.hostname, function () {
 
     // 
     it(hostHelper.hostname + './accessors/web/net/test/auto/mocha/testREST Should GET values from a Cross-Origin Resource Sharing (CORS) site', function(done) {
-    	// Use custom exception handlers to avoid crashing the build on error.
-    	hostHelper.eachTestStart(done);
-    	
+            // Use custom exception handlers to avoid crashing the build on error.
+            hostHelper.eachTestStart(done);
+            
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"https://cors-test.appspot.com/test\"}");
         instance.provideInput('command', "");
@@ -71,7 +71,7 @@ describe(hostHelper.hostname, function () {
             // FIXME: The browser returns an object.  Node returns a string.
             var responseObject = response;
             if (typeof response === 'string') {
-            	responseObject = JSON.parse(response);
+                    responseObject = JSON.parse(response);
             } 
             responseObject.should.deep.equal(correctResponse);
             
@@ -83,10 +83,10 @@ describe(hostHelper.hostname, function () {
     
     it(hostHelper.hostname + './accessors/web/net/test/auto/mocha/testRest Should GET values using the JSON with padding technique', function(done) {
 
-	var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
-		// Use custom exception handlers to avoid crashing the build on error.
-		hostHelper.eachTestStart(done);
-		
+        var replicationMessage = 'To replicate: (cd net/test/auto/mocha; ../../../../node_modules/.bin/mocha testREST.js)';
+                // Use custom exception handlers to avoid crashing the build on error.
+                hostHelper.eachTestStart(done);
+                
         instance.provideInput('options', 
                               "{\"method\" : \"GET\", \"url\" : \"http://jsonplaceholder.typicode.com/posts/1?callback=?\"}");
         instance.provideInput('command', "");
@@ -97,7 +97,7 @@ describe(hostHelper.hostname, function () {
         // Wait a bit for request to complete.
         // FIXME:  Possible to add listener to send()?  Or callback to react()?                                
         setTimeout(function() {
-        	// Browser returns an object; node returns a string.
+                // Browser returns an object; node returns a string.
             var correctResponseObject = {};
             
             correctResponseObject.userId = 1;
@@ -107,12 +107,12 @@ describe(hostHelper.hostname, function () {
 
             var correctResponseString = 
                 "/**/ typeof  === 'function' && ({" + 
-                	  "\"userId\": 1," + 
-                	  "\"id\": 1," + 
-                	  "\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\"," +
-                	  "\"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae" + 
-                	 "ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"" +
-                	"});";
+                          "\"userId\": 1," + 
+                          "\"id\": 1," + 
+                          "\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\"," +
+                          "\"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae" + 
+                         "ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"" +
+                        "});";
             
             // We were getting:
             // TypeError: Cannot read property 'should' of undefined
@@ -124,9 +124,9 @@ describe(hostHelper.hostname, function () {
             assert(typeof response !== 'undefined');
 
             if (typeof response === 'string') {
-            	response.should.equalIgnoreSpaces(correctResponseString);
+                    response.should.equalIgnoreSpaces(correctResponseString);
             } else {
-            	response.should.deep.equal(correctResponseObject);
+                    response.should.deep.equal(correctResponseObject);
             }
             
             // Use custom exception handlers to avoid crashing the build on error.

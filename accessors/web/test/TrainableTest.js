@@ -146,9 +146,9 @@ exports.initialize = function () {
             if (typeof referenceToken === 'number') {
                 // If the input not a number, then throw an error.
                 if (typeof inputValue !== 'number') {
-            	    var inputValueValue = inputValue;
-            	    if (typeof inputValue === 'object') {
-            		inputValueValue = JSON.stringify(inputValue, function (key, value) {
+                        var inputValueValue = inputValue;
+                        if (typeof inputValue === 'object') {
+                            inputValueValue = JSON.stringify(inputValue, function (key, value) {
                             if (typeof value === 'object' && value !== null) {
                                 if (cache.indexOf(value) !== -1) {
                                     // Circular reference found, discard key
@@ -159,12 +159,12 @@ exports.initialize = function () {
                             }
                             return value;
                         });
-            	    }
-            	    throw new Error(self.accessorName + ': the input "' + inputValueValue +
+                        }
+                        throw new Error(self.accessorName + ': the input "' + inputValueValue +
                                     '" is not a number, it is a ' +
-            		            typeof inputValue + '.  The expected value was "' +
+                                        typeof inputValue + '.  The expected value was "' +
                                     referenceToken + '"');
-            	}
+                    }
 
                 var difference = Math.abs(inputValue - referenceToken);
                 if (difference === NaN) {
