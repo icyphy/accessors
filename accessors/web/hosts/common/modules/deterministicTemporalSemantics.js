@@ -167,7 +167,7 @@ function clearTick(cbId, periodic) {
     
     var label;
     
-    // Parse looking for the identifier
+    // Parse looking for the identifier.
     Object.keys(timedCallbacks).forEach(function(key) {
         if (timedCallbacks[key][cbId] && timedCallbacks[key][cbId].periodic === periodic) {
             label = key;
@@ -195,7 +195,8 @@ function clearTick(cbId, periodic) {
     }
     
     // Display an error message if no timed callback to remove.
-    console.log('deterministicTermporalSemantics.js: clear(): wrong arguments.');
+    throw new Error('deterministicTermporalSemantics.js: clearTick(' + cbId + ', ' + periodic +
+                    '): could not find a label in the timedArguments array, so there was no timed callback to remove.');
 }
 
 /** This function is to be binded to clearTimeout() function. The aim is to 
@@ -337,7 +338,7 @@ function setIntervalDet(callback, timeout, synchronizationLabel) {
 
     // Generate a new identifier
     cbIdentifier++;
-        
+    
     // Update the next tick
     updateNextTick(newTimedCallback, label, cbIdentifier);
     
