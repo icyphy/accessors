@@ -24,12 +24,8 @@ exports.setup = function() {
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
 
-
-    // FIXME: The text below was hand edited so that it would work.
-
-
-    
-    TrainableTest.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"test\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Content-Length\": \"4\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": null, \n  \"url\": \"http://httpbin.org/put\"\n}\n"]);
+    // FIXME: The text below was hand edited so that it would work.  
+    TrainableTest.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"test\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Connection\": \"close\", \n    \"Content-Length\": \"4\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": null, \n  \"url\": \"http://httpbin.org/put\"\n}\n"]);
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
@@ -76,13 +72,8 @@ exports.setup = function() {
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
 
-
-
     // FIXME: The text below was hand edited so that it would work.
-
-
-
-    TrainableTest2.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"{\\\"test\\\":\\\"this is JSON test\\\"}\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Content-Length\": \"28\", \n    \"Content-Type\": \"application/json\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": {\n    \"test\": \"this is JSON test\"\n  }, \n  \"url\": \"http://httpbin.org/put\"\n}\n"]);
+    TrainableTest2.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"{\\\"test\\\":\\\"this is JSON test\\\"}\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Connection\": \"close\", \n    \"Content-Length\": \"28\", \n    \"Content-Type\": \"application/json\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": {\n    \"test\": \"this is JSON test\"\n  }, \n  \"url\": \"http://httpbin.org/put\"\n}\n"]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
