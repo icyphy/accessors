@@ -1,4 +1,4 @@
-// Copyright (c) sock-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -100,6 +100,7 @@
 var WebSocket = require('webSocketServer');
 var server = null;
 var running = false;
+var debug = false;
 
 /** Sets up the accessor by defining inputs and outputs. */
 exports.setup = function () {
@@ -199,14 +200,14 @@ exports.initialize = function () {
                 if (self.sockets[data.socketID] && self.sockets[data.socketID].isOpen()) {
                     // id matches this socket.
                     /*
-                      console.log("Sending to socket id " +
+                      console.log(self.accessorName + ': WebSocketServer: Sending to socket id ' +
                       data.socketID +
                       " message: " +
                       data.message);
                     */
                     self.sockets[data.socketID].send(data.message);
                 } else {
-                    console.log('Socket with ID ' + data.socketID +
+                    console.log(self.accessorName + ': WebSocketServer.js: Socket with ID ' + data.socketID +
                         ' is not open. Discarding message.');
                 }
             } else {
@@ -214,14 +215,14 @@ exports.initialize = function () {
                 // var success = false;
                 for (id = 0; id < self.sockets.length; id += 1) {
                     if (self.sockets[id].isOpen()) {
-                        // console.log("Broadcasting to socket id " + id
-                        //         + " message: " + data);
+                        // console.log(self.accessorName + 'WebSocketServer.js: Broadcasting to socket id ' + id
+                        //         + ' message: ' + data);
                         self.sockets[id].send(data);
                         // success = true;
                     }
                 }
                 // if (!success) {
-                //     console.log('No open sockets. Discarding message: ' + data.message);
+                //     console.log(self.accessorName + 'WebSocketServer.js: No open sockets. Discarding message: ' + data.message);
                 // }
             }
         }
@@ -229,7 +230,9 @@ exports.initialize = function () {
 };
 
 exports.onListening = function () {
-    console.log('Server: Listening for socket connection requests.');
+    if (debug) {
+        console.log(this.accessorName + 'WebSocketServer.js: Listening for socket connection requests.');
+    }
     this.send('listening', this.getParameter('port'));
 };
 
@@ -240,7 +243,9 @@ exports.onConnection = function (socket) {
     // socketID is the index of the socket in the sockets array.
     var self = this,
         socketID = self.sockets.length;
-    console.log('Server: new socket established with ID: ' + socketID);
+    if (debug) {
+        console.log(this.accessorName + 'WebSocketServer.js: new socket established with ID: ' + socketID);
+    }
     this.send('connection', {
         'socketID': socketID,
         'status': 'open'
@@ -265,7 +270,7 @@ exports.onConnection = function (socket) {
         });
     });
     self.sockets[socketID].on('error', function (message) {
-        console.log('error ' + message);
+        console.log(self.accessorName + ': WebSocketServer.js: error ' + message);
         self.error(message);
     });
 

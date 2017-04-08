@@ -1,4 +1,4 @@
-// Copyright (c) sock-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -149,6 +149,8 @@ var pendingSends = [];
 var previousServer, previousPort;
 var running = false;
 
+var debug = false;
+
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
     this.input('server', {
@@ -227,7 +229,9 @@ exports.setup = function () {
  *  errors, and closing from the server.
  */
 exports.initialize = function () {
-    console.log("WebSocketClient.js: initialize()");
+    if (debug) {
+        console.log(this.accessorName + ': WebSockClient.js: initialize()');
+    }
     this.addInputHandler('server', this.exports.connect.bind(this));
     this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
@@ -241,7 +245,9 @@ exports.initialize = function () {
  *  on the toSend() input port.
  */
 exports.connect = function () {
-    console.log("WebSocketClient.js: connect()");
+    if (debug) {
+        console.log(this.accessorName + ': WebSockClient.js: connect()');
+    }
     // Note that if 'server' and 'port' both receive new data in the same
     // reaction, then this will be invoked twice. But we only want to open
     // the socket once.  This is fairly tricky.
@@ -257,9 +263,9 @@ exports.connect = function () {
         previousPort = null;
         previousServer = null;
         //
-        console.log("WebSocketClient.js: connect(): portValue: " + portValue +
-            ", which is less than 0. This could be a signal to close a previously open socket." +
-            "  Returning.");
+        console.log(this.accessorName + ': WebSocketClient.js: connect(): portValue: ' + portValue +
+            ', which is less than 0. This could be a signal to close a previously open socket.' +
+            '  Returning.');
         return;
     }
 
@@ -278,7 +284,9 @@ exports.connect = function () {
         client.close();
     }
 
-    console.log("WebSocketClient.js: connect() calling new WebSocket.Client()");
+    if (debug) {
+        console.log(this.accessorName + ': WebSockClient.js: connect() calling new WebSocket.Client()');
+    }
     client = new WebSocket.Client({
         'host': this.get('server'),
         'port': this.get('port'),
@@ -303,11 +311,13 @@ exports.connect = function () {
     client.on('error', function (message) {
         previousServer = null;
         previousPort = null;
-        console.log('Error: ' + message);
+        console.log(this.accessorName + ': WebSocketClient.js: Error: ' + message);
     });
 
     client.open();
-    console.log("WebSocketClient.js: connect() done");
+    if (debug) {
+        console.log(this.accessorName + ': WebSockClient.js: connect() done');
+    }
 };
 
 /** Handles input on 'toSend'. */
@@ -324,7 +334,7 @@ exports.sendToWebSocket = function (data) {
         if (!this.getParameter('discardMessagesBeforeOpen')) {
             pendingSends.push(data);
         } else {
-            console.log('Discarding data because socket is not open.');
+            console.log(this.accessorName + 'WebSocketClient.js: Discarding data because socket is not open.');
         }
     }
 };
@@ -334,7 +344,9 @@ exports.sendToWebSocket = function (data) {
  */
 exports.onOpen = function () {
     var i;
-    console.log('WebSocketClient.js: onOpen(): Status: Connection established');
+    if (debug) {
+        console.log(this.accessorName + ': WebSocketClient.js: onOpen(): Status: Connection established');
+    }
     this.send('connected', true);
 
     // If there are pending sends, send them now.
@@ -354,7 +366,9 @@ exports.onClose = function () {
     previousServer = null;
     previousPort = null;
 
-    console.log('WebSocketClient.js onClose(): Status: Connection closed.');
+    if (debug) {
+        console.log(this.accessorName + ': WebSocketClient.js onClose(): Status: Connection closed.');
+    }
 
     // NOTE: Even if running is true, it can occur that it is too late
     // to send the message (the wrapup process has been started), in which case
@@ -374,6 +388,8 @@ exports.wrapup = function () {
     running = false;
     if (client) {
         client.close();
-        console.log('Status: Connection closed in wrapup.');
+        if (debug) {
+            console.log(this.accessorName + 'WebSocketClient.js: Status: Connection closed in wrapup.'); 
+        }
     }
 };
