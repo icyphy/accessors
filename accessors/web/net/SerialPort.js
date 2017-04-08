@@ -34,14 +34,14 @@
  *  and `receiveType` parameters. For the Nashorn host, these include at
  *  least 'string', 'number', 'JSON', and a variety of numeric types.
  *  The type 'number' is equivalent to 'double'.
- *  
+ *
  *  The data chunks sent on the `received` output depend on the `receiveType`
  *  parameter. Each output will be of the specified type. Note that if
  *  `receivedType` is 'string' or 'JSON' then the output is produced only
  *  after a null byte is received on the serial port. If the type is 'JSON',
  *  then this accessor will attempt to parse the JSON. If parsing fails,
  *  then the raw byte array will be sent to the `invalid` output port.
- *  
+ *
  *  When type conversions are needed, e.g. when you send a double
  *  with `sendType` set to int, or an int with `sendType` set to byte,
  *  then a "primitive narrowing conversion" will be applied, as specified here:

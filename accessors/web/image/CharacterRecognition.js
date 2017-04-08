@@ -21,14 +21,14 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** An optical character detection accessor.  This accessor takes an input image
- *  and attempts to recognize text in the image.  It considers the whole image, 
- *  so it works best if the image is pre-cropped to the portion containing only 
+ *  and attempts to recognize text in the image.  It considers the whole image,
+ *  so it works best if the image is pre-cropped to the portion containing only
  *  text.
- * 
- *  This accessor uses Tesseract.js, an open source optical character 
+ *
+ *  This accessor uses Tesseract.js, an open source optical character
  *  recognition tool, available under the Apache 2.0 license.
  *  http://tesseract.projectnaptha.com/
- * 
+ *
  *  @accessor image/CharacterDetection
  *  @input input An image
  *  @input (JSON) options A JSON object of options.  See:

@@ -25,28 +25,28 @@
 
 /** Node.js swarmlet host module. To use this, issue the following
  *  command:
- *  
+ *
  *    var nodeHost = require(path + '/nodeHost.js');
  *
  *  where path is the path to this nodeHost.js file.
- *  
+ *
  *  The resulting nodeHost object provides a number of functions,
  *  including:
- *  
+ *
  *  * getAccessorCode(accessorClass): Return the source code for
  *    an accessor, given its fully-qualified class name, e.g. 'net/REST'.
- *    
+ *
  *  * getTopLevelAccessors(): Return an array of instantiated
  *    top-level accessors (implemented in commonHost.js).
- *    
+ *
  *  * instantiate(accessorName, accessorClass): Instantiate an
  *    accessor with an assigned name (an arbitrary string) and
  *    its fully-qualified class name, e.g. 'net/REST'.
- *  
+ *
  *  * startHostShell(): Start an interactive shell on stdin/stdout
  *    to execute commands. Type 'help' in this shell for a list of
  *    supported commands.
- *    
+ *
  *  * stopAllAccessors(): Call wrapup on all top-level accessors.
  *
  *  See nodeHostShell.js for an example use of this module.
@@ -147,7 +147,7 @@ getResource = function (uri) {
     // resources that are given with relative paths. By default, these would
     // get resolved relative to the location of the file defining the swarmlet.
     // This might even work in the Browser host with the same source
-    // policy. 
+    // policy.
 
     if (uri.startsWith('$KEYSTORE') === true) {
         var home = process.env.HOME;
@@ -278,7 +278,7 @@ function exitHandler(options, err) {
     // If we the exitHandler was called with 'cleanup', then we won't exit here,
     // but will exit later.
     if (options.exit) {
-        // console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit(" 
+        // console.log(new Error("nodeHost.js: exitHandler(): Calling process.exit("
         //        + process.exitCode
         //        + "): Here is the stack so we know why: ").stack);
         process.exit(process.exitCode);
@@ -537,13 +537,13 @@ Accessor = commonHost.Accessor;
 /**
  *  Below is the creation of a web server that retrieves all the accessors
  *  monitoring information and returns them as a JSON object.
- *  
+ *
  *  In order to test this service, you need first to decomment the code below.
- *  After running your swarmlet on a node host, you can request from your 
+ *  After running your swarmlet on a node host, you can request from your
  *  browser a web page with the following URL: http://127.0.0.1:8082/monitor/
- *  
+ *
  *  A JSON object is provided. It shows for each accessor: its name, its 'type'
- *  and all the monitoring information that is stored. 
+ *  and all the monitoring information that is stored.
  */
 
 /*var http = require('http');
@@ -561,12 +561,12 @@ http.createServer(function (request, response) {
                 // Content Type: text/plain
                 response.writeHead(200, {'Content-Type': 'text/html'});
                 // Write the content of the file to response body
-                
+
                 //console.log(commonHost.getMonitoringInformation());
 
                 // Retrieve all monitoring information
                 var allMonitoringInformation = commonHost.getMonitoringInformation();
-                
+
                 // Parse the elements and send them one by one
                 Object.keys(allMonitoringInformation).forEach(function (accName) {
                         var accMonitoringInformation = {};
@@ -580,7 +580,7 @@ http.createServer(function (request, response) {
         }
         // Send the response body
         response.end();
-        
+
 }).listen(8082);
 
 // Console will print the message
