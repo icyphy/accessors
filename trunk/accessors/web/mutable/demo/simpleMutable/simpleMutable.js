@@ -29,7 +29,7 @@
  * See [https://accessors.org/accessors/wiki/Modules/Mutable](https://accessors.org/accessors/wiki/Modules/Mutable)
  
  * @module simpleMutable
- * @author Chadlia Haj Hmida
+ * @author Chadlia Jerad
  * @version $$Id$$
  */
 
