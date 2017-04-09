@@ -2071,7 +2071,6 @@ Accessor.prototype.send = function (name, value) {
             throw new Error('send(name, value): No output or input named ' + name);
         }
         // Make the input available in the _next_ reaction.
-        console.log('call setTimeout');
         setTimeout(function () {
             thiz.provideInput(name, value);
             // If this accessor has a container, then provideInput()
