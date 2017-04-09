@@ -76,7 +76,7 @@
  *  
  *  @module deterministicTemporalSemantics
  *  @author Chadlia Jerad
- *  @version $$Id: deterministicTemporalSemantics.js 2017-03-06 10:29:30Z chadlia.jerad $$   
+ *  @version $$Id: deterministicTemporalSemantics.js 2017-04-09 10:37:30Z chadlia.jerad $$   
  */
 
 
@@ -133,13 +133,12 @@ function addToSortedCallbacks(label, id) {
         if (timedCallbacks[labelInList][idInList] === undefined) {
             throw new Error('addToSortedCallbacks(' + label + ', ' + id +
                             '): timedCallbacks[' + labelInList + '][' +
-                            idInList + '] is undefined?  index was: ' + index +
-                            'The failure happen when the user do not provide \'synchronization labels\' when calling this.setTimeout() or this.setInterval(), which is obvious when a user is not aware of this mechanism. This is the reason behind the \'undefined\' value.  A fix is being worked on.');
-
+                            idInList + '] is undefined?  index was: ' + index);
         }
     } while(timedCallbacks[label][id].nextExecutionTime > timedCallbacks[labelInList][idInList].nextExecutionTime
-            && (++index) < sortedTimedCallbackList.length);
+            && ((++index) < sortedTimedCallbackList.length));
     sortedTimedCallbackList.splice(index, 0, obj);
+    
 }
 
 /** This function is to be binded to clearInterval() function. The aim is to 
@@ -191,12 +190,11 @@ function clearTick(cbId, periodic) {
                 clearTimeout(tick);
             }
         }
-        return;
     }
     
-    // Display an error message if no timed callback to remove.
-    throw new Error('deterministicTermporalSemantics.js: clearTick(' + cbId + ', ' + periodic +
-                    '): could not find a label in the timedArguments array, so there was no timed callback to remove.');
+    // If no timed callback to remove, then this is not an error! It may happen, for instance,
+    // that a timer (call to this.setTimeout) has expired before calling clear. It may happen 
+    // also to call clearTimeout or clearInterval with wrong arguments.
 }
 
 /** This function is to be binded to clearTimeout() function. The aim is to 
@@ -243,8 +241,8 @@ var executeAndSetNextTick = function() {
     var timeBeforeCallbacksExecution = Date.now();
     
     // console.log('--Execute: At logical time: ' + logicalTime 
-    //            + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
-    //            + ' with timeChunk: ' + timeChunk);
+    //             + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
+    //             + ' with timeChunk: ' + timeChunk);
     
     // Execute callbacks
     executeCallbacks();
@@ -334,6 +332,8 @@ function setIntervalDet(callback, timeout, synchronizationLabel) {
     var label;
     if (!synchronizationLabel || typeof(synchronizationLabel) !== 'string') {
         label = 'noLabel';
+    } else {
+        label = synchronizationLabel;
     }
 
     // Generate a new identifier
@@ -363,15 +363,14 @@ function setTimeoutDet(callback, timeout, synchronizationLabel) {
     newTimedCallback.interval = timeout;
     newTimedCallback.periodic = false;
     
-    // Generate a new identifier
-    cbIdentifier++;
-    
     // Check if a synchronization label has been provided, otherwise use the default one
     var label;
     if (!synchronizationLabel || typeof(synchronizationLabel) !== 'string') {
         label = 'noLabel';
+    } else {
+        label = synchronizationLabel;
     }
-    
+
     // Generate a new identifier
     cbIdentifier++;
     
@@ -425,7 +424,7 @@ function updateNextTick(newTimedCallback, synchronizationLabel, cbId) {
         addToSortedCallbacks(synchronizationLabel, cbId);
         
         // set the next tick
-        timeChunk = newTimedCallback.nextExecutionTime - logicalTime;
+        timeChunk = computeNextTimeChunk();
         lastTimeChunkInstant = Date.now();
         tick = setTimeout(executeAndSetNextTick, timeChunk);
         
@@ -439,7 +438,7 @@ function updateNextTick(newTimedCallback, synchronizationLabel, cbId) {
     // Because of some possible delays, it may happen that the elapsedTimeSinceLastTick
     // is bigger than timeChunk.
     // The choice here is that we keep the arrival time within the logical time chunk.
-    // thus, it is rounded to the time chunck
+    // thus, it is rounded to the time chunk
     if (elapsedTimeSinceLastTick > timeChunk) {
         elapsedTimeSinceLastTick = timeChunk;
     }

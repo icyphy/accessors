@@ -72,7 +72,7 @@ exports.initialize = function () {
 
     var f2 = function () {
         thiz.clearInterval(inter);
-        console.log('SpontaneousAccessor2 setInterval cleared.');
+        console.log(thiz.accessorName + ' setInterval cleared.');
     };
 
     thiz.setTimeout(f2, 12000, 'end');
