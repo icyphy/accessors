@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 6000 gdp/test/auto/GDPLogCreateAppendReadJS)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
+    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
 
     // Ports: GDPLogCreateAppendReadJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -31,8 +31,8 @@ exports.setup = function() {
     var JavaScriptRamp = new Accessor('JavaScriptRamp', '/** Output a sequence with a given step in values.\n *\n *  @accessor JavaScriptRamp\n *  @param init The value produced on its first iteration.  The\n *  initial default is 0.\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    // FIXME: this only supports numbers, unlike the Cape Code Ramp\n    // actor, which supports many types.\n    this.parameter(\'init\', {\'type\':\'number\', \'value\':0});\n    this.input(\'trigger\');\n    this.output(\'output\', {\'type\':\'number\'});\n    this.parameter(\'step\', {\'type\':\'number\', \'value\':1});\n};\n\nvar _lastValue = 0;\n\nexports.initialize = function() {\n    _lastValue = this.getParameter(\'init\');\n}\nexports.fire = function() {\n    _lastValue += this.getParameter(\'step\');\n    this.send(\'output\', _lastValue);\n};', null, null, null, null);
     JavaScriptRamp.container = this;
     this.containedAccessors.push(JavaScriptRamp);
-    JavaScriptRamp.setParameter('init', 0);
-    JavaScriptRamp.setParameter('step', 1);
+    JavaScriptRamp.setParameter('init', 0.0);
+    JavaScriptRamp.setParameter('step', 1.0);
 
     // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
@@ -44,12 +44,12 @@ exports.setup = function() {
     var JavaScriptRamp2 = new Accessor('JavaScriptRamp2', '/** Output a sequence with a given step in values.\n *\n *  @accessor test/TestRamp\n *  @param init The value produced on its first iteration.  The\n *  initial default is 0.\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    // FIXME: this only supports numbers, unlike the Cape Code Ramp\n    // actor, which supports many types.\n    this.parameter(\'init\', {\'type\':\'number\', \'value\':0});\n    this.input(\'trigger\');\n    this.output(\'output\', {\'type\':\'number\'});\n    this.parameter(\'step\', {\'type\':\'number\', \'value\':1});\n};\n\nvar _lastValueJavaScriptRamp2 = 0;\n\nexports.initialize = function() {\n    _lastValueJavaScriptRamp2 = this.getParameter(\'init\');\n}\nexports.fire = function() {\n    _lastValueJavaScriptRamp2 += this.getParameter(\'step\');\n    this.send(\'output\', _lastValueJavaScriptRamp2);\n};', null, null, null, null);
     JavaScriptRamp2.container = this;
     this.containedAccessors.push(JavaScriptRamp2);
-    JavaScriptRamp2.setParameter('init', 0);
-    JavaScriptRamp2.setParameter('step', 1);
+    JavaScriptRamp2.setParameter('init', 0.0);
+    JavaScriptRamp2.setParameter('step', 1.0);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', ["1","2","3","4"]);
+    TrainableTest.setParameter('correctValues', "[\"1\",\"2\",\"3\",\"4\"]");
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 

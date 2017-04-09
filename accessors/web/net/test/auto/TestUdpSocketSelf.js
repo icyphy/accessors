@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 15000 net/test/auto/TestUDPSocketSelf)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
+    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
 
     // Ports: TestUDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -18,7 +18,7 @@ exports.setup = function() {
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScript = new Accessor('JavaScript', '// Put your JavaScript program here.\n// Add ports and parameters.\n// Define JavaScript functions initialize(), fire(), and/or wrapup().\n// Refer to parameters in scope using dollar-sign{parameterName}.\n// In the fire() function, use get(parameterName, channel) to read inputs.\n// Send to output ports using send(value, portName, channel).\n\nexports.setup = function() {\n    this.parameter(\'interval\', {\'type\':\'number\', \'value\':1000});\n    this.output(\'output\', {\'type\': \'string\'});\n};\n\n// These variables will not be visible to subclasses.\nvar handle = null;\nvar count = 0;\n\nexports.initialize = function() {\n    count = 0;\n    // Need to record \'this\' for use in the callback.\n    var thiz = this;\n    handle = setInterval(function() {\n            count++;\n        thiz.send(\'output\', \'a\' + count);\n        if (count >= 10) {\n                clearInterval(handle);\n        }\n    }, this.getParameter(\'interval\'));\n};\n\nexports.wrapup = function() {\n    if (handle) {\n        clearInterval(handle);\n        handle = null;\n    }\n};', null, null, null, null);
+    var JavaScript = new Accessor('JavaScript', '// Put your JavaScript program here.\n// Add ports and parameters.\n// Define JavaScript functions initialize(), fire(), and/or wrapup().\n// Refer to parameters in scope using dollar-sign{parameterName}.\n// In the fire() function, use get(parameterName, channel) to read inputs.\n// Send to output ports using send(value, portName, channel).\n\nexports.setup = function() {\n    this.parameter(\'interval\', {\'type\':\'number\', \'value\':1000});\n    this.output(\'output\', {\'type\': \'string\'});\n};\n\n// These variables will not be visible to subclasses.\nvar handle = null;\nvar count = 0;\n\nexports.initialize = function() {\n    count = 0;\n    // Need to record \'this\' for use in the callback.\n    var thiz = this;\n    handle = setInterval(function() {\n    	count++;\n        thiz.send(\'output\', \'a\' + count);\n        if (count >= 10) {\n        	clearInterval(handle);\n        }\n    }, this.getParameter(\'interval\'));\n};\n\nexports.wrapup = function() {\n    if (handle) {\n        clearInterval(handle);\n        handle = null;\n    }\n};', null, null, null, null);
     JavaScript.container = this;
     this.containedAccessors.push(JavaScript);
     JavaScript.setParameter('interval', 1000.0);

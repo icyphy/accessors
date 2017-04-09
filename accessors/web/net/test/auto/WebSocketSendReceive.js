@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/WebSocketSendReceive)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
+    //  $PTII/bin/vergil -capecode $PTII/./org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
 
     // Ports: WebSocketSendReceive: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
