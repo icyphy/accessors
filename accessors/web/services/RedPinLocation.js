@@ -148,15 +148,13 @@ exports.wifiReadingsInputHandler = function () {
     exports.ssuper.send.call(this, redPinRequest);
 };
 
-// FIXME: jshint says: "If a strict mode function is executed using function invocation, its 'this' value will be undefined."
-var self = this;
 
-//Copying "this" to "self" is needed because dataReceivedHandler will be passed
-// as a callback to "client" in TCPSocketClient
+//Override the dataReceivedHandler from TCPSocketClient to
+//send server response over location and mapName output ports
 exports.dataReceivedHandler = function (data) {
     var serverResponse = JSON.parse(data);
     var locationID = serverResponse.data.symbolicID;
     var mapName = serverResponse.data.map.mapName;
-    self.send('location', locationID);
-    self.send('mapName', mapName);
+    this.send('location', locationID);
+    this.send('mapName', mapName);
 };
