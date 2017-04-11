@@ -69,17 +69,18 @@ exports.setup = function () {
     });
 };
 
+var self;
 var mqttClient;
 
 function onMessage(topic, data) {
-    this.send('received', data);
-    this.send('receivedTopic', topic);
+    self.send('received', data);
+    self.send('receivedTopic', topic);
 }
 
 function onConnect() {
-    this.send('connection', 'connected to broker');
+    self.send('connection', 'connected to broker');
     // In case there is a topic, subscribe to it.
-    exports.subscribeInputHandler.call(this);
+    exports.subscribeInputHandler.call(self);
 }
 
 exports.subscribeInputHandler = function () {
@@ -108,6 +109,7 @@ exports.unsubscribeInputHandler = function () {
 };
 
 exports.initialize = function () {
+    self = this;
     this.addInputHandler('subscribe', exports.subscribeInputHandler.bind(this));
     this.addInputHandler('unsubscribe', exports.unsubscribeInputHandler.bind(this));
     mqttClient = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
