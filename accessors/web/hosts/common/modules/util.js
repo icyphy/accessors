@@ -27,17 +27,21 @@
  *  @version $$Id$$
  */
 
+/*globals Buffer, console, global, exports, process, require */
+/*jshint globalstrict: true, multistr: true, esnext: true */
+'use strict';
+
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
+    var i = 1;
     if (!isString(f)) {
         var objects = [];
-        for (var i = 0; i < arguments.length; i++) {
+        for (i = 0; i < arguments.length; i++) {
             objects.push(inspect(arguments[i]));
         }
         return objects.join(' ');
     }
 
-    var i = 1;
     var args = arguments;
     var len = args.length;
     var str = String(f).replace(formatRegExp, function(x) {
@@ -52,6 +56,7 @@ exports.format = function(f) {
             } catch (_) {
                 return '[Circular]';
             }
+            break;
         default:
             return x;
         }
@@ -94,6 +99,7 @@ exports.deprecate = function(fn, msg) {
             }
             warned = true;
         }
+        // FIXME: jshint warns: "If a strict mode function is executed using function invocation, its 'this' value will be undefined."
         return fn.apply(this, arguments);
     }
 
@@ -251,8 +257,8 @@ function formatValue(ctx, value, recurseTimes) {
 
     // IE doesn't make error fields non-enumerable
     // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-    if (isError(value)
-        && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    if (isError(value) &&
+        (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
         return formatError(value);
     }
 
@@ -302,7 +308,7 @@ function formatValue(ctx, value, recurseTimes) {
         base = ' ' + formatError(value);
     }
 
-    if (keys.length === 0 && (!array || value.length == 0)) {
+    if (keys.length === 0 && (!array || value.length === 0)) {
         return braces[0] + base + braces[1];
     }
 
@@ -473,7 +479,7 @@ function isNull(arg) {
 exports.isNull = isNull;
 
 function isNullOrUndefined(arg) {
-    return arg == null;
+    return arg === null;
 }
 exports.isNullOrUndefined = isNullOrUndefined;
 
@@ -488,6 +494,8 @@ function isString(arg) {
 exports.isString = isString;
 
 function isSymbol(arg) {
+    // FIXME: jshint returns "Invalid typeof value 'symbol'"
+    // This is es6
     return typeof arg === 'symbol';
 }
 exports.isSymbol = isSymbol;
@@ -546,6 +554,10 @@ if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
     exports.isBuffer = require('./support/isBuffer');
 } else {
     // Browser and Duktape
+
+    // jshint warns: "Function declarations should not be placed in
+    // blocks. Use a function expression or move the statement to the
+    // top of the outer function."
     function isBuffer(arg) {
         return arg instanceof Buffer;
     }

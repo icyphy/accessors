@@ -43,13 +43,13 @@ var fs = require('fs');
  */
 var findNodeAutoDirectories = function(dir) {
     var results = [];
-    var files = fs.readdirSync(dir)
+    var files = fs.readdirSync(dir);
     files.forEach(function(file) {
             basefile = file;
             file = dir + '/' + file;
             try {
-                var stat = fs.statSync(file)
-                    if (stat && stat.isDirectory() && basefile != 'node_modules') {
+                var stat = fs.statSync(file);
+                if (stat && stat.isDirectory() && basefile != 'node_modules') {
                         // Add auto directories, but skip certain directories.
                         if (basefile == 'auto') {
                             var skipIt = false;
