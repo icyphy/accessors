@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 15000 net/test/auto/TestUDPSocketSelf)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 5000.0 net/test/auto/TestUDPSocketSelf)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
 
     // Ports: TestUDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -34,14 +34,14 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', ["a1","a2","a3","a4","a5","a6","a7","a8","a9","a10"]);
+    TrainableTest.setParameter('correctValues', ["a1","a2","a3","a4"]);
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
     // Start: JavaScriptStop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScriptStop = new Accessor('JavaScriptStop', 'exports.setup = function() {\n  this.input(\'input\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'input\', handler.bind(this));\n}\n\nfunction handler() {\n    var value = this.get(\'input\');\n    if (value === true) {\n        console.log(\"JavaScriptStop: about to call stop().\");\n        // stop() is defined for all accessors, though it might not actually do anything.\n        stop.call(this);\n        // An accessor host might not get to the next line.\n        console.log(\"JavaScriptStop: done calling stop() on container\");\n    }\n}\n \nexports.wrapup = function() {\n    console.log(\"JavaScriptStop.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
+    var JavaScriptStop = new Accessor('JavaScriptStop', 'exports.setup = function() {\n  this.input(\'input\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'input\', handler.bind(this));\n}\n\nfunction handler() {\n    var value = this.get(\'input\');\n    if (value === true) {\n        console.log(\"JavaScriptStop: about to call stop().\");\n        // stop() is defined for all accessors, though it might not actually do anything.\n        this.stop.call(this);\n        // An accessor host might not get to the next line.\n        console.log(\"JavaScriptStop: done calling stop() on container\");\n    }\n}\n \nexports.wrapup = function() {\n    console.log(\"JavaScriptStop.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
     JavaScriptStop.container = this;
     this.containedAccessors.push(JavaScriptStop);
 
