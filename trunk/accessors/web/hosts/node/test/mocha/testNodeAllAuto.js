@@ -54,8 +54,6 @@ var findNodeAutoDirectories = function(dir) {
                         if (basefile == 'auto') {
                             var skipIt = false;
                             var skipDirectories = [
-                                                    // Exclude gdp because it is crashes.  06-Apr-2017
-                                                    'gdp/test/auto',
                                                     'hosts/browser/test/auto',
                                                     'node_modules/@terraswarm/gdp/test/mocha'
                                                   ];
