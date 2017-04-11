@@ -204,10 +204,16 @@ exports.issueCommand = function (callback) {
         } else {
             command.url = options;
         }
-    } else if (typeof options.url === 'string') {
-        command.url = options.url + '/' + encodedPath;
     } else {
-        command.url.path = '/' + encodedPath;
+        // Don't use command = options, because otherwise if we invoke
+        // this accessor multiple times, then options.url will be
+        // appended to each time.  Instead, do a deep clone.
+        command = JSON.parse(JSON.stringify(options));
+        if (typeof options.url === 'string') {
+            command.url = options.url + '/' + encodedPath;
+        } else {
+            command.url.path = '/' + encodedPath;
+        }
     }
     command.timeout = this.getParameter('timeout');
 
