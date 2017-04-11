@@ -1,6 +1,6 @@
 // Test code for functions to be shared among accessor hosts.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -49,6 +49,8 @@ getAccessorCode = function (name) {
     // The path elements should end with a slash.
     var searchPath = ['./', '../', '../../', '../../../', '../../../../', 'web/', 'org/terraswarm/accessor/accessors/web/'];
 
+    var pathName, src;
+    
     // For node, add _dirname.  If this is not done, then if this test
     // is run before node/tests/mocha/testNodeAuto.js, then
     // testNodeAuto.js will fail.
@@ -62,17 +64,18 @@ getAccessorCode = function (name) {
         }
         try {
             if (hasFsModule) {
-                var pathName = searchPath[i] + name;
+                pathName = searchPath[i] + name;
                 //console.log("testCommon.js: pathName: " + pathName);
                 if (fs.statSync(pathName).isFile()) {
                     return fs.readFileSync(pathName, 'utf8');
                 }
             } else {
-                var pathName = searchPath[i] + name;
+                pathName = searchPath[i] + name;
                 // print("testCommon.js: pathName: " + pathName);
 
                 if (typeof Duktape === 'object') {
-                    var src = FileIo.readfile(pathName);
+                    src = FileIo.readfile(pathName);
+                    // FIXME: jshint warns "Invalid typeof value 'buffer'", but this might be ok for Duktape2.x
                     if (typeof src === 'buffer') {
                         // print("testCommon.js: returning contents of " + pathName);
                         return src;
@@ -81,8 +84,8 @@ getAccessorCode = function (name) {
                     // Nashorn
                     var FileReader = java.io.FileReader,
                         BufferedReader = java.io.BufferedReader,
-                        buffered,
-                        src = '';
+                        buffered;
+                    src = '';
 
                     try {
                         buffered = new BufferedReader(new FileReader(pathName));
@@ -103,7 +106,7 @@ getAccessorCode = function (name) {
         }
     }
     throw ('Failed to find ' + name + ". Looked in " + searchPath);
-}
+};
 
 // Read the accessor source code.
 var code = getAccessorCode('test/TestAccessor');
@@ -182,14 +185,14 @@ test('TestComposite: priority number of destination is higher than source',
     a.containedAccessors[0].priority < a.containedAccessors[1].priority,
     true);
 
-a.provideInput('input', 10)
-a.containedAccessors[0].react()
-a.containedAccessors[1].react()
+a.provideInput('input', 10);
+a.containedAccessors[0].react();
+a.containedAccessors[1].react();
 test('TestComposite: composite accessor with manual scheduling',
     a.latestOutput('output'), 50);
 
 a.initialize();
-a.provideInput('input', 5)
+a.provideInput('input', 5);
 a.react();
 test('TestComposite: composite accessor with automatic scheduling',
     a.latestOutput('output'), 25);
