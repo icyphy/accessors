@@ -160,4 +160,11 @@ exports.numberOfFaces = function () {
     return filter.faceCount;
 };
 
+/** Return the detected faces rectangles
+ *  @return An array of detected faces rectangles.
+ */
+exports.faceRectangles = function () {
+    return filter.faceRectangles;
+};
+
 
