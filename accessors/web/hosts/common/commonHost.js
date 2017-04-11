@@ -468,28 +468,28 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
         this.monitor = {};
 
         // Monitoring initialize events
-        this.monitor['initialize'] = {
+        this.monitor.initialize = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
         };
 
         // Monitoring react events
-        this.monitor['reactStart'] = {
+        this.monitor.reactStart = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
         };
 
         // Monitoring react events
-        this.monitor['reactEnd'] = {
+        this.monitor.reactEnd = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
         };
 
         // Monitoring wrapup events
-        this.monitor['wrapup'] = {
+        this.monitor.wrapup = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
@@ -560,7 +560,6 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.clearTimeout) {
         this.clearTimeout = bindings.clearTimeout;
     } else if (typeof clearTimeout !== 'undefined') {
-        // this.setTimeout = setTimeout;
         this.clearTimeout = deterministicTemporalSemantics.clearTimeoutDet;
     } else {
         throw new Error('Host does not define required clearTimeout function.');
@@ -1325,16 +1324,16 @@ Accessor.prototype.instantiate = function (instanceName, accessorClass) {
     // If 'this' defines setTimeout(), etc., use that instead of current definitions.
     if (this && this.clearInterval) {
         insideBindings.clearInterval = this.clearInterval;
-    };
+    }
     if (this && this.clearTimeout) {
         insideBindings.clearTimeout = this.clearTimeout;
-    };
+    }
     if (this && this.setInterval) {
         insideBindings.setInterval = this.setInterval;
-    };
+    }
     if (this && this.setTimeout) {
         insideBindings.setTimeout = this.setTimeout;
-    };
+    }
 
     // FIXME: Do we need to ensure that 'actor' or 'accessor' is bound here?
     instanceName = this.accessorName + '.' + instanceName;
@@ -1400,7 +1399,7 @@ Accessor.prototype.mutable = function (value) {
         //// Support for additional monitoring information
 
         // Monitoring reify events
-        this.monitor['reify'] = {
+        this.monitor.reify = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
@@ -1693,7 +1692,7 @@ Accessor.prototype.realize = function (name, options) {
 Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     // Note that we could just use this instead of this.root because of the
     // prototype chain, but in a deep hierarchy, this will be more efficient.
-    var thiz = this.root;
+    var thiz = this.root, i;
 
     // Check that this is a mutableAccessor
     if (!thiz.mutable) {
@@ -1713,7 +1712,7 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     }
 
     // Check if the mutableAccessor and accessor realizes similar features
-    if (thiz.realizesList.length == 0 || accessor.realizesList.length == 0) {
+    if (thiz.realizesList.length === 0 || accessor.realizesList.length === 0) {
         console.log('reifiableBy(): Realized features are needed to check reification.');
         // For compatibility reasons with the previous accessors, the function
         // will continue executing.
@@ -1722,7 +1721,7 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     // Check is realized features are compatible
     // As a first step, this is reduced to equality checking
     // The next step is to perform this tak using ontologies
-    for (var i = 0; i < thiz.realizesList.length; i++) {
+    for (i = 0; i < thiz.realizesList.length; i++) {
         var myRealizesInList = thiz.realizesList[i];
         var myRealizes = thiz.realizes[myRealizesInList];
 
@@ -1742,13 +1741,14 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     var outputsMap = new Map();
     var parametersMap = new Map();
 
+    var myInputInList, myInput, accInputInList, accInput;
     // Look for mapping the accessor inputs to the mutableAccesssor inputs
-    for (var i = 0; i < accessor.inputList.length; i++) {
-        var accInputInList = accessor.inputList[i];
-        var accInput = accessor.inputs[accInputInList];
+    for (i = 0; i < accessor.inputList.length; i++) {
+        accInputInList = accessor.inputList[i];
+        accInput = accessor.inputs[accInputInList];
 
-        var myInputInList = thiz.inputList[thiz.inputList.indexOf(accInputInList)];
-        var myInput = thiz.inputs[myInputInList];
+        myInputInList = thiz.inputList[thiz.inputList.indexOf(accInputInList)];
+        myInput = thiz.inputs[myInputInList];
 
         // Check the input name
         if (!myInputInList)
@@ -1762,9 +1762,9 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     }
 
     // If 'strict' is not passed, proceed with mapping the accessor parameters
-    for (var i = 0; i < thiz.inputList.length; i++) {
-        var myInputInList = thiz.inputList[i];
-        var myInput = thiz.inputs[myInputInList];
+    for (i = 0; i < thiz.inputList.length; i++) {
+        myInputInList = thiz.inputList[i];
+        myInput = thiz.inputs[myInputInList];
 
         if (inputsMap.has(myInputInList))
             continue;
@@ -1781,7 +1781,7 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     }
 
     // Look for mapping the accessor inputs to the mutableAccesssor inputs
-    for (var i = 0; i < thiz.outputList.length; i++) {
+    for (i = 0; i < thiz.outputList.length; i++) {
         var myOutputInList = thiz.outputList[i];
         var myOutput = thiz.outputs[myOutputInList];
 
@@ -1848,7 +1848,7 @@ Accessor.prototype.reify = function (accessor) {
 
     // Check if an accessor is passed
     if (!accessor) {
-        if (thiz.reifyingAccessorsList.length == 0) {
+        if (thiz.reifyingAccessorsList.length === 0) {
             console.log('reify(): no found accessor to reify.');
             return false;
         }
@@ -2195,7 +2195,7 @@ Accessor.prototype.stop = function () {
         container = container.container;
     }
     container.wrapup();
-}
+};
 
 /** Updates the monitoring information (count, date/time of the first event and date/time
  *  of the last event).
@@ -2208,17 +2208,17 @@ Accessor.prototype.updateMonitoringInformation = function (info) {
 
     // Increment the events count
     var monitor = thiz.monitor[info];
-    monitor['count'] = monitor['count'] + 1;
+    monitor.count = monitor.count + 1;
 
     // Update the first occurrence date, if not defined yet
-    if (!(monitor['firstOccurrenceDate']['Date&Time'])) {
-        monitor['firstOccurrenceDate'] = {
+    if (!(monitor.firstOccurrenceDate['Date&Time'])) {
+        monitor.firstOccurrenceDate = {
             'Date&Time': new Date().toLocaleString()
         };
     }
 
     // Update the last occurrence date
-    monitor['latestOccurrenceDate'] = {
+    monitor.latestOccurrenceDate = {
         'Date&Time': new Date().toLocaleString()
     };
 };
@@ -2339,7 +2339,7 @@ function getMonitoringInformation() {
             type = 'topLevel';
         } else {
             type = 'composite';
-        };
+        }
 
         result[name] = {
             'type': type,
@@ -2388,9 +2388,9 @@ function instantiateAccessor(
     // In case bindings is not defined.
     bindings = bindings || {};
     if (trustedAccessorsAllowed && accessorClass.startsWith('trusted/')) {
-        bindings['getTopLevelAccessors'] = getTopLevelAccessors;
+        bindings.getTopLevelAccessors = getTopLevelAccessors;
     } else {
-        bindings['getTopLevelAccessors'] = function () {
+        bindings.getTopLevelAccessors = function () {
             throw new Error('getTopLevelAccessors(): Accessors are not permitted' +
                 ' to access peer accessors in this host.');
         };
@@ -2542,7 +2542,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--e':
         case '-echo':
         case '--echo':
-            console.log(argv)
+            console.log(argv);
             break;
 
         case '-h':
@@ -2708,7 +2708,7 @@ function stopAllAccessors() {
         throw new Error("commonHost.js: stopAllAccessors(): while invoking wrapup() of all accessors," +
             " an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
     }
-};
+}
 
 /** Return a name that is unique in the specified container based on the specified
  *  seed. If no container is given, then return a name that is unique among top-level
