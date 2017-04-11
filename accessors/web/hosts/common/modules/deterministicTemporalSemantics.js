@@ -165,28 +165,43 @@ function clearTick(cbId, periodic) {
     }
     
     var label;
+    var indexInSortedList = -1;
     
-    // Parse looking for the identifier.
+    // Parse looking for label, given the identifier
     Object.keys(timedCallbacks).forEach(function(key) {
         if (timedCallbacks[key][cbId] && timedCallbacks[key][cbId].periodic === periodic) {
             label = key;
+            
         }
     });
+    
+    // Parse for the index in sortedTimedCallbackList
+    for(var i = 0 ; i < sortedTimedCallbackList.length ; i++) {
+        if (sortedTimedCallbackList[i]["id"] === cbId) {
+            indexInSortedList = i;
+            break;
+        }
+    }
 
     if (label) {
         // Delete from timedCallbacks
         delete timedCallbacks[label][cbId];
-
-        // Delete from sortedTimedCallbackList
-        var index = sortedTimedCallbackList.indexOf({"label": label, "id": cbId});
-        sortedTimedCallbackList.splice(index , 1);
         
+        // Delete from sortedTimedCallbackList
+        sortedTimedCallbackList.splice(indexInSortedList , 1);
+
         // Clean up timedCallbacks
         if (Object.size(timedCallbacks[label]) === 1) {
             delete(timedCallbacks[label]);
             // Check if there are still callbacks in the list
             if (Object.size(timedCallbacks) == 0) {
-                timedCallbacks = null;
+                timedCallbacks = null;    // Parse for the index in sortedTimedCallbackList
+                for(var i = 0 ; i < sortedTimedCallbackList.length ; i++) {
+                    if (sortedTimedCallbackList[i]["id"] === cbId) {
+                        indexInSortedList = i;
+                        break;
+                    }
+                }
                 clearTimeout(tick);
             }
         }
@@ -241,8 +256,8 @@ var executeAndSetNextTick = function() {
     var timeBeforeCallbacksExecution = Date.now();
     
     // console.log('--Execute: At logical time: ' + logicalTime 
-    //             + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
-    //             + ' with timeChunk: ' + timeChunk);
+    //            + ' At real time: ' + timeBeforeCallbacksExecution % 100000 
+    //            + ' with timeChunk: ' + timeChunk);
     
     // Execute callbacks
     executeCallbacks();
@@ -278,6 +293,7 @@ function executeCallbacks() {
     do {
         var key = sortedTimedCallbackList[0]["label"];
         var id = sortedTimedCallbackList[0]["id"];
+        
         
         if (timedCallbacks[key][id].nextExecutionTime === logicalTime) {
             sortedTimedCallbackList.splice (0, 1);
