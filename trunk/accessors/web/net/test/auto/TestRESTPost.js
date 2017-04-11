@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 16000 net/test/auto/TestRESTPost)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 5000.0 net/test/auto/TestRESTPost)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
 
     // Ports: TestRESTPost: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -15,15 +15,15 @@ exports.setup = function() {
 
     // Start: REST: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST = this.instantiate('REST', 'net/REST.js');
-    REST.setDefault('options', "{\"url\" : \"http://httpbin.org\", \"method\" : \"POST\"}");
+    REST.setDefault('options', {"url" : "http://httpbin.org", "method" : "POST"});
     REST.setDefault('command', "post");
-    REST.setDefault('arguments', "\"\"");
+    REST.setDefault('arguments', "");
     REST.setParameter('timeout', 5000);
     REST.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', "[\"{\\n  \\\"args\\\": {}, \\n  \\\"data\\\": \\\"test\\\", \\n  \\\"files\\\": {}, \\n  \\\"form\\\": {}, \\n  \\\"headers\\\": {\\n    \\\"Connection\\\": \\\"close\\\", \\n    \\\"Content-Length\\\": \\\"4\\\", \\n    \\\"Host\\\": \\\"httpbin.org\\\"\\n  }, \\n  \\\"json\\\": null, \\n  \\\"url\\\": \\\"http://httpbin.org/post\\\"\\n}\\n\"]");
+    TrainableTest.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"test\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Connection\": \"close\", \n    \"Content-Length\": \"4\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": null, \n  \"url\": \"http://httpbin.org/post\"\n}\n"]);
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
@@ -54,15 +54,15 @@ exports.setup = function() {
 
     // Start: REST2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST2 = this.instantiate('REST2', 'net/REST.js');
-    REST2.setDefault('options', "{\"url\" : \"http://httpbin.org\", \"method\" : \"POST\", \"headers\" : {\"Content-Type\" : \"application/json\"}}");
+    REST2.setDefault('options', {"url" : "http://httpbin.org", "method" : "POST", "headers" : {"Content-Type" : "application/json"}});
     REST2.setDefault('command', "post");
-    REST2.setDefault('arguments', "\"\"");
+    REST2.setDefault('arguments', "");
     REST2.setParameter('timeout', 5000);
     REST2.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', "[\"{\\n  \\\"args\\\": {}, \\n  \\\"data\\\": \\\"{\\\\\\\"test\\\\\\\":\\\\\\\"this is JSON test\\\\\\\"}\\\", \\n  \\\"files\\\": {}, \\n  \\\"form\\\": {}, \\n  \\\"headers\\\": {\\n    \\\"Connection\\\": \\\"close\\\", \\n    \\\"Content-Length\\\": \\\"28\\\", \\n    \\\"Content-Type\\\": \\\"application/json\\\", \\n    \\\"Host\\\": \\\"httpbin.org\\\"\\n  }, \\n  \\\"json\\\": {\\n    \\\"test\\\": \\\"this is JSON test\\\"\\n  }, \\n  \\\"url\\\": \\\"http://httpbin.org/post\\\"\\n}\\n\"]");
+    TrainableTest2.setParameter('correctValues', ["{\n  \"args\": {}, \n  \"data\": \"{\\\"test\\\":\\\"this is JSON test\\\"}\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\": {\n    \"Connection\": \"close\", \n    \"Content-Length\": \"28\", \n    \"Content-Type\": \"application/json\", \n    \"Host\": \"httpbin.org\"\n  }, \n  \"json\": {\n    \"test\": \"this is JSON test\"\n  }, \n  \"url\": \"http://httpbin.org/post\"\n}\n"]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
