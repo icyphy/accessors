@@ -67,6 +67,7 @@ var Filter = function() {
         // Store the trained face detector.  Loaded when first called.
         this.faceCascade = null;
         this.faceCount = 0;
+        this.faceRectangles = [];
         this.image = null;
         
         this.display.on('ready', function(data) {
@@ -102,6 +103,7 @@ Filter.prototype.filter = function() {
         var s2 = [0, 0];
         self.faceCascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
         self.faceCount = faces.size();
+        self.faceRectangles = faces;
         
         for (var i = 0 ;i < faces.size(); i+=1 )
         {
