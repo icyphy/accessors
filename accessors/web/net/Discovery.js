@@ -80,9 +80,21 @@ exports.initialize = function () {
     var self = this;
     handle = this.addInputHandler('hostIP', function () {
         if (self.get('useNmap')) {
-            ds.discoverDevices(self.get('hostIP'), 'nmap');
+            ds.discoverDevices(self.get('hostIP'), 'nmap', function(data) {
+                if (data === "") {
+                    self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+                } else {
+                    self.send('devices', data);
+                }
+            });
         } else {
-            ds.discoverDevices(self.get('hostIP'));
+            ds.discoverDevices(self.get('hostIP'), 'ping', function(data) {
+                if (data === "") {
+                    self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
+                } else {
+                    self.send('devices', data);
+                }
+            });
         }
     });
 };
@@ -91,15 +103,3 @@ exports.initialize = function () {
 exports.wrapup = function () {
     this.removeInputHandler(handle);
 };
-
-/** When discovery is finished, send a list of devices.  */
-if (ds) {
-    var self = this;
-    ds.on('discovered', function (data) {
-        if (data === "") {
-            self.send('error', 'Error:  No devices found.  At minimum, the host machine should be found.');
-        } else {
-            self.send('devices', data);
-        }
-    });
-}
