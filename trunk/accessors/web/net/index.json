@@ -16,6 +16,7 @@
     "UDPSocketSender.js",
     "VertxPublish.js",
     "VertxSubscribe.js",
+    "WebServer.js",
     "WebSocketClient.js",
     "WebSocketServer.js",
     "XBee.js"
