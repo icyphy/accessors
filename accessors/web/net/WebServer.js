@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -76,7 +76,7 @@
 // Stop extra messages from jslint and jshint.  Note that there should
 // be no space between the / and the * and global. See
 // https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*globals console, error, exports, require */
+/*globals console, error, exports, require, util */
 /*jshint globalstrict: true*/
 'use strict';
 
@@ -106,7 +106,7 @@ exports.initialize = function() {
         console.log('WebServer: Creating new server.');
         self.server = new httpServer.HttpServer({
                 'port': self.getParameter('port'),
-                'hostInterface': self.getParameter('hostInterface'),
+                'hostInterface': self.getParameter('hostInterface')
         });
         // Using 'self.exports' rather than just 'exports' in the following allows
         // these functions to be overridden in derived accessors.
@@ -148,7 +148,7 @@ exports.initialize = function() {
 exports.onListening = function() {
     console.log('WebServer: Listening for requests.');
     this.send('listening', this.getParameter('port'));
-}
+};
 
 exports.request = function(request) {
     console.log('Server received request: ' + util.inspect(request));
@@ -158,7 +158,7 @@ exports.request = function(request) {
     } else {
         console.log('WARNING: server does not exist.');
     }
-}
+};
 
 /** Removes all inputHandlers from sockets.<br>
  * Unregisters event listeners from sockets.<br>
