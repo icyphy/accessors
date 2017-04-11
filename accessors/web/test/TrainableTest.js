@@ -218,7 +218,7 @@ exports.initialize = function () {
                 if (inputValueValue === undefined) {
                     inputValueValue = inputValue;
                 }
-                if (referenceTokenValue == undefined) {
+                if (referenceTokenValue === undefined) {
                     referenceTokenValue = referenceToken;
                 }
 
