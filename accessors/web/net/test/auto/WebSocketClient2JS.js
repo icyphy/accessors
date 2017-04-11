@@ -43,7 +43,7 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', "[]");
+    TrainableTest.setParameter('correctValues', []);
     TrainableTest.setParameter('trainingMode', true);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
