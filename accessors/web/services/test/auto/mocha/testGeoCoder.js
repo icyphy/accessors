@@ -6,7 +6,13 @@
 // 
 //   ../../../../node_modules/.bin/mocha testGeoCoder.js
 
-var nodeHost = require('../../../../hosts/node/nodeHost.js');
+var nodeHost;
+try {
+    nodeHost = require('../../../../hosts/node/nodeHost.js');
+} catch (err) {
+    // FIXME: When running (cd $PTII; ant test.mocha), we need the absolute path?
+    nodeHost = require(process.cwd() + '/org/terraswarm/accessor/accessors/web/hosts/node/nodeHost.js');
+}
 
 var fs = require('fs');
 
@@ -15,13 +21,18 @@ describe('NodeHost./accessors/web/services/test/auto/mocha/testGeoCoder', functi
     var replicationMessage = '\n\tTo replicate: (cd web/services/test/auto/mocha/; ../../../../node_modules/.bin/mocha testGeoCoder.js)';
 
     it('testGeoCoder.js', function () {
+
         // Run the ../../testGeoCoder.js file, which has an assert.
         var testFile = '../../testGeoCoder.js';
         if (!fs.existsSync(testFile)) {
             var originalTestFile = testFile;
             testFile = 'services/test/testGeoCoder.js';
             if (!fs.existsSync(testFile)) {
-                throw new Error("Could not find " + originalTestFile + " or " + testFile);
+                var originalTestFile2 = testFile;
+                testFile = 'org/terraswarm/accessor/accessors/web/services/test/testGeoCoder.js'
+                if (!fs.existsSync(testFile)) {
+                    throw new Error("Could not find " + originalTestFile + ", " + originalTestFile2 + " or " + testFile);
+                }
             }
         }
         var args = ['-js', testFile];
@@ -38,7 +49,6 @@ describe('NodeHost./accessors/web/services/test/auto/mocha/testGeoCoder', functi
         // See https://mochajs.org/#timeouts
         this.timeout(4000);
         setTimeout(function () {done(); console.log("mocha/testGeoCoder.js done");}, 3000);
-    
     });
 
 });
