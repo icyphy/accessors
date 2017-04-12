@@ -20,6 +20,24 @@
 #ifdef __MBED__
 #include "mbed.h"
 #include "rtos.h"
+
+extern "C" {
+
+  Timer timer;
+  int gettimeofday(struct timeval* globalTVP, void* tzp __attribute__((unused))) {
+    // FIXME: https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/
+    // says:
+    // "Timers are based on 32-bit int microsecond counters, so they can
+    // only time up to a maximum of 2^31-1 microseconds (30
+    // minutes). They are designed for times between microseconds and
+    // seconds. For longer times, you should consider the time() real
+    // time clock. "
+
+    globalTVP->tv_sec += timer.read_ms();
+    fprintf(stderr, "%s:%d: gettimeofday(): time is %20ld\n", __FILE__, __LINE__, globalTVP->tv_sec);
+    return 0;
+  }
+}
 #endif
 
 #ifdef __ARM_EABI__
@@ -382,6 +400,10 @@ void led2_thread() {
 int main(int argc, char *argv[]) {
   fprintf(stderr, "eduk2.cpp main() start\n");
 
+  // Start the timer for gettimeofday().
+  // See https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/
+  timer.start();
+
   // Under MBED, we create a thread with a non-standard
   // amount of stack, then create a thread for the LEDs.
 #ifdef __MBED__
@@ -406,5 +428,7 @@ int main(int argc, char *argv[]) {
   // On the host, we just call inner_main().
   inner_main();
 #endif  
+
+  timer.stop();
 }
 
