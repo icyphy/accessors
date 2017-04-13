@@ -22,9 +22,12 @@
 
 /** This accessor starts a server that listens for HTTP requests
  *  on the specified hostInterface and port and issues responses.
- *  The hostInterface is needed only if the host machine has more than one
- *  network interface (e.g. Ethernet and WiFi) and 'localhost' does
- *  not resolve to the desired interface.
+ *  The hostInterface specifies what network interface (e.g. Ethernet,
+ *  WiFi, or localhost) to use. The default is 'localhost', which (usually)
+ *  means that the server listens only for requests coming from the local machine.
+ *  This is useful for testing. To listen for requests on all IPv4 addresses on
+ *  the local machine, specify '0.0.0.0'. This will make the server accessible
+ *  to any machine that has access to an IP address for the local machine.
  *
  *  When this server receives an http requests from the network (or from
  *  the local machine), it produces a JavaScript object on the output that
