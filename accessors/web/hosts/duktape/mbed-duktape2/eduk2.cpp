@@ -25,6 +25,9 @@ extern "C" {
 
   Timer timer;
   int gettimeofday(struct timeval* globalTVP, void* tzp __attribute__((unused))) {
+
+    globalTVP->tv_sec = time(NULL);
+
     // FIXME: https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/
     // says:
     // "Timers are based on 32-bit int microsecond counters, so they can
@@ -32,9 +35,9 @@ extern "C" {
     // minutes). They are designed for times between microseconds and
     // seconds. For longer times, you should consider the time() real
     // time clock. "
+    globalTVP->tv_usec = timer.read_ms() - time(NULL) * 1000;
 
-    globalTVP->tv_sec += timer.read_ms();
-    fprintf(stderr, "%s:%d: gettimeofday(): time is %20ld\n", __FILE__, __LINE__, globalTVP->tv_sec);
+    fprintf(stderr, "%s:%d: gettimeofday(): time is %20ld sec, %20ld usec\n", __FILE__, __LINE__, globalTVP->tv_sec, globalTVP->tv_usec);
     return 0;
   }
 }
@@ -400,13 +403,17 @@ void led2_thread() {
 int main(int argc, char *argv[]) {
   fprintf(stderr, "eduk2.cpp main() start\n");
 
+#ifdef __MBED__
+  // Set the time to the start of the epoch.  See
+  // https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Time/
+  set_time(0);
+  
   // Start the timer for gettimeofday().
   // See https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/
   timer.start();
 
   // Under MBED, we create a thread with a non-standard
   // amount of stack, then create a thread for the LEDs.
-#ifdef __MBED__
   Thread t(osPriorityNormal, 200 * 1024);
 
   thread.start(led2_thread);
@@ -416,6 +423,7 @@ int main(int argc, char *argv[]) {
   print_heap_and_isr_stack_info();
   fprintf(stderr, "eduk2.cpp main() after print thread info\n");
 
+  // Here, we start our actual work.
   t.start(&inner_main);
   fprintf(stderr, "eduk2.cpp main() started duktape thread\n");
 
