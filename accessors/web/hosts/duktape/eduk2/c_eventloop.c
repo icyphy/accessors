@@ -360,7 +360,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  Expire timers.
 		 */
 
-		fprintf(stderr, "%s:%d: expire_timers()\n", __FILE__, __LINE__);
+                // fprintf(stderr, "%s:%d: expire_timers()\n", __FILE__, __LINE__);
 		expire_timers(ctx);
 
 		/*
@@ -411,7 +411,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  Poll for activity or timeout.
 		 */
 
-#if 1
+#if 0
 		fprintf(stderr, "going to poll, timeout %d ms, pollfd count %d\n", timeout, poll_count);
 		fflush(stderr);
 #endif
@@ -449,7 +449,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 *  removing them from the poll list.  This ensures indices are not
 		 *  disturbed.  The poll list is compacted before next poll().
 		 */
-		fprintf(stderr, "%s:%d: RC -> %d \n", __FILE__, __LINE__, rc);
+		// fprintf(stderr, "%s:%d: RC -> %d \n", __FILE__, __LINE__, rc);
 
 
 		n = (rc == 0 ? 0 : poll_count);  /* if timeout, no need to check pollfd */
