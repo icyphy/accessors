@@ -451,9 +451,17 @@
   </target>
   
   <target name="status"
-          depends="status.accessors, status.capecode">
+          depends="status.accessors, status.capecode, status.jenkins">
     <echo>Update the Accessor library status page.
     See https://www.icyphy.org/accessors/wiki/Notes/Status
+
+    In reports/status, the following files:
+       accessorMap.txt
+       accessMapCapeCode.txt
+       browserhost.txt
+       capecodehost.txt
+    would need to be copied to /home/www/cvswww/icyphy/accessors/reports/status on the web server.
+    The accessors Jenkins job at http://terra.eecs.berkeley.edu:8080/job/accessors/ does the scp for us.       
     </echo>
   </target>
 
@@ -470,6 +478,40 @@
           executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="org/terraswarm/accessor/status/calculateAccessorMapCapeCode.js"/>
+    </exec>
+    <copy file="${env.PTII}/org/terraswarm/accessor/status/accessorMapCapeCode.txt" todir="reports/status"/>
+  </target>
+
+  <target name="status.jenkins">
+
+    <echo>Getting the Browser Host, Cape Code Host and Node Host test results from Jenkins.
+    </echo>
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/browserhost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/browserhost.txt"/>
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastSuccessfulBuild/testReport/(root)/BrowserHost/"/>
+    </exec>
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/capecodehost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/capecodehost.txt"/>
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/ptII/lastBuild/testSuccessfulBuild/ptolemy.util.test.junit/AutoTests/"/>
+    </exec>    
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/capecodehost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/capecodehost.txt"/>
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastSuccessfulBuild/testReport/NodeHost/"/>
     </exec>
   </target>
 
