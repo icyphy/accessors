@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTPut)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
 
     // Ports: TestRESTPut: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -18,7 +18,7 @@ exports.setup = function() {
     REST.setDefault('options', {"url" : "http://httpbin.org", "method" : "PUT"});
     REST.setDefault('command', "put");
     REST.setDefault('arguments', "");
-    REST.setParameter('timeout', 5000);
+    REST.setParameter('timeout', 10000);
     REST.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -50,7 +50,7 @@ exports.setup = function() {
     REST2.setDefault('options', {"url" : "http://httpbin.org", "method" : "PUT", "headers" : {"Content-Type" : "application/json"}});
     REST2.setDefault('command', "put");
     REST2.setDefault('arguments', "");
-    REST2.setParameter('timeout', 5000);
+    REST2.setParameter('timeout', 10000);
     REST2.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -85,4 +85,4 @@ exports.setup = function() {
     this.connect(REST, 'response', RemoveSomeInfo, 'input');
     this.connect(REST2, 'response', RemoveSomeInfo2, 'input');
 };
-this.stopAt(10000.0);
+this.stopAt(12000.0);
