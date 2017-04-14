@@ -493,7 +493,8 @@
 	  timeout="${timeout}">
       <arg value="-O"/>
       <arg value="reports/status/browserhost.txt"/>
-      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastSuccessfulBuild/testReport/(root)/BrowserHost/"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/(root)/BrowserHost/"/>
     </exec>
 
     <delete quiet="true" verbose="no"
@@ -502,16 +503,18 @@
 	  timeout="${timeout}">
       <arg value="-O"/>
       <arg value="reports/status/capecodehost.txt"/>
-      <arg value="http://terra.eecs.berkeley.edu:8080/job/ptII/lastBuild/testSuccessfulBuild/ptolemy.util.test.junit/AutoTests/"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/ptII/lastCompletedBuild/testReport/ptolemy.util.test.junit/AutoTests/"/>
     </exec>    
 
     <delete quiet="true" verbose="no"
-            file="reports/status/capecodehost.txt"/>
+            file="reports/status/nodehost.txt"/>
     <exec executable="wget"
 	  timeout="${timeout}">
       <arg value="-O"/>
-      <arg value="reports/status/capecodehost.txt"/>
-      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastSuccessfulBuild/testReport/NodeHost/"/>
+      <arg value="reports/status/nodehost.txt"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/NodeHost/"/>
     </exec>
   </target>
 
