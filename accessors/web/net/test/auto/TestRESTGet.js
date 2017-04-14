@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTGet)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
 
     // Ports: TestRESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -18,7 +18,7 @@ exports.setup = function() {
     REST.setDefault('options', {"url" : "http://www.example.com"});
     REST.setDefault('command', "");
     REST.setDefault('arguments', "");
-    REST.setParameter('timeout', 5000);
+    REST.setParameter('timeout', 10000);
     REST.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -36,7 +36,7 @@ exports.setup = function() {
     REST2.setDefault('options', {"url" : "https://www.example.com"});
     REST2.setDefault('command', "");
     REST2.setDefault('arguments', "");
-    REST2.setParameter('timeout', 5000);
+    REST2.setParameter('timeout', 10000);
     REST2.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -54,7 +54,7 @@ exports.setup = function() {
     REST3.setDefault('options', {"url" : "http://echo.jsontest.com/key/value/one/two"});
     REST3.setDefault('command', "");
     REST3.setDefault('arguments', "");
-    REST3.setParameter('timeout', 5000);
+    REST3.setParameter('timeout', 10000);
     REST3.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TrainableTest3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -71,4 +71,4 @@ exports.setup = function() {
     this.connect(TestSpontaneousOnce3, 'output', REST3, 'trigger');
     this.connect(REST3, 'response', TrainableTest3, 'input');
 };
-this.stopAt(5000.0);
+this.stopAt(12000.0);
