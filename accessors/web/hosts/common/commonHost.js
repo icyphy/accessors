@@ -2189,12 +2189,25 @@ Accessor.prototype.setParameter = function (name, value) {
  *  accessor and invoking wrapup() on it.
  */
 Accessor.prototype.stop = function () {
+    console.log("commonHost.js: stop");
     var container = this;
     // Find the top-level container.
     while (container.container) {
         container = container.container;
     }
+    console.log("commonHost.js: stop: container: " + container);
     container.wrapup();
+};
+
+/** Stop execution of the enclosing swarmlet by finding the top-level
+ *  accessor and invoking wrapup() on it.
+ *  @param timeout When this time is reached, stop() is called.
+ */
+Accessor.prototype.stopAt = function (timeout) {
+    var self = this;
+    setTimeout(function() {
+        self.stop();
+    }, timeout);
 };
 
 /** Updates the monitoring information (count, date/time of the first event and date/time
