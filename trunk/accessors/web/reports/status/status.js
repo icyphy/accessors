@@ -106,6 +106,7 @@ function parseCapeCodeResults(data) {
                 testname.indexOf('ptolemy/actor/lib/jjs/modules') !== -1) {
                 
                 var exp = /[/() \[\]\.\-]/g;
+                // Should match the same string in accessors/web/build.xml
                 var link = "http://terra.eecs.berkeley.edu:8080/job/ptII/lastCompletedBuild/testReport/ptolemy.util.test.junit/AutoTests/" + 
                     testname.replace(exp, '_') + '/';
                 
@@ -187,6 +188,7 @@ function parseResults(data, host) {
                 var link;
                 
                 if (host === 'node') {
+                    // Should match the same string in accessors/web/build.xml
                     link = "http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/NodeHost/" + 
                         longtestname.replace(exp, '_') + '/';
                     // Remove any NodeHost run . 
@@ -197,6 +199,7 @@ function parseResults(data, host) {
                         }
                     }
                 } else if (host === 'browser') {
+                    // Should match the same string in accessors/web/build.xml
                     link = "http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/(root)/BrowserHost/" + 
                         longtestname.replace(exp, '_') + '/';
                     // Remove any BrowserHost BrowserHost .
