@@ -56,3 +56,4 @@ exports.setup = function() {
     this.connect(WebSocketClient, 'received', TrainableTest, 'input');
     this.connect(TrainableTest, 'output', Stop, 'stop');
 };
+this.stopAt(15000.0);

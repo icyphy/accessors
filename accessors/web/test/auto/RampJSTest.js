@@ -36,3 +36,4 @@ exports.setup = function() {
     this.connect(TrainableTest2, 'output', Stop, 'stop');
     this.connect(JavaScriptRamp, 'output', TrainableTest2, 'input');
 };
+this.stopAt(4000.0);
