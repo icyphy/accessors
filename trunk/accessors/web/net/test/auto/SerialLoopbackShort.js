@@ -1,7 +1,7 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 5500.0  net/test/auto/SerialLoopbackShort)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js   net/test/auto/SerialLoopbackShort)
     //  To regenerate this composite accessor, run:
     //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/serial/test/auto/SerialLoopbackShort.xml
     //  to edit the model, run:
@@ -41,7 +41,7 @@ exports.setup = function() {
     // Start: JavaScriptTrueToken: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScriptTrueToken = new Accessor('JavaScriptTrueToken', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\', {\'type\': \'boolean\'});\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     self.send(\'output\', true);\n  });\n}\n\nexports.wrapup = function() {\n    console.log(\"JavaScriptTrueToken.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
+    var JavaScriptTrueToken = new Accessor('JavaScriptTrueToken', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\', {\'type\': \'boolean\'});\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     self.send(\'output\', true);\n  });\n}\n\nexports.wrapup = function() {\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
     JavaScriptTrueToken.container = this;
     this.containedAccessors.push(JavaScriptTrueToken);
 
@@ -59,3 +59,4 @@ exports.setup = function() {
     this.connect(SerialPort, 'invalid', JavaScriptTrueToken, 'input');
     this.connect(JavaScriptRamp, 'output', TrainableTest2, 'input');
 };
+this.stopAt(5500.0);
