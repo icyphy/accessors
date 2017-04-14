@@ -27,3 +27,5 @@ exports.setup = function() {
     this.connect(TestAdder, 'sum', 'output');
     this.connect(TestGain, 'scaled', TestAdder, 'inputRight');
 };
+// The stopTime parameter of the directory in the model was 0, so this.stopAt() is not being generated.
+

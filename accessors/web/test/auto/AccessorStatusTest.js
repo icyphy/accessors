@@ -36,3 +36,4 @@ exports.setup = function() {
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(AccessorStatus, 'status', TestDisplay2, 'input');
 };
+this.stopAt(5000.0);
