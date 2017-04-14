@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js -timeout 10000.0 net/test/auto/TestRESTPut)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTPut)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
+    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPut.xml
 
     // Ports: TestRESTPut: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -85,3 +85,4 @@ exports.setup = function() {
     this.connect(REST, 'response', RemoveSomeInfo, 'input');
     this.connect(REST2, 'response', RemoveSomeInfo2, 'input');
 };
+this.stopAt(10000.0);

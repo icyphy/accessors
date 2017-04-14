@@ -64,3 +64,4 @@ exports.setup = function() {
     this.connect(TrainableTest, 'output', JavaScriptTrueToken, 'input');
     this.connect(JavaScriptTrueToken, 'output', Stop, 'stop');
 };
+this.stopAt(25000.0);
