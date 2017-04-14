@@ -468,7 +468,7 @@
   <target name="status.accessors">
     <exec executable="${node.executable}"
 	  timeout="${timeout}">
-      <arg value="reports/status/CalculateAccessorMap.js"/>
+      <arg value="reports/status/calculateAccessorMap.js"/>
     </exec>
   </target>    
 
