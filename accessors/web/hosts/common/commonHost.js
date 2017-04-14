@@ -222,7 +222,7 @@
 
 // Stop extra messages from jslint and jshint.
 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint
-/*globals actor, alert, console, Duktape, exports, instance, java, Packages, process, require, setInterval, setTimeout, window */
+/*globals actor, alert, console, Duktape, exports, instance, java, Packages, process, require, setInterval, setIntervalDet, setTimeout, setTimeoutDet, clearInterval, clearIntervalDet, clearTimeout, clearTimeoutDet, window, Map, getResource */
 /*jshint globalstrict: true, multistr: true */
 'use strict';
 
@@ -243,7 +243,8 @@ var accessorHostsEnum = {
     DEFAULT: 3,
     DUKTAPE: 4,
     NODE: 5,
-    NASHORN: 6
+    NASHORN: 6,
+    CORDOVA:7
 };
 
 var accessorHost = accessorHostsEnum.DEFAULT;
@@ -255,9 +256,13 @@ exports.accessorHostsEnum = accessorHostsEnum;
 exports.accessorHost = accessorHost;
 
 // In alphabetical order.
-// FIXME: This should not be needed!!! Remove it.
-if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
-    accessorHost = accessorHostsEnum.BROWSER;
+// FIXME: This should not be needed!!! Remove it. 
+if (typeof window !== 'undefined') {
+    if (typeof cordova !== 'undefined') {
+        accessorHost = accessorHostsEnum.CORDOVA;
+    } else if (window.hasOwnProperty('browserJSLoaded')) {
+        accessorHost = accessorHostsEnum.BROWSER;
+    }
 } else if (typeof actor !== 'undefined' && typeof Packages !== 'undefined' && typeof Packages.java.util.Vector === 'function') {
     accessorHost = accessorHostsEnum.CAPECODE;
 } else if (typeof Duktape === 'object') {
@@ -271,17 +276,28 @@ if (typeof window !== 'undefined' && window.hasOwnProperty('browserJSLoaded')) {
 if (accessorHost === accessorHostsEnum.DUKTAPE) {
     var util = require('../common/modules/util.js');
     var EventEmitter = require('../common/modules/events.js').EventEmitter;
+} else if(accessorHost === accessorHostsEnum.CORDOVA) {
+    var util = require('cordova/utils');
 } else {
     // The node host will load the core util module here and not access the file system.
     var util = require('util');
     var EventEmitter = require('events').EventEmitter;
 }
 
-var deterministicTemporalSemantics;
-if (accessorHost === accessorHostsEnum.BROWSER) {
-    deterministicTemporalSemantics = require('/accessors/hosts/common/modules/deterministicTemporalSemantics');
-} else {
-    deterministicTemporalSemantics = require('../common/modules/deterministicTemporalSemantics.js');
+if (accessorHost === accessorHostsEnum.CAPECODE || accessorHost === accessorHostsEnum.NASHORN) {
+    ; // Then no deterministic temporal semantics
+} else if (accessorHost === accessorHostsEnum.BROWSER) {
+    var deterministicTemporalSemantics = require('/accessors/hosts/common/modules/deterministicTemporalSemantics');
+} else if (accessorHost === accessorHostsEnum.CORDOVA) {
+    // The module should be already loaded. But for more more convenience when binding to the deterministic behavior,
+    // then we add the following
+    var deterministicTemporalSemantics = {};
+    deterministicTemporalSemantics.setTimeoutDet = setTimeoutDet;
+    deterministicTemporalSemantics.setIntervalDet = setIntervalDet;
+    deterministicTemporalSemantics.clearTimeoutDet = clearTimeoutDet;
+    deterministicTemporalSemantics.clearIntervalDet = clearIntervalDet;
+} else {    
+    var deterministicTemporalSemantics = require('../common/modules/deterministicTemporalSemantics.js');
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -534,8 +550,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.setInterval) {
         this.setInterval = bindings.setInterval;
     } else if (typeof setInterval !== 'undefined') {
-        // this.setInterval = setInterval;
-        this.setInterval = deterministicTemporalSemantics.setIntervalDet;
+        if (deterministicTemporalSemantics) {
+            this.setInterval = deterministicTemporalSemantics.setIntervalDet;
+        } else {
+            this.setInterval = setInterval;
+        }
     } else {
         throw new Error('Host does not define required setInterval function.');
     }
@@ -543,8 +562,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.setTimeout) {
         this.setTimeout = bindings.setTimeout;
     } else if (typeof setTimeout !== 'undefined') {
-        // this.setTimeout = setTimeout;
-        this.setTimeout = deterministicTemporalSemantics.setTimeoutDet;
+        if (deterministicTemporalSemantics) {
+            this.setTimeout = deterministicTemporalSemantics.setTimeoutDet;
+        } else {
+            this.setTimeout = setTimeout;
+        }
     } else {
         throw new Error('Host does not define required setTimeout function.');
     }
@@ -552,7 +574,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.clearInterval) {
         this.clearInterval = bindings.clearInterval;
     } else if (typeof clearInterval !== 'undefined') {
-        this.clearInterval = deterministicTemporalSemantics.clearIntervalDet;
+        if (deterministicTemporalSemantics) {
+            this.clearInterval = deterministicTemporalSemantics.clearIntervalDet;
+        } else {
+            this.clearInterval = clearInterval;
+        }
     } else {
         throw new Error('Host does not define required clearInterval function.');
     }
@@ -560,7 +586,11 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     if (bindings && bindings.clearTimeout) {
         this.clearTimeout = bindings.clearTimeout;
     } else if (typeof clearTimeout !== 'undefined') {
-        this.clearTimeout = deterministicTemporalSemantics.clearTimeoutDet;
+        if (deterministicTemporalSemantics) {
+            this.clearTimeout = deterministicTemporalSemantics.clearTimeoutDet;
+        } else {
+            this.clearTimeout = clearTimeout;
+        }
     } else {
         throw new Error('Host does not define required clearTimeout function.');
     }
@@ -725,7 +755,18 @@ clearTimeout',
         };
     }
 }
-util.inherits(Accessor, EventEmitter);
+if (accessorHost === accessorHostsEnum.CORDOVA) {
+    Accessor.prototype = Object.create(EventEmitter.prototype, {
+        constructor: {
+            value: Accessor,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+} else {
+    util.inherits(Accessor, EventEmitter);
+}
 
 /** Add an input handler for the specified input and return a handle that
  *  can be used to remove the input handler.
@@ -2787,3 +2828,4 @@ exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.stopAllAccessors = stopAllAccessors;
 exports.uniqueName = uniqueName;
+
