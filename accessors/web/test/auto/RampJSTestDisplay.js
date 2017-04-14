@@ -40,3 +40,5 @@ exports.setup = function() {
     this.connect(TrainableTest, 'output', Stop, 'stop');
     this.connect(JavaScriptRamp, 'output', TrainableTest, 'input');
 };
+// The stopTime parameter of the directory in the model was 0, so this.stopAt() is not being generated.
+

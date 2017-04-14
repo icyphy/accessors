@@ -97,3 +97,4 @@ exports.setup = function() {
     this.connect(JavaScriptDelay, 'output', JavaScriptTrueToken, 'input');
     this.connect(JavaScriptTrueToken, 'output', Stop, 'stop');
 };
+this.stopAt(15000.0);

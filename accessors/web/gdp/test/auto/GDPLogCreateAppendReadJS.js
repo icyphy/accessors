@@ -83,3 +83,4 @@ exports.setup = function() {
     this.connect(GDPLogCreate, 'output', GDPLogAppend2, 'logname');
     this.connect(JavaScriptRamp, 'output', GDPLogAppend2, 'data');
 };
+this.stopAt(5000.0);
