@@ -518,6 +518,18 @@
     </exec>
   </target>
 
+  <target name="status.scp">
+    <exec executable="scp"
+	  timeout="${timeout}">
+      <arg value="reports/status/accessorMap.txt"/>
+      <arg value="reports/status/accessorMapCapeCode.txt"/>
+      <arg value="reports/status/browserhost.txt"/>
+      <arg value="reports/status/capecodehost.txt"/>
+      <arg value="reports/status/nodehost.txt"/>
+      <arg value="vc@moog.eecs.berkeley.edu:/home/www/cvswww/icyphy/accessors/reports/status"/>
+    </exec>
+  </target>
+    
   <target name="terraswarm-gdp-install"
 	  depends="-check-terraswarm-gdp"
 	  unless="terraswarm.gdp.exists">
