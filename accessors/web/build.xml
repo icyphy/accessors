@@ -450,6 +450,29 @@
     </exec>
   </target>
   
+  <target name="status"
+          depends="status.accessors, status.capecode">
+    <echo>Update the Accessor library status page.
+    See https://www.icyphy.org/accessors/wiki/Notes/Status
+    </echo>
+  </target>
+
+  <target name="status.accessors">
+    <exec executable="${node.executable}"
+	  timeout="${timeout}">
+      <arg value="reports/status/CalculateAccessorMap.js"/>
+    </exec>
+  </target>    
+
+  <target name="status.capecode"
+          depends="-ptII-exists">
+    <exec dir="${env.PTII}"
+          executable="${node.executable}"
+	  timeout="${timeout}">
+      <arg value="org/terraswarm/accessor/status/calculateAccessorMapCapeCode.js"/>
+    </exec>
+  </target>
+
   <target name="terraswarm-gdp-install"
 	  depends="-check-terraswarm-gdp"
 	  unless="terraswarm.gdp.exists">

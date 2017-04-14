@@ -31,7 +31,7 @@
  * See https://github.com/isaacs/node-glob
  *
  * @module accessorMap
- * @author Beth Osyk
+ * @author Beth Osyk, contributor: Christopher Brooks
  * @version: $$Id$$
  */
 
@@ -68,8 +68,8 @@ module.exports = (function () {
      *     This gives which accessors are fully functional on each host.
      */
     var calculate = function() {
-        findTestCases();
         findAccessors();
+        findTestCases();
         
         // Host to modules:
         // Scan hosts/**/modules and node_modules subdirectories 
@@ -87,8 +87,16 @@ module.exports = (function () {
     var checkIfDone = function() {
         // Assume at least one test case.  Array may not be populated before 
         // this is checked.
+
+        // console.log('accessorMap.js: checkIfDone(): Object.keys(testsToAccessors).length: ' +
+        //             Object.keys(testsToAccessors).length +
+        //             ' ' + (testcases.length - testsError.length)  +
+        //             ' ' + (testcases.length > 0)
+        //            );
         if (Object.keys(testsToAccessors).length === (testcases.length - testsError.length) && 
             testcases.length > 0) {
+
+
             if (Object.keys(accessorsToModules).length === 
                 (accessors.length - accessorsError.length)) {
 
@@ -135,11 +143,12 @@ module.exports = (function () {
                         console.log('Error writing results file: ' + err);
                     }
                 });
-                
+                console.log('accessorMap.js: checkIfDone(): wrote ' + resultsFile);
 
             }
         }
     }
+
     /** Find all accessor source files.
      */
     var findAccessors = function(){
@@ -147,26 +156,36 @@ module.exports = (function () {
         glob('!(demo|hosts|jsdoc|library|obsolete|reports|styles|wiki)**/*.js', function(err, files) {
             accessors = files;        // So we can check all finished later.
             
+            console.log('accessorMap.js: findAccessors(): found ' + accessors.length + ' possible accessor files.');
+
             // Accessors to modules:
             // Any file not under a /test/auto directory with a .js extension.
             // Look for require() statements.
             files.forEach(function(filepath) {
                 scanAccessorFile(filepath);
             });
+
         });
     };
     
-    /** Find all test case files.
+    /** Find all *.js files under test/auto and 
+     *  As a side effect, this function sets the testcases global variable to the results.   
      */
     var findTestCases = function(){
         // Test cases to accessors:
-        // Any file under a /test/auto directory with a .js extension.
-        glob('**/test/auto/**(/)*.js', function(err, files) {
-            testcases = files;        // So we can check all finished later.
+         // Any file under a /test/auto directory with a .js extension.
+        glob('**/*.js', function(err, files) {
+
+            testcases = [];
 
             files.forEach(function(filepath) {
-                scanTestcase(filepath);
+                if (filepath.indexOf('test/auto') != -1) {
+                    scanTestcase(filepath);
+                    testcases.push(filepath);
+                }
             });
+            console.log('accessorMap.js: findTestCases(): found ' + testcases.length + ' test/auto/** *.js testcase files.');
+
         });
     };
     
@@ -283,14 +302,12 @@ module.exports = (function () {
                                         moduleStats !== 'undefined' &&
                                         moduleStats.isDirectory()) {
                                         hostsToModules[dir].push(module);
-                                    }
-                                    
-                                    else if (module.indexOf('.js') > 0 && 
+                                    } else if (module.indexOf('.js') > 0 && 
                                              module.indexOf('.js') === module.length - 3) {
                                         hostsToModules[dir].push(module.substring(0, module.length - 3));
                                     }
                                 } catch(err) {
-                                    
+                                    console.log('Error processing module ' + module);
                                 }
                             }
                         } 
@@ -310,6 +327,12 @@ module.exports = (function () {
             hostsToModules.node.push('querystring');
         }
         
+        for (var module in hostsToModules) {
+            if (hostsToModules.hasOwnProperty(module)) {
+                console.log('accessorMap.js: scanHosts(): found ' + hostsToModules[module].length + ' ' + module + ' modules.');
+            }
+        }
+
         checkIfDone();
     };
 
@@ -363,10 +386,13 @@ module.exports = (function () {
                                     filepath = filepath.substring(prefix + 14);
                                 }
 
+                                // console.log('accessorMap.js: scanTestcase(): ' + ' filepath: ' + filepath + ' match: ' + match);
+
                                 testsToAccessors[filepath].push(match);
                             });
                         } else {
-                            console.log('No accessors found in file: ' + filepath);
+                            console.log('accessorMap.js: scanTestCase(): Warning: no accessors found in ' +
+                                        filepath);
                             testsError.push(filepath);
                         }
                         
