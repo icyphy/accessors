@@ -1,13 +1,13 @@
 {
-  "name": "@terraswarm/accessors",
-  "version": "0.0.17",
-  "description": "Actor-oriented proxies for IoT",
-  "main": "hosts/node/nodeHost.js",
-  "author": {
-    "name": "Edward A. Lee and others",
-    "email": "eal@berkeley.edu",
-    "url": "http://ptolemy.eecs.berkeley.edu/~eal"
-  },
+    "name": "@terraswarm/accessors",
+    "version": "0.0.17",
+    "description": "Actor-oriented proxies for IoT",
+    "main": "hosts/node/nodeHost.js",
+    "author": {
+        "name": "Edward A. Lee and others",
+        "email": "eal@berkeley.edu",
+        "url": "http://ptolemy.eecs.berkeley.edu/~eal"
+    },
     "contributors": [
         {
             "email": "ilgea@eecs.berkeley.edu",
@@ -54,37 +54,37 @@
             "name": "Matt Weber"
         }
     ],
-  "files": [
-      "audio",
-      "audioIo",
-      "cameras",
-      "contextAware",
-      "devices",
-      "gdp",
-      "geodesy",
-      "image",
-      "localization",
-      "net",
-      "obsolete",
-      "robotics",
-      "services",
-      "signals",
-      "test",
-      "utilities",
-      "hosts/common",
-      "hosts/node"
+    "files": [
+        "audio",
+        "audioIo",
+        "cameras",
+        "contextAware",
+        "devices",
+        "gdp",
+        "geodesy",
+        "image",
+        "localization",
+        "net",
+        "obsolete",
+        "robotics",
+        "services",
+        "signals",
+        "test",
+        "utilities",
+        "hosts/common",
+        "hosts/node"
     ],
-  "homepage": "https://www.icyphy.org/accessors/",
-  "keywords": [
-    "actor",
-    "IoT"
-  ],
-  "repository": {
-    "type": "svn",
-    "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "license": "SEE LICENSE IN accessors-license.htm"
+    "homepage": "https://www.icyphy.org/accessors/",
+    "keywords": [
+        "actor",
+        "IoT"
+    ],
+    "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "license": "SEE LICENSE IN accessors-license.htm"
 }
