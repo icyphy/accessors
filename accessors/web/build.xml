@@ -473,7 +473,9 @@
   </target>    
 
   <target name="status.capecode"
-          depends="-ptII-exists">
+          depends="-ptII-exists"
+          if="${ptII.exists}">
+
     <exec dir="${env.PTII}"
           executable="${node.executable}"
 	  timeout="${timeout}">
