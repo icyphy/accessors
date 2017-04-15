@@ -198,11 +198,10 @@
   <target name="cleanAll" 
 	  depends="clean.duktape"
 	  description="Remove the reports/ and doc/jsdoc directories.">
-    <delete quiet="true" verbose="no" includeemptydirs="true">
+    <delete quiet="false" verbose="true" includeemptydirs="true">
       <fileset dir="${basedir}"
                defaultexcludes="false"
-               excludes="reports/status"
-               includes="reports/**"/>
+               includes="reports/junit/**"/>
       <fileset dir="${basedir}"
                defaultexcludes="false"
                includes="doc/jsdoc/**"/>
