@@ -27,6 +27,13 @@ testGeoCoder.provideInput('address', 'berkeley');
 testGeoCoder.react();
 setTimeout(function () {
     //console.log(a.latestOutput('location'));
-    var locationOutput = JSON.stringify(testGeoCoder.latestOutput('location'));
-    assert.equal(locationOutput, '{"latitude":37.8718992,"longitude":-122.2585399}');
+    // var locationOutput = JSON.stringify(testGeoCoder.latestOutput('location'));
+    // assert.equal(locationOutput, '{"latitude":37.8718992,"longitude":-122.2585399}');
+
+    var latitude = testGeoCoder.latestOutput('location').latitude;
+    var longitude = testGeoCoder.latestOutput('location').longitude;
+    // It is OK if we are within a degree.
+    assert.ok(Math.abs(latitude - 37.8718992) < 1.0, 'latitude was ' + latitude)
+    assert.ok(Math.abs(longitude - -122.2585399) < 1.0);
+
 }, 2000);
