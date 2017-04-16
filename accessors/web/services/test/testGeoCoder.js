@@ -10,8 +10,7 @@
 //
 // Run this in the node host, e.g., using:
 //
-//   cd accessors/web/hosts/node
-//   node nodeHostInvoke.js -js test/testGeoCoder.js -timeout 2500
+//   (cd services/test/auto/mocha/; ../../../../node_modules/.bin/mocha testGeoCoder.js)
 //
 // The above script should produce the latitude and longitude of
 // Berkeley on stdout:
@@ -33,7 +32,7 @@ setTimeout(function () {
     var latitude = testGeoCoder.latestOutput('location').latitude;
     var longitude = testGeoCoder.latestOutput('location').longitude;
     // It is OK if we are within a degree.
-    assert.ok(Math.abs(latitude - 37.8718992) < 1.0, 'latitude was ' + latitude)
-    assert.ok(Math.abs(longitude - -122.2585399) < 1.0);
+    assert.ok(Math.abs(latitude - 37.8718992) < 1.0, 'latitude was ' + latitude + ', which is not close to Berkeley.');
+    assert.ok(Math.abs(longitude - -122.2585399) < 1.0, 'longitude was ' + longitude + ', which is not close to Berkeley.');
 
 }, 2000);
