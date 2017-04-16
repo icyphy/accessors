@@ -17,12 +17,9 @@ var fs = require('fs');
  *  It is expected that the .js file define composite accessors.
  *  @param auto The directory that contains the .js files.
  */
-exports.testNodeAuto = function(auto, testTimeout) {
-    if (typeof testTimeout === 'undefined' || testTimeout < 500) {
-        testTimeout = 5500;
-    }
-    console.log("testNodeAuto.js: testNodeAuto(" + auto + ", " + testTimeout + ")");
-    var accessors;
+exports.testNodeAuto = function(auto) {
+    console.log('testNodeAuto.js: testNodeAuto(' + auto + ')');
+    var accetssors;
     try {
         // If run in accessors/web/hosts/node/test/mocha/
         accessors = fs.readdirSync('../../../../' + auto);
@@ -77,7 +74,7 @@ exports.testNodeAuto = function(auto, testTimeout) {
                 var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
-                    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke --timeout ' + testTimeout + " " + auto + '/' + accessor + ')';
+                    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke ' + auto + '/' + accessor + ')';
                     console.log(replicationMessage);
                     var testAccessorName = auto +'/' + accessor;
                     
@@ -130,10 +127,16 @@ exports.testNodeAuto = function(auto, testTimeout) {
                                                      testAccessorName);
                     testAccessor.initialize();
 
+                    if (testAccessor.stopAtTime === undefined) {
+                        console.log('testNodeAuto.js: testAccessor.stopAtTime is undefined.  ' +
+                                    'Perhaps the composite accessor does not invoke "this.stopAt(xxxx)"' +
+                                    'where xxxx is the stop time in ms.?  Defaulting to 5123.');
+                        testAccessor.stopAtTime = 5123;
+                    }
+
                     setTimeout(function(){
                         // A test is considered successful if no errors 
-                        // occur within a given timeout.
-                        // TODO:  Improve upon arbitrary timeout.
+                        // occur within the timeout used with stopAt().
                         // TODO:  Any way to listen for a stop?
                         // Remove listeners at the end of a successful test
                         // to avoid having a potentially infinite number of 
@@ -153,7 +156,7 @@ exports.testNodeAuto = function(auto, testTimeout) {
                                 done();
                             }, 500);
                         }
-                    }, testTimeout);
+                    }, testAccessor.stopAtTime);
                 });
             }
         });
