@@ -626,7 +626,7 @@
 
     <echo>
       Running
-      ${nyc.command} cover ${mocha.bar.command} -- ${converted}
+      ${nyc.command} --exclude='!**/node_modules/**' --reporter=html --reporter=text mocha ${converted}
     </echo>
     
     <chmod file="${nyc.command}"
@@ -634,6 +634,7 @@
     <exec executable="${nyc.command}"
           failonerror="${tests.failonerror}"
           timeout="${timeout.longer}">
+      <arg value="--exclude=!**/node_modules/**"/>
       <arg value="--reporter=html"/>
       <arg value="--reporter=text"/>
       <arg value="mocha"/>
