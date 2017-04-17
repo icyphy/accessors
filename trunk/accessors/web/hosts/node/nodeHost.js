@@ -39,9 +39,15 @@
  *  * getTopLevelAccessors(): Return an array of instantiated
  *    top-level accessors (implemented in commonHost.js).
  *
+ *  * installIfMissingThenRequire(npmPackage): Check the require path
+ *    for a module and if it is not found, invoke npm install.
+ *
  *  * instantiate(accessorName, accessorClass): Instantiate an
  *    accessor with an assigned name (an arbitrary string) and
  *    its fully-qualified class name, e.g. 'net/REST'.
+ *
+ *  * instantiateTopLevel(): Instantiate and return a top-level
+ *    accessor.
  *
  *  * startHostShell(): Start an interactive shell on stdin/stdout
  *    to execute commands. Type 'help' in this shell for a list of
@@ -163,6 +169,42 @@ getResource = function (uri) {
     }
     throw new Error('getResouce(' + uri + ', ' + timeout + ') only supports $KEYSTORE, not ' +
         uri);
+}
+
+/** Check the require path for a module and if it is not found, invoke
+ *  npm install.
+ *
+ *  In node, the module loading system caches the return values of stat()
+ *  calls.  Thus, if we require() a missing package, then installing it
+ *  will not invalidate the cache and calling require() again will not
+ *  find our newly installed cache.  As a workaround, for possibly missing
+ *  packages, we search the array of paths contained by module.paths.
+ *
+ *  @param npmPackage the package to be possibly installed using npm
+ *  and then required.
+ *  @return the value returned by requiring the package
+ */
+function installIfMissingThenRequire(npmPackage) {
+    // console.log('nodeHost.js: installIfMissingThenRequire(' + npmPackage);
+    const paths = module.paths;
+    var foundIt = false;
+    for (var i = 0; i < paths.length; i++) {
+        if (fs.existsSync(paths[i] + '/' + npmPackage)) {
+            // console.log('nodeHost.js: installIfMissingThenRequire(' + npmPackage + '): found ' + paths[i] + '/' + npmPackage);
+            foundIt = true;
+            break;
+        }
+    }
+    if (!foundIt) {
+        var execSync = require('child_process').execSync;
+        var npmOutput;
+        try {
+            npmOutput = execSync('npm install ' + npmPackage);
+        } catch (error) {
+            console.log('npm install ' + npmPackage + ' failed: ' + error + '.  A return code of 1 can typically be ignored because package.json is present.');
+        }     
+    }
+    return require(npmPackage);
 }
 
 /** Instantiate and return an accessor.
@@ -519,6 +561,7 @@ function processCommandLineArguments(args) {
 
 // Exported from this module:
 exports.getAccessorCode = getAccessorCode;
+exports.installIfMissingThenRequire = installIfMissingThenRequire;
 exports.instantiate = instantiate;
 exports.instantiateTopLevel = instantiateTopLevel;
 exports.processCommandLineArguments = processCommandLineArguments;
