@@ -4,6 +4,7 @@
     "ComputerVision.js",
     "FaceDetector.js",
     "ImageAnnotate.js",
+    "ImageDisplay.js",
     "ImageFilter.js",
     "MotionDetector.js"
 ]
