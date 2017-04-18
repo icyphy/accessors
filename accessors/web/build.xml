@@ -642,7 +642,7 @@
     <chmod file="${nyc.command}"
 	   perm="a+x"/>
     <exec executable="${nyc.command}"
-          failonerror="${tests.failonerror}"
+          failonerror="${tests.mocha.failonerror}"
           timeout="${timeout.longer}">
       <arg value="--exclude=!**/node_modules/**"/>
       <arg value="--reporter=html"/>
