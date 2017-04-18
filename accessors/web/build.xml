@@ -65,9 +65,17 @@
   <!-- The @terraswarm.gdp module. -->
   <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
 
-  <!-- If true, then if a test returns non-zero, the build will fail
-       and no other tests will run. -->
+  <!-- If true, then if a test other than the mocha tests return
+       non-zero, the build will fail and no other tests will run. -->
   <property name="tests.failonerror" value="false"/>
+
+  <!-- If true, then if a test.mocha returns non-zero, the build will fail
+       and no other tests will run.
+       The issue is that if a mocha test fails, then mocha will return
+       non-zero, which if tests.mocha.failonerror is true, then ant
+       will exit and the other tests will not run.
+  -->
+  <property name="tests.mocha.failonerror" value="false"/>
 
   <!-- The timeout in milliseconds for test -->
   <property name="timeout" value="120000" />
@@ -940,7 +948,7 @@
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
     <exec executable="${mocha.command}"
-	  failonerror="${tests.failonerror}"
+	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
       <arg line="${converted}"/>
@@ -981,7 +989,7 @@
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
     <exec executable="${mocha.command}"
-	  failonerror="${tests.failonerror}"
+	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
@@ -1024,7 +1032,7 @@
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
     <exec executable="${mocha.command}"
-	  failonerror="${tests.failonerror}"
+	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
           timeout="${timeout.longer}">
       <!-- Don't use nail because some of the commonHosts tests are failing. -->
