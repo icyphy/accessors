@@ -42,8 +42,15 @@ var glob = require('glob');
 module.exports = (function () {
 
     var baseDir = "./hosts";
+    // The contents of the resultsFile is the string representation of
+    // a JSON object with two keys, the value of the testToAccessors
+    // variable and the value of the accessorsToHosts variables below.
     var resultsFile = "./reports/status/accessorMap.txt";
 
+    // testsToAccessors is a JSON object with the test file name (with
+    // the .xml) followed by an array of accessors without the .js.
+    // For example:
+    // {"testToAccessors":{"gdp/test/auto/GDPLogCreateAppendRead.jsl":["gdp/GDPLogRead","gdp/GDPLogCreate"] ...
     var testsToAccessors = {};
     var testsError = [];
     var accessorsToModules = {};
@@ -116,6 +123,13 @@ module.exports = (function () {
             	}
 
                 // Calculate accessors to hosts.
+
+                // accessorsToHosts is a JSON variable where each
+                // accessor is followed by an array containing the
+                // names of the hosts that implement it
+
+                // For example: "accessorsToHosts":{"audio/AudioPlayer.js":["browser"],
+
                 var accessorsToHosts = {};
                 var hosts, modules, hasAllModules;
                 
