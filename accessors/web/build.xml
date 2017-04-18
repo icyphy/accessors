@@ -67,7 +67,7 @@
 
   <!-- If true, then if a test other than the mocha tests return
        non-zero, the build will fail and no other tests will run. -->
-  <property name="tests.failonerror" value="false"/>
+  <property name="tests.failonerror" value="true"/>
 
   <!-- If true, then if a test.mocha returns non-zero, the build will fail
        and no other tests will run.
