@@ -55,10 +55,10 @@ if [ ! -d "$gdpSource" ]; then
 fi
 
 echo "#### $0: Building in $gdpSource"
-#(cd "$gdpSource"; make clean all_noavahi)
+(cd "$gdpSource"; make clean all_noavahi)
 
 echo "#### $0: Building in $gdpSource/lang/java"
-#(cd "$gdpSource"/lang/java; make clean install)
+(cd "$gdpSource"/lang/java; make clean install)
 
 
 gdpJar=`ls -1 $gdpSource/lang/java/gdp-*.jar | tail -1`
