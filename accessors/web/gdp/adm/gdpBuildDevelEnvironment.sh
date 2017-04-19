@@ -55,10 +55,10 @@ if [ ! -d "$gdpSource" ]; then
 fi
 
 echo "#### $0: Building in $gdpSource"
-(cd "$gdpSource"; make)
+#(cd "$gdpSource"; make clean all_noavahi)
 
 echo "#### $0: Building in $gdpSource/lang/java"
-(cd "$gdpSource"/lang/java; make install)
+#(cd "$gdpSource"/lang/java; make clean install)
 
 
 gdpJar=`ls -1 $gdpSource/lang/java/gdp-*.jar | tail -1`
@@ -70,6 +70,49 @@ if [ -f "$gdpJar" -a -f "$gdpPtIIJar" ]; then
     cp "$gdpJar" "$gdpPtIIJar"
 fi    
 
+case "`uname -s`" in
+    Darwin)
+        gdpLib=`ls -1t $gdpSource/libs/libgdp*.dylib | tail -1`
+        gdpjsLib=`ls -1t $gdpSource/lang/js/libs/libgdpjs*.dylib  | tail -1`
+        gdpPtIILib=`ls -1t $PTII/lib/libgdp*.dylib | grep -v libgdpjs | tail -1`
+        gdpjsPtIILib=`ls -1t $PTII/lib/libgdpjs*.dylib | tail -1`
+        ;;
+    Linux)
+        gdpLib=`ls -1t $gdpSource/libs/libgdp*.so | tail -1`
+        gdpjsLib=`ls -1t $gdpSource/lang/js/libs/libgdpjs*.so  | tail -1`
+        gdpjsPtIILib=`ls -1t $PTII/lib/libgdpjs*.so | tail -1`
+        if [ -f /etc/redhat-release ]; then
+            gdpPtIILib=`ls -1t $PTII/lib/linux-x86-64-rhel/libgdp*.so | grep -v libgdpjs | tail -1`
+        else
+            gdpPtIILib=`ls -1t $PTII/lib/libgdp*.so | grep -v libgdpjs | tail -1`
+        fi
+        ;;
+    *)
+        echo "$0: Don't support `uname -s`."
+        exit 2
+        ;;
+esac
+
+if [ -f "$gdpLib" -a -f "$gdpPtIILib" ]; then
+    echo "#### $0: Updating $gdpPtIILib"
+    ls -l "$gdpLib" "$gdpPtIILib"
+    cp "$gdpLib" "$gdpPtIILib"
+else 
+    echo "### $0: Could not update gdp lib: $gdpPtIILib:"
+    ls -l "$gdpLib" "$gdpPtIILib"
+    exit 3
+fi    
+
+if [ -f "$gdpjsLib" -a -f "$gdpjsPtIILib" ]; then
+    echo "#### $0: Updating $gdpjsPtIILib"
+    ls -l "$gdpjsLib" "$gdpjsPtIILib"
+    cp "$gdpjsLib" "$gdpjsPtIILib"
+else 
+    echo "### $0: Could not update gdpjs lib: $gdpjsPtIILib:"
+    ls -l "$gdpjsLib" "$gdpjsPtIILib"
+    exit 3
+fi    
+
 if [ ! -d "$gdpRouterSource" ]; then
    echo "#### $0: Checking out the gdp_router repo and create $gdpRouterSource."
    mkdir -p `dirname $gdpRouterSource`
@@ -78,6 +121,9 @@ else
     echo "#### $0: Running git pull in $gdpRouterSource"
     (cd "$gdpRouterSource"; git pull)
 fi
+
+echo "#### $0: svn status $PTII/lib:"
+svn status $PTII/lib
 
 ######
 # Create the ep_adm_params directory.
