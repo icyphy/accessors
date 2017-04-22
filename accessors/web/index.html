@@ -22,11 +22,13 @@
 	  that reacts to streaming input events and produces streaming output events.
 	  An <b>accessor</b> is an actor that wraps a (possibly remote) device or
 	  service in an actor interface.
+	  An <b>accessor host</b> is a service running in the network or on a client platform
+	  that hosts applications built as a composition of accessors that stream data to
+	  each other. The host is like a browser for things. 
 	</div>
       </p><p>
-	An <b>accessor host</b> is a service running in the network or on a client platform
-	that hosts applications built as a composition of accessors that stream data to
-	each other. For a quick start using Node.js, see the
+    See the <a href="http://www.icyphy.org/pubs/73.html">overview presentation</a>.
+	For a quick start using Node.js as a host, see the
 	<a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node host</a>.
       </p><p>
 	Accessors embrace <b>concurrency</b>, <b>atomicity</b>,
