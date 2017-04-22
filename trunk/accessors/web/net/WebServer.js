@@ -168,7 +168,7 @@ exports.request = function(request) {
  * Closes server.
  */
 exports.wrapup = function(){
-    if (this.server !== null) {
+    if (this.server !== null && typeof this.server !== 'undefined') {
         console.log('WebServer: Stopping the server.');
         this.server.removeAllListeners();
         this.server.stop();
