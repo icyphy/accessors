@@ -29,17 +29,20 @@
  *  setTimeout() and setInterval(), making the resulting execution deterministic.
  *  These implementations will then use the Host's timing functions.
  *  
- *  Using these routines, there will be, at any time, only one timeout pending. 
- *  In addition, this solution allows for deterministic logically simultaneous 
- *  execution of callbacks. From one hand, timed callbacks are labeled with a 
- *  synchronization label. That is, any two callbacks with the same label execute
- *  starting from the same reference point in time. This is the definition of 
- *  'logical synchrony w.r.t a labeled group of callbacks'. From another hand,
- *  labeled timed callbacks deterministic temporal execution relies on the notion 
- *  of logicalTime. Indeed, logical time excludes the callbacks execution time as 
- *  well as any delay that may disturb the deterministic behavior of the system.
- *  Consequently, the time between two tasks execution is always lower bounded by 
- *  the logical corresponding time difference.
+ *  Using these routines, there will be, at any time, only one pending timeout. 
+ *  In addition, this solution allows for deterministic logically simultaneous,
+ *  yet ordered execution of callbacks. From one hand, timed callbacks are labeled 
+ *  with a synchronization label. That is, any two callbacks with the same label 
+ *  execute starting from the same reference point in time. This is the definition  
+ *  of 'logical synchrony w.r.t a labeled group of callbacks'. From another hand, 
+ *  the order in which the calls to setTimeout and setInterval has occurred is 
+ *  preserved. That is, if setInterval is called every 1000ms for function, then
+ *  for function g, therefore every 1000ms of logical time, f will be executing 
+ *  before g. Furthermore, labeled timed callbacks deterministic temporal execution 
+ *  relies on the notion of logicalTime. Indeed, logical time excludes the callbacks 
+ *  execution time as well as any delay that may disturb the deterministic behavior 
+ *  of the system. Consequently, the time between two tasks execution is always lower
+ *  bounded by the logical corresponding time difference. 
  *  
  *  Any incoming new timed callback will be synchronized with the other callbacks 
  *  of the same label. Otherwise, it will mark the reference in time of that 
@@ -62,7 +65,11 @@
  *  In order to make the process fast, the list 'sortedTimedCallbackList' keeps an 
  *  incremental next execution time sorted list of pointers to the timed callbacks.
  *  Pointers are objects with two attributes: the synchronization label and the 
- *  identifier. 
+ *  identifier.
+ *  This list, has three levels of sorting. The first one is obviously the execution
+ *  time. Within a same execution time, callbacks are ordered by their labels shift.
+ *  That is the second level of sorting. Finally, the third one is the callbacks 
+ *  identifiers. 
  *  
  *  A timed callback declares the following attributes: 
  *   *  callbackFunction: the callback function
@@ -76,7 +83,7 @@
  *  
  *  @module deterministicTemporalSemantics
  *  @author Chadlia Jerad
- *  @version $$Id: deterministicTemporalSemantics.js 2017-04-10 22:05:30Z chadlia.jerad $$   
+ *  @version $$Id: deterministicTemporalSemantics.js 2017-04-23 22:05:30Z chadlia.jerad $$   
  */
 
 
@@ -104,9 +111,16 @@ var lastTimeChunkInstant;
 // This variable identifies the real setTimeout call point
 var tick;
 
-/** sortedTimedCallbackList variable keeps track of nextExecutionTime ordered list.
+/** sortedTimedCallbackList variable keeps track of an ordered list of callbacks.
  *  This variable contains pointers to timed callbacks, which are objects with two 
  *  attributes: the label and the id.
+ *  
+ *  This function performs a sorted insertion, given three levels of sorting. 
+ *  The first one is the 'nextExecutionTime'. Then, when two or more callbacks have the 
+ *  same nextExecutionTime,  other levels of sorting are considered:
+ *   *  Second level of sorting: ascending order of labels (using the value of "shift")
+ *   *  Third level: within the same label, an ascending order of the callback identifiers
+ *      is used. 
  *  
  *  @param label the synchronization label of the timedCallback to add
  *  @param id the unique id of  of the timedCallback to add
@@ -124,26 +138,64 @@ function addToSortedCallbacks(label, id) {
         return;
     }
     
-    // Insert the object in the appropriate position 
     var index = 0;
     var labelInList, idInList;
-    do {
+    
+    // Parse sortedTimedCallbackList array looking for the index of insertion
+    for (index = 0 ; index < sortedTimedCallbackList.length ; index++) {
         labelInList = sortedTimedCallbackList[index].label;
         idInList = sortedTimedCallbackList[index].id;
+        
+        // Control point! 
         if (timedCallbacks[labelInList][idInList] === undefined) {
             throw new Error('addToSortedCallbacks(' + label + ', ' + id +
                             '): timedCallbacks[' + labelInList + '][' +
                             idInList + '] is undefined?  index was: ' + index);
+        } 
+        
+        // First level of sorting: nextExecutionTime
+        if (timedCallbacks[labelInList][idInList].nextExecutionTime < timedCallbacks[label][id].nextExecutionTime) {
+            // Go to next element of array, until we reach the same nextExecutionTime or greater
+            continue;
+        } else if (timedCallbacks[labelInList][idInList].nextExecutionTime > timedCallbacks[label][id].nextExecutionTime) {
+            // Case where timedCallbacks[labelInList][idInList].nextExecutionTime > timedCallbacks[label][id].nextExecutionTime
+            // Then break the execution and add at that position
+            break;
+        } else {
+            // This means that timedCallbacks[labelInList][idInList].nextExecutionTime === timedCallbacks[label][id].nextExecutionTime
+            // Second level of sorting: Label shift
+            
+            // If there is already callbacks with the same next execution time
+            // Check first a sorted insertion w.r.t the label
+            if (labelInList === label) {
+                // Third level of sorting: callback id
+                if (id < idInList) {
+                        break;
+                } else {
+                    // Continue parsing until the position is found.
+                    continue;
+                }
+            } else if (timedCallbacks[labelInList].shift < timedCallbacks[label].shift) {
+                // Go to next element of array, until we reach the same shift or greater
+                continue;
+            } else {
+                // timedCallbacks[labelInList].shift > timedCallbacks[label].shift
+                // Case where the label is not already scheduled at that time, and 
+                // it must execute prior to the current one
+                break;
+            }
         }
-    } while((timedCallbacks[label][id].nextExecutionTime > timedCallbacks[labelInList][idInList].nextExecutionTime)  && ((++index) < sortedTimedCallbackList.length));
+    }
     
     sortedTimedCallbackList.splice(index, 0, obj);
-    
+    //console.dir(sortedTimedCallbackList);
+    //console.dir(timedCallbacks);
 }
 
-/** This function is to be binded to clearInterval() function. The aim is to 
- *  make the execution deterministic. It just calls clearTick() with the right
- *  parameters.
+/** This function is to be binded to clearInterval() function. It clears the 
+ *  periodic timer which identifier is given as parameter, by calling
+ *  clearTick().
+ *  
  *  @param cbId this parameter is required. It is the cbIndentifier.
  */
 function clearIntervalDet(cbId){
@@ -212,9 +264,10 @@ function clearTick(cbId, periodic) {
     // also to call clearTimeout or clearInterval with wrong arguments.
 }
 
-/** This function is to be binded to clearTimeout() function. The aim is to 
- *  make the execution deterministic. It just calls clearTick() with the right
- *  parameters.  
+/** This function is to be binded to clearTimeout() function. It clears the 
+ *  timeout timer which identifier is given as parameter, by calling
+ *  clearTick().
+ *  
  *  @param cbId this parameter is required. It is the cbIndentifier.
  */
 function clearTimeoutDet(cbId){
