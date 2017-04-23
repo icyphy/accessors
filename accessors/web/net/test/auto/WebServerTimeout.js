@@ -41,4 +41,4 @@ exports.setup = function() {
     this.connect(WebServer, 'request', TrainableTest2, 'input');
     this.connect(REST, 'response', TestDisplay, 'input');
 };
-this.stopAt(20000.0);
+this.stopAt(18000.0);
