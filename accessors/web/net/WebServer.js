@@ -84,6 +84,7 @@
 'use strict';
 
 var httpServer = require('httpServer');
+var util = require('util');
 
 /** Sets up the accessor by defining inputs and outputs. */
 exports.setup = function() {
