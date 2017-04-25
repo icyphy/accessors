@@ -1,11 +1,15 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
+    //  PTII: /Users/cxh/ptII
+
+    //  codeDirectory.asFile().getCanonicalPath().replace('\', '/'): /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/net/test/auto
+
     //  To run the code, run: 
-    //  (cd C:\workspaceluna\ptII\org\terraswarm\accessor\accessors\web\net\test\auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/WebServerBasic)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/WebServerBasic)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode file:/C:/workspaceluna/ptII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
 
     // Ports: WebServerBasic: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -18,7 +22,6 @@ exports.setup = function() {
     var REST = this.instantiate('REST', 'net/REST.js');
     REST.setDefault('options', {"url" : "http://localhost:8096"});
     REST.setDefault('command', "");
-    // FIXME:  Added "" after arguments by hand.
     REST.setDefault('arguments', "");
     REST.setParameter('timeout', 5000);
     REST.setParameter('outputCompleteResponseOnly', true);
@@ -43,8 +46,8 @@ exports.setup = function() {
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
     TrainableTest2.setParameter('correctValues', [{"body":null,"method":"GET","path":"/","requestID":1}]);
-    TrainableTest2.setParameter('tolerance', 1.0E-9);
     TrainableTest2.setParameter('trainingMode', false);
+    TrainableTest2.setParameter('tolerance', 1.0E-9);
 
     // Connections: WebServerBasic: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScript, 'response', WebServer, 'response');

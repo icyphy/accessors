@@ -1,13 +1,17 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
-    //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/TestUDPSocketSelf)
-    //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
-    //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/TestUDPSocketSelf.xml
+    //  PTII: /Users/cxh/ptII
 
-    // Ports: TestUDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    //  codeDirectory.asFile().getCanonicalPath().replace('\', '/'): /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/net/test/auto
+
+    //  To run the code, run: 
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/UDPSocketSelf)
+    //  To regenerate this composite accessor, run:
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/UDPSocketSelf.xml
+    //  to edit the model, run:
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/test/auto/UDPSocketSelf.xml
+
+    // Ports: UDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
     // Start: UDPSocketListener: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var UDPSocketListener = this.instantiate('UDPSocketListener', 'net/UDPSocketListener.js');
@@ -45,7 +49,7 @@ exports.setup = function() {
     JavaScriptStop.container = this;
     this.containedAccessors.push(JavaScriptStop);
 
-    // Connections: TestUDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    // Connections: UDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(UDPSocketListener, 'message', TestDisplay, 'input');
     this.connect(JavaScript, 'output', UDPSocketSender, 'toSend');
     this.connect(TestDisplay, 'output', TrainableTest, 'input');
