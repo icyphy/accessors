@@ -1,0 +1,32 @@
+div {
+	font-family: 'Open Sans', sans-serif;	
+	padding: 0.5em;
+}
+
+
+
+.main_div {
+	display:inline-block;
+	width: 40%;
+	font-size : 1em;
+}
+
+.watch_div {
+	float:right;
+	font-size : 2.2em;
+	width: 25%;
+}
+
+.hue_div {
+	float:right;
+	font-size : 2.2em;
+	width: 25%;
+	overflow: hidden;
+}
+
+.poster_div {
+	width: 95%;
+	float: left;
+	font-size : 1.5em;
+	text-align: right;
+}

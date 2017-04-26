@@ -1,0 +1,57 @@
+/* Following are for building a complete web page.
+ * Do not use this with the TerraSwarm or iCyPhy sites, since it will conflict.
+ */
+body {
+    margin: 0;
+}
+
+#container {
+    margin: 0;
+    height: auto;
+}
+
+#navcol {
+    position: absolute;
+    width: 220px;
+    height: 100%;
+    background-color: #252c58;
+    color: #f8da73;
+    padding: 10px;
+    margin: 0;
+}
+
+#contentcol {
+    padding-left: 230px;
+    margin-left: 20px;
+    max-width: 1100px;
+    height: auto;
+}
+
+div.header {
+    padding: 10px;
+    color: #f8da73;
+    background-color: #252c58;
+    clear: left;
+}
+
+div.header a:link, div.header a:visited {
+    color: #f8da73;
+    text-decoration: none
+}
+
+div.header a:hover, div.header a:active {
+    color: #f8da73;
+    text-decoration: underline
+}
+
+body, p, button {
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+/* Style for boxed messages. */
+.boxed {
+    border: 1px solid;
+    margin: 10px 0px;
+    padding:15px 10px 15px 50px;
+    background-color: #eeffee;
+}

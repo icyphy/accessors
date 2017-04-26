@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Accessor Status</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="status.css">
+    <script src="status.js"> </script>
+  </head>
+  <body>
+
+    <!-- Legend -->
+    <div class="page">
+      <table id="legend"> 
+	<tr> <td> <span style='color:#228b22;'>  &#9899; </span>: Pass </td> 
+	  <td> <span style='color:#ee7600;'>  &#9650; </span>: Some Problems </td> 
+	  <td> <span style='color:#b22222;font-weight:bold;'> x </span>: Fail </td>
+	  <td> <span style='color:#3B7EA1;font-weight:bold;'> o </span>: Modules Implemented; No Test Case </td>
+	  <td> Blank : Not supported </td>
+	</tr>
+      </table>
+      <br>
+      <div> Click + to show test cases. </div>
+      <div> See <a href=" http://terra.eecs.berkeley.edu:8080/job/accessors/Code_Coverage/"> Code Coverage</a>.</div>
+      <br>
+      <table id="table">
+	<tr> <th> Accessor </th> <th> Browser </th> <th> Cape Code </th> <th> Node </th> </tr>
+      </table>
+
+      
+      <p>Note that the browser host and node host test results included in the status table is based on the second to last run of the <a href="http://terra.eecs.berkeley.edu:8080/job/accessors/">accessors Jenkins job</a>.  This is because the accessor Jenkins job is what generates the data for the table and uses the test results from the previous run.</p>
+
+      <p>For further information, see <a href="/accessors/wiki/Notes/Status">Status Notes</a> (Accessors wiki).</p>
+    </div>
+
+  </body>
+</html>

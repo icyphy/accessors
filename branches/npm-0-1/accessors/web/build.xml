@@ -1,0 +1,1236 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- $Id$ -->
+
+<project basedir="." default="build" name="accessors" 
+         >
+  <!-- We can refer to any environment variable FOO as ${env.FOO} -->
+  <property environment="env" />
+
+  <!-- Location of the eduk sources.  eduk is the embedded duktape
+       binary that does not use a file system.  Duktape is an embedded
+       JavaScript interpreter.
+  -->
+  <property name="eduk.source" value="${basedir}/hosts/duktape/eduk"/>
+
+  <!-- Location of the Duktape 2.x eduk sources.  eduk is the embedded duktape
+       binary that does not use a file system.  Duktape is an embedded
+       JavaScript interpreter.
+  -->
+  <property name="eduk2.source" value="${basedir}/hosts/duktape/eduk2"/>  
+
+  <!-- Location of the chai directory. -->
+  <property name="chai.directory" value="${basedir}/node_modules/chai"/>
+  
+  <!-- Location of the chai-string directory. -->
+  <property name="chai-string.directory" value="${basedir}/node_modules/chai-string"/>
+
+  <!-- Location of the Duktape sources. -->
+  <property name="duktape.source" value="${basedir}/hosts/duktape/duktape"/>
+
+  <!-- Location of the Duktape-2.x sources. -->
+  <property name="duktape2.source" value="${basedir}/hosts/duktape/duktape2"/>
+
+  <!-- The location of the jsdoc installation, used by the jsdoc target. -->
+  <property name="jsdoc.home" value="node_modules/@terraswarm/jsdoc" />
+
+    <!-- The location of the jsdoc command, used by the jsdoc target. -->
+  <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
+
+  <!-- The location of the Node.js binary. -->
+  <property name="node.executable" value="node" />
+
+  <!-- Location of the mocha command, used by tests.mocha and tests.mocha.xml -->
+  <property name="mocha.command" value="${basedir}/node_modules/mocha/bin/mocha"/>
+
+  <!-- Location of the _mocha command, used by tests.mocha and tests.mocha.xml
+       See https://github.com/gotwarlost/istanbul/issues/44 for why we use _mocha
+       instead of mocha: need to get the coverage output.
+  -->
+  <property name="mocha.bar.command" value="${basedir}/node_modules/mocha/bin/_mocha"/>
+
+  <!-- Location of the mocha-junit-reporter index.js, used by tests.mocha.xml -->
+  <property name="mocha-junit-reporter.index.js" value="${basedir}/node_modules/mocha-junit-reporter/index.js"/>
+
+  <!-- Location of the nyc command, used by tests.coverage -->
+  <property name="nyc.command" value="${basedir}/node_modules/.bin/nyc"/>
+  
+  <!-- Location of the Rusteduk sources.
+       Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
+  -->
+  <property name="rusteduk.source" value="${basedir}/hosts/duktape/rusteduk"/>
+
+  <!-- Location of the selenium-webdriver directory. -->
+  <property name="selenium-webdriver.directory" value="${basedir}/node_modules/selenium-webdriver"/>
+
+  <!-- The @terraswarm.gdp module. -->
+  <property name="terraswarm.gdp" value="${basedir}/node_modules/@terraswarm/gdp"/>
+
+  <!-- If true, then if a test other than the mocha tests return
+       non-zero, the build will fail and no other tests will run. -->
+  <property name="tests.failonerror" value="true"/>
+
+  <!-- If true, then if a test.mocha returns non-zero, the build will fail
+       and no other tests will run.
+       The issue is that if a mocha test fails, then mocha will return
+       non-zero, which if tests.mocha.failonerror is true, then ant
+       will exit and the other tests will not run.
+  -->
+  <property name="tests.mocha.failonerror" value="false"/>
+
+  <!-- The timeout in milliseconds for test -->
+  <property name="timeout" value="120000" />
+
+    <!-- The timeout in milliseconds for Cape Code test -->
+  <property name="timeout.longer" value="1200000" />
+
+  <!-- Files to exclude. -->
+  <patternset id="accessors.excludes">
+    <!-- Exclude testSimpleDTSswarmlet.js temporarily and avoid
+         deterministicTemporalSemantics.js: Cannot read property '9' of undefined
+    -->
+    <exclude name="**/deterministicTemporalSemantics/test/auto/mocha/testSimpleDTSswarmlet.js"/>
+    <exclude name="vendors/"/>
+  </patternset>
+  
+  <!-- Path of JavaScript tests that are run by Duktape. -->
+  <fileset id="test.duktape.files" dir="${basedir}/hosts">
+    <include name="**/duktape/test/*.js"/>
+    <patternset refid="accessors.excludes" />
+  </fileset>
+
+  <!-- Path of JavaScript tests that are run by mocha. -->
+
+  <fileset id="test.mocha.files" dir="${basedir}">
+    <include name="**/mocha/test*.js"/>
+    <!-- hosts/browser/common is a symbolic link -->
+    <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
+    <!-- Don't include xcore/jxcore/common/test/mocha/testCommon.js --> 
+    <exclude name="**/hosts/jxcore/**/*.js"/>
+    <exclude name="**/node_modules/**/*.js"/>
+    <patternset refid="accessors.excludes" />
+  </fileset>
+
+  <!-- Targets below here -->
+  <!-- Temporarily don't depend on jsdoc or ptdoc because nodeHost.js uses ecma 6 generators.
+       See  https://github.com/jsdoc3/jsdoc/issues/555
+       -->
+  <target name="build"
+          depends="duktape, jsdoc, ptdoc"
+          description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
+  </target>
+
+  <target name="-cargo-in-path">
+    <property environment="env" />
+    <available file="cargo"
+	       filepath="${env.PATH}"
+	       property="cargo.present"/>
+    <echo>
+      Checking to see if the cargo binary is present.
+      cargo is used for the rusteduk target.
+      Rusteduk is a Duktape-based Java Interpreter that can be called from rust.
+      If cargo is not found, then rusteduk won't compile.
+      Rusteduk is not required by Accessors.
+    </echo>
+  </target>
+  
+  <target name="chai-install"
+	  depends="-check-chai"
+	  unless="chai.directory.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="chai"/>
+    </exec>
+  </target>
+
+  <target name="chai-update"
+	  depends="chai-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="chai"/>
+    </exec>
+  </target>
+
+  <target name="chai-string-install"
+	  depends="-check-chai-string"
+	  unless="chai-string.directory.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="chai-string"/>
+    </exec>
+  </target>
+
+  <target name="chai-string-update"
+	  depends="chai-string-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="chai-string"/>
+    </exec>
+  </target>
+
+  <target name="-check-chai">
+    <available property="chai.directory.exists" file="${chai.directory}"/>
+  </target>
+
+  <target name="-check-chai-string">
+    <available property="chai-string.directory.exists" file="${chai-string.directory}"/>
+  </target>
+  
+  <target name="-check-jsdoc">
+    <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
+  </target>
+
+  <target name="-check-mocha">
+    <available property="mocha.command.exists" file="${mocha.command}"/>
+  </target>
+
+  <target name="-check-mocha-junit-reporter">
+    <available property="mocha-junit-reporter.index.js.exists" file="${mocha-junit-reporter.index.js}"/>
+  </target>  
+
+  <target name="-check-nyc">
+    <available property="nyc.command.exists" file="${nyc.command}"/>
+  </target>
+
+  <target name="-check-selenium-webdriver">
+    <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
+  </target>
+
+  <target name="-check-terraswarm-gdp">
+    <available property="terraswarm.gdp.exists" file="${terraswarm.gdp}"/>
+  </target>
+
+  <target name="cleanAll" 
+	  depends="clean.duktape"
+	  description="Remove the reports/ and doc/jsdoc directories.">
+    <delete quiet="false" verbose="true" includeemptydirs="true">
+      <fileset dir="${basedir}"
+               defaultexcludes="false"
+               includes="reports/junit/**,reports/*.xml"/>
+      <fileset dir="${basedir}"
+               defaultexcludes="false"
+               includes="doc/jsdoc/**"/>
+    </delete>
+  </target>
+
+  <target name="clean.duktape" 
+	  description="Remove the duktape binaries.">
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/duktape/duk"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/duktape2/duk2"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/eduk/eduk"/>
+    <delete quiet="true" verbose="no"
+	    file="hosts/duktape/eduk2/eduk2"/>
+    <exec dir="${rusteduk.source}"
+          executable="make"
+          failonerror="true"
+          timeout="${timeout}">
+      <arg value="clean"/>
+    </exec>
+
+  </target>
+
+  <!-- Build eduk first because it updates the .h files from the .js files
+       that are used by eduk and duk.
+  --> 
+  <target name="duktape"
+          depends="eduk, duk, eduk2, duk2, rusteduk"
+          description="Build the duktape binaries">
+  </target>
+
+  <target name="duk"
+	  depends="eduk"
+          description="Build the duk binary.  Requires make and a C compiler.">
+    <echo>The duk binary has more command line options that the eduk binary.
+    The duk binary would not be deployed on an embedded machine.
+    </echo>
+    <exec dir="${duktape.source}"
+          executable="make"
+	  failonerror="true"
+          timeout="${timeout}">
+    </exec>
+  </target>
+
+  <target name="duk2"
+	  depends="eduk2"
+          description="Build the duk2 binary.  Requires make and a C compiler.">
+    <echo>The duk2 binary uses duktape 2.x.
+    The duk2 binary has more command line options that the eduk binary.
+    The duk2 binary would not be deployed on an embedded machine.
+    </echo>
+    <exec dir="${duktape2.source}"
+          executable="make"
+	  failonerror="true"
+          timeout="${timeout}">
+    </exec>
+  </target>
+  
+  <target name="eduk"
+          description="Build the eduk binary.  Requires xxd, make and gcc.">
+    <echo>The eduk binary has fewer command line options than the duk binary.
+    The eduk binary is what would be deployed on an embedded machine.
+    The eduk binary can also be run from the command line.
+    </echo>
+    <chmod file="${eduk.source}/js2h"
+	   perm="a+x"/>
+    <exec dir="${eduk.source}"
+          executable="make"
+          timeout="${timeout}">
+    </exec>
+  </target>
+
+  <target name="eduk2"
+          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc.">
+    <echo>The eduk2 binary has fewer command line options than the duk binary.
+    The eduk binary is what would be deployed on an embedded machine.
+    The eduk binary can also be run from the command line.
+    </echo>
+    <chmod file="${eduk2.source}/js2h"
+	   perm="a+x"/>
+    <exec dir="${eduk2.source}"
+          executable="make"
+          timeout="${timeout}">
+    </exec>
+  </target>
+  
+  <target name="eduk.tcmalloc"
+          description="Build the eduk with tcmalloc for heap profiling">
+    <exec dir="${eduk.source}"
+          executable="make"
+          failonerror="true"
+          timeout="${timeout}">
+      <arg value="eduk.tcmalloc"/>
+    </exec>
+  </target>
+
+  <target name="jsdoc"
+          depends="jsdoc-update"
+          description="Run jsdoc to generate documentation for JavaScript files."
+          >
+    <echo>Invoke jsdoc to generate documentation for .js files.
+    </echo>
+    <chmod file="${jsdoc.command}"
+	   perm="a+x"/>
+    <exec executable="${jsdoc.command}"
+          timeout="${timeout}">
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--destination" />
+      <arg value="doc/jsdoc" />
+      <arg value="--readme" />
+      <arg value="README.md" />
+      <arg value="--recurse" />
+      <arg value="--verbose" />
+      <arg value="." />
+    </exec>
+
+    <echo>The jsdoc output may be found in doc/jsdoc/index.html
+    </echo>
+
+  </target>
+
+  <target name="jsdoc-install"
+	  depends="-check-jsdoc"
+	  unless="jsdoc.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="@terraswarm/jsdoc"/>
+    </exec>
+  </target>
+
+  <target name="jsdoc-update"
+	  depends="jsdoc-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="@terraswarm/jsdoc"/>
+    </exec>
+  </target>
+
+
+  <target name="mocha-install"
+	  depends="-check-mocha, chai-update"
+	  unless="mocha.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="mocha"/>
+    </exec>
+  </target>
+
+  <target name="mocha-update"
+	  depends="mocha-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="mocha"/>
+    </exec>
+  </target>
+
+  <target name="mocha-junit-reporter-install"
+	  depends="-check-mocha-junit-reporter, chai-update"
+	  unless="mocha-junit-reporter.index.js.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="mocha-junit-reporter"/>
+    </exec>
+  </target>
+
+  <target name="mocha-junit-reporter-update"
+	  depends="mocha-junit-reporter-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="mocha-junit-reporter"/>
+    </exec>
+  </target>
+
+  <target name="nyc-install"
+	  depends="-check-nyc, chai-update"
+	  unless="nyc.command.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="nyc"/>
+    </exec>
+  </target>
+
+  <target name="nyc-update"
+	  depends="nyc-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="nyc"/>
+    </exec>
+  </target>
+
+  <target name="ptdoc"
+          depends="jsdoc-update"
+          description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
+          >
+    <echo>Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
+    See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
+    See jsdoc/jsdoc.json
+    See jsdoc/plugins/accessorJSDocTags.js
+    See jsdoc/templates/ptdoc/publish.js
+    </echo>
+    <chmod file="${jsdoc.command}"
+	   perm="a+x"/>
+    <exec executable="${jsdoc.command}"
+          timeout="${timeout}">
+      <arg value="--configure" />
+      <arg value="jsdoc/jsdoc.json" />
+      <arg value="--recurse" />
+      <arg value="--template" />
+      <arg value="jsdoc/templates/ptdoc" />
+      <arg value="--verbose" />
+      <arg value="." />
+    </exec>
+  </target>
+
+  <target name="rusteduk"
+	  depends="-cargo-in-path"
+          description="Build the rusteduk binary.  Requires rustc."
+	  if="${cargo.present}">
+    <echo>
+      The rusteduk binary is a Rust binary that invokes the C-based
+      duktape JavaScript interpreter.  Rusteduk requires cargo and
+      rustc.  The easiest way to get rustc is to install rustup, see
+      https://www.rustup.rs
+
+      Then run:
+      rustup default stable
+      See https://www.icyphy.org/accessors/wiki/Main/RustHost
+
+      cargo.present: ${cargo.present}
+    </echo>
+    <exec dir="${rusteduk.source}"
+          executable="make"
+          failonerror="true"
+          timeout="${timeout}">
+    </exec>
+  </target>
+  
+  <target name="status"
+          depends="status.accessors, status.capecode, status.jenkins">
+    <echo>Update the Accessor library status page.
+    See https://www.icyphy.org/accessors/wiki/Notes/Status
+
+    In reports/status, the following files:
+       accessorMap.txt
+       accessMapCapeCode.txt
+       browserhost.txt
+       capecodehost.txt
+    would need to be copied to /home/www/cvswww/icyphy/accessors/reports/status on the web server.
+    The accessors Jenkins job at http://terra.eecs.berkeley.edu:8080/job/accessors/ does the scp for us.       
+    </echo>
+  </target>
+
+  <target name="status.accessors">
+    <exec executable="${node.executable}"
+	  timeout="${timeout}">
+      <arg value="reports/status/calculateAccessorMap.js"/>
+    </exec>
+  </target>    
+
+  <target name="status.capecode"
+          depends="-ptII-exists"
+          if="${ptII.exists}">
+
+    <exec dir="${env.PTII}"
+          executable="${node.executable}"
+	  timeout="${timeout}">
+      <arg value="org/terraswarm/accessor/status/calculateAccessorMapCapeCode.js"/>
+    </exec>
+    <copy file="${env.PTII}/org/terraswarm/accessor/status/accessorMapCapeCode.txt" todir="reports/status"/>
+  </target>
+
+  <target name="status.jenkins">
+
+    <echo>Getting the Browser Host, Cape Code Host and Node Host test results from Jenkins.
+    </echo>
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/browserhost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/browserhost.txt"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/(root)/BrowserHost/"/>
+    </exec>
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/capecodehost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/capecodehost.txt"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/ptII/lastCompletedBuild/testReport/ptolemy.util.test.junit/AutoTests/"/>
+    </exec>    
+
+    <delete quiet="true" verbose="no"
+            file="reports/status/nodehost.txt"/>
+    <exec executable="wget"
+	  timeout="${timeout}">
+      <arg value="-O"/>
+      <arg value="reports/status/nodehost.txt"/>
+      <!-- Should match the same string in ./reports/status/status.js -->
+      <arg value="http://terra.eecs.berkeley.edu:8080/job/accessors/lastCompletedBuild/testReport/NodeHost/"/>
+    </exec>
+  </target>
+
+  <target name="status.scp">
+    <exec executable="scp"
+	  timeout="${timeout}">
+      <arg value="reports/status/accessorMap.txt"/>
+      <arg value="reports/status/accessorMapCapeCode.txt"/>
+      <arg value="reports/status/browserhost.txt"/>
+      <arg value="reports/status/capecodehost.txt"/>
+      <arg value="reports/status/nodehost.txt"/>
+      <arg value="vc@moog.eecs.berkeley.edu:/home/www/cvswww/icyphy/accessors/reports/status"/>
+    </exec>
+  </target>
+    
+  <target name="terraswarm-gdp-install"
+	  depends="-check-terraswarm-gdp"
+	  unless="terraswarm.gdp.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="@terraswarm/gdp"/>
+    </exec>
+  </target>
+
+  <target name="terraswarm-gdp-update"
+	  depends="terraswarm-gdp-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="@terraswarm/gdp"/>
+    </exec>
+  </target>
+
+  <target name="tests"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
+          description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
+  </target>
+
+  <target name="-ptII-exists" unless="ptII.exists">
+    <available property="ptII.exists" file="${env.PTII}"/>
+  </target>
+
+  <target name="tests.capecode"
+          depends="-ptII-exists, terraswarm-gdp-update"
+          description="Run the Cape Code tests."
+          if="${ptII.exists}">
+    <echo>
+      == tests.capecode ==
+      These tests are only run if $PTII exists.
+      target timeout = ${timeout.longer} ms.
+    </echo>
+    <exec dir="${env.PTII}/ptolemy/actor/lib/jjs"
+          executable="make"
+	  timeout="${timeout.longer}">
+      <arg value="tests" />
+    </exec>
+    <exec dir="${env.PTII}/org/terraswarm/accessor"
+          executable="make"
+	  timeout="${timeout.longer}">
+      <arg value="tests" />
+    </exec>
+  </target>
+
+  <target name="tests.browser"
+          description="Test the browser host."
+	  depends="selenium-webdriver-update">
+    <echo>
+      ==tests.browser==
+      Run the Browser Accessor Host test
+      The output will appear in reports/junit/browserTestResults.xml
+      See https://www.icyphy.org/accessors/wiki/VersionCurrent/RegressionTesting
+      target timeout = ${timeout} ms.
+    </echo>
+    <mkdir dir="${basedir}/reports/junit"/>
+    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
+    <exec dir="hosts/browser/test"
+	  executable="${node.executable}"
+	  timeout="${timeout}">
+      <arg value="regressionTestScript.js"/>
+    </exec>
+  </target>
+
+  <target name="tests.coverage"
+          description="Use istanbul/nyc and mocha to generate code coverage for JavaScript tests."
+	  depends="nyc-update, mocha-update, terraswarm-gdp-update">
+    <echo>
+      ==tests.coverage==
+      This target uses istanbul/nyc and mocha to generate code coverage for JavaScript tests.
+      If necessary, istanbul/nyc and mocha are installed in node_modules/
+      The output will generated in the coverage/ directory.
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <!-- Delete the coverage/ directory each time we run. -->
+    <delete dir="coverage"/>
+
+    <echo>
+      Running
+      ${nyc.command} --exclude='!**/node_modules/**' --reporter=html --reporter=text mocha ${converted}
+    </echo>
+    
+    <chmod file="${nyc.command}"
+	   perm="a+x"/>
+    <exec executable="${nyc.command}"
+          failonerror="${tests.mocha.failonerror}"
+          timeout="${timeout.longer}">
+      <arg value="--exclude=!**/node_modules/**"/>
+      <arg value="--reporter=html"/>
+      <arg value="--reporter=text"/>
+      <arg value="mocha"/>
+      <arg line="${converted}"/>
+    </exec>
+
+    <echo>
+      See coverage/index.html for the coverage output.
+    </echo>
+  </target>
+
+  <target name="tests.duk"
+          depends="tests.duk.test, tests.duk.auto"
+          description="Execute the duktape tests in duktape/test and test/auto.">
+  </target>
+
+  <target name="tests.duk.auto"
+          depends="duk"
+          description="Execute the duk tests in test/auto.">
+    <echo>
+      == tests.duk.auto ==
+      
+    </echo>
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="."
+           executable="hosts/duktape/duktape/duk"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--echo"/>
+      <arg value="--accessor"/>
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk does not have a separate eduk test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+  
+  <target name="tests.duk.test"
+          depends="duk"
+          description="Execute the duktape tests in duktape/test.">
+    <echo>
+      == tests.duk.test ==
+      To replicate:
+      (cd hosts; duktape/duktape/duk duktape/test/test*.js)
+    </echo>      
+    <apply dir="hosts"
+           executable="duktape/duktape/duk"
+	   failonerror="${tests.failonerror}"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <fileset dir="hosts">
+        <include name="duktape/test/test*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+
+  <target name="tests.duk2"
+          depends="tests.duk2.test, tests.duk2.auto"
+          description="Execute the duktape2 tests in duktape/test and test/auto.">
+  </target>
+
+  <target name="tests.duk2.auto"
+          depends="duk2"
+          description="Execute the duk2 tests in test/auto.">
+    <echo>
+      == tests.duk2.auto ==
+      
+    </echo>
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="."
+           executable="hosts/duktape/duktape2/duk2"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--echo"/>
+      <arg value="--accessor"/>
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk does not have a separate eduk test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+  
+  <target name="tests.duk2.test"
+          depends="duk2"
+          description="Execute the duktape2 tests in duktape/test.">
+    <echo>
+      == tests.duk2.test ==
+      To replicate:
+      (cd hosts; duktape/duktape2/duk2 duktape/test/test*.js)
+    </echo>      
+    <apply dir="hosts"
+           executable="duktape/duktape2/duk2"
+	   failonerror="${tests.failonerror}"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <fileset dir="hosts">
+        <include name="duktape/test/test*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+
+  <target name="tests.eduk"
+          depends="eduk"
+          description="Execute the eduk tests.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="hosts"
+           executable="duktape/eduk/eduk"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk does not have a separate eduk test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+
+  <target name="tests.eduk2"
+          depends="eduk2"
+          description="Execute the eduk2 tests.">
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="hosts"
+           executable="duktape/eduk2/eduk2"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- eduk2 does not have a separate eduk2 test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+  
+  <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
+  
+  <target name="tests.jenkins"
+          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.nashorn, tests.mocha.xml, tests.coverage"
+          description="Run the tests for Jenkins continuous integration">
+    <echo>
+      ==tests.jenkins==
+      Run tests for the accessors continuous integration build
+      See http://terra.eecs.berkeley.edu:8080/job/accessors/
+
+      The tests.jenkins target differs from the tests target in that the
+      tests.jenkins target enerates JUnit xml-compatibile output where possible
+      and runs tests.coverage.
+    </echo>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+
+  <target name="tests.mocha"
+          description="Use mocha to test the Node host and generate output on stdout."
+	  depends="chai-string-update, mocha-update, terraswarm-gdp-update">
+    <echo>
+      ==tests.mocha==
+      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      To run just the composites, use "ant tests.mocha.composites"
+      If necessary, chai and mocha are installed in node_modules/
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout.longer} ms.
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <echo> tests.mocha: running on ${converted}</echo>
+
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
+    <exec executable="${mocha.command}"
+	  failonerror="${tests.mocha.failonerror}"
+	  resultproperty="tests.resultproperty"
+	  timeout="${timeout.longer}">
+      <arg line="${converted}"/>
+    </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+  </target>
+
+  <target name="tests.mocha.composites"
+          description="Use mocha to test just the composite accessors and write to stdout."
+	  depends="mocha-update, terraswarm-gdp-update">
+    <echo>
+
+      ==tests.mocha.composite==
+      This target uses mocha to run the composite accessors via
+      hosts/node/test/mocha/testNodeAllAuto.js
+      If necessary, mocha is installed in node_modules/
+      To run only the composite accessors in one directory:
+      mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
+      To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout} ms.
+    </echo>
+
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
+    <exec executable="${mocha.command}"
+	  failonerror="${tests.mocha.failonerror}"
+	  resultproperty="tests.resultproperty"
+	  timeout="${timeout}">
+      <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
+    </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+    
+  </target>
+
+  <target name="tests.mocha.xml"
+          description="Use mocha to test the Node Host and generate JUnit-compatible output."
+	  depends="chai-string-update, mocha-update, mocha-junit-reporter-update, terraswarm-gdp-update">
+    <echo>
+      ==tests.mocha.xml==
+      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      The output is in JUnit-compatibile xml.
+      If necessary, mocha and mocha-junit-reporter are installed in node_modules/
+      See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+      target timeout = ${timeout.longer} ms.
+    </echo>
+
+    <pathconvert refid="test.mocha.files"
+		 pathsep=" "
+		 property="converted"/>
+
+    <echo> tests.mocha.xml: running on ${converted}</echo>
+
+    <chmod file="${mocha.command}"
+	   perm="a+x"/>
+    <exec executable="${mocha.command}"
+	  failonerror="${tests.mocha.failonerror}"
+	  resultproperty="tests.resultproperty"
+          timeout="${timeout.longer}">
+      <!-- Don't use nail because some of the commonHosts tests are failing. -->
+      <!-- arg line=" bail"/ -->
+      <arg value="--reporter"/>
+      <arg value="mocha-junit-reporter"/>
+      <arg value="--reporter-options"/>
+      <arg value="mochaFile=reports/junit/mochaJUnit.xml,useFullSuiteTitle=true,suiteTitleSeparedBy=:"/>
+      <arg line="${converted}"/>
+    </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+    
+  </target>
+
+  <target name="tests.nashorn"
+          depends="tests.nashorn.test, tests.nashorn.auto"
+          description="Execute the Nashorn tests in nashorn/test and test/auto.">
+  </target>
+  
+  <target name="tests.nashorn.auto"
+          description="Execute the nashorn tests in test/auto."
+          depends="-ptII-exists"
+          if="${ptII.exists}">
+
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="."
+           executable="hosts/nashorn/nashornAccessorHost"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="-e"/>
+      <arg value="-timeout"/>
+      <!-- RampJSTestDisplay requires 5000 ms. -->
+      <arg value="5000"/>
+      <fileset dir=".">
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+    
+  </target>
+
+  <target name="tests.nashorn.test"
+          depends="-ptII-exists"
+          description="Execute the Nashorn tests in hosts/nashorn/test."
+          if="${ptII.exists}">
+    <echo>
+      == tests.nashorn.test ==
+      These tests are only run if $PTII exists.
+      The Nashorn accessor host is a subset of the Cape Code accessor host.
+    </echo>
+
+    <chmod file="hosts/nashorn/nashornAccessorHost"
+	   perm="a+x"/>
+    <apply dir="hosts"
+           executable="nashorn/nashornAccessorHost"
+	   failonerror="${tests.failonerror}"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="-e"/>
+      <arg value="-timeout"/>
+      <arg value="10000"/>
+      <!-- Note that the name of the JavaScript file must follow the -js command line argument. -->
+      <arg value="-js"/>
+      <fileset dir="hosts">
+        <include name="nashorn/test/*.js"/>
+	<exclude name="**/testNashornHost.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+
+    <echo>
+      Running the Nashorn smoke test.  To replicate:
+      (cd hosts; ./nashorn/nashornAccessorHost -timeout 1000 -js nashorn/test/testNashornHost.js)
+      target timeout = ${timeout} ms.
+    </echo>
+
+    <chmod file="hosts/nashorn/nashornAccessorHost"
+	   perm="a+x"/>
+    <exec dir="hosts"
+          executable="nashorn/nashornAccessorHost"
+	  failonerror="${tests.failonerror}"
+	  resultproperty="tests.resultproperty"
+	  timeout="${timeout}">
+      <arg value="-e"/>
+      <arg value="-timeout"/>
+      <arg value="1000"/>
+      <!-- Note that the name of the JavaScript file must follow the -js command line argument. -->
+      <arg value="-js"/>
+      <arg value="nashorn/test/testNashornHost.js"/>
+    </exec>
+
+    <echo>
+      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
+      If "${tests.resultproperty}" is not zero, then one of the tests failed
+      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
+      though tests may have failed.  To have ant fail when this occurs, run:
+      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
+      If everything is OK, then the output should include text like
+      [exec]   30 passing (2m)
+      [exec]   2 pending
+      [exec]   6 failing
+      If you dont' see any passing tests, the process.exit() is being called and
+      not being handled by the mocha handlers.
+    </echo>
+    
+  </target>
+
+  <!-- Alias for tests.mocha. -->
+  <target name="tests.node"
+	  depends="tests.mocha"/>
+  
+  <target name="tests.rusteduk"
+          depends="rusteduk"
+          description="Execute the rusteduk tests.">
+    <echo>
+      == tests.rusteduk ==
+      Rusteduk is an accessor written partially in Rust that uses Duktape as the JS engine.
+    </echo>
+    <!-- Use relative pathnames here so that we can look them up. -->
+    <apply dir="hosts"
+           executable="duktape/rusteduk/target/debug/examples/rusteduk"
+	   failonerror="${tests.failonerror}"
+	   relative="true"
+	   resultproperty="tests.resultproperty"
+	   timeout="${timeout}">
+      <arg value="--timeout"/>
+      <arg value="4000"/>
+      <fileset dir=".">
+	<!-- rusteduk does not have a separate rusteduk test directory, we just
+	     run the accessors in test/auto instead.
+	--> 
+	<include name="test/auto/*.js"/>
+        <patternset refid="accessors.excludes" />
+      </fileset>
+    </apply>
+  </target>
+
+  <target name="selenium-webdriver-install"
+	  depends="-check-selenium-webdriver"
+	  unless="selenium-webdriver.directory.exists">
+    <mkdir dir="${basedir}/node_modules"/>
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="install"/>
+      <arg value="selenium-webdriver"/>
+    </exec>
+  </target>
+
+  <target name="selenium-webdriver-update"
+	  depends="selenium-webdriver-install">
+    <exec executable="npm"
+          timeout="${timeout}">
+      <arg value="update"/>
+      <arg value="selenium-webdriver"/>
+    </exec>
+  </target>
+
+</project>

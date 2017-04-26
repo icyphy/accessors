@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "https://www.icyphy.org/accessors/obsolete/Accessor_1.dtd">
+<class name="WiiMote" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date$</version>
+  <author>Edward A. Lee</author>
+  <input
+    name="rumble"
+    value="false"
+    type="boolean"
+    description="Control to turn on or off the rumble feature."/>
+  <output
+    name="x"
+    type="number"
+    description="The x axis acceleration."/>
+  <output
+    name="y"
+    type="number"
+    description="The y axis acceleration."/>
+  <output
+    name="z"
+    type="number"
+    description="The z axis acceleration."/>
+  <description type="text/html">
+    <![CDATA[
+This accessor gets accelerometer data from a Nintendo WiiMote.
+The accessor runs out of the box, but the server side requires some setup to publish
+the accelerometer readings to an online key-value store.
+There is a Ptolemy II model that will do this publishing, but
+it is not checked in to Ptolemy II SVN repository, because it includes GPLd
+code for the Bluetooth interface.
+	]]>
+  </description>	  
+  <script type="text/javascript">
+    // <![CDATA[
+
+// State variables.
+var wiimote;
+
+function initialize() {
+   wiimote = readURL("http://ptango.eecs.berkeley.edu:8077/keyvalue/get?id=wiimote").trim();
+   if (! wiimote || wiimote == "nil") {
+      error('WiiMote server does not appear to be running.');
+   }
+   alert("Connecting to wiimote server at " + wiimote);
+}
+
+function fire() {
+   var result = readURL(wiimote);
+   var parsed;
+   try {
+      parsed = JSON.parse(result);
+   } catch (e) {
+      // What to do here?
+      error("Unexpected result from WiiMote server: " + result);
+   }
+   send('x', parsed.x);
+   send('y', parsed.y);
+   send('z', parsed.z);
+}
+
+	// ]]>
+  </script>
+</class>

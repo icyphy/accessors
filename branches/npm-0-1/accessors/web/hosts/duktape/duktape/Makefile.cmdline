@@ -1,0 +1,60 @@
+#
+#  Example Makefile for building a program with embedded Duktape.
+#  The example program here is the Duktape command line tool.
+#
+
+DUKTAPE_SOURCES = src/duktape.c
+
+DUKTAPE_CMDLINE_SOURCES = \
+	examples/cmdline/duk_cmdline.c \
+        examples/eventloop/poll.c \
+        ../eduk/nofileio.c \
+        examples/eventloop/fileio.c \
+
+CC	= gcc
+
+CCOPTS	= -Os -pedantic -std=c99 -Wall -fstrict-aliasing -fomit-frame-pointer
+
+# Uncomment the next line to compile with debugging
+#CCOPTS	= -ggdb -pedantic -std=c99 -Wall
+
+# Accessors: Include duktapeHost.h in ..
+CCOPTS += -I. -I./src   # duktape.h and duk_config.h must be in include path
+CCLIBS	= -lm
+
+# If you have readline, you may want to enable these.  On some platforms
+# -lreadline also requires -lncurses (e.g. RHEL), so it is added by default
+# (you may be able to remove it)
+#CCOPTS += -DDUK_CMDLINE_FANCY
+#CCLIBS += -lreadline
+#CCLIBS += -lncurses
+
+# Optional feature defines, see: http://duktape.org/guide.html#compiling
+CCOPTS += -DDUK_OPT_SELF_TESTS
+#CCOPTS += -DDUK_OPT_DEBUG
+#CCOPTS += -DDUK_OPT_DPRINT
+# ...
+
+HFILES =  ./src/duk_config.h \
+	./src/duktape.h \
+	duktapeHost.h \
+	../eduk/RampJSDisplay.h \
+	../eduk/RampJSTest.h \
+	../eduk/RampJSTestDisplay.h \
+	../eduk/TestAdder.h \
+	../eduk/TestComposite.h \
+	../eduk/TestDisplay.h \
+	../eduk/TestGain.h \
+	../eduk/TestSpontaneous.h \
+	../eduk/TrainableTest.h \
+	../eduk/autoTestComposite.h \
+	../eduk/commonHost.h \
+	../eduk/duktapeHost.h \
+	../eduk/ecma_eventloop.h \
+	../eduk/events.h \
+	../eduk/testCommon.h \
+	../eduk/util.h
+
+EDUK_DEFINES = -DEDUK_FULL -DEDUK_RAMPJSDISPLAY
+duk:	$(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) $(HFILES) Makefile.cmdline makefile
+	$(CC) -o $@ $(DEFINES) $(EDUK_DEFINES) $(CCOPTS) $(DUKTAPE_SOURCES) $(DUKTAPE_CMDLINE_SOURCES) $(CCLIBS)

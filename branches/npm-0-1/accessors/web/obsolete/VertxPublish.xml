@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="renderHTML.xsl"?>
+<!DOCTYPE class PUBLIC "-//TerraSwarm//DTD Accessor 1//EN"
+    "https://www.icyphy.org/accessors/obsolete/Accessor_1.dtd">
+<class name="VertxPublish" extends="org.terraswarm.JSAccessor">
+  <version>0.1 $Date$</version>
+  <author>Patricia Derler, Edward A. Lee, Ben Zhang</author>
+  <require name="eventbus"/>
+  <input
+    name="address"
+    value="topic"
+    type="string"
+    description="The event bus address, which is the name of the event stream. This defaults to 'topic'."/>
+  <input
+    name="message"
+    type="JSON"
+    description="The message to the bus."/>       
+  <input
+    name="broadcast"
+    value="true"
+    type="boolean"
+    description="True to broadcast the message to all subscribers. False to send to exactly one subscriber, in a roughly round-robin fashion."/>
+  <input
+    name="busHost"
+    value=""
+    type="string"
+    description="The name of the network interface to use for the Vert.x event bus. A blank string is interpreted as 'localhost'."/>
+  <input
+    name="busHostPort"
+    value="0"
+    type="int"
+    description="The port for the Vert.x event bus. A value of 0 indicates to just find an available port."/>
+  <output
+    name="reply"
+    type="JSON"
+    description="The reply, if any, received after a point-to-point send (where broadcast == false)."/>
+  <description type="text/html">
+    <![CDATA[
+This accessor publishes to a Vert.x event bus, which is a peer-to-peer publish-and-subscribe system. The published data will be sent to any subscriber that subscribes to the same address and runs in the same Vertx cluster (see the VertxSubscribe accessor). The Vertx cluster normally includes all machines that hear multicast packets sent by the machine hosting this accessor.
+<p>
+The input to be published can be any data type supported by accessors that has a string representation in JSON syntax. The data will be converted to a string in JSON format and sent to the event bus. The VertxSubscribe accessor will parse that string and output the data in the native format of its host.
+</p><p>
+If the broadcast input is set to false, then instead of broadcasting the message to all subscribers, the Vertx bus will pick exactly one subscriber and send the message to it.  The bus picks the subscribers in an approximately round-robin fashion. If the subscriber replies to this message, then that will reply (required to be also be a JSON object) will be produced on the reply output port.
+</p><p>
+The busHost input specifies the name of the network interface through which to connect to the Vert.x event bus cluster, and busHostPort specifies the port to use for this. Normally, you can leave these at their default values unless you need to need to use a network interface that is not 'localhost' or you need to use a particular port. These two inputs are examined only at initialization time, so changing them during execution of a swarmlet will have no effect.
+</p>
+	]]>
+  </description>
+  <script type="text/javascript">
+    // <![CDATA[
+    
+var eventbus = require('eventbus');
+var bus;
+var handle;
+
+exports.initialize = function() {
+    var port = get('busHostPort');
+    var host = get('busHost');
+    bus = new eventbus.VertxBus({'port':port, 'host':host});
+    
+    handle = addInputHandler('message', function() {
+        var topic = get('address');
+        var msg = get('message');
+        var all = get('broadcast');
+        if (msg) {
+            if (all) {
+                bus.publish(topic, msg);
+            } else {
+                bus.send(topic, msg, replyHandler);
+            }
+        }
+    });
+}
+
+var replyHandler = function(message) {
+   send('reply', message);
+}
+
+exports.wrapup = function() {
+  bus.unsubscribe();
+  removeInputHandler(handle, 'message');
+}
+
+	//  ]]>
+  </script>
+</class>

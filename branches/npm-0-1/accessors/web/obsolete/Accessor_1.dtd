@@ -1,0 +1,49 @@
+<!-- TerraSwarm Level 1 Accessors DTD Version 0.1, http://terraswarm.org -->
+<!-- $Id$ -->
+
+<!ELEMENT class (author | description | input | output | require | script | version)*>
+<!ATTLIST class
+	name CDATA #REQUIRED
+    extends CDATA #IMPLIED
+    implements CDATA #IMPLIED
+>
+
+<!ELEMENT interface (author | description | input | output | require | version)*>
+<!ATTLIST class
+	name CDATA #REQUIRED
+    implements CDATA #IMPLIED
+>
+
+<!ELEMENT author (#PCDATA)>
+
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description
+	type CDATA #IMPLIED
+>
+
+<!ELEMENT input EMPTY>
+<!ATTLIST input
+	name CDATA #REQUIRED
+    type CDATA #IMPLIED
+    value CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT output EMPTY>
+<!ATTLIST output
+	name CDATA #REQUIRED
+    type CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT require (#PCDATA)>
+<!ATTLIST require
+	name CDATA #IMPLIED
+>
+
+<!ELEMENT script (#PCDATA)>
+<!ATTLIST script
+          type CDATA #IMPLIED
+>
+
+<!ELEMENT version (#PCDATA)>

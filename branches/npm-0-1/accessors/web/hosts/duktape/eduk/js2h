@@ -1,0 +1,47 @@
+#!/bin/sh
+# $Id$
+# Minimize a .js file and then create a .h file
+# Usage: js2h inputfile outputfile
+
+UGLIFYJS=node_modules/uglify-js/bin/uglifyjs
+
+if [ ! -f $UGLIFYJS ]; then
+    if [ ! -d node_modules ]; then
+	mkdir node_modules;
+    fi
+    echo "$0: Installing uglify-js"
+    npm install uglify-js
+fi
+
+# If we installed from a jar file, then uglifyjs might not be executable.
+chmod a+x $UGLIFYJS
+
+if [ $# -ne 2 ]; then
+    echo "$0: Usage: $0 inputFile outputFile"
+    exit 3
+fi
+
+$UGLIFYJS --compress --output $1.min -- $1 
+mv $1 $1.tmp
+
+mv $1.min $1
+
+xxd -i $1 | sed -e 's/unsigned //' \
+		-e 's/^char /const char /' \
+		-e 's/^int /const int /' |
+awk '{ # Add a trailing null to the output.
+        if ($0 ~ /^const int/) {
+            # Add one to the length in the last line
+            print $1, $2, $3, $4, $5 + 1";"
+        } else if ($0 !~ /0x/ || $NF ~ /,/) { 
+            # If the line does not contain 0x, then print it
+            print $0
+        } else {
+            print $0", 0x00"
+        }
+     }
+ END {
+         print "/* The js2h script added a 0x00 character as the last character. */"
+     }' > $2
+
+mv $1.tmp $1

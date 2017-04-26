@@ -1,0 +1,8 @@
+[
+    "RosPublisher.js",
+    "RosSubscriber.js",
+    "LocationRosPublisher.js",
+    "Scarab.js",
+    "DroneLocation.js",
+    "Global2LatLonAlt.js"
+]

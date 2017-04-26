@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"></meta>
+    <title>Browser Swarmlet Host Tests</title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script src="/accessors/hosts/browser/browser.js"></script>
+</head>
+<body>
+<h1 class="header">Browser Swarmlet Host Tests </h1>
+<div>
+<hr>
+The browser swarmlet host is included on accessors.org and icyphy.org pages.  Please click on the left menu to try accessors.
+<p>
+If clicking on a menu item does not load an accessor, then you are viewing this page on a server that does
+not include the browser swarmlet host. You can either point your browser to a server
+that does at <a href="https://www.icyphy.org/accessors/hosts/browser/test/index.html">https://www.icyphy/hosts/browser/test/index.html</a>,
+or you can run your own test server, provided in the accessors <a href="https://www.icyphy.org/accessors/svn.html">SVN repository</a>, on your local host:
+<pre>
+   cd accessors/web/hosts/browser/test
+   node testServer &
+</pre>
+where "accessors" is the root of your repository copy. Then point your browser to this page:
+<quote>
+   <a href="http://localhost:8088/hosts/browser/test/index.html">http://localhost:8088/hosts/browser/test/index.html</a>
+</quote>
+</p>
+<p>
+If you do not see documentation for the accessors, you can create the documentation as follows:
+<pre>
+   cd accessors/web
+   ant
+</pre>
+</p>
+<p>
+Try some standalone test pages.  These pages have all necessary scripts, but without the icyphy.org formatting:
+<ul>
+	<li> <a href="/accessors/hosts/browser/test/manual/httpClient/testCORS.html">CORS</a>, Cross-Origin Resource Sharing for accessing external sites. </li>
+    <li> <a href="/accessors/hosts/browser/test/manual/httpClient/testJSONP.html">JSONP</a>, JSON with Padding technique for transferring data from external sites.  </li>
+    <li> <a href="/accessors/hosts/browser/test/manual/httpClient/testREST.html">REST</a>, send an HTTP request. </li>
+    <li> <a href="/accessors/hosts/browser/test/manual/httpClient/testStockTick.html">StockTick</a>, get a stock quote and more. </li>
+    <li> <a href="/accessors/hosts/browser/test/manual/httpClient/testWeather.html">Weather</a>, get the forecast for a location.  Requires keys, see <a href="README.txt"> README.txt </a>. </li>
+</ul>
+</p>
+<p>See also <a href="README.txt">README.txt</a>.</p>
+<hr>
+</div>
+<div id="accessorDirectoryTarget"></div>
+</body>
+</html>

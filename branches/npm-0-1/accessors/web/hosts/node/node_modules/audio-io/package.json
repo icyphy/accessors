@@ -1,0 +1,13 @@
+{
+  "name": "audio-io",
+  "version": "0.1.0",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "Ilya Rostovtsev",
+      "email": "ilyaforpresident@berkeley.edu"
+    }
+  ],
+  "readme": "ERROR: No README data found!",
+  "license": "BSD-3-Clause"
+}

@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!-- $Id$ -->
+<body>
+	<script type="text/javascript">
+  var ajaxRq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Msxml2.XMLHTTP");
+  ajaxRq.open("GET", "../obsolete/Weather.xml", false);
+  ajaxRq.send(null);
+  document.write('<pre>');
+  document.write(ajaxRq.responseText.replace(/</g,"&lt;"));
+  document.write('</pre>');
+</script>
+</body>
+</html>

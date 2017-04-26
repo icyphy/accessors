@@ -1,0 +1,62 @@
+/* Subset of items from accessorStyle.css and accessorPageStyle.css*/
+
+/* Directory will be light on dark. */
+.accessorDirectory {
+    padding: 10px;
+    font-size: 100%;
+}
+
+/* So that there is spacing before the table titles. */
+.accessorTableTitle:before {
+    margin-top: 10px;
+}
+/* Table style. */
+.accessorTableHeader {
+    text-align: left;
+    padding: 3px;
+    border: 1px solid lightgrey;
+}
+.accessorTable {
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+.accessorTableData {
+    border: 1px solid lightgrey;
+    padding: 3px;
+}
+
+/* Used to hide table rows for parameters and inputs with "expert" visibility.  
+   These parameters and inputs still need to be defined on the HTML page so 
+   that their values are accessible to the browser host. */
+.invisible {
+	display : none;
+}
+
+/* Ensure that documentation doesn't occupy more than 50% of the width of the table. */
+.accessorDocumentation {
+    width: 50%;
+}
+
+/* Style for pretty printed JavaScript. */
+.prettyprint {
+    background-color: #eeffff;
+}
+
+/* Style for error messages. */
+.accessorError {
+    color: #cc1111;
+}
+
+/* Style for warning messages. */
+.accessorWarning {
+    color: #991111;
+}
+
+/* Put buttons at the right. */
+#revealCode, #reactToInputs {
+    float: right;
+}
+
+

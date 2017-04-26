@@ -1,0 +1,177 @@
+/* Colors:
+   See http://www.berkeley.edu/brand/img/colors/WebColor_accessible_AA_swatches.pdf
+   
+   Berkeley Blue (dark blue): #003262
+   California Gold (strong orange-yellow): #FDB515
+   Founder's Rock (medium blue): #3B7EA1
+   Lawrence (bright blue): #00B0DA, R: 0 G: 176 B: 218
+   Sather Gate (pale green): #B9D3B6, R: 185 G: 211 B: 182
+   South Hall (dark brown): #6C3302
+   Web Background Grey (light grey): #EEEEEE
+   Web Bay Fog (light brown-gray): #DDD5C7, R: 221 G: 213 B: 199
+   Web Grey (medium grey): #888888
+   Web Lap Lane (teal):  #00A598
+   Web Medalist (bronze): #C4820E
+   Web Pacific (dark grey): #46535E, R: 70 G: 83 B: 94
+   Wellman Tile (rust): #D9661G
+   */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: #EEEEEE;
+} 
+
+
+.page  {
+	font-size: 2em;
+	color: #FFFFFF;
+}
+
+.project {
+	font-size: 2em;
+	color: #FFFFFF;
+	height: 270px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#page2, #page7 {
+	background-color: #3B7EA1;
+}
+
+#page3, #page8 {
+	background-color: #D9661F;
+}
+
+#page4 {
+	background-color: #C4820E;
+}
+
+#page5 {
+	background-color: #003262;
+}
+
+#page6 {
+	background-color: #888888;
+}
+
+
+.projecttext {
+	padding-top: 0.5em;
+	padding-left: 1em;
+}
+	
+.projectimage {
+	height: 100%;
+	display: block; 
+}
+
+.left {
+	float: left;
+	margin-right: 1em;
+}
+
+.right {
+	float: right;
+	margin-left: 1em;
+}
+
+.backgroundpage {
+	font-weight: bold;
+	color: white;
+	text-align: center;
+	height: 100%;
+}
+
+#slogan1 {
+	padding-top: 2em;
+	font-size: 4em;
+}
+
+#slogan2 {
+	font-size: 3em
+}
+
+#slogan3 {
+	font-size: 1.5em
+}
+
+.multiple-items {
+	width: 70%;
+	margin: 0 auto;
+}
+
+.buttontable{
+	padding: 1em;
+	margin: 1em auto;
+}
+
+.buttontable td {
+	padding: 1em;
+}
+
+.background {
+   
+	height:100%;
+	width:100%; 
+	background-image: url("images/DSC_0231.jpg");
+	background-size: cover;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+}
+.keyword {
+	font-size: 1em;
+	color: #CFDD45;
+}
+
+.description {
+	font-size: 0.7em;
+	color: #FFFFFF;
+}
+
+.icontable {
+	padding: 0.5em;
+	font-size: 1em;
+	width: 100%;
+}
+
+.icontable td {
+	padding: 0.5em;
+}
+
+.iconimage {
+	width: 100%;
+}
+
+.iconcontainer {
+	width: 30%;
+}
+
+/*  Generated using http://css3buttongenerator.com/ */
+.btn {
+  background: #00B0DA;
+  background-image: -webkit-linear-gradient(top, #00B0DA, #003262);
+  background-image: -moz-linear-gradient(top, #00B0DA, #003262);
+  background-image: -ms-linear-gradient(top, #00B0DA, #003262);
+  background-image: -o-linear-gradient(top, #00B0DA, #003262);
+  background-image: linear-gradient(to bottom, #00B0DA, #003262);
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 8px 20px 8px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #B9D3B6;
+  background-image: -webkit-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -moz-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -ms-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: -o-linear-gradient(top, #B9D3B6, #00A598);
+  background-image: linear-gradient(to bottom, #B9D3B6, #00A598);
+  text-decoration: none;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Camera Accessor Demo</title>
+ <script src="/accessors/hosts/browser/browser.js"></script>
+ <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+ 
+ <script>
+ 	var initialValues = {};
+  	initialValues["Camera.trigger"] = true; 
+ </script>
+</head>
+  
+<body>
+<div id="instructions">
+Welcome to the Camera demo!
+<ol>
+	<li> Scroll down to "Inputs".  Click "react to inputs". </li>
+	<li> When the prompt appears, select a webcam and click "Share Selected Device". </li>
+	<li> The video feed and a still image will appear. </li>
+	<li> To take another still image, click "react to inputs" again. </li>
+</ol>  
+
+</div>
+<div class="accessor"
+   src="cameras/Camera"
+   id="Camera"></div>
+</body>
+</html>

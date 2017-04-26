@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!-- A logger using the WebSocketClient.  
+	 ADD INSTRUCTIONS ONCE FINALIZED
+	 
+	 Image credits:
+	 Moto 360:  https://www.motorola.com/us/products/motomaker/FLEXR8?style=ATO800001&deviceStyle=ATO800001&carrier=ATO800001&action=designNew
+	 Hue:  http://www2.meethue.com/en-us/products/
+	 Hands: https://pixabay.com/en/hands-hand-raised-hands-raised-220163/ 
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title> GDP Smartwatch Log </title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/src/WebSocketLog/websocketlog.css">
+    
+    <script>
+    
+        // Define initial values for accessor inputs.  Do so here vs. in the accessor
+        //  definition since they're specific to this scenario.  Wait until page
+        //  has loaded so that form fields exist.   
+ 	    var initialValues = {};
+        
+        // TYPE IN IP ADDRESS OF YOUR MACHINE HERE.
+        // ADDED DEFAULTS FOR terra.eecs
+ 	    initialValues["WebSocketClient.server"] = "terra.eecs.berkeley.edu";
+ 	    initialValues["WebSocketClient.port"] = 8090;
+ 	    initialValues["WebSocketClient.receiveType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sendType"] = "text/plain";
+ 	    initialValues["WebSocketClient.sslTls"] = false;
+	</script>
+	
+	<script>
+		function startLog() {
+		
+	    	// Register an event listener for the button.
+	    	document.getElementById("showAccessor").addEventListener("click", function() {
+	    		var accessorDiv = document.getElementById("WebSocketClient");
+	    		if (accessorDiv.style.display === "none") {
+	    			accessorDiv.style.display = "";
+	    			document.getElementById("showAccessor").textContent = "Hide Accessor";
+	    		} else {
+	    			accessorDiv.style.display = "none";
+	    			document.getElementById("showAccessor").textContent = "Show Accessor";
+	    		}
+	    	});
+		  
+		  	// Watch for changes in the WebSocketClient.received output.
+		  	// Wait a bit after onload to make sure accessors are fully loaded.
+		  	setTimeout(function() {
+			  document.getElementById('log').value = "";
+			  
+			  document.getElementById('WebSocketClient.received')
+			  	.addEventListener('DOMSubtreeModified', function() {
+				  var value = 
+					  document.getElementById('WebSocketClient.received').innerText + "\n";
+				  
+				  // Automatically scroll text box to bottom.
+				  document.getElementById("log").scrollTop = 
+					  document.getElementById("log").scrollHeight; 
+				  
+				  // Clear log every 500 characters so it doesn't go to infinity.
+				  if (document.getElementById('log').value.length > 500) {
+					  document.getElementById('log').value = "";
+				  }
+				  
+				  document.getElementById('log').value += value;
+			  });
+			  
+			  // React accessor so graph will update automatically.
+			  reactIfExecutable('WebSocketClient');
+		  	}, 2000);
+
+		}
+		
+		window.addEventListener('load', startLog);
+		
+	</script>
+
+    <script src="/accessors/hosts/browser/browser.js"></script>
+    
+</head>
+<body>
+<div>
+	<div class="main_div">
+		<textarea rows="20" cols="50" id="log"> </textarea> <br>
+		<!--  Add a button to show/hide the accessor. -->
+	    <div>
+	    	<table width="100%">
+	    		<tr> <td> <button id="showAccessor"> Show Accessor </button> <td> 
+	    		     <td> <div id="caption"> Live GDP Log </div></td>
+	    		</tr>
+	    	</table>
+		</div>
+	</div>
+	
+
+	<!-- These divs are in reverse order since they are floated right. -->
+	<div class="hue_div"> 
+		<div>
+			<img src="hue.jpg" height="160px"> 
+		</div>
+		<div>
+			We'll get the lights. 
+		</div>
+	</div>
+	
+	<div class="watch_div"> 
+		<div>
+			<!-- TODO:  Figure out how to re-scale image height without overflowing div -->
+			<img src="moto360.jpg" height="160px">
+		</div>
+		<div>
+			Raise your hand. 
+		</div>
+	</div>
+	
+</div>
+
+<div class="poster_div"> powered by accessors + GDP  <br> (theme 2 poster) </div>
+<!-- The display:none hides the accessor. -->
+	<div class="accessor"
+	   src="net/WebSocketClient"
+	   id="WebSocketClient"
+	   style="display:none"></div>
+	   
+<div>
+ 	<img src="hands.jpg" width="100%">
+</div>
+   
+
+  
+</body>
+</html>	
