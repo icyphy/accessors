@@ -10,6 +10,7 @@ fi
 echo "@@@@: $0: About to build locally"
 gdpVersion=`cat $PTII/vendors/gdp/gdp/git-version.txt`
 # Build locally
+export PKGMGR=brew
 $PTII/org/terraswarm/accessor/accessors/web/gdp/adm/gdpBuildDevelEnvironment.sh
 (cd $PTII/lib; svn commit -m "Updated gdp libraries on Darwin to $gdpVersion" libgdp*)
 
