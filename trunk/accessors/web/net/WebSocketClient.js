@@ -143,7 +143,7 @@
 'use strict';
 /*jslint plusplus: true */
 
-var WebSocket = require('webSocketClient');
+var WebSocket = require('@accessors-modules/web-socket-client');
 var client = null;
 var pendingSends = [];
 var previousServer, previousPort;

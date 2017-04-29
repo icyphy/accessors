@@ -6,13 +6,7 @@
 // 
 //   ../../../../node_modules/.bin/mocha testGeoCoder.js
 
-var nodeHost;
-try {
-    nodeHost = require('../../../../hosts/node/nodeHost.js');
-} catch (err) {
-    // FIXME: When running (cd $PTII; ant test.mocha), we need the absolute path?
-    nodeHost = require(process.cwd() + '/org/terraswarm/accessor/accessors/web/hosts/node/nodeHost.js');
-}
+var nodeHost = require('@accessors-hosts/node');
 
 var fs = require('fs');
 

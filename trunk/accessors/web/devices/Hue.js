@@ -87,7 +87,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var http = require('httpClient');
+var http = require('@accessors-modules/http-client');
 
 // Node Host needs util defined.
 var util = require('util');

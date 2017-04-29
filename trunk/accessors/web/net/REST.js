@@ -112,7 +112,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var httpClient = require('httpClient');
+var httpClient = require('@accessors-modules/http-client');
 var querystring = require('querystring');
 
 /** Define inputs and outputs. */
