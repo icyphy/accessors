@@ -6,7 +6,7 @@
 //    ../../../../node_modules/.bin/mocha testSimpleMutable.js
 
 var assert = require('assert');
-var nodeHost = require('../../../../hosts/node/nodeHost.js');
+var nodeHost = require('@accessors-hosts/node');
 
 // describe() is a mocha function.
 // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.

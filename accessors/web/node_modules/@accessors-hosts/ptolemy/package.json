@@ -1,0 +1,27 @@
+{
+  "name": "@accessors-hosts/ptolemy",
+  "author": "Edward A. Lee <eal@berkeley.edu>",
+  "contributors" : [
+  
+  ],
+  "description": "A ptolemy module for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "capecodeImport.png",
+        "capecodeLibrary.png",
+        "capecodeWelcome.png",
+        "index.html"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "ptolemy"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

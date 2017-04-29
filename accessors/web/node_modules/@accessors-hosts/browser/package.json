@@ -1,0 +1,35 @@
+{
+  "name": "@accessors-hosts/browser",
+  "author": "Edward A. Lee <eal@berkeley.edu>",
+  "contributors" : [
+        "Beth Osyk <beth@berkeley.edu>",
+        "Christopher Brooks <cxh@eecs.berkeley.edu>"  
+  ],
+  "description": "A browser for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "accessorMobilePageStyle.css",
+        "accessorMobileStyle.css",
+        "accessorPageStyle.css",
+        "accessorStyle.css",
+        "browser.js",
+        "common",
+        "demo",
+        "index.html",
+        "modules",
+        "test",
+        "toc.htm"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "browser"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "browser.js",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

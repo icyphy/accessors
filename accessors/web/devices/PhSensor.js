@@ -48,7 +48,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var http = require('httpClient');
+var http = require('@accessors-modules/http-client');
 
 /** Set up the accessor by defining the inputs and outputs.
  */

@@ -1,0 +1,25 @@
+{
+  "name": "@accessors-hosts/nashorn",
+  "author": "Christopher Brooks <cxh@eecs.berkeley.edu>",
+  "contributors" : [
+        "Edward A. Lee <eal@berkeley.edu>"  
+  ],
+  "description": "A nashorn for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "nashornAccessorHost",
+        "test"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "nashorn"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

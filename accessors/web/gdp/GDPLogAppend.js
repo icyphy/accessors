@@ -1,6 +1,6 @@
 /* Append to a Global Data Plane (GDP) log. */
 
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -56,7 +56,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var GDP = require('gdp');
+var GDP = require('@accessors-modules/gdp');
 var handle = null;
 var log = null;
 var oldLogname = null;
