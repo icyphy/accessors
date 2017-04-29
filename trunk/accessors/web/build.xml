@@ -6,17 +6,11 @@
   <!-- We can refer to any environment variable FOO as ${env.FOO} -->
   <property environment="env" />
 
-  <!-- Location of the eduk sources.  eduk is the embedded duktape
-       binary that does not use a file system.  Duktape is an embedded
-       JavaScript interpreter.
-  -->
-  <property name="eduk.source" value="${basedir}/hosts/duktape/eduk"/>
-
   <!-- Location of the Duktape 2.x eduk sources.  eduk is the embedded duktape
        binary that does not use a file system.  Duktape is an embedded
        JavaScript interpreter.
   -->
-  <property name="eduk2.source" value="${basedir}/hosts/duktape/eduk2"/>  
+  <property name="eduk2.source" value="${basedir}/node_modules/@accessors-hosts/duktape/eduk2"/>  
 
   <!-- Location of the chai directory.
        We use ../node_modules so that we are not installing modules
@@ -29,14 +23,11 @@
   <!-- Location of the chai-string directory. -->
   <property name="chai-string.directory" value="${basedir}/../node_modules/chai-string"/>
 
-  <!-- Location of the Duktape sources. -->
-  <property name="duktape.source" value="${basedir}/../hosts/duktape/duktape"/>
-
   <!-- Location of the Duktape-2.x sources. -->
-  <property name="duktape2.source" value="${basedir}/../hosts/duktape/duktape2"/>
+  <property name="duktape2.source" value="${basedir}/node_modules/@accessors-hosts/duktape/duktape2"/>
 
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
-  <property name="jsdoc.home" value="node_modules/@terraswarm/jsdoc" />
+  <property name="jsdoc.home" value="${basedir}/../node_modules/@terraswarm/jsdoc" />
 
     <!-- The location of the jsdoc command, used by the jsdoc target. -->
   <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
@@ -62,7 +53,7 @@
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
-  <property name="rusteduk.source" value="${basedir}/../hosts/duktape/rusteduk"/>
+  <property name="rusteduk.source" value="${basedir}/node_modules/@accessors-hosts/duktape/rusteduk"/>
 
   <!-- Location of the selenium-webdriver directory. -->
   <property name="selenium-webdriver.directory" value="${basedir}/../node_modules/selenium-webdriver"/>
@@ -230,11 +221,7 @@
   <target name="clean.duktape" 
 	  description="Remove the duktape binaries.">
     <delete quiet="true" verbose="no"
-	    file="hosts/duktape/duktape/duk"/>
-    <delete quiet="true" verbose="no"
 	    file="hosts/duktape/duktape2/duk2"/>
-    <delete quiet="true" verbose="no"
-	    file="hosts/duktape/eduk/eduk"/>
     <delete quiet="true" verbose="no"
 	    file="hosts/duktape/eduk2/eduk2"/>
     <exec dir="${rusteduk.source}"
@@ -246,25 +233,12 @@
 
   </target>
 
-  <!-- Build eduk first because it updates the .h files from the .js files
+  <!-- Build eduk2 first because it updates the .h files from the .js files
        that are used by eduk and duk.
   --> 
   <target name="duktape"
-          depends="eduk, duk, eduk2, duk2, rusteduk"
+          depends="eduk2, duk2, rusteduk"
           description="Build the duktape binaries">
-  </target>
-
-  <target name="duk"
-	  depends="eduk"
-          description="Build the duk binary.  Requires make and a C compiler.">
-    <echo>The duk binary has more command line options that the eduk binary.
-    The duk binary would not be deployed on an embedded machine.
-    </echo>
-    <exec dir="${duktape.source}"
-          executable="make"
-	  failonerror="true"
-          timeout="${timeout}">
-    </exec>
   </target>
 
   <target name="duk2"
@@ -281,20 +255,6 @@
     </exec>
   </target>
   
-  <target name="eduk"
-          description="Build the eduk binary.  Requires xxd, make and gcc.">
-    <echo>The eduk binary has fewer command line options than the duk binary.
-    The eduk binary is what would be deployed on an embedded machine.
-    The eduk binary can also be run from the command line.
-    </echo>
-    <chmod file="${eduk.source}/js2h"
-	   perm="a+x"/>
-    <exec dir="${eduk.source}"
-          executable="make"
-          timeout="${timeout}">
-    </exec>
-  </target>
-
   <target name="eduk2"
           description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc.">
     <echo>The eduk2 binary has fewer command line options than the duk binary.
@@ -309,16 +269,6 @@
     </exec>
   </target>
   
-  <target name="eduk.tcmalloc"
-          description="Build the eduk with tcmalloc for heap profiling">
-    <exec dir="${eduk.source}"
-          executable="make"
-          failonerror="true"
-          timeout="${timeout}">
-      <arg value="eduk.tcmalloc"/>
-    </exec>
-  </target>
-
   <target name="jsdoc"
           depends="jsdoc-update"
           description="Run jsdoc to generate documentation for JavaScript files."
@@ -586,8 +536,8 @@
   </target>
 
   <target name="tests"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
-          description="Run the CapeCode, Browser, Duktape, eduk, node and Nashorn host tests">
+          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
+          description="Run the CapeCode, Browser, Duktape2, eduk2, node and Nashorn host tests">
   </target>
 
   <target name="-ptII-exists" unless="ptII.exists">
@@ -675,89 +625,6 @@
     </echo>
   </target>
 
-  <target name="tests.duk"
-          depends="tests.duk.test, tests.duk.auto"
-          description="Execute the duktape tests in duktape/test and test/auto.">
-  </target>
-
-  <target name="tests.duk.auto"
-          depends="duk"
-          description="Execute the duk tests in test/auto.">
-    <echo>
-      == tests.duk.auto ==
-      
-    </echo>
-    <!-- Use relative pathnames here so that we can look them up. -->
-    <apply dir="."
-           executable="hosts/duktape/duktape/duk"
-	   failonerror="${tests.failonerror}"
-	   relative="true"
-	   resultproperty="tests.resultproperty"
-	   timeout="${timeout}">
-      <arg value="--echo"/>
-      <arg value="--accessor"/>
-      <arg value="--timeout"/>
-      <arg value="4000"/>
-      <fileset dir=".">
-	<!-- eduk does not have a separate eduk test directory, we just
-	     run the accessors in test/auto instead.
-	--> 
-	<include name="test/auto/*.js"/>
-        <patternset refid="accessors.excludes" />
-      </fileset>
-    </apply>
-
-    <echo>
-      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
-    </echo>
-
-  </target>
-  
-  <target name="tests.duk.test"
-          depends="duk"
-          description="Execute the duktape tests in duktape/test.">
-    <echo>
-      == tests.duk.test ==
-      To replicate:
-      (cd hosts; duktape/duktape/duk duktape/test/test*.js)
-    </echo>      
-    <apply dir="hosts"
-           executable="duktape/duktape/duk"
-	   failonerror="${tests.failonerror}"
-	   resultproperty="tests.resultproperty"
-	   timeout="${timeout}">
-      <fileset dir="hosts">
-        <include name="duktape/test/test*.js"/>
-        <patternset refid="accessors.excludes" />
-      </fileset>
-    </apply>
-
-    <echo>
-      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
-    </echo>
-
-  </target>
-
   <target name="tests.duk2"
           depends="tests.duk2.test, tests.duk2.auto"
           description="Execute the duktape2 tests in duktape/test and test/auto.">
@@ -772,7 +639,7 @@
     </echo>
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
-           executable="hosts/duktape/duktape2/duk2"
+           executable="${duktape2.source}/duk2"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   resultproperty="tests.resultproperty"
@@ -782,7 +649,7 @@
       <arg value="--timeout"/>
       <arg value="4000"/>
       <fileset dir=".">
-	<!-- eduk does not have a separate eduk test directory, we just
+	<!-- eduk2 does not have a separate eduk2 test directory, we just
 	     run the accessors in test/auto instead.
 	--> 
 	<include name="test/auto/*.js"/>
@@ -814,8 +681,7 @@
       To replicate:
       (cd hosts; duktape/duktape2/duk2 duktape/test/test*.js)
     </echo>      
-    <apply dir="hosts"
-           executable="duktape/duktape2/duk2"
+    <apply executable="${duktape2.source}/duk2"
 	   failonerror="${tests.failonerror}"
 	   resultproperty="tests.resultproperty"
 	   timeout="${timeout}">
@@ -841,49 +707,10 @@
 
   </target>
 
-  <target name="tests.eduk"
-          depends="eduk"
-          description="Execute the eduk tests.">
-    <!-- Use relative pathnames here so that we can look them up. -->
-    <apply dir="hosts"
-           executable="duktape/eduk/eduk"
-	   failonerror="${tests.failonerror}"
-	   relative="true"
-	   resultproperty="tests.resultproperty"
-	   timeout="${timeout}">
-      <arg value="--timeout"/>
-      <arg value="4000"/>
-      <fileset dir=".">
-	<!-- eduk does not have a separate eduk test directory, we just
-	     run the accessors in test/auto instead.
-	--> 
-	<include name="test/auto/*.js"/>
-        <patternset refid="accessors.excludes" />
-      </fileset>
-    </apply>
-
-    <echo>
-      ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
-    </echo>
-
-  </target>
-
   <target name="tests.eduk2"
           depends="eduk2"
           description="Execute the eduk2 tests.">
-    <!-- Use relative pathnames here so that we can look them up. -->
-    <apply dir="hosts"
-           executable="duktape/eduk2/eduk2"
+    <apply executable="${eduk2.source}/eduk2"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   resultproperty="tests.resultproperty"
@@ -918,7 +745,7 @@
   <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
   
   <target name="tests.jenkins"
-          depends="tests.capecode, tests.browser, tests.duk, tests.eduk, tests.nashorn, tests.mocha.xml, tests.coverage"
+          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
