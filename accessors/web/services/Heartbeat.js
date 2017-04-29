@@ -58,7 +58,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var http = require('httpClient');
+var http = require('@accessors-modules/http-client');
 var os = require('os');
 
 // Mothership expects the Heartbeat clients to use a key.
