@@ -179,7 +179,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var socket = require('socket');
+var socket = require('@accessors-modules/socket');
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {

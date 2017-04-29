@@ -1,6 +1,6 @@
 /* Accessor for GDP Key-Value Store. */
 
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -36,7 +36,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var httpClient = require('httpClient');
+var httpClient = require('@accessors-modules/http-client');
 
 /** Define inputs and outputs. */
 exports.setup = function () {

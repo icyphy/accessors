@@ -83,7 +83,7 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-var httpServer = require('httpServer');
+var httpServer = require('@accessors-modules/http-server');
 var util = require('util');
 
 /** Sets up the accessor by defining inputs and outputs. */

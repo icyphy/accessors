@@ -52,7 +52,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var cameras = require("cameras");
+var cameras = require("@accessors-modules/cameras");
 var camera;
 var handle = null;
 

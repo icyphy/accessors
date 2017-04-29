@@ -1,0 +1,21 @@
+{
+  "name": "@accessors-modules/http-server",
+  "author": "Beth Osyk <beth@berkeley.edu>",
+  "contributors" : [
+        "Christopher Brooks <cxh@eecs.berkeley.edu>"  
+  ],
+  "description": "An http server for Accessors (actor-oriented proxies for IoT)",
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "http-server"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "http-server.js",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}
