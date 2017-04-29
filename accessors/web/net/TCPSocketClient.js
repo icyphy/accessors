@@ -183,7 +183,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var socket = require('socket');
+var socket = require('@accessors-modules/socket');
 var openSocket = false; // state variable used for isOpen function.
 var client = null;
 var running = false;

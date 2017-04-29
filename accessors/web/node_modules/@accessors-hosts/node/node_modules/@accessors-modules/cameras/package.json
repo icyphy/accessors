@@ -1,0 +1,24 @@
+{
+  "name": "@accessors-modules/cameras",
+  "author": "",
+  "contributors" : [
+  
+  ],
+  "description": "A @accessors-modules/cameras for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "cameras.js"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "cameras"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "cameras.js",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

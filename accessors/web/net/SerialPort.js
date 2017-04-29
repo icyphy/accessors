@@ -77,7 +77,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var serial = require('serial');
+var serial = require('@accessors-modules/serial');
 var port = null;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */

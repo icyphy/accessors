@@ -1,0 +1,13 @@
+{
+    "name": "@accessors-modules/discovery",
+    "version": "0.1.0",
+    "main": "discovery.js",
+    "license" : "BSD-3-Clause",
+    "contributors": [
+        {"name" : "Christopher Brooks"
+         , "email" : "cxh@eecs.berkeley.edu"},
+        {"name" : "Elizabeth Osyk"
+         , "email" : "beth@berkeley.edu"}
+],
+"description": "A package that discovers hosts on the local network."
+}

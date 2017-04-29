@@ -1,0 +1,25 @@
+{
+  "name": "@accessors-modules/serial",
+  "author": "Christopher Brooks <cxh@eecs.berkeley.edu>",
+  "contributors" : [
+        "Beth Osyk <beth@berkeley.edu>"  
+  ],
+  "description": "A serial for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "serial.js",
+        "test.js"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "serial"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "serial.js",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

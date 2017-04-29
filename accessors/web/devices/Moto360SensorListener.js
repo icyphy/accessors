@@ -81,7 +81,7 @@
 
 // This accessor requires the optional 'udpSocket' module, which may or may
 // not be provided by an accessor host. Most hosts will provide this module.
-var UDPSocket = require('udpSocket');
+var UDPSocket = require('@accessors-modules/udp-socket');
 
 // FIXME: Use built in debug capability.
 var debug = true;

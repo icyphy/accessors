@@ -97,7 +97,7 @@
 'use strict';
 /*jslint plusplus: true */
 
-var WebSocket = require('webSocketServer');
+var WebSocket = require('@accessors-modules/web-socket-server');
 var server = null;
 var running = false;
 var debug = false;
