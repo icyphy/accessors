@@ -10,8 +10,8 @@ var chai = require('chai');
 chai.use(require('chai-string'));
 var assert = chai.assert;        
 var should = chai.should();
+var HostHelper = require('../../../../node_modules/@accessors-hosts/common/modules/hostHelper.js');
 //var HostHelper = require('../../../../hosts/common/modules/hostHelper.js');
-var HostHelper = require('@accessors-hosts/common/modules/hostHelper.js');
 var hostHelper = new HostHelper.HostHelper();
 
 // describe() is a mocha function.
