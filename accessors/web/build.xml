@@ -576,8 +576,8 @@
       target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/../reports/junit"/>
-    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
-    <exec dir="hosts/browser/test"
+    <echo> Running (cd node_modules/@accessors-hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
+    <exec dir="node_modules/@accessors-hosts/browser/test"
 	  executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="regressionTestScript.js"/>
