@@ -30,7 +30,15 @@
  *
  * See https://github.com/isaacs/node-glob
  *
+ * To run:
+ * (cd accessors/web; node reports/status/calculateAccessorMap.js)
+ * which creates reports/status/accessorMap.txt 
+ *
+ * See
+ * https://www.icyphy.org/accessors/wiki/Notes/Status#Automating
+ *
  * @module accessorMap
+ *
  * @author Beth Osyk, contributor: Christopher Brooks
  * @version: $$Id$$
  */
@@ -41,7 +49,7 @@ var glob = require('glob');
 // To run, invoke calculate().  Must be run from /accessors/web
 module.exports = (function () {
 
-    var baseDir = "./hosts";
+    var baseDir = "./node_modules/@accessors-hosts";
     // The contents of the resultsFile is the string representation of
     // a JSON object with two keys, the value of the testToAccessors
     // variable and the value of the accessorsToHosts variables below.
