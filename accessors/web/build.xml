@@ -111,10 +111,47 @@
        See  https://github.com/jsdoc3/jsdoc/issues/555
        -->
   <target name="build"
-          depends="duktape, jsdoc, ptdoc"
+          depends="copy, duktape, jsdoc, ptdoc"
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
+  <target name="copy"
+          description="Copy files from commonHost to cordova and jxcore">
+    <copy todir="node_modules/@accessors-hosts/cordova/cordova1/DemoApp/www/jxcore">
+      <resources>
+        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
+        <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
+        <file file="node_modules/@accessors-hosts/node/nodeHost.js"/>
+        <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+      </resources>
+    </copy>
+    <copy todir="./node_modules/@accessors-hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
+      <resources>
+        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
+        <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
+        <file file="node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics.js"/> 
+        <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
+      </resources>
+    </copy>
+
+    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common">
+        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
+    </copy>
+
+    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common/modules">
+      <file file="node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics.js"/>
+      <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
+      <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
+      <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+    </copy>
+
+    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common/modules">
+      <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
+      <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
+      <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+    </copy>
+
+  </target>
   <target name="-cargo-in-path">
     <property environment="env" />
     <available file="cargo"
