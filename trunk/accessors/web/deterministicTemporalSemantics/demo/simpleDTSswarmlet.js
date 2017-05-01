@@ -28,7 +28,6 @@
  *  This "swarmlet" example, running on node Host, illustrates the deterministric
  *  temporal semantics implementation
  *
- *  @module smpleDTSswarmlet
  *  @author Chadlia Jerad
  *  @version $$Id$$
  */
