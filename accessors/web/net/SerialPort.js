@@ -55,6 +55,8 @@
  *
  *  This accessor requires the 'serial' module.
  *
+ *  See [https://accessors.org/wiki/VersionCurrent/Serial](https://accessors.org/wiki/VersionCurrent/Serial).
+ *
  *  @accessor net/SerialPort
  *
  *  @input toSend The data to be sent over the serial port.
