@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd C:\workspaceluna\ptII\org\terraswarm\accessor\accessors\web\net\test\auto; node ../../../hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTPost)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTPost)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/C:/workspaceluna/ptII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode file:/C:/workspaceluna/ptII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTPost.xml
 
     // Ports: TestRESTPost: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
