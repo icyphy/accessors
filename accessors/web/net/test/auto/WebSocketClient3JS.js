@@ -1,15 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
-    //  PTII: c:/workspaceluna/ptII
-
-    //  codeDirectory.asFile().getCanonicalPath().replace('\', '/'): $PTII/org/terraswarm/accessor/accessors/web/net/test/auto
-
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/WebSocketClient3JS)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js net/test/auto/WebSocketClient3JS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode file:/C:/workspaceluna/ptII/org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
+    //  $PTII/bin/capecode $PTII/./org/terraswarm/accessor/test/auto/WebSocketClient3JS.xml
 
     // Ports: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -56,4 +52,4 @@ exports.setup = function() {
     this.connect(JavaScript, 'toSend', WebSocketServer, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript, 'connectionReady');
 };
-this.stopAt(15000.0);
+this.stopAt(20000.0);
