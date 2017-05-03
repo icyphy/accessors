@@ -33,7 +33,7 @@
  */
 
 
-var nodeHost = require('../../hosts/node/nodeHost.js');
+var nodeHost = require('../../node_modules/@accessors-hosts/node/nodeHost.js');
 
 // Instantiating the accessors
 var spAcc1 = nodeHost.instantiate('spAcc1', './deterministicTemporalSemantics/SpontaneousPeriodic.js');
