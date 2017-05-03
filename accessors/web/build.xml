@@ -860,10 +860,10 @@
 
       ==tests.mocha.composite==
       This target uses mocha to run the composite accessors via
-      hosts/node/test/mocha/testNodeAllAuto.js
+      node_modules/@accessors-hosts/node/test/mocha/testNodeAllAuto.js
       If necessary, mocha is installed in node_modules/
       To run only the composite accessors in one directory:
-      mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
+      mocha node_modules/@accessors-hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
       target timeout = ${timeout} ms.
@@ -875,7 +875,7 @@
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout}">
-      <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
+      <arg line="node_modules/@accessors-hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
     <echo>
