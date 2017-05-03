@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../hosts/node/nodeHostInvoke.js -timeout 6000 test/auto/RampJSTestDisplay)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../node_modules/@accessors-hosts/node/nodeHostInvoke.js test/auto/RampJSTestDisplay)
     //  To regenerate this composite accessor, run:
     //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/RampJSTestDisplay.xml
 
     // Ports: RampJSTestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 

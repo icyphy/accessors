@@ -1,11 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js   net/test/auto/SerialLoopbackUnsignedByte)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js   net/test/auto/SerialLoopbackUnsignedByte)
     //  To regenerate this composite accessor, run:
     //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/serial/test/auto/SerialLoopbackUnsignedByte.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/./ptolemy/actor/lib/jjs/modules/serial/test/auto/SerialLoopbackUnsignedByte.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/serial/test/auto/SerialLoopbackUnsignedByte.xml
 
     // Ports: SerialLoopbackUnsignedByte: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
