@@ -1,15 +1,11 @@
 exports.setup = function() {
     //  This composite accessor was created by Cape Code.
-    //  PTII: /Users/cxh/ptII
-
-    //  codeDirectory.asFile().getCanonicalPath().replace('\', '/'): /Users/cxh/ptII/org/terraswarm/accessor/accessors/web/net/test/auto
-
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../hosts/node/nodeHostInvoke.js net/test/auto/WebServerBasic)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/WebServerBasic)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
 
     // Ports: WebServerBasic: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
