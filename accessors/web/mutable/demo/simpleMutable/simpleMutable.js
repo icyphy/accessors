@@ -34,7 +34,7 @@
  */
 
 
-var nodeHost = require('../../../hosts/node/nodeHost.js');
+var nodeHost = require('../../../node_modules/@accessors-hosts/node/nodeHost.js');
 
 
 var ma = nodeHost.instantiate('ma', './mutable/MutableTestGain.js');
