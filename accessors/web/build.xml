@@ -874,7 +874,7 @@
     <exec executable="${mocha.command}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
-	  timeout="${timeout}">
+	  timeout="${timeout.longer}">
       <arg line="node_modules/@accessors-hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
