@@ -100,4 +100,17 @@ exports.setup = function() {
     this.connect(GDPLogCreate, 'output', GDPLogAppend2, 'logname');
     this.connect(JavaScriptRamp, 'output', GDPLogAppend2, 'data');
 };
-this.stopAt(8000.0);
+
+// To update the initialize code below, modify
+//   $PTII/ptolemy/cg/kernel/generic/accessor/AccessorCodeGenerator.java
+if (exports.initialize) {
+    var originalInitialize = exports.initialize;
+    exports.initialize = function() {
+        originalInitialize();
+        this.stopAt(8000.0);
+    }
+} else {
+    exports.initialize = function() {
+        this.stopAt(8000.0);
+    }
+}
