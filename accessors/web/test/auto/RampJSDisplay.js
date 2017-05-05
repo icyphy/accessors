@@ -29,4 +29,17 @@ exports.setup = function() {
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
 };
-this.stopAt(5000.0);
+
+// To update the initialize code below, modify
+//   $PTII/ptolemy/cg/kernel/generic/accessor/AccessorCodeGenerator.java
+if (exports.initialize) {
+    var originalInitialize = exports.initialize;
+    exports.initialize = function() {
+        originalInitialize();
+        this.stopAt(5000.0);
+    }
+} else {
+    exports.initialize = function() {
+        this.stopAt(5000.0);
+    }
+}
