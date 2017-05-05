@@ -27,4 +27,17 @@ exports.setup = function() {
     this.connect(TestAdder, 'sum', 'output');
     this.connect(TestGain, 'scaled', TestAdder, 'inputRight');
 };
-this.stopAt(3000.0);
+
+// To update the initialize code below, modify
+//   $PTII/ptolemy/cg/kernel/generic/accessor/AccessorCodeGenerator.java
+if (exports.initialize) {
+    var originalInitialize = exports.initialize;
+    exports.initialize = function() {
+        originalInitialize();
+        this.stopAt(3000.0);
+    }
+} else {
+    exports.initialize = function() {
+        this.stopAt(3000.0);
+    }
+}

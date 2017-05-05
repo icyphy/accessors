@@ -21,4 +21,17 @@ exports.setup = function() {
     // Connections: CaptureOpenLoop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(Camera, 'image', ImageDisplay, 'input');
 };
-this.stopAt(20000.0);
+
+// To update the initialize code below, modify
+//   $PTII/ptolemy/cg/kernel/generic/accessor/AccessorCodeGenerator.java
+if (exports.initialize) {
+    var originalInitialize = exports.initialize;
+    exports.initialize = function() {
+        originalInitialize();
+        this.stopAt(20000.0);
+    }
+} else {
+    exports.initialize = function() {
+        this.stopAt(20000.0);
+    }
+}
