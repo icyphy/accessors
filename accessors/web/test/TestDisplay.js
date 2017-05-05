@@ -45,7 +45,7 @@ exports.setup = function () {
 exports.initialize = function () {
     this.addInputHandler('input', function () {
         var inputValue = this.get('input');
-        console.log(inputValue);
+        console.log(this.accessorName + ': ' + inputValue);
         this.send('output', inputValue);
     });
 };
