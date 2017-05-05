@@ -37,7 +37,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var imageDisplay = require('@accessors-modules/imageDisplay');
+var imageDisplay = require('@accessors-modules/image-display');
 var display = null;
 
 exports.setup = function () {
