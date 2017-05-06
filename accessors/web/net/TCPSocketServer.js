@@ -183,6 +183,7 @@ var socket = require('@accessors-modules/socket');
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
+    console.log('TCPSocketServer.js: setup() start.');
     this.input('toSend');
     this.input('toSendID', {
         type: 'int',
@@ -191,7 +192,7 @@ exports.setup = function () {
     this.output('listening', {
         type: 'int'
     });
-    this.output('connection');
+    this.output('connection', {spontaneous: true});
     this.output('received');
     this.output('receivedID');
 
@@ -272,6 +273,7 @@ exports.setup = function () {
     } catch (err) {
         error(err);
     }
+    console.log('TCPSocketServer.js: setup() end.');
 };
 
 var server = null;
@@ -282,17 +284,23 @@ var sockets = [];
  *  on the most recently received value on the `toSendID` input.
  */
 exports.toSendInputHandler = function () {
+    console.log('TCPSocketServer.js: toSendInputHandler() start.');
     var dataToSend = this.get('toSend');
     var idToSendTo = this.get('toSendID');
     if (idToSendTo === 0) {
         // Broadcast to all sockets.
         for (var i = 0; i < sockets.length; i++) {
+            console.log('TCPSocketServer.js: toSendInputHandler() socket[' + i + '].');
             if (sockets[i]) {
+                console.log('TCPSocketServer.js: toSendInputHandler() socket[' + i + ']. sending: ' + dataToSend);
                 sockets[i].send(dataToSend);
+                console.log('TCPSocketServer.js: toSendInputHandler() socket[' + i + ']. done sending: ' + dataToSend);
             }
         }
     } else if (sockets[idToSendTo]) {
+        console.log('TCPSocketServer.js: toSendInputHandler() socket[idToSendTo]: ' + dataToSend);
         sockets[idToSendTo].send(dataToSend);
+        console.log('TCPSocketServer.js: toSendInputHandler() socket[idToSendTo]: ' + dataToSend + ' done.');
     } else {
         var discardSendToUnopenedSocket = this.getParameter('discardSendToUnopenedSocket');
         if (discardSendToUnopenedSocket) {
@@ -303,6 +311,7 @@ exports.toSendInputHandler = function () {
                 ', but this socket is not open.');
         }
     }
+    console.log('TCPSocketServer.js: toSendInputHandler() end.');
 };
 
 /** Initialize the accessor by starting the server with the current parameter values
@@ -314,6 +323,7 @@ exports.toSendInputHandler = function () {
  *  for incoming data, errors, and closing of the socket from the remote site.
  */
 exports.initialize = function () {
+    console.log('TCPSocketServer.js: initialize() start: port: ' + this.getParameter('port'));
 
     server = new socket.SocketServer({
         'clientAuth': this.getParameter('clientAuth'),
@@ -340,11 +350,12 @@ exports.initialize = function () {
     });
 
     server.on('listening', function (port) {
-        console.log('Server: Listening for socket connection requests on port ' + port);
+        console.log('TCPSocketServer.js: Listening for socket connection requests on port ' + port);
         self.send('listening', port);
     });
 
     server.on('connection', function (serverSocket) {
+        console.log('TCPSocketServer.js: initialize() connection: localPort: ' + serverSocket.localPort + ', remotePort: ' + serverSocket.remotePort());
         // serverSocket is an instance of the Socket class defined
         // in the socket module.
         connectionCount++;
@@ -360,16 +371,19 @@ exports.initialize = function () {
         sockets[socketInstance] = serverSocket;
 
         serverSocket.on('close', function () {
+            console.log('TCPSocketServer.js: initialize() close ');
             socketID.status = 'closed';
             self.send('connection', socketID);
             // Avoid a memory leak here.
             sockets[socketInstance] = null;
         });
         serverSocket.on('data', function (data) {
+            console.log('TCPSocketServer.js: initialize() data: ' + data);
             self.send('received', data);
             self.send('receivedID', connectionCount);
         });
         serverSocket.on('error', function (message) {
+            console.log('TCPSocketServer.js: initialize() error: ' + error);
             self.error(message);
         });
     });
@@ -380,11 +394,13 @@ exports.initialize = function () {
     // Bind the input handler to caller's object so that when it is invoked,
     // it is invoked in the context of that object and not this one.
     this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    console.log('TCPSocketServer.js: initialize() end');
 };
 
 /** Close all sockets, unregister event listeners, and stop the server.
  */
 exports.wrapup = function () {
+    console.log('TCPSocketServer.js: wrapup()');
     sockets = [];
 
     if (server !== null) {
