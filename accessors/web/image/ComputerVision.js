@@ -53,7 +53,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var cv = require("computerVision");
+var cv = require("@accessors-modules/computer-vision");
 
 /** Create inputs, outputs and parameters for the accessor.
  */
