@@ -355,7 +355,7 @@ exports.initialize = function () {
     });
 
     server.on('connection', function (serverSocket) {
-        console.log('TCPSocketServer.js: initialize() connection: localPort: ' + serverSocket.localPort + ', remotePort: ' + serverSocket.remotePort());
+        console.log('TCPSocketServer.js: server connection listener: localPort: ' + serverSocket.localPort + ', remotePort: ' + serverSocket.remotePort());
         // serverSocket is an instance of the Socket class defined
         // in the socket module.
         connectionCount++;
@@ -371,19 +371,19 @@ exports.initialize = function () {
         sockets[socketInstance] = serverSocket;
 
         serverSocket.on('close', function () {
-            console.log('TCPSocketServer.js: initialize() close ');
+            console.log('TCPSocketServer.js: serverSocket close listener');
             socketID.status = 'closed';
             self.send('connection', socketID);
             // Avoid a memory leak here.
             sockets[socketInstance] = null;
         });
         serverSocket.on('data', function (data) {
-            console.log('TCPSocketServer.js: initialize() data: ' + data);
+            console.log('TCPSocketServer.js: serverSocket data listener: ' + data);
             self.send('received', data);
             self.send('receivedID', connectionCount);
         });
         serverSocket.on('error', function (message) {
-            console.log('TCPSocketServer.js: initialize() error: ' + error);
+            console.log('TCPSocketServer.js: serverSocket error listener: ' + message);
             self.error(message);
         });
     });
