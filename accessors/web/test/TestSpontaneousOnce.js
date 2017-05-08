@@ -1,6 +1,6 @@
 // Test accessor that spontaneously produces outputs once.
 //
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -26,9 +26,10 @@
  *  This implementation produces a counting sequence.
  *
  *  @accessor test/TestSpontaneousOnce
- *  @parameter interval The interval before the output in milliseconds.
- *  @output output Output for the counting sequence, of type number.
- *  @author Christopher Brooks. Based on TestSpontaneous by Edward A. Lee
+ *  @parameter delay The delay in milliseconds before the value is outputk.
+ *  @parameter value The value to be output after the delay.
+ *  @output output The output port
+ *  @author Christopher Brooks and Edward A. Lee. Based on TestSpontaneous by Edward A. Lee
  *  @version $$Id$$
  */
 
@@ -39,27 +40,25 @@
 "use strict";
 
 exports.setup = function () {
-    this.parameter('interval', {
+    this.parameter('delay', {
         'type': 'number',
         'value': 1000
     });
-    this.output('output', {
-        'type': 'number'
-    });
+    this.parameter('value', {
+        'value': true
+    }); 
+    this.output('output');
 };
 
 // These variables will not be visible to subclasses.
 var handle = null;
-var count = 0;
 
 exports.initialize = function () {
-    count = 0;
     // Need to record 'this' for use in the callback.
     var thiz = this;
     handle = setTimeout(function () {
-        count += 1;
-        thiz.send('output', count);
-    }, this.getParameter('interval'));
+        thiz.send('output', thiz.getParameter('value'));
+    }, this.getParameter('delay'));
 };
 
 exports.wrapup = function () {
