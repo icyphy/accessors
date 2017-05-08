@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test Page for ClipPlayer </title>
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    <script>
+        // Define initial values for accessor inputs.  Do so here vs. in the 
+        // accessor definition since they're specific to this scenario.   
+        // browser.js looks for initialValues variable. 
+ 	    var initialValues = {};
+        initialValues["ClipPlayer.clipURL"] = "\"http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3\"";
+        initialValues["ClipPlayer.start"] = true; 
+    </script> 
+    <script src="/accessors/hosts/browser/browser.js"></script>
+</head>
+<body>
+<div> <p> Please turn on your speakers and click "react to inputs".  You should 
+ hear jazz music.  </p>
+</div>
+<div class="accessor"
+   src="audio/ClipPlayer"
+   id="ClipPlayer"></div>
+</body>
+</html>

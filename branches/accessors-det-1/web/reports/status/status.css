@@ -1,0 +1,65 @@
+@import url(//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: #FFFFFF;
+} 
+
+table {
+	font-size: 1em;
+	width: 80%;
+	margin: 0em;
+	border-spacing: 0em;
+	border-collapse: collapse;
+}
+
+th, td {
+   border: 1px solid gray;
+   padding: 0.3em;
+   text-align: center;
+}
+
+td.name {text-align: left;}
+
+td.testname {
+	text-align: left;
+	padding-left: 2em;
+}
+
+#table tr:hover {background-color: #B8D5E4;}
+
+/* Test cases */
+tr.hidden, tr.visible {background-color: #f2f2f2;}
+
+tr.hidden {
+	visibility: collapse;
+}
+
+th {
+	background-color: #3B7EA1;
+	color: #FFFFFF;
+}
+
+.page {
+	margin: 2em;
+}
+
+.failed {
+	color: #b22222;
+	font-weight: bold;
+}
+
+.partial {
+	color: #ee7600;
+}
+
+.passed {
+	color: #228b22;
+}
+
+.supported {
+	color: #3B7EA1;
+	font-weight: bold;
+}
+
+

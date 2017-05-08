@@ -1,0 +1,32 @@
+{
+  "name": "@accessors-hosts/duktape",
+  "author": "Christopher Brooks <cxh@eecs.berkeley.edu>",
+  "contributors" : [
+        "Edward A. Lee <eal@berkeley.edu>",
+        "Edward A. Lee <eal@berkeley.edu>"  
+  ],
+  "description": "A duktape for Accessors (actor-oriented proxies for IoT)",
+  "files": [
+        "duktape",
+        "duktape2",
+        "duktapeHost.js",
+        "eduk",
+        "eduk2",
+        "mbed-duktape2",
+        "rusteduk",
+        "test"
+  ],
+  "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "duktape"
+   ],
+  "license": "BSD-3-Clause",
+  "main": "duktapeHost.js",
+  "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+   },
+   "version": "0.1.0"
+}

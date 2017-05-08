@@ -1,0 +1,9 @@
+{
+    "plugins": ["../node_modules/@terraswarm/jsdoc/plugins/markdown", "jsdoc/plugins/accessorJSDocTags"],
+    "markdown": {
+        "tags": ["accessor", "input", "output", "parameter"]
+    },
+    "source": {
+        "excludePattern": "(doc|browser/common|browser/modules|browser/test/lib|hosts/cordova/DemoApp/www/jxcore|node_modules\\/[^@]|node_modules/@accessors-hosts/jxcore/jxcore/common|node_modules/@accessors-hosts/cordova/cordova1/DemoApp|node_modules/@accessors-hosts/cordova/cordova2/demo|rusteduk/duk|vendors)"
+    }
+}

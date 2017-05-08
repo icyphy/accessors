@@ -1,0 +1,14 @@
+[
+    "audio",
+    "cameras",
+    "devices",
+    "gdp",
+    "image",
+    "net",
+    "robotics",
+    "geodesy",
+    "services",
+    "signals",
+    "test",
+    "utilities"
+]

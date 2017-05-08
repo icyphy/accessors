@@ -1,0 +1,21 @@
+{
+    "name": "@accessors-modules/socket",
+    "contributors": [
+        {"name" : "Christopher Brooks"
+         , "email" : "cxh@berkeley.edu"}
+    ],
+    "description": "A socket for Accessors (actor-oriented proxies for IoT).",
+    "keywords": [
+        "accessors",
+        "actor",
+        "IoT",
+        "tcp socket"
+    ],
+    "license" : "BSD-3-Clause",
+    "main": "socket.js",
+    "repository": {
+        "type": "svn",
+        "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
+    },
+    "version": "0.1.0"
+}

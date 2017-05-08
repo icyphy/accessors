@@ -1,0 +1,242 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="TestDroneLocationAndADSB" class="ptolemy.actor.TypedCompositeActor">
+    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.0.devel">
+    </property>
+    <property name="DE Director" class="ptolemy.domains.de.kernel.DEDirector">
+        <property name="stopWhenQueueIsEmpty" class="ptolemy.data.expr.Parameter" value="false">
+        </property>
+        <property name="synchronizeToRealTime" class="ptolemy.data.expr.Parameter" value="true">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="68.0, 32.0">
+        </property>
+    </property>
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={264, 53, 921, 612}, maximized=false}">
+    </property>
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 500]">
+    </property>
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.8000000000000006">
+    </property>
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{168.71875000000006, 181.2747844827586}">
+    </property>
+    <entity name="Display" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={-2, 24, 1370, 746}, maximized=true}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[1366, 694]">
+        </property>
+        <property name="rowsDisplayed" class="ptolemy.data.expr.Parameter" value="8">
+        </property>
+        <property name="columnsDisplayed" class="ptolemy.data.expr.Parameter" value="10">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[485.0, 160.0]">
+        </property>
+    </entity>
+    <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={123, 150, 1121, 216}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[877, 164]">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[485.0, 240.0]">
+        </property>
+    </entity>
+    <entity name="DroneLocation" class="org.terraswarm.accessor.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Copyright (c) 2016-2016 The Regents of the University of California.&#10;// All rights reserved.&#10;//&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;//&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;//&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;//&#10;&#10;/** This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10; * such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10; * In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10; * Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &quot;rosed mavros apm2.launch&quot;&#10; * and launch the node using the command &quot;roslaunch mavros apm2.launch&quot;. The accessor uses a websocket to access ros.&#10; * Thus, you need also to install rosbridge_server and launch &quot;roslaunch rosbridge_server rosbridge_websocket.launch&quot;.&#10; *&#10; *  @accessor robotics/DroneLocation&#10; *  @author Eloi T. Pereira (eloi@berkeley.edu)&#10; *  @version $$Id: DroneLocation.js 1121 2016-11-28 05:49:50Z cxh $$&#10; *  @parameter {string} rosbridgeServer RosBridge server address&#10; *  @parameter {int} rosbridgePort RosBridge server port&#10; *  @output {double} lat Latitude of the drone&#10; *  @output {double} lon Longitude of the drone&#10; *  @output {double} alt Altitude of the drone&#10; */&#10;&#10;// Stop extra messages from jslint and jshint.  Note that there should&#10;// be no space between the / and the * and global. See&#10;// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */&#10;/*globals addInputHandler, get, error, exports, extend, get, input, output, parameter, require, send */&#10;/*jshint globalstrict: true*/&#10;'use strict';&#10;&#10;/** Set up the accessor by defining the inputs and outputs.&#10; */&#10;&#10;&#10;exports.setup = function () {&#10;    var sub = this.instantiate('RosSubscriber', 'robotics/RosSubscriber');&#10;    var g = this.instantiate('Global2LatLonAlt', 'robotics/Global2LatLonAlt');&#10;&#10;    sub.setParameter('topic', &quot;/mavros/global_position/global&quot;);&#10;    this.parameter('rosbridgeServer', {&#10;        type: 'string',&#10;        value: 'localhost'&#10;    });&#10;    this.parameter('rosbridgePort', {&#10;        type: 'int',&#10;        value: 9090&#10;    });&#10;&#10;    this.input('server', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.input('port', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.output('lat', {&#10;        type: 'double',&#10;        value: 0.0&#10;    });&#10;    this.output('lon', {&#10;        type: 'double',&#10;        value: 0.0&#10;    });&#10;    this.output('alt', {&#10;        type: 'double',&#10;        value: 0.0&#10;    });&#10;    this.connect('server', sub, 'server');&#10;    this.connect('port', sub, 'port');&#10;    this.connect(sub, 'received', g, 'global');&#10;    this.connect(g, 'lat', 'lat');&#10;    this.connect(g, 'lon', 'lon');&#10;    this.connect(g, 'alt', 'alt');&#10;};&#10;&#10;exports.initialize = function () {&#10;    var server = this.getParameter('rosbridgeServer').toString();&#10;    var port = this.getParameter('rosbridgePort');&#10;    this.send('server', server);&#10;    this.send('port', port);&#10;};&#10;">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/robotics/DroneLocation.js">
+        </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the mavros ROS package to access a mavlink-based autopilot&#10;such as the APM, APM2 and Px4 in order retrieve the GPS location and altitude of the drone.&#10;In order to run this accessor you need a ROS distribtion (tested with indigo) and the mavros package.&#10;Plug in your mavelink-based autopilot (e.g. APM2), configure the baud rate using the command &amp;quot;rosed mavros apm2.launch&amp;quot;&#10;and launch the node using the command &amp;quot;roslaunch mavros apm2.launch&amp;quot;. The accessor uses a websocket to access ros.&#10;Thus, you need also to install rosbridge_server and launch &amp;quot;roslaunch rosbridge_server rosbridge_websocket.launch&amp;quot;.&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: DroneLocation.js 1121 2016-11-28 05:49:50Z cxh $$">
+            </property>
+            <property name="lat (port)" class="ptolemy.kernel.util.StringAttribute" value="Latitude of the drone">
+            </property>
+            <property name="lon (port)" class="ptolemy.kernel.util.StringAttribute" value="Longitude of the drone">
+            </property>
+            <property name="alt (port)" class="ptolemy.kernel.util.StringAttribute" value="Altitude of the drone">
+            </property>
+            <property name="rosbridgeServer (parameter)" class="ptolemy.kernel.util.StringAttribute" value="RosBridge server address">
+            </property>
+            <property name="rosbridgePort (parameter)" class="ptolemy.kernel.util.StringAttribute" value="RosBridge server port">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[90.0, 185.0]">
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="rosbridgeServer" class="ptolemy.data.expr.Parameter" value="localhost">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <port name="server" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="port" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="lat" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="lon" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="alt" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+    </entity>
+    <entity name="AdsB" class="org.terraswarm.accessor.JSAccessor">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Copyright (c) 2016 The Regents of the University of California.&#10;// All rights reserved.&#10;&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;&#10;/** This accessor uses the dump1090 driver to access a Software-Defined Radio&#10; * such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10; * in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an&#10; * aircraft periodically broadcasts its state such as location, altitude, heading, etc.&#10; * In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090,&#10; * plug your SDR USB dongle, and run ./dump1090 --net --interactive&#10; * One can also feed the accessor with a reference location (e.g. from an autopilot) and a threshold parameter.&#10; * If a reference location is provided, the accessor retrieves all the aircrafts within the threshold distance in the output &quot;traffic&quot;&#10; *  @accessor devices/AdsB&#10; *  @author Eloi T. Pereira (eloi@berkeley.edu)&#10; *  @version $$Id: AdsB.js 1597 2017-04-29 15:41:50Z cxh $$&#10; *  @input {trigger}&#10; *  @input {double} latRef Latitude of the reference location&#10; *  @input {double} lonRef Longitude of the reference location&#10; *  @input {double} altRef Altitude of the reference location&#10; *  @parameter {string} dump1090Server The address of the web server created by dump1090&#10; *  @parameter {int} port The port of the web server created by dump1090&#10; *  @parameter {int} timeToLiveIfNotUpdated The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device&#10; *  @parameter {double} threshold Threshold distance in kilometers&#10; *  @output {object} aircrafts An object mapping aircraft flight IDs to aircraft state&#10; *  @output {object} traffic Aircrafts within a threshold distance of the reference location&#10; */&#10;&#10;// Stop extra messages from jslint and jshint.  Note that there should&#10;// be no space between the / and the * and global. See&#10;// https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */&#10;/*globals addInputHandler, console, get, error, exports, extend, get, input, output, parameter, require, send */&#10;/*jshint globalstrict: true*/&#10;'use strict';&#10;&#10;var http = require('@accessors-modules/http-client');&#10;&#10;var map = {};&#10;&#10;/** Set up the accessor by defining the inputs and outputs.&#10; */&#10;exports.setup = function () {&#10;    this.extend('net/REST');&#10;&#10;    this.parameter('dump1090Server', { // address of the web server created by dump1090&#10;        type: 'string',&#10;        value: 'localhost'&#10;    });&#10;    this.parameter('port', { // port of the web server created by dump1090&#10;        type: 'int',&#10;        value: 8080&#10;    });&#10;&#10;    this.parameter('timeToLiveIfNotUpdated', { // time in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device&#10;        type: 'int',&#10;        value: 20000&#10;    });&#10;    this.parameter('threshold', {&#10;        type: 'double',&#10;        value: null&#10;    });&#10;    this.input('options', {&#10;        'visibility': 'expert',&#10;        'value': '&quot;http://localhost:8080&quot;'&#10;    });&#10;    this.input('command', {&#10;        'visibility': 'expert',&#10;        'value': '/dump1090/data.json'&#10;    });&#10;    this.input('arguments', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.input('body', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.input('latRef', {&#10;        type: 'double',&#10;        value: null&#10;    });&#10;    this.input('lonRef', {&#10;        type: 'double',&#10;        value: null&#10;    });&#10;    this.input('altRef', {&#10;        type: 'double',&#10;        value: null&#10;    });&#10;    this.output('headers', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.output('status', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.output('response', {&#10;        'visibility': 'expert'&#10;    });&#10;    this.output('aircrafts');&#10;    this.output('traffic');&#10;    this.parameter('outputCompleteResponsesOnly', {&#10;        'visibility': 'expert'&#10;    });&#10;};&#10;&#10;function llaEuclideanDistance(lat1, lon1, alt1, lat2, lon2, alt2) {&#10;    var a = 6378137.0; //WGS-84 semi-major axis (meters)&#10;    var e2 = 0.0066943799901377997; //WGS-84 first eccentricity squared&#10;    var lat1Rad = lat1 * Math.PI / 180;&#10;    var lon1Rad = lon1 * Math.PI / 180;&#10;    var n1 = a / Math.sqrt(1 - e2 * Math.sin(lat1Rad) * Math.sin(lat1Rad));&#10;    var x1 = (n1 + alt1) * Math.cos(lat1Rad) * Math.cos(lon1Rad);&#10;    var y1 = (n1 + alt1) * Math.cos(lat1Rad) * Math.sin(lon1Rad);&#10;    var z1 = (n1 * (1 - e2) + alt1) * Math.sin(lat1Rad);&#10;    var lat2Rad = lat2 * Math.PI / 180;&#10;    var lon2Rad = lon2 * Math.PI / 180;&#10;    var n2 = a / Math.sqrt(1 - e2 * Math.sin(lat2Rad) * Math.sin(lat2Rad));&#10;    var x2 = (n2 + alt2) * Math.cos(lat2Rad) * Math.cos(lon2Rad);&#10;    var y2 = (n2 + alt2) * Math.cos(lat2Rad) * Math.sin(lon2Rad);&#10;    var z2 = (n2 * (1 - e2) + alt2) * Math.sin(lat2Rad);&#10;    var dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) + Math.pow(z1 - z2, 2));&#10;    return dist;&#10;}&#10;&#10;exports.initialize = function () {&#10;    this.exports.ssuper.initialize.call(this);&#10;    var serverUrl = 'http://' + this.getParameter('dump1090Server').toString() + ':' + this.getParameter('port').toString();&#10;    this.send('options', {&#10;        &quot;url&quot;: serverUrl&#10;    });&#10;    var self = this;&#10;    this.addInputHandler('latRef', function () {&#10;        var latRef = Number(self.get('latRef'));&#10;        var lonRef = Number(self.get('lonRef'));&#10;        var altRef = Number(self.get('altRef'));&#10;        var threshold = self.getParameter('threshold');&#10;        //console.log(&quot;Reference: lat = &quot; + latRef + &quot; lon = &quot; + lonRef + &quot; alt &quot; + altRef + &quot; thrsld = &quot; + threshold);&#10;        if (latRef &amp;&amp; lonRef &amp;&amp; altRef &amp;&amp; threshold) {&#10;            var filteredMap = {};&#10;            for (var a in map) {&#10;                var lat = Number(map[a].lat);&#10;                var lon = Number(map[a].lon);&#10;                var alt = Number(map[a].alt);&#10;                //console.log(&quot;Aircraft &quot; + a + &quot; is at lat = &quot; + lat + &quot; lon = &quot; + lon + &quot; alt &quot; + alt);&#10;                var distance = llaEuclideanDistance(latRef, lonRef, altRef, lat, lon, alt);&#10;                console.log(&quot;Aircraft &quot; + a + &quot; is within &quot; + distance + &quot; meters.&quot;);&#10;                if (distance &lt; threshold * 1000) {&#10;                    filteredMap[a] = map[a];&#10;                    console.log(&quot;Aircraft &quot; + a + &quot; is within thresold distance.&quot;);&#10;                }&#10;            }&#10;            self.send('traffic', filteredMap);&#10;        }&#10;    });&#10;};&#10;&#10;var AircraftState = function (lat, lon, alt, speed, heading, squawk, seen) {&#10;    this.lat = lat;&#10;    this.lon = lon;&#10;    this.alt = alt;&#10;    this.speed = speed;&#10;    this.heading = heading;&#10;    this.squawk = squawk;&#10;    this.seen = seen;&#10;};&#10;&#10;/** Filter the response, extracting the aircrat information. The full response is produced&#10; *  on the 'response' output.&#10; */&#10;exports.filterResponse = function (response) {&#10;&#10;    if (response) {&#10;        try {&#10;            // Check if response is JSON or stringified JSON.  If stringified, parse.&#10;            var parsed;&#10;            if (typeof response == &quot;object&quot;) {&#10;                parsed = response;&#10;            } else {&#10;                parsed = JSON.parse(response);&#10;            }&#10;&#10;            var currentTime = (new Date()).getTime();&#10;            for (var i = 0; i &lt; parsed.length; i++) {&#10;                var a = parsed[i];&#10;                if (a.flight !== '' &amp;&amp; a.validposition == 1 &amp;&amp; a.validtrack == 1) {&#10;                    var s = new AircraftState(a.lat, a.lon, a.altitude, a.speed, a.track, a.squawk, (currentTime - a.seen * 1000));&#10;                    var key = a.flight.replace(/ /g, '');&#10;                    map[key] = s;&#10;                }&#10;            }&#10;            for (var k in map) {&#10;                var elapsed = currentTime - map[k].seen;&#10;                if (elapsed &gt; this.getParameter('timeToLiveIfNotUpdated')) {&#10;                    //console.log(k + &quot;, it has been more than &quot; + this.getParameter('timeToLiveIfNotUpdated') + &quot; ms since I've last seen you. Im going to delete you.&quot;);&#10;                    delete map[k];&#10;                }&#10;            }&#10;            this.send('aircrafts', map);&#10;        } catch (err) {&#10;            error('AdsB: Unable to parse response: ' + err.message);&#10;            this.send('aircrafts', null);&#10;        }&#10;    } else {&#10;        this.send('aircrafts', null);&#10;    }&#10;    return response;&#10;};&#10;">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/devices/AdsB.js">
+        </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;This accessor uses the dump1090 driver to access a Software-Defined Radio&#10;such as the NooElec R820T (http://www.nooelec.com/store/sdr/sdr-receivers/nesdr-mini-rtl2832-r820t.html)&#10;in order to receive and parse ADS-B messages. ADS-B  is a cooperative surveillance technology in which an&#10;aircraft periodically broadcasts its state such as location, altitude, heading, etc.&#10;In order to run this accessor you need to compile the dump1090 driver from https://github.com/MalcolmRobb/dump1090,&#10;plug your SDR USB dongle, and run ./dump1090 --net --interactive&#10;One can also feed the accessor with a reference location (e.g. from an autopilot) and a threshold parameter.&#10;If a reference location is provided, the accessor retrieves all the aircrafts within the threshold distance in the output &amp;quot;traffic&amp;quot;&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Eloi T. Pereira (eloi@berkeley.edu)">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id: AdsB.js 1597 2017-04-29 15:41:50Z cxh $$">
+            </property>
+            <property name="undefined (port)" class="ptolemy.kernel.util.StringAttribute" value="undefined">
+            </property>
+            <property name="aircrafts (port)" class="ptolemy.kernel.util.StringAttribute" value="An object mapping aircraft flight IDs to aircraft state">
+            </property>
+            <property name="dump1090Server (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The address of the web server created by dump1090">
+            </property>
+            <property name="port (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The port of the web server created by dump1090">
+            </property>
+            <property name="timeToLiveIfNotUpdated (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The time interval in millisecond after which an aircraft is removed from the list in case an update is not received from the SDR device">
+            </property>
+            <property name="latRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Latitude of the reference location">
+            </property>
+            <property name="lonRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Longitude of the reference location">
+            </property>
+            <property name="altRef (port)" class="ptolemy.kernel.util.StringAttribute" value="Altitude of the reference location">
+            </property>
+            <property name="traffic (port)" class="ptolemy.kernel.util.StringAttribute" value="Aircrafts within a threshold distance of the reference location">
+            </property>
+            <property name="threshold (parameter)" class="ptolemy.kernel.util.StringAttribute" value="Threshold distance in kilometers">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[320.0, 175.0]">
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="options" class="ptolemy.actor.parameters.PortParameter" value="&quot;http://localhost:8080&quot;">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="command" class="ptolemy.actor.parameters.PortParameter" value="/dump1090/data.json">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="arguments" class="ptolemy.actor.parameters.PortParameter" value="">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="dump1090Server" class="ptolemy.data.expr.Parameter" value="localhost">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="threshold" class="ptolemy.data.expr.Parameter" value="10">
+        </property>
+        <property name="outputCompleteResponsesOnly" class="ptolemy.data.expr.Parameter">
+        </property>
+        <port name="options" class="ptolemy.actor.parameters.ParameterPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </port>
+        <port name="command" class="ptolemy.actor.parameters.ParameterPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="arguments" class="ptolemy.actor.parameters.ParameterPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </port>
+        <port name="trigger" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="body" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="response" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="status" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="headers" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="latRef" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="lonRef" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="altRef" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="aircrafts" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="traffic" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+    </entity>
+    <relation name="relation" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation2" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation5" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="[195.0, 155.0]">
+        </vertex>
+    </relation>
+    <link port="Display.input" relation="relation"/>
+    <link port="Display2.input" relation="relation2"/>
+    <link port="DroneLocation.lat" relation="relation6"/>
+    <link port="DroneLocation.lon" relation="relation4"/>
+    <link port="DroneLocation.alt" relation="relation5"/>
+    <link port="AdsB.trigger" relation="relation6"/>
+    <link port="AdsB.latRef" relation="relation6"/>
+    <link port="AdsB.lonRef" relation="relation4"/>
+    <link port="AdsB.altRef" relation="relation5"/>
+    <link port="AdsB.aircrafts" relation="relation"/>
+    <link port="AdsB.traffic" relation="relation2"/>
+</entity>

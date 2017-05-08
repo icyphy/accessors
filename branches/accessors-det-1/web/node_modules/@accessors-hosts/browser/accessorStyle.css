@@ -1,0 +1,127 @@
+/********** Following are specifically for accessor displays. *********/
+
+/* Directory will be light on dark. */
+/* This is where the menu on the left gets its colors. */
+.accessorDirectory {
+    padding: 10px;
+    font-size: 100%;
+    background-color: #33060FF;
+    color: #f8da73;
+}
+
+/* Accessor menu links are styled a little differently than other menu links. 
+   The #accessorMenu gets its own ID since the #menu styling in UCB.css 
+   overrides any sub-divs if it is loaded after accessorStyle.css. */ 
+#accessorMenu {
+	font-size:85%;
+	text-align:left;
+}
+
+#acceesorMenu ul {
+	list-style-type:none;
+}
+
+#accessorMenu a {
+	display:block; 
+	width:170px;
+	text-indent: 10px;
+	color:#e7c254;
+	background:#33060FF;
+	text-decoration:none;
+}
+
+/* Consistency with buttons. */
+.accessorButton {
+    font-size: 100%;
+    background-color: #f8da73;
+}
+/* So that 'reveal code' button appears to the right of the title. */
+#accessorTitle {
+    display: inline;
+}
+/* So that 'react to inputs' button appears to the right of the table title. */
+.accessorTableTitle {
+    display: inline;
+}
+/* So that there is spacing before the table titles. */
+.accessorTableTitle:before {
+    margin-top: 10px;
+}
+/* Table style. */
+.accessorTableHeader {
+    background-color: #33060FF;
+    color: #f8da73;
+    text-align: left;
+    padding: 3px;
+    border: 1px solid lightgrey;
+}
+.accessorTable {
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+.accessorTableData {
+    border: 1px solid lightgrey;
+    padding: 3px;
+}
+.accessorTableRow {
+    background-color: #f0f5ff;
+}
+.accessorTableRow:hover {
+    background-color: #ffffcc;
+}
+/* Boldface items in accessor menu on hover-over. Show a hand cursor.  */
+.accessorDirectoryItem:hover {
+	font-weight:bold;
+	cursor: pointer;
+}
+/* Used to hide table rows for parameters and inputs with "expert" visibility.  
+   These parameters and inputs still need to be defined on the HTML page so 
+   that their values are accessible to the browser host. */
+.invisible {
+	display : none;
+}
+/* Song and dance here required to get table cell to stretch, but not overrun the border. */
+.valueInputBox {
+    font-size: 100%;
+    display:table-cell;
+    width:100%;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+}
+/* Ensure that documentation doesn't occupy more than 50% of the width of the table. */
+.accessorDocumentation {
+    width: 50%;
+}
+
+/* Style for contained accessors. */
+.containedAccessor {
+    background-color: #eeffee;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+/* Style for pretty printed JavaScript. */
+.prettyprint {
+    background-color: #eeffff;
+}
+
+/* Style for error messages. */
+.accessorError {
+    color: #cc1111;
+}
+
+/* Style for warning messages. */
+.accessorWarning {
+    color: #991111;
+}
+
+/* Put buttons at the right. */
+#revealCode, #reactToInputs {
+    float: right;
+}
+
+
+
