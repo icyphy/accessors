@@ -242,7 +242,7 @@
     <available property="terraswarm.gdp.exists" file="${terraswarm.gdp}"/>
   </target>
 
-  <target name="cleanAll" 
+  <target name="clean" 
 	  depends="clean.duktape"
 	  description="Remove the reports/ and doc/jsdoc directories.">
     <delete quiet="false" verbose="true" includeemptydirs="true">
@@ -254,6 +254,10 @@
                includes="doc/jsdoc/**"/>
     </delete>
   </target>
+
+  <!-- cleanAll is for backward compatibility. Use 'ant clean' instead of 'ant cleanAll' -->
+  <target name="cleanAll"
+          depends="clean"/>
 
   <target name="clean.duktape" 
 	  description="Remove the duktape binaries.">
