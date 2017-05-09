@@ -72,8 +72,8 @@ exports.setup = function () {
 
 exports.initialize = function () {
     this.addInputHandler('input', function () {
-        console.log("TestGain2: inputHandler: input: " + this.get('input') + " gain: " + this.getParameter('gain'));
-        console.log('TestGain2: scaled: ' + this.get('input') * this.getParameter('gain') + ' opScaled: ' + -(this.get('input') * this.getParameter('gain')));
+        // console.log("TestGain2: inputHandler: input: " + this.get('input') + " gain: " + this.getParameter('gain'));
+        // console.log('TestGain2: scaled: ' + this.get('input') * this.getParameter('gain') + ' opScaled: ' + -(this.get('input') * this.getParameter('gain')));
 
         this.send('scaled', this.get('input') * this.getParameter('gain'));
         this.send('opScaled', -(this.get('input') * this.getParameter('gain')));
