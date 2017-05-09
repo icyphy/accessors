@@ -67,13 +67,13 @@ exports.initialize = function () {
             ' with output = ' + thiz.latestOutput('output'));
     };
 
-    var inter = thiz.setInterval(f1, thiz.getParameter('period'),
-        thiz.getParameter('synchronizationLabel'), thiz);
+    var inter = setInterval(f1, thiz.getParameter('period'),
+        thiz.getParameter('synchronizationLabel'));
 
     var f2 = function () {
-        thiz.clearInterval(inter);
+        clearInterval(inter);
         console.log(thiz.accessorName + ' setInterval cleared.');
     };
 
-    thiz.setTimeout(f2, 12000, 'end');
+    setTimeout(f2, 12000, 'end');
 };

@@ -60,9 +60,9 @@ exports.initialize = function () {
     var numberOfFirings = 0;
     var thiz = this;
 
-    thiz.setTimeout(function () {
+    setTimeout(function () {
         thiz.send('output', ++numberOfFirings);
         console.log(thiz.accessorName + " :: period = " + thiz.getParameter('timeout') +
             ' :: output = ' + thiz.latestOutput('output'));
-    }, thiz.getParameter('timeout'), thiz.getParameter('synchronizationLabel'), thiz);
+    }, thiz.getParameter('timeout'), thiz.getParameter('synchronizationLabel'));
 };
