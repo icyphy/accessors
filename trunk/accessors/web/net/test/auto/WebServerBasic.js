@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/WebServerBasic)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpServer/test/auto/WebServerBasic.xml
 
     // Ports: WebServerBasic: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -31,7 +31,8 @@ exports.setup = function() {
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
-    TestSpontaneousOnce.setParameter('interval', 1000.0);
+    TestSpontaneousOnce.setParameter('delay', 1000.0);
+    TestSpontaneousOnce.setParameter('value', true);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');

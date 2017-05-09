@@ -3,15 +3,16 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTGet)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
 
     // Ports: TestRESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
-    TestSpontaneousOnce.setParameter('interval', 1000.0);
+    TestSpontaneousOnce.setParameter('delay', 1000.0);
+    TestSpontaneousOnce.setParameter('value', true);
 
     // Start: REST: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST = this.instantiate('REST', 'net/REST.js');
@@ -29,7 +30,8 @@ exports.setup = function() {
 
     // Start: TestSpontaneousOnce2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce2 = this.instantiate('TestSpontaneousOnce2', 'test/TestSpontaneousOnce.js');
-    TestSpontaneousOnce2.setParameter('interval', 1000.0);
+    TestSpontaneousOnce2.setParameter('delay', 1000.0);
+    TestSpontaneousOnce2.setParameter('value', true);
 
     // Start: REST2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST2 = this.instantiate('REST2', 'net/REST.js');
@@ -47,7 +49,8 @@ exports.setup = function() {
 
     // Start: TestSpontaneousOnce3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce3 = this.instantiate('TestSpontaneousOnce3', 'test/TestSpontaneousOnce.js');
-    TestSpontaneousOnce3.setParameter('interval', 1000.0);
+    TestSpontaneousOnce3.setParameter('delay', 1000.0);
+    TestSpontaneousOnce3.setParameter('value', true);
 
     // Start: REST3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST3 = this.instantiate('REST3', 'net/REST.js');
