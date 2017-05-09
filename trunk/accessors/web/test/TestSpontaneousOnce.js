@@ -40,7 +40,7 @@
 "use strict";
 
 exports.setup = function () {
-    this.parameter('delay', {
+    this.parameter('interval', {
         'type': 'number',
         'value': 1000
     });
@@ -58,7 +58,7 @@ exports.initialize = function () {
     var thiz = this;
     handle = setTimeout(function () {
         thiz.send('output', thiz.getParameter('value'));
-    }, this.getParameter('delay'));
+    }, this.getParameter('interval'));
 };
 
 exports.wrapup = function () {
