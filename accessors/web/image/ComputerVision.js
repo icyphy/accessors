@@ -33,7 +33,7 @@
  *  Please cvlicense.txt in /accessor/web/hosts/browser/modules/cvlicense.txt
  *
  *  To run, please point your browser to:
- *  https://www.terraswarm.org/accessors/hosts/browser/demo/computervision/computervision.html
+ *  https://www.icyphy.org/accessors/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html
  *
  *  @accessor image/ComputerVision
  *  @input input (string or image) An image or path to a local image.  Remote
