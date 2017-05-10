@@ -223,12 +223,10 @@
   
   <!-- Ideally we would check to see if the host that npm connects to is online, but
        www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
-  <target name="-check-if-accessors-org-is-reachable">
-    <echo>Check to see if accessors.org is pingable.</echo>
-    <condition property="accessors-org-is-reachable">
-      <isreachable
-          timeout="15"
-          host="accessors.org"/>
+  <target name="-check-if-npmjs-org-is-up">
+    <echo>Check to see if https://www.npmjs.org is up.</echo>
+    <condition property="npmjs-org-is-up">
+      <http url="https://www.npmjs.org"/>
     </condition>
   </target>
 
@@ -353,7 +351,7 @@
 
   <target name="jsdoc-install"
 	  depends="-check-jsdoc"
-          if="${accessors-org-is-reachable}"
+          if="${npmjs-org-is-up}"
 	  unless="jsdoc.command.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
@@ -365,13 +363,13 @@
   </target>
 
   <target name="-jsdoc-no-network-message"
-          unless="${accessors-org-is-reachable}">
+          unless="${npmjs-org-is-up}">
     <echo>accessors.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
   </target>
 
   <target name="jsdoc-update"
-	  depends="-check-if-accessors-org-is-reachable, -jsdoc-no-network-message, jsdoc-install"
-          if="${accessors-org-is-reachable}">
+	  depends="-check-if-npmjs-org-is-up, -jsdoc-no-network-message, jsdoc-install"
+          if="${npmjs-org-is-up}">
     <exec dir=".."
           executable="npm"
           timeout="${timeout.npm}">
