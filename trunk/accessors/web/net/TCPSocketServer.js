@@ -379,6 +379,8 @@ exports.initialize = function () {
         });
         serverSocket.on('data', function (data) {
             console.log('TCPSocketServer.js: serverSocket data listener: ' + data);
+            var util = require('util');
+            console.log(util.inspect(data));
             self.send('received', data);
             self.send('receivedID', connectionCount);
         });
