@@ -79,6 +79,9 @@
     <!-- The timeout in milliseconds for Cape Code test -->
   <property name="timeout.longer" value="1200000" />
 
+  <!-- The timeout in milliseconds for the Node Package Manager (npm) -->
+  <property name="timeout.npm" value="45000" />
+
   <!-- Files to exclude. -->
   <patternset id="accessors.excludes">
     <!-- Exclude testSimpleDTSswarmlet.js temporarily and avoid
@@ -172,7 +175,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="chai"/>
     </exec>
@@ -182,7 +185,7 @@
 	  depends="chai-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="chai"/>
     </exec>
@@ -194,7 +197,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="chai-string"/>
     </exec>
@@ -204,7 +207,7 @@
 	  depends="chai-string-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="chai-string"/>
     </exec>
@@ -218,6 +221,17 @@
     <available property="chai-string.directory.exists" file="${chai-string.directory}"/>
   </target>
   
+  <!-- Ideally we would check to see if the host that npm connects to is online, but
+       www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
+  <target name="-check-if-accessors-org-is-reachable">
+    <echo>Check to see if accessors.org is pingable.</echo>
+    <condition property="accessors-org-is-reachable">
+      <isreachable
+          timeout="15"
+          host="accessors.org"/>
+    </condition>
+  </target>
+
   <target name="-check-jsdoc">
     <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
   </target>
@@ -319,6 +333,7 @@
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
     <exec executable="${jsdoc.command}"
+          failonerror="true"
           timeout="${timeout}">
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
@@ -338,21 +353,28 @@
 
   <target name="jsdoc-install"
 	  depends="-check-jsdoc"
+          if="${accessors-org-is-reachable}"
 	  unless="jsdoc.command.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="@terraswarm/jsdoc"/>
     </exec>
   </target>
 
+  <target name="-jsdoc-no-network-message"
+          unless="${accessors-org-is-reachable}">
+    <echo>accessors.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
+  </target>
+
   <target name="jsdoc-update"
-	  depends="jsdoc-install">
+	  depends="-check-if-accessors-org-is-reachable, -jsdoc-no-network-message, jsdoc-install"
+          if="${accessors-org-is-reachable}">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="@terraswarm/jsdoc"/>
     </exec>
@@ -365,7 +387,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="mocha"/>
     </exec>
@@ -375,7 +397,7 @@
 	  depends="mocha-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="mocha"/>
     </exec>
@@ -387,7 +409,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="mocha-junit-reporter"/>
     </exec>
@@ -397,7 +419,7 @@
 	  depends="mocha-junit-reporter-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="mocha-junit-reporter"/>
     </exec>
@@ -409,7 +431,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="nyc"/>
     </exec>
@@ -419,7 +441,7 @@
 	  depends="nyc-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="nyc"/>
     </exec>
@@ -560,7 +582,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="@terraswarm/gdp"/>
     </exec>
@@ -570,7 +592,7 @@
 	  depends="terraswarm-gdp-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="@terraswarm/gdp"/>
     </exec>
@@ -1106,7 +1128,7 @@
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="selenium-webdriver"/>
     </exec>
@@ -1116,7 +1138,7 @@
 	  depends="selenium-webdriver-install">
     <exec dir=".."
           executable="npm"
-          timeout="${timeout}">
+          timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="selenium-webdriver"/>
     </exec>
