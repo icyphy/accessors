@@ -260,7 +260,7 @@
     <delete quiet="false" verbose="true" includeemptydirs="true">
       <fileset dir="${basedir}"
                defaultexcludes="false"
-               includes="reports/junit/**,reports/*.xml,**/*PtDoc.xml"/>
+               includes="reports/junit/**,reports/*.xml,**/*PtDoc.xml,**/duk2,**/eduk2"/>
       <fileset dir="${basedir}"
                defaultexcludes="false"
                includes="doc/jsdoc/**"/>
