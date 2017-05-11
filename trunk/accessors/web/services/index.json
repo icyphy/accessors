@@ -3,6 +3,7 @@
     "Heartbeat.js",
     "NaturalLanguage.js",
     "RedPinLocation.js",
+    "SpeechRecognition.js", 
     "StockTick.js",
     "Weather.js"
 ]
