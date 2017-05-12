@@ -19,7 +19,7 @@ exports.setup = function() {
     WebSocketClient.setParameter('sendType', "application/json");
     WebSocketClient.setParameter('connectTimeout', 1000);
     WebSocketClient.setDefault('server', "localhost");
-    WebSocketClient.setDefault('port', 8087);
+    WebSocketClient.setDefault('port', 8181);
     WebSocketClient.setParameter('trustedCACertPath', "");
     WebSocketClient.setParameter('trustAll', false);
     WebSocketClient.setParameter('sslTls', false);
@@ -27,7 +27,7 @@ exports.setup = function() {
     // Start: WebSocketServer: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketServer = this.instantiate('WebSocketServer', 'net/WebSocketServer.js');
     WebSocketServer.setParameter('hostInterface', "localhost");
-    WebSocketServer.setParameter('port', 8087);
+    WebSocketServer.setParameter('port', 8181);
     WebSocketServer.setParameter('receiveType', "application/json");
     WebSocketServer.setParameter('sendType', "application/json");
     WebSocketServer.setParameter('pfxKeyCertPassword', "");
