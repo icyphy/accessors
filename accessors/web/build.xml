@@ -101,10 +101,10 @@
 
   <fileset id="test.mocha.files" dir="${basedir}">
     <include name="**/mocha/test*.js"/>
-    <!-- hosts/browser/common is a symbolic link -->
-    <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
+    <!-- node_modules/@accessors-hosts/browser/common is a symbolic link -->
+    <exclude name="**/node_modules/@accessors-hosts/browser/common/test/mocha/test*.js"/>
     <!-- Don't include xcore/jxcore/common/test/mocha/testCommon.js --> 
-    <exclude name="**/hosts/jxcore/**/*.js"/>
+    <exclude name="**/node_modules/@accessors-hosts/jxcore/**/*.js"/>
     <!-- exclude name="**/node_modules/**/*.js"/ -->
     <patternset refid="accessors.excludes" />
   </fileset>
@@ -274,9 +274,13 @@
   <target name="clean.duktape" 
 	  description="Remove the duktape binaries.">
     <delete quiet="true" verbose="no"
-	    file="hosts/duktape/duktape2/duk2"/>
+	    file="node_modules/@accessors-hosts/duktape/duktape2/duk2"/>
     <delete quiet="true" verbose="no"
-	    file="hosts/duktape/eduk2/eduk2"/>
+	    file="node_modules/@accessors-hosts/duktape/eduk2/eduk2"/>
+    <delete quiet="true" verbose="no">
+      <fileset dir="node_modules/@accessors-hosts/duktape/eduk2" includes="*.h"/>
+    </delete>
+
     <exec dir="${rusteduk.source}"
           executable="make"
           failonerror="true"
@@ -979,7 +983,7 @@
 
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
-           executable="hosts/nashorn/nashornAccessorHost"
+           executable="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   resultproperty="tests.resultproperty"
@@ -1012,7 +1016,7 @@
 
   <target name="tests.nashorn.test"
           depends="-ptII-exists"
-          description="Execute the Nashorn tests in hosts/nashorn/test."
+          description="Execute the Nashorn tests in node_modules/@accessors-hosts/nashorn/test."
           if="${ptII.exists}">
     <echo>
       == tests.nashorn.test ==
@@ -1020,7 +1024,7 @@
       The Nashorn accessor host is a subset of the Cape Code accessor host.
     </echo>
 
-    <chmod file="hosts/nashorn/nashornAccessorHost"
+    <chmod file="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
@@ -1059,7 +1063,7 @@
       target timeout = ${timeout} ms.
     </echo>
 
-    <chmod file="hosts/nashorn/nashornAccessorHost"
+    <chmod file="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <exec dir="hosts"
           executable="nashorn/nashornAccessorHost"
