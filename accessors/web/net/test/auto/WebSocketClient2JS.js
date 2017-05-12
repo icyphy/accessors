@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js net/test/auto/WebSocketClient2JS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
+    //  $PTII/bin/capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketClient2JS.xml
 
     // Ports: WebSocketClient2JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -19,7 +19,7 @@ exports.setup = function() {
     WebSocketClient.setParameter('sendType', "application/json");
     WebSocketClient.setParameter('connectTimeout', 1000);
     WebSocketClient.setDefault('server', "localhost");
-    WebSocketClient.setDefault('port', 8091);
+    WebSocketClient.setDefault('port', 8182);
     WebSocketClient.setParameter('trustedCACertPath', "");
     WebSocketClient.setParameter('trustAll', false);
     WebSocketClient.setParameter('sslTls', false);
@@ -27,7 +27,7 @@ exports.setup = function() {
     // Start: WebSocketServer: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebSocketServer = this.instantiate('WebSocketServer', 'net/WebSocketServer.js');
     WebSocketServer.setParameter('hostInterface', "localhost");
-    WebSocketServer.setParameter('port', 8091);
+    WebSocketServer.setParameter('port', 8182);
     WebSocketServer.setParameter('receiveType', "application/json");
     WebSocketServer.setParameter('sendType', "application/json");
     WebSocketServer.setParameter('pfxKeyCertPassword', "");
