@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js net/test/auto/WebSocketSendReceive)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
+    //  $PTII/bin/capecode $PTII/./org/terraswarm/accessor/test/auto/WebSocketSendReceive.xml
 
     // Ports: WebSocketSendReceive: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -18,7 +18,7 @@ exports.setup = function() {
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
-    TrainableTest.setParameter('correctValues', ["0123456789"]);
+    TrainableTest.setParameter('correctValues', []);
     TrainableTest.setParameter('trainingMode', true);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
@@ -62,7 +62,7 @@ exports.setup = function() {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', [{"message":"abcdefg","socketID":0}]);
+    TrainableTest2.setParameter('correctValues', []);
     TrainableTest2.setParameter('trainingMode', true);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 

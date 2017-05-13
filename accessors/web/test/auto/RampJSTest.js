@@ -43,10 +43,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize();
-        this.stopAt(5000.0);
+        this.stopAt(4000.0);
     }
 } else {
     exports.initialize = function() {
-        this.stopAt(5000.0);
+        this.stopAt(4000.0);
     }
 }
