@@ -68,7 +68,8 @@ exports.setup = function() {
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
-    TestSpontaneousOnce.setParameter('interval', 500.0);
+    TestSpontaneousOnce.setParameter('delay', 1000.0);
+    TestSpontaneousOnce.setParameter('value', true);
 
     // Start: GDPLogSubscribe2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var GDPLogSubscribe2 = this.instantiate('GDPLogSubscribe2', 'gdp/GDPLogSubscribe.js');
