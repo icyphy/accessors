@@ -272,6 +272,7 @@
           depends="clean"/>
 
   <target name="clean.duktape" 
+	  depends="clean.rusteduk"
 	  description="Remove the duktape binaries.">
     <delete quiet="true" verbose="no"
 	    file="node_modules/@accessors-hosts/duktape/duktape2/duk2"/>
@@ -280,14 +281,18 @@
     <delete quiet="true" verbose="no">
       <fileset dir="node_modules/@accessors-hosts/duktape/eduk2" includes="*.h"/>
     </delete>
+  </target>
 
+  <target name="clean.rusteduk" 
+	  depends="-cargo-in-path"
+          description="Clean the rusteduk directory.  Requires rustc and cargo."
+	  if="${cargo.present}">
     <exec dir="${rusteduk.source}"
           executable="make"
           failonerror="true"
           timeout="${timeout}">
       <arg value="clean"/>
     </exec>
-
   </target>
 
   <!-- Build eduk2 first because it updates the .h files from the .js files
