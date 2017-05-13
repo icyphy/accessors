@@ -1,6 +1,6 @@
 // Speech recognition accessor.
 //
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -45,51 +45,51 @@ var speechRecognition = require('@accessors-modules/speech-recognition');
 /** Create a SpeechRecognition accessor.
  */
 exports.setup = function () {
-	this.parameter('continuous', {
-		'type' : 'boolean', 
-		'value' : 'false'
-	});
-	
-	this.input('start', {
-		'type': 'boolean'
-	});
-	
-	this.input('stop', {
-		'type': 'boolean'
-	});
-		
+    this.parameter('continuous', {
+                'type' : 'boolean', 
+                'value' : false
+            });
+        
+    this.input('start', {
+                'type': 'boolean'
+                    });
+        
+    this.input('stop', {
+                'type': 'boolean'
+                    });
+                
     this.output('text', {
-        'type': 'string'
-    });
+                'type': 'string'
+                    });
 };
 
 /** Register input handlers for start and stop events and set up event handler
  * for recognition results.
  */
 exports.initialize = function () {
-	var self = this;
-	
-	var options = {};
-	options.continuous = this.getParameter('continuous');
-	this.recognition = new speechRecognition.SpeechRecognition(options);
-	
-	this.recognition.on('result', function(result) {
-		self.send('text', result);
-	});
-	
-	this.addInputHandler('start', function() {
-		// Recheck continuous mode parameter in case it has changed.
-		options.continuous = self.getParameter('continuous');
-		self.recognition.setOptions(options);
-		
-		if (self.get('start')) {
-			self.recognition.start();
-		}
-	});
-	
-	this.addInputHandler('stop', function() {
-		if (self.get('stop')) {
-			self.recognition.stop();
-		}
-	});
+    var self = this;
+        
+    var options = {};
+    options.continuous = this.getParameter('continuous');
+    this.recognition = new speechRecognition.SpeechRecognition(options);
+        
+    this.recognition.on('result', function(result) {
+                self.send('text', result);
+            });
+        
+    this.addInputHandler('start', function() {
+                // Recheck continuous mode parameter in case it has changed.
+                options.continuous = self.getParameter('continuous');
+                self.recognition.setOptions(options);
+                
+                if (self.get('start')) {
+                    self.recognition.start();
+                }
+            });
+        
+    this.addInputHandler('stop', function() {
+                if (self.get('stop')) {
+                    self.recognition.stop();
+                }
+            });
 };
