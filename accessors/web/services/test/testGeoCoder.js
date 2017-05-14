@@ -17,6 +17,7 @@
 //  { latitude: 37.8718992, longitude: -122.2585399 }
 // Previously, it produced "undefined".
 
+console.log('services/test/testGeoCoder.js');
 var assert = require('assert');
 
 var testGeoCoder = instantiate('testGeoCoder', 'services/GeoCoder');
@@ -29,8 +30,11 @@ setTimeout(function () {
     // var locationOutput = JSON.stringify(testGeoCoder.latestOutput('location'));
     // assert.equal(locationOutput, '{"latitude":37.8718992,"longitude":-122.2585399}');
 
-    var latitude = testGeoCoder.latestOutput('location').latitude;
-    var longitude = testGeoCoder.latestOutput('location').longitude;
+    var locationOutput = testGeoCoder.latestOutput('location');
+    assert.ok(locationOutput !== undefined, 'The location output of testGeoCoder was undefined?');
+    var latitude = locationOutput.latitude;
+    var longitude = locationOutput.longitude;
+
     // It is OK if we are within a degree.
     assert.ok(Math.abs(latitude - 37.8718992) < 1.0, 'latitude was ' + latitude + ', which is not close to Berkeley.');
     assert.ok(Math.abs(longitude - -122.2585399) < 1.0, 'longitude was ' + longitude + ', which is not close to Berkeley.');
