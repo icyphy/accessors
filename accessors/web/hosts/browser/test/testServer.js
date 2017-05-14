@@ -86,7 +86,7 @@ server.on('request', function (request, response) {
 
             // Disallow any ..
             if (url.indexOf('..') < 0) {
-                var base = path.join(__dirname, '..', '..', '..', '..');
+                var base = path.join(__dirname, '..', '..', '..');
                 var location = path.join(base, url);
 
                 // Check for images.  Used for testing accessors splash screen.
