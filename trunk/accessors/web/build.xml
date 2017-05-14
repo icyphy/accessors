@@ -10,7 +10,7 @@
        binary that does not use a file system.  Duktape is an embedded
        JavaScript interpreter.
   -->
-  <property name="eduk2.source" value="${basedir}/node_modules/@accessors-hosts/duktape/eduk2"/>  
+  <property name="eduk2.source" value="${basedir}/hosts/duktape/eduk2"/>  
 
   <!-- Location of the chai directory.
        We use ../node_modules so that we are not installing modules
@@ -24,7 +24,7 @@
   <property name="chai-string.directory" value="${basedir}/../node_modules/chai-string"/>
 
   <!-- Location of the Duktape-2.x sources. -->
-  <property name="duktape2.source" value="${basedir}/node_modules/@accessors-hosts/duktape/duktape2"/>
+  <property name="duktape2.source" value="${basedir}/hosts/duktape/duktape2"/>
 
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
   <property name="jsdoc.home" value="${basedir}/../node_modules/@terraswarm/jsdoc" />
@@ -53,7 +53,7 @@
   <!-- Location of the Rusteduk sources.
        Rusteduk is a Rust binary that invokes the C-based Duktape interpreter.
   -->
-  <property name="rusteduk.source" value="${basedir}/node_modules/@accessors-hosts/duktape/rusteduk"/>
+  <property name="rusteduk.source" value="${basedir}/hosts/duktape/rusteduk"/>
 
   <!-- Location of the selenium-webdriver directory. -->
   <property name="selenium-webdriver.directory" value="${basedir}/../node_modules/selenium-webdriver"/>
@@ -101,10 +101,10 @@
 
   <fileset id="test.mocha.files" dir="${basedir}">
     <include name="**/mocha/test*.js"/>
-    <!-- node_modules/@accessors-hosts/browser/common is a symbolic link -->
-    <exclude name="**/node_modules/@accessors-hosts/browser/common/test/mocha/test*.js"/>
+    <!-- hosts/browser/common is a symbolic link -->
+    <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
     <!-- Don't include xcore/jxcore/common/test/mocha/testCommon.js --> 
-    <exclude name="**/node_modules/@accessors-hosts/jxcore/**/*.js"/>
+    <exclude name="**/hosts/jxcore/**/*.js"/>
     <!-- exclude name="**/node_modules/**/*.js"/ -->
     <patternset refid="accessors.excludes" />
   </fileset>
@@ -120,38 +120,38 @@
 
   <target name="copy"
           description="Copy files from commonHost to cordova and jxcore">
-    <copy todir="node_modules/@accessors-hosts/cordova/cordova1/DemoApp/www/jxcore">
+    <copy todir="hosts/cordova/cordova1/DemoApp/www/jxcore">
       <resources>
-        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
-        <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
-        <file file="node_modules/@accessors-hosts/node/nodeHost.js"/>
-        <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+        <file file="hosts/common/commonHost.js"/>
+        <file file="hosts/common/modules/events.js"/>
+        <file file="hosts/node/nodeHost.js"/>
+        <file file="hosts/common/modules/util.js"/>
       </resources>
     </copy>
-    <copy todir="./node_modules/@accessors-hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
+    <copy todir="./hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
       <resources>
-        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
-        <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
-        <file file="node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics.js"/> 
-        <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
+        <file file="hosts/common/commonHost.js"/>
+        <file file="hosts/common/modules/events.js"/>
+        <file file="hosts/common/modules/deterministicTemporalSemantics.js"/> 
+        <file file="hosts/common/modules/hostHelper.js"/>
       </resources>
     </copy>
 
-    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common">
-        <file file="node_modules/@accessors-hosts/common/commonHost.js"/>
+    <copy todir="hosts/jxcore/jxcore/common">
+        <file file="hosts/common/commonHost.js"/>
     </copy>
 
-    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common/modules">
-      <file file="node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics.js"/>
-      <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
-      <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
-      <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+    <copy todir="hosts/jxcore/jxcore/common/modules">
+      <file file="hosts/common/modules/deterministicTemporalSemantics.js"/>
+      <file file="hosts/common/modules/events.js"/>
+      <file file="hosts/common/modules/hostHelper.js"/>
+      <file file="hosts/common/modules/util.js"/>
     </copy>
 
-    <copy todir="node_modules/@accessors-hosts/jxcore/jxcore/common/modules">
-      <file file="node_modules/@accessors-hosts/common/modules/events.js"/>
-      <file file="node_modules/@accessors-hosts/common/modules/hostHelper.js"/>
-      <file file="node_modules/@accessors-hosts/common/modules/util.js"/>
+    <copy todir="hosts/jxcore/jxcore/common/modules">
+      <file file="hosts/common/modules/events.js"/>
+      <file file="hosts/common/modules/hostHelper.js"/>
+      <file file="hosts/common/modules/util.js"/>
     </copy>
 
   </target>
@@ -275,11 +275,11 @@
 	  depends="clean.rusteduk"
 	  description="Remove the duktape binaries.">
     <delete quiet="true" verbose="no"
-	    file="node_modules/@accessors-hosts/duktape/duktape2/duk2"/>
+	    file="hosts/duktape/duktape2/duk2"/>
     <delete quiet="true" verbose="no"
-	    file="node_modules/@accessors-hosts/duktape/eduk2/eduk2"/>
+	    file="hosts/duktape/eduk2/eduk2"/>
     <delete quiet="true" verbose="no">
-      <fileset dir="node_modules/@accessors-hosts/duktape/eduk2" includes="*.h"/>
+      <fileset dir="hosts/duktape/eduk2" includes="*.h"/>
     </delete>
   </target>
 
@@ -646,8 +646,8 @@
       target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/../reports/junit"/>
-    <echo> Running (cd node_modules/@accessors-hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
-    <exec dir="node_modules/@accessors-hosts/browser/test"
+    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
+    <exec dir="hosts/browser/test"
 	  executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="regressionTestScript.js"/>
@@ -893,10 +893,10 @@
 
       ==tests.mocha.composite==
       This target uses mocha to run the composite accessors via
-      node_modules/@accessors-hosts/node/test/mocha/testNodeAllAuto.js
+      hosts/node/test/mocha/testNodeAllAuto.js
       If necessary, mocha is installed in node_modules/
       To run only the composite accessors in one directory:
-      mocha node_modules/@accessors-hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
+      mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
       target timeout = ${timeout} ms.
@@ -908,7 +908,7 @@
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
-      <arg line="node_modules/@accessors-hosts/node/test/mocha/testNodeAllAuto.js"/>
+      <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
     <echo>
@@ -988,7 +988,7 @@
 
     <!-- Use relative pathnames here so that we can look them up. -->
     <apply dir="."
-           executable="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
+           executable="hosts/nashorn/nashornAccessorHost"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
 	   resultproperty="tests.resultproperty"
@@ -1021,7 +1021,7 @@
 
   <target name="tests.nashorn.test"
           depends="-ptII-exists"
-          description="Execute the Nashorn tests in node_modules/@accessors-hosts/nashorn/test."
+          description="Execute the Nashorn tests in hosts/nashorn/test."
           if="${ptII.exists}">
     <echo>
       == tests.nashorn.test ==
@@ -1029,7 +1029,7 @@
       The Nashorn accessor host is a subset of the Cape Code accessor host.
     </echo>
 
-    <chmod file="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
+    <chmod file="hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <apply dir="hosts"
            executable="nashorn/nashornAccessorHost"
@@ -1068,7 +1068,7 @@
       target timeout = ${timeout} ms.
     </echo>
 
-    <chmod file="node_modules/@accessors-hosts/nashorn/nashornAccessorHost"
+    <chmod file="hosts/nashorn/nashornAccessorHost"
 	   perm="a+x"/>
     <exec dir="hosts"
           executable="nashorn/nashornAccessorHost"

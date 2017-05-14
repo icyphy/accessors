@@ -230,17 +230,17 @@ void nofileio_register(duk_context *ctx) {
 
 #ifdef EDUK_RAMPJSDISPLAY
     fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
-    fileEntries[n].contents = ____________test_auto_RampJSDisplay_js;
-    fileEntries[n].length = ____________test_auto_RampJSDisplay_js_len;
+    fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
 
     // Accessors used by RampJSDisplay.js
     fileEntries[++n].name = "./test/TestDisplay.js";
-    fileEntries[n].contents = ____________test_TestDisplay_js;
-    fileEntries[n].length = ____________test_TestDisplay_js_len;
+    fileEntries[n].contents = _________test_TestDisplay_js;
+    fileEntries[n].length = _________test_TestDisplay_js_len;
 
     fileEntries[++n].name = "./test/TestSpontaneous.js";
-    fileEntries[n].contents = ____________test_TestSpontaneous_js;
-    fileEntries[n].length = ____________test_TestSpontaneous_js_len;
+    fileEntries[n].contents = _________test_TestSpontaneous_js;
+    fileEntries[n].length = _________test_TestSpontaneous_js_len;
 
 #endif
 
@@ -254,28 +254,28 @@ void nofileio_register(duk_context *ctx) {
 
     // Composite accessors in test/auto/ that are used for testing
     fileEntries[++n].name = "./test/auto/AccessorStatusTest.js";
-    fileEntries[n].contents = ____________test_auto_AccessorStatusTest_js;
-    fileEntries[n].length = ____________test_auto_AccessorStatusTest_js_len;
+    fileEntries[n].contents = _________test_auto_AccessorStatusTest_js;
+    fileEntries[n].length = _________test_auto_AccessorStatusTest_js_len;
 
     fileEntries[++n].name = "./test/auto/RampJSTest.js";
-    fileEntries[n].contents = ____________test_auto_RampJSTest_js;
-    fileEntries[n].length = ____________test_auto_RampJSTest_js_len;
+    fileEntries[n].contents = _________test_auto_RampJSTest_js;
+    fileEntries[n].length = _________test_auto_RampJSTest_js_len;
 
     fileEntries[++n].name = "./test/auto/RampJSTestDisplay.js";
-    fileEntries[n].contents = ____________test_auto_RampJSTestDisplay_js;
-    fileEntries[n].length = ____________test_auto_RampJSTestDisplay_js_len;
+    fileEntries[n].contents = _________test_auto_RampJSTestDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSTestDisplay_js_len;
 
     fileEntries[++n].name = "./utilities/Stop.js";
-    fileEntries[n].contents = ____________utilities_Stop_js;
-    fileEntries[n].length = ____________utilities_Stop_js_len;
+    fileEntries[n].contents = _________utilities_Stop_js;
+    fileEntries[n].length = _________utilities_Stop_js_len;
 
     fileEntries[++n].name = "./test/auto/TestComposite.js";
-    fileEntries[n].contents = ____________test_auto_TestComposite_js;
-    fileEntries[n].length = ____________test_auto_TestComposite_js_len;
+    fileEntries[n].contents = _________test_auto_TestComposite_js;
+    fileEntries[n].length = _________test_auto_TestComposite_js_len;
 
     fileEntries[++n].name = "./test/auto/Stop.js";
-    fileEntries[n].contents = ____________test_auto_Stop_js;
-    fileEntries[n].length = ____________test_auto_Stop_js_len;
+    fileEntries[n].contents = _________test_auto_Stop_js;
+    fileEntries[n].length = _________test_auto_Stop_js_len;
 
     // Used by ../duktape/duktape tests.
     fileEntries[++n].name = "common/test/testCommon.js";
@@ -287,24 +287,24 @@ void nofileio_register(duk_context *ctx) {
     // underscores because xxd was run in
     // accessors/web/hosts/duktape/eduk.
     fileEntries[++n].name = "./test/TestAdder.js";
-    fileEntries[n].contents = ____________test_TestAdder_js;
-    fileEntries[n].length = ____________test_TestAdder_js_len;
+    fileEntries[n].contents = _________test_TestAdder_js;
+    fileEntries[n].length = _________test_TestAdder_js_len;
 
     fileEntries[++n].name = "./test/TestComposite.js";
-    fileEntries[n].contents = ____________test_TestComposite_js;
-    fileEntries[n].length = ____________test_TestComposite_js_len;
+    fileEntries[n].contents = _________test_TestComposite_js;
+    fileEntries[n].length = _________test_TestComposite_js_len;
 
     fileEntries[++n].name = "./test/TestGain.js";
-    fileEntries[n].contents = ____________test_TestGain_js;
-    fileEntries[n].length = ____________test_TestGain_js_len;
+    fileEntries[n].contents = _________test_TestGain_js;
+    fileEntries[n].length = _________test_TestGain_js_len;
 
     fileEntries[++n].name = "./test/TrainableTest.js";
-    fileEntries[n].contents = ____________test_TrainableTest_js;
-    fileEntries[n].length = ____________test_TrainableTest_js_len;
+    fileEntries[n].contents = _________test_TrainableTest_js;
+    fileEntries[n].length = _________test_TrainableTest_js_len;
 
     fileEntries[++n].name = "./trusted/AccessorStatus.js";
-    fileEntries[n].contents = ____________trusted_AccessorStatus_js;
-    fileEntries[n].length = ____________trusted_AccessorStatus_js_len;
+    fileEntries[n].contents = _________trusted_AccessorStatus_js;
+    fileEntries[n].length = _________trusted_AccessorStatus_js_len;
 #endif
 
     /* Set global 'NoFileIo'. */
