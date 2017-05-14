@@ -74,7 +74,7 @@ exports.testNodeAuto = function(auto) {
                 var dotlessTestAccessorName = testAccessorName.replace(/\.\//g, '/').replace(/\/\//g, '/');
                 it ('NodeHost./accessors/web' + dotlessTestAccessorName, function (done) {
 
-                    var replicationMessage = '\n\tTo replicate: (cd node_modules/@accessors-hosts/node; node nodeHostInvoke ' + auto + '/' + accessor + ')';
+                    var replicationMessage = '\n\tTo replicate: (cd hosts/node; node nodeHostInvoke ' + auto + '/' + accessor + ')';
                     console.log(replicationMessage);
                     var testAccessorName = auto +'/' + accessor;
                     
