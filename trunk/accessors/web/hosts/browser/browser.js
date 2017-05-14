@@ -623,7 +623,7 @@ function generateAccessorHTML(path, id, text) {
     // up the accessor to be executed.
 
     // Load common/commonHost.js code asynchronously.
-    loadFromServer('/accessors/node_modules/@accessors-hosts/common/commonHost.js',
+    loadFromServer('/accessors/hosts/common/commonHost.js',
         id,
         function (err, theCommonHost) {
             var instance;
@@ -1448,7 +1448,7 @@ function getJavaScript(path, callback, module) {
         // A relative path is provided.
         // Convert this to an absolute path for either a module or an accessor.
         if (module) {
-            path = '/accessors/node_modules/@accessors-hosts/browser/modules/' + path;
+            path = '/accessors/hosts/browser/modules/' + path;
         } else if (path.indexOf('accessors/') !== 0) {
             path = '/accessors/' + path;
         } else {
