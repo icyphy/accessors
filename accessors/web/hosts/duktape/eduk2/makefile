@@ -1,3 +1,5 @@
+ROOT = ../../..
+
 # The location of the duktape sources
 DUKTAPE = ../duktape2
 
@@ -119,25 +121,26 @@ util.h: ../../common/modules/util.js makefile
 ecma_eventloop.h: ../duktape2/examples/eventloop/ecma_eventloop.js makefile
 	./js2h $< $@
 
+
 # Composite Accessors used for testing.  Production duktape accessor
 # hosts will not include these files.
-RampJSDisplay.h: ../../../../test/auto/RampJSDisplay.js makefile
+RampJSDisplay.h: $(ROOT)/test/auto/RampJSDisplay.js makefile
 	./js2h $< $@
-RampJSTest.h: ../../../../test/auto/RampJSTest.js makefile
+RampJSTest.h: $(ROOT)/test/auto/RampJSTest.js makefile
 	./js2h $< $@
-RampJSTestDisplay.h: ../../../../test/auto/RampJSTestDisplay.js makefile
-	./js2h $< $@
-
-Stop.h: ../../../../utilities/Stop.js makefile
+RampJSTestDisplay.h: $(ROOT)/test/auto/RampJSTestDisplay.js makefile
 	./js2h $< $@
 
-autoAccessorStatusTest.h: ../../../../test/auto/AccessorStatusTest.js makefile
+Stop.h: $(ROOT)/utilities/Stop.js makefile
 	./js2h $< $@
 
-autoTestComposite.h: ../../../../test/auto/TestComposite.js makefile
+autoAccessorStatusTest.h: $(ROOT)/test/auto/AccessorStatusTest.js makefile
 	./js2h $< $@
 
-autoTestStop.h: ../../../../test/auto/Stop.js makefile
+autoTestComposite.h: $(ROOT)/test/auto/TestComposite.js makefile
+	./js2h $< $@
+
+autoTestStop.h: $(ROOT)/test/auto/Stop.js makefile
 	./js2h $< $@
 
 deterministicTemporalSemantics.h: ../../common/modules/deterministicTemporalSemantics.js makefile
@@ -147,19 +150,19 @@ deterministicTemporalSemantics.h: ../../common/modules/deterministicTemporalSema
 testCommon.h: ../../common/test/testCommon.js makefile
 	./js2h $< $@
 # Accessors
-AccessorStatus.h: ../../../../trusted/AccessorStatus.js makefile
+AccessorStatus.h: $(ROOT)/trusted/AccessorStatus.js makefile
 	./js2h $< $@
-TestAdder.h: ../../../../test/TestAdder.js makefile
+TestAdder.h: $(ROOT)/test/TestAdder.js makefile
 	./js2h $< $@
-TestComposite.h: ../../../../test/TestComposite.js makefile
+TestComposite.h: $(ROOT)/test/TestComposite.js makefile
 	./js2h $< $@
-TestDisplay.h: ../../../../test/TestDisplay.js makefile
+TestDisplay.h: $(ROOT)/test/TestDisplay.js makefile
 	./js2h $< $@
-TestGain.h: ../../../../test/TestGain.js makefile
+TestGain.h: $(ROOT)/test/TestGain.js makefile
 	./js2h $< $@
-TestSpontaneous.h: ../../../../test/TestSpontaneous.js makefile
+TestSpontaneous.h: $(ROOT)/test/TestSpontaneous.js makefile
 	./js2h $< $@
-TrainableTest.h: ../../../../test/TrainableTest.js makefile
+TrainableTest.h: $(ROOT)/test/TrainableTest.js makefile
 	./js2h $< $@
 
 clean:
