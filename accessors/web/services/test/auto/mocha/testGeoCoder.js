@@ -7,6 +7,7 @@
 //   ../../../../../node_modules/.bin/mocha  testGeoCoder.js 
 
 var nodeHost = require('@accessors-hosts/node');
+var commonHost = require('@accessors-hosts/common');
 
 var fs = require('fs');
 
@@ -17,28 +18,31 @@ describe('NodeHost./accessors/web/services/test/auto/mocha/testGeoCoder', functi
 
     it('testGeoCoder.js', function () {
 
-        // // Run the ../../testGeoCoder.js file, which has an assert.
-        // var testFile = '../../testGeoCoder.js';
-        // if (!fs.existsSync(testFile)) {
-        //     var originalTestFile = testFile;
-        //     testFile = 'services/test/testGeoCoder.js';
-        //     if (!fs.existsSync(testFile)) {
-        //         var originalTestFile2 = testFile;
-        //         testFile = 'org/terraswarm/accessor/accessors/web/services/test/testGeoCoder.js'
-        //         if (!fs.existsSync(testFile)) {
-        //             throw new Error("Could not find " + originalTestFile + ", " + originalTestFile2 + " or " + testFile);
-        //         }
-        //     }
-        // }
-        // var args = ['-js', testFile];
-        // nodeHost.processCommandLineArguments(args,
-        //                                      // Argument to read a file.
-        //                                      function(filename) {
-        //                                          // FIXME: What if the encoding is not utf8?
-        //                                          return fs.readFileSync(filename, 'utf8');
-        //                                      },
-        //                                      // Argument to instantiate an accessor.
-        //                                      nodeHost.instantiateTopLevel);
+        // Run the ../../testGeoCoder.js file, which has an assert.
+        var testFile = '../../testGeoCoder.js';
+        if (!fs.existsSync(testFile)) {
+            var originalTestFile = testFile;
+            testFile = 'services/test/testGeoCoder.js';
+            if (!fs.existsSync(testFile)) {
+                var originalTestFile2 = testFile;
+                testFile = 'org/terraswarm/accessor/accessors/web/services/test/testGeoCoder.js'
+                if (!fs.existsSync(testFile)) {
+                    throw new Error("Could not find " + originalTestFile + ", " + originalTestFile2 + " or " + testFile);
+                }
+            }
+        }
+        var args = ['-js', testFile];
+        // nodeHost.processCommandLineArguments() terminates by
+        // calling exit(), so we use
+        // commonHost.processCommandLineArguments().
+        commonHost.processCommandLineArguments(args,
+                                             // Argument to read a file.
+                                             function(filename) {
+                                                 // FIXME: What if the encoding is not utf8?
+                                                 return fs.readFileSync(filename, 'utf8');
+                                             },
+                                             // Argument to instantiate an accessor.
+                                             nodeHost.instantiateTopLevel);
     });
 
     it('Wait 3 seconds until the geoCoder tests complete', function(done) {
