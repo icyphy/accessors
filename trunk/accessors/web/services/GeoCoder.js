@@ -30,6 +30,9 @@
  *  This accessor requires a "key" for the Google Geocoding API, which you can
  *  obtain for free at https://developers.google.com/maps/documentation/geocoding/intro .
  *
+ *  This accessor looks for key in $KEYSTORE/geoCoderKey, which
+ *  resolves to $HOME/.ptKeystore/geoCoderKey.
+ *
  *  This accessor does not block waiting for the response, but if any additional
  *  *address* input is received before a pending request has received a response
  *  or timed out, then the new request will be queued and sent out only after
@@ -40,7 +43,6 @@
  *  @input {string} address The address, for example "Berkeley, CA".
  *  @output location The location, as an object with a 'latitude' and 'longitude'
  *   property.
- *  @parameter {string} key The key for the Google geocoding API.
  *  @output response An object containing the location information.
  *  @author Edward A. Lee
  *  @version $$Id$$
@@ -53,17 +55,27 @@
 /*jshint globalstrict: true*/
 'use strict';
 
+// The key from https://developers.google.com/maps/documentation/geocoding/intro
+var key = '';
+
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
     this.extend('net/REST');
     this.input('address');
     this.output('location');
-    this.parameter('key', {
-        'type': 'string',
-        'value': 'Enter Key Here'
-    });
 
+    // See the accessor comment for how to get the key.
+    var keyFile = '$KEYSTORE/geoCoderKey';
+    try {
+        key = getResource(keyFile, 1000).trim();
+    } catch (e) {
+        console.log('GeoCoder.js: Could not get ' + keyFile + ":  " + e +
+                    '\nThe key is not public, so this accessor is only useful ' +
+                    'If you have the key.  See ' +
+                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder');
+        key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
+    }
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     // Note the need for quotation marks on the options parameter.
@@ -104,10 +116,6 @@ exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
 
-    var key = this.getParameter('key');
-    if (key == "Enter Key Here") {
-        throw "GeoCoder:  You need a key, which you can obtain at https://developers.google.com/maps/documentation/geocoding/intro.";
-    }
     var self = this;
 
     // Handle location information.
@@ -117,7 +125,7 @@ exports.initialize = function () {
             // arguments is a reserved word, so we use args.
             var args = {
                 'address': address,
-                'key': key
+                'key': self.key
             };
             self.send('arguments', args);
             self.send('trigger', true);
