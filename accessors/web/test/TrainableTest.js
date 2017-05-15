@@ -181,9 +181,25 @@ exports.initialize = function () {
                 }
             } else if (typeof referenceToken === 'string') {
                 if (inputValue !== referenceToken) {
-                    throw new Error(self.accessorName + ': The input "' + inputValue + '" is !== ' +
-                        ' to the expected value "' +
-                        referenceToken + '"');
+                    // devices/test/auto/WatchEmulator.js needs this test for object because
+                    // if we receive a JSON object, then we should try to stringify it.
+                    if (typeof inputValue === 'object') {
+                        var inputValueValue = null;
+                        try {
+                            inputValueValue = JSON.stringify(inputValue);
+                        } catch (err) {
+                            throw new Error(self.accessorName + ': The input "' + inputValue + '" is !== ' +
+                                            ' to the expected value "' +
+                                            referenceToken + '".  The input was an object, and a string was expected.');
+                        }
+                        if (inputValueValue !== referenceToken) {
+                            throw new Error(self.accessorName + ': The input "' + inputValueValue + '" is !== ' +
+                                            ' to the expected value "' +
+                                            referenceToken +
+                                            '".  The input was an object and JSON.stringify() did not throw an exception.' +
+                                            'A string was expected.');
+                        }
+                    }
                 }
             } else if (typeof referenceToken === 'object') {
                 cache = [];

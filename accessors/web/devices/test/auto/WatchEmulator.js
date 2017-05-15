@@ -34,13 +34,6 @@ exports.setup = function() {
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
-    // Start: JavaScriptStop2: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
-    // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
-    // We probably need to do something with the bindings.
-    var JavaScriptStop2 = new Accessor('JavaScriptStop2', 'exports.setup = function() {\n  this.input(\'input\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'input\', handler.bind(this));\n}\n\nfunction handler() {\n    var value = this.get(\'input\');\n    if (value === true) {\n        console.log(\"JavaScriptStop: about to call stop().\");\n        // stop() is defined for all accessors, though it might not actually do anything.\n        stop.call(this);\n        // An accessor host might not get to the next line.\n        console.log(\"JavaScriptStop: done calling stop() on container\");\n    }\n}\n \nexports.wrapup = function() {\n    console.log(\"JavaScriptStop.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}', null, null, null, null);
-    JavaScriptStop2.container = this;
-    this.containedAccessors.push(JavaScriptStop2);
-
     // Start: JavaScriptDeleteTimestamps: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
@@ -56,12 +49,15 @@ exports.setup = function() {
     Moto360SensorListener.setParameter('accelerometerSensitivity', 0.0);
     Moto360SensorListener.setParameter('gyroSensitivity', 0.0);
 
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
+
     // Connections: WatchEmulator: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', JavaScriptWatchEmulator, 'trigger');
     this.connect(JavaScriptWatchEmulator, 'output', UDPSocketSender, 'toSend');
     this.connect(JavaScriptDeleteTimestamps, 'output', TrainableTest2, 'input');
-    this.connect(TrainableTest2, 'output', JavaScriptStop2, 'input');
     this.connect(Moto360SensorListener, 'accelerometer', JavaScriptDeleteTimestamps, 'input');
+    this.connect(TrainableTest2, 'output', Stop, 'stop');
 };
 
 // To update the initialize code below, modify
