@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -28,8 +28,11 @@
  *  `{"latitude": 37.85, "longitude": -122.26}`, which is
  *  the location of Berkeley, California.
  *
- *  This accessor requires a "key" for the API, which you can
+ *  This accessor requires a key for the API, which you can
  *  obtain for free at http://openweathermap.org/appid .
+ *
+ *  This accessor looks for key in $KEYSTORE/weatherKey, which
+ *  resolves to $HOME/.ptKeystore/weatherKey.
  *
  *  This accessor does not block waiting for the response, but if any additional
  *  *location* input is received before a pending request has received a response
@@ -42,7 +45,6 @@
  *  @version $$Id$$
  *  @input location The location, an object with two fields (default is Berkeley).
  *  @parameter {string} temperature One of 'Fahrenheit', 'Celsius', or 'Kelvin'.
- *  @parameter {string} key The key for the openweathermap.org service.
  *  @output response An object containing the raw response from the service.
  *  @output weather An object containing more readable weather data.
  */
@@ -53,6 +55,9 @@
 /*globals addInputHandler, addInputParameter, error, exports, extend, input, get, getParameter, output, parameter, send */
 /*jshint globalstrict: true*/
 'use strict';
+
+// The key from http://openweathermap.org/appid that should be placed in $HOME/.ptKeystore/weatherKey.
+var key = '';
 
 /** Set up the accessor by defining the inputs and outputs.
  */
@@ -70,11 +75,17 @@ exports.setup = function () {
         'options': ['Fahrenheit', 'Celsius', 'Kelvin'],
         'value': 'Fahrenheit'
     });
-    this.parameter('key', {
-        'type': 'string',
-        'value': 'Enter Key Here'
-    });
-
+    // See the accessor comment for how to get the key.
+    var keyFile = '$KEYSTORE/weatherKey';
+    try {
+        key = getResource(keyFile, 1000).trim();
+    } catch (e) {
+        console.log('Weather.js: Could not get ' + keyFile + ":  " + e +
+                    '\nThe key is not public, so this accessor is only useful ' +
+                    'If you have the key.  See ' +
+                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.Weather');
+        key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
+    }
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {
@@ -126,11 +137,6 @@ var convertTemperature = function (kelvin, units) {
 exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
-
-    var key = this.getParameter('key');
-    if (key == "Enter Key Here") {
-        throw "Weather:  You need a key, which you can obtain at http://openweathermap.org/appid.";
-    }
 
     var self = this;
 
