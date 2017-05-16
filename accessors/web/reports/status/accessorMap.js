@@ -115,20 +115,20 @@ module.exports = (function () {
 
             if (Object.keys(accessorsToModules).length === 
                 (accessors.length - accessorsError.length)) {
-            	
-            	// Calculate modules from superclass accessors.
-            	for (var accessor in accessorExtends) {
-            		if (accessorExtends[accessor].length > 0) {
-            			accessorExtends[accessor].forEach(function(superclass) {
-            				var modules = accessorsToModules[superclass + ".js"];
-            				if (modules.length > 0) {
-            					modules.forEach(function(module) {
-            						accessorsToModules[accessor].push(module);
-            					});
-            				}
-            			});
-            		}
-            	}
+                
+                // Calculate modules from superclass accessors.
+                for (var accessor in accessorExtends) {
+                    if (accessorExtends[accessor].length > 0) {
+                        accessorExtends[accessor].forEach(function(superclass) {
+                            var modules = accessorsToModules[superclass + ".js"];
+                            if (modules.length > 0) {
+                                modules.forEach(function(module) {
+                                    accessorsToModules[accessor].push(module);
+                                });
+                            }
+                        });
+                    }
+                }
 
                 // Calculate accessors to hosts.
 
@@ -210,7 +210,7 @@ module.exports = (function () {
      */
     var findTestCases = function(){
         // Test cases to accessors:
-         // Any file under a /test/auto directory with a .js extension.
+        // Any file under a /test/auto directory with a .js extension.
         glob('**/*.js', function(err, files) {
 
             testcases = [];
@@ -237,32 +237,36 @@ module.exports = (function () {
                 accessorsError.push(filepath);
 
             } else {
-                fs.readFile(filepath, 'utf8', function(err, data) {
-                    if (err) {
-                        console.log('Error reading file ' + filepath + " : " + err);
-                        accessorsError.push(filepath);
-                    } else {
-                        
-                        // Extract accessor name from filename. 
-                        // Filepath is the full platform-dependent path.
-                        // Extract part after */accessors/web/
-                        var i = filepath.indexOf('accessors/web');
-                        if (i >= 0) {
-                            filepath = filepath.substring(i + 14);
-                        }
-                        accessorsToModules[filepath] = [];
-                        accessorExtends[filepath] = [];
-                        
-                        // Look for matches to:
-                        // extend('package/accessor') where quotes may be double 
-                        // quotes or single quotes.  Ignore whitespace.
-                        // This will return, for example:
-                        // extend('net/TCPSocketClient'
-                        // Use /g at the end to find all matches.
-                        var exp = /extend\(\s*['"]\s*\w+\/\w+\s*['"]/g; 
-                        var matches = data.match(exp);
-                        
-                        if (matches !== null && typeof matches !== 'undefined' &&
+                if (!stats.isFile()) {
+                    console.log('accessorMap.js: Skipping ' + filepath + ' because it is not a file.');
+                } else {
+                    fs.readFile(filepath, 'utf8', function(err, data) {
+                        if (err) {
+                            console.log('accessorMap.js: Error reading file ' + filepath + " : " + err);
+                            console.log(stats);
+                            accessorsError.push(filepath);
+                        } else {
+                            
+                            // Extract accessor name from filename. 
+                            // Filepath is the full platform-dependent path.
+                            // Extract part after */accessors/web/
+                            var i = filepath.indexOf('accessors/web');
+                            if (i >= 0) {
+                                filepath = filepath.substring(i + 14);
+                            }
+                            accessorsToModules[filepath] = [];
+                            accessorExtends[filepath] = [];
+                            
+                            // Look for matches to:
+                            // extend('package/accessor') where quotes may be double 
+                            // quotes or single quotes.  Ignore whitespace.
+                            // This will return, for example:
+                            // extend('net/TCPSocketClient'
+                            // Use /g at the end to find all matches.
+                            var exp = /extend\(\s*['"]\s*\w+\/\w+\s*['"]/g; 
+                            var matches = data.match(exp);
+                            
+                            if (matches !== null && typeof matches !== 'undefined' &&
                                 matches.length > 0) {
                                 matches.forEach(function(match) {
                                     // Module name is from ' or " to end-1
@@ -276,39 +280,39 @@ module.exports = (function () {
 
                                     accessorExtends[filepath].push(match);
                                 });
-                        }
-                        
-                        // Look for matches to:
-                        // require('something') where quotes may be double 
-                        // quotes or single quotes.  Ignore whitespace.
-                        // This will return, for example:
-                        // require('cameras'
-                        // Use /g at the end to find all matches.
-                        var exp = /require\(\s*['"]\s*-*\w+-*\w*\s*['"]/g;
-                        
-                        var matches = data.match(exp);
-                        
-                        // Some accessors do not require any modules.
-                        if (matches !== null && typeof matches !== 'undefined' &&
-                            matches.length > 0) {
-                            matches.forEach(function(match) {
-                                // Module name is from ' or " to end-1
-                                var quote = match.indexOf('\'');
-                                if (quote < 0) {
-                                    quote = match.indexOf('\"');
-                                }
-                                if (quote >= 0) {
-                                    match = match.substring(quote + 1, match.length - 1);
-                                }
+                            }
+                            
+                            // Look for matches to:
+                            // require('something') where quotes may be double 
+                            // quotes or single quotes.  Ignore whitespace.
+                            // This will return, for example:
+                            // require('cameras'
+                            // Use /g at the end to find all matches.
+                            var exp = /require\(\s*['"]\s*-*\w+-*\w*\s*['"]/g;
+                            
+                            var matches = data.match(exp);
+                            
+                            // Some accessors do not require any modules.
+                            if (matches !== null && typeof matches !== 'undefined' &&
+                                matches.length > 0) {
+                                matches.forEach(function(match) {
+                                    // Module name is from ' or " to end-1
+                                    var quote = match.indexOf('\'');
+                                    if (quote < 0) {
+                                        quote = match.indexOf('\"');
+                                    }
+                                    if (quote >= 0) {
+                                        match = match.substring(quote + 1, match.length - 1);
+                                    }
 
-                                accessorsToModules[filepath].push(match);
-                            });
+                                    accessorsToModules[filepath].push(match);
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
-        
         checkIfDone();
     };
     
@@ -366,7 +370,7 @@ module.exports = (function () {
                                         moduleStats.isDirectory()) {
                                         hostsToModules[dir].push(module);
                                     } else if (module.indexOf('.js') > 0 && 
-                                             module.indexOf('.js') === module.length - 3) {
+                                               module.indexOf('.js') === module.length - 3) {
                                         hostsToModules[dir].push(module.substring(0, module.length - 3));
                                     }
                                 } catch(err) {
