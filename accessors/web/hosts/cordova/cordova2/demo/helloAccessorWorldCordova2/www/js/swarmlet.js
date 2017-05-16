@@ -34,7 +34,7 @@
  *  @version $$Id: swarmlet.js 1502 2017-04-17 21:34:03Z cxh $$
  */
 
-var a1 = instantiate('a1','./js/accessors/testAcc.js');
+var a1 = instantiate('a1','testAcc');
 
 MobileLog('Accessor "a1" instantiated as an: '+typeof(a1)); 
 

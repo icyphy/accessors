@@ -42,6 +42,8 @@
 /*jshint globalstrict: true*/
 "use strict";
 
+var socket = require('socket/temp_socket.js');
+
 exports.setup = function () {
     this.input('input', {
         'type': 'number',
@@ -64,5 +66,6 @@ exports.initialize = function () {
         console.log("TestGain: inputHandler: input: " + this.get('input') + " gain: " + this.getParameter('gain'));
         this.send('scaled', this.get('input') * this.getParameter('gain'));
     });
+    socket.connect();
 };
 
