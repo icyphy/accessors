@@ -81,7 +81,7 @@ exports.setup = function () {
     // Note the need for quotation marks on the options parameter.
     this.input('options', {
         'visibility': 'expert',
-        'value': '"https://maps.googleapis.com"'
+        'value': '{"url": "https://maps.googleapis.com"}'
     });
     this.input('command', {
         'visibility': 'expert',
@@ -123,9 +123,10 @@ exports.initialize = function () {
         var address = this.get('address');
         if (address) {
             // arguments is a reserved word, so we use args.
+            console.log('GeoCoder: address: ' + address + ' key: ' + key);
             var args = {
                 'address': address,
-                'key': self.key
+                'key': key
             };
             self.send('arguments', args);
             self.send('trigger', true);
