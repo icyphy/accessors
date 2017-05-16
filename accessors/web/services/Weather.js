@@ -90,7 +90,7 @@ exports.setup = function () {
     // Also, hide base class inputs, except trigger.
     this.input('options', {
         'visibility': 'expert',
-        'value': '"http://api.openweathermap.org"'
+        'value': '{ "url": "http://api.openweathermap.org"}'
     });
     this.input('command', {
         'visibility': 'expert',
@@ -98,7 +98,8 @@ exports.setup = function () {
     });
     this.input('arguments', {
         'visibility': 'expert',
-        'value': '{"lat":37.85, "lon":-122.26}'
+        'key': 'Enter Key Here',
+        'value': '{"lat":37.85, "lon":-122.26, "key":"Set ~/.ptkeystore/weatherKey"}'
     });
     this.input('body', {
         'visibility': 'expert'
@@ -112,7 +113,7 @@ exports.setup = function () {
     this.output('status', {
         'visibility': 'expert'
     });
-    this.parameter('outputCompleteResponsesOnly', {
+    this.parameter('outputCompleteResponseOnly', {
         'visibility': 'expert'
     });
 };
@@ -146,6 +147,7 @@ exports.initialize = function () {
         if (location &&
             typeof location.latitude === 'number' &&
             typeof location.longitude === 'number') {
+            console.log('Weather: lat: ' + location.latitude + ', lon: ' + location.longitude + ', key: ' + key);
             var reformatted = {
                 'lat': location.latitude,
                 'lon': location.longitude,
@@ -170,6 +172,8 @@ exports.initialize = function () {
  *  on the 'response' output.
  */
 exports.filterResponse = function (response) {
+    console.log('Weather.js filterResponse(' + response);
+    console.log(response);
     if (response) {
         // Note that for some hosts, the response is a string, needing to parsed,
         // and for some, its already been parsed.

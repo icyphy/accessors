@@ -3,31 +3,11 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/services/test/auto; node ../../../hosts/node/nodeHostInvoke.js services/test/auto/GeoCoderWeather)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor file:/Users/cxh/ptII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode file:/Users/cxh/ptII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
 
     // Ports: GeoCoderWeather: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
-
-    // Start: Weather: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var Weather = this.instantiate('Weather', 'services/Weather.js');
-    Weather.setParameter('outputCompleteResponsesOnly', null);
-    Weather.setDefault('arguments', {"lat":37.85, "lon":-122.26});
-    Weather.setDefault('location', {"latitude":37.85,"longitude":-122.26});
-    Weather.setDefault('options', "http://api.openweathermap.org");
-    Weather.setDefault('command', "/data/2.5/weather");
-    Weather.setParameter('temperature', "Fahrenheit");
-    Weather.setParameter('timeout', 10000);
-    Weather.setParameter('outputCompleteResponseOnly', true);
-
-    // Start: GeoCoder: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var GeoCoder = this.instantiate('GeoCoder', 'services/GeoCoder.js');
-    GeoCoder.setParameter('outputCompleteResponsesOnly', null);
-    GeoCoder.setDefault('arguments', {"address":"Berkeley, CA","key":"Enter Key Here"});
-    GeoCoder.setDefault('options', "https://maps.googleapis.com");
-    GeoCoder.setDefault('command', "maps/api/geocode/json");
-    GeoCoder.setParameter('timeout', 10000);
-    GeoCoder.setParameter('outputCompleteResponseOnly', true);
 
     // Start: JavaScriptConst: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -57,13 +37,39 @@ exports.setup = function() {
     // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var Stop = this.instantiate('Stop', 'utilities/Stop.js');
 
+    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
+
+    // Start: TestDisplay2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestDisplay2 = this.instantiate('TestDisplay2', 'test/TestDisplay.js');
+
+    // Start: GeoCoder: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var GeoCoder = this.instantiate('GeoCoder', 'services/GeoCoder.js');
+    GeoCoder.setDefault('options', {"url": "https://maps.googleapis.com"});
+    GeoCoder.setDefault('command', "maps/api/geocode/json");
+    GeoCoder.setDefault('arguments', {"address":"Berkeley, CA","key":"Enter Key Here"});
+    GeoCoder.setParameter('timeout', 10000);
+    GeoCoder.setParameter('outputCompleteResponseOnly', true);
+
+    // Start: Weather: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Weather = this.instantiate('Weather', 'services/Weather.js');
+    Weather.setDefault('options', { "url": "http://api.openweathermap.org"});
+    Weather.setDefault('command', "/data/2.5/weather");
+    Weather.setDefault('arguments', {"lat":37.85, "lon":-122.26, "key":"Set ~/.ptkeystore/weatherKey"});
+    Weather.setParameter('temperature', "Fahrenheit");
+    Weather.setDefault('location', {"latitude":37.85,"longitude":-122.26});
+    Weather.setParameter('timeout', 10000);
+    Weather.setParameter('outputCompleteResponseOnly', true);
+
     // Connections: GeoCoderWeather: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
-    this.connect(GeoCoder, 'location', Weather, 'location');
-    this.connect(JavaScriptConst, 'output', GeoCoder, 'address');
     this.connect(TestSpontaneousOnce, 'output', JavaScriptConst, 'trigger');
     this.connect(JavaScriptGetTemperature, 'temperature', TrainableTest, 'input');
     this.connect(Weather, 'weather', JavaScriptGetTemperature, 'input');
     this.connect(TrainableTest, 'output', Stop, 'stop');
+    this.connect(GeoCoder, 'response', TestDisplay, 'input');
+    this.connect(Weather, 'weather', TestDisplay2, 'input');
+    this.connect(JavaScriptConst, 'output', GeoCoder, 'address');
+    this.connect(GeoCoder, 'location', Weather, 'location');
 };
 
 // To update the initialize code below, modify
@@ -72,10 +78,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize();
-        this.stopAt(10000.0);
+        this.stopAt(21000.0);
     }
 } else {
     exports.initialize = function() {
-        this.stopAt(10000.0);
+        this.stopAt(21000.0);
     }
 }
