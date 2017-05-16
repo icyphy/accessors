@@ -29,7 +29,10 @@ var app = {
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
         // Load and parse the swarmlet
-        eval(getJavaScript('./js/swarmlet.js', null, false));
+        console.log("App path is: " + document.location);
+        var txt = getJavaScript('./js/swarmlet.js');
+        eval(txt);
+        MobileLog('Swarmlet initialized');
     },
 
     // Update DOM on a Received Event
