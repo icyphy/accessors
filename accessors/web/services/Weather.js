@@ -56,9 +56,6 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-// The key from http://openweathermap.org/appid that should be placed in $HOME/.ptKeystore/weatherKey.
-var key = '';
-
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
@@ -75,17 +72,7 @@ exports.setup = function () {
         'options': ['Fahrenheit', 'Celsius', 'Kelvin'],
         'value': 'Fahrenheit'
     });
-    // See the accessor comment for how to get the key.
-    var keyFile = '$KEYSTORE/weatherKey';
-    try {
-        key = getResource(keyFile, 1000).trim();
-    } catch (e) {
-        console.log('Weather.js: Could not get ' + keyFile + ":  " + e +
-                    '\nThe key is not public, so this accessor is only useful ' +
-                    'If you have the key.  See ' +
-                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.Weather');
-        key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
-    }
+
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     this.input('options', {
@@ -147,6 +134,21 @@ exports.initialize = function () {
         if (location &&
             typeof location.latitude === 'number' &&
             typeof location.longitude === 'number') {
+
+            // The key from http://openweathermap.org/appid that should be placed in $HOME/.ptKeystore/weatherKey.
+            var key = '';
+            // See the accessor comment for how to get the key.
+            var keyFile = '$KEYSTORE/weatherKey';
+            try {
+                key = getResource(keyFile, 1000).trim();
+            } catch (e) {
+                console.log('Weather.js: Could not get ' + keyFile + ":  " + e +
+                            '\nThe key is not public, so this accessor is only useful ' +
+                            'If you have the key.  See ' +
+                            'https://www.icyphy.org/accessors/library/index.html?accessor=services.Weather');
+                key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
+            }
+
             console.log('Weather: lat: ' + location.latitude + ', lon: ' + location.longitude + ', key: ' + key);
             var reformatted = {
                 'lat': location.latitude,

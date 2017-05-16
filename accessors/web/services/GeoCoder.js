@@ -55,9 +55,6 @@
 /*jshint globalstrict: true*/
 'use strict';
 
-// The key from https://developers.google.com/maps/documentation/geocoding/intro
-var key = '';
-
 /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
@@ -65,17 +62,6 @@ exports.setup = function () {
     this.input('address');
     this.output('location');
 
-    // See the accessor comment for how to get the key.
-    var keyFile = '$KEYSTORE/geoCoderKey';
-    try {
-        key = getResource(keyFile, 1000).trim();
-    } catch (e) {
-        console.log('GeoCoder.js: Could not get ' + keyFile + ":  " + e +
-                    '\nThe key is not public, so this accessor is only useful ' +
-                    'If you have the key.  See ' +
-                    'https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder');
-        key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
-    }
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
     // Note the need for quotation marks on the options parameter.
@@ -122,8 +108,24 @@ exports.initialize = function () {
     this.addInputHandler('address', function () {
         var address = this.get('address');
         if (address) {
-            // arguments is a reserved word, so we use args.
+            // The key from https://developers.google.com/maps/documentation/geocoding/intro
+            var key = '';
+
+            // See the accessor comment for how to get the key.
+            var keyFile = '$KEYSTORE/geoCoderKey';
+            try {
+                key = getResource(keyFile, 1000).trim();
+            } catch (e) {
+                console.log('GeoCoder.js: Could not get ' + keyFile + ":  " + e +
+                            '\nThe key is not public, so this accessor is only useful ' +
+                            'If you have the key.  See ' +
+                            'https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder');
+                key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
+            }
+
             console.log('GeoCoder: address: ' + address + ' key: ' + key);
+
+            // arguments is a reserved word, so we use args.
             var args = {
                 'address': address,
                 'key': key
