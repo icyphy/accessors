@@ -1,0 +1,5 @@
+accessorMobilePageStyleLicense.css has the following license:
+
+Copyright 2010, 2014 jQuery Foundation, Inc. and othercontributors
+Released under the MIT license.
+http://jquery.org/license
