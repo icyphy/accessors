@@ -127,11 +127,6 @@ var tick;
 // Default label index
 var defaultLabelIndex = 0;
 
-// Default LLCD for any delayed callback with timeout 0 that is given without
-// an explicity different LLCD
-var zeroTimeoutLabel = 'zeroTimeoutLabel';
-
-
 /** This function is to be binded to clearInterval() function. It clears the 
  *  periodic timer which identifier is given as parameter, by calling
  *  clearTick().
@@ -457,7 +452,9 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     var label;
     if (!llcd || typeof(llcd) !== 'string') {
         if (timeout === 0) {
-            label = zeroTimeoutLabel;
+            // Default LLCD for any delayed callback with timeout 0 that is given without
+            // an explicitly different LLCD
+            label = 'zeroTimeoutLabel';
         } else {
             label = ++defaultLabelIndex;
         }
@@ -476,12 +473,12 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // current physical time
     if (!delayedCallbacks[label]) {
         delayedCallbacks[label] = {};
-        if (label !== zeroTimeoutLabel) {
+        if (label === 'zeroTimeoutLabel') {
+            delayedCallbacks[label].currentLogicalTime = 0;
+            delayedCallbacks[label].origin = 0;               
+        } else {
             delayedCallbacks[label].currentLogicalTime = Date.now();
             delayedCallbacks[label].origin = delayedCallbacks[label].currentLogicalTime;
-        } else {
-            delayedCallbacks[label].currentLogicalTime = 0;
-            delayedCallbacks[label].origin = 0;   
         }
     }
     
