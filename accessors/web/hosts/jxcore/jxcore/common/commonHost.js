@@ -741,7 +741,7 @@ clearTimeout',
         };
 
         this.wrapup = function () {
-            // console.log('wrapup for accessor: '+this.accessorName);
+            // console.log('wrapup for accessor: ' + this.accessorName);
             // Mark that this accessor has not been initialized.
             this.initialized = false;
 
@@ -755,11 +755,7 @@ clearTimeout',
 
             // Reset all timers
             var thiz = this;
-            Object.keys(this.timers).forEach(function(key) {
-                thiz.clearIntervalDeterministic(key);
-                thiz.clearTimeoutDeterministic(key);
-            });
-            this.timers = {};
+            thiz.clearTimers();
             
             // Invoke wrapup on contained accessors.
             if (this.containedAccessors && this.containedAccessors.length > 0) {
@@ -1143,9 +1139,9 @@ Accessor.prototype.connect = function (a, b, c, d) {
  */
 Accessor.prototype.clearIntervalDeterministic = function(cbId) {
     var thiz = this;
-    if (thiz.timers[cbId] === true) {
-       deterministicTemporalSemantics.clearIntervalDet(cbId);
-       delete(thiz.timers[cbId]);
+    if (thiz.timers[cbId]) {
+        deterministicTemporalSemantics.clearIntervalDet(Number(cbId));
+        delete(thiz.timers[cbId]);
     }
 }
 
@@ -1157,10 +1153,32 @@ Accessor.prototype.clearIntervalDeterministic = function(cbId) {
  */
 Accessor.prototype.clearTimeoutDeterministic = function(cbId) {
     var thiz = this;
-    if (thiz.timers[cbId] === true) {
-        deterministicTemporalSemantics.clearTimeoutDet(cbId); 
+    if (thiz.timers[cbId]) {
+        deterministicTemporalSemantics.clearTimeoutDet(Number(cbId)); 
         delete(thiz.timers[cbId]);
     }
+}
+
+/** Clears all the timers by removing them from the callbackQueue and the
+ *  delayedCallbacks object, and then setting this.timers to the empty object. 
+ */
+Accessor.prototype.clearTimers = function() {
+    var thiz = this;
+    
+    // Parse all timers to remove them from the callbackQueue and the
+    // delayedCallbacks, if deterministicTemporalSemantics is defined 
+    if (deterministicTemporalSemantics) {
+        Object.keys(thiz.timers).forEach(function(key) {
+            deterministicTemporalSemantics.clearTimeoutDet(Number(key));
+            deterministicTemporalSemantics.clearIntervalDet(Number(key));
+        });
+    } else {
+        Object.keys(thiz.timers).forEach(function(key) {
+            clearTimeout(key);
+            clearInterval(key);
+        });
+    }
+    thiz.timers = {};
 }
 
 /** Disconnects the specified inputs and outputs.
@@ -2767,6 +2785,10 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
                     terminator();
                 } else {
                     stopAllAccessors();
+                    console.log('stop all accessors');
+                    if (deterministicTemporalSemantics) {
+                        deterministicTemporalSemantics.reset();
+                    }
                 }
             }, timeout);
             break;
@@ -2926,4 +2948,3 @@ exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.stopAllAccessors = stopAllAccessors;
 exports.uniqueName = uniqueName;
-
