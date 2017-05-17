@@ -382,7 +382,7 @@ exports.initialize = function () {
             var util = require('util');
             console.log(util.inspect(data));
             self.send('received', data);
-            self.send('receivedID', connectionCount);
+            self.send('receivedID', socketInstance);
         });
         serverSocket.on('error', function (message) {
             console.log('TCPSocketServer.js: serverSocket error listener: ' + message);
