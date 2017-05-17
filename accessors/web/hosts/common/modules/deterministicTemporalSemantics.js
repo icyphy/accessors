@@ -148,44 +148,39 @@ function clearIntervalDet(cbId){
  *          false otherwise
  */
 function clearTick(cbId, periodic) {
-    if (!delayedCallbacks || (typeof cbId !== "number") || (typeof periodic !== "boolean")) {
+    if (!delayedCallbacks || (callbackQueue.length === 0)) {
         return;
     }
     
     var label;
     var indexInCbQueue = -1;
     
-    // Parse looking for label, given the identifier
-    Object.keys(delayedCallbacks).forEach(function(key) {
-        if (delayedCallbacks[key][cbId] && delayedCallbacks[key][cbId].periodic === periodic) {
-            label = key;
-            
-        }
-    });
-    
-    // Parse for the index in callbackQueue
+    // Parse for the index in callbackQueue, and deduce the label
     for(var i = 0 ; i < callbackQueue.length ; i++) {
         if (callbackQueue[i].id === cbId) {
             indexInCbQueue = i;
+            label = callbackQueue[i].label ;
             break;
         }
     }
     
-    if (label) {
+    if (indexInCbQueue !== -1) {
+        // console.log('index of id: ' + cbId + ' in callback queue is: ' +
+        //      indexInCbQueue + ' label is: ' + label + ' del callbacks: ' + 
+        //      delayedCallbacks[label][cbId]);
+
         // Delete from delayedCallbacks
         delete delayedCallbacks[label][cbId];
         
         // Delete from callbackQueue
         callbackQueue.splice(indexInCbQueue , 1);
-
+        
         // Clean up delayedCallbacks
         if (Object.size(delayedCallbacks[label]) === 2) {
             delete(delayedCallbacks[label]);
             // Check if there are still callbacks in the list
             if (Object.size(delayedCallbacks) === 0) {
-                delayedCallbacks = null;    // Parse for the index in callbackQueue 
-                nextScheduledTick = Infinity;
-                clearTimeout(tick);
+                reset();
             }
         }
     }
@@ -230,14 +225,12 @@ function computeNextSceduledTick() {
  */
 var executeAndSetNextTick = function() {
     // Handling a corner case: if somehow it happens that delayedCallbacks is empty
-    if (!delayedCallbacks) {
-        clearTimeout(tick);
-        nextScheduledTick = Infinity;
+    if (!delayedCallbacks || (callbackQueue.length === 0)) {
+        reset();
         return;
     }
     
     var currentTime = Date.now();
-    //console.dir(delayedCallbacks);
     
     while (nextScheduledTick <= currentTime) {
         
@@ -248,9 +241,8 @@ var executeAndSetNextTick = function() {
         executeCallbacks();
         
         // Check that there are still call backs in the list
-        if (!delayedCallbacks) {
-            clearTimeout(tick);
-            nextScheduledTick = Infinity;
+        if (!delayedCallbacks || (callbackQueue.length === 0)) {
+            reset();
             return;
         }
         
@@ -262,14 +254,13 @@ var executeAndSetNextTick = function() {
     }
        
     // Handling a corner case: if somehow it happens that delayedCallbacks is empty
-    if (!delayedCallbacks) {
-        clearTimeout(tick);
-        nextScheduledTick = Infinity;
+    if (!delayedCallbacks || (callbackQueue.length === 0)) {
+        reset();
         return;
     }
     
     // Set the next Tick
-    tick = setTimeout(executeAndSetNextTick, nextScheduledTick - Date.now());        
+    tick = setTimeout(executeAndSetNextTick, Math.max(nextScheduledTick - Date.now(), 0));        
 };
 
 /** This function executes delayed callback such that their next execution time
@@ -290,24 +281,38 @@ function executeCallbacks() {
             delayedCallbacks[key].currentLogicalTime = nextScheduledTick;
             
             // Call the callback function
-            delayedCallbacks[key][id].cbFunction.call();
-            
-            // then reinitialize the remainingTime to the interval value.
-            if (delayedCallbacks[key][id].periodic === true) {
-                delayedCallbacks[key][id].nextExecutionTime += delayedCallbacks[key][id].interval;
-                putInCallbackQueue(key, id);
-            } else {
-                // All the executed callbacks that are not periodic (case where remainingTime remained
-                // equal to zero) need to be removed from the List.
+            try {
+                delayedCallbacks[key][id].cbFunction.call();    
+                
+                // then reinitialize the remainingTime to the interval value.
+                if (delayedCallbacks[key][id].periodic === true) {
+                    delayedCallbacks[key][id].nextExecutionTime += delayedCallbacks[key][id].interval;
+                    putInCallbackQueue(key, id);
+                } else {
+                    // All the executed callbacks that are not periodic, need to be removed from the List.
+                    delete(delayedCallbacks[key][id]);
+                    
+                    // If delayedCallback of the key label is empty, then remove it
+                    if (Object.size(delayedCallbacks[key]) === 2) {
+                        delete(delayedCallbacks[key]);
+                        if (Object.size(delayedCallbacks) === 0) {
+                            reset();
+                            return;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('executeCallbacks(): the delayedCallback of id ' + id +' and llcd ' + 
+                        key + ' does not exist any more! \n Perhaps the accessor ' +
+                        'is deleted without calling wrapup...\n ... thus removing from list, ' +
+                        'and the size of callbackQueue is: ' + callbackQueue.length);
                 delete(delayedCallbacks[key][id]);
                 
                 // If delayedCallback of the key label is empty, then remove it
                 if (Object.size(delayedCallbacks[key]) === 2) {
                     delete(delayedCallbacks[key]);
                     if (Object.size(delayedCallbacks) === 0) {
-                        delayedCallbacks = null;
-                        clearTimeout(tick);
-                        nextScheduledTick = Infinity;
+                        reset();
                         return;
                     }
                 }
@@ -321,9 +326,7 @@ function executeCallbacks() {
 
     // Check if there are callbacks in the list
     if (Object.size(delayedCallbacks) === 0) {
-        delayedCallbacks = null;
-        clearTimeout(tick);
-        nextScheduledTick = Infinity;
+        reset();
     }
 }
 
@@ -404,8 +407,24 @@ function putInCallbackQueue(label, id) {
     }
     
     callbackQueue.splice(index, 0, obj);
-    // console.dir(callbackQueue);
-    // console.dir(delayedCallbacks);
+}
+
+/** In case there are no more delayedCallbacks (that is when callbackQueue becomes
+ *  empty or delayedCallbacks has no more callbacks, then reset all counter, identifiers,
+ *  objects and lists. 
+ */
+function reset() {
+    // Clear tick
+    clearTimeout(tick);
+    
+    // Make sure delayedCallbacks and callbackQueue are reset
+    delayedCallbacks = null;
+    callbackQueue = [];
+    
+    // Set initial values for nextScheduledTick, cbIdentifier and defaultLabelIndex 
+    nextScheduledTick = Infinity;
+    cbIdentifier = 0;
+    defaultLabelIndex = 0;
 }
 
 /** Both, setIntervalDet and setTimeoutDet create a new delayed callback, compute the next
@@ -433,7 +452,7 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // Check if a labeled clock domain has been provided, otherwise use the default one
     var label;
     if (!llcd || typeof(llcd) !== 'string') {
-        label = defaultLabelIndex++;
+        label = ++defaultLabelIndex;
     } else {
         label = llcd;
     }
@@ -463,13 +482,11 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // Schedule the new delayed callback
     putInCallbackQueue(label, cbIdentifier);
     
-    // console.log('+++ It is: '+Date.now() % 100000 +' Timer set by: '+cbIdentifier+' to expire at: '+newDelayedCallback.nextExecutionTime % 100000+' and the size of delayed callbacks is: '+Object.size(delayedCallbacks)+' and queue size: '+callbackQueue.length);
-    
     // Update the next tick if necessary
     if (nextScheduledTick > newDelayedCallback.nextExecutionTime) {
         clearTimeout(tick);
         nextScheduledTick = newDelayedCallback.nextExecutionTime;
-        tick = setTimeout(executeAndSetNextTick, nextScheduledTick - Date.now());
+        tick = setTimeout(executeAndSetNextTick, Math.max(nextScheduledTick - Date.now(), 0));
     }
     
     // return the callback identifier, useful for clearInterval
@@ -488,9 +505,6 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
  */
 function setIntervalDet(callback, timeout, llcd) {
     var tt = setDelayedCallback(callback, timeout, true, llcd);
-    // p.timers.push(tt);
-    // console.dir('for cb: '+callback+ ' my id is: '+tt);
-    // console.dir(p);
     return tt;
 }
 
@@ -526,6 +540,8 @@ Object.size = function(obj) {
     return size;
 };
 
+
+
 ///////////////////////////////////////////////////////////////////
 //// Exports
 
@@ -533,3 +549,4 @@ exports.setTimeoutDet = setTimeoutDet;
 exports.clearTimeoutDet = clearTimeoutDet;
 exports.setIntervalDet = setIntervalDet;
 exports.clearIntervalDet = clearIntervalDet;
+exports.reset = reset;
