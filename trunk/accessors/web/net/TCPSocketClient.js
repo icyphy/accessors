@@ -192,7 +192,7 @@ var previousHost, previousPort;
 
 /** Set up the accessor by defining the parameters, inputs, and outputs. */
 exports.setup = function () {
-    console.log('TCPSocketClient.js: setup() start');
+    // console.log('TCPSocketClient.js: setup() start');
     this.input('host', {
         type: 'string',
         value: 'localhost'
@@ -296,7 +296,7 @@ exports.setup = function () {
     } catch (err) {
         this.error(err);
     }
-    console.log('TCPSocketClient.js: setup() end');
+    // console.log('TCPSocketClient.js: setup() end');
 };
 
 
@@ -306,7 +306,7 @@ exports.setup = function () {
  *  `discardMessagesBeforeOpen`.
  */
 exports.send = function (data) {
-    console.log('TCPSocketClient.js: send()');
+    // console.log('TCPSocketClient.js: send()');
     // May be receiving inputs before client has been set.
 
     if (client && exports.isOpen()) {
@@ -336,7 +336,7 @@ exports.send = function (data) {
 
 /** Handle input on 'toSend' by sending the specified data to the server. */
 exports.toSendInputHandler = function () {
-    console.log('TCPSocketClient.js: toSendInputHandler()');
+    // console.log('TCPSocketClient.js: toSendInputHandler()');
     this.exports.send.call(this, this.get('toSend'));
 };
 
@@ -347,7 +347,7 @@ exports.toSendInputHandler = function () {
  *  errors, and closing from the server.
  */
 exports.initialize = function () {
-    console.log('TCPSocketClient.js: initialize()');
+    // console.log('TCPSocketClient.js: initialize()');
     this.addInputHandler('host', this.exports.connect.bind(this));
     this.addInputHandler('port', this.exports.connect.bind(this));
     this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
@@ -361,7 +361,7 @@ exports.initialize = function () {
  *   extending accessor.
  */
 exports.dataReceivedHandler = function (data) {
-    console.log('TCPSocketClient.js: dataReceiveHandler() data: ' + data);
+    // console.log('TCPSocketClient.js: dataReceiveHandler() data: ' + data);
     this.send('received', data);
 };
 
@@ -371,7 +371,7 @@ exports.dataReceivedHandler = function (data) {
  *  on the toSend() input port.
  */
 exports.connect = function () {
-    console.log('TCPSocketClient.js: connect()');
+    // console.log('TCPSocketClient.js: connect()');
     // Note that if 'host' and 'port' both receive new data in the same
     // reaction, then this will be invoked twice. But we only want to open
     // the socket once.  This is fairly tricky.
@@ -427,7 +427,7 @@ exports.connect = function () {
     var self = this;
 
     client.on('open', function () {
-        console.log('TCPSocketClient: open: Connection established');
+        // console.log('TCPSocketClient: open: Connection established');
         self.send('connected', true);
 
         // If there are pending sends, send them now.
@@ -442,10 +442,10 @@ exports.connect = function () {
     });
     client.on('data', self.exports.dataReceivedHandler.bind(self));
     client.on('close', function () {
-        console.log('TCPSocketClient: close');
+        // console.log('TCPSocketClient: close');
         previousHost = null;
         previousPort = null;
-        console.log('Connection closed.');
+        // console.log('Connection closed.');
         // NOTE: Even if running is true, it can occur that it is too late
         // to send the message (the wrapup process has been started), in which case
         // the message may not be received.
@@ -455,28 +455,28 @@ exports.connect = function () {
         openSocket = false; //Update state variable
     });
     client.on('error', function (message) {
-        console.log('TCPSocketClient: error: ' + error);
+        // console.log('TCPSocketClient: error: ' + error);
         previousHost = null;
         previousPort = null;
         self.error(message);
     });
 
     client.open();
-    console.log('TCPSocketClient.js: connect() end');
+    // console.log('TCPSocketClient.js: connect() end');
 };
 
 /** Return true if this client has an open connection to the server. */
 exports.isOpen = function () {
-    console.log('TCPSocketClient.js: isOpen()');
+    // console.log('TCPSocketClient.js: isOpen()');
     return openSocket;
 };
 
 /** Close the web socket connection. */
 exports.wrapup = function () {
-    console.log('TCPSocketClient.js: wrapup()');
+    // console.log('TCPSocketClient.js: wrapup()');
     running = false;
     if (client) {
         client.close();
-        console.log('Status: Connection closed in wrapup.');
+        // console.log('Status: Connection closed in wrapup.');
     }
 };
