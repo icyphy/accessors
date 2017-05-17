@@ -86,7 +86,7 @@ commonHost.allowTrustedAccessors(true);
  *  __dirname/../.., where __dirname is the directory where this
  *  script is located.
  */
-var accessorPath = [path.join(__dirname, '..', '..', '..')];
+var accessorPath = [path.join(__dirname, '..', '..')];
 
 /////////////////////////////////////////////////
 // Functions are defined below here.
