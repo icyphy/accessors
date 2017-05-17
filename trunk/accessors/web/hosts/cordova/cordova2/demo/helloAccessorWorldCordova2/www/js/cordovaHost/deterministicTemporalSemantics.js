@@ -127,6 +127,10 @@ var tick;
 // Default label index
 var defaultLabelIndex = 0;
 
+// Default LLCD for any delayed callback with timeout 0 that is given without
+// an explicity different LLCD
+var zeroTimeoutLabel = 'zeroTimeoutLabel';
+
 
 /** This function is to be binded to clearInterval() function. It clears the 
  *  periodic timer which identifier is given as parameter, by calling
@@ -176,7 +180,7 @@ function clearTick(cbId, periodic) {
         callbackQueue.splice(indexInCbQueue , 1);
         
         // Clean up delayedCallbacks
-        if (Object.size(delayedCallbacks[label]) === 2) {
+        if ((Object.size(delayedCallbacks[label]) === 2)) {
             delete(delayedCallbacks[label]);
             // Check if there are still callbacks in the list
             if (Object.size(delayedCallbacks) === 0) {
@@ -452,7 +456,11 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // Check if a labeled clock domain has been provided, otherwise use the default one
     var label;
     if (!llcd || typeof(llcd) !== 'string') {
-        label = ++defaultLabelIndex;
+        if (timeout === 0) {
+            label = zeroTimeoutLabel;
+        } else {
+            label = ++defaultLabelIndex;
+        }
     } else {
         label = llcd;
     }
@@ -468,8 +476,13 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // current physical time
     if (!delayedCallbacks[label]) {
         delayedCallbacks[label] = {};
-        delayedCallbacks[label].currentLogicalTime = Date.now();
-        delayedCallbacks[label].origin = delayedCallbacks[label].currentLogicalTime;
+        if (label !== zeroTimeoutLabel) {
+            delayedCallbacks[label].currentLogicalTime = Date.now();
+            delayedCallbacks[label].origin = delayedCallbacks[label].currentLogicalTime;
+        } else {
+            delayedCallbacks[label].currentLogicalTime = 0;
+            delayedCallbacks[label].origin = 0;   
+        }
     }
     
     // Set the next execution time of the new callback to the current logical time of the LLCD 
@@ -504,6 +517,16 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
  *  @return the unique Id of setInterval call
  */
 function setIntervalDet(callback, timeout, llcd) {
+    // Do not allow setInterval calls is called with timeout 0
+    // Since this may lead to a dangerous behavior
+    if (timeout === 0) {
+        // FIXME: What to do in case of setInterval of 0, since this may
+        // harm the system
+        // throw new Error('setInterval(): timeout zero is not allowed!');
+        // or
+        // console.log('setInterval(): timeout zero is not allowed, remove the call');
+        // return -1;
+    }
     var tt = setDelayedCallback(callback, timeout, true, llcd);
     return tt;
 }
