@@ -1566,6 +1566,18 @@ Accessor.prototype.provideInput = function (name, value) {
         throw new Error('provideInput(): Accessor has no input named ' + name);
     }
 
+    // If input.pendingHandler is true, then this value should be
+    // queued rather than overwriting the currentValue. Then at the end of
+    // react, or when pendingHandler is reset, the value should be extracted
+    // from the queue and provideInput() should be called again.
+    if (input.pendingHandler) {
+        if (!input.queuedInputs) {
+            input.queuedInputs = [];
+        }
+        input.queuedInputs.push(value);
+        return;
+    }
+
     value = convertType(value, input, name);
     input.currentValue = value;
 
@@ -1613,6 +1625,9 @@ Accessor.prototype.provideInput = function (name, value) {
  *  @param name The name of the input.
  */
 Accessor.prototype.react = function (name) {
+    // FIXME: The accessor specification says nothing about a name argument to react()
+    // and this does not appear to be used anywhere. Remove it?
+
     // console.log(this.accessorName + ": ================== react(" + name + ")");
 
     this.emit('reactStart');
@@ -1690,10 +1705,21 @@ Accessor.prototype.react = function (name) {
             moreInputsPossiblyAvailable = false;
             for (var i = 0; i < thiz.inputList.length; i++) {
                 name = thiz.inputList[i];
-                if (thiz.inputs[name].pendingHandler) {
-                    thiz.inputs[name].pendingHandler = false;
+                var input = thiz.inputs[name];
+                if (input.pendingHandler) {
+                    input.pendingHandler = false;
+                    // The handler may send data to an input of this same accessor,
+                    // so it is possible that after invoking the handler, there will
+                    // be more inputs available.
                     moreInputsPossiblyAvailable = true;
                     invokeSpecificHandler(name);
+
+                    // If there are queued inputs for this port, then dequeue
+                    // them here.
+                    if (input.queuedInputs && input.queuedInputs.length> 0) {
+                        var value = input.queuedInputs.shift();
+                        thiz.provideInput(name, value);
+                    }
                 }
             }
         }
