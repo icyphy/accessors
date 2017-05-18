@@ -80,7 +80,7 @@ exports.setup = function() {
 if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
-        originalInitialize();
+        originalInitialize.call(this);
         this.stopAt(12000.0);
     }
 } else {
