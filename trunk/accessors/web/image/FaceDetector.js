@@ -46,17 +46,22 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var faceDetector = require('@accessors-modules/face-detector');
+var faceDetector = require('face-detector');
 
 exports.setup = function () {
     this.input('input');
+    this.parameter('options', {
+        'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
+        'type': 'JSON'
+    });
+    this.parameter('transform', {
+        type: 'string',
+        options: faceDetector.filters,
+        value: 'faces'
+    });
     this.output('output');
     this.output('faceCount', {
         'type': 'int'
-    });
-    this.input('options', {
-        'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
-        'type': 'JSON'
     });
 };
 
@@ -64,9 +69,11 @@ exports.initialize = function () {
     var self = this;
 
     this.addInputHandler('input', function () {
-        var options = this.get('options');
+        var options = this.getParameter('options');
+        var transform = this.getParameter('transform');
         var image = this.get('input');
-        var result = faceDetector.filter(image, options, function (result) {
+       
+        faceDetector.filter(image, transform, options, function (result) {
             self.send('output', result);
             var numFaces = faceDetector.numberOfFaces();
             self.send('faceCount', numFaces);
