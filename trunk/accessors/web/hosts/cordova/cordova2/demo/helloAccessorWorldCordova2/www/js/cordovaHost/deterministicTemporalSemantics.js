@@ -147,7 +147,7 @@ function clearIntervalDet(cbId){
  *          false otherwise
  */
 function clearTick(cbId, periodic) {
-    if (!delayedCallbacks || (callbackQueue.length === 0)) {
+    if (!delayedCallbacks && (callbackQueue.length === 0)) {
         return;
     }
     
@@ -156,18 +156,15 @@ function clearTick(cbId, periodic) {
     
     // Parse for the index in callbackQueue, and deduce the label
     for(var i = 0 ; i < callbackQueue.length ; i++) {
-        if (callbackQueue[i].id === cbId) {
+        if (Number(callbackQueue[i].id) === cbId) {
+            
             indexInCbQueue = i;
             label = callbackQueue[i].label ;
             break;
         }
     }
     
-    if (indexInCbQueue !== -1) {
-        // console.log('index of id: ' + cbId + ' in callback queue is: ' +
-        //      indexInCbQueue + ' label is: ' + label + ' del callbacks: ' + 
-        //      delayedCallbacks[label][cbId]);
-
+    if (indexInCbQueue !== -1 && label !== 'zeroTimeoutLabel') {
         // Delete from delayedCallbacks
         delete delayedCallbacks[label][cbId];
         
@@ -177,11 +174,23 @@ function clearTick(cbId, periodic) {
         // Clean up delayedCallbacks
         if ((Object.size(delayedCallbacks[label]) === 2)) {
             delete(delayedCallbacks[label]);
+            
             // Check if there are still callbacks in the list
             if (Object.size(delayedCallbacks) === 0) {
                 reset();
             }
         }
+    }  else {
+        // It may happen that the delayed callback was deleted from the callbackQueue,
+        // but not yet deleted from the delayedCallbacks object.
+        // This happens when the delayedCallback is the calling wrapup.
+        // Handle here this particular case
+        Object.keys(delayedCallbacks).forEach(function(key) {
+            if (delayedCallbacks[key][cbId]) {
+                label = key;
+            }
+        })
+        if (label) delete delayedCallbacks[label][cbId];
     }
     
     // If no delayed callback to remove, then this is not an error! It may happen, for instance,
@@ -301,15 +310,17 @@ function executeCallbacks() {
                     }
                 }
             } catch (e) {
-                console.log('executeCallbacks(): the delayedCallback of id ' + id +' and llcd ' + 
-                        key + ' does not exist any more! \n Perhaps the accessor ' +
-                        'is deleted without calling wrapup...\n ... thus removing from list, ' +
-                        'and the size of callbackQueue is: ' + callbackQueue.length);
+                throw new Error(e);
+                    // 'executeCallbacks(): the delayedCallback of id ' + id +' and llcd ' + 
+                    //    key + ' does not exist any more! \n Perhaps the accessor ' +
+                    //    'is deleted without calling wrapup...\n ... thus removing from list, ' +
+                    //    'and the size of callbackQueue is: ' + callbackQueue.length+'\n'+e);
                 delete(delayedCallbacks[key][id]);
                 
                 // If delayedCallback of the key label is empty, then remove it
                 if (Object.size(delayedCallbacks[key]) === 2) {
                     delete(delayedCallbacks[key]);
+
                     if (Object.size(delayedCallbacks) === 0) {
                         reset();
                         return;
@@ -473,7 +484,7 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // current physical time
     if (!delayedCallbacks[label]) {
         delayedCallbacks[label] = {};
-        if (label === 'zeroTimeoutLabel') {
+        if (label == 'zeroTimeoutLabel') {
             delayedCallbacks[label].currentLogicalTime = 0;
             delayedCallbacks[label].origin = 0;               
         } else {
@@ -519,10 +530,7 @@ function setIntervalDet(callback, timeout, llcd) {
     if (timeout === 0) {
         // FIXME: What to do in case of setInterval of 0, since this may
         // harm the system
-        // throw new Error('setInterval(): timeout zero is not allowed!');
-        // or
-        // console.log('setInterval(): timeout zero is not allowed, remove the call');
-        // return -1;
+        throw new Error('setInterval(): timeout zero is not allowed!');
     }
     var tt = setDelayedCallback(callback, timeout, true, llcd);
     return tt;
