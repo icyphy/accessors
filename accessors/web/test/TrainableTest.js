@@ -184,7 +184,7 @@ exports.initialize = function () {
                     // devices/test/auto/WatchEmulator.js needs this test for object because
                     // if we receive a JSON object, then we should try to stringify it.
                     if (typeof inputValue === 'object') {
-                        var inputValueValue = null;
+                        inputValueValue = null;
                         try {
                             inputValueValue = JSON.stringify(inputValue);
                         } catch (err) {

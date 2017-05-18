@@ -516,7 +516,7 @@ function generateAccessorHTML(path, id, text) {
         }
         
         //Delete @accessors-modules/ from path start; it's already accounted for.
-        if (path.indexOf("@accessors-modules/") == 0) {
+        if (path.indexOf("@accessors-modules/") === 0) {
         	path = path.substring(19);
         }
 
