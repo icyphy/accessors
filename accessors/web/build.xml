@@ -750,6 +750,10 @@
       == tests.duk2.test ==
       To replicate:
       (cd hosts; duktape/duktape2/duk2 duktape/test/test*.js)
+
+      Note that duk2 built with gcc 4.4.7 will fail with 'TypeError: undefined not callable'
+      The workaround is to use a more recent version of gcc.
+
     </echo>      
     <apply executable="${duktape2.source}/duk2"
 	   failonerror="${tests.failonerror}"
