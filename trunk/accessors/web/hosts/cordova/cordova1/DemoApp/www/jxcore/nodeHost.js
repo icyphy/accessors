@@ -139,7 +139,7 @@ function getAccessorCode(name) {
         throw new Error('Accessor ' + name + ' not found on path: ' + accessorPath);
     }
     return code;
-};
+}
 
 /** Get a resource.
  *  Below are the types of resources that are handled
@@ -162,9 +162,9 @@ getResource = function (uri) {
         if (home === undefined) {
             throw new Error('Could not get $HOME from the environment to expand ' + uri);
         } else {
-            uri = uri.replace('$KEYSTORE', home + path.sep + '.ptKeystore')
+            uri = uri.replace('$KEYSTORE', home + path.sep + '.ptKeystore');
             code = fs.readFileSync(uri, 'utf8');
-            return code
+            return code;
         }
     }
     throw new Error('getResouce(' + uri + ', ' + timeout + ') only supports $KEYSTORE, not ' +
@@ -228,7 +228,7 @@ function instantiate(accessorName, accessorClass) {
         accessorName, accessorClass, getAccessorCode, bindings);
     //console.log('nodeHost.js: Instantiated accessor ' + accessorName + ' with class ' + accessorClass);
     return instance;
-};
+}
 
 /** Instantiate and return a top-level accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
@@ -239,7 +239,7 @@ function instantiate(accessorName, accessorClass) {
 function instantiateTopLevel(accessorName, accessorClass) {
     // FIXME: See if we can get rid of instantiateTopLevel
     return instantiate(accessorName, accessorClass);
-};
+}
 
 /** Handle calls to exit, Control-C, errors and uncaught exceptions.
  *  The wrapup() method is invoked for all accessors.  The first
@@ -261,14 +261,14 @@ function exitHandler(options, err) {
             commonHost.stopAllAccessors();
         } catch (wrapupError) {
             console.log("nodeHost.js: wrapup() failed: " + wrapupError);
-            if (process.exitCode == undefined) {
+            if (process.exitCode === undefined) {
                 process.exitCode = 1;
             }
         }
         if (initialThrowable !== null) {
             console.log("nodeHost.js: while invoking wrapup() of all accessors, an exception was thrown: " +
                 initialThrowable + ":" + initialThrowable.stack);
-            if (process.exitCode == undefined) {
+            if (process.exitCode === undefined) {
                 process.exitCode = 1;
             }
         }
@@ -488,7 +488,7 @@ function startHostShell() {
     rl.prompt();
 
     return evaluator;
-};
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Execution handlers.
@@ -554,7 +554,7 @@ function processCommandLineArguments(args) {
         console.log('No standalone accessors were instantiated');
         //process.exit(0);
     }
-};
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Export the module functions.
