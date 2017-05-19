@@ -149,7 +149,7 @@ exports.initialize = function () {
                 key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
             }
 
-            console.log('Weather: lat: ' + location.latitude + ', lon: ' + location.longitude + ', key: ' + key);
+            // console.log('Weather: lat: ' + location.latitude + ', lon: ' + location.longitude + ', key: ' + key);
             var reformatted = {
                 'lat': location.latitude,
                 'lon': location.longitude,
@@ -174,8 +174,8 @@ exports.initialize = function () {
  *  on the 'response' output.
  */
 exports.filterResponse = function (response) {
-    console.log('Weather.js filterResponse(' + response);
-    console.log(response);
+    // console.log('Weather.js filterResponse(' + response);
+    // console.log(response);
     if (response) {
         // Note that for some hosts, the response is a string, needing to parsed,
         // and for some, its already been parsed.
