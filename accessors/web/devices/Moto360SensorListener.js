@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -84,7 +84,7 @@
 var UDPSocket = require('@accessors-modules/udp-socket');
 
 // FIXME: Use built in debug capability.
-var debug = true;
+var debug = false;
 
 // Initialize these to large numbers so that the first output always appears.
 // Accelerometer values.
