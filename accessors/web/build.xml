@@ -105,6 +105,8 @@
     <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
     <!-- Don't include xcore/jxcore/common/test/mocha/testCommon.js --> 
     <exclude name="**/hosts/jxcore/**/*.js"/>
+    <!-- Exclude node_modules/@accessors-hosts because it is a symbolic link. -->
+    <exclude name="**/node_modules/@accessors-hosts/**/*.js"/>
     <!-- exclude name="**/node_modules/**/*.js"/ -->
     <patternset refid="accessors.excludes" />
   </fileset>
