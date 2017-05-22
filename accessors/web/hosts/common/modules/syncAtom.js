@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -49,43 +49,43 @@
  * 
  * @module @accessors-hosts/common/sync-atom
  * @author Marten Lohstroh
- * @version 0
+ * @version $Id$
  */
 
 /**
  * Construct a new calendar queue.
  */
 function CalendarQ() {
-  this.q = [];
+    this.q = [];
 }
 
 /**
  * Pop an element from the queue. FIXME: change signature to function(event, time)
  */
 CalendarQ.prototype.enqueue = function(e) {
-  for (var i = 0; i < this.q.length && e.time >= this.q[i].time; i++);
-  this.q.splice(i, 0, e);
+    for (var i = 0; i < this.q.length && e.time >= this.q[i].time; i++);
+    this.q.splice(i, 0, e);
 }
 
 /**
  * Push an element onto the queue.
  */
 CalendarQ.prototype.dequeue = function() {
-  return this.q.shift();
+    return this.q.shift();
 }
 
 /**
  * See what is at the start of the queue.
  */
 CalendarQ.prototype.peek = function() {
-  return this.q[0];
+    return this.q[0];
 }
 
 /**
  * Report the size of the queue.
  */
 CalendarQ.prototype.size = function() {
-  return this.q.length;
+    return this.q.length;
 }
 
 // Events.
@@ -197,7 +197,7 @@ function clearTimeoutSync(cbId){
  * @param timeout The interval with respect to the current time.
  * @param caller The function from which this event was released.
  * @param repeat Whether this timed event is periodic or not.
- * @return 
+ * @return the id of the event.
  */
 function schedule(callback, timeout, caller, repeat) {
     var id = counter++;
@@ -244,7 +244,7 @@ function schedule(callback, timeout, caller, repeat) {
  * Schedule a periodic timed event.
  * @param callback The function to be executed.
  * @param timeout The interval with respect to the (re)current time.
- * @return 
+ * @return the unique id of the setInterval call.
  */
 function setIntervalSync(callback, timeout) {
     if (timeout >= 0) {
@@ -256,7 +256,7 @@ function setIntervalSync(callback, timeout) {
  * Schedule a timed event.  
  * @param callback The function to be executed.
  * @param timeout The interval with respect to the (re)current time.
- * @return the unique Id of setTimeout call
+ * @return the unique id of setTimeout call
  */
 function setTimeoutSync(callback, timeout) {
     if (timeout >= 0) {
