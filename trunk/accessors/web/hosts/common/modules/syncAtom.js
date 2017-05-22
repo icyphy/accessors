@@ -45,34 +45,45 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/caller
  * Function.caller is supported by: Chrome, Firefox Gecko 1.0, IE 8, Opera, Safari,
  * which includes the mobile version of these respective browsers. Function.caller
- * will not work in strict mode. V8 provides a similar functionality, but this has
- * not been tested.
- * 
- * NOTE: For what it's worth, here is yet another "considered harmful" contribution: 
- * https://medium.com/@bmeurer/function-caller-considered-harmful-45f06916c907
+ * will not work in strict mode.
  * 
  * @module @accessors-hosts/common/sync-atom
  * @author Marten Lohstroh
  * @version 0
  */
 
+/**
+ * Construct a new calendar queue.
+ */
 function CalendarQ() {
   this.q = [];
 }
 
+/**
+ * Pop an element from the queue. FIXME: change signature to function(event, time)
+ */
 CalendarQ.prototype.enqueue = function(e) {
   for (var i = 0; i < this.q.length && e.time >= this.q[i].time; i++);
   this.q.splice(i, 0, e);
 }
 
+/**
+ * Push an element onto the queue.
+ */
 CalendarQ.prototype.dequeue = function() {
   return this.q.shift();
 }
 
+/**
+ * See what is at the start of the queue.
+ */
 CalendarQ.prototype.peek = function() {
   return this.q[0];
 }
 
+/**
+ * Report the size of the queue.
+ */
 CalendarQ.prototype.size = function() {
   return this.q.length;
 }
@@ -86,7 +97,8 @@ var calendar = new CalendarQ();
 // The current time.
 var time = Date.now();
 
-var origin = time; // FIXME: Only using this for debugging
+// Start of simulation time.
+var startTime = time;
 
 // The next wake up time.
 var alarm = Infinity;
@@ -97,18 +109,29 @@ var handle;
 // Counter for callback IDs.
 var counter = 0;
 
-// Memorize the last caller.
+// The last caller that scheduled a timed event.
 var lastCaller = null;
 
 // Synchronization point for releases from the same caller.
 var release; 
 
+/**
+ * Construct a new Callback object.
+ * @param fun
+ * @param offset
+ * @param period
+ */
 function Callback(fun, offset, period) {
     this.fun = fun;
     this.offset = offset;
     this.period = period;
 }
 
+/**
+ * Construct a new Event object.
+ * @param id
+ * @param time
+ */
 function Event(id, time) {
     this.id = id;
     this.time = time;
@@ -129,7 +152,7 @@ var tick = function() {
         if (e.id in callbacks) {
             var cb = callbacks[e.id];
             console.log("Callback: " + JSON.stringify(cb));
-            console.log(e.time - origin);
+            console.log(e.time - startTime);
             cb.fun.call();
             if (cb.period >= 0) {
                 calendar.enqueue(e.id, e.time + events[e.id].period);
@@ -147,8 +170,8 @@ var tick = function() {
 };
 
 /** 
- * 
- * @param cbId 
+ * Unschedule a periodic callback.
+ * @param cbId Handle returned by setInterval().
  */
 function clearIntervalSync(cbId){
     if (callbacks[cbId].period >= 0) {
@@ -157,8 +180,8 @@ function clearIntervalSync(cbId){
 }
 
 /**
- *
- * @param cbId this parameter is required. It is the cbIndentifier.
+ * Unschedule a delayed callback.
+ * @param cbId Handle returned by setTimeout().
  */
 function clearTimeoutSync(cbId){
     if (callbacks[cbId].period < 0) {
@@ -167,27 +190,29 @@ function clearTimeoutSync(cbId){
 }
 
 /**
- *
- * @param callback 
- * @param timeout 
- * @param caller 
- * @param repeat   
+ * Schedule a new timed event. This entails adding to the callbacks dictonary,
+ * as well as adding it to the calendar queue, and if needed, (re)setting a 
+ * timer to wake up in time to process enabled events.
+ * @param callback The callback to be scheduled.
+ * @param timeout The interval with respect to the current time.
+ * @param caller The function from which this event was released.
+ * @param repeat Whether this timed event is periodic or not.
  * @return 
  */
-
 function schedule(callback, timeout, caller, repeat) {
     var id = counter++;
     var offset;
 
     // Use logical time if the caller was a sync function.
     // Use wallclock time otherwise.
-    if (caller.includes("setIntervalSync") || caller.includes("setTimeoutSync")) {
+    if (caller.includes("setInterval") || caller.includes("setTimeout")) {
         console.log("Synchronous release at T=" + time);
         offset = time;
     } else {
         console.log("Asynchronous release at T=" + time);
         // The same caller released a timed event, and no other timed events have
-        // occurred since. These releases ought to have the same offset.
+        // occurred since (lastCaller would have been cleared). 
+        // These releases ought to have the _same_ offset.
         if (caller != lastCaller) {
             release = Date.now();
             lastCaller = caller;
@@ -204,7 +229,7 @@ function schedule(callback, timeout, caller, repeat) {
     }
 
     var newTime = offset + timeout;
-    calendar.enqueue(new Event(id, offset + timeout));
+    calendar.enqueue(new Event(id, newTime));
     
     // Reset the alarm, if necessary.
     if (newTime < alarm) {
@@ -216,9 +241,9 @@ function schedule(callback, timeout, caller, repeat) {
 }
 
 /**
- *
- * @param callback 
- * @param timeout 
+ * Schedule a periodic timed event.
+ * @param callback The function to be executed.
+ * @param timeout The interval with respect to the (re)current time.
  * @return 
  */
 function setIntervalSync(callback, timeout) {
@@ -228,9 +253,9 @@ function setIntervalSync(callback, timeout) {
 }
 
 /**
- *   
- * @param callback 
- * @param timeout 
+ * Schedule a timed event.  
+ * @param callback The function to be executed.
+ * @param timeout The interval with respect to the (re)current time.
  * @return the unique Id of setTimeout call
  */
 function setTimeoutSync(callback, timeout) {
@@ -240,7 +265,7 @@ function setTimeoutSync(callback, timeout) {
 }
 
 /** 
- *  
+ * Clear all (period) timed events. 
  */
 function reset() {
     // Clear timer for the next tick.
@@ -264,20 +289,22 @@ exports.setIntervalSync = setIntervalSync;
 exports.clearIntervalSync = clearIntervalSync;
 exports.reset = reset;
 
-function g() {
-    console.log("3@4000.")
-    //console.log("3@3200.")
-}
+// Some test code...
 
-function f() {
-    console.log("1@1200.")
-    //setTimeoutSync(g, 2000);
-}
+// function g() {
+//     console.log("3@4000.")
+//     //console.log("3@3200.")
+// }
 
-function h() {
-    console.log("3@2000.")
-    setTimeoutSync(g, 2000);
-}
+// function f() {
+//     console.log("1@1200.")
+//     //setTimeoutSync(g, 2000);
+// }
 
-setTimeoutSync(f, 1200);
-setTimeoutSync(h, 2000);
+// function h() {
+//     console.log("3@2000.")
+//     setTimeoutSync(g, 2000);
+// }
+
+// setTimeoutSync(f, 1200);
+// setTimeoutSync(h, 2000);
