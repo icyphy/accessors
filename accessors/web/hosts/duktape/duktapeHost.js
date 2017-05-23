@@ -7,7 +7,7 @@
 //    ===============
 
 // (http://opensource.org/licenses/MIT)
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -179,7 +179,7 @@ function getAccessorCode(name) {
 getResource = function (uri) {
     // See nodeHost.js for an implementation.
     throw new Error('getResouce(' + uri + ') not yet implemented');
-}
+};
 
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
