@@ -31,7 +31,7 @@
  *  respectively, to this module's setTioumetDet() and setIntervalDet(). It is 
  *  guaranteed that only one timeout (function provided by the host) is pending  
  *  at any time and that callbacks will be executing with respect to their  
- *  logical clock domains and their relative arrival time.
+ *  logical clock domains and their relative priority and/or arrival time.
  *  
  *  For this implementation, we assume that there is the physical time line, 
  *  together with many logical time lines. All time lines do not advance the same 
@@ -76,11 +76,18 @@
  *  the corresponding timer. This happens each time setTimeoutDet() or seIntervalDet() 
  *  is called. 
  *  
+ *  For the sake of any system that may need to define execution order based on 
+ *  predefined/precomputed priorities, it is possible to pass the priority 
+ *  as an argument to setTimeout or setInterval. Consequently, the third level of
+ *  delayed callbacks ordering will be, first, based on priorities, then on arrival
+ *  time (reflected by the identifiers). For the case of Accessors, the priority will
+ *  be inherited from the accessor's priority (if defined).
+ *  
  *  If the programmer unintentionally or intentionally do not provide a synchronization
  *  label, then a new unique one will be generated automatically. This means that 
  *  each call to setTimeout or setInterval, that is done without specifying the label,
  *  will be considered as a new one, and it will be unique (by incrementing 
- *  defaultLabelIndecallback queuex).
+ *  defaultLabelIndex).
  *  
  *  In order to make the process fast, the list 'callbackQueue' keeps an incremental 
  *  next execution time sorted list of pointers to the delayed callbacks. Pointers
@@ -97,6 +104,13 @@
  *      otherwise, it executes only once.
  *   *  nextExecutionTime: records the next time at which the callback should be
  *      executed.
+ *   *  priority: that is an optional attribute, that can be passed during the delayed
+ *      callback creation.
+ *   *  errorCallback: another optional attribute that specifies the callback to execute 
+ *      in case the callbackFunction execution failed.
+ *   *  cleanCallback: again, another optional attribute that gives the callback function
+ *      to execute after successfully executing the callback function. For the particular 
+ *      case of Accessors, the need is to clean the accessor's timers attribute.
  *        
  *  Proof: Done! Using Real-Time Maude :-)
  *  
@@ -251,7 +265,7 @@ var executeAndSetNextTick = function() {
         // Upadte current time
         currentTime = Date.now();
     }
-       
+    
     // Handling a corner case: if somehow it happens that delayedCallbacks is empty
     if (!delayedCallbacks || (callbackQueue.length === 0)) {
         reset();
@@ -281,30 +295,49 @@ function executeCallbacks() {
             
             // Call the callback function
             try {
-                delayedCallbacks[key][id].cbFunction.call();    
+                delayedCallbacks[key][id].cbFunction.call();
                 
+                // Clean up after call succeds, if cleanCallback is defined
+                if (delayedCallbacks[key][id].cleanCallback) {
+                    delayedCallbacks[key][id].cleanCallback.call(null, id);
+                }
+
                 // then reinitialize the remainingTime to the interval value.
-                if (delayedCallbacks[key][id].periodic === true) {
-                    delayedCallbacks[key][id].nextExecutionTime += delayedCallbacks[key][id].interval;
-                    putInCallbackQueue(key, id);
-                } else {
-                    // All the executed callbacks that are not periodic, need to be removed from the List.
-                    delete(delayedCallbacks[key][id]);
-                    
-                    // If delayedCallback of the key label is empty, then remove it
-                    if (Object.size(delayedCallbacks[key]) === 2) {
-                        delete(delayedCallbacks[key]);
-                        if (Object.size(delayedCallbacks) === 0) {
-                            reset();
-                            return;
+                if (delayedCallbacks) {
+                    if (delayedCallbacks[key]) {
+                        if (delayedCallbacks[key][id]) {
+                            if (delayedCallbacks[key][id].periodic === true) {
+                        
+                                delayedCallbacks[key][id].nextExecutionTime += delayedCallbacks[key][id].interval;
+                                putInCallbackQueue(key, id);
+                            } else {
+                                // All the executed callbacks that are not periodic, need to be removed from the List.
+                                delete(delayedCallbacks[key][id]);
+                                
+                                // If delayedCallback of the key label is empty, then remove it
+                                if (Object.size(delayedCallbacks[key]) === 2) {
+                                    delete(delayedCallbacks[key]);
+                                    if (Object.size(delayedCallbacks) === 0) {
+                                        reset();
+                                        return;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             } catch (e) {
-                console.log('executeCallbacks(): the delayedCallback of id ' + id +' and llcd ' + 
-                        key + ' does not exist any more! \n Perhaps the accessor ' +
-                        'is deleted without calling wrapup...\n ... thus removing from list, ' +
-                        'and the size of callbackQueue is: ' + callbackQueue.length);
+                // If an error is catched, then use the provided callback of error outputting.
+                if (delayedCallbacks[key][id].errorCallback) {
+                    // FIXME: Check if the following lines make sens!
+                    console.log('Error executing delayedCallbacks[' + key + '][' + id + ']...');
+                    delayedCallbacks[key][id].errorCallback.call(null, e);
+                } else {
+                    console.log('Error executing delayedCallbacks[' + key + '][' + id + ']. No error callback ' +
+                            'is provided, then throw an error:');
+                    throw new Error (e);
+                }
+
                 delete(delayedCallbacks[key][id]);
                 
                 // If delayedCallback of the key label is empty, then remove it
@@ -337,8 +370,8 @@ function executeCallbacks() {
  *  The first one is the 'nextExecutionTime'. Then, when two or more callbacks have the 
  *  same nextExecutionTime,  other levels of sorting are considered:
  *   *  Second level of sorting: ascending order of labels (using the value of "origin")
- *   *  Third level: within the same label, an ascending order of the callback identifiers
- *      is used. 
+ *   *  Third level: within the same label, delayed callbacks are ordered by priorities first,
+ *      then by an ascending order of the callback identifiers. 
  *  
  *  @param label the labeled clock domain of the delayedCallback to add
  *  @param id the unique id of  of the delayedCallback to add
@@ -364,7 +397,7 @@ function putInCallbackQueue(label, id) {
         labelInList = callbackQueue[index].label;
         idInList = callbackQueue[index].id;
         
-        // Control point! 
+        // Control point for consistency check between delayedCallbacks and callbackQueue
         if (delayedCallbacks[labelInList][idInList] === undefined) {
             throw new Error('putInCallbackQueue(' + label + ', ' + id +
                             '): delayedCallbacks[' + labelInList + '][' +
@@ -386,12 +419,32 @@ function putInCallbackQueue(label, id) {
             // If there is already callbacks with the same next execution time
             // Check first a sorted insertion w.r.t the label
             if (labelInList === label) {
-                // Third level of sorting: callback id
-                if (id < idInList) {
+                // Third level of sorting: 
+                // Use of priorities and callback ids
+                if (delayedCallbacks[label][id].priority) {
+                    // The callback to insert has priority
+                    if (delayedCallbacks[labelInList][idInList].priority) {
+                        if (delayedCallbacks[label][id].priority < delayedCallbacks[labelInList][idInList].priority) {
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else {
                         break;
+                    }
                 } else {
-                    // Continue parsing until the position is found.
-                    continue;
+                    // The callback to schedule has no priority
+                    if (delayedCallbacks[labelInList][idInList].priority) {
+                        // Callbacks that has priority attribute has more priority compared to
+                        // those which do not have one
+                        continue;
+                    } else if (id < idInList) {
+                        // If both callbacks do not have priority, then sort given the id
+                        break;
+                    } else {
+                        // Continue parsing until the position is found.
+                        continue;
+                    }
                 }
             } else if (delayedCallbacks[labelInList].origin < delayedCallbacks[label].origin) {
                 // Go to next element of array, until we reach the same currentLogicalTime or greater
@@ -439,18 +492,25 @@ function reset() {
  *  @param repeat periodic attribute value
  *  @param llcd An optional argument for the labeled logical clock domain
  *   label as a string.
+ *  @param priority An optional argument for the priority over other delayed callbacks
+ *  @param errorCallback An optional argument that provides the callback to execute in case
+ *   the delayed callbacks execution raised an error
+ *  @param cleanCallback An optional argument that provides the callback to execute after 
+ *   the delayed callbacks has executed successfully
  *  @return the unique Id of the new delayed callback
  */
-function setDelayedCallback(callback, timeout, repeat, llcd) {
+function setDelayedCallback(callback, timeout, repeat, llcd, priority, errorCallback, cleanCallback) {
     // Construct a new object
     var newDelayedCallback = {};
     newDelayedCallback.cbFunction = callback;
     newDelayedCallback.interval = timeout;
     newDelayedCallback.periodic = repeat;
     
+    // FIXME: Set a control step for the last 4 parameters
+    
     // Check if a labeled clock domain has been provided, otherwise use the default one
     var label;
-    if (!llcd || typeof(llcd) !== 'string') {
+    if (!llcd || llcd == undefined || typeof(llcd) !== 'string') {
         if (timeout === 0) {
             // Default LLCD for any delayed callback with timeout 0 that is given without
             // an explicitly different LLCD
@@ -462,9 +522,21 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
         label = llcd;
     }
 
+    // Possibly set the priority, errorCallback and cleanCallback
+    if (priority !== undefined && typeof(priority) == 'number') {
+        newDelayedCallback.priority = priority;
+    }
+    if (errorCallback && typeof(errorCallback) == 'function') {
+        newDelayedCallback.errorCallback = errorCallback;  
+    }
+    if (errorCallback && typeof(cleanCallback) == 'function') {
+        newDelayedCallback.cleanCallback = cleanCallback;  
+    }
+
     // Generate a new identifier
     cbIdentifier++;
     
+    // If the delayedCallbacks object was empty, then create the object
     if (!delayedCallbacks) {
         delayedCallbacks = {};
     }
@@ -473,7 +545,7 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
     // current physical time
     if (!delayedCallbacks[label]) {
         delayedCallbacks[label] = {};
-        if (label === 'zeroTimeoutLabel') {
+        if (label == 'zeroTimeoutLabel') {
             delayedCallbacks[label].currentLogicalTime = 0;
             delayedCallbacks[label].origin = 0;               
         } else {
@@ -511,21 +583,20 @@ function setDelayedCallback(callback, timeout, repeat, llcd) {
  *  @param callback The callback function
  *  @param timeout The timeout of the asynchronous execution
  *  @param llcd An optional argument for the labeled logical clock domain
+ *  @param priority An optional argument for the priority over other delayed callbacks
+ *  @param errorCallback An optional argument that provides the callback to execute in case
+ *   the delayed callbacks execution raised an error
+ *  @param cleanCallback An optional argument that provides the callback to execute after 
+ *   the delayed callbacks has executed successfully
  *  @return the unique Id of setInterval call
  */
-function setIntervalDet(callback, timeout, llcd) {
-    // Do not allow setInterval calls is called with timeout 0
+function setIntervalDet(callback, timeout, llcd, priority, errorCallback, cleanCallback) {
+    // Throw an error if setInterval is called with timeout 0
     // Since this may lead to a dangerous behavior
     if (timeout === 0) {
-        // FIXME: What to do in case of setInterval of 0, since this may
-        // harm the system
-        // throw new Error('setInterval(): timeout zero is not allowed!');
-        // or
-        // console.log('setInterval(): timeout zero is not allowed, remove the call');
-        // return -1;
+        throw new Error('setInterval(): timeout zero is not allowed!');
     }
-    var tt = setDelayedCallback(callback, timeout, true, llcd);
-    return tt;
+    return setDelayedCallback(callback, timeout, true, llcd, priority, errorCallback, cleanCallback);
 }
 
 /** This function is to be binded to setTimeout() function. It calls setDelayedCallback
@@ -536,10 +607,16 @@ function setIntervalDet(callback, timeout, llcd) {
  *  @param callback the callback function
  *  @param timeout the timeout of the asynchronous execution
  *  @param llcd An optional argument for the labeled logical clock domain
+ *  @param priority An optional argument for the priority over other delayed callbacks
+ *  @param errorCallback An optional argument that provides the callback to execute in case
+ *   the delayed callbacks execution raised an error
+ *  @param cleanCallback An optional argument that provides the callback to execute after 
+ *   the delayed callbacks has executed successfully 
  *  @return the unique Id of setTimeout call
  */
-function setTimeoutDet(callback, timeout, llcd) {
-    return setDelayedCallback(callback, timeout, false, llcd);
+function setTimeoutDet(callback, timeout, llcd, priority, errorCallback, cleanCallback) {
+    // Just call setDelayedCallback and return
+    return setDelayedCallback(callback, timeout, false, llcd, priority, errorCallback, cleanCallback);
 }
 
 /** This function is used to return the number of an object entries.
