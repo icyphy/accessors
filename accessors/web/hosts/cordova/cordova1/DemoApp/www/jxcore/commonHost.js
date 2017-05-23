@@ -2349,9 +2349,21 @@ Accessor.prototype.setDefaultInput = function (name, value) {
  *  @return the unique Id of setTimeout call
  */
 Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd, 
-        priority = this.priority, errorCallback = this.error.bind(this), cleanCallback = this.cleanTimersAfterExecution.bind(this)) {
+        priority, errorCallback, cleanCallback) {
 
     var thiz = this;
+    
+    // Set default values for priority, errorCallback and cleanCallback
+    if (priority == undefined) {
+        priority = this.priority;
+    }
+    if (errorCallback == undefined) {
+        errorCallback = this.error.bind(this);
+    }
+    if (cleanCallback == undefined) {
+        cleanCallback = this.cleanTimersAfterExecution.bind(this);
+    }
+    
     var tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, priority, errorCallback, cleanCallback);
 
     // Add the delayed callback identifier to the Accessors timers
@@ -2397,9 +2409,21 @@ Accessor.prototype.setParameter = function (name, value) {
  *  @return the unique Id of setTimeout call
  */
 Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, 
-        priority = this.priority, errorCallback = this.error.bind(this), cleanCallback = this.cleanTimersAfterExecution.bind(this)) {
-    
+        priority, errorCallback, cleanCallback) {
+
     var thiz = this;
+    
+    // Set default values for priority, errorCallback and cleanCallback
+    if (priority == undefined) {
+        priority = this.priority;
+    }
+    if (errorCallback == undefined) {
+        errorCallback = this.error.bind(this);
+    }
+    if (cleanCallback == undefined) {
+        cleanCallback = this.cleanTimersAfterExecution.bind(this);
+    }
+
     var tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, priority, errorCallback, cleanCallback);
     
     // Add the delayed callback identifier to the Accessors timers
