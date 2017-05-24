@@ -1054,7 +1054,11 @@ Accessor.prototype.cleanTimersAfterExecution = function(cbId) {
 Accessor.prototype.clearIntervalDeterministic = function(cbId) {
     var thiz = this;
     if (thiz.timers[cbId]) {
-        deterministicTemporalSemantics.clearIntervalDet(Number(cbId));
+        if (deterministicTemporalSemantics) {
+            deterministicTemporalSemantics.clearIntervalDet(Number(cbId));
+        } else {
+            clearInterval(cbId);
+        }
         delete(thiz.timers[cbId]);
     }
 }
@@ -1068,7 +1072,11 @@ Accessor.prototype.clearIntervalDeterministic = function(cbId) {
 Accessor.prototype.clearTimeoutDeterministic = function(cbId) {
     var thiz = this;
     if (thiz.timers[cbId]) {
-        deterministicTemporalSemantics.clearTimeoutDet(Number(cbId)); 
+        if (deterministicTemporalSemantics) {
+            deterministicTemporalSemantics.clearTimeoutDet(Number(cbId));
+        } else {
+            clearTimeout(cbId);
+        }
         delete(thiz.timers[cbId]);
     }
 }
@@ -2160,13 +2168,25 @@ Accessor.prototype.scheduleEvent = function (accessor, priority) {
         if (!thiz.reactRequestedAlready) {
             thiz.reactRequestedAlready = true;
             if (priority) {
-                thiz.setTimeoutDeterministic(function () {
-                    thiz.react();
-                }, 0, undefined, priority);
+                if (deterministicTemporalSemantics) {
+                    thiz.setTimeoutDeterministic(function () {
+                        thiz.react();
+                    }, 0, undefined, priority);
+                } else {
+                    thiz.setTimeoutDeterministic(function () {
+                        thiz.react();
+                    }, 0);
+                }
             } else {
-                thiz.setTimeoutDeterministic(function () {
-                    thiz.react();
-                }, 0, undefined, thiz.priority);
+                if (deterministicTemporalSemantics) {
+                    thiz.setTimeoutDeterministic(function () {
+                        thiz.react();
+                    }, 0, undefined, thiz.priority);
+                } else {
+                    thiz.setTimeoutDeterministic(function () {
+                        thiz.react();
+                    }, 0);
+                }
             } 
         }
     }
@@ -2235,21 +2255,39 @@ Accessor.prototype.send = function (name, value) {
             throw new Error('send(name, value): No output or input named ' + name);
         }
         // Make the input available in the _next_ reaction.
-        thiz.setTimeoutDeterministic(function () {
-            thiz.provideInput(name, value);
-            // If this accessor has a container, then provideInput()
-            // above will take care of scheduling a future reaction.
-            // However, if it has no container, then no such reaction
-            // will be requested. Request that reaction here.
-            if (!thiz.container) {
-                if (!thiz.reactRequestedAlready) {
-                    thiz.reactRequestedAlready = true;
-                    thiz.setTimeoutDeterministic(function () {
-                        thiz.react();
-                    }, 0, undefined, thiz.priority);
+        if (deterministicTemporalSemantics) {
+            thiz.setTimeoutDeterministic(function () {
+                thiz.provideInput(name, value);
+                // If this accessor has a container, then provideInput()
+                // above will take care of scheduling a future reaction.
+                // However, if it has no container, then no such reaction
+                // will be requested. Request that reaction here.
+                if (!thiz.container) {
+                    if (!thiz.reactRequestedAlready) {
+                        thiz.reactRequestedAlready = true;
+                        thiz.setTimeoutDeterministic(function () {
+                            thiz.react();
+                        }, 0, null, thiz.priority);
+                    }
                 }
-            }
-        }, 0, undefined, thiz.priority);
+            }, 0, null, thiz.priority);
+        } else {
+            thiz.setTimeoutDeterministic(function () {
+                thiz.provideInput(name, value);
+                // If this accessor has a container, then provideInput()
+                // above will take care of scheduling a future reaction.
+                // However, if it has no container, then no such reaction
+                // will be requested. Request that reaction here.
+                if (!thiz.container) {
+                    if (!thiz.reactRequestedAlready) {
+                        thiz.reactRequestedAlready = true;
+                        thiz.setTimeoutDeterministic(function () {
+                            thiz.react();
+                        }, 0, null, thiz.priority);
+                    }
+                }
+            }, 0);
+        }
         return;
     }
     // If necessary, convert the value to the match the type.
@@ -2352,9 +2390,9 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd,
         priority, errorCallback, cleanCallback) {
 
     var thiz = this;
-    
+    var tempo;
     var _priority, _errorCallback, _cleanCallback ;
-    
+        
     // Set default values for priority, errorCallback and cleanCallback
     if (!priority) {
         _priority = thiz.priority;
@@ -2371,9 +2409,9 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd,
     } else {
         _cleanCallback = cleanCallback;
     }
-
-    var tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
-
+    
+    tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd);//, _priority, _errorCallback, _cleanCallback);
+    
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
     thiz.timers[tempo] = true;
@@ -2416,12 +2454,14 @@ Accessor.prototype.setParameter = function (name, value) {
  *   to the accessor cleanTimersAfterExecution function prototype
  *  @return the unique Id of setTimeout call
  */
-Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, 
+Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd,
         priority, errorCallback, cleanCallback) {
 
     var thiz = this;
+    var tempo;
     var _priority, _errorCallback, _cleanCallback ;
-    
+
+
     // Set default values for priority, errorCallback and cleanCallback
     if (!priority) {
         _priority = thiz.priority;
@@ -2438,8 +2478,7 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd,
     } else {
         _cleanCallback = cleanCallback;
     }
-
-    var tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
+    tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd);//, _priority, _errorCallback, _cleanCallback);
     
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
@@ -2458,10 +2497,17 @@ Accessor.prototype.stop = function () {
     while (container.container) {
         container = container.container;
     }
-    container.setTimeoutDeterministic(function() {
-        // console.log('Executing stop');
-        container.wrapup();
-    }, 0, undefined, this.priority);
+    if (deterministicTemporalSemantics) {
+        container.setTimeoutDeterministic(function() {
+            // console.log('Executing stop');
+            container.wrapup();
+        }, 0, null, this.priority);
+    } else {
+        container.setTimeoutDeterministic(function() {
+            // console.log('Executing stop');
+            container.wrapup();
+        }, 0);
+    }
 };
 
 /** Stop execution of the enclosing swarmlet by finding the top-level
@@ -2471,9 +2517,15 @@ Accessor.prototype.stop = function () {
 Accessor.prototype.stopAt = function (timeout) {
     this.stopAtTime = timeout;
     var self = this;
-    self.setTimeoutDeterministic(function() {
-        self.stop();
-    }, timeout, undefined, self.priority);
+    if (deterministicTemporalSemantics) {
+        self.setTimeoutDeterministic(function() {
+            self.stop();
+        }, timeout, null, self.priority);
+    } else {
+        self.setTimeoutDeterministic(function() {
+            self.stop();
+        }, timeout);
+    }
 };
 
 /** Updates the monitoring information (count, date/time of the first event and date/time

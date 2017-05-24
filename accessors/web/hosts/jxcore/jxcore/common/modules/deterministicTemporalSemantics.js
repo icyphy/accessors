@@ -297,7 +297,7 @@ function executeCallbacks() {
             try {
                 delayedCallbacks[key][id].cbFunction.call();
                 
-                // Clean up after call succeds, if cleanCallback is defined
+                // Clean up after call succeeds, if cleanCallback is defined
                 if (delayedCallbacks[key][id].cleanCallback) {
                     delayedCallbacks[key][id].cleanCallback.call(null, id);
                 }
@@ -328,14 +328,13 @@ function executeCallbacks() {
                 }
             } catch (e) {
                 // If an error is catched, then use the provided callback of error outputting.
+                console.log('Error executing delayedCallbacks[' + key + '][' + id + ']...');
                 if (delayedCallbacks[key][id].errorCallback) {
-                    // FIXME: Check if the following lines make sens!
-                    console.log('Error executing delayedCallbacks[' + key + '][' + id + ']...');
-                    delayedCallbacks[key][id].errorCallback.call(null, e);
+                    // FIXME: Check if the following line makes sens!
+                    // delayedCallbacks[key][id].errorCallback.call(null, e);
                 } else {
-                    console.log('Error executing delayedCallbacks[' + key + '][' + id + ']. No error callback ' +
-                            'is provided, then throw an error:');
-                    throw new Error (e);
+                    // FIXME: Check if the following line makes sens!
+                    // throw new Error (e);
                 }
 
                 delete(delayedCallbacks[key][id]);
