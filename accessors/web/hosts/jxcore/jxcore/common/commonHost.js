@@ -217,7 +217,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1738 2017-05-24 00:42:44Z chadlia.jerad $$
+ *  @version $$Id: commonHost.js 1739 2017-05-24 07:40:28Z chadlia.jerad $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -2958,7 +2958,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1738 2017-05-24 00:42:44Z chadlia.jerad $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1739 2017-05-24 07:40:28Z chadlia.jerad $");
             return false;
 
         default:

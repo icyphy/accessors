@@ -528,7 +528,7 @@ function setDelayedCallback(callback, timeout, repeat, llcd, priority, errorCall
     if (errorCallback && typeof(errorCallback) == 'function') {
         newDelayedCallback.errorCallback = errorCallback;  
     }
-    if (errorCallback && typeof(cleanCallback) == 'function') {
+    if (cleanCallback && typeof(cleanCallback) == 'function') {
         newDelayedCallback.cleanCallback = cleanCallback;  
     }
 
