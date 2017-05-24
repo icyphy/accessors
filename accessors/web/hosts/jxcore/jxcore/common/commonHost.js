@@ -217,7 +217,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1734 2017-05-23 23:42:32Z chadlia.jerad $$
+ *  @version $$Id: commonHost.js 1736 2017-05-23 23:59:57Z chadlia.jerad $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -2353,18 +2353,20 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd,
 
     var thiz = this;
     
-    // Set default values for priority, errorCallback and cleanCallback
-    if (priority == undefined) {
-        priority = this.priority;
-    }
-    if (errorCallback == undefined) {
-        errorCallback = this.error.bind(this);
-    }
-    if (cleanCallback == undefined) {
-        cleanCallback = this.cleanTimersAfterExecution.bind(this);
-    }
+    var _priority = priority, _errorCallback = errorCallback, _cleanCallback = cleanCallback;
     
-    var tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, priority, errorCallback, cleanCallback);
+    // Set default values for priority, errorCallback and cleanCallback
+    if (_priority == undefined) {
+        _priority = thiz.priority;
+    }
+    if (_errorCallback == undefined) {
+        _errorCallback = thiz.error.bind(thiz);
+    }
+    if (_cleanCallback == undefined) {
+        _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
+    }
+
+    var tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
 
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
@@ -2412,19 +2414,20 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd,
         priority, errorCallback, cleanCallback) {
 
     var thiz = this;
+    var _priority = priority, _errorCallback = errorCallback, _cleanCallback = cleanCallback;
     
     // Set default values for priority, errorCallback and cleanCallback
-    if (priority == undefined) {
-        priority = this.priority;
+    if (_priority == undefined) {
+        _priority = thiz.priority;
     }
-    if (errorCallback == undefined) {
-        errorCallback = this.error.bind(this);
+    if (_errorCallback == undefined) {
+        _errorCallback = thiz.error.bind(thiz);
     }
-    if (cleanCallback == undefined) {
-        cleanCallback = this.cleanTimersAfterExecution.bind(this);
+    if (_cleanCallback == undefined) {
+        _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
     }
 
-    var tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, priority, errorCallback, cleanCallback);
+    var tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
     
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
@@ -2891,7 +2894,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1734 2017-05-23 23:42:32Z chadlia.jerad $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1736 2017-05-23 23:59:57Z chadlia.jerad $");
             return false;
 
         default:
