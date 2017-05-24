@@ -2353,17 +2353,23 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd,
 
     var thiz = this;
     
-    var _priority = priority, _errorCallback = errorCallback, _cleanCallback = cleanCallback;
+    var _priority, _errorCallback, _cleanCallback ;
     
     // Set default values for priority, errorCallback and cleanCallback
-    if (_priority == undefined) {
+    if (!priority) {
         _priority = thiz.priority;
+    } else {
+        _priority = priority;
     }
-    if (_errorCallback == undefined) {
+    if (!errorCallback) {
         _errorCallback = thiz.error.bind(thiz);
+    } else {
+        _errorCallback = errorCallback;
     }
-    if (_cleanCallback == undefined) {
+    if (!cleanCallback) {
         _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
+    } else {
+        _cleanCallback = cleanCallback;
     }
 
     var tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
@@ -2414,17 +2420,23 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd,
         priority, errorCallback, cleanCallback) {
 
     var thiz = this;
-    var _priority = priority, _errorCallback = errorCallback, _cleanCallback = cleanCallback;
+    var _priority, _errorCallback, _cleanCallback ;
     
     // Set default values for priority, errorCallback and cleanCallback
-    if (_priority == undefined) {
+    if (!priority) {
         _priority = thiz.priority;
+    } else {
+        _priority = priority;
     }
-    if (_errorCallback == undefined) {
+    if (!errorCallback) {
         _errorCallback = thiz.error.bind(thiz);
+    } else {
+        _errorCallback = errorCallback;
     }
-    if (_cleanCallback == undefined) {
+    if (!cleanCallback) {
         _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
+    } else {
+        _cleanCallback = cleanCallback;
     }
 
     var tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
