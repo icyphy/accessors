@@ -288,6 +288,7 @@ function executeCallbacks() {
         var id = callbackQueue[0].id;
         
         if (delayedCallbacks[key][id].nextExecutionTime === nextScheduledTick) {
+            // console.dir(callbackQueue);
             callbackQueue.splice (0, 1);
 
             // Update the current logical time of an LLCD 
@@ -295,11 +296,15 @@ function executeCallbacks() {
             
             // Call the callback function
             try {
+                // console.log('--- execution delCB['+key+']['+id+']');
+                // console.dir(delayedCallbacks[key][id]);
+                
                 delayedCallbacks[key][id].cbFunction.call();
                 
                 // Clean up after call succeeds, if cleanCallback is defined
                 if (delayedCallbacks[key][id].cleanCallback) {
-                    delayedCallbacks[key][id].cleanCallback.call(null, id);
+                    delayedCallbacks[key][id].cleanCallback.call(this, id);
+                    // console.log('cleaned the id: '+id);
                 }
 
                 // then reinitialize the remainingTime to the interval value.
