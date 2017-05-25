@@ -26,4 +26,5 @@
         <allow-intent href="itms-apps:*" />
         <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     </platform>
+    <engine name="ios" spec="~4.4.0" />
 </widget>
