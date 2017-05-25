@@ -63,6 +63,8 @@ exports.setup = function () {
     this.output('faceCount', {
         'type': 'int'
     });
+
+    this.output('faces');
 };
 
 exports.initialize = function () {
@@ -77,6 +79,8 @@ exports.initialize = function () {
             self.send('output', result);
             var numFaces = faceDetector.numberOfFaces();
             self.send('faceCount', numFaces);
+            var faces = faceDetector.faceRectangles();
+            self.send('faces', faces);
         });
     });
 };
