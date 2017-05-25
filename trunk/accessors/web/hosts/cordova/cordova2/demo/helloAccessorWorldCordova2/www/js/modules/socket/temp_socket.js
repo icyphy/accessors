@@ -69,8 +69,27 @@
 /*jshint globalstrict: true */
 "use strict";
 
-//var SocketHelper = Java.type('ptolemy.actor.lib.jjs.modules.socket.SocketHelper');
 var EventEmitter = require('events').EventEmitter;
+
+this.port = 80;
+this.host = '172.217.4.142';
+
+// Find what the socket cordova plugin provides here: https://developer.chrome.com/apps/sockets_tcp
+
+///////////////////////////////////////////////////////////////////////////////
+//// supportedReceiveTypes
+
+/** Return an array of the types supported by the current host for
+ *  receiveType arguments.
+ */
+exports.supportedReceiveTypes = function () {
+    // These values are based on what Cape Code returns in
+    // ptolemy.actor.lib.jjs.modules.socket.SocketHelper.supportedReceiveTypes().
+    // To replicate:
+    // echo 'java::call java.util.Arrays toString [java::call ptolemy.actor.lib.jjs.modules.socket.SocketHelper supportedReceiveTypes]' | $PTII/bin/ptjacl
+    return ['byte', 'double', 'float', 'image', 'int', 'json', 'number', 'short', 'string', 'unsignedbyte', 'unsignedshort'];
+
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //// connect
@@ -83,7 +102,7 @@ var socket = {
     connect: function() {
         chrome.sockets.tcp.create(function(createInfo) {
             MobileLog('New socket created');
-            chrome.sockets.tcp.connect(createInfo.socketId, '172.217.4.142', 80, function(result) {
+            chrome.sockets.tcp.connect(createInfo.socketId, this.host, this.port, function(result) {
             if (result === 0) {
                 MobileLog('connect: success');
             } else {
