@@ -26,8 +26,15 @@
 // Ptolemy II includes the work of others, to see those copyrights, follow
 // the copyright link on the splash page or see copyright.htm.
 /**
- * Module for HTTP clients.
  * FIXME: This currently only supports a get request.
+ *
+ * Module for HTTP clients.
+ * Depends on cordova-plugin-http. To install run 
+ * <pre>
+ * cordova plugin add cordova-plugin-http
+ * </pre>
+ *
+ * Example usage below
  * <pre>
  * httpClient.get({
  *      trustAll: true,
