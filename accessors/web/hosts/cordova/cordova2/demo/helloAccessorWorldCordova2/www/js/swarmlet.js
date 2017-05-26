@@ -30,22 +30,42 @@
  *  See https://www.icyphy.org/accessors/wiki/Main/CordovaHost2
  *  
  *  @module swarmlet.js
- *  @author Chadlia Jerad
+ *  @author Chadlia Jerad, Victor Nouvellet
  *  @version $$Id: swarmlet.js 1502 2017-04-17 21:34:03Z cxh $$
  */
 
-var a1 = instantiate('a1','testAcc');
+// var a1 = instantiate('a1','testAcc');
 
-MobileLog('Accessor "a1" instantiated as an: '+typeof(a1)); 
+// MobileLog('Accessor "a1" instantiated as an: '+typeof(a1)); 
 
-a1.initialize();
+// a1.initialize();
                         
-MobileLog('Accessor "a1" initialized'); 
+// MobileLog('Accessor "a1" initialized'); 
 
-a1.provideInput('input', 5);
+// a1.provideInput('input', 5);
 
-MobileLog('Accessor "a1" provided input:5'); 
+// MobileLog('Accessor "a1" provided input:5'); 
                         
-a1.react();
+// a1.react();
         
-MobileLog('Latest output of ' + a1.accessorName + ': ' + a1.latestOutput('scaled'));
+// MobileLog('Latest output of ' + a1.accessorName + ': ' + a1.latestOutput('scaled'));
+
+//--------- BLE ----------
+
+var bleAcc = instantiate('bleAcc','bleAccessor');
+
+MobileLog('Accessor "bleAcc" instantiated as an: '+typeof(bleAcc)); 
+
+bleAcc.initialize();
+
+MobileLog('Accessor "bleAcc" initialized'); 
+
+bleAcc.provideInput('startScan', true);
+
+bleAcc.react();
+
+setTimeout(function() {
+    bleAcc.provideInput('stopScan', true);
+    bleAcc.react();    
+
+}, 5000);
