@@ -705,7 +705,8 @@ clearTimeout',
                 this.assignPriorities();
                 this.eventQueue = [];
                 for (var i = 0; i < this.containedAccessors.length; i++) {
-                    //console.log('Priority of: ' + this.containedAccessors[i].accessorName + ' is: ' + this.containedAccessors[i].priority);
+                    // console.log('Priority of: ' + this.containedAccessors[i].accessorName +
+                    //       ' is: ' + this.containedAccessors[i].priority);
                     if (this.containedAccessors[i].initialize) {
                         this.containedAccessors[i].initialize();
                     }
@@ -1053,14 +1054,12 @@ Accessor.prototype.cleanTimersAfterExecution = function(cbId) {
  */
 Accessor.prototype.clearIntervalDeterministic = function(cbId) {
     var thiz = this;
-    //if (thiz.timers[cbId]) {
-        if (deterministicTemporalSemantics) {
-            deterministicTemporalSemantics.clearIntervalDet(Number(cbId));
-        } else {
-            clearInterval(cbId);
-        }
-        delete(thiz.timers[cbId]);
-   // }
+    if (deterministicTemporalSemantics) {
+        deterministicTemporalSemantics.clearIntervalDet(Number(cbId));
+    } else {
+        clearInterval(cbId);
+    }
+    delete(thiz.timers[cbId]);
 }
 
 /** Delete the delayed one time callback using the deterministic temporal semantics.
@@ -1071,14 +1070,12 @@ Accessor.prototype.clearIntervalDeterministic = function(cbId) {
  */
 Accessor.prototype.clearTimeoutDeterministic = function(cbId) {
     var thiz = this;
-    //if (thiz.timers[cbId]) {
-        if (deterministicTemporalSemantics) {
-            deterministicTemporalSemantics.clearTimeoutDet(Number(cbId));
-        } else {
-            clearTimeout(cbId);
-        }
-        delete(thiz.timers[cbId]);
-    //}
+    if (deterministicTemporalSemantics) {
+        deterministicTemporalSemantics.clearTimeoutDet(Number(cbId));
+    } else {
+        clearTimeout(cbId);
+    }
+    delete(thiz.timers[cbId]);
 }
 
 /** Clears all the timers by removing them from the callbackQueue and the
@@ -1096,13 +1093,12 @@ Accessor.prototype.clearTimers = function() {
         });
     } else {
         Object.keys(thiz.timers).forEach(function(key) {
-            clearTimeout(key);
-            clearInterval(key);
+            clearTimeout(Number(key));
+            clearInterval(Number(key));
         });
     }
     thiz.timers = {};
 }
-
 
 /** Connect the specified inputs and outputs.
  *  There are four forms of this function:
@@ -2392,39 +2388,24 @@ Accessor.prototype.setDefaultInput = function (name, value) {
  *  @param llcd An optional argument for the labeled logical clock domain
  *  @param priority An optional argument for the priority over other delayed callbacks. If not
  *   provided, the value is defaulted to the accessor priority
- *  @param errorCallback An optional argument that provides the callback to execute in case
- *   the delayed callbacks execution raised an error. If not provided, the value is defaulted 
- *   to the accessor error function prototype
- *  @param cleanCallback An optional argument that provides the callback to execute after 
- *   the delayed callbacks has executed successfully. If not provided, the value is defaulted 
- *   to the accessor cleanTimersAfterExecution function prototype
  *  @return the unique Id of setTimeout call
  */
-Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd, 
-        priority, errorCallback, cleanCallback) {
+Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd, priority) {
 
     var thiz = this;
     var tempo;
-    var _priority, _errorCallback, _cleanCallback ;
+    var tempPriority, errorCallback, cleanCallback;
         
     // Set default values for priority, errorCallback and cleanCallback
     if (priority == undefined) {
-        _priority = thiz.priority;
+        tempPriority = thiz.priority;
     } else {
-        _priority = priority;
+        tempPriority = priority;
     }
-    if (!errorCallback || errorCallback == undefined) {
-        _errorCallback = thiz.error.bind(thiz);
-    } else {
-        _errorCallback = errorCallback;
-    }
-    if (!cleanCallback || cleanCallback == undefined) {
-        _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
-    } else {
-        _cleanCallback = cleanCallback;
-    }
-    
-    tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
+    errorCallback = thiz.error.bind(thiz);
+    cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
+
+    tempo = deterministicTemporalSemantics.setIntervalDet(callback, timeout, llcd, tempPriority, errorCallback, cleanCallback);
     
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
@@ -2460,39 +2441,24 @@ Accessor.prototype.setParameter = function (name, value) {
  *  @param llcd An optional argument for the labeled logical clock domain
  *  @param priority An optional argument for the priority over other delayed callbacks. If not
  *   provided, the value is defaulted to the accessor priority
- *  @param errorCallback An optional argument that provides the callback to execute in case
- *   the delayed callbacks execution raised an error. If not provided, the value is defaulted 
- *   to the accessor error function prototype
- *  @param cleanCallback An optional argument that provides the callback to execute after 
- *   the delayed callbacks has executed successfully. If not provided, the value is defaulted 
- *   to the accessor cleanTimersAfterExecution function prototype
  *  @return the unique Id of setTimeout call
  */
-Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd,
-        priority, errorCallback, cleanCallback) {
-
+Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, priority) {
     var thiz = this;
     var tempo;
-    var _priority, _errorCallback, _cleanCallback ;
+    var tempPriority, errorCallback, cleanCallback;
 
 
     // Set default values for priority, errorCallback and cleanCallback
     if (priority == undefined) {
-        _priority = thiz.priority;
+        tempPriority = thiz.priority;
     } else {
-        _priority = priority;
+        tempPriority = priority;
     }
-    if (!errorCallback || errorCallback == undefined) {
-        _errorCallback = thiz.error.bind(thiz);
-    } else {
-        _errorCallback = errorCallback;
-    }
-    if (!cleanCallback || cleanCallback == undefined) {
-        _cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
-    } else {
-        _cleanCallback = cleanCallback;
-    }
-    tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, _priority, _errorCallback, _cleanCallback);
+    errorCallback = thiz.error.bind(thiz);
+    cleanCallback = thiz.cleanTimersAfterExecution.bind(thiz);
+
+    tempo = deterministicTemporalSemantics.setTimeoutDet(callback, timeout, llcd, tempPriority, errorCallback, cleanCallback);
     
     // Add the delayed callback identifier to the Accessors timers
     // This is useful for resetting timers when wrapping up
