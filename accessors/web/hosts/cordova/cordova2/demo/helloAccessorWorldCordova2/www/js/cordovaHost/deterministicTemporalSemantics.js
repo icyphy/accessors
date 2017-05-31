@@ -289,6 +289,7 @@ function executeCallbacks() {
         
         if (delayedCallbacks[key][id].nextExecutionTime === nextScheduledTick) {
             // console.dir(callbackQueue);
+            // console.dir(delayedCallbacks);
             callbackQueue.splice (0, 1);
 
             // Update the current logical time of an LLCD 
@@ -296,23 +297,20 @@ function executeCallbacks() {
             
             // Call the callback function
             try {
-                // console.log('--- execution delCB['+key+']['+id+']');
-                // console.dir(delayedCallbacks[key][id]);
+                console.log('--- execution delCB['+key+']['+id+']');
                 
                 delayedCallbacks[key][id].cbFunction.call();
-                
-                // Clean up after call succeeds, if cleanCallback is defined
-                if (delayedCallbacks[key][id].cleanCallback) {
-                    delayedCallbacks[key][id].cleanCallback.call(this, id);
-                    // console.log('cleaned the id: '+id);
-                }
-
+                            
                 // then reinitialize the remainingTime to the interval value.
                 if (delayedCallbacks) {
                     if (delayedCallbacks[key]) {
                         if (delayedCallbacks[key][id]) {
+                            // Clean up after call succeeds, if cleanCallback is defined
+                            if (delayedCallbacks[key][id].cleanCallback) {
+                                delayedCallbacks[key][id].cleanCallback.call(this, id);
+                                // console.log('cleaned the id: '+id);
+                            }
                             if (delayedCallbacks[key][id].periodic === true) {
-                        
                                 delayedCallbacks[key][id].nextExecutionTime += delayedCallbacks[key][id].interval;
                                 putInCallbackQueue(key, id);
                             } else {
@@ -425,9 +423,9 @@ function putInCallbackQueue(label, id) {
             if (labelInList === label) {
                 // Third level of sorting: 
                 // Use of priorities and callback ids
-                if (delayedCallbacks[label][id].priority) {
-                    // The callback to insert has priority
-                    if (delayedCallbacks[labelInList][idInList].priority) {
+                if (delayedCallbacks[label][id].priority !== undefined) {
+                    // The callback to insert has priority (priority can be equal to 0. Then it is not undefined)
+                    if (delayedCallbacks[labelInList][idInList].priority !== undefined) {
                         if (delayedCallbacks[label][id].priority < delayedCallbacks[labelInList][idInList].priority) {
                             break;
                         } else {
@@ -437,8 +435,8 @@ function putInCallbackQueue(label, id) {
                         break;
                     }
                 } else {
-                    // The callback to schedule has no priority
-                    if (delayedCallbacks[labelInList][idInList].priority) {
+                    // The callback has no priority 
+                    if (delayedCallbacks[labelInList][idInList].priority !== undefined) {
                         // Callbacks that has priority attribute has more priority compared to
                         // those which do not have one
                         continue;
@@ -650,4 +648,3 @@ exports.setTimeoutDet = setTimeoutDet;
 exports.clearTimeoutDet = clearTimeoutDet;
 exports.setIntervalDet = setIntervalDet;
 exports.clearIntervalDet = clearIntervalDet;
-exports.reset = reset;
