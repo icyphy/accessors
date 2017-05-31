@@ -733,9 +733,6 @@ clearTimeout',
                 // property.
                 this.exports.fire.call(this);
             }
-
-            // Update monitoring information
-            // FIXME: Are react and fire semantically different?
         };
 
         this.wrapup = function () {
@@ -875,6 +872,10 @@ Accessor.prototype.addInputHandler = function (name, func) {
  *  rather than as a response to an input.  Every directed cycle in a connectivity
  *  graph must contain at least one spontaneous output or there will be a deadlock
  *  due to a causality loop.
+ *  Every accessor will receive a unique priority.
+ *  If the topological sort alone is not sufficient to determine priorities,
+ *  then the order in which inputs and outputs are connected will determine it so
+ *  that the priorities are deterministic.
  */
 Accessor.prototype.assignPriorities = function () {
     // Note that we could just use this instead of this.root because of the
@@ -889,11 +890,13 @@ Accessor.prototype.assignPriorities = function () {
     // Next, assign the first accessor an arbitrary priority and follow its
     // connections to assign priorities implied by those connections.
     var startingPriority = 0;
+    var countConnectedComponents = 0;
     for (i = 0; i < accessors.length; i++) {
         // If the instance already has a priority, skip it.
         if (accessors[i].priority !== null) {
             continue;
         }
+        countConnectedComponents++;
         accessors[i].priority = startingPriority;
         // console.log('Assigned priority to ' + accessors[i].accessorName + ' of ' + startingPriority);
         // Follow connections
@@ -903,7 +906,7 @@ Accessor.prototype.assignPriorities = function () {
         // Any remaining accessors without priorities are in one or more independent
         // connected subgraphs. To ensure that the next set of priorities does not
         // overlap those already assigned, we start with a sufficiently higher number.
-        startingPriority = 2 * (accessors.length - i);
+        startingPriority = (countConnectedComponents + 1) * accessors.length;
     }
 };
 
@@ -914,12 +917,14 @@ Accessor.prototype.assignPriorities = function () {
  *  Return the largest priority assigned to a downstream accessor, or if
  *  no priorities are assigned to downstream accessor, then return the priority
  *  of the specified accessor.
+ *  All downstream accessors are assigned unique priorities.
  *  @param accessor The contained accessor with a priority.
  *  @param cyclePriority If we encounter an accessor with this priority, then
  *   there is a causality loop.
  */
 Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cyclePriority) {
     var myPriority = accessor.priority;
+    var countDownstreamAccessors = 0
     // To get repeatable priorities, iterate over outputs in order.
     for (var i = 0; i < accessor.outputList.length; i++) {
         var output = accessor.outputs[accessor.outputList[i]];
@@ -931,6 +936,7 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
         if (output.destinations) {
             // There are destination accessors.
             for (var j = 0; j < output.destinations.length; j++) {
+                countDownstreamAccessors++;
                 var destination = output.destinations[j];
                 if (typeof destination === 'string') {
                     // Destination is an output of the container.
@@ -938,6 +944,7 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
                 }
                 var destinationAccessor = destination.accessor;
                 var destinationInput = destinationAccessor.inputs[destination.inputName];
+
                 var theirPriority = destinationAccessor.priority;
                 if (theirPriority === cyclePriority) {
                     throw new Error('Causality loop found including at least: ' +
@@ -946,56 +953,43 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
                 if (theirPriority === null) {
                     // Destination has no previously assigned priority. Give it one,
                     // and follow the implications.
-
-                    // We increment myPriority before use so that if
-                    // an output is connected to multiple inputs, the
-                    // inputs do not have the same priority.
-                    // To replicate this, run:
-
-                    // (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node; node nodeHostInvoke -timeout 6000 test/auto/RampJSTestDisplay.js)
-
-                    // If we don't increment the priority then either
-                    // the Display or the TrainableTest fails to get
-                    // inputs.
-                    destinationAccessor.priority = ++myPriority;
-                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + myPriority));
-
-                    // In case there are further assigned priorities further downstream,
-                    // update myPriority to the largest of those.
-                    myPriority = this.assignImpliedPrioritiesDownstream(
-                        destinationAccessor, cyclePriority);
+                    destinationAccessor.priority = myPriority + countDownstreamAccessors;
+                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + destinationAccessor.priority);
+                    countDownstreamAccessors += this.assignImpliedPrioritiesDownstream(
+                            destinationAccessor, cyclePriority);
                 } else {
                     if (theirPriority > myPriority) {
                         // Priority is OK. Continue.
                         continue;
                     }
                     // Priority has to be adjusted.
-
-                    // See comment above for why we increment myPriority.
-                    destinationAccessor.priority = ++myPriority;
-                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + (myPriority + 1));
-                    myPriority = this.assignImpliedPrioritiesDownstream(
+                    destinationAccessor.priority = myPriority + countDownstreamAccessors;
+                    // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + destinationAccessor.priority);
+                    countDownstreamAccessors += this.assignImpliedPrioritiesDownstream(
                         destinationAccessor, cyclePriority);
                 }
             }
         }
     }
-    return myPriority;
+    return countDownstreamAccessors;
 };
 
 /** Assuming that the specified accessor has an assigned priority, follow its
  *  connections upstream and assign priorities to connected accessors.
+ *  All upstream accessors are assigned unique priorities.
  *  @param accessor The contained accessor with a priority.
  *  @param cyclePriority If we encounter an accessor with this priority, then
  *   there is a causality loop.
  */
 Accessor.prototype.assignImpliedPrioritiesUpstream = function (accessor, cyclePriority) {
     var myPriority = accessor.priority;
+    var countUpstreamAccessors = 0;
     // To get repeatable priorities, iterate over inputs in order.
     for (var i = 0; i < accessor.inputList.length; i++) {
         var input = accessor.inputs[accessor.inputList[i]];
         if (input.source && typeof input.source !== 'string') {
             // There is a source accessor.
+            countUpstreamAccessors++;
             var source = input.source.accessor;
             // There was a bug here where $PTII/ptolemy/actor/lib/jjs/test/auto/RampDisplay.xml
             // would fail because output was undefined.
@@ -1016,21 +1010,22 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function (accessor, cyclePr
             if (theirPriority === null) {
                 // Source has no previously assigned priority. Give it one,
                 // and follow the implications.
-                source.priority = myPriority - 1;
-                // console.log('Assigned upstream priority to ' + accessors[i].accessorName + ' of ' + (myPriority - 1));
-                this.assignImpliedPrioritiesUpstream(source, cyclePriority);
+                source.priority = myPriority - countUpstreamAccessors;
+                // console.log('Assigned upstream priority to ' + accessors[i].accessorName + ' of ' + source.priority);
+                countUpstreamAccessors += this.assignImpliedPrioritiesUpstream(source, cyclePriority);
             } else {
                 if (theirPriority < myPriority) {
                     // Priority is OK. Continue.
                     continue;
                 }
                 // Priority has to be adjusted.
-                source.priority = myPriority - 1;
-                // console.log('Assigned upstream priority to ' + accessors[i].accessorName + ' of ' + (myPriority - 1));
-                this.assignImpliedPrioritiesUpstream(source, cyclePriority);
+                source.priority = myPriority - countUpstreamAccessors;
+                // console.log('Assigned upstream priority to ' + accessors[i].accessorName + ' of ' + source.priority);
+                countUpstreamAccessors += this.assignImpliedPrioritiesUpstream(source, cyclePriority);
             }
         }
     }
+    return countUpstreamAccessors;
 };
 
 /** Delete the delayed callback identifier from the timers list. This function may be
