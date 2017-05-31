@@ -120,43 +120,6 @@
           description="Compile the duktape binaries. Generate html and Ptdoc documentation.">
   </target>
 
-  <target name="copy"
-          description="Copy files from commonHost to cordova and jxcore">
-    <copy todir="hosts/cordova/cordova1/DemoApp/www/jxcore">
-      <resources>
-        <file file="hosts/common/commonHost.js"/>
-        <file file="hosts/common/modules/events.js"/>
-        <file file="hosts/node/nodeHost.js"/>
-        <file file="hosts/common/modules/util.js"/>
-      </resources>
-    </copy>
-    <copy todir="./hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
-      <resources>
-        <file file="hosts/common/commonHost.js"/>
-        <file file="hosts/common/modules/events.js"/>
-        <file file="hosts/common/modules/deterministicTemporalSemantics.js"/> 
-        <file file="hosts/common/modules/hostHelper.js"/>
-      </resources>
-    </copy>
-
-    <copy todir="hosts/jxcore/jxcore/common">
-        <file file="hosts/common/commonHost.js"/>
-    </copy>
-
-    <copy todir="hosts/jxcore/jxcore/common/modules">
-      <file file="hosts/common/modules/deterministicTemporalSemantics.js"/>
-      <file file="hosts/common/modules/events.js"/>
-      <file file="hosts/common/modules/hostHelper.js"/>
-      <file file="hosts/common/modules/util.js"/>
-    </copy>
-
-    <copy todir="hosts/jxcore/jxcore/common/modules">
-      <file file="hosts/common/modules/events.js"/>
-      <file file="hosts/common/modules/hostHelper.js"/>
-      <file file="hosts/common/modules/util.js"/>
-    </copy>
-
-  </target>
   <target name="-cargo-in-path">
     <property environment="env" />
     <available file="cargo"
@@ -295,6 +258,55 @@
           timeout="${timeout}">
       <arg value="clean"/>
     </exec>
+  </target>
+
+  <target name="copy"
+          depends="copy.ptII"
+          description="Copy files from commonHost to cordova and jxcore">
+    <copy todir="hosts/cordova/cordova1/DemoApp/www/jxcore">
+      <resources>
+        <file file="hosts/common/commonHost.js"/>
+        <file file="hosts/common/modules/events.js"/>
+        <file file="hosts/node/nodeHost.js"/>
+        <file file="hosts/common/modules/util.js"/>
+      </resources>
+    </copy>
+
+    <copy todir="hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
+      <resources>
+        <file file="hosts/common/commonHost.js"/>
+        <file file="hosts/common/modules/events.js"/>
+        <file file="hosts/common/modules/deterministicTemporalSemantics.js"/> 
+        <file file="hosts/common/modules/hostHelper.js"/>
+      </resources>
+    </copy>
+
+    <copy todir="hosts/jxcore/jxcore/common">
+        <file file="hosts/common/commonHost.js"/>
+    </copy>
+
+    <copy todir="hosts/jxcore/jxcore/common/modules">
+      <file file="hosts/common/modules/deterministicTemporalSemantics.js"/>
+      <file file="hosts/common/modules/events.js"/>
+      <file file="hosts/common/modules/hostHelper.js"/>
+      <file file="hosts/common/modules/util.js"/>
+    </copy>
+
+    <copy todir="hosts/jxcore/jxcore/common/modules">
+      <file file="hosts/common/modules/events.js"/>
+      <file file="hosts/common/modules/hostHelper.js"/>
+      <file file="hosts/common/modules/util.js"/>
+    </copy>
+  </target>
+
+  <target name="copy.ptII"
+          depends="-ptII-exists"
+          if="${ptII.exists}">
+    <copy todir="${env.PTII}/ptolemy/actor/lib/jjs">
+      <resources>
+        <file file="hosts/common/commonHost.js"/>
+      </resources>
+    </copy>
   </target>
 
   <!-- Build eduk2 first because it updates the .h files from the .js files
