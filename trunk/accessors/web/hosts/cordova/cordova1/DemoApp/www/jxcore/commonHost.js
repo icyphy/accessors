@@ -686,6 +686,11 @@ clearTimeout',
     if (typeof this.exports.setup === 'function') {
         // console.log('setup for accessor: '+this.accessorName);
         this.exports.setup.call(this);
+        // Add an error port. Since Accessor.prototype.output uses 
+        // pushIfNotPresent, then we will finish by having only one
+        // error port per Accessor 
+        // FIXME: Should we keep this?
+        this.output('error');
     }
 
     ///////////////////////////////////////////////////////////////////
