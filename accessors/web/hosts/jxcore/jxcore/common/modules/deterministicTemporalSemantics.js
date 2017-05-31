@@ -297,7 +297,7 @@ function executeCallbacks() {
             
             // Call the callback function
             try {
-                console.log('--- execution delCB['+key+']['+id+']');
+                // console.log('--- execution delCB['+key+']['+id+']');
                 
                 delayedCallbacks[key][id].cbFunction.call();
                             
