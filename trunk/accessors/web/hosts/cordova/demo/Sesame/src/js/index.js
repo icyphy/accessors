@@ -7,7 +7,7 @@ var app = {
 
     // Start swarmlet when the device is ready.
     onDeviceReady: function() {
-        var topLevel = instantiateAccessor('MyTopLevel', 'RampJSTestDisplay', getAccessorCode);
+        var topLevel = instantiateAccessor('MyTopLevel', 'Sesame');
         topLevel.initialize();
         this.updateStatus('Executing'); // FIXME: handle wrap up
     },
