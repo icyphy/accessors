@@ -543,26 +543,26 @@ exports.isPrimitive = isPrimitive;
 
 // See https://www.icyphy.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
 
-var commonHost = require('common/commonHost');
+// FIXME: commenting this out will break the browser and duktape host.
+// What these hosts should do instead is have their own extention of utils.js
+// that overrides whatever is host specific.
+// var commonHost = require('common/commonHost');
 
-// If commonHost.accessorHost or commonHost.accessorHostEnum.NODE is undefined, the you
-// will get "TypeError: cannot read property 'NODE' of undefined"
-// The problem is that commonHost.js is not exporting accessorHost and
-// accessorHostEnum before the require() of uti.
-
-if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-    exports.isBuffer = require('./support/isBuffer');
-} else {
+// FIXME: commenting this out will break the node, browser, and Duktape host.
+// This is a common module, so we cannot have platform-specific code here.
+//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+//    exports.isBuffer = require('./support/isBuffer');
+//} else {
     // Browser and Duktape
 
     // jshint warns: "Function declarations should not be placed in
     // blocks. Use a function expression or move the statement to the
     // top of the outer function."
-    function isBuffer(arg) {
-        return arg instanceof Buffer;
-    }
-    exports.isBuffer = isBuffer;
-}
+    // function isBuffer(arg) {
+    //     return arg instanceof Buffer;
+    // }
+    // exports.isBuffer = isBuffer;
+//}
 
 function objectToString(o) {
     return Object.prototype.toString.call(o);
@@ -592,7 +592,6 @@ exports.log = function() {
     console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
 };
 
-
 /**
  * Inherit the prototype methods from one constructor into another.
  *
@@ -606,22 +605,29 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-    exports.inherits = require('inherits');
-} else {
-    // Browser and Duktape
-    exports.inherits = function(ctor, superCtor) {
-        ctor.super_ = superCtor;
-        ctor.prototype = Object.create(superCtor.prototype, {
-            constructor: {
-                value: ctor,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-    };
-}
+// FIXME: provide a generic default implementation and override if necessary
+//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+//    exports.inherits = require('inherits');
+//}
+// FIXME: commenting this out will break various hosts.
+// What these hosts should do instead is have their own exention of utils.js
+// that overrides this export. 
+// if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
+//     exports.inherits = require('inherits');
+// } else {
+//     // Browser and Duktape
+    // exports.inherits = function(ctor, superCtor) {
+    //     ctor.super_ = superCtor;
+    //     ctor.prototype = Object.create(superCtor.prototype, {
+    //         constructor: {
+    //             value: ctor,
+    //             enumerable: false,
+    //             writable: true,
+    //             configurable: true
+    //         }
+    //     });
+    // };
+// }
 
 exports._extend = function(origin, add) {
     // Don't do anything if add isn't an object
