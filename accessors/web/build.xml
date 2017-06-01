@@ -835,8 +835,10 @@
   
   <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
   
+  <!-- 6/1/17: temporarily remove duktape tests. -->
+  <!-- depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml, tests.coverage" -->
   <target name="tests.jenkins"
-          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml, tests.coverage"
+          depends="tests.capecode, tests.browser, tests.nashorn, tests.mocha.xml, tests.coverage"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
