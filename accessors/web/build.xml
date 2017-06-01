@@ -620,7 +620,9 @@
   </target>
 
   <target name="tests"
-          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
+          <!-- 6/1/17: temporarily remove duktape tests. -->
+          depends="tests.capecode, tests.browser, tests.mocha, tests.nashorn"
+          <!-- depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn" -->
           description="Run the CapeCode, Browser, Duktape2, eduk2, node and Nashorn host tests">
   </target>
 
