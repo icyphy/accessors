@@ -25,7 +25,7 @@
         <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     </platform>
     <engine name="ios" spec="~4.4.0" />
+    <plugin name="cordova-plugin-ble" spec="^2.0.1" />
     <plugin name="cordova-plugin-chrome-apps-sockets-tcp" spec="https://github.com/MobileChromeApps/cordova-plugin-chrome-apps-sockets-tcp" />
-    <plugin name="cordova-plugin-http" spec="~1.2.0" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
 </widget>

@@ -39,7 +39,7 @@
  *  doorAcc.provideInput('trigger', true);
  *  doorAcc.react();
  *
- *  @author Hokeun Kim and Matt Weber
+ *  @author Hokeun Kim, Matt Weber, Victor Nouvellet
  *  @version $$Id: TestGain.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
@@ -51,6 +51,8 @@
 
 var httpClient = require('httpClient/httpClient.js');
 
+var dropOutput = false;
+
 exports.setup = function () {
     this.input('trigger');
     this.parameter('url', {
@@ -61,17 +63,26 @@ exports.setup = function () {
 };
 
 function triggerInputHandler() {
-    httpClient.get({
-            trustAll: true,
-            url: this.getParameter('url')
-        },
-        function(data) {
-        	MobileLog(data);
-            this.send('response', data);
-        }
-    );
+    if (dropOutput == false) {
+        httpClient.get({
+                trustAll: true,
+                url: this.getParameter('url')
+            },
+            function(data) {
+            	console.log(data);
+                dropOutput = true;
+                this.send('response', data);
+            }
+        );
+    } else {
+        console.log('Opening request dropped because door was opened less than ' + this.getParameter('minDoorPeriod') + ' ms ago.')
+    }
 };
 
 exports.initialize = function () {
     this.addInputHandler('trigger', triggerInputHandler);
+
+    setTimeout(function() {
+        dropOutput = false;
+    }, this.getParameter('minDoorPeriod')); //FIXME use Math.max(10000, this.getParameter('minDoorPeriod'))
 };

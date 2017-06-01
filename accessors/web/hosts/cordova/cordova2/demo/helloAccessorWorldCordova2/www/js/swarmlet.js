@@ -63,9 +63,3 @@ MobileLog('Accessor "bleAcc" initialized');
 bleAcc.provideInput('startScan', true);
 
 bleAcc.react();
-
-setTimeout(function() {
-    bleAcc.provideInput('stopScan', true);
-    bleAcc.react();    
-
-}, 5000);

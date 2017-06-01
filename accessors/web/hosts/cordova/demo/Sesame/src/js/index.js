@@ -7,7 +7,7 @@ var app = {
 
     // Start swarmlet when the device is ready.
     onDeviceReady: function() {
-        var topLevel = instantiateAccessor('MyTopLevel', 'Sesame');
+        var topLevel = instantiateAccessor('MyTopLevel', 'Sesame', getAccessorCode);
         topLevel.initialize();
         this.updateStatus('Executing'); // FIXME: handle wrap up
     },
