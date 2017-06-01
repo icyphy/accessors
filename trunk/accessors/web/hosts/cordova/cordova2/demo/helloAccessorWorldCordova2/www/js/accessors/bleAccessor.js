@@ -72,7 +72,10 @@ function startScan() {
     ble.startScan(
         function(device)
         {
-            MobileLog('Found device ' + (!(device.name) ? device.address : device.name) + " (" + device.rssi + " dB)");
+            if (device.name === 'estimote') {
+                MobileLog('Found ibeacon: ' + (!(device.name) ? device.address : device.name) + " (" + device.rssi + " dB). Address: " + device.address + ".");
+            }
+            
             // this.send('newDevice', device);
         },
         function(errorCode)
@@ -80,7 +83,7 @@ function startScan() {
             MobileLog('startScan error: ' + errorCode);
             // this.send('scanError', errorCode);
         },
-        { allowDuplicates: false, timeout: 1000 }
+        { allowDuplicates: true, timeout: 1000 }
     );
 }
 
