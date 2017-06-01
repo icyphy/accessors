@@ -2,7 +2,7 @@
 
   <target name="clean">
     <delete includeEmptyDirs="true">
-      <fileset dir="." includes="**/*" excludes="src/**, build.xml, README" defaultexcludes="false"/>
+      <fileset dir="." includes="**/*" excludes="src/**, build.xml, README, package.json" defaultexcludes="false"/>
     </delete>
   </target>
 
