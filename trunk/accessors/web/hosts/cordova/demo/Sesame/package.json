@@ -1,0 +1,22 @@
+{
+    "name": "sesame",
+    "displayName": "Sesame",
+    "version": "1.0.0",
+    "description": "A sample application that demonstrate the use of accessors on mobile devices.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "iCyPhy Team",
+    "license": "Apache-2.0",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-http": {},
+            "cordova-plugin-ble": {}
+        }
+    },
+    "dependencies": {
+        "cordova-plugin-whitelist": "1"
+    }
+}
