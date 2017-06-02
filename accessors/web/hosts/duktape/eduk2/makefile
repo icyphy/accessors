@@ -22,6 +22,7 @@ C_FILES = \
 JS_H_FILES = \
 	AccessorStatus.h \
 	RampJSDisplay.h \
+	RampJSInspect.h \
 	RampJSTest.h \
 	RampJSTestDisplay.h \
 	Stop.h \
@@ -126,6 +127,8 @@ ecma_eventloop.h: ../duktape2/examples/eventloop/ecma_eventloop.js makefile
 # Composite Accessors used for testing.  Production duktape accessor
 # hosts will not include these files.
 RampJSDisplay.h: $(ROOT)/test/auto/RampJSDisplay.js makefile
+	./js2h $< $@
+RampJSInspect.h: $(ROOT)/test/auto/RampJSInspect.js makefile
 	./js2h $< $@
 RampJSTest.h: $(ROOT)/test/auto/RampJSTest.js makefile
 	./js2h $< $@
