@@ -59,6 +59,10 @@ exports.setup = function () {
         'value': 'https://www.google.com',
         'type': 'string'
     });
+    this.parameter('minDoorPeriod', {
+        'value': 10000,
+        'type': 'int'
+    });
     this.output('response');
 };
 
@@ -85,4 +89,6 @@ exports.initialize = function () {
     setTimeout(function() {
         dropOutput = false;
     }, this.getParameter('minDoorPeriod')); //FIXME use Math.max(10000, this.getParameter('minDoorPeriod'))
+    
+    console.log('Door initialized');
 };
