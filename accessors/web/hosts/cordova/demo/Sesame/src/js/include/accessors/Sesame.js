@@ -50,13 +50,13 @@ exports.setup = function() {
     trigger.setParameter('delay', 1000.0);
     trigger.setParameter('value', true);
 
-    sesameFilter.setParameter('rssi', -90);
+    sesameFilter.setParameter('rssi', -70);
     sesameFilter.setParameter('address', 'AAF3DAFF-26C5-45CD-9A32-DCBAC84F7B30');
     
     door.setParameter('minDoorPeriod', 20000);
 
     // WARNING: Do not commit this URL!!!
-    // door.setParameter('url', 'https://.........');
+    door.setParameter('url', 'https://....');
 
     this.connect(trigger, 'output', ble, 'startScan');
     this.connect(ble, 'newDevice', sesameFilter, 'newDevice');
