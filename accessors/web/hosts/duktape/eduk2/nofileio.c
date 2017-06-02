@@ -196,7 +196,9 @@ static int nofileio_readfile(duk_context *ctx) {
     }
 
  error:
+#ifdef DEBUG_NOFILEIO
     fprintf(stderr, "%s:%d Could not find %s\n", __FILE__, __LINE__, filename);
+#endif
     return DUK_RET_ERROR;
 }
 
