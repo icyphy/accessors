@@ -123,7 +123,7 @@ exports.initialize = function () {
                 key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheGeoCoderAccessorDocs';
             }
 
-            console.log('GeoCoder: address: ' + address + ' key: ' + key);
+            // console.log('GeoCoder: address: ' + address + ' key: ' + key);
 
             // arguments is a reserved word, so we use args.
             var args = {
