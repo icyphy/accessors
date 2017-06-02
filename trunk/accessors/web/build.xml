@@ -681,7 +681,7 @@
     <echo>
       ==tests.coverage==
       This target uses istanbul/nyc and mocha to generate code coverage for JavaScript tests.
-      If necessary, istanbul/nyc and mocha are installed in node_modules/
+      If necessary, istanbul/nyc and mocha are installed in ../node_modules/
       The output will generated in the coverage/ directory.
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
 
@@ -843,9 +843,13 @@
 	  depends="chai-string-update, mocha-update, terraswarm-gdp-update">
     <echo>
       ==tests.mocha==
-      This target uses mocha to test Node.js tests in **/mocha/test*.js files.
+      This target uses
+      ${mocha.command}
+      to test Node.js tests in **/mocha/test*.js files.
+
       To run just the composites, use "ant tests.mocha.composites"
-      If necessary, chai and mocha are installed in node_modules/
+
+      If necessary, chai and mocha are installed in ../node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
       target timeout = ${timeout.longer} ms.
     </echo>
@@ -886,14 +890,21 @@
 	  depends="mocha-update, terraswarm-gdp-update">
     <echo>
 
-      ==tests.mocha.composite==
-      This target uses mocha to run the composite accessors via
+      ==tests.mocha.composites==
+      This target uses
+      ${mocha.command}
+      to run the composite accessors via
       hosts/node/test/mocha/testNodeAllAuto.js
-      If necessary, mocha is installed in node_modules/
+
+      If necessary, mocha is installed in ../node_modules/
+
       To run only the composite accessors in one directory:
       mocha hosts/node/test/testNodeOneAuto.js --Dauto=XXX/test/auto
+
       To run all the tests, use "ant tests.mocha" or "ant tests.mocha.xml"
+
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
+
       target timeout = ${timeout} ms.
     </echo>
 
@@ -929,7 +940,7 @@
       ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
       The output is in JUnit-compatibile xml.
-      If necessary, mocha and mocha-junit-reporter are installed in node_modules/
+      If necessary, mocha and mocha-junit-reporter are installed in ../node_modules/
       See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSMocha
       target timeout = ${timeout.longer} ms.
     </echo>
