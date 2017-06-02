@@ -147,16 +147,31 @@ exports.testNodeAuto = function(auto) {
                             // If the accessor contains a TrainableTest
                             // that has not fired, the TrainableTest will
                             // (correctly) throw an exception. 
+
+                            // It should be OK to call wrapup() again, or
+                            // more to the point, it is a bug if there is
+                            // a problem with calling wrapup more than once.
+                            
                             testAccessor.wrapup();
                             
                             // Wait to see if any exceptions occur in wrapup.
+                            // and remove the listeners.
                             setTimeout(function() {
                                 process.removeListener('uncaughtException', exceptionHandler);
                                 process.removeListener('exit', exitHandler);
                                 done();
                             }, 500);
                         }
-                    }, testAccessor.stopAtTime);
+                    }, // Set the timeout of this callback that
+                       // removes the listeners so that it runs after
+                       // the model stops.  Note that here we are
+                       // using the native Node setTimeout(), whereas
+                       // the model is using a deterministic
+                       // setTimeout().  If we don't invoke this
+                       // callback after the model is done, then
+                       // RampJSTest will non-deterministical have
+                       // different results under Node.
+                               testAccessor.stopAtTime + 1000);
                 });
             }
         });
