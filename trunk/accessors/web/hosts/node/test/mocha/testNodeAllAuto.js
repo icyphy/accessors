@@ -41,6 +41,8 @@ var fs = require('fs');
  *  The hosts/browser/test/auto directory is excluded.
  *  @return an array of auto/ directories.
  */
+var printedSkipMessage = [];
+
 var findNodeAutoDirectories = function(dir) {
     var results = [];
     var files = fs.readdirSync(dir);
@@ -57,14 +59,20 @@ var findNodeAutoDirectories = function(dir) {
                                                     // Exclude gdp because it does not stop.
                                                     'gdp/test/auto',
                                                     'hosts/browser/test/auto',
+                                                    'hosts/cordova/demo',
                                                     'node_modules/@terraswarm/gdp/test/mocha'
                                                   ];
+
                             skipDirectories.forEach(function(skipDirectory) {
-                                    if (file.indexOf(skipDirectory) != -1) {
-                                        console.log("testNodeAllAuto.js: Skipping " + skipDirectory);
-                                        skipIt = true;
+                                if (file.indexOf(skipDirectory) != -1) {
+                                    // Only print the message once.
+                                    if (printedSkipMessage.indexOf(skipDirectory) === -1) {
+                                        console.log("testNodeAllAuto.js: Skipping tests in " + skipDirectory);
+                                        printedSkipMessage.push(skipDirectory);
                                     }
-                                });
+                                    skipIt = true;
+                                }
+                            });
                             if (!skipIt) {
                                 results.push(file);
                             }
