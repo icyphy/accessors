@@ -112,7 +112,7 @@ static double get_now(void) {
 		return 0.0;
 	}
         double returnValue = ((double) tv.tv_sec) * 1000.0 + ((double) tv.tv_usec) / 1000.0;
-        fprintf(stderr, "%s:%d: get_now() returning %g.\n", __FILE__, __LINE__, returnValue);
+        // fprintf(stderr, "%s:%d: get_now() returning %g.\n", __FILE__, __LINE__, returnValue);
 	return returnValue;
 }
 
@@ -417,13 +417,13 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 #endif
 
 // Accessors: Use usleep() here instead of poll().
-		printf("timeout -> %d \n", timeout);
+		// printf("timeout -> %d \n", timeout);
 
 #ifdef __ARM_EABI__
 		fprintf(stderr, "%s:%d: busy_delay_us()\n", __FILE__, __LINE__);
 		busy_delay_us(timeout*1000);
 #else
-		fprintf(stderr, "%s:%d: usleep()\n", __FILE__, __LINE__);
+		// fprintf(stderr, "%s:%d: usleep()\n", __FILE__, __LINE__);
 		usleep(timeout*1000);
 #endif
 		//rc = poll(poll_list, poll_count, timeout);
@@ -490,7 +490,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 
 	duk_pop_n(ctx, 3);
 
-        fprintf(stderr, "%s:%d: return 0\n", __FILE__, __LINE__);
+        // fprintf(stderr, "%s:%d: return 0\n", __FILE__, __LINE__);
 	return 0;
 }
 
