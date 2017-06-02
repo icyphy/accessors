@@ -30,11 +30,12 @@ exports.testNodeAuto = function(auto) {
     
     var mochaListener;
     
+    var mochaTimeout = 20000;
     // describe() is a mocha function.
     // IMPORTANT: Don't change 'NodeHost', the Accessor Status page uses it.
     // See https://www.icyphy.org/accessors/wiki/Notes/Status
     describe('NodeHost' , function() {
-        this.timeout(20000); // Increase default timeout.  Originally 2000ms.
+        this.timeout(mochaTimeout); // Increase default timeout.  Originally 2000ms.
         
         before(function() {        
             // Remove the mocha listener (restore later) and 
@@ -132,7 +133,23 @@ exports.testNodeAuto = function(auto) {
                                     'Perhaps the composite accessor does not invoke "this.stopAt(xxxx)"' +
                                     'where xxxx is the stop time in ms.?  Defaulting to 5123.');
                         testAccessor.stopAtTime = 5123;
-                    }
+                    } else if (testAccessor.stopAtTime >= (mochaTimeout - 500)) {
+                        // The problem we were seeing is that
+                        // GeoCoderWeather and WebServerTimeout were
+                        // failing with:
+
+                        // Error: timeout of 20000ms exceeded. Ensure the done() callback is being called in this test.                        
+
+                        console.log('testNodeAuto.js: WARNING: testAccessor.stopAtTime is ' +
+                                    testAccessor.stopAtTime +
+                                    ', which is greater than the (mochaTimeout - 500) of ' +
+                                    (mochaTimeout - 500) +
+                                    ', which is likely to cause problems.');
+                        
+                        // FIXME: Calling stopAt with an earlier time does not seem to help.
+                        // testAccessor.stopAt(mochaTimeout - 1000);
+
+                    } 
 
                     setTimeout(function(){
                         // A test is considered successful if no errors 
