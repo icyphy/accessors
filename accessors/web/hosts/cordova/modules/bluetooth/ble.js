@@ -54,29 +54,29 @@ exports.startScan = function (successCallback, errorCallback, options) {
             errorCallback(errorCode);
         }
     );
-},
+};
 exports.stopScan = function () {
     evothings.ble.stopScan();
-},
+};
 exports.connectToDevice = function (devcie, onConnected, onDisconnected, onConnectError, options) {
-    evothings.ble.stopScan();
-},
+    evothings.ble.connectToDevice(devcie, onConnected, onDisconnected, onConnectError, options);
+};
 exports.getService = function (device, uuid) {
     evothings.ble.getService(device, uuid);
-},
+};
 exports.getCharacteristic = function (service, uuid) {
     evothings.ble.getCharacteristic(service, uuid);
-},
+};
 exports.getDescriptor = function (characteristic, uuid) {
     evothings.ble.getDescriptor(characteristic, uuid);
-},
+};
 exports.readCharacteristic = function (device, characteristic, success, fail) {
     evothings.ble.readCharacteristic(device, characteristic, success, fail);
-},
+};
 exports.writeCharacteristic = function (device, characteristic, data, success, fail) {
     evothings.ble.writeCharacteristic(device, characteristic, data, success, fail);
-},
+};
 exports.enableNotification = function (device, characteristic, success, fail) {
     evothings.ble.enableNotification(device, characteristic, success, fail);
-}
+};
 
