@@ -15,6 +15,7 @@ console.log('services/test/auto/mocha/testGeoCoder.js start');
 describe('NodeHost./accessors/web/services/test/auto/mocha/testGeoCoder', function() {
 
     var replicationMessage = '\n\tTo replicate: (cd web/services/test/auto/mocha/; ../../../../../node_modules/.bin/mocha testGeoCoder.js)';
+    console.log(replicationMessage);
 
     it('testGeoCoder.js', function () {
 
