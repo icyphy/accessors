@@ -1,3 +1,4 @@
 To run these tests, use
 
-(cd services/test/auto/mocha/; ../../../../node_modules/.bin/mocha testGeoCoder.js)
+(cd ../..; mocha hosts/node/test/testNodeOneAuto.js --Dauto=services/test/auto)
+
