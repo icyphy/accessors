@@ -40,6 +40,7 @@ JS_H_FILES = \
 	duktapeHost.h \
 	ecma_eventloop.h \
 	events.h \
+	modulesUtil.h \
 	testCommon.h \
 	util.h
 
@@ -144,6 +145,9 @@ autoTestStop.h: $(ROOT)/test/auto/Stop.js makefile
 	./js2h $< $@
 
 deterministicTemporalSemantics.h: ../../common/modules/deterministicTemporalSemantics.js makefile
+	./js2h $< $@
+
+modulesUtil.h: ../modules/util.js makefile
 	./js2h $< $@
 
 # Used by ../duktape/duktape2 tests
