@@ -61,6 +61,7 @@ exports.initialize = function () {
 
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
+    console.log('New Device being filtered');
     if(newDevice.uuid === this.getParameter('uuid') && newDevice.rssi >= this.getParameter('rssi')){
         this.send('open', true);
     }

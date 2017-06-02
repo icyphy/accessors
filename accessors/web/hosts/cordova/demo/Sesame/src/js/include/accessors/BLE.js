@@ -65,6 +65,7 @@ exports.setup = function () {
 exports.initialize = function () {
     this.addInputHandler('startScan', startScan);
     this.addInputHandler('stopScan', stopScan);
+    console.log('BLE initialized');
 };
 
 function startScan() {
