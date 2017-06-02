@@ -123,7 +123,9 @@ Duktape.modSearch = function (id, require, exports, module) {
 // We expect to run duk from the hosts directory.  See
 // https://www.icyphy.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
 
+console.log('duktapeHost.js: about to require commonHost');
 var commonHost = require("common/commonHost");
+console.log('duktapeHost.js: done requiring commonHost');
 
 // Duktape does not have path nor fs modules.
 //var path = require('path');
