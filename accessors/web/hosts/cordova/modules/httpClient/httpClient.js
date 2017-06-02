@@ -69,16 +69,23 @@ exports.get = function (options, responseCallback) {
         }, function() {
             console.log('error :(');
         });
+
+        cordovaHTTP.validateDomainName(false, function() {
+            console.log('success!');
+        }, function() {
+            console.log('error :(');
+        });
     }
+
     console.log('🔗URL: ' + options.url);
     cordovaHTTP.get(options.url, {}, {}, function(response) {
         responseCallback(response.data);
-        console.log('Status:' + response.status);
-        console.log('Data:' + response.data);
+        // console.log('Status: ' + response.status);
+        // console.log('Data: ' + response.data);
     }, function(response) {
         responseCallback(response.error);
-        console.log('Error:' + response.error);
-        console.log('Status:' + response.status);
-        console.log('Data:' + response.data);
+        // console.log('Error: ' + response.error);
+        // console.log('Status: ' + response.status);
+        // console.log('Data: ' + response.data);
     });
 };
