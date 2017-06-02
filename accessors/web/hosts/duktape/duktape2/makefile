@@ -11,6 +11,7 @@ HFILES = ./src/duk_config.h \
 	./src/duktape.h \
 	duktapeHost.h \
 	../eduk2/RampJSDisplay.h \
+	../eduk2/RampJSInspect.h \
 	../eduk2/RampJSTest.h \
 	../eduk2/RampJSTestDisplay.h \
 	../eduk2/TestAdder.h \
