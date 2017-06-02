@@ -83,9 +83,11 @@ function require(id) {
     // Create the exports object to be populated.
     var module = {};
     module.exports = {};
+    var pathArray = id.split("/");
     
-    // If require specifies a path, use it.
-    if (id.includes("/") && loadModule(_includePath + id) === true) {
+    if (id.indexOf("./modules") == 0 && loadModule(_modulesCommonPath + pathArray[pathArray.length - 1]) === true) {
+        path = _modulesCommonPath + pathArray[pathArray.length - 1];
+    } else if (id.includes("/") && loadModule(_includePath + id) === true) {
         path = _includePath + id;
     } else {
         // Check if there is a locally-defined module with given id.
