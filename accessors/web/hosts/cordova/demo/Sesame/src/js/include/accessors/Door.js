@@ -69,13 +69,18 @@ exports.setup = function () {
 function triggerInputHandler() {
     var thiz = this;
     if (dropOutput == false) {
+        dropOutput = true;
+        setTimeout(function() {
+            console.log('🐱The door can be opened again!');
+            dropOutput = false;
+        }, thiz.getParameter('minDoorPeriod')); //FIXME use Math.max(10000, this.getParameter('minDoorPeriod'))
+        
         console.log('Opening the 📍🚪');
         httpClient.get({
                 trustAll: true,
                 url: thiz.getParameter('url')
             },
             function(data) {
-                dropOutput = true;
                 console.log('🚪 response: ' + data);
                 thiz.send('response', data);
             }
@@ -88,9 +93,5 @@ function triggerInputHandler() {
 exports.initialize = function () {
     this.addInputHandler('trigger', triggerInputHandler);
 
-    setTimeout(function() {
-        dropOutput = false;
-    }, this.getParameter('minDoorPeriod')); //FIXME use Math.max(10000, this.getParameter('minDoorPeriod'))
-    
     console.log('Door initialized');
 };
