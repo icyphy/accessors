@@ -61,8 +61,8 @@ exports.startScan = function (successCallback, errorCallback, options) {
 exports.stopScan = function () {
     evothings.ble.stopScan();
 };
-exports.connectToDevice = function (devcie, onConnected, onDisconnected, onConnectError, options) {
-    evothings.ble.connectToDevice(devcie, onConnected, onDisconnected, onConnectError, options);
+exports.connectToDevice = function (device, onConnected, onDisconnected, onConnectError, options) {
+    evothings.ble.connectToDevice(device, onConnected, onDisconnected, onConnectError, options);
 };
 exports.getService = function (device, uuid) {
     evothings.ble.getService(device, uuid);
