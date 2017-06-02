@@ -83,12 +83,12 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 20
+#define FILE_ENTRIES_SIZE 21
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 7
+#define FILE_ENTRIES_SIZE 8
 #else // EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 4
+#define FILE_ENTRIES_SIZE 5
 #endif // EDUK_RAMPJSDISPLAY 
 #endif //EDUK_FULL
 
@@ -97,6 +97,7 @@
 #include "duktape.h"
 #include "commonHost.h"
 #include "events.h"
+#include "modulesUtil.h"
 #include "util.h"
 #include "deterministicTemporalSemantics.h"
 
@@ -223,6 +224,10 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[++n].name = "common/modules/util.js";
     fileEntries[n].contents = ______common_modules_util_js;
     fileEntries[n].length = ______common_modules_util_js_len;
+
+    fileEntries[++n].name = "modules/util.js";
+    fileEntries[n].contents = ___modules_util_js;
+    fileEntries[n].length = ___modules_util_js_len;
 
     fileEntries[++n].name = "common/modules/deterministicTemporalSemantics.js";
     fileEntries[n].contents = ______common_modules_deterministicTemporalSemantics_js;
