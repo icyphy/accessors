@@ -31,6 +31,8 @@
 'use strict';
 
 var commonUtil = require('common/modules/util');
+
+// The cordova/utils module is provided by Cordova (see the include of cordova.js in index.html)
 var cordovaUtils = cordova.require('cordova/utils');
 
 // Use the cordova-specific implementation if it exists.
