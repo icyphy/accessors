@@ -67,15 +67,17 @@ exports.setup = function () {
 };
 
 function triggerInputHandler() {
+    var thiz = this;
     if (dropOutput == false) {
+        console.log('Opening the 📍🚪');
         httpClient.get({
                 trustAll: true,
-                url: this.getParameter('url')
+                url: thiz.getParameter('url')
             },
             function(data) {
-            	console.log(data);
                 dropOutput = true;
-                this.send('response', data);
+                console.log('🚪 response: ' + data);
+                thiz.send('response', data);
             }
         );
     } else {
