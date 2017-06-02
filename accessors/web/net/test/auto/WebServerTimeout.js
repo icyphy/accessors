@@ -55,10 +55,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize.call(this);
-        this.stopAt(19000.0);
+        this.stopAt(18000.0);
     }
 } else {
     exports.initialize = function() {
-        this.stopAt(19000.0);
+        this.stopAt(18000.0);
     }
 }
