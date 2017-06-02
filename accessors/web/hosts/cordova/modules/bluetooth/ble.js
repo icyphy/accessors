@@ -33,53 +33,50 @@
  * @author Chadlia Jerad, Victor Nouvellet
  * @version $$Id: ble.js 75980 2017-04-23 00:19:25Z victor.nouvellet@berkeley.edu $$
  */
-var ble = {
-    startScan: function (successCallback, errorCallback, options) {
-        // Scan for all services.
-        var foundDevices = {};
+exports.startScan = function (successCallback, errorCallback, options) {
+    // Scan for all services.
+    var foundDevices = {};
 
-        evothings.ble.startScan(
-            function(device)
-            {
-                console.log('startScan found device named: ' + device.name);
-                var count = Object.size(foundDevices);
-                foundDevices[device.address] = device;
-                if (Object.size(foundDevices) > count || options.allowDuplicates == true) {
-                    // New device -> call callback
-                    successCallback(device);
-                } 
-            },
-            function(errorCode)
-            {
-                console.log('startScan error: ' + errorCode);
-                errorCallback(errorCode);
-            }
-        );
-    },
-    stopScan: function () {
-        evothings.ble.stopScan();
-    },
-    connectToDevice: function (devcie, onConnected, onDisconnected, onConnectError, options) {
-        evothings.ble.stopScan();
-    },
-    getService: function (device, uuid) {
-        evothings.ble.getService(device, uuid);
-    },
-    getCharacteristic: function (service, uuid) {
-        evothings.ble.getCharacteristic(service, uuid);
-    },
-    getDescriptor: function (characteristic, uuid) {
-        evothings.ble.getDescriptor(characteristic, uuid);
-    },
-    readCharacteristic: function (device, characteristic, success, fail) {
-        evothings.ble.readCharacteristic(device, characteristic, success, fail);
-    },
-    writeCharacteristic: function (device, characteristic, data, success, fail) {
-        evothings.ble.writeCharacteristic(device, characteristic, data, success, fail);
-    },
-    enableNotification: function (device, characteristic, success, fail) {
-        evothings.ble.enableNotification(device, characteristic, success, fail);
-    }
-};
+    evothings.ble.startScan(
+        function(device)
+        {
+            // console.log('startScan found device named: ' + device.name);
+            var count = Object.size(foundDevices);
+            foundDevices[device.address] = device;
+            if (Object.size(foundDevices) > count || options.allowDuplicates == true) {
+                // New device -> call callback
+                successCallback(device);
+            } 
+        },
+        function(errorCode)
+        {
+            console.log('startScan error: ' + errorCode);
+            errorCallback(errorCode);
+        }
+    );
+},
+exports.stopScan = function () {
+    evothings.ble.stopScan();
+},
+exports.connectToDevice = function (devcie, onConnected, onDisconnected, onConnectError, options) {
+    evothings.ble.stopScan();
+},
+exports.getService = function (device, uuid) {
+    evothings.ble.getService(device, uuid);
+},
+exports.getCharacteristic = function (service, uuid) {
+    evothings.ble.getCharacteristic(service, uuid);
+},
+exports.getDescriptor = function (characteristic, uuid) {
+    evothings.ble.getDescriptor(characteristic, uuid);
+},
+exports.readCharacteristic = function (device, characteristic, success, fail) {
+    evothings.ble.readCharacteristic(device, characteristic, success, fail);
+},
+exports.writeCharacteristic = function (device, characteristic, data, success, fail) {
+    evothings.ble.writeCharacteristic(device, characteristic, data, success, fail);
+},
+exports.enableNotification = function (device, characteristic, success, fail) {
+    evothings.ble.enableNotification(device, characteristic, success, fail);
+}
 
-exports.ble = ble;

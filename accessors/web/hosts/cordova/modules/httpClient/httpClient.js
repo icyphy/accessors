@@ -61,29 +61,24 @@ var EventEmitter = require('events').EventEmitter;
  *  <li> url: A string that can be parsed as a URL.
  *  </ul>
  */
-var httpClient = {  // FIXME: see how we can integrate this (partially) with the 
-                    // common implementation
-    get: function (options, responseCallback) {
-        if (options.trustAll === true) {
-            cordovaHTTP.acceptAllCerts(true, function() {
-                console.log('accepting all certs success!');
-            }, function() {
-                console.log('error :(');
-            });
-        }
 
-        cordovaHTTP.get(options.url, {
-            id: 12,
-            message: "test"
-        }, { Authorization: "OAuth2: token" }, function(response) {
-            responseCallback(response.data);
-            //console.log(response.status);
-            //console.log(response.data);
-        }, function(response) {
-            responseCallback(response.error);
-            //console.log(response.error);
+exports.get = function (options, responseCallback) {
+    if (options.trustAll === true) {
+        cordovaHTTP.acceptAllCerts(true, function() {
+            console.log('accepting all certs success!');
+        }, function() {
+            console.log('error :(');
         });
     }
+    console.log('🔗URL: ' + options.url);
+    cordovaHTTP.get(options.url, {}, {}, function(response) {
+        responseCallback(response.data);
+        console.log('Status:' + response.status);
+        console.log('Data:' + response.data);
+    }, function(response) {
+        responseCallback(response.error);
+        console.log('Error:' + response.error);
+        console.log('Status:' + response.status);
+        console.log('Data:' + response.data);
+    });
 };
-
-exports.httpClient = httpClient;
