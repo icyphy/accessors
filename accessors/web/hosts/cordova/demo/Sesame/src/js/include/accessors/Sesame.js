@@ -50,10 +50,13 @@ exports.setup = function() {
     trigger.setParameter('delay', 1000.0);
     trigger.setParameter('value', true);
 
-    sesameFilter.setParameter('rssi', -30);
-    sesameFilter.setParameter('uuid', 'AAF3DAFF-26C5-45CD-9A32-DCBAC84F7B30');
+    sesameFilter.setParameter('rssi', -90);
+    sesameFilter.setParameter('address', 'AAF3DAFF-26C5-45CD-9A32-DCBAC84F7B30');
     
     door.setParameter('minDoorPeriod', 20000);
+
+    // WARNING: Do not commit this URL!!!
+    // door.setParameter('url', 'https://.........');
 
     this.connect(trigger, 'output', ble, 'startScan');
     this.connect(ble, 'newDevice', sesameFilter, 'newDevice');
@@ -61,5 +64,5 @@ exports.setup = function() {
 };
 
 exports.initialize = function () {
-  console.log('test1 init top level ');
+  console.log('Sesame swarmlet initialized');
 };
