@@ -70,18 +70,19 @@ exports.initialize = function () {
 
 function startScan() {
     // var allowDuplicates = this.getParameter('allowDuplicates');
+    var thiz = this;
     ble.startScan(
         function(device)
         {
-            MobileLog('Found device ' + (!(device.name) ? device.address : device.name) + " (" + device.rssi + " dB)");
-            // this.send('newDevice', device);
+            // console.log('Found device ' + (!(device.name) ? device.address : device.name) + " (" + device.rssi + " dB)");
+            thiz.send('newDevice', device);
         },
         function(errorCode)
         {
-            MobileLog('startScan error: ' + errorCode);
-            // this.send('scanError', errorCode);
+            console.log('startScan error: ' + errorCode);
+            thiz.send('scanError', errorCode);
         },
-        { allowDuplicates: false, timeout: 1000 }
+        { allowDuplicates: true, timeout: 1000 }
     );
 }
 
