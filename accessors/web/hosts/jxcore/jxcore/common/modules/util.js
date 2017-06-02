@@ -24,7 +24,7 @@
  *
  * @module @accessors-hosts/common/modules/util
  * @author Joyent, Edward A. Lee
- * @version $$Id: util.js 1762 2017-06-01 08:06:02Z marten $$
+ * @version $$Id: util.js 1787 2017-06-02 14:10:07Z cxh $$
  */
 
 /*globals Buffer, console, global, exports, process, require */
@@ -541,38 +541,13 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-// See https://www.icyphy.org/accessors/wiki/Main/ResourcesForHostAuthors#Differentiating
-
-// FIXME: commenting this out will break the browser and duktape host.
-// What these hosts should do instead is have their own extention of utils.js
-// that overrides whatever is host specific.
-// var commonHost = require('common/commonHost');
-
-// FIXME: commenting this out will break the node, browser, and Duktape host.
-// This is a common module, so we cannot have platform-specific code here.
-//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-//    exports.isBuffer = require('./support/isBuffer');
-//} else {
-    // Browser and Duktape
-
-    // jshint warns: "Function declarations should not be placed in
-    // blocks. Use a function expression or move the statement to the
-    // top of the outer function."
-    // function isBuffer(arg) {
-    //     return arg instanceof Buffer;
-    // }
-    // exports.isBuffer = isBuffer;
-//}
-
 function objectToString(o) {
     return Object.prototype.toString.call(o);
 }
 
-
 function pad(n) {
     return n < 10 ? '0' + n.toString(10) : n.toString(10);
 }
-
 
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
               'Oct', 'Nov', 'Dec'];
@@ -586,48 +561,10 @@ function timestamp() {
     return [d.getDate(), months[d.getMonth()], time].join(' ');
 }
 
-
 // log is just a thin wrapper to console.log that prepends a timestamp
 exports.log = function() {
     console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
 };
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-// FIXME: provide a generic default implementation and override if necessary
-//if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-//    exports.inherits = require('inherits');
-//}
-// FIXME: commenting this out will break various hosts.
-// What these hosts should do instead is have their own exention of utils.js
-// that overrides this export. 
-// if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-//     exports.inherits = require('inherits');
-// } else {
-//     // Browser and Duktape
-    // exports.inherits = function(ctor, superCtor) {
-    //     ctor.super_ = superCtor;
-    //     ctor.prototype = Object.create(superCtor.prototype, {
-    //         constructor: {
-    //             value: ctor,
-    //             enumerable: false,
-    //             writable: true,
-    //             configurable: true
-    //         }
-    //     });
-    // };
-// }
 
 exports._extend = function(origin, add) {
     // Don't do anything if add isn't an object
