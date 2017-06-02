@@ -37,10 +37,15 @@
 exports.setup = function() {
     console.log('setup of bleDoorOpening');
 
-    var trigger = this.instantiate('trigger', 'TestSpontaneousOnce');
-    var ble = this.instantiate('ble', 'bleAccessor');
+    var trigger = this.instantiate('trigger', 'test/TestSpontaneousOnce');
+    var ble = this.instantiate('ble', 'BLE');
     var sesameFilter = this.instantiate('sesameFilter', 'SesameFilter');
     var door = this.instantiate('door', 'Door');
+
+    console.log('Type of trigger: ' + typeof trigger);
+    console.log('Type of ble: ' + typeof ble);
+    console.log('Type of sesameFilter: ' + typeof sesameFilter);
+    console.log('Type of door: ' + typeof door);
 
     trigger.setParameter('delay', 1000.0);
     trigger.setParameter('value', true);
@@ -50,7 +55,7 @@ exports.setup = function() {
     
     door.setParameter('minDoorPeriod', 20000);
 
-    this.connect(trigger, 'trigger', ble, 'startScan');
+    this.connect(trigger, 'output', ble, 'startScan');
     this.connect(ble, 'newDevice', sesameFilter, 'newDevice');
     this.connect(sesameFilter, 'open', door, 'trigger');
 };
