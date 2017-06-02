@@ -314,6 +314,11 @@
         <file file="hosts/common/commonHost.js"/>
       </resources>
     </copy>
+    <copy todir="${env.PTII}/ptolemy/actor/lib/jjs/modules">
+      <resources>
+        <file file="hosts/common/modules/deterministicTemporalSemantics.js"/>
+      </resources>
+    </copy>
   </target>
 
   <!-- Build eduk2 first because it updates the .h files from the .js files
