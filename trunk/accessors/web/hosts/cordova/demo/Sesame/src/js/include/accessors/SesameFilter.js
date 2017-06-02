@@ -44,7 +44,7 @@ exports.setup = function () {
     this.output('open', {
         'type': 'boolean'
     });
-    this.parameter('uuid', {
+    this.parameter('address', {
         'type': 'string',
         'value': ''
     });
@@ -56,13 +56,21 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
-    this.addInputHandler('newDevice', handleNewDevice.bind(this));
+    var thiz = this;
+    console.log('Filtered Address: ' + this.getParameter('address') + '. Min RSSI value: ' + this.getParameter('rssi'));
+    this.addInputHandler('newDevice', handleNewDevice.bind(thiz));
 };
 
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
-    console.log('New Device being filtered');
-    if(newDevice.uuid === this.getParameter('uuid') && newDevice.rssi >= this.getParameter('rssi')){
+    if(newDevice.address === this.getParameter('address') && newDevice.rssi >= this.getParameter('rssi')){
+        console.log('🎉Beacon found!');
         this.send('open', true);
+    } else {
+        if (newDevice.address === this.getParameter('address')) {
+            console.log('🚪Beacon not close enough: ' + newDevice.rssi + ' dB.');
+        } else {
+            // console.log('New Device filtered revealed not to be the door beacon');
+        }
     }
 }
