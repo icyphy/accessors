@@ -92,12 +92,12 @@ setTimeout = function (func, delay) {
 
         // Coverity Scan reports "explicit_this_parameter: Explicit use of 'this'."
         // if the next lines are uncommented:
-        // bind_args = Array.prototype.slice.call(arguments, 2);
-        // bind_args.unshift(this);
-        // cb_func = func.bind.apply(func, bind_args);
+        bind_args = Array.prototype.slice.call(arguments, 2);
+        bind_args.unshift(this);
+        cb_func = func.bind.apply(func, bind_args);
 
         // So, we throw an error.
-        throw new TypeError('callback arguments are provided, which is not supported because of this issues.');
+        //throw new TypeError('callback arguments are provided, which is not supported because of this issues.');
     } else {
         // Normal case: callback given as a function without arguments.
         cb_func = func;
