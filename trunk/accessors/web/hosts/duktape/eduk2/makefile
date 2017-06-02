@@ -22,6 +22,7 @@ C_FILES = \
 JS_H_FILES = \
 	AccessorStatus.h \
 	RampJSDisplay.h \
+	RampJSInspect.h \
 	RampJSTest.h \
 	RampJSTestDisplay.h \
 	Stop.h \
@@ -43,8 +44,6 @@ JS_H_FILES = \
 	modulesUtil.h \
 	testCommon.h \
 	util.h
-
-#	RampJSInspect.h
 
 H_FILES = \
 	$(DUKTAPE)/src/duk_config.h \
