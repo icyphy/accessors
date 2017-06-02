@@ -64,7 +64,7 @@ exports.initialize = function () {
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
     if(newDevice.address === this.getParameter('address') && newDevice.rssi >= this.getParameter('rssi')){
-        console.log('🎉Beacon found!');
+        console.log('🎉Beacon found! Data: ' + JSON.stringify(newDevice));
         this.send('open', true);
     } else {
         if (newDevice.address === this.getParameter('address')) {

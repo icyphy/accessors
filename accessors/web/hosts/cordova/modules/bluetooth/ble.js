@@ -33,6 +33,9 @@
  * @author Chadlia Jerad, Victor Nouvellet
  * @version $$Id: ble.js 75980 2017-04-23 00:19:25Z victor.nouvellet@berkeley.edu $$
  */
+
+exports.requiredPlugins = ['cordova-plugin-ble'];
+
 exports.startScan = function (successCallback, errorCallback, options) {
     // Scan for all services.
     var foundDevices = {};

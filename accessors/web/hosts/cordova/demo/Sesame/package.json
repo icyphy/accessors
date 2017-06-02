@@ -17,6 +17,8 @@
         }
     },
     "dependencies": {
-        "cordova-plugin-whitelist": "1"
+        "cordova-plugin-whitelist": "1",
+        "cordova-plugin-ble": "~2.0.1",
+        "cordova-plugin-http": "~1.2.0"
     }
 }
