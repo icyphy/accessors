@@ -750,16 +750,6 @@
 
     <echo>
       ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -788,16 +778,6 @@
 
     <echo>
       ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
     </echo>
 
   </target>
@@ -823,16 +803,6 @@
 
     <echo>
       ${ant.project.invoked-targets} returned "${tests.resultproperty}", which should be 0.
-      If "${tests.resultproperty}" is not zero, then one of the tests failed
-      Ant itself will print 'BUILD SUCCESSFUL' because the ant process was successful,
-      though tests may have failed.  To have ant fail when this occurs, run:
-      ant -Dtests.failonerror=true ${ant.project.invoked-targets}
-      If everything is OK, then the output should include text like
-      [exec]   30 passing (2m)
-      [exec]   2 pending
-      [exec]   6 failing
-      If you dont' see any passing tests, the process.exit() is being called and
-      not being handled by the mocha handlers.
     </echo>
 
   </target>
