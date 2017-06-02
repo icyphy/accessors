@@ -1,0 +1,29 @@
+{
+    "name": "ble",
+    "version": "1.0.0",
+    "description": "A BLE module",
+    "main": "ble.js",
+    "author": "Victor Nouvellet",
+    "license": "Apache-2.0",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-ble": {}
+        }
+    },
+    "dependencies": {
+        "cordova-plugin-ble": "~2.0.1"
+    },
+    "interface": {
+        "functions": {
+            "startScan": ["successCallback", "errorCallback", "options"],
+            "stopScan": [],
+            "connectToDevice": ["device", "onConnected", "onDisconnected", "onConnectError", "options"],
+            "getService": ["device", "uuid"],
+            "getCharacteristic": ["service", "uuid"],
+            "getDescriptor": ["characteristic", "uuid"],
+            "readCharacteristic": ["device", "characteristic", "success", "fail"],
+            "writeCharacteristic": ["device", "characteristic", "data", "success", "fail"],
+            "enableNotification": ["device", "characteristic", "success", "fail"]}
+        }
+    }
+}
