@@ -87,13 +87,27 @@ Duktape.modSearch = function (id, require, exports, module) {
     }
 
 
-    try {
-        // Use NoFileIo instead of FileIo because small embedded systems
-        // don't have file systems.
-        src = NoFileIo.readfile(name);
-    } catch (error) {
-        // Rusteduk has FileIo, not NoFileIo.
-        src = FileIo.readfile(name);
+    // Iterate through a series of search paths.
+    // common/modules is needed for common/modules/events.js.
+    var prefixes = [ '', 'modules/', 'common/modules/' ];
+    for (var i = 0; i < prefixes.length; i++) {
+        var prefixName = prefixes[i] + name;
+        // console.log('duktapeHost.js: about to look for ' + prefixName);
+        try {
+            // Use NoFileIo instead of FileIo because small embedded systems
+            // don't have file systems.
+            src = NoFileIo.readfile(prefixName);
+        } catch (error) {
+            try {
+                // Rusteduk has FileIo, not NoFileIo.
+                src = FileIo.readfile(prefixName);
+            } catch (error) {
+                // Ignore.
+            }
+        }
+        if (typeof src !== 'undefined' && src.length > 0) {
+            break;
+        }
     }
 
     // print('readFile returned', src);
@@ -122,10 +136,7 @@ Duktape.modSearch = function (id, require, exports, module) {
 
 // We expect to run duk from the hosts directory.  See
 // https://www.icyphy.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
-
-console.log('duktapeHost.js: about to require commonHost');
 var commonHost = require("common/commonHost");
-console.log('duktapeHost.js: done requiring commonHost');
 
 // Duktape does not have path nor fs modules.
 //var path = require('path');

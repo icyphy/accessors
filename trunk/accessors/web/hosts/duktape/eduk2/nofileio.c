@@ -83,10 +83,10 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 21
+#define FILE_ENTRIES_SIZE 22
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 8
+#define FILE_ENTRIES_SIZE 9
 #else // EDUK_RAMPJSDISPLAY 
 #define FILE_ENTRIES_SIZE 5
 #endif // EDUK_RAMPJSDISPLAY 
@@ -103,6 +103,7 @@
 
 #ifdef EDUK_RAMPJSDISPLAY
 #include "RampJSDisplay.h"
+#include "RampJSInspect.h"
 #include "TestDisplay.h"
 #include "TestSpontaneous.h"
 #endif // EDUK_RAMPJSDISPLAY
@@ -129,7 +130,7 @@
 #endif // EDUK_FULL
 
 // Define DEBUG_NOFILEIO and recompile for more verbose debugging.
-#define DEBUG_NOFILEIO
+// #define DEBUG_NOFILEIO
 
 struct fileEntry {
     char * name;
@@ -237,6 +238,10 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[++n].name = "./test/auto/RampJSDisplay.js";
     fileEntries[n].contents = _________test_auto_RampJSDisplay_js;
     fileEntries[n].length = _________test_auto_RampJSDisplay_js_len;
+
+    fileEntries[++n].name = "./test/auto/RampJSInspect.js";
+    fileEntries[n].contents = _________test_auto_RampJSInspect_js;
+    fileEntries[n].length = _________test_auto_RampJSInspect_js_len;
 
     // Accessors used by RampJSDisplay.js
     fileEntries[++n].name = "./test/TestDisplay.js";
