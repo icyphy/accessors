@@ -368,7 +368,7 @@ duk_ret_t eventloop_run(duk_context *ctx, void *udata) {
 		 */
 
 		if (exit_requested) {
-#if 1
+#if 0
 			fprintf(stderr, "exit requested, exiting event loop\n");
 			fflush(stderr);
 #endif
