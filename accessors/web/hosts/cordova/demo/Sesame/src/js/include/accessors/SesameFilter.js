@@ -44,7 +44,11 @@ exports.setup = function () {
     this.output('open', {
         'type': 'boolean'
     });
-    this.parameter('address', {
+    this.parameter('characteristic', {
+        'type': 'string',
+        'value': ''
+    });
+    this.parameter('serviceData', {
         'type': 'string',
         'value': ''
     });
@@ -57,20 +61,20 @@ exports.setup = function () {
 
 exports.initialize = function () {
     var thiz = this;
-    console.log('Filtered Address: ' + this.getParameter('address') + '. Min RSSI value: ' + this.getParameter('rssi'));
+    console.log('Filtered Service: [' + this.getParameter('characteristic') + ' : ' + this.getParameter('serviceData') + ']. Min RSSI value: ' + this.getParameter('rssi'));
     this.addInputHandler('newDevice', handleNewDevice.bind(thiz));
 };
 
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
-    if(newDevice.address === this.getParameter('address') && newDevice.rssi >= this.getParameter('rssi')){
+    if(newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData') && newDevice.rssi >= this.getParameter('rssi')){
         console.log('🎉Beacon found and close enough!');
         this.send('open', true);
     } else {
-        if (newDevice.address === this.getParameter('address')) {
+        if (newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData')) {
             console.log('🚪Beacon not close enough: ' + newDevice.rssi + ' dB.');
-        } else if (newDevice.rssi >= -50) {
-            console.log('Close estimote found with advertisement data: ' + JSON.stringify(newDevice.advertisementData));
+        } else if (newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.rssi >= -50) {
+            console.log('Close estimote found with advertisement data: ' + JSON.stringify(newDevice.advertisementData.kCBAdvDataServiceData));
         }
     }
 }
