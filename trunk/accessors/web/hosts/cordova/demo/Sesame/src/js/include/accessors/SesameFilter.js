@@ -64,13 +64,13 @@ exports.initialize = function () {
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
     if(newDevice.address === this.getParameter('address') && newDevice.rssi >= this.getParameter('rssi')){
-        console.log('🎉Beacon found! Data: ' + JSON.stringify(newDevice));
+        console.log('🎉Beacon found and close enough!');
         this.send('open', true);
     } else {
         if (newDevice.address === this.getParameter('address')) {
             console.log('🚪Beacon not close enough: ' + newDevice.rssi + ' dB.');
-        } else {
-            // console.log('New Device filtered revealed not to be the door beacon');
+        } else if (newDevice.rssi >= -50) {
+            console.log('Close estimote found with advertisement data: ' + JSON.stringify(newDevice.advertisementData));
         }
     }
 }
