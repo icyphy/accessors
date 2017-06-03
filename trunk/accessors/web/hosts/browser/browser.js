@@ -510,6 +510,12 @@ function generateAccessorHTML(path, id, text) {
 
     // Load the specified module.
     function require(path) {
+        // // FIXME: This is needed so that we can avoid platform
+        // // dependent code in commonHost.js, but it is so ugly. -cxh
+        // if (path === './modules/deterministicTemporalSemantics') {
+        //     return require('/accessors/node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics');
+        // }
+
         // If the commonHost is required, return it.
         if (path.indexOf("commonHost") >= 0) {
             return commonHost;
@@ -556,8 +562,22 @@ function generateAccessorHTML(path, id, text) {
             } catch (err) {
                 console.log("path " + path);
                 console.log("err " + err);
+                text += '<span class="accessorError"> (Not supported by this host)';
+                // If the path includes modules, try common/modules.
+                var newPath;
+                try {
+                    var index = path.indexOf('modules');
+                    if (index !== -1) {
+                        newPath = '/accessors/hosts/common/' +
+                            path.substr(index);
+                        return require(newPath);
+                    }
+                } catch (err2) {
+                    // Ignore and report original error.
+                    text += '(Also tried ' + newPath + ')';
+                }
+                text += '</span>';
                 executable = false;
-                text += '<span class="accessorError"> (Not supported by this host)</span>';
             }
             modules.innerHTML = text + '</p>';
             return result;
