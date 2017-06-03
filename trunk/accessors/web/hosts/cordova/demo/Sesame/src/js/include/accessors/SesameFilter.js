@@ -57,6 +57,7 @@ exports.setup = function () {
         'value': '-50'
     });
 
+
 };
 
 exports.initialize = function () {
@@ -67,11 +68,11 @@ exports.initialize = function () {
 
 function handleNewDevice() {
     var newDevice = this.get('newDevice');
-    if(newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData') && newDevice.rssi >= this.getParameter('rssi')){
+    if(typeof newDevice.advertisementData !== "undefined" && typeof newDevice.advertisementData.kCBAdvDataServiceData !== "undefined" && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData') && newDevice.rssi >= this.getParameter('rssi')){
         console.log('🎉Beacon found and close enough!');
         this.send('open', true);
     } else {
-        if (newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData')) {
+        if (typeof newDevice.advertisementData !== "undefined" && typeof newDevice.advertisementData.kCBAdvDataServiceData !== "undefined" && newDevice.advertisementData.kCBAdvDataServiceData[this.getParameter('characteristic')] === this.getParameter('serviceData')) {
             console.log('🚪Beacon not close enough: ' + newDevice.rssi + ' dB.');
         } else if (newDevice.advertisementData.kCBAdvDataServiceData != null && newDevice.rssi >= -50) {
             console.log('Close estimote found with advertisement data: ' + JSON.stringify(newDevice.advertisementData.kCBAdvDataServiceData));
