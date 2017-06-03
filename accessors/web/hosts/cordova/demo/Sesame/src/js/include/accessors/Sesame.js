@@ -51,12 +51,14 @@ exports.setup = function() {
     trigger.setParameter('value', true);
 
     sesameFilter.setParameter('rssi', -70);
-    sesameFilter.setParameter('address', 'AAF3DAFF-26C5-45CD-9A32-DCBAC84F7B30');
+    // sesameFilter.setParameter('address', 'AAF3DAFF-26C5-45CD-9A32-DCBAC84F7B30');
+    sesameFilter.setParameter('characteristic', '0000feaa-0000-1000-8000-00805f9b34fb');
+    sesameFilter.setParameter('serviceData', 'EOECYWNjZXNzb3JzADg=');
     
     door.setParameter('minDoorPeriod', 20000);
 
     // WARNING: Do not commit this URL!!!
-    door.setParameter('url', 'https://....');
+    door.setParameter('url', 'https://...');
 
     this.connect(trigger, 'output', ble, 'startScan');
     this.connect(ble, 'newDevice', sesameFilter, 'newDevice');
