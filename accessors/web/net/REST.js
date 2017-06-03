@@ -118,7 +118,6 @@ var querystring = require('querystring');
 /** Define inputs and outputs. */
 exports.setup = function () {
     this.input('options', {
-        'type': 'JSON',
         'value': ''
     });
     this.input('command', {
@@ -196,6 +195,14 @@ exports.issueCommand = function (callback) {
     var body = this.get('body');
     var command = options;
     if (typeof options === 'string') {
+    	// Remove any opening or trailing quotes
+    	if (options[0] == '\'' || options[0] == '\"') {
+    		options = options.substring(1);
+    	}
+    	if (options[options.length - 1] == '\'' || 
+    			options[options.length - 1] == '\"') {
+    		options = options.substring(0, options.length - 1);
+    	}
         // In order to be able to include the outputCompleteResponseOnly
         // option, we have to switch styles here.
         command = {};
