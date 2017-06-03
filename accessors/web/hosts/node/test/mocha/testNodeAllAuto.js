@@ -56,8 +56,6 @@ var findNodeAutoDirectories = function(dir) {
                         if (basefile == 'auto') {
                             var skipIt = false;
                             var skipDirectories = [
-                                                    // Exclude gdp because it does not stop.
-                                                    'gdp/test/auto',
                                                     'hosts/browser/test/auto',
                                                     'hosts/cordova/demo',
                                                     'node_modules/@terraswarm/gdp/test/mocha'
