@@ -2,9 +2,9 @@
 <widget id="edu.berkeley.sesame" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Sesame</name>
     <description>
-        A sample application that demonstrate the use of accessors on mobile devices
+        Application for automatically opening the DOP center entrance door.
     </description>
-    <author email="victor.nouvellet@berkeley.edu" href="http://icyphy.org">
+    <author email="accessors-devel@icyphy.org" href="http://icyphy.org">
         iCyPhy Team
     </author>
     <content src="index.html" />

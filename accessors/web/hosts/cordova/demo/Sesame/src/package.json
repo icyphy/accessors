@@ -2,7 +2,7 @@
     "name": "sesame",
     "displayName": "Sesame",
     "version": "1.0.0",
-    "description": "A sample application that demonstrate the use of accessors on mobile devices.",
+    "description": "Application for automatically opening the DOP center entrance door.",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
