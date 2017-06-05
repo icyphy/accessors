@@ -2,32 +2,33 @@
 
   <target name="clean">
     <delete includeEmptyDirs="true">
-      <fileset dir="." includes="**/*" excludes="src/**, build.xml, README, package.json, config.xml" defaultexcludes="false"/>
+      <fileset dir="." includes="**/*" excludes="src/**, build.xml, README" defaultexcludes="false"/>
     </delete>
   </target>
 
   <target name="build">
+    <antcall target="init"/>
     <antcall target="refresh"/>
     <antcall target="plugins"/>
+  </target>
+
+  <target name="init">
+    <exec executable="cordova">
+      <arg value="create"/>
+      <arg value="../.new_cordova_proj"/>
+    </exec>
+    <copy todir=".">
+      <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
+    </copy>
+    <delete dir="../.new_cordova_proj"/>
   </target>
 
   <target name="refresh">
     <delete includeEmptyDirs="true" failonerror="false">
       <fileset dir="www/js/includes" includes="**/*" defaultexcludes="false"/>
     </delete>
-    <exec executable="cordova">
-      <arg value="create"/>
-      <arg value="../.new_cordova_proj"/>
-    </exec>
-    <copy todir=".">
-      <fileset dir="../.new_cordova_proj"/>
-    </copy>
-    <delete dir="../.new_cordova_proj"/>
-    <delete includeemptydirs="true">
-      <fileset dir="www" includes="**/*"/>
-    </delete>
-    <copy todir="www">
-      <fileset dir="src"/>
+    <copy todir="." overwrite="true">
+      <fileset dir="src/"/>
     </copy>
     <copy todir="www/js/include/cordova/modules">
       <fileset dir="../../modules"/>
@@ -38,7 +39,8 @@
 <!--     <copy todir="../node_modules">
       <fileset dir="../../../common/node_modules"/>
     </copy>
- -->    <copy todir="www/js/include/accessors">
+ -->  
+    <copy todir="www/js/include/accessors">
       <fileset dir="../../../../" includes="**/*.js" excludes="hosts/**, **/demo/**"/>
     </copy>  
     <copy file="../../../common/commonHost.js" tofile="www/js/include/common/commonHost.js"/>
