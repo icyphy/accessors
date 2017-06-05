@@ -2613,8 +2613,9 @@ function convertType(value, destination, name) {
             }
         }
     } else if (typeof value === 'string') {
-        // Provided value is a string, but
-        // destination type is boolean, number, int, or JSON.
+        // Provided value is a reported to be a string.  Note that it might
+    	// actually be a JSON object but is reported to be a string.  
+    	// Destination type is boolean, number, int, or JSON.
         if (value === '') {
             // If the value is an empty string, then convert
             // to null, unless the destination type is JSON.
@@ -2623,7 +2624,20 @@ function convertType(value, destination, name) {
             }
         } else {
             try {
-                value = JSON.parse(value);
+            	// Check if it is a JSON object - first character will be {.
+            	// If so, parse as a JSON object.  Otherwise, look for 
+            	// quotation marks (adding if not present) and try to parse 
+            	// again to get a string literal (which is valid JSON).
+            	if (value[0] === '{') {
+            		value = JSON.parse(value);
+            	} else {
+                    if ( (value[0] !== '\"' && value[0] !== '\'') && 
+                    		(value[value.length -1] !== '\"' && 
+                    				value[value.length -1] !== '\'') ) {
+                    	value = '\"' + value + '\"';
+                    }
+                    value = JSON.parse(value);
+            	}
             } catch (error) {
                 throw new Error('Failed to convert value to destination type: ' +
                     name +
