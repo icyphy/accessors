@@ -9,3 +9,7 @@ The default build file and README are:
 Change these, and install them for all demos using the command:
 
 $ ./updateAnt
+
+To clean up all the demos, run:
+
+$ ./cleanAll
