@@ -13,8 +13,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScriptConst = this.instantiateFromCode('JavaScriptConst', '/** Output a const\n *\n *  @accessor test/Const\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    this.input(\'trigger\');\n    this.output(\'output\');\n};\n\nexports.fire = function() {\n	var value = \"Berkeley, CA\";\n    this.send(\'output\', value);\n};');
-    JavaScriptConst.container = this;
-    this.containedAccessors.push(JavaScriptConst);
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
@@ -31,8 +29,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScriptGetTemperature = this.instantiateFromCode('JavaScriptGetTemperature', '// Send the value of the temperature field.\n\nexports.setup = function() {\n    this.input(\'input\', {\'type\': \'JSON\'});\n    this.output(\'temperature\', {\'type\': \'number\'});\n};\n\nvar handle = null;\n\nexports.initialize = function() {\n	var self = this;\n	\n	handle = this.addInputHandler(\'input\', function () {\n		var json = this.get(\'input\');\n		self.send(\'temperature\', json.temperature);\n	});\n}\n\nexports.wrapup = function() {\n    if (handle !== null) {\n        this.removeInputHandler(handle);\n    }\n};');
-    JavaScriptGetTemperature.container = this;
-    this.containedAccessors.push(JavaScriptGetTemperature);
 
     // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var Stop = this.instantiate('Stop', 'utilities/Stop.js');
