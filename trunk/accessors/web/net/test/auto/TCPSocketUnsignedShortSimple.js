@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js net/test/auto/TCPSocketUnsignedShortSimple)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/TCPSocketUnsignedShortSimple.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./org/terraswarm/accessor/test/auto/TCPSocketUnsignedShortSimple.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/org/terraswarm/accessor/test/auto/TCPSocketUnsignedShortSimple.xml
+    //  $PTII/bin/capecode $PTII/./org/terraswarm/accessor/test/auto/TCPSocketUnsignedShortSimple.xml
 
     // Ports: TCPSocketUnsignedShortSimple: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -61,9 +61,7 @@ exports.setup = function() {
     // Start: JavaScriptConst: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScriptConst = new Accessor('JavaScriptConst', '/** Output a const\n *\n *  @accessor test/Const\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    this.input(\'trigger\');\n    this.output(\'output\');\n};\n\nexports.fire = function() {\n	var value = [-1, 0, 1, 65535, 65536, 2];\n    this.send(\'output\', value);\n};', null, null, null, null);
-    JavaScriptConst.container = this;
-    this.containedAccessors.push(JavaScriptConst);
+    var JavaScriptConst = this.instantiateFromCode('JavaScriptConst', '/** Output a const\n *\n *  @accessor test/Const\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    this.input(\'trigger\');\n    this.output(\'output\');\n};\n\nexports.fire = function() {\n	var value = [-1, 0, 1, 65535, 65536, 2];\n    this.send(\'output\', value);\n};');
 
     // Connections: TCPSocketUnsignedShortSimple: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TCPSocketServer, 'listening', TCPSocketClient, 'port');
@@ -77,7 +75,7 @@ exports.setup = function() {
 if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
-        originalInitialize();
+        originalInitialize.call(this);
         this.stopAt(2000.0);
     }
 } else {

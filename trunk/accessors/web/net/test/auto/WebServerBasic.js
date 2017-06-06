@@ -26,8 +26,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScript = this.instantiateFromCode('JavaScript', 'exports.setup = function() {\n	this.input(\'request\');\n	this.output(\'response\');\n}\nexports.initialize = function() {\n	var self = this;\n	this.addInputHandler(\'request\', function() {\n		var request = self.get(\'request\');\n		var response = {\n			requestID: request.requestID,\n			response: \"<H1>Hello World</H1>\"\n		};\n		self.send(\'response\', response);\n	});\n}\n');
-    JavaScript.container = this;
-    this.containedAccessors.push(JavaScript);
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');

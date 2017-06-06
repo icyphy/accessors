@@ -17,8 +17,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScript_Ramp_With_Spaces_In_Its_Name = this.instantiateFromCode('JavaScript_Ramp_With_Spaces_In_Its_Name', '/** Output a sequence with a given step in values.\n *\n *  @accessor test/TestRamp\n *  @param init The value produced on its first iteration.  The\n *  initial default is 0.\n *  @input trigger The trigger\n *  @output output The output\n *  @param step The amount by which the output is incremented. The\n *  default is 1.\n *  @author Christopher Brooks\n *  @version $$Id$$\n */\nexports.setup = function() {\n    // FIXME: this only supports numbers, unlike the Cape Code Ramp\n    // actor, which supports many types.\n    this.parameter(\'init\', {\'type\':\'number\', \'value\':0});\n    this.input(\'trigger\');\n    this.output(\'output\', {\'type\':\'number\'});\n    this.parameter(\'step\', {\'type\':\'number\', \'value\':1});\n};\n\nvar _lastValue = 0;\n\nexports.initialize = function() {\n    _lastValue = this.getParameter(\'init\');\n}\nexports.fire = function() {\n    _lastValue += this.getParameter(\'step\');\n    this.send(\'output\', _lastValue);\n};');
-    JavaScript_Ramp_With_Spaces_In_Its_Name.container = this;
-    this.containedAccessors.push(JavaScript_Ramp_With_Spaces_In_Its_Name);
     JavaScript_Ramp_With_Spaces_In_Its_Name.setParameter('init', 0.0);
     JavaScript_Ramp_With_Spaces_In_Its_Name.setParameter('step', 1.0);
 
