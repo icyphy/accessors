@@ -1,0 +1,11 @@
+To create a new Cordova App with name "AppName", run:
+
+$ ./createApp AppName
+
+The default build file and README are:
+.build.xml
+.README
+
+Change these, and install them for all demos using the command:
+
+$ ./updateAnt
