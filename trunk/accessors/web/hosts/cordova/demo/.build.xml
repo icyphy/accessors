@@ -7,7 +7,12 @@
   </target>
 
   <target name="create">
-    <antcall target="init"/>
+    <copy todir="src/">
+      <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
+    </copy>
+    <copy todir="src/">
+      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
+    </copy>
     <antcall target="clean"/>
   </target>
 
@@ -24,12 +29,6 @@
     </exec>
     <copy todir=".">
       <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
-    </copy>
-    <copy todir="src/">
-      <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
-    </copy>
-    <copy todir="src/">
-      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
     </copy>
     <delete dir="../.new_cordova_proj"/>
   </target>
