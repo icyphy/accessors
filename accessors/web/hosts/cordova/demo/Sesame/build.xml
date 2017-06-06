@@ -10,6 +10,7 @@
     <antcall target="init"/>
     <antcall target="refresh"/>
     <antcall target="plugins"/>
+    <antcall target="wrapup"/>
   </target>
 
   <target name="init">
@@ -36,10 +37,6 @@
     <copy todir="www/js/include/common/modules">
       <fileset dir="../../../common/modules"/>
     </copy>
-<!--     <copy todir="../node_modules">
-      <fileset dir="../../../common/node_modules"/>
-    </copy>
- -->  
     <copy todir="www/js/include/accessors">
       <fileset dir="../../../../" includes="**/*.js" excludes="hosts/**, **/demo/**"/>
     </copy>  
@@ -63,6 +60,18 @@
       <arg value="add"/>
       <arg value="ios"/>
     </exec>
+  </target>
+
+  <target name="wrapup">
+    <copy todir="src/">
+      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
+    </copy>
+  </target>
+
+  <target name="save">
+    <copy todir="src/" overwrite="true">
+      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
+    </copy>
   </target>
 
 </project>
