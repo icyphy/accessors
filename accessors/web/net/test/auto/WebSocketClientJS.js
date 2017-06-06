@@ -38,8 +38,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScript2 = this.instantiateFromCode('JavaScript2', 'exports.setup = function() {\n  this.input(\'connectionReady\');\n  this.output(\'toSend\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'connectionReady\', handler.bind(this));\n}\n\nfunction handler() {\n  var add = \'0123456789\';\n  var longString = \'\';\n  for (var i = 0; i < 7000; i++) {\n    longString += add;\n  }\n  this.send(\'toSend\', longString);\n}\n \nexports.wrapup = function() {\n  this.removeInputHandler(handle);\n}');
-    JavaScript2.container = this;
-    this.containedAccessors.push(JavaScript2);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');

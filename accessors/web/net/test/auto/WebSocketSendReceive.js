@@ -13,8 +13,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScript2 = this.instantiateFromCode('JavaScript2', 'exports.setup = function() {\n  this.input(\'connectionReady\');\n  this.output(\'toSend\');\n}\n\nvar handle;\nexports.initialize  = function() {\n  handle = this.addInputHandler(\'connectionReady\', handler.bind(this));\n}\n\nfunction handler() {\n  this.send(\'toSend\', \'0123456789\');\n}\n \nexports.wrapup = function() {\n  this.removeInputHandler(handle);\n}');
-    JavaScript2.container = this;
-    this.containedAccessors.push(JavaScript2);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
@@ -57,8 +55,6 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScript = this.instantiateFromCode('JavaScript', 'exports.setup = function() {\n  this.output(\'toSend\');\n}\n\nexports.initialize  = function() {\n  var self = this;\n  setTimeout(function() {\n     self.send(\'toSend\', \'abcdefg\');\n  }, 500);\n}\n');
-    JavaScript.container = this;
-    this.containedAccessors.push(JavaScript);
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
@@ -70,16 +66,12 @@ exports.setup = function() {
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScriptDelay = this.instantiateFromCode('JavaScriptDelay', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\');\n  this.parameter(\'delay\');\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     setTimeout(function() {\n         self.send(\'output\', self.get(\'input\'));\n     }, self.getParameter(\'delay\'));\n  });\n}\n\nexports.wrapup = function() {\n    console.log(\"JavaScriptDelay.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}');
-    JavaScriptDelay.container = this;
-    this.containedAccessors.push(JavaScriptDelay);
     JavaScriptDelay.setParameter('delay', 500);
 
     // Start: JavaScriptTrueToken: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
     var JavaScriptTrueToken = this.instantiateFromCode('JavaScriptTrueToken', 'exports.setup = function() {\n  this.input(\'input\');\n  this.output(\'output\', {\'type\': \'boolean\'});\n}\n\nvar handle;\n\nexports.initialize  = function() {\n  var self = this;\n  handle = this.addInputHandler(\'input\', function() {\n     self.send(\'output\', true);\n  });\n}\n\nexports.wrapup = function() {\n    console.log(\"JavaScriptTrueToken.wrapup()\");\n    if (typeof handle !== undefined) {\n        this.removeInputHandler(handle);\n    }\n}');
-    JavaScriptTrueToken.container = this;
-    this.containedAccessors.push(JavaScriptTrueToken);
 
     // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var Stop = this.instantiate('Stop', 'utilities/Stop.js');
