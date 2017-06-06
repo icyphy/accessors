@@ -6,11 +6,15 @@
     </delete>
   </target>
 
+  <target name="create">
+    <antcall target="init"/>
+    <antcall target="clean"/>
+  </target>
+
   <target name="build">
     <antcall target="init"/>
     <antcall target="refresh"/>
     <antcall target="plugins"/>
-    <antcall target="wrapup"/>
   </target>
 
   <target name="init">
@@ -20,6 +24,12 @@
     </exec>
     <copy todir=".">
       <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
+    </copy>
+    <copy todir="src/">
+      <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
+    </copy>
+    <copy todir="src/">
+      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
     </copy>
     <delete dir="../.new_cordova_proj"/>
   </target>
@@ -60,12 +70,6 @@
       <arg value="add"/>
       <arg value="ios"/>
     </exec>
-  </target>
-
-  <target name="wrapup">
-    <copy todir="src/">
-      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
-    </copy>
   </target>
 
   <target name="save">
