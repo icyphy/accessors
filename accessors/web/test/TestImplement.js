@@ -24,7 +24,7 @@
 //
 
 /** Test accessor that implements an interface defined by another.
- *  To show that base class functionality if not inherited, this
+ *  To show that base class functionality is not inherited, this
  *  accessor reacts only to the numeric input and does not print
  *  any fire message, even though the base class has a fire() function
  *  that does.
