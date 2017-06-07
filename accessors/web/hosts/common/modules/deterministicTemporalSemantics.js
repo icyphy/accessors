@@ -489,17 +489,40 @@ function reset() {
  *  while setting periodic to the value it should be. Therefore, setIntervalDet and 
  *  setTimeoutDet just call this function with the rights parameters.
  *  
- *  @param callback The callback function
- *  @param timeout The timeout of the asynchronous execution
- *  @param repeat periodic attribute value
- *  @param llcd An optional argument for the labeled logical clock domain
- *   label as a string.
+ *  @param callback The callback function, which will be invoked once or periodically,
+ *   depending on the value of the repeat parameter.
+ *  @param timeout The time until the first (or only) execution of the callback.
+ *   This is a non-negative number interpreted as milliseconds
+ *   (a negative number will be treated as zero).
+ *   This is a logical time, relative to the current logical time of the llcd.
+ *   If the llcd is null or has never before been created, then a new llcd will be
+ *   created and its logical time will be set to (approximately) the current physical time.
+ *  @param repeat A boolean specifying whether the callback should be invoked just once
+ *   (with value false) or repeatedly, periodically, until stopped (with value true).
+ *   To stop it, call clearTick(), passing the returned handle.
+ *  @param llcd An optional argument giving the labeled logical clock domain
+ *   label as a string. If no llcd argument is given (the argument is null or undefined),
+ *   then a new anonymous clock domain is created with its logical time origin set to the
+ *   current real time (approximately). An exception is that if llcd is not given and
+ *   timeout is zero, then a single shared zero-delay clock domain is used.
+ *   This exception is used to request an execution as soon as possible, before any
+ *   callbacks in other clock domains are invoked. If there are multiple such zero-timeout
+ *   anonymous llcd callbacks, then the order of their invocation will be determined by
+ *   their priority, if one is given, and by the order of the request, if no priority
+ *   is given or if a priority matches another priority.
  *  @param priority An optional argument for the priority over other delayed callbacks
- *  @param errorCallback An optional argument that provides the callback to execute in case
- *   the delayed callbacks execution raised an error
+ *   that use the same llcd and are scheduled to occur at the same logical time.
+ *   This is either null or an integer, where a lower value means higher priority.
+ *   If two priorities match, then the order of invocation matches the order in which
+ *   requests are made (by calling this function).
+ *  @param errorCallback An optional argument that provides a callback to execute in case
+ *   the delayed callback's execution throws an error. If no callback is specified, then
+ *   if the delayed callback throws an error, then the error message and stack trace
+ *   will be printed to the console and execution will continue.
  *  @param cleanCallback An optional argument that provides the callback to execute after 
- *   the delayed callbacks has executed successfully
- *  @return the unique Id of the new delayed callback
+ *   the delayed callback has executed successfully. If repeat is true, then this callback
+ *   will be invoked after each successful invocation of of the callback argument function.
+ *  @return A label that is the unique ID of the new delayed callback.
  */
 function setDelayedCallback(callback, timeout, repeat, llcd, priority, errorCallback, cleanCallback) {
     // Construct a new object
