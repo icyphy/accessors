@@ -38,7 +38,7 @@ exports.setup = function() {
     console.log('setup of bleDoorOpening');
 
     var trigger = this.instantiate('trigger', 'test/TestSpontaneousOnce');
-    var ble = this.instantiate('ble', 'BLE');
+    var bleScanner = this.instantiate('bleScannerAcc', 'BLEScanner');
     var sesameFilter = this.instantiate('sesameFilter', 'SesameFilter');
     var door = this.instantiate('door', 'Door');
 
@@ -55,8 +55,8 @@ exports.setup = function() {
     // WARNING: Do not commit this URL!!!
     door.setParameter('url', 'https:...');
 
-    this.connect(trigger, 'output', ble, 'startScan');
-    this.connect(ble, 'newDevice', sesameFilter, 'newDevice');
+    this.connect(trigger, 'output', bleScanner, 'startScan');
+    this.connect(bleScanner, 'newDevice', sesameFilter, 'newDevice');
     this.connect(sesameFilter, 'open', door, 'trigger');
 };
 
