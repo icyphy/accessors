@@ -42,11 +42,6 @@ exports.setup = function() {
     var sesameFilter = this.instantiate('sesameFilter', 'SesameFilter');
     var door = this.instantiate('door', 'Door');
 
-    console.log('Type of trigger: ' + typeof trigger);
-    console.log('Type of ble: ' + typeof ble);
-    console.log('Type of sesameFilter: ' + typeof sesameFilter);
-    console.log('Type of door: ' + typeof door);
-
     trigger.setParameter('delay', 1000.0);
     trigger.setParameter('value', true);
 

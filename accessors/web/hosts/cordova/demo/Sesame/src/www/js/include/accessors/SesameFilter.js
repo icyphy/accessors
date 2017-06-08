@@ -56,8 +56,6 @@ exports.setup = function () {
         'type': 'number',
         'value': '-50'
     });
-
-
 };
 
 exports.initialize = function () {
