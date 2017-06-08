@@ -77,7 +77,7 @@ exports.get = function (options, responseCallback) {
         });
     }
 
-    console.log('🔗URL: ' + options.url);
+    console.log('🔗Request to URL');
     cordovaHTTP.get(options.url, {}, {}, function(response) {
         responseCallback(response.data);
         // console.log('Status: ' + response.status);
