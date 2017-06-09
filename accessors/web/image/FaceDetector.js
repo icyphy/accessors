@@ -51,7 +51,7 @@ var faceDetector = require('@accessors-modules/face-detector');
 exports.setup = function () {
     this.input('input');
     this.parameter('options', {
-        'value': '{"MinFaceSize": 50, "MaxFaceSize": 400}',
+        'value': '{"MinFaceSize": 50, "MaxFaceSize": 500}',
         'type': 'JSON'
     });
     this.parameter('transform', {
@@ -80,7 +80,7 @@ exports.initialize = function () {
             var numFaces = faceDetector.numberOfFaces();
             self.send('faceCount', numFaces);
             var faces = faceDetector.faceRectangles();
-            self.send('faces', faces);
+            self.send('faces', JSON.stringify(faces));
         });
     });
 };
