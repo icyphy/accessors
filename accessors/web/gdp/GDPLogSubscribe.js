@@ -127,8 +127,8 @@ exports.subscribe = function () {
         logdname = this.get('logdname');
 
     if (logname === '') {
-        // Nothing more to do.
-        return;
+        // No log name.
+        error('No log name');
     }
 
     // Create or connect to a log.
