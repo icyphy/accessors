@@ -127,8 +127,12 @@ exports.subscribe = function () {
         logdname = this.get('logdname');
 
     if (logname === '') {
-        // No log name.
-        error('No log name');
+        // Nothing more to do.
+        // ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribe.xml and
+        // ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
+        // both end up calling subscribe() with an empty log name
+        // during start up.
+        return;
     }
 
     // Create or connect to a log.
