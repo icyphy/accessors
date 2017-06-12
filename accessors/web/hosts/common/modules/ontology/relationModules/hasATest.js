@@ -1,7 +1,4 @@
 exports.hasA = function(args){
-    
-}
-function hasA(args) {
     if(args.length != 2){
       error("hasA has an incorrect number of arguments");
     }
