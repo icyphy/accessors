@@ -1,10 +1,14 @@
+var isAModule = require("./relationModules/isATest");
+var hasAModule = require("./relationModules/hasATest");
+
+
 exports.interpret = function (name, args){
     switch(name){
       case "isA":
-        return isA(args);
+        return isAModule.isA(args);
         break;
       case "hasA":
-        return hasA(args);
+        return hasAModule.hasA(args);
         break;
       case "close":
         return close(args);
@@ -19,6 +23,7 @@ exports.interpret = function (name, args){
     }
 }
 
+/*
 function isA(args) {
     if(args.length != 2){
       error("isA has an incorrect number of arguments");
@@ -32,6 +37,7 @@ function isA(args) {
     }
 }
 
+
 function hasA(args) {
     if(args.length != 2){
       error("hasA has an incorrect number of arguments");
@@ -44,6 +50,7 @@ function hasA(args) {
       return false;
     }
 }
+*/
 
 function close(args){
     return true;
