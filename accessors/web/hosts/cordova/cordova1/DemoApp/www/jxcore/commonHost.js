@@ -2151,7 +2151,7 @@ Accessor.prototype.scheduleEvent = function (accessor, priority) {
                 if (deterministicTemporalSemantics) {
                     thiz.setTimeoutDeterministic(function () {
                         thiz.react();
-                    }, 0, undefined, priority);
+                    }, 0, null, priority);
                 } else {
                     thiz.setTimeoutDeterministic(function () {
                         thiz.react();
@@ -2161,7 +2161,7 @@ Accessor.prototype.scheduleEvent = function (accessor, priority) {
                 if (deterministicTemporalSemantics) {
                     thiz.setTimeoutDeterministic(function () {
                         thiz.react();
-                    }, 0, undefined, thiz.priority);
+                    }, 0, null, thiz.priority);
                 } else {
                     thiz.setTimeoutDeterministic(function () {
                         thiz.react();
@@ -2249,7 +2249,7 @@ Accessor.prototype.send = function (name, value) {
                         if (deterministicTemporalSemantics) {
                             thiz.setTimeoutDeterministic(function () {
                                 thiz.react();
-                            }, 0, undefined, thiz.priority);
+                            }, 0, null, thiz.priority);
                         } else {
                             thiz.setTimeoutDeterministic(function () {
                                 thiz.react();
@@ -2257,7 +2257,7 @@ Accessor.prototype.send = function (name, value) {
                         }
                     }
                 }
-            }, 0, undefined, thiz.priority);
+            }, 0, null, thiz.priority);
         } else {
             thiz.setTimeoutDeterministic(function () {
                 thiz.provideInput(name, value);
@@ -2271,7 +2271,7 @@ Accessor.prototype.send = function (name, value) {
                         if (deterministicTemporalSemantics) {
                             thiz.setTimeoutDeterministic(function () {
                                 thiz.react();
-                            }, 0, undefined, thiz.priority);
+                            }, 0, null, thiz.priority);
                         } else {
                             thiz.setTimeoutDeterministic(function () {
                                 thiz.react();
@@ -2380,7 +2380,7 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd, 
     var tempPriority, errorCallback, cleanCallback;
         
     // Set default values for priority, errorCallback and cleanCallback
-    if (priority == undefined) {
+    if (priority === null) {
         tempPriority = thiz.priority;
     } else {
         tempPriority = priority;
@@ -2433,7 +2433,7 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, p
 
 
     // Set default values for priority, errorCallback and cleanCallback
-    if (priority == undefined) {
+    if (priority === null) {
         tempPriority = thiz.priority;
     } else {
         tempPriority = priority;
@@ -2464,7 +2464,7 @@ Accessor.prototype.stop = function () {
         container.setTimeoutDeterministic(function() {
             // console.log('Executing stop');
             container.wrapup();
-        }, 0, undefined, this.priority);
+        }, 0, null, this.priority);
     } else {
         container.setTimeoutDeterministic(function() {
             // console.log('Executing stop');
@@ -2483,7 +2483,7 @@ Accessor.prototype.stopAt = function (timeout) {
     if (deterministicTemporalSemantics) {
         self.setTimeoutDeterministic(function() {
             self.stop();
-        }, timeout, undefined, self.priority);
+        }, timeout, null, self.priority);
     } else {
         self.setTimeoutDeterministic(function() {
             self.stop();
@@ -2568,27 +2568,17 @@ function convertType(value, destination, name) {
             }
         } else {
             try {
-            	// Check if it is a JSON object - first character will be {.
-            	// If so, parse as a JSON object.  Otherwise, look for 
-            	// quotation marks (adding if not present) and try to parse 
-            	// again to get a string literal (which is valid JSON).
-            	if (value[0] === '{') {
-            		value = JSON.parse(value);
-            	} else {
-                    if ( (value[0] !== '\"' && value[0] !== '\'') && 
-                    		(value[value.length -1] !== '\"' && 
-                    				value[value.length -1] !== '\'') ) {
-                    	value = '\"' + value + '\"';
-                    }
-                    value = JSON.parse(value);
-            	}
+            	// Try to parse JSON.  This sometimes fails for strings
+            	// which are not enclosed in quotation marks.  Note also
+            	// the Javascript type (here, string) does not necessarily 
+            	// match the type of the parsed JSON (e.g. could be an object).
+            	var originalValue = value;
+            	
+                value = JSON.parse(value);
             } catch (error) {
-                throw new Error('Failed to convert value to destination type: ' +
-                    name +
-                    ' expected a ' +
-                    destination.type +
-                    ' but received: ' +
-                    value);
+            	// Assume it is a string.
+            	// Note this approach does not allow us to catch malformed JSON.
+            	value = originalValue;
             }
         }
     } else if (destination.type === 'boolean' && typeof value !== 'boolean') {
