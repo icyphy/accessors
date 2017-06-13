@@ -1,3 +1,41 @@
+// Code for testing the ontologyLogicParser.js module. See README.txt for instructions
+// on how to generate the module.
+//
+// Copyright (c) 2015-2017 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission is hereby granted, without written agreement and without
+// license or royalty fees, to use, copy, modify, and distribute this
+// software and its documentation for any purpose, provided that the above
+// copyright notice and the following two paragraphs appear in all copies
+// of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+// SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+// ENHANCEMENTS, OR MODIFICATIONS.
+//
+
+/** 
+ * Code for testing the ontologyLogicParser.js module. See README.txt for instructions
+ * on how to generate the module. Run the test by running node parserTester.js.
+ *
+ * In the future this will be integrated into the accessors testing infratructure,
+ * but for now, this is too much a work in progress.
+ * 
+ *  @module @accessors-hosts/common/modules/ontology
+ *  @author Matt Weber and Chadlia Jerad
+ *  @version $$Id: ontologyChecker.js 2017-06-12 11:11:30Z chadlia.jerad $$   
+ */
+
 'use strict';
 
 var parser = require('./ontologyLogicParser.js');
@@ -92,6 +130,7 @@ allTestsSuccessful = parseTest('false && isA("hueBulb" , "light" )', false) && a
 allTestsSuccessful = parseTest('undefined && isA("hueBulb" , "light" )', undefined) && allTestsSuccessful;
 allTestsSuccessful = parseTest('undefined', undefined) && allTestsSuccessful;
 allTestsSuccessful = parseTest('undefined -> undefined -> undefined', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('! undefined', undefined) && allTestsSuccessful;
 console.log('######################################################')
 console.log("Do all tests pass? " + allTestsSuccessful);
 
