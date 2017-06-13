@@ -67,20 +67,31 @@ allTestsSuccessful = parseTest('false -> (false -> (false && false) -> false)', 
 allTestsSuccessful = parseTest('false -> false -> false -> false -> false', false) && allTestsSuccessful; // test for left associativity
 allTestsSuccessful = parseTest('false -> (false -> false)', true) && allTestsSuccessful;
 allTestsSuccessful = parseTest('(false -> false) -> false', false) && allTestsSuccessful;
-allTestsSuccessful = parseTest('isA("human" , "entity" )', true) && allTestsSuccessful;
-allTestsSuccessful = parseTest('isA("nonentity" , "food" )', false) && allTestsSuccessful;
-allTestsSuccessful = parseTest('isA("nonentity" , "food" ) -> hasA("watch" , "everything" )', true) && allTestsSuccessful;
-allTestsSuccessful = parseTest('isA(,"nonentity", "food" )', 'error') && allTestsSuccessful;
+// allTestsSuccessful = parseTest('isA("human" , "entity" )', true) && allTestsSuccessful;
+// allTestsSuccessful = parseTest('isA("nonentity" , "food" )', false) && allTestsSuccessful;
+// allTestsSuccessful = parseTest('isA("nonentity" , "food" ) -> hasA("watch" , "everything" )', true) && allTestsSuccessful;
+// allTestsSuccessful = parseTest('isA(,"nonentity", "food" )', 'error') && allTestsSuccessful;
 allTestsSuccessful = parseTest('true()', 'error') && allTestsSuccessful;
 allTestsSuccessful = parseTest('true(false)', 'error') && allTestsSuccessful;
-allTestsSuccessful = parseTest('IsA', 'error') && allTestsSuccessful;
-allTestsSuccessful = parseTest('IsAt("human" , "entity" )', 'error') && allTestsSuccessful;
+// allTestsSuccessful = parseTest('IsA', 'error') && allTestsSuccessful;
+// allTestsSuccessful = parseTest('IsAt("human" , "entity" )', 'error') && allTestsSuccessful;
 allTestsSuccessful = parseTest('close("me", "door")', true) && allTestsSuccessful;
 allTestsSuccessful = parseTest('closed("me", "door")', false) && allTestsSuccessful;
 allTestsSuccessful = parseTest('closed("me_", "_door")', false) && allTestsSuccessful;
 allTestsSuccessful = parseTest('getType("me")', 'string') && allTestsSuccessful;
 allTestsSuccessful = parseTest('getType(10)', 'number') && allTestsSuccessful;
 allTestsSuccessful = parseTest('getType(10.01)', 'number') && allTestsSuccessful;
+allTestsSuccessful = parseTest('isA("hueBulb" , "light" )', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('isA("hueBulb" , "light" ) || false', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('isA("hueBulb" , "light" ) || true', true) && allTestsSuccessful;
+allTestsSuccessful = parseTest('isA("hueBulb" , "light" ) -> true', true) && allTestsSuccessful;
+allTestsSuccessful = parseTest('false -> isA("hueBulb" , "light" )', true) && allTestsSuccessful;
+allTestsSuccessful = parseTest('true -> isA("hueBulb" , "light" )', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('true && isA("hueBulb" , "light" )', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('false && isA("hueBulb" , "light" )', false) && allTestsSuccessful;
+allTestsSuccessful = parseTest('undefined && isA("hueBulb" , "light" )', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('undefined', undefined) && allTestsSuccessful;
+allTestsSuccessful = parseTest('undefined -> undefined -> undefined', undefined) && allTestsSuccessful;
 console.log('######################################################')
 console.log("Do all tests pass? " + allTestsSuccessful);
 

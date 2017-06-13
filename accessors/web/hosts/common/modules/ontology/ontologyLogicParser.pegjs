@@ -27,8 +27,25 @@ infixOp
 A
   = _ lhs:B rhs:(Arepeat*) {
       var result = lhs;
+
       for(var i = 0; i < rhs.length; i++){
-        result = (! result) || rhs[i];
+        if ( typeof result !== 'undefined' && typeof rhs[i] !== 'undefined' ){
+          result = (! result) || rhs[i];
+        } else if(typeof result === 'undefined' && typeof rhs[i] === 'undefined'){
+          result = undefined;
+        } else if ( typeof result !== 'undefined'){
+          if(result === false){
+            result = true;
+          } else {
+            result = undefined;
+          }
+        } else if ( typeof rhs[i] !== 'undefined'){
+          if(rhs[i] === true){
+            result = true;
+          } else {
+            result = undefined;
+          }
+        }
       }
       return result;
     }
@@ -40,7 +57,23 @@ B
   = _ lhs:C rhs:(Brepeat*) {
       var result = lhs;
       for(var i = 0; i < rhs.length; i++){
-        result = result || rhs[i];
+        if ( typeof result !== 'undefined' && typeof rhs[i] !== 'undefined' ){
+          result = result || rhs[i];
+        } else if(typeof result === 'undefined' && typeof rhs[i] === 'undefined'){
+          result = undefined;
+        } else if ( typeof result !== 'undefined'){
+          if(result === true){
+            result = true;
+          } else {
+            result = undefined;
+          }
+        } else if ( typeof rhs[i] !== 'undefined'){
+          if(rhs[i] === true){
+            result = true;
+          } else {
+            result = undefined;
+          }
+        }
       }
       return result;
     }
@@ -52,7 +85,23 @@ C
   = _ lhs:D rhs:(Crepeat*){
       var result = lhs;
       for(var i = 0; i < rhs.length; i++){
-        result = result && rhs[i];
+        if ( typeof result !== 'undefined' && typeof rhs[i] !== 'undefined' ){
+          result = result && rhs[i];
+        } else if(typeof result === 'undefined' && typeof rhs[i] === 'undefined'){
+          result = undefined;
+        } else if ( typeof result !== 'undefined'){
+          if(result === false){
+            result = false;
+          } else {
+            result = undefined;
+          }
+        } else if ( typeof rhs[i] !== 'undefined'){
+          if(rhs[i] === false){
+            result = false;
+          } else {
+            result = undefined;
+          }
+        }
       }
       return result;
     }
@@ -83,6 +132,7 @@ literal
 boolean
   = _ 'true' _ {return true;}
   / _ 'false' _ {return false;}
+  / _ 'undefined' _ {return undefined;}
 
 string
   = _ '\"' str:([^"]*) '\"' _ {return str.join('');}
