@@ -7,6 +7,6 @@ exports.isA = function(args){
     } else if(args[1] == "entity"){
       return true;
     } else {
-      return false;
+      return undefined;
     }  
 }
