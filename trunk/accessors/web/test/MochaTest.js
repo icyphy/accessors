@@ -78,29 +78,14 @@ if (typeof window === 'undefined') {
     var window = {};
 }
 
-try {
-    var commonHost = require('commonHost.js');
-} catch (err) {
-    // Needed for node host.
-    // Do not remove this unless (cd accessors/web; ant test.mocha) works.
-    var commonHost = require('../common/commonHost.js');
-}
-try {
-    var Testing = require('testing');
-    var testing = new Testing.Testing();
+var commonHost = require('commonHost.js');
 
-    var assert = testing.chai.assert;
-    var expect = testing.chai.expect;
-    var should = testing.chai.should();
-} catch (err) {
-    if (commonHost.accessorHost === commonHost.accessorHostsEnum.NODE) {
-        // Needed for node host.
-        // Do not remove this unless (cd accessors/web; ant test.mocha) works.
-        console.error("require('testing') failed.  This happens under node.");
-    } else {
-        throw err;
-    }
-}
+var Testing = require('testing');
+var testing = new Testing.Testing();
+
+var assert = testing.chai.assert;
+var expect = testing.chai.expect;
+var should = testing.chai.should();
 
 exports.setup = function () {
     // TODO:  Same file for all.  Put in common?  Or in test/Test?
