@@ -144,7 +144,14 @@ function peg$parse(input, options) {
       peg$c0 = function(stripped) {return stripped},
       peg$c1 = "!",
       peg$c2 = peg$literalExpectation("!", false),
-      peg$c3 = function(expr) {return !expr},
+      peg$c3 = function(expr) {
+          if(typeof expr === 'undefined'){
+            return undefined
+          } else{
+            return ! expr;
+          }
+        
+        },
       peg$c4 = function(lhs, rhs) {
             var result = lhs;
 
