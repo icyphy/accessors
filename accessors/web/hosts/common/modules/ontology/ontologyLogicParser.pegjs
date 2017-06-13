@@ -1,3 +1,63 @@
+// Code for generating the ontologyLogicParser.js module. See README.txt for instructions
+// on how to generate the module.
+//
+// Copyright (c) 2015-2017 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission is hereby granted, without written agreement and without
+// license or royalty fees, to use, copy, modify, and distribute this
+// software and its documentation for any purpose, provided that the above
+// copyright notice and the following two paragraphs appear in all copies
+// of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+// SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+// ENHANCEMENTS, OR MODIFICATIONS.
+//
+
+/** Code for generating the ontologyLogicParser.js module. See README.txt for instructions
+ * on how to generate the module.
+ *
+ * The language parsed by the generated file is a first order logic language for
+ * ontologies. It supports parenthesis, negation (!), the literal values true, false, and undefined,
+ * the infix operators and (&&), or (||), and implies (->), and custom defined relations
+ * with boolean, undefined, string, and number, arguments eg. isA("Socrates", "Mortal" )
+ *
+ * The logical operators (!, &&, ||, ->) are defined over true, false, and undefined,
+ * using the constructive logic interpretations. Eg. true || undefined = true;
+ *
+ * I tried to make the order of precedence match the C programming language (because 
+ * everyone knows C). As such the order is from highest precedence to lowest precedence:
+ * parenthesis, relations, negation, and, or, implies.
+ *
+ * The infix operators are left associative. For example the expression:
+ * false -> false -> false
+ * will be interpreted as (false -> false) -> false = false
+ * instead of false -> (false -> false) = true
+ *
+ * Relations are defined externally in the module "relations.js". That module must
+ * export the function "interpret" with two arguments. The first argument is the name of the
+ * relation written as a string, and the second argument is an array of arguments to be checked
+ * if that array is a tuple in the relation. For now, "interpret" returns true, false,
+ * or undefined. In the future, we may implement probabilistic return values 
+ * 
+ * Every expression must ultimately result in the value: true, false, or undefined.
+ * 
+ *  @module @accessors-hosts/common/modules/ontology
+ *  @author Matt Weber
+ *  @version $$Id: ontologyChecker.js 2017-06-12 11:11:30Z chadlia.jerad $$   
+ */
+
+
 {
   //initilization code
   var relations = require('./relations.js');
@@ -16,11 +76,19 @@ nonInfixExpression
   / relation
 
 prefixOp
-  = _ "!" _ expr:expression {return !expr}
+  = _ "!" _ expr:expression {
+    if(typeof expr === 'undefined'){
+      return undefined
+    } else{
+      return ! expr;
+    }
+  
+  }
 
 
-//These ops are left recursive (expression -> infixOp -> expression)
-//so convert them to prefix
+// These ops are left recursive (expression, infixOp,  expression)
+// The trick for making them so is explained at 
+// http://www.engr.mun.ca/~theo/Misc/exp_parsing.htm#classic
 infixOp
   = A
 
