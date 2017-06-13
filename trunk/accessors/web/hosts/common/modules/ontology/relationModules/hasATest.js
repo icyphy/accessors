@@ -7,6 +7,6 @@ exports.hasA = function(args){
     } else if(args[1] == "everything"){
       return true;
     } else{
-      return false;
+      return undefined;
     }
 }
