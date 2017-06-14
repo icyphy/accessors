@@ -1,0 +1,18 @@
+{
+	"light": {
+			"@context": "lightUrlOntology",
+			"isA": "thing"
+		},
+	"smartLight": {
+			"@context": "smartLightUrlOntology",
+			"isA": "light"		
+	},
+	"hueBulb": {
+			"@context": "hueSmartLightUrlOntology",
+			"isA": "smartLight"		
+	},
+	"ikeaBulb": {
+			"@context": "ikeaSmartLightUrlOntology",
+			"isA": "smartlight"		
+	}
+}
