@@ -270,24 +270,6 @@
   <target name="copy"
           depends="copy.ptII"
           description="Copy files from commonHost to cordova and jxcore">
-    <copy todir="hosts/cordova/cordova1/DemoApp/www/jxcore">
-      <resources>
-        <file file="hosts/common/commonHost.js"/>
-        <file file="hosts/common/modules/events.js"/>
-        <file file="hosts/node/nodeHost.js"/>
-        <file file="hosts/common/modules/util.js"/>
-      </resources>
-    </copy>
-
-    <copy todir="hosts/cordova/cordova2/demo/helloAccessorWorldCordova2/www/js/cordovaHost">
-      <resources>
-        <file file="hosts/common/commonHost.js"/>
-        <file file="hosts/common/modules/events.js"/>
-        <file file="hosts/common/modules/deterministicTemporalSemantics.js"/> 
-        <file file="hosts/common/modules/hostHelper.js"/>
-      </resources>
-    </copy>
-
     <copy todir="hosts/jxcore/jxcore/common">
         <file file="hosts/common/commonHost.js"/>
     </copy>
