@@ -217,7 +217,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1856 2017-06-09 18:54:58Z beth@berkeley.edu $$
+ *  @version $$Id: commonHost.js 76228 2017-06-14 00:41:05Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -236,7 +236,7 @@ var trustedAccessorsAllowed = false;
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
-var deterministicTemporalSemantics = require('./modules/deterministicTemporalSemantics');
+var deterministicTemporalSemantics = require('deterministicTemporalSemantics');
 
 ///////////////////////////////////////////////////////////////////
 //// Accessor class and its functions.
@@ -2919,7 +2919,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1856 2017-06-09 18:54:58Z beth@berkeley.edu $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 76228 2017-06-14 00:41:05Z cxh $");
             return false;
 
         default:
