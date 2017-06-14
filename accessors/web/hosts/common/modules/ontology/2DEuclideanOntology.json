@@ -1,6 +1,7 @@
 {
 	"$relations": {
-		"close": "function(a, b, args){\r\n    var threshold = args[0];\r\n    var distSquared =  (a.coordinates[0] - b.coordinates[0]) * (a.coordinates[0] - b.coordinates[0]) + (a.coordinates[1] - b.coordinates[1]) * (a.coordinates[1] - b.coordinates[1]);\r\n    if( distSquared <= threshold * threshold ){\r\n      return true;\r\n    } else{\r\n      return false;\r\n    }\r\n}"
+		"close": "var threshold = args[0];\r\n    var distSquared =  (a.coordinates[0] - b.coordinates[0]) * (a.coordinates[0] - b.coordinates[0]) + (a.coordinates[1] - b.coordinates[1]) * (a.coordinates[1] - b.coordinates[1]);\r\n    if( distSquared <= threshold * threshold ){\r\n      return true;\r\n    } else{\r\n      return false;\r\n    }",
+		"test": "return true;\r\n    \r\n"
 	},
 	"a": {
 			"@context": "objectAOntology",
