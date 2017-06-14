@@ -199,7 +199,9 @@ function installIfMissingThenRequire(npmPackage) {
         var execSync = require('child_process').execSync;
         var npmOutput;
         try {
+            console.log('Invoking npm install ' + npmPackage);
             npmOutput = execSync('npm install ' + npmPackage);
+            console.log('Done with npm install ' + npmPackage);
         } catch (error) {
             console.log('npm install ' + npmPackage + ' failed: ' + error + '.  A return code of 1 can typically be ignored because package.json is present.');
         }     
