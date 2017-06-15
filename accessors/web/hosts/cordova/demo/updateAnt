@@ -2,6 +2,6 @@
 for f in */; do
   echo $f
   cp .build.xml $f/build.xml
-  cp .README $f/README
+  cp .README.txt $f/README.txt
 done
 

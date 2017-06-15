@@ -1,4 +1,4 @@
 #!/bin/bash
 mkdir $1
 cp .build.xml $1/build.xml
-cp .README $1/README
+cp .README.txt $1/README.txt
