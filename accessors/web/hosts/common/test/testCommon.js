@@ -236,11 +236,11 @@ var b = commonHost.instantiateAccessor('TestSpontaneous', 'test/TestSpontaneous'
     getAccessorCode);
 
 b.initialize();
-setTimeoutDeterministic(function () {
+b.setTimeoutDeterministic(function () {
     test('TestSpontaneous: Test that spontaneous accessor produces 0 after 1 second',
         b.latestOutput('output'), 0);
 }, 1500);
-setTimeoutDeterministic(function () {
+b.setTimeoutDeterministic(function () {
     test('TestSpontaneous: Test that spontaneous accessor produces 1 after 2 seconds',
         b.latestOutput('output'), 1);
     b.wrapup();
@@ -250,11 +250,11 @@ setTimeoutDeterministic(function () {
 var c = commonHost.instantiateAccessor(
     'TestCompositeSpontaneous', 'test/TestCompositeSpontaneous', getAccessorCode);
 c.initialize();
-setTimeoutDeterministic(function () {
+c.setTimeoutDeterministic(function () {
     test('TestCompositeSpontaneous: Test that composite spontaneous accessor produces 0 after 1 second',
         c.latestOutput('output'), 0);
 }, 1500);
-setTimeoutDeterministic(function () {
+c.setTimeoutDeterministic(function () {
     test('TestCompositeSpontaneous: Test that composite spontaneous accessor produces 4 after 2 seconds',
         c.latestOutput('output'), 4);
     c.wrapup();
