@@ -35,7 +35,8 @@
  *   occur until a non-empty value is provided.
  *   By default, this is empty.
  *   Providing an empty string will unsubscribe from any previously subscribed-to log.
- *
+ *   See the [GDP Infrastructure wiki[(https://gdp.cs.berkeley.edu/redmine/projects/gdp-sensor-and-actuator-deployments/wiki/Berkeley_Sensor_Deployments)
+ *   for a list of GDP logs.
  *  @input {string} logdname The name of a logd server.  If empty,
  *   then the hostname of the local machine is used. This server is
  *   a gateway into the GDP.
