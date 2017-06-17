@@ -33,7 +33,7 @@
   <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
 
   <!-- The location of the Node.js binary. -->
-  <property name="node.executable" value="node" />
+  <property name="node.command" value="node" />
 
   <!-- Location of the mocha command, used by tests.mocha and tests.mocha.xml -->
   <property name="mocha.command" value="${basedir}/../node_modules/mocha/bin/mocha"/>
@@ -241,8 +241,27 @@
     <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
   </target>
 
+  <!-- The Global Data Plane (gdp) client is not supported under Windows.
+       set terraswarm.gdp.install to true if the ${terrawarm.gdp} directory
+       does not exist and the os is anything other than Windows.
+  -->
   <target name="-check-terraswarm-gdp">
-    <available property="terraswarm.gdp.exists" file="${terraswarm.gdp}"/>
+    <condition property="terraswarm.gdp.install">
+      <and>
+	<not>
+	  <available file="${terraswarm.gdp}"/>
+	</not>
+	<not>
+	  <os family="windows"/>
+	</not>
+      </and>
+    </condition>
+  </target>
+
+  <target name="-check-windows">
+    <condition property="is.windows">
+      <os family="windows"/>
+    </condition>
   </target>
 
   <target name="clean" 
@@ -370,7 +389,7 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${node.executable}"
+    <exec executable="${node.command}"
           failonerror="true"
           timeout="${timeout.longer}">
       <arg value="${jsdoc.command}" />
@@ -498,7 +517,7 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${node.executable}"
+    <exec executable="${node.command}"
           timeout="${timeout}">
       <arg value="${jsdoc.command}" />
       <arg value="--configure" />
@@ -550,7 +569,7 @@
   </target>
 
   <target name="status.accessors">
-    <exec executable="${node.executable}"
+    <exec executable="${node.command}"
 	  timeout="${timeout}">
       <arg value="reports/status/calculateAccessorMap.js"/>
     </exec>
@@ -561,7 +580,7 @@
           if="${ptII.exists}">
 
     <exec dir="${env.PTII}"
-          executable="${node.executable}"
+          executable="${node.command}"
 	  timeout="${timeout}">
       <arg value="org/terraswarm/accessor/status/calculateAccessorMapCapeCode.js"/>
     </exec>
@@ -618,7 +637,7 @@
     
   <target name="terraswarm-gdp-install"
 	  depends="-check-terraswarm-gdp,-check-npm"
-	  unless="terraswarm.gdp.exists">
+	  if="terraswarm.gdp.install">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="${npm.executable}"
@@ -629,7 +648,8 @@
   </target>
 
   <target name="terraswarm-gdp-update"
-	  depends="terraswarm-gdp-install">
+	  depends="-check-windows, terraswarm-gdp-install"
+	  if="terraswarm.gdp.install">
     <exec dir=".."
           executable="${npm.executable}"
           timeout="${timeout.npm}">
@@ -679,9 +699,9 @@
       target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/../reports/junit"/>
-    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
+    <echo> Running (cd hosts/browser/test; ${node.command} regressionTestScript.js)</echo>
     <exec dir="hosts/browser/test"
-	  executable="${node.executable}"
+	  executable="${node.command}"
 	  timeout="${timeout}">
       <arg value="regressionTestScript.js"/>
     </exec>
@@ -874,10 +894,11 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${mocha.command}"
+    <exec executable="${node.command}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
+      <arg line="${mocha.command}" />
       <arg line="${converted}"/>
     </exec>
 
@@ -922,10 +943,11 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${mocha.command}"
+    <exec executable="${node.command}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
+      <arg line="${mocha.command}" />
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
@@ -965,12 +987,13 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${mocha.command}"
+    <exec executable="${node.command}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
           timeout="${timeout.longer}">
       <!-- Don't use nail because some of the commonHosts tests are failing. -->
       <!-- arg line=" bail"/ -->
+      <arg line="${mocha.command}" />
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
