@@ -30,6 +30,8 @@
  *  @param {string} logname The GDP logname.  By convention, use
  *  a reverse fully qualified name like
  *  "org.terraswarm.accessors.demo.MyDemoName"
+ *   See the [GDP Infrastructure wiki[(https://gdp.cs.berkeley.edu/redmine/projects/gdp-sensor-and-actuator-deployments/wiki/Berkeley_Sensor_Deployments)
+ *   for a list of GDP logs.
  *
  *  @param {string} logdname The name of the logd server.  If empty,
  *  then the hostname of the local machine is used.
