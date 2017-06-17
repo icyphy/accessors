@@ -135,18 +135,19 @@
     <echo>
       Checking to see if the cargo binary is present.
       cargo is used for the rusteduk target.
-      Rusteduk is a Duktape-based Java Interpreter that can be called from rust.
+      Rusteduk is a Duktape-based JavaScript Interpreter
+      that can be called from rust.
       If cargo is not found, then rusteduk won't compile.
       Rusteduk is not required by Accessors.
     </echo>
   </target>
   
   <target name="chai-install"
-	  depends="-check-chai"
+	  depends="-check-chai,-check-npm"
 	  unless="chai.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="chai"/>
@@ -156,7 +157,7 @@
   <target name="chai-update"
 	  depends="chai-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="chai"/>
@@ -164,11 +165,11 @@
   </target>
 
   <target name="chai-string-install"
-	  depends="-check-chai-string"
+	  depends="-check-chai-string,-check-npm"
 	  unless="chai-string.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="chai-string"/>
@@ -176,9 +177,10 @@
   </target>
 
   <target name="chai-string-update"
-	  depends="chai-string-install">
+	  depends="chai-string-install,-check-npm">
+    <echo>npm: ${npm.executable}</echo>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="chai-string"/>
@@ -213,6 +215,23 @@
   <target name="-check-mocha-junit-reporter">
     <available property="mocha-junit-reporter.index.js.exists" file="${mocha-junit-reporter.index.js}"/>
   </target>  
+
+  <!-- Under Windows, npm.cmd and npm are in the path, so we check
+       for npm.exe and use that if it is found.
+       Note that if npm.executable is set with the properties
+       at the top of the file then this will not work.
+  -->
+  <target name="-check-npm">
+    <property environment="env" />
+    <condition property="npm.executable"
+	       value="npm.cmd"
+	       else="npm">
+      <available file="npm.cmd"
+	       filepath="${env.PATH}"
+               property="npm.executable"
+	       value="npm.cmd"/>
+    </condition>
+  </target>
 
   <target name="-check-nyc">
     <available property="nyc.command.exists" file="${nyc.command}"/>
@@ -307,13 +326,15 @@
        that are used by eduk and duk.
   --> 
   <target name="duktape"
-          depends="eduk2, duk2, rusteduk"
-          description="Build the duktape binaries">
+          depends="-xxd-in-path, eduk2, duk2, rusteduk"
+          description="Build the duktape binaries"
+	  if="${xxd.present}">
   </target>
 
   <target name="duk2"
-	  depends="eduk2"
-          description="Build the duk2 binary.  Requires make and a C compiler.">
+	  depends="-xxd-in-path, eduk2"
+          description="Build the duk2 binary.  Requires make and a C compiler."
+	  if="${xxd.present}">
     <echo>The duk2 binary uses duktape 2.x.
     The duk2 binary has more command line options that the eduk binary.
     The duk2 binary would not be deployed on an embedded machine.
@@ -326,7 +347,9 @@
   </target>
   
   <target name="eduk2"
-          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc.">
+	  depends="-xxd-in-path"
+          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc."
+	  if="${xxd.present}">
     <echo>The eduk2 binary has fewer command line options than the duk binary.
     The eduk binary is what would be deployed on an embedded machine.
     The eduk binary can also be run from the command line.
@@ -347,9 +370,10 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${jsdoc.command}"
+    <exec executable="${node.executable}"
           failonerror="true"
-          timeout="${timeout}">
+          timeout="${timeout.longer}">
+      <arg value="${jsdoc.command}" />
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
       <arg value="--destination" />
@@ -367,12 +391,12 @@
   </target>
 
   <target name="jsdoc-install"
-	  depends="-check-jsdoc"
+	  depends="-check-jsdoc,-check-npm"
           if="${npmjs-org-is-up}"
 	  unless="jsdoc.command.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="@terraswarm/jsdoc"/>
@@ -388,7 +412,7 @@
 	  depends="-check-if-npmjs-org-is-up, -jsdoc-no-network-message, jsdoc-install"
           if="${npmjs-org-is-up}">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="@terraswarm/jsdoc"/>
@@ -401,7 +425,7 @@
 	  unless="mocha.command.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="mocha"/>
@@ -411,7 +435,7 @@
   <target name="mocha-update"
 	  depends="mocha-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="mocha"/>
@@ -423,7 +447,7 @@
 	  unless="mocha-junit-reporter.index.js.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="mocha-junit-reporter"/>
@@ -433,7 +457,7 @@
   <target name="mocha-junit-reporter-update"
 	  depends="mocha-junit-reporter-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="mocha-junit-reporter"/>
@@ -445,7 +469,7 @@
 	  unless="nyc.command.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="nyc"/>
@@ -455,7 +479,7 @@
   <target name="nyc-update"
 	  depends="nyc-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="nyc"/>
@@ -466,7 +490,7 @@
           depends="jsdoc-update"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
           >
-    <echo>Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
+    <echo>Invoke ${jsdoc.command} to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
     See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
     See jsdoc/jsdoc.json
     See jsdoc/plugins/accessorJSDocTags.js
@@ -474,8 +498,9 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${jsdoc.command}"
+    <exec executable="${node.executable}"
           timeout="${timeout}">
+      <arg value="${jsdoc.command}" />
       <arg value="--configure" />
       <arg value="jsdoc/jsdoc.json" />
       <arg value="--recurse" />
@@ -592,11 +617,11 @@
   </target>
     
   <target name="terraswarm-gdp-install"
-	  depends="-check-terraswarm-gdp"
+	  depends="-check-terraswarm-gdp,-check-npm"
 	  unless="terraswarm.gdp.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="@terraswarm/gdp"/>
@@ -606,7 +631,7 @@
   <target name="terraswarm-gdp-update"
 	  depends="terraswarm-gdp-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="@terraswarm/gdp"/>
@@ -1123,11 +1148,11 @@
   </target>
 
   <target name="selenium-webdriver-install"
-	  depends="-check-selenium-webdriver"
+	  depends="-check-selenium-webdriver,-check-npm"
 	  unless="selenium-webdriver.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="install"/>
       <arg value="selenium-webdriver"/>
@@ -1137,11 +1162,19 @@
   <target name="selenium-webdriver-update"
 	  depends="selenium-webdriver-install">
     <exec dir=".."
-          executable="npm"
+          executable="${npm.executable}"
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="selenium-webdriver"/>
     </exec>
   </target>
+
+  <target name="-xxd-in-path">
+    <property environment="env" />
+    <available file="xxd"
+	       filepath="${env.PATH}"
+	       property="xxd.present"/>
+  </target>
+  
 
 </project>
