@@ -190,6 +190,20 @@
   <target name="-check-chai">
     <available property="chai.directory.exists" file="${chai.directory}"/>
   </target>
+  
+  <!-- If we are under Windows and node_modules/@accessors-hosts is a
+       file, not a directory, then set fix.accessors.hosts.link to
+       true.
+       -->
+  <target name="-check-accessors-hosts-link">
+    <condition property="fix.accessors.hosts.link">
+      <and>
+	<available file="node_modules/@accessors-hosts"
+		   type="dir"/>
+	<os family="windows"/>
+      </and>
+    </condition>
+  </target>
 
   <target name="-check-chai-string">
     <available property="chai-string.directory.exists" file="${chai-string.directory}"/>
@@ -1189,6 +1203,24 @@
           timeout="${timeout.npm}">
       <arg value="update"/>
       <arg value="selenium-webdriver"/>
+    </exec>
+  </target>
+
+  <!-- Under Windows, node_modules/@accessors-hosts might
+       be a Cygwin-style link which will not work with the
+       Windows node binary.  So, we remove it.
+       -->
+  <target name="windows.fix.link"
+	  depends="-check-accessors-hosts-link"
+	  if="fix.accessors.hosts.link">
+
+    <delete file="node_modules/@accessors-hosts" quiet="false" verbose="true" />
+
+    <exec executable="cmd" >
+      <arg value="/c" />
+      <arg value="mklink" />
+      <arg value="node_modules\\@accessors-hosts" />
+      <arg value="..\\hosts" />
     </exec>
   </target>
 
