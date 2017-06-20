@@ -88,3 +88,23 @@ nsh> quit;
 exit
 
 
+Install the npm @accessors-hosts/node package on the npm server.
+========================================================
+(This is for the use of maintainers of this node module.)
+
+We are using an account named
+'[terraswarm](https://www.npmjs.com/~terraswarm)' on the npmjs
+repository to manage the @accessors-hosts/node package.
+
+To update the @accessors-hosts/node package on npmjs:
+
+1.  Update the patch number in package.json
+2.  Login to npm
+        npm login
+
+        Username: terraswarm
+        Password: See ~terra/.npmpass on terra
+        Email: terraswarm-software@terraswarm.org 
+3.  Publish:
+        npm publish --access public
+
