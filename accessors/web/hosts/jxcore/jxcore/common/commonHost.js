@@ -217,7 +217,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1870 2017-06-14 00:41:54Z cxh $$
+ *  @version $$Id: commonHost.js 1889 2017-06-20 22:15:38Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -236,7 +236,7 @@ var trustedAccessorsAllowed = false;
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
-var deterministicTemporalSemantics = require('deterministicTemporalSemantics');
+var deterministicTemporalSemantics = require('./modules/deterministicTemporalSemantics');
 
 ///////////////////////////////////////////////////////////////////
 //// Accessor class and its functions.
@@ -880,7 +880,9 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
                 var theirPriority = destinationAccessor.priority;
                 if (theirPriority === cyclePriority) {
                     throw new Error('Causality loop found including at least: ' +
-                        destinationAccessor.accessorName);
+                                    destinationAccessor.accessorName +
+                                    ". Try setting an output port to be spontaneous." +
+                                    "  See accessors.org/wiki/Main/CompositeAccessor#Spontaneous");
                 }
                 if (theirPriority === null) {
                     // Destination has no previously assigned priority. Give it one,
@@ -2919,7 +2921,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1870 2017-06-14 00:41:54Z cxh $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1889 2017-06-20 22:15:38Z cxh $");
             return false;
 
         default:
