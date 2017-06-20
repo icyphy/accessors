@@ -262,13 +262,13 @@ exports.handleResponse = function (message) {
                 // In order to be able to include the outputCompleteResponseOnly
                 // option, we have to switch styles here.
                 command = {};
-                command.url = message.location;
+                command.url = message.headers.location;
             } else {
                 // Don't use command = options, because otherwise if we invoke
                 // this accessor multiple times, then options.url will be
                 // appended to each time.  Instead, do a deep clone.
                 command = JSON.parse(JSON.stringify(options));
-                command.url = message.location;
+                command.url = message.headers.location;
             }
             command.timeout = this.getParameter('timeout');
 
@@ -287,23 +287,15 @@ exports.handleResponse = function (message) {
 
         } else {
             if (message.body) {
-                console.log("REST.js: handleResponse(): message.body: " + message.body);
                 this.send('response', this.exports.filterResponse.call(this, message.body));
             } else {
-                console.log("REST.js: handleResponse(): message: " + message);
                 this.send('response', this.exports.filterResponse.call(this, message));
             }
 
-            if (message.location) {
-                console.log("REST.js: handleResponse(): message.location: " + message.location);
-            }
-
             if (message.statusCode) {
-                console.log("REST.js: handleResponse(): message.statusCode: " + message.statusCode);
                 this.send('status', message.statusCode + ': ' + message.statusMessage);
             }
             if (message.headers) {
-                console.log("REST.js: handleResponse(): message.headers: " + message.headers);
                 this.send('headers', message.headers);
             }
         }
