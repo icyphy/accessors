@@ -8,6 +8,9 @@
         "Christopher Brooks <cxh@eecs.berkeley.edu>",
         "Ilya Rostovtsev <ilyaforpresident@berkeley.edu>"  
   ],
+  "dependencies": {
+      "@accessors-hosts/common": "*"
+  },
   "description": "A @accessors-hosts/node for Accessors (actor-oriented proxies for IoT)",
   "files": [
         "bin",
@@ -31,5 +34,5 @@
         "type": "svn",
         "url": "https://repo.eecs.berkeley.edu/svn-anon/projects/terraswarm/accessors/trunk/accessors"
    },
-   "version": "0.1.0"
+   "version": "0.1.1"
 }

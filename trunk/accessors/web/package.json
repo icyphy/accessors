@@ -1,6 +1,6 @@
 {
     "name": "@terraswarm/accessors",
-    "version": "0.0.19",
+    "version": "0.0.21",
     "description": "Actor-oriented proxies for IoT",
     "main": "hosts/node/nodeHost.js",
     "author": {
@@ -54,6 +54,9 @@
             "name": "Matt Weber"
         }
     ],
+    "dependencies": {
+         "@accessors-hosts/common": "*"
+    },
     "files": [
         "audio",
         "audioIo",
@@ -62,6 +65,7 @@
         "devices",
         "gdp",
         "geodesy",
+	"hosts",
         "image",
         "localization",
         "net",
@@ -74,7 +78,7 @@
         "hosts/common",
         "hosts/node"
     ],
-    "homepage": "https://www.icyphy.org/accessors/",
+    "homepage": "https://accessors.org/",
     "keywords": [
         "actor",
         "IoT"
