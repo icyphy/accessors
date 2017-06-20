@@ -1,6 +1,6 @@
 // Accessor for  Representational State Transfer (RESTful) interfaces.
 
-// Copyright (c) 2015-2016 The Regents of the University of California.
+// Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -89,7 +89,7 @@
  *  If it is false, then multiple outputs may result from a single input or trigger.
  *
  *  @accessor net/REST
- *  @author Edward A. Lee (eal@eecs.berkeley.edu)
+ *  @author Edward A. Lee (eal@eecs.berkeley.edu), contributor: Christopher Brooks
  *  @input {JSON} options The url for the command or an object specifying options.
  *  @input {string} command The command.
  *  @input {JSON} arguments Arguments to the command.
@@ -225,8 +225,9 @@ exports.issueCommand = function (callback) {
         command.body = body;
     }
 
-    // console.log("REST request to: " + JSON.stringify(command));
-
+    // console.log("REST.js issueCommand(): request to: " + JSON.stringify(command));
+    //    console.log(util.inspect(command));
+    
     request = httpClient.request(command, callback);
     request.on('error', function (message) {
         if (!message) {
@@ -249,16 +250,62 @@ exports.issueCommand = function (callback) {
 exports.handleResponse = function (message) {
     // Assume that if the response is null, an error will be signaled.
     if (message !== null && typeof message !== 'undefined') {
-        if (message.body) {
-            this.send('response', this.exports.filterResponse.call(this, message.body));
+        // Handle redirects by creating a new command and making a new
+        // request.  This is similar to issueCommand().
+        // The encodedPath is already in the URL, so we dont need to append it here.
+        if (message.statusCode && message.statusCode >= 300 && message.statusCode <= 308 && message.statusCode != 306) {
+            var body = this.get('body');
+            var options = this.get('options');
+            var command = options;
+
+            if (typeof options === 'string') {
+                // In order to be able to include the outputCompleteResponseOnly
+                // option, we have to switch styles here.
+                command = {};
+                command.url = message.location;
+            } else {
+                // Don't use command = options, because otherwise if we invoke
+                // this accessor multiple times, then options.url will be
+                // appended to each time.  Instead, do a deep clone.
+                command = JSON.parse(JSON.stringify(options));
+                command.url = message.location;
+            }
+            command.timeout = this.getParameter('timeout');
+
+            if (this.getParameter('outputCompleteResponseOnly') === false) {
+                command.outputCompleteResponseOnly = false;
+            }
+
+            if (typeof body !== 'undefined') {
+                command.body = body;
+            }
+
+            request = httpClient.request(
+                command,
+                this.exports.handleResponse.bind(this));
+            request.end();
+
         } else {
-            this.send('response', this.exports.filterResponse.call(this, message));
-        }
-        if (message.statusCode) {
-            this.send('status', message.statusCode + ': ' + message.statusMessage);
-        }
-        if (message.headers) {
-            this.send('headers', message.headers);
+            if (message.body) {
+                console.log("REST.js: handleResponse(): message.body: " + message.body);
+                this.send('response', this.exports.filterResponse.call(this, message.body));
+            } else {
+                console.log("REST.js: handleResponse(): message: " + message);
+                this.send('response', this.exports.filterResponse.call(this, message));
+            }
+
+            if (message.location) {
+                console.log("REST.js: handleResponse(): message.location: " + message.location);
+            }
+
+            if (message.statusCode) {
+                console.log("REST.js: handleResponse(): message.statusCode: " + message.statusCode);
+                this.send('status', message.statusCode + ': ' + message.statusMessage);
+            }
+            if (message.headers) {
+                console.log("REST.js: handleResponse(): message.headers: " + message.headers);
+                this.send('headers', message.headers);
+            }
         }
     }
 };
