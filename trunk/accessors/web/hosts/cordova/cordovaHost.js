@@ -61,7 +61,8 @@ var common = require('common/commonHost');
 /**
  * Return true if the module was loaded successfully, false otherwise.
  * If the code was loaded before, do nothing, otherwise, retrieve it.
- * @param id {string} Identifier for the module.
+ * @param {string} id Identifier for the module.
+ * @returns {boolean} Whether the module was loaded successfully.
  */
 function loadModule(id) {
     if (!_loadedModules.hasOwnProperty(id)) {
@@ -81,7 +82,8 @@ function loadModule(id) {
  * load a global module. If that also fails, use the native require function
  * implemented by Cordova.
  * 
- * @param id {string} Identifier for the module.
+ * @param {string} id Identifier for the module.
+ * @returns {object} The modules exports.
  * @see https://github.com/nodejs/node/blob/master/lib/module.js
  */
 function require(id) {
@@ -126,7 +128,8 @@ function require(id) {
 /** 
  * Return the source of an accessor definition from the accessor library on the host.
  * The ".js" extension of the accessor class is optional. This is a blocking call.
- * @param path The path on the server for the JavaScript code, e.g. 'net/REST'.
+ * @param {string} path The path on the server for the JavaScript code, e.g. 'net/REST'.
+ * @returns {string} The source code of the accessor.
  */
 function getAccessorCode(id) {
     if (!_loadedAccessors.hasOwnProperty(id)) {
@@ -143,8 +146,8 @@ function getAccessorCode(id) {
  * is given, then the response will be passed as the second argument of the
  * callback. The first argument is used to pass an error message in case the
  * operation was unsuccessful (and will be null otherwise).
- * @param path The relative path on the server.
- * @param callback The callback function.
+ * @param {string} path The relative path on the server.
+ * @param {function} callback The callback function.
  */
 function getJavaScript(path, callback) { // FIXME: try to merge with browser version.
                                          // FIXME: works with browser and android, test iOS.
@@ -200,8 +203,9 @@ getResource = function(uri) {};
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
- *  @param accessorName The name to give to the instance.
- *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ *  @param {string} accessorName The name to give to the instance.
+ *  @param {string} accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ *  @returns {object} An accessor instance.
  */
 function instantiate(accessorName, accessorClass) {
     var bindings = { 
