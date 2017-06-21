@@ -75,8 +75,14 @@ function loadModule(id) {
 }
 
 /**
- * FIXME: comments
+ * This require function is similar to Node's implementation (module.js).
+ * If the given identifier specifies a full path then try to use that path.
+ * Otherwise, attempt to load a local module. If that fails, attempt to 
+ * load a global module. If that also fails, use the native require function
+ * implemented by Cordova.
+ * 
  * @param id {string} Identifier for the module.
+ * @see https://github.com/nodejs/node/blob/master/lib/module.js
  */
 function require(id) {
     var path;
@@ -85,20 +91,27 @@ function require(id) {
     module.exports = {};
     var pathArray = id.split("/");
     
-    if (id.indexOf("./modules") == 0 && loadModule(_modulesCommonPath + pathArray[pathArray.length - 1]) === true) {
-        path = _modulesCommonPath + pathArray[pathArray.length - 1];
-    } else if (id.includes("/") && loadModule(_includePath + id) === true) {
+    // Change the root of relative paths that start with './modules'
+    if (id.indexOf("./modules") == 0 && loadModule(_modulesCommonPath 
+        + pathArray[pathArray.length - 1]) === true) {
+        id = pathArray[pathArray.length - 1];
+    } 
+
+    // Follow the path if it is given.
+    if (id.includes("/") && loadModule(_includePath + id) === true) {
         path = _includePath + id;
     } else {
         // Check if there is a locally-defined module with given id.
         if (loadModule(_modulesLocalPath + id) === true) {
             path = _modulesLocalPath + id;
         }
-        // If not, assume that this is a common module.
+        // If not, check whether this this is a common module.
+        else if (loadModule(_modulesCommonPath + id) === true) {
+            path = _modulesCommonPath + id
+        }
+        // Else, use the native require.
         else {
-            if (loadModule(_modulesCommonPath + id) === true) {
-                path = _modulesCommonPath + id
-            }
+            return cordova.require(); 
         }
     }
     // If the module was loaded successfully, evaluate its code.
@@ -106,7 +119,7 @@ function require(id) {
         var wrapper = eval('(function (module, exports) {' + _loadedModules[path] + '})');
         wrapper(module, module.exports);
     } 
-    // FIXME: Not sure if this is the desired behavior. What does nodejs do if loading fails?
+
     return module.exports;
 };
  
