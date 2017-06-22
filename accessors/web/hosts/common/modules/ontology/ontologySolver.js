@@ -339,7 +339,7 @@ Ontology.prototype.solve = function (class1, isSubClassOf, class2, notTriple, ar
 	var thiz = this;
 	var triple;
 	// console.log('Call to '+thiz.ontologyName+' : '+class1+' :: '+ isSubClassOf +' :: '+ class2);
-	if (typeof notTriple === undefined || (notTriple === true)) {
+	if (typeof notTriple === "undefined" || (notTriple === true)) {
 		// Check id class1 is defined in the  ontology
 			// console.log('get the triple: '+ class1);
 		
