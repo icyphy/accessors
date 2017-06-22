@@ -208,21 +208,21 @@ Ontology.prototype.addFunction = function(functionRelationName, functionCode) {
 	}
 
 	// If '$relations' attribute does not exist, then add it
-	if (!this.ontologyObject["$relations"]) {
-		this.ontologyObject["$relations"] = {};
+	if (!this.ontologyObject.$relations) {
+		this.ontologyObject.$relations = {};
 	}
 
 	// Check if the function already exists
-	if (this.ontologyObject["$relations"][functionRelationName]) {
+	if (this.ontologyObject.$relations[functionRelationName]) {
 		console.log('Ontology module: addFunction(): Function ' + functionRelationName + 
 			' is already defined. Use updateFunction if you want to update its code.');
 		return false;
 	}
 
 	// Add the new function
-	this.ontologyObject["$relations"][functionRelationName] = functionCode;
+	this.ontologyObject.$relations[functionRelationName] = functionCode;
 	return true;
-}
+};
 
 /** Adds a triple to the ontologyObject. If the attribute class1 already exists,
  *  then update isSubClassOf relation attribute only if class2 is not already there.
@@ -280,13 +280,13 @@ Ontology.prototype.addTriple = function(class1, isSubClassOf, class2, context) {
 		this.ontologyObject[class1] = {
 			"@context": '',
 			isSubClassOf : class2
-		}
+		};
 		if (context && typeof context === 'string') {
 			this.ontologyObject[class1]["@context"] = context;
 		}			
 	}
 	return true;
-}
+};
 
 /** This function loads and adds a triple from a given URL as parameter, if the 
  *  ontology is editable. The aim is to enable, in the future, dynamically
@@ -305,7 +305,7 @@ Ontology.prototype.loadAndAddTripleFromURL = function (tripleUrl) {
 		return false;
 	}
 	return true;
-}
+};
 
 /** This is the skeleton of another function prototype that deals with ontology
  *  mapping...
@@ -381,7 +381,7 @@ Ontology.prototype.solve = function (class1, isSubClassOf, class2, notTriple, ar
 							continue;
 					}
 
-				};
+				}
 				return undefined;
 			}
 		} else {
@@ -426,14 +426,14 @@ Ontology.prototype.updateFunction = function(functionRelationName, functionCode)
 	}
 
 	// If '$relations' attribute does not exist, then add it
-	if (!this.ontologyObject["$relations"]) {
-		this.ontologyObject["$relations"] = {};
+	if (!this.ontologyObject.$relations) {
+		this.ontologyObject.$relations = {};
 	}
 
 	// Update/add the function
-	this.ontologyObject["$relations"][functionRelationName] = functionCode;
+	this.ontologyObject.$relations[functionRelationName] = functionCode;
 	return true;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////    Exports
