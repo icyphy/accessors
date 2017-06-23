@@ -133,9 +133,12 @@ exports.setup = function () {
         value: false
     });
     this.input('toSend');
-    this.output('received');
+    this.output('received', {
+        'spontaneous': true        
+    });
     this.output('listening', {
-        'type': 'int'
+        'type': 'int',
+        'spontaneous': true
     });
     this.output('connection', {
         'spontaneous': true
