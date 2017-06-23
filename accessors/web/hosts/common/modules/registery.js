@@ -24,9 +24,8 @@
 
 /**
  * Registery for discovered accessors, allowing accessors to publish the
- * accessors that they discover. Refinable accessors can subscribe as
- * listers so they get a callback whenever a new accessor becomes 
- * available.
+ * accessors that they discover. Refinable (mutable) accessors can subscribe 
+ * as listers so they get a callback whenever a new accessor becomes available.
  * @author: Marten Lohstroh
  * @module: @not-sure-how-this-works
  */
@@ -44,17 +43,24 @@ var subscribers = [];
 // Counter to keep track of subscribers.
 var counter = 0;
 
+// FIXME: Ask Chaldia whether there is any objection against instantiating
+// the accessor inside of the module instead of passing along it's source.
+
 /**
  * Publish a newly-discovered accessor.
+ * Subscribers will get a callback with the accessor's description
+ * (first argument) and the accessor's source (second argument).
+ * The description has a 'params' field that stores the parameters
+ * of the accessor.
  * @param {string} url The URL that points to the accessor.
  */
-module.exports.publish = function (url) {
+module.exports.publish = function (description) {
   var options = {};
-  options.url = url;
-  httpClient.request(options, function(response) {
-    hashmap[url] = response;
+  options.url = description['url'];
+  httpClient.request(options, function(source) {
+    hashmap[url] = source;
     for (callback in subscribers) {
-      callback(response);
+      callback(description, source);
     }
   });
 };
@@ -63,12 +69,19 @@ module.exports.publish = function (url) {
  * Unpublish an accessor because it is no longer available.
  * @param {string} url The URL that points to the accessor.
  */
-module.exports.unpublish = function(url) {
-  delete hashmap[url];
+module.exports.unpublish = function(description) {
+  delete hashmap[description];
 };
 
 /**
  * Subscribe to updates regarding newly-discovered accessors.
+ * The first argument of the callback function will capture
+ * the accessor's description, the second will capture the its
+ * source code. The description is an object with two keys: 'url'
+ * and 'params'; together they uniquely identify a "Thing." Note
+ * that the accessor must indeed be instantiated using the given
+ * parameters, or else it will fail to connect to the appropriate
+ * "Thing."
  * @param {function} callback Function to call when a new accessor is discovered.
  * @returns {number} corresponding to the activated subscription.
  */
