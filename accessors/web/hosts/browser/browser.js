@@ -512,9 +512,11 @@ function generateAccessorHTML(path, id, text) {
     function require(path) {
         // // FIXME: This is needed so that we can avoid platform
         // // dependent code in commonHost.js, but it is so ugly. -cxh
-        // if (path === './modules/deterministicTemporalSemantics') {
-        //     return require('/accessors/node_modules/@accessors-hosts/common/modules/deterministicTemporalSemantics');
-        // }
+    	// FIXME:  Beth: This was commented out but I reinstated it as 
+    	// the speech recognition demo was crashing.
+        if (path === './modules/deterministicTemporalSemantics') {
+             return require('/accessors/hosts/common/modules/deterministicTemporalSemantics');
+        }
 
         // If the commonHost is required, return it.
         if (path.indexOf("commonHost") >= 0) {
