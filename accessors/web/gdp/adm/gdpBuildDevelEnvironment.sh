@@ -82,8 +82,10 @@ case "`uname -s`" in
         gdpjsLib=`ls -1t $gdpSource/lang/js/libs/libgdpjs*.so  | tail -1`
         gdpjsPtIILib=`ls -1t $PTII/lib/libgdpjs*.so | tail -1`
         if [ -f /etc/redhat-release ]; then
+	    echo "$0: saw /etc/redhat_release"
             gdpPtIILib=`ls -1t $PTII/lib/linux-x86-64-rhel/libgdp*.so | grep -v libgdpjs | tail -1`
         else
+	    echo "$0: did not find /etc/redhat_release"
             gdpPtIILib=`ls -1t $PTII/lib/libgdp*.so | grep -v libgdpjs | tail -1`
         fi
         ;;
