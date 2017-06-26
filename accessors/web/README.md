@@ -1,3 +1,6 @@
+
+$Id$
+
 Terraswarm Accessors
 ===================
 
@@ -44,4 +47,23 @@ See [https://www.icyphy.org/accessors/wiki/Main/JSDoc).
 
 This file may be found at accessors/web/README.md and is included in the JSDoc output automatically because accessors/web/build.xml is invoked with -R README.md
 
-$Id$
+Install the npm @terraswarm/accessors package on the npm server.
+========================================================
+(This is for the use of maintainers of this node module.)
+
+We are using an account named
+'[terraswarm](https://www.npmjs.com/~terraswarm)' on the npmjs
+repository to manage the @terraswarm/accessors package.
+
+To update the @terraswarm/accessors package on npmjs:
+
+1.  Update the patch number in package.json
+2.  Login to npm
+        npm login
+
+        Username: terraswarm
+        Password: See ~terra/.npmpass on terra
+        Email: terraswarm-software@terraswarm.org 
+3.  Publish:
+        npm publish --access public
+
