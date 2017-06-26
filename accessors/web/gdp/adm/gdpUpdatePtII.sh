@@ -7,14 +7,25 @@ if [ "`uname -s`" != "Darwin" ]; then
     echo "$0: Must be run under Mac OS X because we need to build there and then ssh to RHEL and Linux."
 fi
 
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "@@@@: $0: About to build locally"
-gdpVersion=`cat $PTII/vendors/gdp/gdp/git-version.txt`
-# Build locally
-export PKGMGR=brew
-$PTII/org/terraswarm/accessor/accessors/web/gdp/adm/gdpBuildDevelEnvironment.sh
-(cd $PTII/lib; svn commit -m "Updated gdp libraries on Darwin to $gdpVersion" libgdp*)
+# echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+# echo "@@@@: $0: About to build locally"
+# gdpVersion=`cat $PTII/vendors/gdp/gdp/git-version.txt`
+# # Build locally
+# export PKGMGR=brew
+# $PTII/org/terraswarm/accessor/accessors/web/gdp/adm/gdpBuildDevelEnvironment.sh
+# (cd $PTII/lib; svn commit -m "Updated gdp libraries on Darwin to $gdpVersion" libgdp*)
 
+echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+echo "@@@@: $0: About to build on wessel"
+ubuntuPTII=/home/cxh/ptII
+ubuntuAccessors=$ubuntuPTII/org/terraswarm/accessor/accessors/web
+# Update so that we get the Darwin libraries to be included in the GDP jar file and eventually the @ubuntuswarm/accessors module.
+ssh wessel "(cd $ubuntuPTII; svn update --accept theirs-full)"
+ssh wessel "(cd $ubuntuAccessors; svn update --accept theirs-full)"
+ssh wessel "export PTII=$ubuntuPTII; $ubuntuAccessors/gdp/adm/gdpBuildDevelEnvironment.sh"
+ssh wessel "(cd $ubuntuPTII/lib; svn commit -m \"Updated gdp libraries on Ubuntu to $gdpVersion\" libgdp*)"
+
+# Build on terra last so that libgdp uses an older version of libgc
 echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 echo "@@@@: $0: About to build on terra"
 terraPTII=/home/cxh/src/ptII
@@ -23,17 +34,7 @@ terraAccessors=$terraPTII/org/terraswarm/accessor/accessors/web
 ssh terra "(cd $terraPTII; svn update --accept theirs-full)"
 ssh terra "(cd $terraAccessors; svn update --accept theirs-full)"
 ssh terra "$terraAccessors/gdp/adm/gdpBuildDevelEnvironment.sh"
-ssh terra "(cd $terraPTII/lib; svn commit -m \"Updated gdp libraries on RHEL to $gdpVersion\" libgdp* linux-x86-64-rhel)"
-
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "@@@@: $0: About to build on swarmnuc001"
-ubuntuPTII=/home/cxh/ptII
-ubuntuAccessors=$ubuntuPTII/org/terraswarm/accessor/accessors/web
-# Update so that we get the Darwin libraries to be included in the GDP jar file and eventually the @ubuntuswarm/accessors module.
-ssh swarmnuc001 "(cd $ubuntuPTII; svn update --accept theirs-full)"
-ssh swarmnuc001 "(cd $ubuntuAccessors; svn update --accept theirs-full)"
-ssh swarmnuc001 "export PTII=$ubuntuPTII; $ubuntuAccessors/gdp/adm/gdpBuildDevelEnvironment.sh"
-ssh swarmnuc001 "(cd $ubuntuPTII/lib; svn commit -m \"Updated gdp libraries on Ubuntu to $gdpVersion\" libgdp* linux-x86-64-rhel)"
+ssh terra "(cd $terraPTII/lib; svn commit -m \"Updated gdp libraries on RHEL to $gdpVersion\" libgdp*rhel* gdp*.jar linux-x86-64-rhel)"
 
 echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 echo "@@@@: $0: Rebuilding locally to get updated libraries"
