@@ -13,7 +13,7 @@
         "accessors",
         "actor",
         "IoT",
-        "jxcore",
+        "jxcore"
    ],
   "license": "BSD-3-Clause",
   "main": "main.js",
