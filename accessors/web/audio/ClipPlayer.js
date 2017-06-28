@@ -42,6 +42,7 @@
 
 var audio = require("audio");
 
+/** Create the inputs and outputs for this accessor. */
 exports.setup = function () {
     this.input('start');
     this.input('stop');
@@ -49,20 +50,31 @@ exports.setup = function () {
         'type': 'string',
         'value': 'http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3'
     });
+    this.output('done', {
+    	'type' : 'boolean'
+    });
 };
 
-var playerPlaying = null;
-var previousURL = null;
-
+/** Load the specified URL and create a player for it.  */
 exports.initialize = function () {
     var self = this;
+    this.player = null;
+    this.previousURL = null;
 
+    /** Check the URL and, if changed, create a new player for it.  */
     function updateURL() {
         var url = self.get('clipURL');
-        if (url && url !== previousURL) {
-            console.log('Got a new URL: ' + url);
+        if (url && url !== self.previousURL) {
+            //console.log('Got a new URL: ' + url);
+            if (self.player !== null) {
+            	self.player.stop();	// audio.js checks if it's actually playing.
+            }
             self.player = new audio.ClipPlayer(url);
-            previousURL = url;
+            self.previousURL = url;
+            
+            self.player.on('done', function() {
+            	self.send('done', true);
+            });
         }
     }
     updateURL();
@@ -75,27 +87,27 @@ exports.initialize = function () {
         // In case there is a new URL...
         updateURL();
 
-        if (playerPlaying) {
-            playerPlaying.stop();
-        }
-        if (!self.player) {
+        if (self.player === null || typeof self.player === 'undefined') {
             error('No clip specified.');
             return;
+        } else {
+        	self.player.stop();	// audio.js checks if it's actually playing.
         }
         self.player.play();
-        playerPlaying = self.player;
     });
 
     this.addInputHandler('stop', function () {
-        if (playerPlaying) {
-            playerPlaying.stop();
-            playerPlaying = null;
+        if (self.player !== null && typeof self.player !== 'undefined') {
+            self.player.stop();  // audio.js checks if it's actually playing.
         }
     });
+  
 };
 
+/** Stop any playback. */
 exports.wrapup = function () {
-    if (playerPlaying) {
-        playerPlaying.stop();
+    if (this.player !== null && typeof this.player !== 'undefined') {
+        this.player.stop();  // audio.js checks if it's actually playing.
+        this.player = null;
     }
 };
