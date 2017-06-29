@@ -2057,6 +2057,7 @@ Accessor.prototype.removeReification = function () {
 
     var acc = thiz.containedAccessors.pop();
     if (acc.container) acc.container = null;
+	acc.wrapup();
 
     Object.keys(thiz.inputsMap).forEach(function (key) {
         thiz.disconnect(key, acc, thiz.inputsMap[key]);
@@ -2072,6 +2073,7 @@ Accessor.prototype.removeReification = function () {
     if (thiz.parametersMap) thiz.parametersMap = {};
 
     // Update the mutableAccessor status and history
+
     thiz.status = 'instantiated';
 
     return true;
