@@ -53,6 +53,9 @@ exports.setup = function () {
         'type': 'string'
     });
     this.input('resources');
+    this.output('post', {
+        'type': 'JSON'
+    });
 };
 
 var display = function () {
@@ -68,8 +71,13 @@ var display = function () {
     browser.display(toDisplay);
 };
 
+
 exports.initialize = function () {
     this.addInputHandler('html', display);
+    var self = this;
+    browser.addListener('/', function(data) {
+      self.send('post', JSON.parse(data));
+    });
     this.addInputHandler('resources', function() {
         var resources = this.get('resources');
         for (var name in resources) {
