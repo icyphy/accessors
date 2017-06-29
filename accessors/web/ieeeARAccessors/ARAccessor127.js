@@ -36,8 +36,8 @@ exports.setup = function() {
 
 	// Defining inputs
 	this.input('control', {
-		'type': 'int',
-		'value': 0
+		'type': 'JSON',
+		'value': null
 	});
 
 	// Defining outputs
