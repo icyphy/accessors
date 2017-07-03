@@ -40,6 +40,7 @@
  *    path.
  *  * requestID: An identifier for the request.
  *  
+ *
  *  To produce a response, this accessor waits for an input on its *response*
  *  port that is a JavaScript object containing the following properties:
  *  
@@ -50,7 +51,8 @@
  *    representation will be sent back as the response). If this property is
  *    not included in the input, then the input will be stringified as a JSON
  *    object and sent. This will include the requestID property.
- *    
+ *  
+ *
  *  If there is no pending request with a matching ID, then an error will be
  *  issued.
  *  
