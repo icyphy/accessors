@@ -1,5 +1,6 @@
 [
     "Browser.js",
+    "Clock.js",
     "Exec.js",
     "Stop.js"
 ]
