@@ -1,0 +1,12 @@
+<property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+    <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
+    </property>
+    <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;Accessor that spontaneously produces outputs once per time interval.&#10; This implementation produces a counting sequence.&lt;/p&gt;">
+    </property>
+    <property name="output (port)" class="ptolemy.kernel.util.StringAttribute" type="undefined" value="Output for the counting sequence, of type number.">
+    </property>
+    <property name="interval (parameter)" class="ptolemy.kernel.util.StringAttribute" type="undefined" value="The interval between outputs in milliseconds.">
+    </property>
+    <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id$$">
+    </property>
+</property>
