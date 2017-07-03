@@ -46,7 +46,7 @@
 "use strict";
 
 var Browser = require('browser');
-var browser = new Browser.Browser();
+var browser = null;
 
 exports.setup = function () {
     this.input('html', {
@@ -55,6 +55,10 @@ exports.setup = function () {
     this.input('resources');
     this.output('post', {
         'type': 'JSON'
+    });
+    this.parameter('port', {
+        'type': 'number',
+        'value': 8080
     });
 };
 
@@ -73,11 +77,15 @@ var display = function () {
 
 
 exports.initialize = function () {
-    this.addInputHandler('html', display);
     var self = this;
+    
+    browser = new Browser.Browser(self.getParameter('port'));
     browser.addListener('/', function(data) {
-      self.send('post', JSON.parse(data));
+        self.send('post', JSON.parse(data));
     });
+
+    this.addInputHandler('html', display.bind(this));
+
     this.addInputHandler('resources', function() {
         var resources = this.get('resources');
         for (var name in resources) {
