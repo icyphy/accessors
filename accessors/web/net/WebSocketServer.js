@@ -239,7 +239,7 @@ exports.onListening = function () {
     this.send('listening', this.getParameter('port'));
 };
 
-/** Executes when a connection has been establised.<br>
+/** Executes when a connection has been established.<br>
  *  Triggers an output on <code>'connection'</code>.
  *  Adds an event listener to the socket. */
 exports.onConnection = function (socket) {
