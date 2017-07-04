@@ -49,6 +49,10 @@ var Browser = require('browser');
 var browser = null;
 
 exports.setup = function () {
+    this.parameter('header', {
+        'type': 'string',
+        'value': ''
+    });
     this.input('html', {
         'type': 'string'
     });
@@ -79,7 +83,10 @@ var display = function () {
 exports.initialize = function () {
     var self = this;
     
-    browser = new Browser.Browser(self.getParameter('port'));
+    browser = new Browser.Browser(
+            {'port': self.getParameter('port')},
+            self.getParameter('header')
+    );
     browser.addListener('/', function(data) {
         self.send('post', JSON.parse(data));
     });
@@ -95,5 +102,7 @@ exports.initialize = function () {
 };
 
 exports.wrapup = function () {
-    browser.shutdown();
+    if (browser) {
+        browser.stop();
+    }
 };
