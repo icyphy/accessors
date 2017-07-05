@@ -57,6 +57,11 @@ exports.initialize = function () {
     count = 0;
     // Need to record 'this' for use in the callback.
     var thiz = this;
+
+    // Send an output and then call setInterval
+    thiz.send('output', count);
+    count += 1;
+    
     handle = setInterval(function () {
         thiz.send('output', count);
         count += 1;
