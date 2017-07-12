@@ -25,16 +25,61 @@
 
 /** Accessor that connects with a browser on the local host.
  *  This is intended to be used by a swarmlet to interact with users,
- *  for example by providing forms to be filled in.
- *  For now, however, it simply displays HTML provided to its input.
+ *  for example by displaying content and providing forms to be filled in.
+ *  Initial content on the page may be specified using the *content*
+ *  parameter and HTML header content may be specified using *header*.
+ *  
+ *  Whatever text is received on the *html* input port will replace the content
+ *  of the web page. Normally, this will be HTML text without any DOCTYPE or
+ *  header and without a body tag. Each time new text is received, the content
+ *  of the page will be updated.
+ *  
+ *  The page will be opened upon initialize if *content* is not empty.
+ *  Otherwise, it will be opened when the first *html* input is received.
+ *  
+ *  The *resources* input can be used to provide resources, such as images,
+ *  that will be used by the HTML content provided on the *html* input.
+ *  Note that updating a resource with the same name will not normally result
+ *  in the web page being updated because browsers normally cache such resources.
+ *  If HTML content refers to a resource that has already been loaded (or more
+ *  precisely, that has the same name as a resource that has already been loaded),
+ *  then the browser will not load the resource again, but rather will use the
+ *  previous version.  You can force the browser to reload a resource by augmenting
+ *  the name with parameters (which will be ignored). For example, if you have
+ *  a resource named "image.jpg" that you wish to update it, then you can
+ *  specify HTML like this:
+ *  
+ *     &lt;img src="image.jpg?count=n"/&gt;
+ *  
+ *  where *n* is a unique integer not previously seen by the browser.
+ *  This will force the browser to go back to the server to retrieve the resource.
  *
+ *  The way this accessor works on most hosts is that it starts a web server on localhost
+ *  at the specified port that serves the specified web page and then instructs
+ *  the system default browser to load the default page from that server.
+ *  The page served by the server includes a script that listens for websocket
+ *  connections that are used to provide HTML content to display on the page.
+ *  Some hosts, however, such as the cordova and browser hosts, natively use
+ *  a browser as part of the host, so in these cases, no web server nor socket
+ *  connection is needed and the *port* parameter will be ignored.
+ *  
  *  @accessor utilities/Browser
- *  @input {string} html An HTML document to render in the browser.
+ *  @input {string} html HTML content to render in the body of the page displayed
+ *   by the browser.
  *  @input resources An object where each named property is an object containing
  *   two properties, 'data' and 'contentType'. The name of the named property is
  *   the path to be used to access the resource. The 'data' property is the resource
  *   itself, an arbitrary collection of bytes. The 'contentType' is the MIME
  *   type of the data.
+ *  @parameter {string} header HTML content to include in the header part of the web page.
+ *   This is a good place to script definitions.
+ *  @parameter {string} content HTML content to include in the main body of the page.
+ *   If this is non-empty, then the page is opened upon initialize.
+ *   Otherwise, the page is opened when the first *html* input is received.
+ *  @parameter {int} port The port to use, if needed, for websocket communication between this
+ *   accessor (which updates the HTML content of the web page) and the browser.
+ *   The web page will listen on this socket for content and display whatever arrives
+ *   on that port. This is ignored on hosts that do not need to invoke an external browser.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @version $$Id$$
  */
@@ -53,6 +98,10 @@ exports.setup = function () {
         'type': 'string',
         'value': ''
     });
+    this.parameter('content', {
+        'type': 'string',
+        'value': ''
+    });
     this.input('html', {
         'type': 'string'
     });
@@ -61,7 +110,7 @@ exports.setup = function () {
         'type': 'JSON'
     });
     this.parameter('port', {
-        'type': 'number',
+        'type': 'int',
         'value': 8080
     });
 };
@@ -85,8 +134,10 @@ exports.initialize = function () {
     
     browser = new Browser.Browser(
             {'port': self.getParameter('port')},
-            self.getParameter('header')
+            self.getParameter('header'),
+            self.getParameter('content')
     );
+    // Listen for any POST to the server.
     browser.addListener('/', function(data) {
         self.send('post', JSON.parse(data));
     });
