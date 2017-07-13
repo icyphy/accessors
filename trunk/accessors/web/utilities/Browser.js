@@ -48,9 +48,9 @@
  *  the name with parameters (which will be ignored). For example, if you have
  *  a resource named "image.jpg" that you wish to update it, then you can
  *  specify HTML like this:
- *  
+ *  <pre>
  *     &lt;img src="image.jpg?count=n"/&gt;
- *  
+ *  </pre>
  *  where *n* is a unique integer not previously seen by the browser.
  *  This will force the browser to go back to the server to retrieve the resource.
  *
