@@ -47,8 +47,18 @@ var speechRecognition = require('@accessors-modules/speech-recognition');
 exports.setup = function () {
     this.parameter('continuous', {
                 'type' : 'boolean', 
-                'value' : false
-            });
+                'value' : true
+    				});
+    
+    this.parameter('dictionaryPath', {
+		'type' : 'string',
+		'value' : ''
+			});
+    
+    this.parameter('languageModelPath', {
+    			'type' : 'string',
+    			'value' : ''
+    				});
         
     this.input('start', {
                 'type': 'boolean'
@@ -71,6 +81,9 @@ exports.initialize = function () {
         
     var options = {};
     options.continuous = this.getParameter('continuous');
+    options.dictionaryPath = this.getParameter('dictionaryPath');
+    options.languageModelPath = this.getParameter('languageModelPath');
+    
     this.recognition = new speechRecognition.SpeechRecognition(options);
         
     this.recognition.on('result', function(result) {
@@ -93,3 +106,12 @@ exports.initialize = function () {
                 }
             });
 };
+
+/** Stop the recognizer.  The helper class takes care of multiple stops.
+ */
+exports.wrapup = function() {
+	console.log('calling wrapup');
+	if (this.recognition !== null && typeof this.recognition !== "undefined") {
+		this.recognition.stop();
+	}
+}
