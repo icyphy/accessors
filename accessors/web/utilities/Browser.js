@@ -23,42 +23,75 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Accessor that connects with a browser on the local host.
- *  This is intended to be used by a swarmlet to interact with users,
- *  for example by displaying content and providing forms to be filled in.
- *  Initial content on the page may be specified using the *content*
+/** Accessor that uses a browser on the local host for interaction with a user.
+ *  The initial content on the page may be specified using the *content*
  *  parameter and HTML header content may be specified using *header*.
  *  
  *  Whatever text is received on the *html* input port will replace the content
  *  of the web page. Normally, this will be HTML text without any DOCTYPE or
  *  header and without a body tag. Each time new text is received, the content
- *  of the page will be updated.
+ *  of the page will be replaced.
  *  
  *  The page will be opened upon initialize if *content* is not empty.
  *  Otherwise, it will be opened when the first *html* input is received.
  *  
  *  The *resources* input can be used to provide resources, such as images,
  *  that will be used by the HTML content provided on the *html* input.
- *  Note that updating a resource with the same name will not normally result
- *  in the web page being updated because browsers normally cache such resources.
- *  If HTML content refers to a resource that has already been loaded (or more
- *  precisely, that has the same name as a resource that has already been loaded),
- *  then the browser will not load the resource again, but rather will use the
- *  previous version.  You can force the browser to reload a resource by augmenting
- *  the name with parameters (which will be ignored). For example, if you have
- *  a resource named "image.jpg" that you wish to update it, then you can
- *  specify HTML like this:
+ *  Note that you probably will also have to provide an *update* input (see below)
+ *  to force the browser to update the page using the specified resource.
+ *  
+ *  The *update* input can be used to instruct the browser to replace content
+ *  within the page, vs. the *html* input which replaces the entire page.
+ *  The value of an *update* input is expected to be an object with three properties,
+ *  *id*, *property*, and *content*.
+ *  
+ *  The *id* property refers to a the ID of
+ *  a DOM element in the content of the page, where the content has been provided
+ *  either via the *content* parameter or the *html* input. For example, your
+ *  page may include:
  *  <pre>
- *     &lt;img src="image.jpg?count=n"/&gt;
+ *     &lt;div id="foo"&gt;&lt;/div&gt;
  *  </pre>
- *  where *n* is a unique integer not previously seen by the browser.
- *  This will force the browser to go back to the server to retrieve the resource.
+ *  or
+ *  <pre>
+ *     &lt;img id="bar" src="image.jpg"/&gt;
+ *  </pre>
+ *   *  @param id The ID.
+ *  The *property* field specifies what property of the DOM element with the
+ *  specified ID is to be updated. If *property* is "html", then the
+ *  DOM object is updated by invoking the jQuery html() function
+ *  with the specified *content* as an argument. For example, if *id* is "foo",
+ *  *property* is "html", and *content* is "Hello World!", then the above div
+ *  will be populated with the text "Hello World!" on the web page.
+ *  The *content* can include any HTML markup or even scripts, which will be executed.
+ *  
+ *  If *property* is anything other than 'html', then the DOM element's *property*
+ *  attribute will be assigned the value of *content*.
+ *  A *property* value of 'src', however, is treated specially.
+ *  A *property* value of 'src' can be used, for example, to replace the image in the above img tag.
+ *  Just send the updated image to the *resources* input and send this to the
+ *  *update* input:
+ *  <pre>
+ *     {'id':'bar', 'property':'src', 'content':'image.jpg'}
+ *  </pre>
+ *  
+ *  Note that to get the browser to actually replace the image, we have to play some tricks.
+ *  A browser normally caches an image that it has previously retrieved
+ *  and it will use the cached version of the image rather than obtaining the new image
+ *  from the server.  To force the browser to refresh the image, this accessor
+ *  treats a *property* value of 'src' specially.
+ *  Specifically, it appends to the *content* a suffix of the form '?count=*n*',
+ *  where *n* is a unique number. This forces the browser to retrieve the image
+ *  from the server rather than use its cached version because the URI is
+ *  different from that of the cached version. The server, on the other hand, ignores
+ *  the parameter 'count' that has been appended to this URI and simply returns the
+ *  updated image.
  *
  *  The way this accessor works on most hosts is that it starts a web server on localhost
  *  at the specified port that serves the specified web page and then instructs
  *  the system default browser to load the default page from that server.
  *  The page served by the server includes a script that listens for websocket
- *  connections that are used to provide HTML content to display on the page.
+ *  connections that are used to provide HTML content and udpates to display on the page.
  *  Some hosts, however, such as the cordova and browser hosts, natively use
  *  a browser as part of the host, so in these cases, no web server nor socket
  *  connection is needed and the *port* parameter will be ignored.
@@ -71,6 +104,8 @@
  *   the path to be used to access the resource. The 'data' property is the resource
  *   itself, an arbitrary collection of bytes. The 'contentType' is the MIME
  *   type of the data.
+ *  @input update An object with three properties, 'id', 'property', and 'content',
+ *   that specifies an update to a DOM element on the page.
  *  @parameter {string} header HTML content to include in the header part of the web page.
  *   This is a good place to script definitions.
  *  @parameter {string} content HTML content to include in the main body of the page.
@@ -106,6 +141,7 @@ exports.setup = function () {
         'type': 'string'
     });
     this.input('resources');
+    this.input('update');
     this.output('post', {
         'type': 'JSON'
     });
@@ -115,7 +151,12 @@ exports.setup = function () {
     });
 };
 
-var display = function () {
+/** Display the HTML contents retrieved from the *html* input in the main body
+ *  of the browser page replacing whatever was there before.
+ *  Before doing this, check for any *resources* input and add those resources
+ *  to the browser in case the HTML references them. 
+ */
+function display() {
     // Check for any new resources.
     var resources = this.get('resources');
     if (resources) {
@@ -128,6 +169,31 @@ var display = function () {
     browser.display(toDisplay);
 };
 
+/** Update the specified property of the DOM element of the current page,
+ *  if it exists, with the specified content.
+ *  @param id The ID.
+ *  @param property The type of the update. If this is "html", then the
+ *   DOM object is updated by invoking the jQuery html() function it
+ *   with the specified content as an argument. Otherwise, the property
+ *   with name *property* is assigned the value of the content.
+ *   If *property* is 'src', then in addition, the content is augmented
+ *   with a suffix of the form '?count=*n*', where *n* is a unique number.
+ *   This is so that the browser will be forced to reload the src rather than
+ *   using any cached version it may have. This can be used, for example,
+ *   to force an update to an img tag where a new image has been provided
+ *   using addResource().
+ *  @param content The content of the update, typically HTML to insert or
+ *   a property value like src to set.
+ */
+function update() {
+    var update = this.get('update');
+    if (!update.id || !update.property || !update.content) {
+        error('Malformed update input. Expected an object with id, property, and content properties.'
+                + 'Got instead: ' + util.inspect(update));
+        return;
+    }
+    browser.update(update.id, update.property, update.content);
+}
 
 exports.initialize = function () {
     var self = this;
@@ -143,6 +209,8 @@ exports.initialize = function () {
     });
 
     this.addInputHandler('html', display.bind(this));
+
+    this.addInputHandler('update', update.bind(this));
 
     this.addInputHandler('resources', function() {
         var resources = this.get('resources');
