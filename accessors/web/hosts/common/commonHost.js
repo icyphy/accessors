@@ -1344,11 +1344,11 @@ Accessor.prototype.getMonitoringInformation = function () {
     // Get the type of the accessor
     // FIXME: Needs further refinement!!!
     if (this.mutable && this.mutable === true) {
-       type = 'mutable';
+       type += 'mutable';
     } else if (this.extendedBy) {
-        type = '::extended';
+        type += '::extended';
     } else if (this.implementedBy) {
-        type = '::implemented';
+        type += '::implemented';
     } 
 
     if (!this.container) {
@@ -2786,12 +2786,12 @@ function getTopLevelAccessors() {
  *   ignored (the instance inherits those properties from the implementer).
  */
 function instantiateAccessor(
-    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy, mutable) {
+    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
     // In case bindings is not defined.
     bindings = bindings || {};
     var instance = new Accessor(
-        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy, mutable);
+        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
     allAccessors.push(instance);
     return instance;
