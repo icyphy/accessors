@@ -1457,6 +1457,60 @@ Accessor.prototype.instantiateFromCode = function (instanceName, code) {
     return containedInstance;
 };
 
+/** Instantiate the specified accessor only, given its class name. Unlike instantiate,
+ *  the new accessor is not added as a contained accessor and it has no container.
+ *  This will throw an exception if no getAccessorCode() function
+ *  has been specified.
+ *  @param instanceName A name to give to this instance, that will be unique. Although
+ *   the name is prepended with the instantiating accessor name, no containment 
+ *   relation is established.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ */
+Accessor.prototype.instantiateOnly = function (instanceName, accessorClass) {
+    if (!this.getAccessorCode) {
+        throw new Error('instantiate() is not supported by this swarmlet host.');
+    }
+    // For functions that access ports, etc., we want the default implementation
+    // when instantiating the contained accessor.
+    var insideBindings = this.getDefaultInsideBindings(accessorClass);
+    instanceName = this.accessorName + '.' + instanceName;
+    instanceName = uniqueName(instanceName, this);
+    var containedInstance = instantiateAccessor(
+        instanceName, accessorClass, this.getAccessorCode, insideBindings);
+    allAccessors.push(containedInstance);
+    return containedInstance;
+};
+
+/** Instantiate the specified accessor only, given the code that implements the 
+ *  accessor. Unlike instantiateFromCode, the new accessor is not added as a 
+ *  contained accessor and it has no container.
+ *  @param instanceName A name to give to this instance, that will be unique. Although
+ *   the name is prepended with the instantiating accessor name, no containment 
+ *   relation is established.
+ *  @param code The code for the accessor.
+ */
+Accessor.prototype.instantiateOnlyFromCode = function (instanceName, code) {
+    // Only need the getAccessorCode function if the code uses inheritance, so
+    // we don't require it.
+    var getAccessorCode = null;
+    if (this.getAccessorCode) {
+        getAccessorCode = this.getAccessorCode;
+    }
+    // For functions that access ports, etc., we want the default implementation
+    // when instantiating the contained accessor.
+    var bindings = this.getDefaultInsideBindings(null);
+
+    instanceName = this.accessorName + '.' + instanceName;
+    instanceName = uniqueName(instanceName, this);
+
+    // Last two arguments are extendedBy and implementedBy.
+    // None of these apply.
+    var containedInstance = new Accessor(
+            instanceName, code, getAccessorCode, bindings);
+    allAccessors.push(containedInstance);
+    return containedInstance;
+};
+
 /** Return the latest value produced on this output, or null if no
  *  output has been produced.
  *  @param name The name of the output.
