@@ -1328,6 +1328,50 @@ Accessor.prototype.getDefaultInsideBindings = function(accessorClass) {
     return insideBindings;
 }
 
+/** Return an object that contains the accessor name, type (one or a combination of 
+ *  'mutable', 'extended', 'implemented', 'toplevel' or 'composite'), the accessor's 
+ *  monitor object, and an array of the contained accessors' monitoring information,
+ *  if the current one is a composite.  *
+ *  @return an object with the monitoring information of the accessor and its contained
+ *   accessors.
+ */
+Accessor.prototype.getMonitor = function () {
+    var obj = {};
+    var type = '';
+
+    // Get the type of the accessor
+    // FIXME: Needs further refinement!!!
+    if (this.isMutable) {
+       type += 'mutable';
+    } else if (this.extendedBy) {
+        type += 'extended';
+    } else if (this.implementedBy) {
+        type += 'implemented';
+    } 
+
+    if (!this.container) {
+        type += '::topLevel';
+    } else {
+        type += '::composite';
+    }
+
+    // Fill the object to return
+    obj = {
+    	'name': this.accessorName,
+        'type': type,
+        'monitoringInformation': this.monitor,
+        'composites': []
+    };
+
+    if (this.containedAccessors && this.containedAccessors.length > 0) {        
+		for (var i = 0; i < this.containedAccessors.length; i++) {
+            obj.composites.push(this.containedAccessors[i].getMonitor());
+        }
+    }
+
+    return obj;
+}
+
 /** Default implementation of this.getParameter(), which reads the current value of the
  *  parameter provided by this.setParameter(), or the default value if none has been provided,
  *  or null if neither has been provided.
@@ -2688,35 +2732,18 @@ function convertType(value, destination, name) {
 }
 
 /** Return an object of objects. Each object (referenced by the accessor name)
- *  contains: the accessor type (mutable, top level, extended, implemented),
+ *  contains: the accessor type (mutable, top level, composite, extended, implemented),
  *  and all the monitoring information.
  *
  *  @return an object of names the top level accessors that have been created thus far.
  */
 function getMonitoringInformation() {
+    var topLevelAccessors = getTopLevelAccessors();
     var result = {};
-    for (var i = 0; i < allAccessors.length; i++) {
-        var type;
-        var name = allAccessors[i].accessorName;
-
-        // Get the type of the accessor
-        if (allAccessors[i].isMutable) {
-            type = 'mutable';
-        } else if (allAccessors[i].extendedBy) {
-            type = 'extended';
-        } else if (allAccessors[i].implementedBy) {
-            type = 'implemented';
-        } else if (!allAccessors[i].container) {
-            type = 'topLevel';
-        } else {
-            type = 'composite';
-        }
-
-        result[name] = {
-            'type': type,
-            'monitoringInformation': allAccessors[i].monitor
-        };
-    }
+    for (var i = 0; i < topLevelAccessors.length; i++) {
+        result[topLevelAccessors[i].accessorName] = 
+       			topLevelAccessors[i].getMonitor();
+    };
     return result;
 }
 
