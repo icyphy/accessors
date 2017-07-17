@@ -168,7 +168,7 @@
  *  be stored. When calling 'reify' function on a particular accessor X, the mutableAccessor
  *  will connect to X, making it equivalent to X itself. This is enabled by the composition
  *  mechanism that is done on runtime.
- *  this.emit
+ *  
  *  The choice of the accessor to be used for reification can be forced (by giving the accessor
  *  as parameter) or by giving a sorting function. Depending on a bunch of options provided
  *  by the swarmlet designer, 'sort' function will select the best match.
@@ -301,11 +301,11 @@ var deterministicTemporalSemantics = require('./modules/deterministicTemporalSem
  *    will reference it in their root property.
  *  * **ssuper**: If this accessor extends another, this is a reference to the instance
  *    of the accessor it extends.
- *  * **mutable**: If this accessor is a mutableAccessor, this attribute will be set.
+ *  * **isMutable**: If this accessor is a mutableAccessor, this attribute will be set.
  *
  *  If the returned instance is a mutableAccessor, then it will include these additional
  *  properties:
- *  * **status**: indicates the current state among all the states of the lifecycle of a
+ *  * **state**: indicates the current state among all the states of the lifecycle of a
  *    given mutableAccessor
  *  * **reifyingAccessorsList**: An array of the reifying accessors, together with some
  *    information (such as Location...) that will be relevant for sorting. This list should
@@ -317,7 +317,7 @@ var deterministicTemporalSemantics = require('./modules/deterministicTemporalSem
  *  * **parametersMap**: An object that maps the non mapped mutableAccessor inputs to, possibly,
  *    the reifying accessor non connected inputs.
  *  Notes: (i) When a mutableAccessor is reified, the attribute containedAccessors will contain
- *  he selected accessor for reification (ii) A mutableAccessor cannot extend another accessor.
+ *  the selected accessor for reification (ii) A mutableAccessor cannot extend another accessor.
  *  FIXME: Check if a  mutableAccessor can implement another accessor.
  *
  *  The bindings parameter provides function bindings for functions that are used by
@@ -1419,6 +1419,7 @@ Accessor.prototype.instantiate = function (instanceName, accessorClass) {
     instanceName = uniqueName(instanceName, this);
     var containedInstance = instantiateAccessor(
         instanceName, accessorClass, this.getAccessorCode, insideBindings);
+    allAccessors.push(containedInstance);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
     return containedInstance;
@@ -1446,10 +1447,10 @@ Accessor.prototype.instantiateFromCode = function (instanceName, code) {
     instanceName = this.accessorName + '.' + instanceName;
     instanceName = uniqueName(instanceName, this);
 
-    // Last three arguments are extendedBy, implementedBy, and mutable.
+    // Last two arguments are extendedBy and implementedBy
     // None of these apply.
     var containedInstance = new Accessor(
-            instanceName, code, getAccessorCode, bindings, null, null, null);
+            instanceName, code, getAccessorCode, bindings, null, null);
     allAccessors.push(containedInstance);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
@@ -1482,12 +1483,12 @@ Accessor.prototype.module = {
 };
 
 /** Default implementation of the function to define a mutableAccessor.
- *  If this is a mutableAccessor, then add the corresponding properties.
+ *  If this is a mutableAccessor, then add attributes to the accessor.
  *  @param value The value, which should be 'true'
  */
 Accessor.prototype.mutable = function (value) {
-    if (value === 'true' || value === true) {
-        this.mutable = true;
+    if (value == 'true' || value == true) {
+        this.isMutable = true;
 
         ///////////////////////////////////////////////////////////////////
         //// Set up the mutableAccessor properties.
@@ -1504,18 +1505,22 @@ Accessor.prototype.mutable = function (value) {
         this.outputsMap = {};
         this.parametersMap = {};
 
-        this.status = 'instantiated';
+        this.state = 'instantiated';
 
         ////////////////////////////////////////////////////////////////////
         //// Support for additional monitoring information
 
-        // Monitoring reify events
-        this.monitor.reify = {
+        // Monitoring reification events
+        this.monitor.reified = {
             'count': 0,
             'firstOccurrenceDate': {},
             'latestOccurrenceDate': {}
         };
-
+        this.monitor.removedReification = {
+            'count': 0,
+            'firstOccurrenceDate': {},
+            'latestOccurrenceDate': {}
+        };
     }
 
 };
@@ -1835,7 +1840,7 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
     var thiz = this.root, i;
 
     // Check that this is a mutableAccessor
-    if (!thiz.mutable) {
+    if (!thiz.isMutable) {
         console.log('Only mutableAccessors can be tested for reification.');
         return false;
     }
@@ -1971,7 +1976,7 @@ Accessor.prototype.reify = function (accessor) {
     var thiz = this.root;
 
     // Check that this is a mutableAccessor
-    if (!thiz.mutable) {
+    if (!thiz.isMutable) {
         console.log('Only mutableAccessors can be reified.');
         return false;
     }
@@ -2034,9 +2039,11 @@ Accessor.prototype.reify = function (accessor) {
         thiz.connect(reifying.accessor, key, thiz.outputsMap[key]);
     });
 
-    // Update the mutableAccessor status and history
-    thiz.status = 'reified';
-    thiz.updateMonitoringInformation('reify');
+    reifying.accessor.initialize();
+
+    // Update the mutableAccessor state and history
+    thiz.state = 'reified';
+    thiz.updateMonitoringInformation('reified');
 
     return true;
 };
@@ -2055,29 +2062,35 @@ Accessor.prototype.removeReification = function () {
         return false;
     }
 
-    var acc = thiz.containedAccessors.pop();
-    if (acc.container) acc.container = null;
-	acc.wrapup();
+    // Remove the containment relationship
+   	var acc = thiz.containedAccessors.pop();
+    if (acc.container) {
+    	acc.container = null;
+    }
 
+	// Disconnect the mutableAccessor from the reifying one
     Object.keys(thiz.inputsMap).forEach(function (key) {
         thiz.disconnect(key, acc, thiz.inputsMap[key]);
     });
-
     Object.keys(thiz.outputsMap).forEach(function (key) {
         thiz.disconnect(acc, key, thiz.outputsMap[key]);
     });
 
+	// Wrapup the accessor to remove
+	acc.wrapup();
 
+	// Empty mapping objects 
     thiz.inputsMap = {};
     thiz.outputsMap = {};
-    if (thiz.parametersMap) thiz.parametersMap = {};
+    if (thiz.parametersMap) {
+    	thiz.parametersMap = {};
+    }
 
-    // Update the mutableAccessor status and history
-
-    thiz.status = 'instantiated';
+    // Update the mutableAccessor state and history
+    thiz.state = 'instantiated';
+    thiz.updateMonitoringInformation('removedReification');
 
     return true;
-
 };
 
 /** Remove the input handler with the specified handle, if it exists.
@@ -2633,7 +2646,7 @@ function getMonitoringInformation() {
         var name = allAccessors[i].accessorName;
 
         // Get the type of the accessor
-        if (allAccessors[i].mutable) {
+        if (allAccessors[i].isMutable) {
             type = 'mutable';
         } else if (allAccessors[i].extendedBy) {
             type = 'extended';
@@ -2687,12 +2700,12 @@ function getTopLevelAccessors() {
  *   ignored (the instance inherits those properties from the implementer).
  */
 function instantiateAccessor(
-    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy, mutable) {
+    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
     // In case bindings is not defined.
     bindings = bindings || {};
     var instance = new Accessor(
-        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy, mutable);
+        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
     allAccessors.push(instance);
     return instance;
