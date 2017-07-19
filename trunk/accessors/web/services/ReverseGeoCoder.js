@@ -31,7 +31,7 @@
  *  obtain for free at https://developers.google.com/maps/documentation/geocoding/intro .
  *
  *  This accessor looks for a key in $KEYSTORE/geoCoderKey, which
- *  resolves to $HOME/.ptKeystore/geoCoderKey.
+ *  resolves to $HOME/.ptKeystore/geoCoderKey (GeoCoding uses the same key as ReverseGeoCoding). 
  *
  *  This accessor does not block waiting for the response, but if any additional
  *  *address* input is received before a pending request has received a response
