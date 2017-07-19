@@ -7,5 +7,5 @@
     "SpeechRecognition.js", 
     "StockTick.js",
     "Weather.js",
-    "GeoLocation"
+    "GeoLocation.js"
 ]
