@@ -6,5 +6,6 @@
     "ReverseGeoCoder.js",
     "SpeechRecognition.js", 
     "StockTick.js",
-    "Weather.js"
+    "Weather.js",
+    "GeoLocation"
 ]
