@@ -1,0 +1,23 @@
+{
+    "name": "geolocation",
+    "version": "1.0.0",
+    "description": "A GeoLocation module",
+    "main": "geolocation.js",
+    "author": "Chadlia Jerad",
+    "license": "Apache-2.0",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-geolocation": {
+                "GEOLOCATION_USAGE_DESCRIPTION": " "
+            }
+        }
+    },
+    "dependencies": {
+        "cordova-plugin-geolocation": "^2.4.3"
+    },
+    "interface": {
+        "functions": {
+            "getPosition": ["successCallback", "errorCallback", "options"]
+        }
+    }
+}
