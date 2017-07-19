@@ -43,16 +43,11 @@
  *      mandatory.
  *   ** longitude: Longitude (float, unit: degree). This attribute is 
  *      mandatory.
- *   ** altitude: Altitude (Number, unit: meters). This attribute is 
- *      optional.
- *   ** accuracy: Accuracy level of the latitude and longitude coordinates 
- *      (Number, unit: meters).
- *   ** altitudeAccuracy: Accuracy level of the altitude coordinate (Number, 
- *      unit: meters).
- *   ** heading: Direction of travel, counting clockwise relative to the 
- *      true north (Number, unit: degrees).
- *   ** speed: Current ground speed of the device (Number, unit: meters per
- *      second).
+ *   ** accuracy: String that describes, in a fuzzy way the accuracy level.
+ *      That is, if the swarmlet is running in a device that is equiped 
+ *      with GPS, then the accuracy will be set to 'high'. If it uses an ip
+ *      address based lookup, the it will be set to 'low'. These values are
+ *      set at the module level.
  *   ** timestamp: Creation timestamp of the coordiantes (Number, unit: 
  *      milliseconds).
  *
@@ -113,23 +108,11 @@ exports.initialize = function () {
         geoLocation.getPosition(
             function(position) {
                 // onSuccess function
-                var pos = {};
-                pos.latitude = position.coords.latitude;
-                pos.longitude = position.coords.longitude;         
-                pos.altitude = position.coords.altitude;          
-                pos.accuracy = position.coords.accuracy;            
-                pos.altitudeAccuracy = position.coords.altitudeAccuracy;  
-                pos.heading = position.coords.heading;           
-                pos.speed = position.coords.speed;
-                pos.timestamp = position.timestamp;
-                pos.error = false;
-                thiz.send('location', pos);
+                thiz.send('location', position);
             }, 
             function(e) {
                 // onError function
-                var pos = {};
-                pos.error = e;
-                thiz.send('location', pos);
+                thiz.send('location', e);
             }, 
             options);
     });
