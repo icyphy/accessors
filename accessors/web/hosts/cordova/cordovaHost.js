@@ -93,6 +93,17 @@ function require(id) {
     module.exports = {};
     var pathArray = id.split("/");
     
+    // Change the id of the module if it starts with @accessors-modules
+    if (id.indexOf("@accessors-modules/") == 0) {
+        // If "@accessors-modules" is followed by the module name only
+        // then replicate it as the directory + / + module name
+        if (pathArray.length == 2) {
+            id = pathArray[1] + '/' + pathArray[1];
+        } else {
+            // If followed by an entire path, then just keep it
+            id = id.substr(19);
+    }
+
     // Change the root of relative paths that start with './modules'
     if (id.indexOf("./modules") == 0 && loadModule(_modulesCommonPath 
         + pathArray[pathArray.length - 1]) === true) {
