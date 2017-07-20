@@ -36,18 +36,17 @@
  */
 
 exports.setup = function() {
-
+    
     var clock = this.instantiate('clock', 'utilities/Clock');
     clock.setParameter('interval', 2500);
 
-    var geoLocation = this.instantiate('geoLocation', 'GeoLocation');
+    var geoLocation = this.instantiate('geoLocation', 'services/GeoLocation');
     geoLocation.setParameter('enableHighAccuracy', true);
 
     var locationDisplay = this.instantiate('locationDisplay', 'LocationDisplay');
 
     this.connect(clock, 'output', geoLocation, 'trigger');
     this.connect(geoLocation, 'location', locationDisplay, 'location');
-
 };
 
 exports.initialize = function () {
