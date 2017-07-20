@@ -1331,7 +1331,7 @@ Accessor.prototype.getDefaultInsideBindings = function(accessorClass) {
 /** Return an object that contains the accessor name, type (one or a combination of 
  *  'mutable', 'extended', 'implemented', 'toplevel' or 'composite'), the accessor's 
  *  monitor object, and an array of the contained accessors' monitoring information,
- *  if the current one is a composite.  *
+ *  if the current one is a composite.
  *  @return an object with the monitoring information of the accessor and its contained
  *   accessors.
  */
