@@ -92,7 +92,7 @@ function require(id) {
     var module = {};
     module.exports = {};
     var pathArray = id.split("/");
-    
+
     // Change the id of the module if it starts with @accessors-modules
     if (id.indexOf("@accessors-modules/") == 0) {
         // If "@accessors-modules" is followed by the module name only
@@ -102,6 +102,7 @@ function require(id) {
         } else {
             // If followed by an entire path, then just keep it
             id = id.substr(19);
+        }
     }
 
     // Change the root of relative paths that start with './modules'
