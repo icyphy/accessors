@@ -37,6 +37,21 @@ exports.requiredPlugins = ['cordova-plugin-geolocation'];
 
 exports.getPosition = function(onSuccess, onError, options) {
 	
-	var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-};
+	var watchID = navigator.geolocation.getCurrentPosition(
+		function(position) {
+			var location = {};
+            location.latitude = position.coords.latitude;
+            location.longitude = position.coords.longitude;         
+            location.timestamp = position.timestamp;
+            location.accuracy = 'high';
+            location.error = false;
+			onSuccess(location);
+		},
+		function(e) {
+			var location = {};
+            location.error = e;
+			onError(location);
+		}, options
+	);
 
+};
