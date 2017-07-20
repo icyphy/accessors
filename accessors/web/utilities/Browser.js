@@ -141,9 +141,12 @@ exports.setup = function () {
         'type': 'string'
     });
     this.input('resources');
-    this.input('update');
-    this.output('post', {
+    this.input('update', {
         'type': 'JSON'
+    });
+    this.output('post', {
+        'type': 'JSON',
+        'spontaneous': true
     });
     this.parameter('port', {
         'type': 'int',
