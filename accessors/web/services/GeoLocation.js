@@ -69,7 +69,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var geoLocation = require('@accessors-modules/geolocation');
+var geoLocation = require('@accessors-modules/geolocation/geoLocation');
 
 exports.setup = function () {
     // Meta-information about the accessors that can be useful in case
