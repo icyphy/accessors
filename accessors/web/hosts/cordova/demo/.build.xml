@@ -6,21 +6,30 @@
     </delete>
   </target>
 
-<!--  <target name="create">
+  <target name="create">
+    <exec executable="cordova">
+      <arg value="create"/>
+      <arg value="../.new_cordova_proj"/>
+    </exec>
     <copy todir="src/">
       <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
     </copy>
     <copy todir="src/">
       <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
     </copy>
-    <antcall target="clean"/>
-  </target>
--->
-
-  <target name="build">
-    <antcall target="init"/>
+    <copy todir=".">
+      <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
+    </copy>
+    <delete dir="../.new_cordova_proj"/>
     <antcall target="refresh"/>
     <antcall target="plugins"/>
+  </target>
+
+  <target name="build">
+    <antcall target="clean"/>   <!-- remove cordova-generated files -->
+    <antcall target="init"/>    <!-- (re)generate cordova files  -->
+    <antcall target="refresh"/> <!-- copy source files into cordova project -->
+    <antcall target="plugins"/> <!-- add plugins to project -->
   </target>
 
   <target name="init">
@@ -30,12 +39,6 @@
     </exec>
     <copy todir=".">
       <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
-    </copy>
-   <copy todir="src/">
-      <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
-    </copy>
-    <copy todir="src/">
-      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
     </copy>
     <delete dir="../.new_cordova_proj"/>
   </target>
