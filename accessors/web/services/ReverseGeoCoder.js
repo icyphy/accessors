@@ -41,7 +41,12 @@
  *
  *  If multiple addresses are returned from the google reverse geocoding service,
  *  this accessor outputs the first one on address. The full response is available
- *  at the response output
+ *  at the response output.
+ *  
+ *  The accuracy property of the location input is used to filter the returned results.
+ *  If for example, location is given at a very low accuracy and the given coordinates are
+ *  intended to represent an entire city or district, it would be overly specific to return
+ *  the street address. Instead the name of the city should be the output.
  *
  *  @accessor services/ReverseGeoCoder
  *  @input location The location, as an object with a 'latitude' and 'longitude'
@@ -134,6 +139,18 @@ exports.initialize = function () {
                 'latlng': location.latitude + ',' + location.longitude,
                 'key': key
             };
+
+            //Set a filter for the reverse geocoding request based on the accuracy of the
+            //location object. Default to no filter if accuracy is not specified or set to high.
+            //The list of results from google is ordered by accuracy. 
+            if(location.accuracy && location.accuracy == "low"){
+                args.result_type = "locality";
+                //according to the google API https://developers.google.com/maps/documentation/geocoding/intro#Types
+                //"locality indicates an incorporated city or town political entity."
+                //I need to do more experimenting, but it seems ip based location is accurate
+                //up to this level but no further. 
+
+            }
             self.send('arguments', args);
             self.send('trigger', true);
         } else {
