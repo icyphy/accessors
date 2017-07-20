@@ -63,8 +63,12 @@
  */
 exports.setup = function () {
     this.extend('net/REST');
-    this.input('location');
-    this.output('address');
+    this.input('location',{
+        "type": 'JSON'
+    });
+    this.output('address',{
+        "type": 'string'
+    });
 
     // Change default values of the base class inputs.
     // Also, hide base class inputs, except trigger.
