@@ -112,7 +112,7 @@ exports.initialize = function () {
             }, 
             function(e) {
                 // onError function
-                thiz.send('location', e);
+                thiz.send('error', e);
             }, 
             options);
     });

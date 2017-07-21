@@ -25,9 +25,14 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/**
- *  Module for retrieving geolocation information.
- *
+/** Module for retrieving geolocation information, using the geolocation
+ *  plugin for Cordova. Using the navigator geolocation, the current 
+ *  position is passed in case of success.
+ *  The exported function is 'getPosition', that has as parameters:
+ *  ** the function to execute in case of success,
+ *  ** the function to execute in case an error occured
+ *  ** and the options, not applicable in this case.
+ *  
  *  @module geolocation
  *  @author Chadlia Jerad
  *  @version $$Id: geolocation.js 75980 2017-07-18 00:19:25Z chadlia.jerad $$
@@ -44,13 +49,10 @@ exports.getPosition = function(onSuccess, onError, options) {
             location.longitude = position.coords.longitude;         
             location.timestamp = position.timestamp;
             location.accuracy = 'high';
-            location.error = false;
-			onSuccess(location);
+			onSuccess.call(this, location);
 		},
 		function(e) {
-			var location = {};
-            location.error = e;
-			onError(location);
+			onError.call(this, e);
 		}, options
 	);
 
