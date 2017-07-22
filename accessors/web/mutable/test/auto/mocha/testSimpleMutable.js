@@ -29,7 +29,6 @@ describe('NodeHost' , function() {
             assert.equal(a1.accessorName, "a1");
 
             if (ma.reify(a1)) {
-                ma.initialize();
                 
                 ma.provideInput('input', _input);
                 ma.react();
@@ -48,14 +47,13 @@ describe('NodeHost' , function() {
         }
 
         // Remove accessor a1 as reification.
-        if (ma.removeReification()) {
+        if (ma.unreify()) {
             //console.log('Successfully removed previous reification. Go for substitution...');
 
             // Go and test for reification with a2.
             if (ma.reifiableBy(a2)){
                 // console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
-                if (ma.reify()) {
-                    ma.initialize();
+                if (ma.reify(a2)) {
                     ma.provideInput('input', _input);
                     ma.react();
                     // console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
