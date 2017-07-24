@@ -89,6 +89,10 @@ exports.initialize = function () {
     this.recognition.on('result', function(result) {
                 self.send('text', result);
             });
+    
+    this.recognition.on('onerror', function(message) {
+    	error(message);
+    });
         
     this.addInputHandler('start', function() {
                 // Recheck continuous mode parameter in case it has changed.
@@ -104,13 +108,12 @@ exports.initialize = function () {
                 if (self.get('stop')) {
                     self.recognition.stop();
                 }
-            });
+            });    
 };
 
 /** Stop the recognizer.  The helper class takes care of multiple stops.
  */
 exports.wrapup = function() {
-	console.log('calling wrapup');
 	if (this.recognition !== null && typeof this.recognition !== "undefined") {
 		this.recognition.stop();
 	}
