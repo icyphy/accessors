@@ -84,31 +84,28 @@ exports.initialize = function () {
     options.dictionaryPath = this.getParameter('dictionaryPath');
     options.languageModelPath = this.getParameter('languageModelPath');
     
-    this.recognition = new speechRecognition.SpeechRecognition(options);
-        
-    this.recognition.on('result', function(result) {
-                self.send('text', result);
-            });
-    
-    this.recognition.on('onerror', function(message) {
-    	error(message);
-    });
+    if (this.recognition !== null || typeof this.recognition !== 'undefined') {
+    	this.recognition = new speechRecognition.SpeechRecognition(options);
+    	
+        this.recognition.on('result', function(result) {
+            self.send('text', result);
+        });
+
+    } else {
+    	this.recognition.setOptions(options);
+    }
         
     this.addInputHandler('start', function() {
-                // Recheck continuous mode parameter in case it has changed.
-                options.continuous = self.getParameter('continuous');
-                self.recognition.setOptions(options);
-                
-                if (self.get('start')) {
-                    self.recognition.start();
-                }
-            });
+        if (self.get('start')) {
+            self.recognition.start();
+        }
+    });
         
     this.addInputHandler('stop', function() {
-                if (self.get('stop')) {
-                    self.recognition.stop();
-                }
-            });    
+        if (self.get('stop')) {
+            self.recognition.stop();
+        }
+    });    
 };
 
 /** Stop the recognizer.  The helper class takes care of multiple stops.
