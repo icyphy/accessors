@@ -1,0 +1,31 @@
+{
+    "name": "wifiScanner",
+    "version": "1.0.0",
+    "description": "A module that provides access to host wifi scanning.",
+    "main": "wifiScanner.js",
+    "author": "Matt Weber",
+    "license": "Apache-2.0",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-whitelist": {},
+            "com.pylonproducts.wifiwizard": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-android-permissions": {}
+        }
+    },
+    "dependencies": {
+        "cordova-android": "^6.2.3",
+        "cordova-browser": "^4.1.0",
+        "cordova-ios": "^4.4.0",
+        "cordova-plugin-android-permissions": "^1.0.0",
+        "cordova-plugin-device": "^1.1.6",
+        "cordova-plugin-whitelist": "^1.3.2",
+        "wifiwizard": "^0.2.11",
+        "com.pylonproducts.wifiwizard": "~0.2.11"
+    },
+    "interface": {
+        "functions": {
+            "scan": ["listHandler"]
+        }
+    }
+}
