@@ -24,6 +24,9 @@
 //
 
 /** Subscribe to a Global Data Plane (GDP) log.
+ *  Given a log name, this accessor first retrieves the most recent append to the specified log
+ *  and produces it as an output during initialize. After that, whenever a new append to the log
+ *  occurs, it produces an output.
  *
  *  FIXME: What is the meaning of the startrec and numrec arguments? Makes no sense for subscription.
  *
@@ -155,6 +158,10 @@ exports.subscribe = function () {
         this.getParameter('numrec'),
         this.getParameter('timeout')
     );
+    
+    // Produce a first output that is the latest data.
+    var data = log.read(-1);
+    self.send('data', data);
 };
 
 /** Unsubscribe to the log. */
