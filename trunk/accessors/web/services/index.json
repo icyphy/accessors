@@ -1,5 +1,6 @@
 [
     "GeoCoder.js",
+    "GeoLocation.js",
     "Heartbeat.js",
     "NaturalLanguage.js",
     "RedPinLocation.js",
@@ -7,5 +8,5 @@
     "SpeechRecognition.js", 
     "StockTick.js",
     "Weather.js",
-    "GeoLocation.js"
+    "WiFiScan.js"
 ]
