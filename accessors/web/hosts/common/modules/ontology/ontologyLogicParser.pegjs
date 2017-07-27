@@ -60,20 +60,273 @@
 
 {
   //initilization code
-  var relations = require('./relations.js');
+  //console.log("Initialized options: " + JSON.stringify(options));
+  //var relations = require('./relations.js');
+  var thiz = this; //Saved so I can call thiz.parse later.
+  
+  var variableAssignment = {};
+  var trueAssignments = [];
+  var queryMode = false;
+  var domainsMap = {}; //a map between variables and domains
+  var quantifiedVariableArray = [];
+
+  //A Q is treated as an existential quantifer in terms of later quantifiers,
+  //but the appearance of a Q switches the output of the parser to query mode
+  //where the trueAssignments object will be returned instead of "true/false"
+
+  //For valid input you can also give an expression with variables 
+  //and a variable assignment object as a parser option
+
+  function tryAssignments(expression, quantVarIndex){
+    /*
+    console.log("printing expression");
+    console.log(expression);
+    console.log(quantVarIndex);
+    console.log(quantifiedVariableArray);
+    console.log("printing domainsMap");
+    console.log(domainsMap);
+    */
+
+
+    //This condition is not an off-by-one error! When the index pushes past
+    //the last element of the array, evaluate.
+    if(quantVarIndex == quantifiedVariableArray.length){
+       //console.log(JSON.stringify(variableAssignment));
+      //console.log("in base case, printing expression");
+      //console.log(expression);
+      //console.log(JSON.stringify({"startRule":'expression', "variableAssignment":variableAssignment }));
+      //Parse the expression using the current variableAssignment
+      //and begin with the 'expression' rule (not the 'form' rule)
+      var parseResult = thiz.parse(expression, 
+        {"startRule":'expression', "variableAssignment":variableAssignment }
+      );
+      //console.log("parseResult was " + parseResult);
+      if(queryMode && typeof parseResult !== 'undefined' && parseResult){
+        //console.log("queryMode is true!");
+        //console.log("adding assignment: " + JSON.stringify(variableAssignment) )
+        
+        //We have to copy the assignment to a new object, otherwise it remains symbolicly linked
+        //and will change on the next assignment we test.
+        trueAssignments.push(Object.assign( {}, variableAssignment));
+
+      }
+      return parseResult;
+
+    } else {
+      var currentQuantifier = quantifiedVariableArray[quantVarIndex].quantifier;
+      var currentVariable = quantifiedVariableArray[quantVarIndex].variable;
+      var currentDomain = domainsMap[currentVariable];
+      var truthValue;
+      switch (currentQuantifier) {
+        case 'A':
+          truthValue = true;
+          for( var i = 0; i < currentDomain.length; i++){
+            variableAssignment[currentVariable] = currentDomain[i];
+            var assignmentResult = tryAssignments(expression, quantVarIndex +1);
+            if( typeof assignmentResult === 'undefined' || ! assignmentResult){
+              truthValue = false;
+              break;
+            }
+          }
+          break;
+        case 'E':
+          truthValue = false;
+          for( var i = 0; i < currentDomain.length; i++){
+            variableAssignment[currentVariable] = currentDomain[i];
+            var assignmentResult = tryAssignments(expression, quantVarIndex + 1);
+            if(typeof assignmentResult !== 'undefined' &&  assignmentResult){
+              truthValue = true;
+              break;
+            }
+          }
+          break;
+        case 'Q':
+          queryMode = true;
+          truthValue = false;
+          for( var i = 0; i < currentDomain.length; i++){
+            variableAssignment[currentVariable] = currentDomain[i];
+            var assignmentResult =  tryAssignments(expression, quantVarIndex +1);
+            truthValue =  truthValue || (typeof assignmentResult !== 'undefined' && assignmentResult);
+          }
+          break;
+      }
+      //console.log("at level: " + quantVarIndex + "returning truthvalue: " + truthValue);
+      return truthValue;
+    }
+  }
 }
 
-expression
+form
+  = quantVars:quantifiedVariableList ':' expr:variableExpression ':' dom:domains {
+
+    //console.log("form for next 3 lines:");
+    //console.log(JSON.stringify(dom));
+    //console.log(JSON.stringify(quantVars));
+    //console.log(expr);
+    //Validate: The same variable should only appear once in the variableList and the domain
+    //and all variables in variableList must have a domain.
+
+    // if a variable appears in seenVariables it is in quantVars
+    // if a variable has the assignment "true" in seenVariables it appears in dom
+    var seenVariables = {};
+
+    if(quantVars.length === 0){
+      error('Quantified variables are expected, but none are given.');
+    }
+    for(var i = 0; i < quantVars.length; i++){
+      if( typeof seenVariables[quantVars[i].variable] !== 'undefined' ){
+        error('Duplicate instance of variable ' + quantVars[i].variable + ' in quantifiers');
+      } else {
+        seenVariables[quantVars[i].variable] = false;
+      }
+    }
+
+    for(var i = 0; i < dom.length; i++){
+      if( typeof seenVariables[dom[i].variable] === 'undefined' ){
+        error('Variable ' + dom[i].variable + ' appears in domains but not quantifiers.');
+      } else if (seenVariables[dom[i].variable] === true){
+        error('Variable ' + dom[i].variable + ' appears multiple times in domains.');
+      } else {
+        seenVariables[dom[i].variable] = true;
+      }
+    }
+
+
+    for(var key in seenVariables){
+      if(seenVariables[key] === false){
+        error('Variable ' + key + ' has not been given a domain.' );
+      }
+    }
+
+    //convert dom to a global object so it is 1) easier to find the domain for a variable
+    //and 2) doesn't have to be passed on every recursive call to tryAssignments
+    for(var i = 0; i < dom.length; i++){
+      domainsMap[dom[i].variable] = dom[i].domain;
+    }
+    
+
+    //convert quantVars to a global object for the same reason
+    quantifiedVariableArray = quantVars;
+
+
+
+
+    var assignmentResult = tryAssignments(expr, 0);
+    if(queryMode && assignmentResult){
+      //console.log("assignmentResults are: " + JSON.stringify(trueAssignments));
+      return trueAssignments;
+    } else {
+      return assignmentResult;
+    }
+  }
+/expr:expression { return expr;}
+
+variableExpression
+  = varExpr:([^:]*) { 
+  //console.log('looking at form-variableExpression ' + varExpr.join(""));
+  return varExpr.join('');}
+
+
+/*
   = infixOp //must proceed everything else because they can be nonInfixExpressions
   / parens
   / prefixOp
   / relation
+  / variable
+*/
+
+variable
+  = _ variableString:name _ {
+  //console.log("hello from variable");
+    if(typeof options.variableAssignment === 'undefined' ){
+      error("Variables are not allowed if no variable assignment has been given in options.");
+    }
+    if(typeof options.variableAssignment[variableString] === 'undefined'){
+      error("No assignment has been given to the unbound variable '" + variableString + "'");
+    } else {
+      //console.log('replacing ' + variableString + " with " + options.variableAssignment[variableString]);
+      
+      //var parseResult = thiz.parse(options.variableAssignment[variableString].toString(), {"startRule":'terminal' });
+      //console.log("variable parsing result was: " + parseResult);
+      return options.variableAssignment[variableString];
+
+      // To prevent someone from trying to hack this parser with code injection
+      // in a variable, force the start rule for its evaluation to be 'terminal'
+    }
+  }
+
+quantifiedVariableList
+  = quantVars:(quantifiedVariable+) {
+    //console.log("return quantVarsList: " + JSON.stringify(quantVars));
+    return quantVars;
+  }
+
+quantifiedVariable
+  = _ quantifier:[AEQ] _ variable:(name) _ { 
+  //console.log("quantifier: " + quantifier);
+  //console.log("variable: " + variable);
+  return { "quantifier": quantifier, "variable": variable  }; }
+
+// should match something of the form
+// x = [1 ,2 ,3], y = [true], z = ["apple", "orange"]
+// and return
+// [ {"variable":x, "domain": [1,2,3], ... }  ] 
+
+domains
+  = head:variableDomain tail:(domainSequence+) { 
+  tail.splice(0, 0, head);
+  //console.log('domains case 2: ' + JSON.stringify(tail));
+  return tail;}
+  / dom:variableDomain { 
+    //console.log('domains case 1: ' + JSON.stringify([dom]));
+    return [dom];
+      }
+  
+
+domainSequence
+  = _ ','  varDom:variableDomain  {
+  //console.log('vardom is ' + JSON.stringify(varDom));
+  return varDom;}
+
+
+// should match something of the form
+// x = [1 ,2 ,3]
+// and return 
+// {"variable":x, "domain": [1,2,3]}
+variableDomain
+  = _ variable:name _ '=' _ '[' _ value:terminal _ ']' _ 
+  { 
+  //console.log('varDomain case 1');
+  return { "variable": variable, "domain":[value ]  }; }
+
+  / _ variable:name _ '=' _ '[' _ head:terminal _  tail:(domainItem+) ']' _ {
+    //console.log("variable: " + JSON.stringify(variable));
+
+  //console.log('head ' + JSON.stringify(head));
+  //console.log('tail ' + JSON.stringify(tail));
+    tail.splice(0,0, head) ;
+  //console.log('after splice tail ' + JSON.stringify(tail));
+  //console.log('varDomain case 2' + JSON.stringify({ "variable": variable, "domain":tail }) );
+  return { 
+  "variable": variable, "domain":tail }; }
+  
+domainItem
+  = ',' _ item:terminal  {
+  //console.log('domain item: ' + item);
+  return item;}
+
+expression
+  = infi:infixOp {return infi;}//must proceed everything else because they can be nonInfixExpressions
+  / par:parens {return par;}
+  / pre:prefixOp  {return pre;}
+  / relat:relation {return relat;}
 
 //Needed to prevent left recursion for infixOps
 nonInfixExpression
   = stripped:parens {return stripped}
   / prefixOp
   / relation
+  / vari:variable {return vari;}
 
 prefixOp
   = _ "!" _ expr:expression {
@@ -90,7 +343,7 @@ prefixOp
 // The trick for making them so is explained at 
 // http://www.engr.mun.ca/~theo/Misc/exp_parsing.htm#classic
 infixOp
-  = A
+  = aa:A {return aa;}
 
 A
   = _ lhs:B rhs:(Arepeat*) {
@@ -147,7 +400,7 @@ B
     }
 
 Brepeat
-  = _ "||" _ symbol:C {return symbol;}
+  = _ "||" _ symbol:C { return symbol;}
 
 C
   = _ lhs:D rhs:(Crepeat*){
@@ -175,11 +428,11 @@ C
     }
 
 Crepeat
-  =_ "&&" _ symbol:D {return symbol;}
+  =_ "&&" _ symbol:D { return symbol;}
 
 
 D
-  = nonInfixExpression
+  = nonInf:nonInfixExpression { return nonInf}
 
 /*
   = _ B (_ "&&" _ B)*  { return head && tail;}
@@ -190,11 +443,26 @@ D
 */
 
 
+terminal
+  =t:boolean {
+    //console.log("found a bool terminal " + t);
+    return t;}
+  /t:string {
+    //console.log("found a string terminal " + t);
+    return t;}
+  /t:decimal{ 
+    //must preceed integer 
+    //console.log("found a decimal terminal " + t);
+    return t;}
+  /t:integer {
+    //console.log("found an integer terminal " + t);
+    return t;}
+
 literal
-  =boolean
-  /string
-  /decimal //must preceed integer
-  /integer
+  =t:terminal
+  /vari:variable {
+   //console.log("got a variable in literal: " +  vari);
+  return vari;}
 
 
 boolean
@@ -206,23 +474,31 @@ string
   = _ '\"' str:([^"]*) '\"' _ {return str.join('');}
 
 integer
-  = _ int:([0-9]*) _ {return parseInt(int.join(''));}
+  = _ int:([0-9]+) _ {console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&got "+ int); return parseInt(int.join(''));}
 
 decimal
-  = _ dec:(([0-9]*) '.' ([0-9]*)) _ {return parseFloat(dec.join(''));} 
+  = _ head:([0-9]*) '.' tail:([0-9]+) _ {
+  tail.splice(0, 0, '.');
+  for(var i = head.length -1; i >= 0; i--){
+    tail.splice(0, 0, head[i]);
+  }
+  return parseFloat(tail.join(''));} 
 
 //FIXME temporary implementation
 relation
   = boolean   //must be first case to check for reserved names
   / _ relat:name _ "(" _ ")" _ {
-        return relations.interpret(relat, []);
+        //console.log("relation1");
+        return options.relations.interpret(relat, []);
       }
   / _ relat:name _ "(" _ arg1:literal _ ")" _ {
-        return relations.interpret(relat, [arg1]);
+        //console.log("relation2");
+        return options.relations.interpret(relat, [arg1]);
       }
   / _ relat:name _ "(" _ arg1:literal _ args:argument+ ")" _ {
+          //console.log("relation3");
         args.unshift(arg1);
-        return relations.interpret(relat, args);
+        return options.relations.interpret(relat, args);
       }
 
 
@@ -233,7 +509,9 @@ argument
 //This should only work if names are checked after relations and reserved words like truefalse
 // because it's the same except for parenthesis
 name
-  = head:[a-z_]i tail:[a-z0-9_]i* {tail.unshift(head); return tail.join("");}
+  = head:[a-z_]i tail:[a-z0-9_]i* {tail.unshift(head);
+  //console.log('name is: ' + tail.join(""));
+   return tail.join("");}
 
 parens
   = _ "(" _ expr:expression _ ")" _ {return expr}
@@ -245,14 +523,8 @@ _ "whitespace"
 /*
 //todos
 
-//variables are non-negative integers
-variable
-  =
+//equality relation
 
-//looks like a relation but prefixed by '$'
-function
-  =
-
-//Quantifiers
+//tuples, like for coordinates
 */
 
