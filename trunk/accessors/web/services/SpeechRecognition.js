@@ -46,31 +46,31 @@ var speechRecognition = require('@accessors-modules/speech-recognition');
  */
 exports.setup = function () {
     this.parameter('continuous', {
-                'type' : 'boolean', 
-                'value' : true
-    				});
+        'type' : 'boolean', 
+        'value' : true
+    });
     
     this.parameter('dictionaryPath', {
-		'type' : 'string',
-		'value' : ''
-			});
+        'type' : 'string',
+        'value' : ''
+    });
     
     this.parameter('languageModelPath', {
-    			'type' : 'string',
-    			'value' : ''
-    				});
-        
+        'type' : 'string',
+        'value' : ''
+    });
+    
     this.input('start', {
-                'type': 'boolean'
-                    });
-        
+        'type': 'boolean'
+    });
+    
     this.input('stop', {
-                'type': 'boolean'
-                    });
-                
+        'type': 'boolean'
+    });
+    
     this.output('text', {
-                'type': 'string'
-                    });
+        'type': 'string'
+    });
 };
 
 /** Register input handlers for start and stop events and set up event handler
@@ -78,29 +78,29 @@ exports.setup = function () {
  */
 exports.initialize = function () {
     var self = this;
-        
+    
     var options = {};
     options.continuous = this.getParameter('continuous');
     options.dictionaryPath = this.getParameter('dictionaryPath');
     options.languageModelPath = this.getParameter('languageModelPath');
     
     if (this.recognition !== null || typeof this.recognition !== 'undefined') {
-    	this.recognition = new speechRecognition.SpeechRecognition(options);
-    	
+        this.recognition = new speechRecognition.SpeechRecognition(options);
+        
         this.recognition.on('result', function(result) {
             self.send('text', result);
         });
 
     } else {
-    	this.recognition.setOptions(options);
+        this.recognition.setOptions(options);
     }
-        
+    
     this.addInputHandler('start', function() {
         if (self.get('start')) {
             self.recognition.start();
         }
     });
-        
+    
     this.addInputHandler('stop', function() {
         if (self.get('stop')) {
             self.recognition.stop();
@@ -111,7 +111,7 @@ exports.initialize = function () {
 /** Stop the recognizer.  The helper class takes care of multiple stops.
  */
 exports.wrapup = function() {
-	if (this.recognition !== null && typeof this.recognition !== "undefined") {
-		this.recognition.stop();
-	}
+    if (this.recognition !== null && typeof this.recognition !== "undefined") {
+        this.recognition.stop();
+    }
 }
