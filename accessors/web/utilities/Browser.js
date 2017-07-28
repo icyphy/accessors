@@ -1,6 +1,6 @@
 // Accessor that connects with a browser on the local host.
 //
-// Copyright (c) 2016-2016 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -121,7 +121,7 @@
 
 // Stop extra messages from jslint and jshint.  Note that there should be no
 // space between the / and the * and global. See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint */
-/*global  exports, require */
+/*global error, exports, require, util */
 /*jshint globalstrict: true*/
 "use strict";
 
@@ -170,7 +170,7 @@ function display() {
 
     var toDisplay = this.get('html');
     browser.display(toDisplay);
-};
+}
 
 /** Update the specified property of the DOM element of the current page,
  *  if it exists, with the specified content.
@@ -189,13 +189,13 @@ function display() {
  *   a property value like src to set.
  */
 function update() {
-    var update = this.get('update');
-    if (!update.id || !update.property || !update.content) {
+    var updateValue = this.get('update');
+    if (!updateValue.id || !updateValue.property || !updateValue.content) {
         error('Malformed update input. Expected an object with id, property, and content properties.'
-                + 'Got instead: ' + util.inspect(update));
+                + 'Got instead: ' + util.inspect(updateValue));
         return;
     }
-    browser.update(update.id, update.property, update.content);
+    browser.update(updateValue.id, updateValue.property, updateValue.content);
 }
 
 exports.initialize = function () {
