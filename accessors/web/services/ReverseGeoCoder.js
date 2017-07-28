@@ -88,7 +88,7 @@ exports.setup = function () {
     });
 
     this.input('arguments', {
-        'visibility': 'expert',
+        'visibility': 'expert'
     });
     this.input('body', {
         'visibility': 'expert'

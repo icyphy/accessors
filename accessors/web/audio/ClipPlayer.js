@@ -51,7 +51,7 @@ exports.setup = function () {
         'value': 'http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3'
     });
     this.output('done', {
-    	'type' : 'boolean'
+        'type' : 'boolean'
     });
 };
 
@@ -67,13 +67,13 @@ exports.initialize = function () {
         if (url && url !== self.previousURL) {
             //console.log('Got a new URL: ' + url);
             if (self.player !== null) {
-            	self.player.stop();	// audio.js checks if it's actually playing.
+                self.player.stop();        // audio.js checks if it's actually playing.
             }
             self.player = new audio.ClipPlayer(url);
             self.previousURL = url;
             
             self.player.on('done', function() {
-            	self.send('done', true);
+                self.send('done', true);
             });
         }
     }
@@ -91,7 +91,7 @@ exports.initialize = function () {
             error('No clip specified.');
             return;
         } else {
-        	self.player.stop();	// audio.js checks if it's actually playing.
+            self.player.stop();        // audio.js checks if it's actually playing.
         }
         self.player.play();
     });
@@ -101,7 +101,7 @@ exports.initialize = function () {
             self.player.stop();  // audio.js checks if it's actually playing.
         }
     });
-  
+    
 };
 
 /** Stop any playback. */
