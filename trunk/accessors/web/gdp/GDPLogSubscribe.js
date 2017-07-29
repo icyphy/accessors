@@ -142,9 +142,14 @@ exports.subscribe = function () {
 
     // Listen for data from the log.
     log.on('data', function (data) {
-        console.log('****** received: ' + data);
-        self.send('data', data);
-        console.log('****** sent data: ' + data);
+        // De-duplicate if the data is the same as the first data.
+        if ((self.firstData === null) || !self.firstData.equals(data)) {
+            console.log('****** received: ' + data);
+            self.send('data', data);
+            console.log('****** sent data: ' + data);
+            // Avoid performing the comparison again.
+            self.firstData = null;
+        }
     });
 
     log.setDebugLevel(this.getParameter('debugLevel'));
@@ -155,6 +160,21 @@ exports.subscribe = function () {
         this.getParameter('numrec'),
         this.getParameter('timeout')
     );
+    
+    // Produce a first output that is the latest data.
+    // Note that there is a race condition here because by the time the read
+    // occurs, we may already have a 'data' event queued. This would result
+    // in duplicated data. So we record the value of the first data, and
+    // if the first event exactly matches it, then the first event is ignored.
+    // Note that if there is nothing on the log, the log.read() yields a 404,
+    // not found, error, so we surround with a try catch.
+    self.firstData = null;
+    try {
+        self.firstData = log.read(-1);
+        self.send('data', self.firstData);
+    } catch(e) {
+        // Ignore.
+    }
 };
 
 /** Unsubscribe to the log. */
