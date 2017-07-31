@@ -119,6 +119,10 @@ exports.wifiReadingsInputHandler = function () {
     //Throw an error if input is incorrectly structured
     try {
         var wifiTest = JSON.parse(wifiArray);
+        if(! Array.isArray(wifiTest) ){
+            throw "the wifiArray input is not an array";
+        }
+
         for (var i = 0; i < wifiTest.length; i += 1) {
             if (typeof wifiTest[i].ssid !== "string") {
                 throw "missing ssid string in " + i + "th element of wifiReadings: " + wifiArray;
