@@ -49,7 +49,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var httpClient = require('httpClient/httpClient.js');
+var httpClient = require('@accessors-modules/http-client');
 
 var dropOutput = false;
 
