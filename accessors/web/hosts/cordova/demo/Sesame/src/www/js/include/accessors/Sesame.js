@@ -23,15 +23,14 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This "swarmlet" example, running on Cordova, illustrates the use of Cordova
- *  Host. The swarmlet loads loads a 'testAcc', initializes it, provides an input
- *  and then diplays the output after caling react().
+/** This accessor is a swarmlet that opens the door of the DOP center when 
+ *  near. Proximity is evaluated using a ble beacon. 
  *  
  *  See https://www.icyphy.org/accessors/wiki/Main/CordovaHost2
  *  
- *  @module swarmlet.js
+ *  @module Sesame.js
  *  @author Chadlia Jerad, Victor Nouvellet
- *  @version $$Id: swarmlet.js 1502 2017-04-17 21:34:03Z cxh $$
+ *  @version $$Id: Sesame.js 1502 2017-04-17 21:34:03Z cxh $$
  */
 
 exports.setup = function() {

@@ -29,9 +29,9 @@
  *  @param newDevice The input, an object containing rssi and uuid.
  *  @param open The output, a boolean trigger to the Door accessor.
  *  @param uuid A parameter specifiying the uuid for which to produce an output.
- *  @param rssi A parameter specifying the minimum rssivalue for which to produce an output.
+ *  @param rssi A parameter specifying the minimum rssi value for which to produce an output.
  *  @author Matt Weber
- *  @version $$Id: BLE.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @version $$Id: SesameFilter.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
