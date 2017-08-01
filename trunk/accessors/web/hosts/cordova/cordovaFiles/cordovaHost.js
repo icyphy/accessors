@@ -125,7 +125,7 @@ function require(id) {
         }
         // Else, use the native require.
         else {
-            return cordova.require(); 
+            return cordova.require(id); 
         }
     }
     // If the module was loaded successfully, evaluate its code.
