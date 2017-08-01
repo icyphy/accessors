@@ -41,8 +41,8 @@
  *  bleScanAcc.provideInput('startScan', true);
  *  bleScanAcc.react();
  *
- *  @author Chadlia, Victor
- *  @version $$Id: BLE.js 1137 2016-12-06 22:13:55Z cxh $$
+ *  @author Chadlia Jerad, Victor Nouvellet
+ *  @version $$Id: BLEScanner.js 1137 2016-12-06 22:13:55Z cxh $$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
@@ -51,7 +51,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var ble = require('bluetooth/ble.js');
+var ble = require('@accessors-modules/ble');
 
 exports.setup = function () {
     this.input('startScan');
