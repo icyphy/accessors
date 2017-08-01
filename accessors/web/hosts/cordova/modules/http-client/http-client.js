@@ -47,9 +47,9 @@
  * </pre>
  * Both http and https are supported.
  *
- * @module httpClient
+ * @module http-client
  * @author Hokeun Kim and Matt Weber
- * @version $$Id: httpClient.js 75980 2017-04-23 00:19:25Z beth@berkeley.edu $$
+ * @version $$Id: http-client.js 75980 2017-04-23 00:19:25Z beth@berkeley.edu $$
  */
 
 var EventEmitter = require('events').EventEmitter;
