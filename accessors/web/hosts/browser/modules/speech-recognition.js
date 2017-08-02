@@ -77,14 +77,31 @@ exports.SpeechRecognition = function(options) {
         // The event is SpeechRecognitionResultList object which is an array of
         // SpeechRecognitionResult objects.  Each object contains a 
         // .transcript and .confidence.
-        self.emit('result', event.results[self.resultCount][0].transcript);
+    	// Remove any leading spaces.
+    	var result = event.results[self.resultCount][0].transcript;
+    	if (result.length > 0 && result[0] === ' ') {
+    		result = result.substring(1, result.length);
+    	}
+        self.emit('result', result);
         if (options.continuous) {
             self.resultCount ++;
         }
     };
         
+    // Propagate errors.
+    // List of Web Speech API errors:
+    // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognitionError/error
     this.recognition.onerror = function(err) {
-        error('Error: ' + err);
+    	// Ignore no-speech errors.  These might occur in due to background noise.
+    	// Any error stops the recongition engine.  Restart in case of no-speech.
+    	if (err.error !== 'no-speech') {
+    		error('Error: ' + err.error);
+    	} else {
+    		self.recognition.onend = function() {
+    			self.recognition.start();
+    			self.recognition.onend = null;
+    		}
+    	}
     };
     /* Useful for debugging.
           
