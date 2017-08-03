@@ -34,11 +34,15 @@ exports.setup = function() {
     var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
     TestSpontaneous2.setParameter('interval', 1000.0);
 
+    // Start: TestDisplay3: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestDisplay3 = this.instantiate('TestDisplay3', 'test/TestDisplay.js');
+
     // Connections: AccessorStatusTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(TestSpontaneous2, 'output', AccessorStatus, 'query');
     this.connect(AccessorStatus, 'status', TestDisplay2, 'input');
+    this.connect(AccessorStatus, 'monitor', TestDisplay3, 'input');
 };
 
 // To update the initialize code below, modify
