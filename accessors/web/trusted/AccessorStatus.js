@@ -25,21 +25,26 @@
 
 /** Accessor that outputs the current status of all top-level accessors.
  *
- *  Upon receiving an input, this accessor outputs an array of objects,
+ *  Upon receiving a *query* input, this accessor outputs an array of objects,
  *  one for each top-level accessor. Each object has the following fields:
  *  * accessorName: The name of the accessor.
  *  * accessorClass: The class of the accessor, e.g. net/REST.
  *  * initialized: True if the accessor has been initialized and not wrapped up.
  *
+ *
+ *  If the *monitoringInterval* parameter has value greater than zero, then
+ *  upon initialization, this accessor turns on monitoring of the execution
+ *  of top-level accessors. At the time interval specified by *monitoringInterval*
+ *  it will output on the *monitor* port the current monitoring information.
+ *  It will also send to the console the final monitoring information in
+ *  wrapup.
+ *  
  *  This accessor can only be used in a host that allows trusted accessors.
  *  Trusted accessors must have class names beginning with 'trusted/'
  *  and are allowed to invoke the function getTopLevelAccessors() to
  *  obtain access to peer accessors.
  *
- *  FIXME: This is really just a bare minimum starting point. The query
- *  input should be able to specify various operations, such as watching
- *  accessors for their event emissions, timing the execution of accessors,
- *  etc.
+ *  FIXME: This is really just a bare minimum starting point for monitoring.
  *
  *  @accessor trusted/AccessorStatus
  *  @input query FIXME
@@ -54,15 +59,24 @@
 /*jshint globalstrict: true*/
 "use strict";
 
+var util = require('util');
+
 exports.setup = function () {
     this.input('query');
     this.output('status');
+    this.output('monitor');
+    this.parameter('monitoringInterval', {
+        'type':'number',
+        'value':1000
+    });
 };
+
+var handle = null;
 
 exports.initialize = function () {
     var self = this;
     this.addInputHandler('query', function () {
-        var accessors = this.getTopLevelAccessors();
+        var accessors = getTopLevelAccessors();
         var result = [];
         for (var i = 0; i < accessors.length; i += 1) {
             result.push({
@@ -71,8 +85,34 @@ exports.initialize = function () {
                 'initialized': accessors[i].initialized
             });
         }
-
-        console.log('FIXME ' + result);
-        this.send('status', result);
+        self.send('status', result);
     });
+    
+    var monitoringInterval = this.getParameter('monitoringInterval');
+    if (monitoringInterval > 0) {
+        var accessors = getTopLevelAccessors();
+        for (var i = 0; i < accessors.length; i += 1) {
+            // FIXME: Should the argument (deeply) be a parameter?
+            accessors[i].startMonitoring(false);
+        }
+        handle = setInterval(function() {
+            var accessors = getTopLevelAccessors();
+            var result = [];
+            for (var i = 0; i < accessors.length; i += 1) {
+                result.push(accessors[i].getMonitoring());
+            }
+            self.send('monitor', result);
+        }, monitoringInterval);
+    }
 };
+
+exports.wrapup = function() {
+    if (handle) {
+        clearInterval(handle);
+        console.log('*** Final monitoring information:');
+        var accessors = getTopLevelAccessors();
+        for (var i = 0; i < accessors.length; i += 1) {
+            console.log(util.inspect(accessors[i].getMonitoring()));
+        }
+    }
+}

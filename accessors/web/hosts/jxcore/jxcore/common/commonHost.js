@@ -163,16 +163,14 @@
  *  accessor X'. The condition is that X, as well as X', both are type refinement of the
  *  mutable accessor. By calling 'reifiableBy', accessors are tested for the condition.
  *
- *  When instantiated, a mutableAcessor is equivalent to an interface definition (but with
- *  a bunch of additional/configuration options). Every accessor tested for reification will
- *  be stored. When calling 'reify' function on a particular accessor X, the mutableAccessor
+ *  When calling 'reify' function on a particular accessor X, the mutableAccessor
  *  will connect to X, making it equivalent to X itself. This is enabled by the composition
- *  mechanism that is done on runtime.
- *  this.emit
- *  The choice of the accessor to be used for reification can be forced (by giving the accessor
- *  as parameter) or by giving a sorting function. Depending on a bunch of options provided
- *  by the swarmlet designer, 'sort' function will select the best match.
- *
+ *  mechanism. And this is done on runtime. If there is a previous reified accessor, it is
+ *  unreified.
+ *  
+ *  The choice of the accessor to be used for reification can be handled by another accessor
+ *  or actor. 
+ * 
  *  At any time, a previous reification can be removed. This will make the mutableAccessor
  *  equivalent to an interface again. Consequently, another reification may be performed,
  *  enabling thus dynamic substitution.
@@ -217,12 +215,12 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1889 2017-06-20 22:15:38Z cxh $$
+ *  @version $$Id: commonHost.js 1996 2017-08-01 22:30:48Z chadlia.jerad $$
  */
 
 // Stop extra messages from jslint and jshint.
 // See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSHint
-/*globals actor, alert, console, Duktape, exports, instance, java, Packages, process, require, setInterval, setIntervalDet, setTimeout, setTimeoutDet, clearInterval, clearIntervalDet, clearTimeout, clearTimeoutDet, window, Map, getResource */
+/*globals actor, alert, console, Duktape, exports, instance, java, Packages, process, require, setInterval, setIntervalDet, setTimeout, setTimeoutDet, clearInterval, clearIntervalDet, clearTimeout, clearTimeoutDet, window, getResource, getTopLevelAccessors */
 /*jshint globalstrict: true, multistr: true */
 'use strict';
 
@@ -265,8 +263,6 @@ var deterministicTemporalSemantics = require('./modules/deterministicTemporalSem
  *    This is used by this.removeInputHandler(). If the handler is one
  *    for any input, then nameOfInput is null and arrayIndexOfHandler
  *    specifies the position of the handler in the anyInputHandlers array.
- *  * **monitor**: An object that records the number of initializations, wrapups and
- *    reactions, as well as the dates of each first and last events.
  *  * **realizesList**: An array of realized features names (see below).
  *  * **realizes**: An object with one property per realized feature (see below).
  *
@@ -301,23 +297,23 @@ var deterministicTemporalSemantics = require('./modules/deterministicTemporalSem
  *    will reference it in their root property.
  *  * **ssuper**: If this accessor extends another, this is a reference to the instance
  *    of the accessor it extends.
- *  * **mutable**: If this accessor is a mutableAccessor, this attribute will be set.
+ *  * **isMutable**: If this accessor is a mutableAccessor, this attribute will be set.
  *
  *  If the returned instance is a mutableAccessor, then it will include these additional
  *  properties:
- *  * **status**: indicates the current state among all the states of the lifecycle of a
+ *  * **state**: indicates the current state among all the states of the lifecycle of a
  *    given mutableAccessor
  *  * **reifyingAccessorsList**: An array of the reifying accessors, together with some
  *    information (such as Location...) that will be relevant for sorting. This list should
  *    be ordered using a given sorting function.
- *  * **inputsMap**: An array that maps the mutableAccessor inputs to the reifying accessor
+ *  * **inputsMap**: An object that maps the mutableAccessor inputs to the reifying accessor
  *    inputs.
- *  * **outputsMap**: An array that maps the mutableAccessor outputs to the reifying accessor
+ *  * **outputsMap**: An object that maps the mutableAccessor outputs to the reifying accessor
  *    outputs.
- *  * **parametersMap**: An array that maps the non mapped mutableAccessor inputs to, possibly,
+ *  * **parametersMap**: An object that maps the non mapped mutableAccessor inputs to, possibly,
  *    the reifying accessor non connected inputs.
  *  Notes: (i) When a mutableAccessor is reified, the attribute containedAccessors will contain
- *  he selected accessor for reification (ii) A mutableAccessor cannot extend another accessor.
+ *  the selected accessor for reification (ii) A mutableAccessor cannot extend another accessor.
  *  FIXME: Check if a  mutableAccessor can implement another accessor.
  *
  *  The bindings parameter provides function bindings for functions that are used by
@@ -355,6 +351,8 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     this.code = code;
 
     this.bindings = bindings;
+    
+    this.isMutable = false;
 
     ///////////////////////////////////////////////////////////////////
     //// Override using specified bindings.
@@ -419,37 +417,6 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
         // List of contained accessors.
         this.containedAccessors = [];
 
-        ////////////////////////////////////////////////////////////////////
-        //// Support for monitoring.
-        this.monitor = {};
-
-        // Monitoring initialize events
-        this.monitor.initialize = {
-            'count': 0,
-            'firstOccurrenceDate': {},
-            'latestOccurrenceDate': {}
-        };
-
-        // Monitoring react events
-        this.monitor.reactStart = {
-            'count': 0,
-            'firstOccurrenceDate': {},
-            'latestOccurrenceDate': {}
-        };
-
-        // Monitoring react events
-        this.monitor.reactEnd = {
-            'count': 0,
-            'firstOccurrenceDate': {},
-            'latestOccurrenceDate': {}
-        };
-
-        // Monitoring wrapup events
-        this.monitor.wrapup = {
-            'count': 0,
-            'firstOccurrenceDate': {},
-            'latestOccurrenceDate': {}
-        };
     }
 
     // Define the exports object to be populated by the accessor code.
@@ -548,6 +515,12 @@ function Accessor(accessorName, code, getAccessorCode, bindings, extendedBy, imp
     } else {
         throw new Error('Host does not define required alert function.');
     }
+    
+    if (bindings && bindings.getTopLevelAccessors) {
+        this.getTopLevelAccessors = bindings.getTopLevelAccessors;
+    } else {
+        this.getTopLevelAccessors = getTopLevelAccessorsNotSupported;
+    }
 
     // By default, the root property is this instance.
     this.root = this;
@@ -557,6 +530,7 @@ alert, \
 error, \
 exports, \
 getResource, \
+getTopLevelAccessors, \
 httpRequest, \
 readURL, \
 require, \
@@ -570,6 +544,7 @@ clearTimeout',
         this.error,
         this.exports,
         this.getResource,
+        this.getTopLevelAccessors,
         this.httpRequest,
         this.readURL,
         this.require,
@@ -641,8 +616,11 @@ clearTimeout',
         // exports.initialize() and exports.wrapup(), if those are defined.
         this.initialize = function () {
             var thiz = this;
-            // Clearing all timers before initializing
-            // thiz.clearTimers();
+            if (typeof _debug !== 'undefined' && _debug) {
+                // The false argument says to not individually monitor contained accessors.
+                this.startMonitoring(false);
+            }
+            this.emit('initializeStart');
             
             if (this.containedAccessors && this.containedAccessors.length > 0) {
                 this.assignPriorities();
@@ -662,11 +640,8 @@ clearTimeout',
                 this.exports.initialize.call(this);
             }
             this.initialized = true;
-            
-            // Update monitoring information
-            this.updateMonitoringInformation('initialize');
 
-            this.emit('initialize');
+            this.emit('initializeEnd');
         };
 
         this.fire = function () {
@@ -682,6 +657,7 @@ clearTimeout',
             // console.log('wrapup for accessor: ' + this.accessorName);
             // Mark that this accessor has not been initialized.
             this.initialized = false;
+            this.emit('wrapupStart');
 
             // Remove all input handlers.
             this.inputHandlers = {};
@@ -709,10 +685,12 @@ clearTimeout',
                 this.exports.wrapup.call(this);
             }
 
-            // Update monitoring information
-            this.updateMonitoringInformation('wrapup');
-
-            this.emit('wrapup');
+            this.emit('wrapupEnd');
+            if (typeof _debug !== 'undefined' && _debug) {
+                var monitoringInfo = this.stopMonitoring();
+                console.log('**** Monitoring information for ' + this.accessorName + ':');
+                console.log(util.inspect(monitoringInfo));
+            }
         };
     }
 }
@@ -1320,12 +1298,21 @@ Accessor.prototype.getDefaultInsideBindings = function(accessorClass) {
     if (trustedAccessorsAllowed && (!accessorClass || accessorClass.startsWith('trusted/'))) {
         insideBindings.getTopLevelAccessors = getTopLevelAccessors;
     } else {
-        insideBindings.getTopLevelAccessors = function () {
-            throw new Error('getTopLevelAccessors(): Accessors are not permitted' +
-                ' to access peer accessors in this host.');
-        };
+        insideBindings.getTopLevelAccessors = getTopLevelAccessorsNotSupported;
     }
     return insideBindings;
+}
+
+/** Return an object that contains the accessor's monitor object. Prior to this, the 
+ *  total utilization is computed up to this point.
+ *
+ *  @return the accessor's monitor object.
+ */
+Accessor.prototype.getMonitoring = function() {
+	this.monitor.utilization = this.monitor.initialize.utilization +
+			this.monitor.react.utilization + 
+			this.monitor.wrapup.utilization;
+    return this.monitor;
 }
 
 /** Default implementation of this.getParameter(), which reads the current value of the
@@ -1419,6 +1406,7 @@ Accessor.prototype.instantiate = function (instanceName, accessorClass) {
     instanceName = uniqueName(instanceName, this);
     var containedInstance = instantiateAccessor(
         instanceName, accessorClass, this.getAccessorCode, insideBindings);
+    allAccessors.push(containedInstance);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
     return containedInstance;
@@ -1446,10 +1434,10 @@ Accessor.prototype.instantiateFromCode = function (instanceName, code) {
     instanceName = this.accessorName + '.' + instanceName;
     instanceName = uniqueName(instanceName, this);
 
-    // Last three arguments are extendedBy, implementedBy, and mutable.
+    // Last two arguments are extendedBy and implementedBy
     // None of these apply.
     var containedInstance = new Accessor(
-            instanceName, code, getAccessorCode, bindings, null, null, null);
+            instanceName, code, getAccessorCode, bindings, null, null);
     allAccessors.push(containedInstance);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
@@ -1482,42 +1470,22 @@ Accessor.prototype.module = {
 };
 
 /** Default implementation of the function to define a mutableAccessor.
- *  If this is a mutableAccessor, then add the corresponding properties.
- *  @param value The value, which should be 'true'
+ *  If this is a mutableAccessor, then add attibutes to the accessor, 
+ *  such as the mapping objects and reification monitoring objects.
+ *  @param value The value, which should be 'true' in case this a mutable
  */
 Accessor.prototype.mutable = function (value) {
-    if (value === 'true') {
-        this.mutable = true;
-
-        ///////////////////////////////////////////////////////////////////
-        //// Set up the mutableAccessor properties.
-        /*if (extendedBy || implementedBy) {
-                throw new Error('An extended or implementing Accessor cannot be a mutableAccessor.');
-        }*/
+    if (value) {
+        this.root.isMutable = true;
 
         ////////////////////////////////////////////////////////////////////
         //// For a mutableAccessor, define additional attributes
 
-        this.reifyingAccessorsList = [];
+        this.inputsMap = {};
+        this.outputsMap = {};
 
-        this.inputsMap = new Map();
-        this.outputsMap = new Map();
-        this.parametersMap = new Map();
-
-        this.status = 'instantiated';
-
-        ////////////////////////////////////////////////////////////////////
-        //// Support for additional monitoring information
-
-        // Monitoring reify events
-        this.monitor.reify = {
-            'count': 0,
-            'firstOccurrenceDate': {},
-            'latestOccurrenceDate': {}
-        };
-
+        this.state = 'instantiated';
     }
-
 };
 
 /** Define an accessor output.
@@ -1630,8 +1598,6 @@ Accessor.prototype.react = function (name) {
     // console.log(this.accessorName + ": ================== react(" + name + ")");
 
     this.emit('reactStart');
-    // Update monitoring information
-    this.updateMonitoringInformation('reactStart');
 
     var thiz = this.root;
 
@@ -1764,9 +1730,6 @@ Accessor.prototype.react = function (name) {
         this.exports.fire.call(this);
     }
 
-    // Update monitoring information
-    this.updateMonitoringInformation('reactEnd');
-
     this.emit('reactEnd');
 };
 
@@ -1779,11 +1742,12 @@ Accessor.prototype.readURL = function () {
     throw new Error('This swarmlet host does not support readURL().');
 };
 
-/** Default implementation of the function to define an accessor realized feature.
+/** Default implementation of the function to define an accessor realized features.
  *  Accessors that override this should probably invoke this default explicitly
  *  by referencing the prototype.
  *  @param name The name of the realized feature.
- *  @param options The options for the realized feature.
+ *  @param options The options for the realized feature. Cen be used to reference 
+ *   the ontology of the provided 'name'.
  */
 Accessor.prototype.realize = function (name, options) {
     if (!this || !this.realizesList) {
@@ -1796,93 +1760,76 @@ Accessor.prototype.realize = function (name, options) {
 };
 
 /** Evaluates if the 'mutableAccessor' (this) is reifiable by the 'accessor' given
- *  as parameter, or, in other words, if the accessor's interface refines the
- *  mutableAccesor's interface.
- *  The accessor should be a top level one.
- *  This is a type refinement, hence the function returns true if
- *   *  the set of inputs of 'accessor' are included in the set of inputs of
- *           'mutableAccessor'
- *   *  and the set of outputs of 'mutableAccessor' are included in the set of
- *      outputs of 'accessor'.
+ *  as parameter.
+ *  Two conditions are considered for the reification test to hold. 
+ *  ** The first consists on checking if the accessor realizes all the mutableAccessor
+ *     realized functions.
+ *  ** The second is interface type refinement. The conditions are: 
+ *     ** the set of 'accessor' inputs are included in the set of 'mutableAccessor'
+ *        inputs.
+ *     ** and the set of outputs of 'mutableAccessor' are included in the set of
+ *        outputs of 'accessor'.
+ *  For port inclusion to hold, the following conditions are checked:
+ *  ** Same port name
+ *  ** If the ports contain an attribute called 'type', then they need to be
+ *     checked for equality.
+ *  TODO: augment type checking with subtyping.
  *
- *  For an inclusion to hold, the following conditions are checked:
- *   *  Same port name
- *   *  If the ports contain an attribute called 'type', then they need to be
- *      checked for equality.
- *  TODO: Type checking can be improved by using an ontology.
- *
- *  An alternative for dealing with the accessor parameters is to to consider
- *  them, from the mutableAccessor view, as inputs. If the parameter 'strict' is
- *  passed, then the function looks for mapping the non mapped mutableAcessor
- *  inputs to the accessor parameters.
- *
- *  The following objects are constructed: inputsMap, outputsMap and parametersMap.
- *
- *  In addition, if the result is true (i.e. the accessor can be used to reify
- *  the mutableAccessor), then an object containing: (i) the accessor, (ii) the mappings
- *  and (iii) the options, is pushed in the array of reifyingAccessorsList.
+ *  The following objects are constructed: inputsMap and outputsMap and, will be
+ *  returned if all tests pass.
  *
  *  @param accessor An instantiated Accessor object
- *  @param options An optional parameter that describes additional information about the
- *   accessor, such as its location, IPAddress, ...
- *   FIXME: options is to be detailed!!!
- *  @param strict An optional parameter that selects if the accessor parameters can be
- *   mapped to available mutableAccessor inputs.
+ *  @return false if not reifyableBy, else return an object with the inputsMap and 
+ *   outputsMap objets
  */
-Accessor.prototype.reifiableBy = function (accessor, options, strict) {
+Accessor.prototype.reifiableBy = function (accessor) {
     // Note that we could just use this instead of this.root because of the
     // prototype chain, but in a deep hierarchy, this will be more efficient.
-    var thiz = this.root, i;
+    var thiz = this.root; 
+    var i;
 
     // Check that this is a mutableAccessor
-    if (!thiz.mutable) {
-        console.log('Only mutableAccessors can be tested for reification.');
+    if (!thiz.isMutable) {
+        this.error('Only mutableAccessors can be tested for reification.');
         return false;
     }
 
-    if (!accessor) {
-        console.log('reifiableBy(): the paremeter should be an accessor.');
+    if (!accessor || !accessor.accessorName) {
+        this.error('reifiableBy(): the paremeter should be an accessor.');
         return false;
     }
 
-    // Check if the accessor if a top level one
-    if (accessor.container) {
-        console.log('reifiableBy(): the parameter should be a top level accessor.');
-        return false;
-    }
-
-    // Check if the mutableAccessor and accessor realizes similar features
+    // Check if all the features realized by the mutableAccessor are realized
+    // by the given accessor
     if (thiz.realizesList.length === 0 || accessor.realizesList.length === 0) {
+    	// FIXME: decide what to do...
         console.log('reifiableBy(): Realized features are needed to check reification.');
         // For compatibility reasons with the previous accessors, the function
         // will continue executing.
         // return false;
     }
-    // Check is realized features are compatible
-    // As a first step, this is reduced to equality checking
-    // The next step is to perform this tak using ontologies
+    // Check if realized features are compatible.
+    // As a first iteration, this is reduced to equality checking.
+    // The next step is to perform this task using ontologies
     for (i = 0; i < thiz.realizesList.length; i++) {
         var myRealizesInList = thiz.realizesList[i];
         var myRealizes = thiz.realizes[myRealizesInList];
-
         var accRealizesInList = accessor.realizesList[accessor.realizesList.indexOf(myRealizesInList)];
         var accRealizes = accessor.realizes[accRealizesInList];
-
-        // Check the realized feature name
-        if (!accRealizesInList)
+        if (!accRealizesInList) {
             return false;
-
-        // FIXME: To be further improved
+        }
+        // FIXME: To be further improved by adding ontologies
     }
 
-    // Map objects for inputs, outputs and possibly parameters between the mutableAccessor
+    // Mapping objects for inputs and outputs between the mutableAccessor
     // and the accessor
-    var inputsMap = new Map();
-    var outputsMap = new Map();
-    var parametersMap = new Map();
+    var inputsMap = {};
+    var outputsMap = {};
 
-    var myInputInList, myInput, accInputInList, accInput;
     // Look for mapping the accessor inputs to the mutableAccesssor inputs
+    var myInputInList, myInput, accInputInList, accInput;
+
     for (i = 0; i < accessor.inputList.length; i++) {
         accInputInList = accessor.inputList[i];
         accInput = accessor.inputs[accInputInList];
@@ -1891,36 +1838,19 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
         myInput = thiz.inputs[myInputInList];
 
         // Check the input name
-        if (!myInputInList)
+        if (!myInputInList) {
             return false;
+        }
 
         // Then check the type, if such attribute exists
-        if (accInput.type !== myInput.type)
+        if (accInput.type !== myInput.type) {
             return false;
+        }
 
-        inputsMap.set(myInputInList, accInputInList);
+        inputsMap[myInputInList] = accInputInList;
     }
 
-    // If 'strict' is not passed, proceed with mapping the accessor parameters
-    for (i = 0; i < thiz.inputList.length; i++) {
-        myInputInList = thiz.inputList[i];
-        myInput = thiz.inputs[myInputInList];
-
-        if (inputsMap.has(myInputInList))
-            continue;
-
-        // If the input is not already mapped to an accessor input,
-        // then check if it can be associated to a parameter
-        var accParameterInList = accessor.parameterList[accessor.parameterList.indexOf(myInputInList)];
-        var accParameter = accessor.parameters[accParameterInList];
-
-        if (accParameterInList)
-        // Then check the type, if such attribute exists
-            if (myInput.type === accParameter.type)
-            parametersMap.set(myInputInList, accParameterInList);
-    }
-
-    // Look for mapping the accessor inputs to the mutableAccesssor inputs
+    // Look for mapping the mutableAccesssor outputs to the accessor outputs
     for (i = 0; i < thiz.outputList.length; i++) {
         var myOutputInList = thiz.outputList[i];
         var myOutput = thiz.outputs[myOutputInList];
@@ -1929,153 +1859,130 @@ Accessor.prototype.reifiableBy = function (accessor, options, strict) {
         var accOutput = accessor.outputs[accOutputInList];
 
         // Check the output name
-        if (!accOutputInList)
+        if (!accOutputInList) {
             return false;
-
+		}
         // Then check the type, if such attribute exists
-        if (accOutput.type !== myOutput.type)
+        if (accOutput.type !== myOutput.type) {
             return false;
+        }
 
-        outputsMap.set(accOutputInList, myOutputInList);
+        outputsMap[accOutputInList] = myOutputInList;
     }
 
     // Create the object to be saved in the mutableAccessor reifyingAccessorsList
     var reifying = {};
-    reifying.accessor = accessor;
     reifying.inputsMap = inputsMap;
     reifying.outputsMap = outputsMap;
-    reifying.parametersMap = parametersMap;
-    reifying.options = options;
 
-    thiz.reifyingAccessorsList.push(reifying);
-
-    return true;
+    return reifying;
 };
 
-/** If the accessor's interface refines the mutableAccessor interface, then the inputs
- *  and outputs Map Objects are used to establish the connections between both objects
- *  and between the inputs and outputs.
- *  *  If an accessor is passed as a parameter, then it is first checked if it is
- *     contained in the array of reifyingAccessorsList. If it is not, then recall
- *     reifiableBy function.
- *  *  If no parameter is passed, then reify the first element of
- *     reifyingAccessorsList array. Otherwise, return false.
+/** Reifies the accessor given as parameter by:
+ *  ** First, check the type of the passed parameter. If this a accessor class
+ *     or an accessor code, then instantate it.
+ *  ** Second, calling reifyableBy, is order to get the mapping objects.
+ *  ** If reification conditions hold, remove previous reification, if any.
+ *  ** Finally, establish the connections between the mutableAccessor and the 
+ *     accessor.
  *
- *  The Map objects inputsMap and outputsMap are constructed.
- *
- *  @param accessor an instantiated Accessor object
+ *  @param accessor This parameter can be either an accessor object, a fully 
+ *   qualified accessor class or an accessor code
+ *  @return true if the reification was achieved successfully, false otherwise.
  */
 Accessor.prototype.reify = function (accessor) {
     // Note that we could just use this instead of this.root because of the
     // prototype chain, but in a deep hierarchy, this will be more efficient.
     var thiz = this.root;
-
+        
     // Check that this is a mutableAccessor
-    if (!thiz.mutable) {
-        console.log('Only mutableAccessors can be reified.');
+    if (!thiz.isMutable) {
+        thiz.error('Cannot call reify on an accessor that is not Mutable.');
         return false;
     }
 
-    // Check if the mutableAccessor is already reified or not
-    if (thiz.containedAccessors.length == 1) {
-        console.log('The mutableAccessor is already reified, please remove the reification before substitution');
-        return false;
-    }
+	var accessorInstance;
+    var instanceName = this.accessorName + '.' + "tempAccessorName";
+    instanceName = uniqueName(instanceName, this);
+    var isNewAccessor = true;
 
-    var reifying = {};
-    reifying.accessor = accessor;
-    var _reifyingIndexInList = -1;
-
-    // Check if an accessor is passed
+    // Check the accessor parameter type
     if (!accessor) {
-        if (thiz.reifyingAccessorsList.length === 0) {
-            console.log('reify(): no found accessor to reify.');
-            return false;
-        }
-
-        // If no accessor is passed and that there is already concretizable ones, pick up
-        // the first element of the array
-        _reifyingIndexInList = 0;
-
-    } else {
-        // When an accessor is passed, check that it was tested for refinement.
-
-        thiz.reifyingAccessorsList.forEach(function (element) {
-            if (element.accessor === accessor) {
-                _reifyingIndexInList = thiz.reifyingAccessorsList.indexOf(element);
-            }
-        });
-
-        if (_reifyingIndexInList == -1) {
-            console.log('reify(): the passed accessor has not been tested for abtraction. Please call reifiableBy.');
-            return false;
-        }
-    }
-
-    // Retreive the element to reify from the mutableAccessor's reifyingAccessorsList attribute
-    reifying = thiz.reifyingAccessorsList[_reifyingIndexInList];
-    thiz.reifyingAccessorsList.splice(_reifyingIndexInList, 1);
-
-    // Establish that the mutableAccessor is considered as a composite accessor with only one
-    // element
-    thiz.containedAccessors.push(reifying.accessor);
-    reifying.accessor.container = thiz;
-
-    thiz.inputsMap = reifying.inputsMap;
-    thiz.outputsMap = reifying.outputsMap;
-    thiz.parametersMap = reifying.parametersMap;
-
-    // Establish the connections
-    thiz.inputsMap.forEach(function (key, value) {
-        thiz.connect(key, reifying.accessor, value);
-    });
-
-    thiz.outputsMap.forEach(function (key, value) {
-        thiz.connect(reifying.accessor, key, value);
-    });
-
-    // Update the mutableAccessor status and history
-    thiz.status = 'reified';
-    thiz.updateMonitoringInformation('reify');
-
-    return true;
-};
-
-/** Removes the reification of the mutableAccessor. Therefore, the connections between both objects
- *  and between their corresponding inputs and outputs are removed.
- */
-Accessor.prototype.removeReification = function () {
-    // Note that we could just use this instead of this.root because of the
-    // prototype chain, but in a deep hierarchy, this will be more efficient.
-    var thiz = this.root;
-
-    // Check if there is already a reification
-    if (thiz.containedAccessors.length != 1) {
-        console.log('removeReification(): No contained accessor.');
+    	// Report an error if no parameter is passed
+        thiz.error('reify(): Missing parameter.');
         return false;
+    } else if(accessor.accessorName) {
+    	// Case where and accessor object is passed
+    	accessorInstance = accessor;
+    	isNewAccessor = false;
+    } else if(typeof accessor == 'string') {
+		// Check if accessor is an accessor code
+	    try {
+			// For functions that access ports, etc., we want the default implementation
+    		// when instantiating the contained accessor.
+    		var accessorClass = accessor;
+    		var insideBindings = this.getDefaultInsideBindings(null);
+		    var accessorInstance = instantiateAccessor(
+        		instanceName, accessorClass, this.getAccessorCode, insideBindings);
+		    console.log('that was an accessor accessorClass: ' + accessorInstance);
+		    accessorInstance.accessorClass = accessorClass;
+	    } catch(e) {
+	    	// If an error is catched, the provided parameter is likely to be the
+	    	// the accessorCode
+	    	try {
+	    		var accessorCode = accessor;
+	    		var getAccessorCode = null;
+    			if (this.getAccessorCode) {
+        			getAccessorCode = this.getAccessorCode;
+    			};
+	    		var insideBindings = this.getDefaultInsideBindings(null);
+			    accessorInstance = new Accessor(
+			    	instanceName, accessorCode, getAccessorCode, insideBindings, null, null);
+		    } catch(ee) {
+		    	thiz.error('Parameter supplied is not a valid accessor object, accessor class or accessor code: ' + ee);
+		    	return false;
+		    };
+	    };
+	};
+
+	// Check that the accessor instance is a possible reification
+	var mapObject = this.reifiableBy(accessorInstance);
+
+	if (mapObject) {
+		this.unreify();
+		// Add the accessor to the list of all accessors if it is a new one
+		if (isNewAccessor) {
+			allAccessors.push(accessorInstance);
+		}
+
+		// Establish containment
+    	thiz.containedAccessors.push(accessorInstance);
+    	accessorInstance.container = thiz;
+
+    	// Get mapping objects
+    	thiz.inputsMap = mapObject.inputsMap;
+    	thiz.outputsMap = mapObject.outputsMap;
+
+    	// Establish the connections
+    	Object.keys(thiz.inputsMap).forEach(function (key) {
+        	thiz.connect(key, accessorInstance, thiz.inputsMap[key]);
+    	});
+    	Object.keys(thiz.outputsMap).forEach(function (key) {
+        	thiz.connect(accessorInstance, key, thiz.outputsMap[key]);
+    	});
+
+    	// Initialize the instance
+    	accessorInstance.initialize();
+
+    	// Update the mutableAccessor state and history
+    	thiz.state = 'reified';
+
+    	thiz.emit('reified');
+    	return true;
+    } else {
+    	thiz.error('Accessor supplied cannot reify the mutableAccessor: ' + thiz.accessorName);
+    	return false;
     }
-
-    var acc = thiz.containedAccessors.pop();
-    if (acc.container) acc.container = null;
-
-    thiz.inputsMap.forEach(function (key, value) {
-        thiz.disconnect(key, acc, value);
-    });
-
-    thiz.outputsMap.forEach(function (key, value) {
-        thiz.disconnect(acc, key, value);
-    });
-
-
-    thiz.inputsMap.clear();
-    thiz.outputsMap.clear();
-    if (thiz.parametersMap) thiz.parametersMap.clear();
-
-    // Update the mutableAccessor status and history
-    thiz.status = 'instantiated';
-
-    return true;
-
 };
 
 /** Remove the input handler with the specified handle, if it exists.
@@ -2452,6 +2359,72 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, p
     return tempo;
 }
 
+/** Starts monitoring the accessor behavior. For this, a monitor object is created/
+ *  reinitialized. The monitor object records the start monitoring time, end 
+ *  monitoring time, total utilization and monitor objects for each of the events
+ *  'initialize', 'react' and 'wrapup'. Listeners are added to the events. 
+ *  If deeply parameter is set, then all the contained accessors will also call 
+ *  startMonitoring.
+ *
+ *  @param: deeply Boolean value. If set to true, it indicates to start monitoring 
+ *   all contained accessors.
+ */
+Accessor.prototype.startMonitoring = function(deeply) {
+	var thiz = this;
+
+	// Construct the monitor object
+	this.monitor = {};
+	this.monitor.utilization = 0;
+	this.monitor.startMonitoringTime = Date.now();
+
+	// Monitoring initialize events
+	this.monitor.initialize = {
+		'count': 0,
+		'utilization': 0,
+		'latestStart': 0,
+		'latestEnd': 0
+    };
+
+    // Monitoring react events
+    this.monitor.react = {
+		'count': 0,
+		'utilization': 0,
+		'latestStart': 0,
+		'latestEnd': 0
+    };
+
+    // Monitoring wrapup events
+    this.monitor.wrapup = {
+		'count': 0,
+		'utilization': 0,
+		'latestStart': 0,
+		'latestEnd': 0
+    };
+
+    // If needed, start monitoring all contained accessors.
+	if (deeply) {
+        if (this.containedAccessors && this.containedAccessors.length > 0) {
+            for (var i = 0; i < this.containedAccessors.length; i++) {
+                this.containedAccessors[i].startMonitoring(deeply);
+            }
+        }
+	}
+
+	if (this.monitoring) {
+        // Already monitoring. Just reset as above.
+        return;
+    }
+
+    // Add to each event listeners for 'start' and 'end'
+    this.monitoring = true;
+    thiz.addListener('initializeStart', _recordEventStart.bind(thiz, 'initialize'));
+    thiz.addListener('initializeEnd', _recordEventEnd.bind(thiz, 'initialize'));
+    thiz.addListener('reactStart', _recordEventStart.bind(thiz, 'react'));
+    thiz.addListener('reactEnd', _recordEventEnd.bind(thiz, 'react'));
+    thiz.addListener('wrapupStart', _recordEventStart.bind(thiz, 'wrapup'));
+    thiz.addListener('wrapupEnd', _recordEventEnd.bind(thiz, 'wrapup'));
+};
+
 /** Stop execution of the enclosing swarmlet by finding the top-level
  *  accessor and invoking wrapup() on it.
  */
@@ -2493,31 +2466,145 @@ Accessor.prototype.stopAt = function (timeout) {
     }
 };
 
-/** Updates the monitoring information (count, date/time of the first event and date/time
- *  of the last event).
- *  @param: info The name of the monitored event to update. info is a string
+/** Stops monitoring the accessor's status. After the monitoring stop time is set,
+ *  all events utilizations are updated based on the monitoring stop time, listeners 
+ *  are removed, and monitoring is stopped for all contained accessors. Finally, 
+ *  monitor object is returned.
+ * 
+ *  @return the accessor's monitor object.
  */
-Accessor.prototype.updateMonitoringInformation = function (info) {
+Accessor.prototype.stopMonitoring = function() {
+	var thiz = this;
+	this.monitor.stopMonitoringTime = Date.now();
+
+	// Update utilization based on stopMonitoringTime, for each of the events
+	var events = ['initialize', 'react', 'wrapup'];
+	for (var event in events) {
+		if (this.monitor[events[event]].latestEnd > this.monitor[events[event]].latestStart) {
+			var latestUtilizationTime = this.monitor[events[event]].utilization * 
+					(this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
+			this.monitor[events[event]].utilization = latestUtilizationTime / 
+					(this.monitor.stopMonitoringTime - this.monitor.startMonitoringTime);
+		} else if (this.monitor[events[event]].latestStart > this.monitor[events[event]].latestEnd) {
+			var latestUtilizationTime = this.monitor[events[event]].utilization * 
+					(this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
+			this.monitor[events[event]].utilization = latestUtilizationTime + 
+					(this.stopMonitoringTime - this.monitor[events[event]].latestStart);
+			this.monitor[events[event]].utilization /= 
+					(this.monitor.stopMonitoringTime - this.monitor.startMonitoringTime);
+		}
+	}
+
+	var monitor = this.getMonitoring();
+	this.monitoring = false;
+
+	// Remove listeners
+    this.removeListener('initializeStart', _recordEventStart.bind(thiz, 'initialize'));
+    this.removeListener('initializeEnd', _recordEventEnd.bind(thiz, 'initialize'));
+    this.removeListener('reactStart', _recordEventStart.bind(thiz, 'react'));
+    this.removeListener('reactEnd', _recordEventEnd.bind(thiz, 'react'));
+    this.removeListener('wrapupStart', _recordEventStart.bind(thiz, 'wrapup'));
+    this.removeListener('wrapupEnd', _recordEventEnd.bind(thiz, 'wrapup'));
+
+	// Stop monitoring of all contained accessors
+    if (this.containedAccessors && this.containedAccessors.length > 0) {
+        for (var i = 0; i < this.containedAccessors.length; i++) {
+            this.containedAccessors[i].stopMonitoring();
+        }
+	}
+
+    return monitor;
+}
+
+/** Unreifies the mutableAccessor. Therefore, containment relation is removed.
+ *  Then the connections between both objects and between their corresponding 
+ *  inputs and outputs are removed. And finally the contained accessor wrapup.
+ *  @return True is the mutable was successfully reified, false otherwise
+ */
+Accessor.prototype.unreify = function () {
     // Note that we could just use this instead of this.root because of the
     // prototype chain, but in a deep hierarchy, this will be more efficient.
     var thiz = this.root;
 
-    // Increment the events count
-    var monitor = thiz.monitor[info];
-    monitor.count = monitor.count + 1;
-
-    // Update the first occurrence date, if not defined yet
-    if (!(monitor.firstOccurrenceDate['Date&Time'])) {
-        monitor.firstOccurrenceDate = {
-            'Date&Time': new Date().toLocaleString()
-        };
+    // Check if there is already a reification
+    if (thiz.containedAccessors.length != 1) {
+        console.log('unreify(): No contained accessor.');
+        return false;
     }
 
-    // Update the last occurrence date
-    monitor.latestOccurrenceDate = {
-        'Date&Time': new Date().toLocaleString()
-    };
+    // Remove the containment relationship and wrapup
+   	var acc = thiz.containedAccessors.pop();
+	acc.wrapup();
+    if (acc.container) {
+    	acc.container = null;
+    }
+
+	// Disconnect the mutableAccessor from the reifying one
+    Object.keys(thiz.inputsMap).forEach(function (key) {
+        thiz.disconnect(key, acc, thiz.inputsMap[key]);
+    });
+    Object.keys(thiz.outputsMap).forEach(function (key) {
+        thiz.disconnect(acc, key, thiz.outputsMap[key]);
+    });
+
+	// Empty mapping objects 
+    thiz.inputsMap = {};
+    thiz.outputsMap = {};
+
+    // Update the mutableAccessor state and history
+    thiz.state = 'instantiated';
+    thiz.emit('unreified');
+
+    return true;
 };
+
+///////////////////////////////////////////////////////////////////
+//// Listeners functions.
+
+/** Callback to be executed upon listing to the event name end.
+ *  This function is binded to the accessor's instance, when adding the listener.
+ *
+ *  @param event Name of the listened event that ended
+ */
+var _recordEventEnd = function(event) {
+    var end = Date.now();
+
+    if (this.monitor[event].latestStart != 0) {
+   		// Amount of time in reactions prior to this reaction
+   		var timePrior = this.monitor[event].latestEnd - this.monitor.startMonitoringTime;
+   		timePrior *=  Number(this.monitor[event].utilization);
+
+   		// Amount of time in this reaction
+   		var timeThis = end - Number(this.monitor[event].latestStart);
+
+   		this.monitor[event].utilization = timePrior + timeThis;
+   		var totalElapsed = end - this.monitor.startMonitoringTime;
+   		this.monitor[event].utilization /= totalElapsed;
+    } else {
+    	this.monitor[event].utilization = 1;
+    	this.monitor[event].latestStart = this.monitor.startMonitoringTime;
+    }
+    this.monitor[event].count++;
+    this.monitor[event].latestEnd = end;
+}
+
+/** Callback to be executed upon listening to the event's name start.
+ *  This function is binded to the accessor's instance, when adding the listener.
+ *
+ *  @param event Name of the listened event that started
+ */
+var _recordEventStart = function(event) {
+	switch(event) {
+		case 'initialize':
+			this.monitor.initialize.latestStart = Date.now();
+			break;
+		case 'react':
+			this.monitor.react.latestStart = Date.now();
+			break;
+		case 'wrapup':
+			this.monitor.wrapup.latestStart = Date.now();
+	}
+}
 
 ///////////////////////////////////////////////////////////////////
 //// Module functions.
@@ -2618,39 +2705,6 @@ function convertType(value, destination, name) {
     return value;
 }
 
-/** Return an object of objects. Each object (referenced by the accessor name)
- *  contains: the accessor type (mutable, top level, extended, implemented),
- *  and all the monitoring information.
- *
- *  @return an object of names the top level accessors that have been created thus far.
- */
-function getMonitoringInformation() {
-    var result = {};
-    for (var i = 0; i < allAccessors.length; i++) {
-        var type;
-        var name = allAccessors[i].accessorName;
-
-        // Get the type of the accessor
-        if (allAccessors[i].mutable) {
-            type = 'mutable';
-        } else if (allAccessors[i].extendedBy) {
-            type = 'extended';
-        } else if (allAccessors[i].implementedBy) {
-            type = 'implemented';
-        } else if (!allAccessors[i].container) {
-            type = 'topLevel';
-        } else {
-            type = 'composite';
-        }
-
-        result[name] = {
-            'type': type,
-            'monitoringInformation': allAccessors[i].monitor
-        };
-    }
-    return result;
-}
-
 /** Return the top-level accessors that have been created thus far.
  *  @return an array that names the top level accessors that have been created thus far.
  */
@@ -2664,10 +2718,17 @@ function getTopLevelAccessors() {
     return result;
 }
 
-/** Instantiate an accessor given its fully qualified name, a function to retrieve
- *  the code, and a require function to retrieve modules.
+/** Throw an error indicating that getTopLevelAccessors is not supported.
+ */
+function getTopLevelAccessorsNotSupported() {
+    throw new Error('getTopLevelAccessors(): Accessors are not permitted' +
+        ' to access peer accessors in this host.');
+}
+
+/** Instantiate an accessor given its fully qualified class name, a function to retrieve
+ *  the code, and bindings that include at least a require function to retrieve modules.
  *  The returned object will have a property **accessorClass** with the value of the
- *  name parameter passed in here.
+ *  class name parameter passed in here.
  *  @param accessorName A name to give to the accessor instance.
  *  @param accessorClass Fully qualified accessor class, e.g. 'net/REST'.
  *  @param getAccessorCode A function that will retrieve the source code of a specified
@@ -2685,12 +2746,12 @@ function getTopLevelAccessors() {
  *   ignored (the instance inherits those properties from the implementer).
  */
 function instantiateAccessor(
-    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy, mutable) {
+    accessorName, accessorClass, getAccessorCode, bindings, extendedBy, implementedBy) {
     var code = getAccessorCode(accessorClass);
     // In case bindings is not defined.
     bindings = bindings || {};
     var instance = new Accessor(
-        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy, mutable);
+        accessorName, code, getAccessorCode, bindings, extendedBy, implementedBy);
     instance.accessorClass = accessorClass;
     allAccessors.push(instance);
     return instance;
@@ -2921,7 +2982,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1889 2017-06-20 22:15:38Z cxh $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1996 2017-08-01 22:30:48Z chadlia.jerad $");
             return false;
 
         default:
@@ -3067,7 +3128,6 @@ var _accessorInstanceTable = {};
 exports.Accessor = Accessor;
 exports.allowTrustedAccessors = allowTrustedAccessors;
 exports.instantiateAccessor = instantiateAccessor;
-exports.getMonitoringInformation = getMonitoringInformation;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.stopAllAccessors = stopAllAccessors;
