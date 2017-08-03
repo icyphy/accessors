@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Display data on the console.
+/** Display data on the console using util.inspect().
  *
  *  @accessor test/TestDisplay
  *  @param input The output
@@ -37,6 +37,8 @@
 /*jshint globalstrict: true*/
 "use strict";
 
+var util = require('util');
+
 exports.setup = function () {
     this.input('input');
     this.output('output');
@@ -45,7 +47,7 @@ exports.setup = function () {
 exports.initialize = function () {
     this.addInputHandler('input', function () {
         var inputValue = this.get('input');
-        console.log(this.accessorName + ': ' + inputValue);
+        console.log(util.inspect(inputValue));
         this.send('output', inputValue);
     });
 };
