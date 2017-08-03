@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../node_modules/@accessors-hosts/node/nodeHostInvoke.js test/auto/AccessorStatusTest)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/AccessorStatusTest.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/AccessorStatusTest.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/AccessorStatusTest.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/cg/kernel/generic/accessor/test/auto/AccessorStatusTest.xml
 
     // Ports: AccessorStatusTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -25,13 +25,19 @@ exports.setup = function() {
 
     // Start: AccessorStatus: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var AccessorStatus = this.instantiate('AccessorStatus', 'trusted/AccessorStatus.js');
+    AccessorStatus.setParameter('monitoringInterval', 1000.0);
 
     // Start: TestDisplay2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestDisplay2 = this.instantiate('TestDisplay2', 'test/TestDisplay.js');
 
+    // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
+    TestSpontaneous2.setParameter('interval', 1000.0);
+
     // Connections: AccessorStatusTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScriptRamp, 'output', TestDisplay, 'input');
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
+    this.connect(TestSpontaneous2, 'output', AccessorStatus, 'query');
     this.connect(AccessorStatus, 'status', TestDisplay2, 'input');
 };
 
