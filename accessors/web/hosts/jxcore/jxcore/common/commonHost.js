@@ -215,7 +215,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 2012 2017-08-04 16:39:02Z cxh $$
+ *  @version $$Id: commonHost.js 2015 2017-08-04 16:44:27Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -2744,7 +2744,8 @@ function getTopLevelAccessors() {
  */
 function getTopLevelAccessorsNotSupported() {
     throw new Error('getTopLevelAccessors(): Accessors are not permitted' +
-                    ' to access peer accessors in this host.');
+                    ' to access peer accessors in this host.' +
+                    ' To allow access to trusted accessors, consider setting commonHost.allowTrustedAccessors(true).');
 }
 
 /** Instantiate an accessor given its fully qualified class name, a function to retrieve
@@ -3004,7 +3005,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2012 2017-08-04 16:39:02Z cxh $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2015 2017-08-04 16:44:27Z cxh $");
             return false;
 
         default:
