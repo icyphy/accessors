@@ -1,4 +1,4 @@
-// Accessor that connects with a browser on the local host.
+// Accessor that provides a user interface on the local host.
 //
 // Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Accessor that uses a browser on the local host for interaction with a user.
+/** Accessor that provides a user interface on the local host.
  *  The initial content on the page may be specified using the *content*
  *  parameter and HTML header content may be specified using *header*.
  *  
@@ -38,9 +38,9 @@
  *  The *resources* input can be used to provide resources, such as images,
  *  that will be used by the HTML content provided on the *html* input.
  *  Note that you probably will also have to provide an *update* input (see below)
- *  to force the browser to update the page using the specified resource.
+ *  to force the user interface to update the page using the specified resource.
  *  
- *  The *update* input can be used to instruct the browser to replace content
+ *  The *update* input can be used to instruct the user interface to replace content
  *  within the page, vs. the *html* input which replaces the entire page.
  *  The value of an *update* input is expected to be an object with three properties,
  *  *id*, *property*, and *content*.
@@ -75,13 +75,13 @@
  *     {'id':'bar', 'property':'src', 'content':'image.jpg'}
  *  </pre>
  *  
- *  Note that to get the browser to actually replace the image, we have to play some tricks.
- *  A browser normally caches an image that it has previously retrieved
+ *  Note that to get the user interface to actually replace the image, we have to play some tricks.
+ *  A user interface normally caches an image that it has previously retrieved
  *  and it will use the cached version of the image rather than obtaining the new image
- *  from the server.  To force the browser to refresh the image, this accessor
+ *  from the server.  To force the user interface to refresh the image, this accessor
  *  treats a *property* value of 'src' specially.
  *  Specifically, it appends to the *content* a suffix of the form '?count=*n*',
- *  where *n* is a unique number. This forces the browser to retrieve the image
+ *  where *n* is a unique number. This forces the user interface to retrieve the image
  *  from the server rather than use its cached version because the URI is
  *  different from that of the cached version. The server, on the other hand, ignores
  *  the parameter 'count' that has been appended to this URI and simply returns the
@@ -89,16 +89,16 @@
  *
  *  The way this accessor works on most hosts is that it starts a web server on localhost
  *  at the specified port that serves the specified web page and then instructs
- *  the system default browser to load the default page from that server.
+ *  the system default user interface to load the default page from that server.
  *  The page served by the server includes a script that listens for websocket
  *  connections that are used to provide HTML content and udpates to display on the page.
- *  Some hosts, however, such as the cordova and browser hosts, natively use
- *  a browser as part of the host, so in these cases, no web server nor socket
+ *  Some hosts, however, such as the cordova and user interface hosts, natively use
+ *  a user interface as part of the host, so in these cases, no web server nor socket
  *  connection is needed and the *port* parameter will be ignored.
  *  
- *  @accessor utilities/Browser
+ *  @accessor utilities/UserInterface.js
  *  @input {string} html HTML content to render in the body of the page displayed
- *   by the browser.
+ *   by the user interface.
  *  @input resources An object where each named property is an object containing
  *   two properties, 'data' and 'contentType'. The name of the named property is
  *   the path to be used to access the resource. The 'data' property is the resource
@@ -112,9 +112,9 @@
  *   If this is non-empty, then the page is opened upon initialize.
  *   Otherwise, the page is opened when the first *html* input is received.
  *  @parameter {int} port The port to use, if needed, for websocket communication between this
- *   accessor (which updates the HTML content of the web page) and the browser.
+ *   accessor (which updates the HTML content of the web page) and the user interface.
  *   The web page will listen on this socket for content and display whatever arrives
- *   on that port. This is ignored on hosts that do not need to invoke an external browser.
+ *   on that port. This is ignored on hosts that do not need to invoke an external user interface.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @version $$Id$$
  */
@@ -125,8 +125,8 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var Browser = require('browser');
-var browser = null;
+var UserInterface = require('@accessor-modules/user-interface.js');
+var userInterface = null;
 
 exports.setup = function () {
     this.parameter('header', {
@@ -155,21 +155,21 @@ exports.setup = function () {
 };
 
 /** Display the HTML contents retrieved from the *html* input in the main body
- *  of the browser page replacing whatever was there before.
+ *  of the user interface page replacing whatever was there before.
  *  Before doing this, check for any *resources* input and add those resources
- *  to the browser in case the HTML references them. 
+ *  to the user interface in case the HTML references them. 
  */
 function display() {
     // Check for any new resources.
     var resources = this.get('resources');
     if (resources) {
         for (var name in resources) {
-            browser.addResource(name, resources[name].data, resources[name].contentType);
+            userInterface.addResource(name, resources[name].data, resources[name].contentType);
         }
     }
 
     var toDisplay = this.get('html');
-    browser.display(toDisplay);
+    userInterface.display(toDisplay);
 }
 
 /** Update the specified property of the DOM element of the current page,
@@ -181,7 +181,7 @@ function display() {
  *   with name *property* is assigned the value of the content.
  *   If *property* is 'src', then in addition, the content is augmented
  *   with a suffix of the form '?count=*n*', where *n* is a unique number.
- *   This is so that the browser will be forced to reload the src rather than
+ *   This is so that the user interface will be forced to reload the src rather than
  *   using any cached version it may have. This can be used, for example,
  *   to force an update to an img tag where a new image has been provided
  *   using addResource().
@@ -195,19 +195,19 @@ function update() {
                 + 'Got instead: ' + util.inspect(updateValue));
         return;
     }
-    browser.update(updateValue.id, updateValue.property, updateValue.content);
+    userInterface.update(updateValue.id, updateValue.property, updateValue.content);
 }
 
 exports.initialize = function () {
     var self = this;
     
-    browser = new Browser.Browser(
+    userInterface = new UserInterface.UserInterfacer(
             {'port': self.getParameter('port')},
             self.getParameter('header'),
             self.getParameter('content')
     );
     // Listen for any POST to the server.
-    browser.addListener('/', function(data) {
+    userInterface.addListener('/', function(data) {
         self.send('post', JSON.parse(data));
     });
 
@@ -218,13 +218,13 @@ exports.initialize = function () {
     this.addInputHandler('resources', function() {
         var resources = this.get('resources');
         for (var name in resources) {
-            browser.addResource(name, resources[name].data, resources[name].contentType);
+            userInterface.addResource(name, resources[name].data, resources[name].contentType);
         }
     });
 };
 
 exports.wrapup = function () {
-    if (browser) {
-        browser.stop();
+    if (userInterface) {
+        userInterface.stop();
     }
 };
