@@ -215,7 +215,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 1996 2017-08-01 22:30:48Z chadlia.jerad $$
+ *  @version $$Id: commonHost.js 2010 2017-08-04 16:10:05Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -538,20 +538,20 @@ setInterval, \
 setTimeout, \
 clearInterval, \
 clearTimeout',
-        code);
+                               code);
     wrapper.call(this,
-        this.alert,
-        this.error,
-        this.exports,
-        this.getResource,
-        this.getTopLevelAccessors,
-        this.httpRequest,
-        this.readURL,
-        this.require,
-        this.setIntervalDeterministic.bind(this),
-        this.setTimeoutDeterministic.bind(this),
-        this.clearIntervalDeterministic.bind(this),
-        this.clearTimeoutDeterministic.bind(this));
+                 this.alert,
+                 this.error,
+                 this.exports,
+                 this.getResource,
+                 this.getTopLevelAccessors,
+                 this.httpRequest,
+                 this.readURL,
+                 this.require,
+                 this.setIntervalDeterministic.bind(this),
+                 this.setTimeoutDeterministic.bind(this),
+                 this.clearIntervalDeterministic.bind(this),
+                 this.clearTimeoutDeterministic.bind(this));
 
     // Mark that the accessor has not been initialized
     this.initialized = false;
@@ -633,7 +633,7 @@ clearTimeout',
                     }
                 }
             }
-            
+
             if (typeof this.exports.initialize === 'function') {
                 // Call with 'this' being the accessor instance, not the exports
                 // property.
@@ -686,11 +686,15 @@ clearTimeout',
             }
 
             this.emit('wrapupEnd');
+
             if (typeof _debug !== 'undefined' && _debug) {
                 var monitoringInfo = this.stopMonitoring();
                 console.log('**** Monitoring information for ' + this.accessorName + ':');
                 console.log(util.inspect(monitoringInfo));
             }
+
+            // FIXME: Should we keep this?
+            this.removeAllListeners();
         };
     }
 }
@@ -868,7 +872,7 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
                     destinationAccessor.priority = myPriority + countDownstreamAccessors;
                     // console.log('Assigned downstream priority to ' + destinationAccessor.accessorName + ' of ' + destinationAccessor.priority);
                     countDownstreamAccessors += this.assignImpliedPrioritiesDownstream(
-                            destinationAccessor, cyclePriority);
+                        destinationAccessor, cyclePriority);
                 } else {
                     if (theirPriority > myPriority) {
                         // Priority is OK. Continue.
@@ -917,7 +921,7 @@ Accessor.prototype.assignImpliedPrioritiesUpstream = function (accessor, cyclePr
             var theirPriority = source.priority;
             if (theirPriority === cyclePriority) {
                 throw new Error('Causality loop found including at least: ' +
-                    accessor.accessorName);
+                                accessor.accessorName);
             }
             if (theirPriority === null) {
                 // Source has no previously assigned priority. Give it one,
@@ -1309,9 +1313,32 @@ Accessor.prototype.getDefaultInsideBindings = function(accessorClass) {
  *  @return the accessor's monitor object.
  */
 Accessor.prototype.getMonitoring = function() {
-	this.monitor.utilization = this.monitor.initialize.utilization +
-			this.monitor.react.utilization + 
-			this.monitor.wrapup.utilization;
+    if (this.monitoring) {
+        // Update utilizations given the currentMonitoringTime
+        this.monitor.currentMonitoringTime = Date.now();
+
+        var events = ['initialize', 'react', 'wrapup'];
+        for (var event in events) {
+            if (this.monitor[events[event]].latestEnd > this.monitor[events[event]].latestStart) {
+                var latestUtilizationTime = this.monitor[events[event]].utilization * 
+                    (this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
+                this.monitor[events[event]].utilization = latestUtilizationTime / 
+                    (this.monitor.currentMonitoringTime - this.monitor.startMonitoringTime);
+            } else if (this.monitor[events[event]].latestStart > this.monitor[events[event]].latestEnd) {
+                var latestUtilizationTime = this.monitor[events[event]].utilization * 
+                    (this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
+                this.monitor[events[event]].utilization = latestUtilizationTime + 
+                    (this.monitor.currentMonitoringTime - this.monitor[events[event]].latestStart);
+                this.monitor[events[event]].utilization /= 
+                    (this.monitor.currentMonitoringTime - this.monitor.startMonitoringTime);
+            } 
+        }
+
+        this.monitor.utilization = this.monitor.initialize.utilization +
+            this.monitor.react.utilization + 
+            this.monitor.wrapup.utilization;
+    }
+
     return this.monitor;
 }
 
@@ -1379,7 +1406,7 @@ Accessor.prototype.implement = function (accessorClass) {
 Accessor.prototype.input = function (name, options) {
     if (!this || !this.inputList) {
         throw new Error('Function input() is being called without "this" being defined. ' +
-            'Perhaps use "this.input(...)" instead of "input(...)".');
+                        'Perhaps use "this.input(...)" instead of "input(...)".');
     }
     // The input may have been previously defined in a base accessor.
     pushIfNotPresent(name, this.inputList);
@@ -1437,7 +1464,7 @@ Accessor.prototype.instantiateFromCode = function (instanceName, code) {
     // Last two arguments are extendedBy and implementedBy
     // None of these apply.
     var containedInstance = new Accessor(
-            instanceName, code, getAccessorCode, bindings, null, null);
+        instanceName, code, getAccessorCode, bindings, null, null);
     allAccessors.push(containedInstance);
     containedInstance.container = this;
     this.containedAccessors.push(containedInstance);
@@ -1495,7 +1522,7 @@ Accessor.prototype.mutable = function (value) {
 Accessor.prototype.output = function (name, options) {
     if (!this || !this.outputList) {
         throw new Error('Function output() is being called without "this" being defined. ' +
-            'Perhaps use "this.output(...)" instead of "output(...)".');
+                        'Perhaps use "this.output(...)" instead of "output(...)".');
     }
     // The output may have been previously defined in a base accessor.
     pushIfNotPresent(name, this.outputList);
@@ -1509,7 +1536,7 @@ Accessor.prototype.output = function (name, options) {
 Accessor.prototype.parameter = function (name, options) {
     if (!this || !this.parameterList) {
         throw new Error('Function parameter() is being called without "this" being defined. ' +
-            'Perhaps use "this.parameter(...)" instead of "parameter(...)".');
+                        'Perhaps use "this.parameter(...)" instead of "parameter(...)".');
     }
     // The parameter may have been previously defined in a base accessor.
     pushIfNotPresent(name, this.parameterList);
@@ -1648,10 +1675,10 @@ Accessor.prototype.react = function (name) {
                         // }
 
                         throw new Error('commonHost.js, react(), invoking a specific handler for \"' +
-                            name + '\": Exception occurred in input handler,' +
-                            ' which has now has been removed.  Exception was: ' +
-                            exception +
-                            ' Stacktrace was: ' + stacktrace);
+                                        name + '\": Exception occurred in input handler,' +
+                                        ' which has now has been removed.  Exception was: ' +
+                                        exception +
+                                        ' Stacktrace was: ' + stacktrace);
                     }
                 }
             }
@@ -1704,9 +1731,9 @@ Accessor.prototype.react = function (name) {
                     thiz.removeInputHandler(
                         thiz.anyInputHandlers[j].handle);
                     thiz.error('commonHost.js, react() invoking handlers registered to handle any input: Exception occurred in input handler,' +
-                        ' which has now has been removed.  Exception was: ' +
-                        exception +
-                        ' Stacktrace was: ' + exception.stack);
+                               ' which has now has been removed.  Exception was: ' +
+                               exception +
+                               ' Stacktrace was: ' + exception.stack);
                 }
             }
         }
@@ -1752,7 +1779,7 @@ Accessor.prototype.readURL = function () {
 Accessor.prototype.realize = function (name, options) {
     if (!this || !this.realizesList) {
         throw new Error('Function realize() is being called without "this" being defined. ' +
-            'Perhaps use "this.realize(...)" instead of "realize(...)".');
+                        'Perhaps use "this.realize(...)" instead of "realize(...)".');
     }
     // The input may have been previously defined in a base accessor.
     pushIfNotPresent(name, this.realizesList);
@@ -1802,7 +1829,7 @@ Accessor.prototype.reifiableBy = function (accessor) {
     // Check if all the features realized by the mutableAccessor are realized
     // by the given accessor
     if (thiz.realizesList.length === 0 || accessor.realizesList.length === 0) {
-    	// FIXME: decide what to do...
+        // FIXME: decide what to do...
         console.log('reifiableBy(): Realized features are needed to check reification.');
         // For compatibility reasons with the previous accessors, the function
         // will continue executing.
@@ -1861,7 +1888,7 @@ Accessor.prototype.reifiableBy = function (accessor) {
         // Check the output name
         if (!accOutputInList) {
             return false;
-		}
+        }
         // Then check the type, if such attribute exists
         if (accOutput.type !== myOutput.type) {
             return false;
@@ -1894,94 +1921,94 @@ Accessor.prototype.reify = function (accessor) {
     // Note that we could just use this instead of this.root because of the
     // prototype chain, but in a deep hierarchy, this will be more efficient.
     var thiz = this.root;
-        
+    
     // Check that this is a mutableAccessor
     if (!thiz.isMutable) {
         thiz.error('Cannot call reify on an accessor that is not Mutable.');
         return false;
     }
 
-	var accessorInstance;
+    var accessorInstance;
     var instanceName = this.accessorName + '.' + "tempAccessorName";
     instanceName = uniqueName(instanceName, this);
     var isNewAccessor = true;
 
     // Check the accessor parameter type
     if (!accessor) {
-    	// Report an error if no parameter is passed
+        // Report an error if no parameter is passed
         thiz.error('reify(): Missing parameter.');
         return false;
     } else if(accessor.accessorName) {
-    	// Case where and accessor object is passed
-    	accessorInstance = accessor;
-    	isNewAccessor = false;
+        // Case where and accessor object is passed
+        accessorInstance = accessor;
+        isNewAccessor = false;
     } else if(typeof accessor == 'string') {
-		// Check if accessor is an accessor code
-	    try {
-			// For functions that access ports, etc., we want the default implementation
-    		// when instantiating the contained accessor.
-    		var accessorClass = accessor;
-    		var insideBindings = this.getDefaultInsideBindings(null);
-		    var accessorInstance = instantiateAccessor(
-        		instanceName, accessorClass, this.getAccessorCode, insideBindings);
-		    console.log('that was an accessor accessorClass: ' + accessorInstance);
-		    accessorInstance.accessorClass = accessorClass;
-	    } catch(e) {
-	    	// If an error is catched, the provided parameter is likely to be the
-	    	// the accessorCode
-	    	try {
-	    		var accessorCode = accessor;
-	    		var getAccessorCode = null;
-    			if (this.getAccessorCode) {
-        			getAccessorCode = this.getAccessorCode;
-    			};
-	    		var insideBindings = this.getDefaultInsideBindings(null);
-			    accessorInstance = new Accessor(
-			    	instanceName, accessorCode, getAccessorCode, insideBindings, null, null);
-		    } catch(ee) {
-		    	thiz.error('Parameter supplied is not a valid accessor object, accessor class or accessor code: ' + ee);
-		    	return false;
-		    };
-	    };
-	};
+        // Check if accessor is an accessor code
+        try {
+            // For functions that access ports, etc., we want the default implementation
+            // when instantiating the contained accessor.
+            var accessorClass = accessor;
+            var insideBindings = this.getDefaultInsideBindings(null);
+            var accessorInstance = instantiateAccessor(
+                instanceName, accessorClass, this.getAccessorCode, insideBindings);
+            console.log('that was an accessor accessorClass: ' + accessorInstance);
+            accessorInstance.accessorClass = accessorClass;
+        } catch(e) {
+            // If an error is catched, the provided parameter is likely to be the
+            // the accessorCode
+            try {
+                var accessorCode = accessor;
+                var getAccessorCode = null;
+                if (this.getAccessorCode) {
+                    getAccessorCode = this.getAccessorCode;
+                };
+                var insideBindings = this.getDefaultInsideBindings(null);
+                accessorInstance = new Accessor(
+                    instanceName, accessorCode, getAccessorCode, insideBindings, null, null);
+            } catch(ee) {
+                thiz.error('Parameter supplied is not a valid accessor object, accessor class or accessor code: ' + ee);
+                return false;
+            };
+        };
+    };
 
-	// Check that the accessor instance is a possible reification
-	var mapObject = this.reifiableBy(accessorInstance);
+    // Check that the accessor instance is a possible reification
+    var mapObject = this.reifiableBy(accessorInstance);
 
-	if (mapObject) {
-		this.unreify();
-		// Add the accessor to the list of all accessors if it is a new one
-		if (isNewAccessor) {
-			allAccessors.push(accessorInstance);
-		}
+    if (mapObject) {
+        this.unreify();
+        // Add the accessor to the list of all accessors if it is a new one
+        if (isNewAccessor) {
+            allAccessors.push(accessorInstance);
+        }
 
-		// Establish containment
-    	thiz.containedAccessors.push(accessorInstance);
-    	accessorInstance.container = thiz;
+        // Establish containment
+        thiz.containedAccessors.push(accessorInstance);
+        accessorInstance.container = thiz;
 
-    	// Get mapping objects
-    	thiz.inputsMap = mapObject.inputsMap;
-    	thiz.outputsMap = mapObject.outputsMap;
+        // Get mapping objects
+        thiz.inputsMap = mapObject.inputsMap;
+        thiz.outputsMap = mapObject.outputsMap;
 
-    	// Establish the connections
-    	Object.keys(thiz.inputsMap).forEach(function (key) {
-        	thiz.connect(key, accessorInstance, thiz.inputsMap[key]);
-    	});
-    	Object.keys(thiz.outputsMap).forEach(function (key) {
-        	thiz.connect(accessorInstance, key, thiz.outputsMap[key]);
-    	});
+        // Establish the connections
+        Object.keys(thiz.inputsMap).forEach(function (key) {
+            thiz.connect(key, accessorInstance, thiz.inputsMap[key]);
+        });
+        Object.keys(thiz.outputsMap).forEach(function (key) {
+            thiz.connect(accessorInstance, key, thiz.outputsMap[key]);
+        });
 
-    	// Initialize the instance
-    	accessorInstance.initialize();
+        // Initialize the instance
+        accessorInstance.initialize();
 
-    	// Update the mutableAccessor state and history
-    	thiz.state = 'reified';
+        // Update the mutableAccessor state and history
+        thiz.state = 'reified';
 
-    	thiz.emit('reified');
-    	return true;
+        thiz.emit('reified');
+        return true;
     } else {
-    	thiz.error('Accessor supplied cannot reify the mutableAccessor: ' + thiz.accessorName);
-    	return false;
+        thiz.error('Accessor supplied cannot reify the mutableAccessor: ' + thiz.accessorName);
+        return false;
     }
 };
 
@@ -2092,8 +2119,8 @@ Accessor.prototype.scheduleEvent = function (accessor, priority) {
     var myPriority = accessor.priority;
     if (typeof myPriority !== 'number') {
         throw new Error('Accessor does not have a priority: ' +
-            accessor.accessorName +
-            '. Perhaps initialize() is overridden?');
+                        accessor.accessorName +
+                        '. Perhaps initialize() is overridden?');
     }
     // Recall that a higher priority number means a lower priority.
     var theirPriority = queue[queue.length - 1].priority;
@@ -2287,7 +2314,7 @@ Accessor.prototype.setIntervalDeterministic = function(callback, timeout, llcd, 
     var thiz = this;
     var tempo;
     var tempPriority, errorCallback, cleanCallback;
-        
+    
     // Set default values for priority, errorCallback and cleanCallback
     if (priority === null) {
         tempPriority = thiz.priority;
@@ -2314,9 +2341,9 @@ Accessor.prototype.setParameter = function (name, value) {
     var parameter = this.parameters[name];
     if (!parameter) {
         throw new Error('setParameter(): Accessor ' +
-            this.accessorName +
-            ' has no parameter named ' + name +
-            ' Perhaps it is an input and you should use setDefault()?');
+                        this.accessorName +
+                        ' has no parameter named ' + name +
+                        ' Perhaps it is an input and you should use setDefault()?');
     }
     // If necessary, convert the value to the match the type.
     value = convertType(value, parameter, name);
@@ -2370,47 +2397,47 @@ Accessor.prototype.setTimeoutDeterministic = function(callback, timeout, llcd, p
  *   all contained accessors.
  */
 Accessor.prototype.startMonitoring = function(deeply) {
-	var thiz = this;
+    var thiz = this;
 
-	// Construct the monitor object
-	this.monitor = {};
-	this.monitor.utilization = 0;
-	this.monitor.startMonitoringTime = Date.now();
+    // Construct the monitor object
+    this.monitor = {};
+    this.monitor.utilization = 0;
+    this.monitor.startMonitoringTime = Date.now();
 
-	// Monitoring initialize events
-	this.monitor.initialize = {
-		'count': 0,
-		'utilization': 0,
-		'latestStart': 0,
-		'latestEnd': 0
+    // Monitoring initialize events
+    this.monitor.initialize = {
+        'count': 0,
+        'utilization': 0,
+        'latestStart': 0,
+        'latestEnd': 0
     };
 
     // Monitoring react events
     this.monitor.react = {
-		'count': 0,
-		'utilization': 0,
-		'latestStart': 0,
-		'latestEnd': 0
+        'count': 0,
+        'utilization': 0,
+        'latestStart': 0,
+        'latestEnd': 0
     };
 
     // Monitoring wrapup events
     this.monitor.wrapup = {
-		'count': 0,
-		'utilization': 0,
-		'latestStart': 0,
-		'latestEnd': 0
+        'count': 0,
+        'utilization': 0,
+        'latestStart': 0,
+        'latestEnd': 0
     };
 
     // If needed, start monitoring all contained accessors.
-	if (deeply) {
+    if (deeply) {
         if (this.containedAccessors && this.containedAccessors.length > 0) {
             for (var i = 0; i < this.containedAccessors.length; i++) {
                 this.containedAccessors[i].startMonitoring(deeply);
             }
         }
-	}
+    }
 
-	if (this.monitoring) {
+    if (this.monitoring) {
         // Already monitoring. Just reset as above.
         return;
     }
@@ -2474,45 +2501,31 @@ Accessor.prototype.stopAt = function (timeout) {
  *  @return the accessor's monitor object.
  */
 Accessor.prototype.stopMonitoring = function() {
-	var thiz = this;
-	this.monitor.stopMonitoringTime = Date.now();
+    var thiz = this;
+    var monitor = this.getMonitoring();
 
-	// Update utilization based on stopMonitoringTime, for each of the events
-	var events = ['initialize', 'react', 'wrapup'];
-	for (var event in events) {
-		if (this.monitor[events[event]].latestEnd > this.monitor[events[event]].latestStart) {
-			var latestUtilizationTime = this.monitor[events[event]].utilization * 
-					(this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
-			this.monitor[events[event]].utilization = latestUtilizationTime / 
-					(this.monitor.stopMonitoringTime - this.monitor.startMonitoringTime);
-		} else if (this.monitor[events[event]].latestStart > this.monitor[events[event]].latestEnd) {
-			var latestUtilizationTime = this.monitor[events[event]].utilization * 
-					(this.monitor[events[event]].latestEnd - this.monitor.startMonitoringTime);
-			this.monitor[events[event]].utilization = latestUtilizationTime + 
-					(this.stopMonitoringTime - this.monitor[events[event]].latestStart);
-			this.monitor[events[event]].utilization /= 
-					(this.monitor.stopMonitoringTime - this.monitor.startMonitoringTime);
-		}
-	}
+    if (this.monitoring) {
+        this.monitor.stopMonitoringTime = this.monitor.currentMonitoringTime;
+        this.monitoring = false;
 
-	var monitor = this.getMonitoring();
-	this.monitoring = false;
+        // Remove listeners
+        this.removeListener('initializeStart', _recordEventStart(thiz, 'initialize'));
+        this.removeListener('initializeEnd', _recordEventEnd(thiz, 'initialize'));
+        this.removeListener('reactStart', _recordEventStart(thiz, 'react'));
+        this.removeListener('reactEnd', _recordEventEnd(thiz, 'react'));
+        this.removeListener('wrapupStart', _recordEventStart(thiz, 'wrapup'));
+        this.removeListener('wrapupEnd', _recordEventEnd(thiz, 'wrapup'));
 
-	// Remove listeners
-    this.removeListener('initializeStart', _recordEventStart.bind(thiz, 'initialize'));
-    this.removeListener('initializeEnd', _recordEventEnd.bind(thiz, 'initialize'));
-    this.removeListener('reactStart', _recordEventStart.bind(thiz, 'react'));
-    this.removeListener('reactEnd', _recordEventEnd.bind(thiz, 'react'));
-    this.removeListener('wrapupStart', _recordEventStart.bind(thiz, 'wrapup'));
-    this.removeListener('wrapupEnd', _recordEventEnd.bind(thiz, 'wrapup'));
-
-	// Stop monitoring of all contained accessors
-    if (this.containedAccessors && this.containedAccessors.length > 0) {
-        for (var i = 0; i < this.containedAccessors.length; i++) {
-            this.containedAccessors[i].stopMonitoring();
+        // Stop monitoring of all contained accessors
+        if (this.containedAccessors && this.containedAccessors.length > 0) {
+            for (var i = 0; i < this.containedAccessors.length; i++) {
+                if (this.containedAccessors[i].monitoring) {
+                    this.containedAccessors[i].stopMonitoring();
+                }
+            }
         }
-	}
-
+    }
+    
     return monitor;
 }
 
@@ -2533,13 +2546,13 @@ Accessor.prototype.unreify = function () {
     }
 
     // Remove the containment relationship and wrapup
-   	var acc = thiz.containedAccessors.pop();
-	acc.wrapup();
+    var acc = thiz.containedAccessors.pop();
+    acc.wrapup();
     if (acc.container) {
-    	acc.container = null;
+        acc.container = null;
     }
 
-	// Disconnect the mutableAccessor from the reifying one
+    // Disconnect the mutableAccessor from the reifying one
     Object.keys(thiz.inputsMap).forEach(function (key) {
         thiz.disconnect(key, acc, thiz.inputsMap[key]);
     });
@@ -2547,7 +2560,7 @@ Accessor.prototype.unreify = function () {
         thiz.disconnect(acc, key, thiz.outputsMap[key]);
     });
 
-	// Empty mapping objects 
+    // Empty mapping objects 
     thiz.inputsMap = {};
     thiz.outputsMap = {};
 
@@ -2570,19 +2583,19 @@ var _recordEventEnd = function(event) {
     var end = Date.now();
 
     if (this.monitor[event].latestStart != 0) {
-   		// Amount of time in reactions prior to this reaction
-   		var timePrior = this.monitor[event].latestEnd - this.monitor.startMonitoringTime;
-   		timePrior *=  Number(this.monitor[event].utilization);
+        // Amount of time in reactions prior to this reaction
+        var timePrior = this.monitor[event].latestEnd - this.monitor.startMonitoringTime;
+        timePrior *=  Number(this.monitor[event].utilization);
 
-   		// Amount of time in this reaction
-   		var timeThis = end - Number(this.monitor[event].latestStart);
+        // Amount of time in this reaction
+        var timeThis = end - Number(this.monitor[event].latestStart);
 
-   		this.monitor[event].utilization = timePrior + timeThis;
-   		var totalElapsed = end - this.monitor.startMonitoringTime;
-   		this.monitor[event].utilization /= totalElapsed;
+        this.monitor[event].utilization = timePrior + timeThis;
+        var totalElapsed = end - this.monitor.startMonitoringTime;
+        this.monitor[event].utilization /= totalElapsed;
     } else {
-    	this.monitor[event].utilization = 1;
-    	this.monitor[event].latestStart = this.monitor.startMonitoringTime;
+        this.monitor[event].utilization = 1;
+        this.monitor[event].latestStart = this.monitor.startMonitoringTime;
     }
     this.monitor[event].count++;
     this.monitor[event].latestEnd = end;
@@ -2594,16 +2607,16 @@ var _recordEventEnd = function(event) {
  *  @param event Name of the listened event that started
  */
 var _recordEventStart = function(event) {
-	switch(event) {
-		case 'initialize':
-			this.monitor.initialize.latestStart = Date.now();
-			break;
-		case 'react':
-			this.monitor.react.latestStart = Date.now();
-			break;
-		case 'wrapup':
-			this.monitor.wrapup.latestStart = Date.now();
-	}
+    switch(event) {
+    case 'initialize':
+        this.monitor.initialize.latestStart = Date.now();
+        break;
+    case 'react':
+        this.monitor.react.latestStart = Date.now();
+        break;
+    case 'wrapup':
+        this.monitor.wrapup.latestStart = Date.now();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -2640,15 +2653,15 @@ function convertType(value, destination, name) {
                 value = JSON.stringify(value);
             } catch (error) {
                 throw new Error('Object provided to ' +
-                    name +
-                    ' does not have a string representation: ' +
-                    error);
+                                name +
+                                ' does not have a string representation: ' +
+                                error);
             }
         }
     } else if (typeof value === 'string') {
         // Provided value is a reported to be a string.  Note that it might
-    	// actually be a JSON object but is reported to be a string.  
-    	// Destination type is boolean, number, int, or JSON.
+        // actually be a JSON object but is reported to be a string.  
+        // Destination type is boolean, number, int, or JSON.
         if (value === '') {
             // If the value is an empty string, then convert
             // to null, unless the destination type is JSON.
@@ -2657,17 +2670,17 @@ function convertType(value, destination, name) {
             }
         } else {
             try {
-            	// Try to parse JSON.  This sometimes fails for strings
-            	// which are not enclosed in quotation marks.  Note also
-            	// the Javascript type (here, string) does not necessarily 
-            	// match the type of the parsed JSON (e.g. could be an object).
-            	var originalValue = value;
-            	
+                // Try to parse JSON.  This sometimes fails for strings
+                // which are not enclosed in quotation marks.  Note also
+                // the Javascript type (here, string) does not necessarily 
+                // match the type of the parsed JSON (e.g. could be an object).
+                var originalValue = value;
+                
                 value = JSON.parse(value);
             } catch (error) {
-            	// Assume it is a string.
-            	// Note this approach does not allow us to catch malformed JSON.
-            	value = originalValue;
+                // Assume it is a string.
+                // Note this approach does not allow us to catch malformed JSON.
+                value = originalValue;
             }
         }
     } else if (destination.type === 'boolean' && typeof value !== 'boolean') {
@@ -2681,9 +2694,9 @@ function convertType(value, destination, name) {
         // value is not a string. Needs to be a number.
         if (typeof value !== 'number') {
             throw new Error(name + ' expected an int, but got a ' +
-                (typeof value) +
-                ': ' +
-                value);
+                            (typeof value) +
+                            ': ' +
+                            value);
         }
         // If type is int, need the value to be an integer.
         if (destination.type === 'int' && value % 1 !== 0) {
@@ -2697,9 +2710,9 @@ function convertType(value, destination, name) {
             JSON.stringify(value);
         } catch (err) {
             throw new Error('Object provided to ' +
-                name +
-                ' does not have a JSON representation: ' +
-                err);
+                            name +
+                            ' does not have a JSON representation: ' +
+                            err);
         }
     }
     return value;
@@ -2722,7 +2735,7 @@ function getTopLevelAccessors() {
  */
 function getTopLevelAccessorsNotSupported() {
     throw new Error('getTopLevelAccessors(): Accessors are not permitted' +
-        ' to access peer accessors in this host.');
+                    ' to access peer accessors in this host.');
 }
 
 /** Instantiate an accessor given its fully qualified class name, a function to retrieve
@@ -2913,7 +2926,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--js':
             if (i + 1 >= argv.length) {
                 console.error("Argument " + i + "  was " + argv[i] + " but there is no " +
-                    "following filename argument.  Args were: " + argv);
+                              "following filename argument.  Args were: " + argv);
                 return false;
             }
             i += 1;
@@ -2926,7 +2939,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
                 eval(fileReader(argv[i]));
             } catch (error) {
                 console.error('Failed to eval "' + argv[i] + '": ' + error +
-                    ":" + error.stack);
+                              ":" + error.stack);
                 return false;
             }
 
@@ -2945,7 +2958,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--timeout':
             if (i + 1 >= argv.length) {
                 console.error("Argument " + i + "  was " + argv[i] + " but there is no " +
-                    "following milliseconds argument.  Args were: " + argv);
+                              "following milliseconds argument.  Args were: " + argv);
                 return false;
             }
             i += 1;
@@ -2955,7 +2968,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
             timeout = argv[i];
 
             console.log("commonHost.js: processCommandLineArguments(): " +
-                "Setting timeout to stop after " + timeout + " ms.");
+                        "Setting timeout to stop after " + timeout + " ms.");
             setTimeout(function () {
                 // Under node, process.exit gets caught by exitHandler() in
                 // nodeHost.js and invokes wrapup().
@@ -2982,7 +2995,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 1996 2017-08-01 22:30:48Z chadlia.jerad $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2010 2017-08-04 16:10:05Z cxh $");
             return false;
 
         default:
@@ -3065,7 +3078,7 @@ function stopAllAccessors() {
     }
     if (initialThrowable !== null) {
         throw new Error("commonHost.js: stopAllAccessors(): while invoking wrapup() of all accessors," +
-            " an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
+                        " an exception was thrown: " + initialThrowable + ":" + initialThrowable.stack);
     }
 }
 
@@ -3079,7 +3092,7 @@ function stopAllAccessors() {
  */
 function uniqueName(seed, container) {
     var startIndex = (seed.indexOf('\\') >= 0 ? seed.lastIndexOf('\\') :
-        seed.lastIndexOf('/'));
+                      seed.lastIndexOf('/'));
     if (startIndex >= 0) {
         seed = seed.substring(startIndex + 1);
     }
