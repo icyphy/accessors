@@ -7,21 +7,25 @@ CFILES = ./examples/cmdline/duk_cmdline.c \
 # .h files that contain the contents of .js files
 JS_HFILES = 
 
-HFILES = ./src/duk_config.h \
+HFILES =  ./src/duk_config.h \
 	./src/duktape.h \
 	duktapeHost.h \
+        ../eduk2/AccessorStatus.h \
 	../eduk2/RampJSDisplay.h \
-	../eduk2/RampJSInspect.h \
 	../eduk2/RampJSTest.h \
 	../eduk2/RampJSTestDisplay.h \
+	../eduk2/Stop.h \
 	../eduk2/TestAdder.h \
 	../eduk2/TestComposite.h \
 	../eduk2/TestDisplay.h \
 	../eduk2/TestGain.h \
 	../eduk2/TestSpontaneous.h \
 	../eduk2/TrainableTest.h \
+        ../eduk2/autoAccessorStatusTest.h \
 	../eduk2/autoTestComposite.h \
+        ../eduk2/autoTestStop.h \
 	../eduk2/commonHost.h \
+        ../eduk2/deterministicTemporalSemantics.h \
 	../eduk2/duktapeHost.h \
 	../eduk2/ecma_eventloop.h \
 	../eduk2/events.h \
