@@ -138,6 +138,11 @@ Duktape.modSearch = function (id, require, exports, module) {
 // https://www.icyphy.org/accessors/wiki/Main/DuktapeHost#RequireModuleID
 var commonHost = require("common/commonHost");
 
+// This host allows trusted accessors, which means that any
+// accessor whose class name begins with 'trusted/' can invoke the
+// function getTopLevelAccessors().
+commonHost.allowTrustedAccessors(true);
+
 // Duktape does not have path nor fs modules.
 //var path = require('path');
 //var fs = require('fs');
@@ -321,6 +326,7 @@ exports = {
     // Don't export clearInterval, setInterval and setTimeout here because
     // we no longer require ecma_eventloop.js above.
     //'clearInterval': clearInterval,
+    'getTopLevelAccessors': commonHost.getTopLevelAccessors,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
@@ -328,6 +334,6 @@ exports = {
     //'setInterval': setInterval,
     //'setTimeout': setTimeout,
 };
-//print("duktapeHost.js done");
+
 
 
