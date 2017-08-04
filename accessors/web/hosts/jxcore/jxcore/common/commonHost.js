@@ -215,7 +215,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 2010 2017-08-04 16:10:05Z cxh $$
+ *  @version $$Id: commonHost.js 2012 2017-08-04 16:39:02Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -1299,6 +1299,15 @@ Accessor.prototype.getDefaultInsideBindings = function(accessorClass) {
     // accessor is a custom script provided as part of the swarmlet.
     // We trust all such scripts, since they are part of the swarmlet definition,
     // and therefore authored by the author of the swarmlet.
+
+    // String.startsWith was added in ECMA2015 and might not be present in Duktape.
+    // The definition of startsWith below is from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+    if (!String.prototype.startsWith) {
+        String.prototype.startsWith = function(searchString, position){
+            return this.substr(position || 0, searchString.length) === searchString;
+        };
+    }
+
     if (trustedAccessorsAllowed && (!accessorClass || accessorClass.startsWith('trusted/'))) {
         insideBindings.getTopLevelAccessors = getTopLevelAccessors;
     } else {
@@ -2995,7 +3004,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2010 2017-08-04 16:10:05Z cxh $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2012 2017-08-04 16:39:02Z cxh $");
             return false;
 
         default:
