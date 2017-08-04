@@ -1960,7 +1960,6 @@ Accessor.prototype.reify = function (accessor) {
             var insideBindings = this.getDefaultInsideBindings(null);
             var accessorInstance = instantiateAccessor(
                 instanceName, accessorClass, this.getAccessorCode, insideBindings);
-            console.log('that was an accessor accessorClass: ' + accessorInstance);
             accessorInstance.accessorClass = accessorClass;
         } catch(e) {
             // If an error is catched, the provided parameter is likely to be the
@@ -2453,12 +2452,12 @@ Accessor.prototype.startMonitoring = function(deeply) {
 
     // Add to each event listeners for 'start' and 'end'
     this.monitoring = true;
-    thiz.addListener('initializeStart', _recordEventStart.bind(thiz, 'initialize'));
-    thiz.addListener('initializeEnd', _recordEventEnd.bind(thiz, 'initialize'));
-    thiz.addListener('reactStart', _recordEventStart.bind(thiz, 'react'));
-    thiz.addListener('reactEnd', _recordEventEnd.bind(thiz, 'react'));
-    thiz.addListener('wrapupStart', _recordEventStart.bind(thiz, 'wrapup'));
-    thiz.addListener('wrapupEnd', _recordEventEnd.bind(thiz, 'wrapup'));
+    thiz.addListener('initializeStart', _recordEventStart.bind(this, 'initialize'));
+    thiz.addListener('initializeEnd', _recordEventEnd.bind(this, 'initialize'));
+    thiz.addListener('reactStart', _recordEventStart.bind(this, 'react'));
+    thiz.addListener('reactEnd', _recordEventEnd.bind(this, 'react'));
+    thiz.addListener('wrapupStart', _recordEventStart.bind(this, 'wrapup'));
+    thiz.addListener('wrapupEnd', _recordEventEnd.bind(this, 'wrapup'));
 };
 
 /** Stop execution of the enclosing swarmlet by finding the top-level
@@ -2518,12 +2517,12 @@ Accessor.prototype.stopMonitoring = function() {
         this.monitoring = false;
 
         // Remove listeners
-        this.removeListener('initializeStart', _recordEventStart(thiz, 'initialize'));
-        this.removeListener('initializeEnd', _recordEventEnd(thiz, 'initialize'));
-        this.removeListener('reactStart', _recordEventStart(thiz, 'react'));
-        this.removeListener('reactEnd', _recordEventEnd(thiz, 'react'));
-        this.removeListener('wrapupStart', _recordEventStart(thiz, 'wrapup'));
-        this.removeListener('wrapupEnd', _recordEventEnd(thiz, 'wrapup'));
+        this.removeListener('initializeStart', _recordEventStart);
+        this.removeListener('initializeEnd', _recordEventEnd);
+        this.removeListener('reactStart', _recordEventStart);
+        this.removeListener('reactEnd', _recordEventEnd);
+        this.removeListener('wrapupStart', _recordEventStart);
+        this.removeListener('wrapupEnd', _recordEventEnd);
 
         // Stop monitoring of all contained accessors
         if (this.containedAccessors && this.containedAccessors.length > 0) {
