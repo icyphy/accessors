@@ -125,7 +125,7 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-var UserInterface = require('@accessor-modules/user-interface.js');
+var UserInterface = require('@accessors-modules/user-interface');
 var userInterface = null;
 
 exports.setup = function () {
@@ -201,7 +201,7 @@ function update() {
 exports.initialize = function () {
     var self = this;
     
-    userInterface = new UserInterface.UserInterfacer(
+    userInterface = new UserInterface.UserInterface(
             {'port': self.getParameter('port')},
             self.getParameter('header'),
             self.getParameter('content')
