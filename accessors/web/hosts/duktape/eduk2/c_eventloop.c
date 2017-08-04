@@ -52,8 +52,8 @@
 
 #include "duktape.h"
 
-// Accessors: Reduced MAX_TIMES from 4096 to 4.
-#define  MAX_TIMERS             4         /* this is quite excessive for embedded use, but good for testing */
+// Accessors: Reduced MAX_TIMES from 4096 to 8.
+#define  MAX_TIMERS             8         /* this is quite excessive for embedded use, but good for testing */
 #define  MIN_DELAY              1.0
 #define  MIN_WAIT               1.0
 #define  MAX_WAIT               60000.0
