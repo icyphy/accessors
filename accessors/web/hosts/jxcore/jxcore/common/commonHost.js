@@ -215,7 +215,7 @@
  *
  *  @module @accessors-hosts/commonHost
  *  @author Edward A. Lee and Chris Shaver.  Contributor: Christopher Brooks
- *  @version $$Id: commonHost.js 2015 2017-08-04 16:44:27Z cxh $$
+ *  @version $$Id: commonHost.js 2024 2017-08-05 19:06:00Z cxh $$
  */
 
 // Stop extra messages from jslint and jshint.
@@ -685,6 +685,8 @@ clearTimeout',
                 this.exports.wrapup.call(this);
             }
 
+            // If you change wrapupEnd, then be sure to update the wrapupEnd
+            // listener in processCommandLineArguments().
             this.emit('wrapupEnd');
 
             if (typeof _debug !== 'undefined' && _debug) {
@@ -3005,7 +3007,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
         case '--v':
         case '-version':
         case '--version':
-            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2015 2017-08-04 16:44:27Z cxh $");
+            console.log("Accessors 1.0, commonHost.js: $Id: commonHost.js 2024 2017-08-05 19:06:00Z cxh $");
             return false;
 
         default:
@@ -3022,7 +3024,7 @@ function processCommandLineArguments(argv, fileReader, instantiateTopLevel, term
             // Initialize the accessor.
             accessor.initialize();
 
-            accessor.on('wrapup', function () {
+            accessor.on('wrapupEnd', function () {
                 accessorsWrappedUp++;
                 if (terminator && accessorsWrappedUp >= accessorCount) {
                     // All initialized accessors have wrapped up.
