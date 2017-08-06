@@ -149,9 +149,10 @@ exports.setup = function () {
         'type': 'JSON',
         'spontaneous': true
     });
+    // Use port 8089 because port 8080 is occupied on terra.eecs.berkeley.edu
     this.parameter('port', {
         'type': 'int',
-        'value': 8080
+        'value': 8089
     });
 };
 
