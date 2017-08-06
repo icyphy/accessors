@@ -1,4 +1,4 @@
-// Accessor that provides a user interface on the local host.
+// Accessor that provides a user interface based on HTML5 on the local host.
 //
 // Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
@@ -23,7 +23,7 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Accessor that provides a user interface on the local host.
+/** Accessor that provides a user interface based on HTML5 on the local host.
  *  The initial content on the page may be specified using the *content*
  *  parameter and HTML header content may be specified using *header*.
  *  
@@ -75,8 +75,9 @@
  *     {'id':'bar', 'property':'src', 'content':'image.jpg'}
  *  </pre>
  *  
- *  Note that to get the user interface to actually replace the image, we have to play some tricks.
- *  A user interface normally caches an image that it has previously retrieved
+ *  Note that to get the user interface to actually replace the image, we may have to play some tricks.
+ *  If the user interface is implemented by a browser, then the browser
+ *  normally caches an image that it has previously retrieved
  *  and it will use the cached version of the image rather than obtaining the new image
  *  from the server.  To force the user interface to refresh the image, this accessor
  *  treats a *property* value of 'src' specially.
@@ -89,11 +90,11 @@
  *
  *  The way this accessor works on most hosts is that it starts a web server on localhost
  *  at the specified port that serves the specified web page and then instructs
- *  the system default user interface to load the default page from that server.
+ *  the system default browser to load the default page from that server.
  *  The page served by the server includes a script that listens for websocket
  *  connections that are used to provide HTML content and udpates to display on the page.
- *  Some hosts, however, such as the cordova and user interface hosts, natively use
- *  a user interface as part of the host, so in these cases, no web server nor socket
+ *  Some hosts, however, such as the cordova and browser hosts, natively use
+ *  a browser as part of the host, so in these cases, no web server nor socket
  *  connection is needed and the *port* parameter will be ignored.
  *  
  *  @accessor utilities/UserInterface.js
@@ -114,7 +115,7 @@
  *  @parameter {int} port The port to use, if needed, for websocket communication between this
  *   accessor (which updates the HTML content of the web page) and the user interface.
  *   The web page will listen on this socket for content and display whatever arrives
- *   on that port. This is ignored on hosts that do not need to invoke an external user interface.
+ *   on that port. This is ignored on hosts that do not need to invoke an external browser.
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
  *  @version $$Id$$
  */
