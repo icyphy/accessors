@@ -8,7 +8,7 @@ $ cordova run browser
 
 To run in the Android simulator:
 
-$ cordova simulate android
+$ cordova emulate android
 
 To refresh (without rebuilding, which is time-consuming):
 
