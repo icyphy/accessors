@@ -60,7 +60,7 @@
       <fileset dir="../../../../" includes="**/*.js" excludes="hosts/**, **/demo/**"/>
     </copy>  
     <copy file="../../../common/commonHost.js" tofile="www/js/include/common/commonHost.js"/>
-    <copy file="../../cordovaHost.js" tofile="www/js/include/cordova/cordovaHost.js"/>
+    <copy file="../../cordovaFiles/cordovaHost.js" tofile="www/js/include/cordova/cordovaHost.js"/>
   </target>
 
   <target name="plugins">
