@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/cg; node ../hosts/node/nodeHostInvoke.js cg/SimpleCodeGen)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/SimpleCodeGen.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/composite/SimpleCodeGen.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/SimpleCodeGen.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/gdp/composite/SimpleCodeGen.xml
 
     // Ports: SimpleCodeGen: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
