@@ -1,5 +1,6 @@
 [
     "MochaTest.js",
+    "SimpleCodeGen.js",
     "TestAccessor.js",
     "TestAdder.js",
     "TestBaseC.js",
