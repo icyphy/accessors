@@ -159,7 +159,8 @@ exports.setup = function () {
  */
 exports.encodePath = function () {
     // Remove any leading slash that might be present.
-    var command = this.get('command').replace(/^\//, '');
+	var re = new RegExp('^\/');
+	var command = this.get('command').replace(re, '');
     // Encode any characters that are not allowed in a URL.
     var encodedArgs = querystring.stringify(this.get('arguments'));
     if (encodedArgs) {
@@ -225,8 +226,8 @@ exports.issueCommand = function (callback) {
         command.body = body;
     }
 
-    // console.log("REST.js issueCommand(): request to: " + JSON.stringify(command));
-    //    console.log(util.inspect(command));
+     console.log("REST.js issueCommand(): request to: " + JSON.stringify(command));
+        console.log(util.inspect(command));
     
     request = httpClient.request(command, callback);
     request.on('error', function (message) {
