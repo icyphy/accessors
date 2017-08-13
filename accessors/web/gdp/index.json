@@ -1,5 +1,6 @@
 [
     "GDPAppendViaGW.js",
+    "GDPCreateViaGW.js",
     "GDPLogAppend.js",
     "GDPLogCreate.js",
     "GDPLogRead.js",
