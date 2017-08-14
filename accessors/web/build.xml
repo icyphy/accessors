@@ -104,9 +104,6 @@
     <!-- hosts/browser/common is a symbolic link -->
     <exclude name="**/hosts/browser/common/test/mocha/test*.js"/>
 
-    <!-- Don't include xcore/jxcore/common/test/mocha/testCommon.js --> 
-    <exclude name="**/hosts/jxcore/**/*.js"/>
-
     <!-- Exclude node_modules/@accessors-hosts because it is a symbolic link. -->
     <exclude name="**/node_modules/@accessors-hosts/**/*.js"/>
 
@@ -320,27 +317,6 @@
   </target>
 
   <target name="copy"
-          depends="copy.ptII"
-          description="Copy files from commonHost to cordova and jxcore">
-    <copy todir="hosts/jxcore/jxcore/common">
-        <file file="hosts/common/commonHost.js"/>
-    </copy>
-
-    <copy todir="hosts/jxcore/jxcore/common/modules">
-      <file file="hosts/common/modules/deterministicTemporalSemantics.js"/>
-      <file file="hosts/common/modules/events.js"/>
-      <file file="hosts/common/modules/hostHelper.js"/>
-      <file file="hosts/common/modules/util.js"/>
-    </copy>
-
-    <copy todir="hosts/jxcore/jxcore/common/modules">
-      <file file="hosts/common/modules/events.js"/>
-      <file file="hosts/common/modules/hostHelper.js"/>
-      <file file="hosts/common/modules/util.js"/>
-    </copy>
-  </target>
-
-  <target name="copy.ptII"
           depends="-ptII-exists"
           if="${ptII.exists}">
     <copy todir="${env.PTII}/ptolemy/actor/lib/jjs">
