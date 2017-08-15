@@ -72,7 +72,7 @@ var certificateAndDomainNameRequested = false;
 exports.get = function (options, responseCallback) {
 	var parsedOptions = parseOptions(options);
 
-    console.log('🔗 Get Request to URL');
+    console.log('Get Request to URL...');
     
     // Call cordovaHTTP get
     cordovaHTTP.get(parsedOptions.url, 
@@ -107,7 +107,7 @@ exports.get = function (options, responseCallback) {
 exports.post = function (options, responseCallback) {
 	var parsedOptions = parseOptions(options);
 
-    console.log('🔗 Post Request to URL');
+    console.log('Post Request to URL...');
    
     // Call cordovaHTTP post. It takes the url, data, headers and two callback functions
     cordovaHTTP.post(parsedOptions.url, 
@@ -133,7 +133,7 @@ exports.post = function (options, responseCallback) {
 exports.put = function (options, responseCallback) {
 	var parsedOptions = parseOptions(options);
 
-    console.log('🔗 Put Request to URL');
+    console.log('Put Request to URL...');
    
     // Call cordovaHTTP post. It takes the url, data, headers and two callback functions
     cordovaHTTP.put(parsedOptions.url, 
