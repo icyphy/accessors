@@ -118,7 +118,7 @@ var querystring = require('querystring');
 /** Define inputs and outputs. */
 exports.setup = function () {
     this.input('options', {
-    	'type': 'JSON',	// Note that string literals are valid JSON.
+            'type': 'JSON',        // Note that string literals are valid JSON.
         'value': ''
     });
     this.input('command', {
@@ -159,8 +159,8 @@ exports.setup = function () {
  */
 exports.encodePath = function () {
     // Remove any leading slash that might be present.
-	var re = new RegExp('^\/');
-	var command = this.get('command').replace(re, '');
+        var re = new RegExp('^\/');
+        var command = this.get('command').replace(re, '');
     // Encode any characters that are not allowed in a URL.
     var encodedArgs = querystring.stringify(this.get('arguments'));
     if (encodedArgs) {
