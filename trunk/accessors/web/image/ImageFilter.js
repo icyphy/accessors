@@ -22,24 +22,28 @@
 //
 
 /**
-This accessor filters images provided at the input to produce modified images
-on the output. This accessor requires an 'imageFilters' module implemented on
-the accessor host. The filters that are available will depend on the particular
-host implementation of this module and will be provided as select alternatives for the
-'filter' parameter. The options that each filter can accept will also depend on the
-module implementation on the host.  The filters that are implemented by the Ptolemy II
-host and their options are documented in the
-[imageFilters module](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/module-imageFilters.html)
-Demos for these filters can be found in the Ptolemy II tree at
-org/terraswarm/accessor/demo/ImageFilters.
-
-@accessor image/ImageFilter
-@parameter {string} filter The filter to apply.
-@input input The image to filter.
-@input {JSON} options The options controlling the filter.
-@output output The filtered image.
-@author Edward A. Lee
-@version $$Id$$
+ * Filter images provided at the input and produce modified images
+ * on the output.
+ *
+ * This accessor requires an 'imageFilters' module implemented on the
+ * accessor host. The filters that are available will depend on the
+ * particular host implementation of this module and will be provided
+ * as select alternatives for the 'filter' parameter. The options that
+ * each filter can accept will also depend on the module
+ * implementation on the host.  The filters that are implemented by
+ * the Ptolemy II host and their options are documented in the
+ * [imageFilters module](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/module-imageFilters.html)
+ *
+ * Demos for these filters can be found in the Ptolemy II tree at
+ * $PTII/ptolemy/actor/lib/jjs/modules/imageFilters/demo/ImageFilters
+ * 
+ * @accessor image/ImageFilter
+ * @parameter {string} filter The filter to apply.
+ * @input input The image to filter.
+ * @input {JSON} options The options controlling the filter.
+ * @output output The filtered image.
+ * @author Edward A. Lee
+ * @version $$Id$$
  */
 
 // Stop extra messages from jslint.  Note that there should be no
