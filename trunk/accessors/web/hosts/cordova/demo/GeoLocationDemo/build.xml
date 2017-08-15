@@ -21,8 +21,18 @@
       <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
     </copy>
     <delete dir="../.new_cordova_proj"/>
+    <copy file="../../cordovaFiles/index.js" tofile="src/www/js/index.js" overwrite="true"/>
+    <copy todir="src/www/js/include/accessors/">
+      <fileset dir="../../cordovaFiles/initDemoAccessors" />
+    </copy>
+    <copy todir="src/www/">
+      <fileset dir="../../cordovaFiles/initDemoLayout"/>
+    </copy>
+    <copy file="../../cordovaFiles/initDemoLayout/index.html" tofile="src/www/index.html" overwrite="true"/>
+    <copy file="../../cordovaFiles/initDemoLayout/css/index.css" tofile="src/www/css/index.css" overwrite="true"/>
     <antcall target="refresh"/>
     <antcall target="plugins"/>
+
   </target>
 
   <target name="build">
@@ -30,6 +40,7 @@
     <antcall target="init"/>    <!-- (re)generate cordova files  -->
     <antcall target="refresh"/> <!-- copy source files into cordova project -->
     <antcall target="plugins"/> <!-- add plugins to project -->
+    <copy file="../../cordovaFiles/index.js" tofile="www/js/index.js"/>
   </target>
 
   <target name="init">
@@ -58,7 +69,7 @@
     </copy>
     <copy todir="www/js/include/accessors">
       <fileset dir="../../../../" includes="**/*.js" excludes="hosts/**, **/demo/**"/>
-    </copy>  
+    </copy> 
     <copy file="../../../common/commonHost.js" tofile="www/js/include/common/commonHost.js"/>
     <copy file="../../cordovaFiles/cordovaHost.js" tofile="www/js/include/cordova/cordovaHost.js"/>
   </target>
