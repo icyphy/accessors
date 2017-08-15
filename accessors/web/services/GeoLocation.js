@@ -26,7 +26,8 @@
 /** GeoLocation accessor that outputs the coordinates.
  *  Location retieval parameters needs to be set.
  *   
- *  @accessor GeoLocation
+ *  @accessor services/GeoLocation
+ *
  *  @param enableHighAccuracy Boolean value that says if the user
  *   wants to enable or not high accuracy (needs the best possible results).
  *   If set to false, the position will be retieved using network-based methods.
