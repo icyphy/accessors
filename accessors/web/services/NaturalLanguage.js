@@ -78,6 +78,9 @@ exports.setup = function () {
         type: 'string',
         spontaneous: true
     });
+    // Note that it is OK for the clientAccessToken to
+    // be included in the accessor because the author needs
+    // to configure an agent for this to work.
     this.parameter('clientAccessToken', {
         type: 'string',
         value: '<-- your client access token here -->'
