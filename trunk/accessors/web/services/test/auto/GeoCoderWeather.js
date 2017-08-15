@@ -3,9 +3,9 @@ exports.setup = function() {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/services/test/auto; node ../../../hosts/node/nodeHostInvoke.js services/test/auto/GeoCoderWeather)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/GeoCoderWeather.xml
 
     // Ports: GeoCoderWeather: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
