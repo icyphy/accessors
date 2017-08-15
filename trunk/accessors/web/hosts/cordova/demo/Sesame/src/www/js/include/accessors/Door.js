@@ -71,17 +71,17 @@ function triggerInputHandler() {
     if (dropOutput == false) {
         dropOutput = true;
         setTimeout(function() {
-            console.log('🐱The door can be opened again!');
+            console.log('The door can be opened again!');
             dropOutput = false;
         }, thiz.getParameter('minDoorPeriod')); //FIXME use Math.max(10000, this.getParameter('minDoorPeriod'))
         
-        console.log('Opening the 📍🚪');
+        console.log('Opening the door');
         httpClient.get({
                 trustAll: true,
                 url: thiz.getParameter('url')
             },
             function(response) {
-                console.log('🚪 response: ' + response.data);
+                console.log('Response: ' + response.data);
                 thiz.send('response', response.data);
             }
         );
