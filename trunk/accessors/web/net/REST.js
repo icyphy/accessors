@@ -226,8 +226,9 @@ exports.issueCommand = function (callback) {
         command.body = body;
     }
 
-     console.log("REST.js issueCommand(): request to: " + JSON.stringify(command));
-        console.log(util.inspect(command));
+    // console.log("REST.js issueCommand(): request to: " + JSON.stringify(command));
+    // var util = require('util'); 
+    // console.log(util.inspect(command));
     
     request = httpClient.request(command, callback);
     request.on('error', function (message) {
