@@ -80,9 +80,9 @@ function triggerInputHandler() {
                 trustAll: true,
                 url: thiz.getParameter('url')
             },
-            function(data) {
-                console.log('🚪 response: ' + data);
-                thiz.send('response', data);
+            function(response) {
+                console.log('🚪 response: ' + response.data);
+                thiz.send('response', response.data);
             }
         );
     } else {
