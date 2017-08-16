@@ -1,5 +1,5 @@
 [
-    "FINDLocation",
+    "FINDLocation.js",
     "GeoCoder.js",
     "GeoLocation.js",
     "Heartbeat.js",
