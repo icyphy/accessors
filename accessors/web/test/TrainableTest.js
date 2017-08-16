@@ -113,7 +113,10 @@ exports.initialize = function () {
             var referenceToken = correctValuesValues[numberOfInputTokensSeen];
             //console.log("Test: " + numberOfInputTokensSeen + ", input: " + inputValue
             //+ ", referenceToken: " + referenceToken);
-            if (typeof inputValue !== 'number' && typeof inputValue !== 'string' && typeof inputValue !== 'object') {
+            if (typeof inputValue !== 'boolean' &&
+                typeof inputValue !== 'number' &&
+                typeof inputValue !== 'object' &&
+                typeof inputValue !== 'string') {
                 if (inputValue === null) {
                     throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
                         ' tokens, the value of the input was null?  ' +
@@ -143,7 +146,35 @@ exports.initialize = function () {
                     '" is neither a number nor a string, it is a ' +
                     typeof inputValue + ' with value ' + inputValueValue);
             }
-            if (typeof referenceToken === 'number') {
+            if (typeof referenceToken === 'boolean') {
+                // If the input not a boolean, then throw an error.
+                if (typeof inputValue !== 'boolean') {
+                    inputValueValue = inputValue;
+                    if (typeof inputValue === 'object') {
+                        inputValueValue = JSON.stringify(inputValue, function (key, value) {
+                            if (typeof value === 'object' && value !== null) {
+                                if (cache.indexOf(value) !== -1) {
+                                    // Circular reference found, discard key
+                                    return;
+                                }
+                                // Store value in our collection
+                                cache.push(value);
+                            }
+                            return value;
+                        });
+                    }
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the input "' + inputValueValue +
+                                    '" is not a boolean, it is a ' +
+                                    typeof inputValue + '.  The expected value was "' +
+                                    referenceToken + '"');
+                }
+                if (inputValue !== referenceToken) {
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the input "' + inputValue + '" is not equal to "' +
+                                    referenceToken + '"');
+                }
+            } else if (typeof referenceToken === 'number') {
                 // If the input not a number, then throw an error.
                 if (typeof inputValue !== 'number') {
                     inputValueValue = inputValue;
@@ -160,24 +191,27 @@ exports.initialize = function () {
                             return value;
                         });
                     }
-                    throw new Error(self.accessorName + ': the input "' + inputValueValue +
-                        '" is not a number, it is a ' +
-                        typeof inputValue + '.  The expected value was "' +
-                        referenceToken + '"');
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the input "' + inputValueValue +
+                                    '" is not a number, it is a ' +
+                                    typeof inputValue + '.  The expected value was "' +
+                                    referenceToken + '"');
                 }
 
                 var difference = Math.abs(inputValue - referenceToken);
                 if (isNaN(difference)) {
-                    throw new Error(self.accessorName + ': The absolute value of the input "' +
-                        inputValue + '" - the referenceToken "' +
-                        referenceToken + '" is NaN?  It should be less than ' +
-                        self.getParameter('tolerance'));
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the absolute value of the input "' +
+                                    inputValue + '" - the referenceToken "' +
+                                    referenceToken + '" is NaN?  It should be less than ' +
+                                    self.getParameter('tolerance'));
                 }
                 if (difference > self.getParameter('tolerance')) {
-                    throw new Error(self.accessorName + ': The input "' + inputValue + '" is not within "' +
-                        self.getParameter('tolerance') +
-                        '" of the expected value "' +
-                        referenceToken + '"');
+                    throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                    ' tokens, the input "' + inputValue + '" is not within "' +
+                                    self.getParameter('tolerance') +
+                                    '" of the expected value "' +
+                                    referenceToken + '"');
                 }
             } else if (typeof referenceToken === 'string') {
                 if (inputValue !== referenceToken) {
@@ -188,12 +222,14 @@ exports.initialize = function () {
                         try {
                             inputValueValue = JSON.stringify(inputValue);
                         } catch (err) {
-                            throw new Error(self.accessorName + ': The input "' + inputValue + '" is !== ' +
+                            throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                            ' tokens, the input "' + inputValue + '" is !== ' +
                                             ' to the expected value "' +
                                             referenceToken + '".  The input was an object, and a string was expected.');
                         }
                         if (inputValueValue !== referenceToken) {
-                            throw new Error(self.accessorName + ': The input "' + inputValueValue + '" is !== ' +
+                            throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                            ' tokens, the input "' + inputValueValue + '" is !== ' +
                                             ' to the expected value "' +
                                             referenceToken +
                                             '".  The input was an object and JSON.stringify() did not throw an exception.' +
@@ -250,9 +286,10 @@ exports.initialize = function () {
                     // Deal with referenceTokens with value 1L.
                     if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
                         inputValueValue.toString() !== referenceTokenValue.toString) {
-                        throw new Error(self.accessorName + ': The input "' + inputValueValue +
-                            '" is !== to the expected value "' +
-                            referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
+                        throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                        'tokens, the input "' + inputValueValue +
+                                        '" is !== to the expected value "' +
+                                        referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
                     }
                 }
             } else {
