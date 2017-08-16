@@ -1,4 +1,5 @@
 [
+    "FINDLocation",
     "GeoCoder.js",
     "GeoLocation.js",
     "Heartbeat.js",
