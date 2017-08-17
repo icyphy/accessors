@@ -25,6 +25,9 @@
     <engine name="android" spec="^6.2.3" />
     <engine name="browser" spec="^4.1.0" />
     <engine name="ios" spec="^4.4.0" />
+    <plugin name="com.pylonproducts.wifiwizard" spec="~0.2.11" />
     <plugin name="cordova-plugin-chrome-apps-sockets-tcp" spec="^1.3.7" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
+    <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-android-permissions" spec="^1.0.0" />
 </widget>
