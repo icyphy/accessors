@@ -44,7 +44,7 @@ if [ ! -d $accessors ]; then
     exit 10
 fi
 
-nodeHost="$accessors/node_modules/@accessors-hosts/node/nodeHost.js"
+nodeHost="$accessors/web/hosts/node/nodeHost.js"
 if [ ! -f "$nodeHost" ]; then
     echo "$0: could not find the $nodeHost? Exiting."
     exit 11
@@ -64,7 +64,7 @@ if [ $status = 0 ]; then
     exit 13
 fi    
 
-moduleDirectory="$accessors/node_modules/@accessors-hosts/node/node_modules/@accessors-modules/$module"
+moduleDirectory="$accessors/web/hosts/node/node_modules/@accessors-modules/$module"
 if [ -d $moduleDirectory ]; then
     echo "$0: $moduleDirectory already exists. Exiting."
     exit 14
