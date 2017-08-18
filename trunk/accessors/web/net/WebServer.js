@@ -144,7 +144,11 @@ exports.initialize = function() {
         if (typeof body !== 'string') {
             body = JSON.stringify(body);
         }
-        this.server.respond(response.requestID, body);
+        if (response.hasOwnProperty('responseCode')) {
+        	this.server.respond(response.requestID, body, response.responseCode);
+        } else {
+        	this.server.respond(response.requestID, body);
+        }
     });
     
     // Initialize pendingRequests to an empty object.
