@@ -23,14 +23,12 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This "swarmlet" example, running on Cordova, illustrates the use of Cordova
- *  Host to run a swarmlet. The swarmlet loads loads a 'TestSpontaneousOnce' and 
- *  a 'Hello' accessors, initializes them, and connect them
+/** This "swarmlet" example, running on Cordova, illustrates the WiFiScanAccessor
+ *  and the FINDLocation accessor for 
  *  
- *  See https://www.icyphy.org/accessors/wiki/Main/CordovaHost2
  *  
  *  @module swarmlet.js
- *  @author Victor Nouvellet
+ *  @author Matt Weber
  *  @version $$Id: swarmlet.js 1502 2017-04-17 21:34:03Z cxh $$
  */
 
@@ -43,11 +41,8 @@ exports.setup = function() {
     clock.setParameter('interval', 3000);
     var JSONDisplay = this.instantiate('JSONDisplay', 'JSONDisplay');
     var rawWiFiToFIND = this.instantiate('rawWiFiToFIND', 'rawWiFiToFIND');
-    //var FINDLocation = this.instantiate('FINDLocation', 'services/WiFiScan');
     var FINDLocation = this.instantiate('FINDLocation', 'services/FINDLocation');
 
-    //var RedPin = this.instantiate('RedPin', 'localRedPinLocation');
-    //var rawWiFiToRedPin = this.instantiate('rawWiFiToRedPin', 'rawWiFiToRedPin');
 
 
     this.connect(clock, "output", WiFiScan, "trigger");
@@ -60,28 +55,7 @@ exports.setup = function() {
     FINDLocation.send('username', 'user1');
 
 
-    //this.connect(rawWiFiToRedPin, 'redPinWiFi', RedPin, 'wifiReadings' );
-    //this.connect(RedPin, 'location', JSONDisplay, 'JSON');
-
     console.log('Swarmlet setup complete.');
-
-
-/*
-
-    var trigger = this.instantiate('trigger', 'test/TestSpontaneousOnce');
-    var hello = this.instantiate('helloAcc', 'Hello');
-    var RedPin = this.instantiate('RedPin', 'services/RedPinLocation');
-
-    trigger.setParameter('delay', 1000.0);
-    trigger.setParameter('value', true);
-
-    ///////// Put your name here \\\\\\\\\\\
-     hello.setParameter('name', 'RedPin');
-
-    this.connect(trigger, 'output', hello, 'sayHello');
-*/
-
-    console.log('Swarmlet setup ended.');
 };
 
 exports.initialize = function () {
