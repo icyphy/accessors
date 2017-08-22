@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Http Client module for Cordova host",
   "main": "http-client.js",
-  "author": "Matt Weber and Heuken Kim",
+  "author": "Matt Weber, Chadlia Jerad, and Heuken Kim",
   "license": "Apache-2.0",
 
   "scripts": {
@@ -13,6 +13,8 @@
     "HttpClient", "Accessors"
   ],
   "cordova": {
-      "plugins": "cordova-plugin-http"
+    "plugins": {
+      "cordova-plugin-advanced-http": {}
+    }
   }
 }
