@@ -1,4 +1,4 @@
-exports.setup = function() {
+exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/test/auto; node ../../node_modules/@accessors-hosts/node/nodeHostInvoke.js test/auto/TestComposite)
@@ -8,8 +8,8 @@ exports.setup = function() {
     //  $PTII/bin/capecode $PTII/./ptolemy/cg/kernel/generic/accessor/test/auto/TestComposite.xml
 
     // Ports: TestComposite: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
-    this.input('input', {'type':'int', 'value':0});
-    this.output('output', {'type':'number'});
+    this.input('input', {'type' : 'int', 'value':0});
+    this.output('output', {'type' : 'number'});
 
     // Start: TestGain: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     // The script has local modifications, so it is being emitted.

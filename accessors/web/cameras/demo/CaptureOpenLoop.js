@@ -1,4 +1,4 @@
-exports.setup = function() {
+exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/cameras/demo; node ../../node_modules/@accessors-hosts/node/nodeHostInvoke.js cameras/demo/CaptureOpenLoop)
