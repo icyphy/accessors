@@ -1,4 +1,4 @@
-exports.setup = function() {
+exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js net/test/auto/WebSocketLog)
