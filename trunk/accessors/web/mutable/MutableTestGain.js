@@ -53,7 +53,4 @@ exports.setup = function () {
         'type': 'number',
         'value': 2
     });
-    this.realize('gain', {
-        'ontology': 'url'
-    });
 };

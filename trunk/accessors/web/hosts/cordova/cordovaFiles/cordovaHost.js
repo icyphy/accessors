@@ -242,6 +242,7 @@ function instantiate(accessorName, accessorClass) {
 
 var instantiateAccessor = common.instantiateAccessor;
 var Accessor = common.Accessor;
+var isReifiableBy = common.isReifiableBy;
 Accessor.prototype.require = require;
 
 // Override the default log function.

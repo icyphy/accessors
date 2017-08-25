@@ -674,6 +674,9 @@ function generateAccessorHTML(path, id, text) {
                     commonHost = theCommonHost;
                     Accessor = commonHost.Accessor;
 
+                    // Make isReifiableBy globally visible
+                    isReifiableBy = commonHost.isReifiableBy;
+
                     // Override commonHost's require with browser's require.
                     // 'Accessor' constructor is used in Mocha tests.
                     commonHost.Accessor.prototype.require = require;
