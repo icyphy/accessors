@@ -48,7 +48,7 @@ console.log('# In the above, we use node to run the example, which create the mu
 var _input = 1;
 
 // First: use of a1
-if (ma.reifiableBy(a1)) {
+if (nodeHost.isReifiableBy(ma, a1)) {
     console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a1.accessorName);
     if (ma.reify(a1)) {
         ma.provideInput('input', _input);
@@ -70,15 +70,12 @@ if (ma.unreify()) {
     console.log('Successfully removed previous reification. Go for substitution...');
 
     // go and test for reification with a2
-    if (ma.reifiableBy(a2)) {
+    if (nodeHost.isReifiableBy(ma, a2)) {
         console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
         if (ma.reify(a2)) {
             ma.provideInput('input', _input);
             ma.react();
             console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName + ': ' + ma.latestOutput('scaled'));
-
-            // At this point, ma is mutable, a1 is composite and a2 in top level
-            console.dir(nodeHost.getMonitoringInformation());
 
             _input += 5;
             ma.provideInput('input', _input);
