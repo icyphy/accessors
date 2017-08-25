@@ -291,6 +291,7 @@ Accessor = commonHost.Accessor;
 // so that they can be invoked on the command line.
 provideInput = commonHost.provideInput;
 setParameter = commonHost.setParameter;
+isReifiableBy = commonHost.isReifiableBy;
 
 ////////////////////////////////////////
 // Duktape host-specific require() calls and functions should go below here.

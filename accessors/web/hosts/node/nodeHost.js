@@ -572,7 +572,7 @@ exports.startHostShell = startHostShell;
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
 exports.getTopLevelAccessors = commonHost.getTopLevelAccessors;
-exports.getMonitoringInformation = commonHost.getMonitoringInformation;
+exports.isReifiableBy = commonHost.isReifiableBy;
 exports.stopAllAccessors = commonHost.stopAllAccessors;
 exports.uniqueName = commonHost.uniqueName;
 

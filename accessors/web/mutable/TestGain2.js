@@ -62,12 +62,6 @@ exports.setup = function () {
         'type': 'number',
         'value': 4
     });
-    this.realize('gain', {
-        'ontology': 'url'
-    });
-    this.realize('opposite', {
-        'ontology': 'url2'
-    });
 };
 
 exports.initialize = function () {

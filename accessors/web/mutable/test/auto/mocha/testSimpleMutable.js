@@ -23,7 +23,7 @@ describe('NodeHost' , function() {
         var _input = 1;
 
         // First: use of a1
-        if (ma.reifiableBy(a1)){
+        if (nodeHost.isReifiableBy(ma, a1)){
             // console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a1.accessorName);
             assert.equal(ma.accessorName, "ma");
             assert.equal(a1.accessorName, "a1");
@@ -51,17 +51,13 @@ describe('NodeHost' , function() {
             //console.log('Successfully removed previous reification. Go for substitution...');
 
             // Go and test for reification with a2.
-            if (ma.reifiableBy(a2)){
+            if (nodeHost.isReifiableBy(ma, a2)){
                 // console.log('The mutableAccessor ' + ma.accessorName + ' can be reified by the accessor ' + a2.accessorName);
                 if (ma.reify(a2)) {
                     ma.provideInput('input', _input);
                     ma.react();
                     // console.log('Latest output of ' + ma.accessorName + ' reified by ' + a2.accessorName +': ' + ma.latestOutput('scaled'));
                     assert.equal(ma.latestOutput('scaled'), 24);
-                    
-
-                    // At this point, ma is mutable, a1 is composite and a2 in top level.
-                    //console.dir(nodeHost.getMonitoringInformation());
                     
                     _input += 5;
                     ma.provideInput('input', _input);
