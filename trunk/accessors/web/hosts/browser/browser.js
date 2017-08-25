@@ -148,6 +148,7 @@ var commonHost;
 // These will be defined when commonHost.js is loaded.  Used by Test accessor
 // and mocha test cases.
 var Accessor, instantiate;
+var isReifiableBy;
 
 // Needed by computervision module.  The computer vision code did not originally
 // use strict mode. Declare variables here to avoid 'undeclared variable' error.
