@@ -24,8 +24,6 @@
 //
 
 /** Module for HTTP clients. Supports get, put and post methods.
- *  FIXME: it is likely sequential requests with an open socket are not queued
- *  and the responses may arrive out of order 
  *  
  *  Depends on cordova-plugin-advanced-http. To install run 
  *  <pre>
@@ -44,6 +42,10 @@
  *  );
  *  </pre>
  *  
+ *  Many of the features of http-client modules for Cape Code and Node hosts are not
+ *  supported in this module due to limitiations in the plugin. Places in the documentation where
+ *  this implementation cannot meet the API of the other versions are marked with FIXMEs 
+ *
  *  FIXME: PUT and POST commands only accept stringified JSON objects as the body
  *  They are sent as json or url encoding depending on this implementation of http-client's
  *  special option: "encoding". Blame cordova-plugin-advanced-http.
@@ -51,18 +53,26 @@
  *  Both http and https are supported.
  *
  *  @module http-client
- *  @author Hokeun Kim, Matt Weber and Chadlia Jerad
+ *  @author  Matt Weber, Chadlia Jerad, and Hokeun Kim
  *  @version $$Id: http-client.js 75980 2017-04-23 00:19:25Z beth@berkeley.edu $$
  */
 
-console.log("top of http-client.js");
 // Needed plugins
 exports.requiredPlugins = ['cordova-plugin-advanced-http'];
-
 var EventEmitter = require('events').EventEmitter;
+
+//FIXME: this full path require method is brittle. Ideally we would require these
+//helper node modules with require('util') style.
+var URL = require('./modules/url-parse/url-parse');
+var required = require('./modules/requires-port/requires-port');
 var util = require('util');
 var cordovaHTTP = cordova.plugin.http;
 
+
+// Store if 'trust all certificates' and 'validate domain name' were already set
+// to the desired value. This will avoid non useful repeated calls.
+var trustAllStatus = false;
+var validateDomainNameStatus = true;
 
 /** Issue an HTTP request and provide a callback function for responses.
  *  The callback is a function that is passed an instance of IncomingMessage,
@@ -82,21 +92,33 @@ var cordovaHTTP = cordova.plugin.http;
  *  or a map with the following fields (this helper class assumes
  *  all fields are present, so please be sure they are):
  *  <ul>
+ *  <li> trustAll: FIXME THIS IS A CORDOVA EXCLUSIVE OPTION.
+ *       Accept all SSL certificates. Or disable accepting all certificates. Defaults to false.
+ *  <li> validateDomainName: FIXME THIS IS A CORDOVA EXCLUSIVE OPTION.
+ *       Whether or not to validate the domain name in the certificate. Defaults to true.
+ *  <li> encoding: FIXME: THIS IS ONLY A CORDOVA ISSUE
+ *       For put and post requests, cordova-plugin-advanced-http only supports
+ *       JSON and url encodings. Possible values are "json" and "urlencoded". "json" is default. See. 
+ *       https://www.npmjs.com/package/cordova-plugin-advanced-http-custom-error#setdataserializer
  *  <li> body: The request body, if any. FIXME: This should support all strings and image data
  *       but doesn't. It only supports stringified JSON objects (not stringified strings!).
- *       These are either url or json encoded in the body depending on this module implementation's
+ *       These are either url or json encoded in the body depending on the value of the Cordova-only
  *       special "encoding" option. Default is json encoding.
  *  <li> headers: An object containing request headers. By default this
  *       is an empty object. Items may have a value that is an array of values,
  *       for headers with more than one value.
- *  <li> keepAlive: A boolean that specified whether to keep sockets around
+ *  <li> keepAlive: FIXME: The value true is not supported by the cordova http plugin!
+ *       In other hosts, this is a boolean
+ *       that specifies whether to keep sockets around
  *       in a pool to be used by other requests in the future. This defaults to false.
- *  <li> method: A string specifying the HTTP request method.
- *       This defaults to 'GET', but can also be 'PUT', 'POST', 'DELETE', etc.
- *  <li> outputCompleteResponseOnly: If false, then the multiple invocations of the
+ *  <li> method: FIXME: The only supported HTTP request methods in this module are 'GET', 'PUT', and 'POST'.
+ *       Defaults to 'GET'. In other hosts more methods may be supported.
+ *  <li> outputCompleteResponseOnly: FIXME: The value false is not supported by the cordova http plugin! 
+ *       In other hosts, if false, then the multiple invocations of the
  *       callback may be invoked for each request. This defaults to true, in which case
  *       there will be only one invocation of the callback.
- *  <li> timeout: The amount of time (in milliseconds) to wait for a response
+ *  <li> timeout: FIXME: This parameter is ignored by the cordova http plugin! 
+ *       In other hosts, the amount of time (in milliseconds) to wait for a response
  *       before triggering a null response and an error. This defaults to 5000.
  *  <li> url: A string that can be parsed as a URL, or an object containing
  *       the following fields:
@@ -108,7 +130,8 @@ var cordovaHTTP = cordova.plugin.http;
  *            string can be specified as a separate field (see below).
  *            An exception is thrown if the request path contains illegal characters.
  *       <li> protocol: The protocol. This is a string that defaults to 'http'.
- *       <li> port: Port of remote server. This defaults to 80.
+ *       <li> port: Port of remote server. This defaults to 80. Using the defaultwill probably yield
+ *            undesired behavior if the specified protocol isn't http.
  *       <li> query: A query string to be appended to the path, such as '?page=12'.
  *       </ul>
  *  </ul>
@@ -121,7 +144,28 @@ var cordovaHTTP = cordova.plugin.http;
 exports.request = function (options, responseCallback) {
     return new ClientRequest(options, responseCallback);
 };
-console.log("line 113 of http-client.js");
+
+/** Constructor for the object type returned by the request() function.
+ *  This object type provides the following functions:
+ *  <ul>
+ *  <li> end(): Call this to end the request. </li>
+ *  <li> write(''data'', ''encoding''): FIXME: Not supported by this module!
+ *  In other hosts, writes data (e.g. for a POST request). </li>
+ *  </ul>
+ *  The request will not be issued until you call end().
+ *  See the documentation of the request function for an explanation of the arguments.
+ *  This is an event emitter that emits the following events:
+ *  <ul>
+ *  <li> 'error': If an error occurs. The message is passed as an argument. </li>
+ *  <li> 'response': A response is received from the server. This event is automatically
+ *       handled by calling responseCallback, if responseCallback is not null.</li>
+ *  </ul>
+ *  @constructor
+ *  @param options The options.
+ *  @param responseCallback The callback function to call with an instance of IncomingMessage,
+ *   or with a null argument to signal an error.
+ */
+
 function ClientRequest(options, responseCallback) {
     var self = this;
 
@@ -132,6 +176,7 @@ function ClientRequest(options, responseCallback) {
         'outputCompleteResponseOnly': true,
         'timeout': 5000,
         'trustAll': false,
+        'validateDomainName': true,
         'encoding': 'json'
     };
     var defaultURL = {
@@ -144,32 +189,32 @@ function ClientRequest(options, responseCallback) {
 
     var urlSpec;
     if (util.isString(options)) {
+        //The entire options input is given as just a string
         urlSpec = options;
         options = {}; // If only URL is passed in, create new options object
     } else if (util.isString(options.url)) {
+        //Options is an object with a url field that is just a string
         urlSpec = options.url;
     }
     if (urlSpec) {
+        //Either options is a string or an object with a string url field.
         var url = new URL(urlSpec);
-        var port = url.getPort();
-        if (port < 0) {
-            port = url.getDefaultPort();
-            if (port < 0) {
-                port = 80;
-            }
+        //var url = new URL('https://github.com/foo/bar');
+        var port = url.port;
+        if (!port || port < 0) {
+            port = false; //indicates port should be omited from url
         }
-
         options.url = {
-            'host': url.getHost(),
-            'path': url.getPath(),
+            'host': url.hostname,
+            'path': url.pathname,
             'port': port,
-            'protocol': url.getProtocol(),
-            'query': url.getQuery()
+            'protocol': url.protocol.split(':')[0],
+            'query': url.query
         };
     } else {
+        //Options is an object with its URL field set to an object
         options.url = util._extend(defaultURL, options.url);
     }
-    // Fill in default values.
     options = util._extend(defaultOptions, options);
 
     // Attach the callback to be invoked when this object issues
@@ -195,43 +240,80 @@ function ClientRequest(options, responseCallback) {
         options.headers = headers;
     }
 
-    //this.helper = HttpClientHelper.getOrCreateHelper(actor, this);
     this.options = options;
-    //console.log("this.options in request");
-    //console.log(options.body);
-    //console.log("options.body before this line");
+    console.log("end clientRequest");
 }
-console.log("before util.inherits http-clinet.js");
 util.inherits(ClientRequest, EventEmitter);
 exports.ClientRequest = ClientRequest;
 
-console.log("line 192 http-clinet.js");
-
 /** Issue the request. */
 ClientRequest.prototype.end = function () {
-    //console.log("options in end:");
-   // console.log(JSON.stringify(this.options));
-    //console.log("options.body in end");
-    //console.log(this.options.body);
-    //console.log("curious");
-    //console.log(JSON.stringify(this.options.body));
-    if(this.options.method){
-        switch(this.options.method) {
-            case "GET":
-                cordovaGet(this);
-                break;
-            case "PUT":
-                cordovaPut(this);
-                break;
-            case "POST":
-                cordovaPost(this);
-                break;
-            default:
-                this._handleError("http-client: invalid HTTP command specified");
-                break;
+    var that = this;
+    console.log("in end");
+    //trustall and validate domain name options can only be set asynchronously
+    //by the http plugin. To ensure the plugin is in the correct state before
+    //issuing the request we have to chain callbacks.
+
+    //setTrustAll is a helper function which upon success calls
+    //setValidateDomainName which upon success calls the main body of this function (below)
+    setTrustAll(this, setValidateDomainName, function() {
+
+        console.log("in end body");
+        //Call the apropriate wrapper for the cordova http plugin method.
+        if(that.options.method){
+            switch(that.options.method) {
+                case "GET":
+                    cordovaGet(that);
+                    break;
+                case "PUT":
+                    cordovaPut(that);
+                    break;
+                case "POST":
+                    cordovaPost(that);
+                    break;
+                default:
+                    that._handleError("http-client: invalid HTTP command specified");
+                    break;
+            }
+        } else{
+            that._handleError("http-client: No HTTP command specified");
         }
-    } else{
-        this._handleError("http-client: invalid HTTP command specified");
+    });
+};
+
+//Helper function for ClientRequest.prototype.end. See the comment in that function
+var setTrustAll = function(request, setValidateCallback, endCallback){
+    if(request.options.trustAll == trustAllStatus){
+        //no need to set anything
+        setValidateCallback(request, endCallback);
+    } else {
+        cordovaHTTP.acceptAllCerts(request.options.trustAll, function() {
+            //If successfully set
+            trustAllStatus = request.options.trustAll;
+            console.log('trustAllStatus changed to ' + request.options.trustAll);
+            setValidateCallback(request, endCallback);
+        }, function() {
+            //If not successfully set
+            request._handleError('Unable to set trustAll status for cordova plugin!');
+        });
+    }
+};
+
+//Helper function for ClientRequest.prototype.end. See the comment in that function.
+var setValidateDomainName = function(request, endCallback){
+    if(request.options.validateDomainName == validateDomainNameStatus ){
+        //no need to set anything
+        endCallback();
+    } else {
+        cordovaHTTP.validateDomainName(request.options.validateDomainName, function() {
+            //If successfully set
+            validateDomainNameStatus = request.options.validateDomainName;
+            console.log('validateDomainNameStatus changed to ' + request.options.validateDomainName);
+            endCallback();
+        }, function() {
+            //If not successfully set
+            request._handleError('Unable to set validateDomainName status for cordova plugin!');
+        });
     }
 };
 
@@ -295,7 +377,6 @@ exports.post = function (options, responseCallback) {
     return request;
 };
 
-console.log("line 276 http-clinet.js");
 
 /** Convenience method to issue an HTTP PUT.  This just calls request() and then
  *  calls end() on the object returned by request(). It returns the object returned
@@ -321,36 +402,32 @@ exports.put = function (options, responseCallback) {
     return request;
 };
 
-var EventEmitter = require('events').EventEmitter;
-
-// Store if 'trust all certificates' and 'validate domain name' were called.
-// This will avoid non useful repeated calls.
-var certificateAndDomainNameRequested = false;
-
-/** Issue an HTTP get request.
+/** Issue an HTTP get request. Initiated by calling end() on a ClientRequest with its method
+ *  parameter set to GET
  *
  *  In addition to the description of options parameter given in parseOptions(),
  *  this parameter can call accepting all, if trustAll attribute in options is set
  *  to true.
  *  
- *  @param options The options.
- *  @param responseCallback The callback function to call with an instance of IncomingMessage,
- *   or with a null argument to signal an error.
+ *  @param request The clientRequest object initiating the command.
  */
 var cordovaGet = function (request) {
 	var parsedOptions = parseOptions(request);
     if(parsedOptions){
-         console.log('Get Request to URL...');
+         console.log('Get Request to URL...' + parsedOptions.url);
+         //console.log(JSON.stringify(parsedOptions));
     
         // Call cordovaHTTP get
         cordovaHTTP.get(parsedOptions.url, 
                 parsedOptions.parameters, 
                 parsedOptions.headers, 
                 function(response) {
+                    console.log("get request success callback!");
                     var receivedMessage = new IncomingMessage(response);
                     request.emit('response', receivedMessage);
                 },
                 function(response) {
+                                       console.log("get request failure callback!");
                     request.emit('response', null);
                     request._handleError('cordovaGet error in http-client: ' + response.error);
                 }
@@ -374,29 +451,7 @@ var cordovaGet = function (request) {
 var cordovaPost = function (request) {
 	var parsedOptions = parseOptions(request);
     if(parsedOptions){
-            /*
-            cordovaHTTP.acceptAllCerts(true, function() {
-                console.log('accepting all certs success!');
-            }, function() {
-                console.log('error :(');
-            });
 
-            cordovaHTTP.validateDomainName(false, function() {
-                console.log('success!');
-            }, function() {
-                console.log('error :(');
-            });
-    */
-
-        //console.log('Post Request to URL...');
-        //console.log(JSON.stringify(parsedOptions));
-        //console.log("url");
-        //console.log(parsedOptions.url);
-        //console.log("data");
-        //console.log(JSON.stringify(parsedOptions.data));
-        //console.log("headers");
-        //console.log(JSON.stringify(parsedOptions.headers));
-        //console.log("end test");
         // Call cordovaHTTP post. It takes the url, data, headers and two callback functions
         cordovaHTTP.post(parsedOptions.url, 
             parsedOptions.data, 
@@ -418,75 +473,6 @@ var cordovaPost = function (request) {
     }
 
 };
-
-/*
-var cordovaPost = function(request){
-    var testmessage = {"group":'mutemandrill'};
-    console.log(JSON.stringify(testmessage));
-    console.log(cordovaHTTP);
-    console.log("after print");
-
-    cordovaHTTP.post("http://terra.eecs.berkeley.edu:8091",  {
-    "id": 12,
-    "message": "test",
-    "cant": "beat",
-    "join": "em"
-} , { Authorization: "OAuth2: token" }, function(response) {
-    console.log("success with post");
-   // console.log(response.data);
-}, function(response) {
-    console.log("failure with post");
-   // console.log(response.data);
-   // console.log(response.error);
-   // console.error(response.error);
-
-});
-};
-*/
-/*
-var cordovaPost = function(request){
-console.log("in cordovaPost");
-cordovaHTTP.acceptAllCerts(false, function(){
-
-    console.log("now accepting certs");
-    cordovaHTTP.validateDomainName(false, function(){
-        console.log("now not validating");
-        cordovaHTTP.post("https://google.com/", {
-    id: 12,
-    message: "test"
-}, { Authorization: "OAuth2: token" }, function(response) {
-    // prints 200
-    console.log(response.status);
-    try {
-        response.data = JSON.parse(response.data);
-        // prints test
-        console.log(response.data.message);
-    } catch(e) {
-        console.error("JSON parsing error");
-    }
-}, function(response) {
-    // prints 403
-    console.log(response.status);
-    
-    //prints Permission denied 
-    console.log(response.error);
-});
-
-
-    }, function(){
-
-        console.log("failed to turn off validateDomainName");
-    });
-
-
-},
-function(){
-    console.log("failed to accept certs");
-}
-);
-
-};
-*/
 
 /** Issue an HTTP put request.
  *
@@ -523,73 +509,16 @@ var cordovaPut = function (request) {
     
 };
 
-/** Parses the request options and returns the appropriate object according to 
- *  the documentation above for exports.request()
+/** Parses the request options and returns cordova plugin compatible attributes.
  *  
- *  --- The description below HAS A MAJOR ADDITION (encoding) FROM CapeCode's httpClient module.
- *  The options argument can be a string URL
- *  or a map with the following fields (this helper class assumes
- *  all fields are present, so please be sure they are):
- *  <ul>
- *  <li> encoding: FIXME: THIS IS ONLY A CORDOVA ISSUE
- *       For put and post requests, cordova-plugin-advanced-http only supports
- *       JSON and url encodings. Possible values are "json" and "urlencoded". "json" is default. See. 
- *       https://www.npmjs.com/package/cordova-plugin-advanced-http-custom-error#setdataserializer
- *  <li> body: The request body, if any.  This supports at least strings and image data.
- *  <li> headers: An object containing request headers. By default this
- *       is an empty object. Items may have a value that is an array of values,
- *       for headers with more than one value.
- *  <li> keepAlive: A boolean that specified whether to keep sockets around
- *       in a pool to be used by other requests in the future. This defaults to false.
- *  <li> method: A string specifying the HTTP request method.
- *       This defaults to 'GET', but can also be 'PUT', 'POST', 'DELETE', etc.
- *  <li> outputCompleteResponseOnly: If false, then the multiple invocations of the
- *       callback may be invoked for each request. This defaults to true, in which case
- *       there will be only one invocation of the callback.
- *  <li> timeout: The amount of time (in milliseconds) to wait for a response
- *       before triggering a null response and an error. This defaults to 5000.
- *  <li> url: A string that can be parsed as a URL, or an object containing
- *       the following fields:
- *       <ul>
- *       <li> host: A string giving the domain name or IP address of
- *            the server to issue the request to. This defaults to 'localhost'.
- *       <li> path: Request path as a string. This defaults to '/'. This can
- *            include a query string, e.g. '/index.html?page=12', or the query
- *            string can be specified as a separate field (see below).
- *            An exception is thrown if the request path contains illegal characters.
- *       <li> protocol: The protocol. This is a string that defaults to 'http'.
- *       <li> port: Port of remote server. This defaults to 80.
- *       <li> query: A query string to be appended to the path, such as '?page=12'.
- *       </ul>
- *  </ul>
- *  
- *  In addition, options can call accepting all certificates, if trustAll attribute
- *  is set to true.
- *  
- *  @param request argument containing options at request.options.
+ *  @param request the clientRequest object containing options at request.options.
  *  @returns an object with cordova-plugin-advanced-http compatible attributes: url, parameters and headers.
  *  returns null if unable to parse the options.
  */
 function parseOptions (request) {
+    console.log("in parsedOptions");
     var options = request.options;
 	var url = '', parameters = {}, data = {}, headers = {};
-	
-	// Call accept all certificates if trustAll is set	
-    if (options.trustAll && !certificateAndDomainNameRequested) {
-    	// console.log('Request for accepting all certificates...');
-    	certificateAndDomainNameRequested = true;
-    	cordovaHTTP.acceptAllCerts(true, function() {
-    		console.log('All certificates are trusted.');
-    	}, function() {
-    		console.log('Cannot trust all certificates!');
-    	});
-       
-    	cordovaHTTP.validateDomainName(false, function() {
-    		console.log('Domain name successfully validated!');
-    	}, function() {
-    		console.log('Error validating domain name.');
-    	});
-    }
     
     // Extract URL from options, if any
 	if (typeof options === 'string') {
@@ -602,7 +531,7 @@ function parseOptions (request) {
 			var path = '/';
 			var protocol = 'http';
 			var port = '80';
-			var query = '';
+
 			//console.log("typeof options.url != 'string'");
 			if (typeof options.url.host !== 'undefined' && options.url) {
 				host = options.url.host; 
@@ -616,10 +545,19 @@ function parseOptions (request) {
 			if (typeof options.url.port !== 'undefined' && options.url.port) {
 				port = options.url.port; 
 			}
-			if (typeof options.url.query !== 'undefined' && options.url.query) {
-				query = options.url.query; 
-			}
-			url = protocol + '://' + host + ':' + port + path + query;
+
+            if(options.url.port){
+                host = host + ':' + port;
+            }
+            url = protocol + '://' + host + path;
+
+            /*
+            if(options.url.query)
+                url = protocol + '://' + host + path;
+            } else {
+                url = protocol + '://' + host + ':' + port + path;                
+            }
+            */
 		}
 	}
 		
@@ -629,10 +567,11 @@ function parseOptions (request) {
 	}
 	
 	// Construct parameters from options, if any
-	if (options.parameters) {
-		parameters = options.parameters;
+	if (options.url.query) {
+		parameters = options.url.query;
 	}
 	
+    console.log("near end of parseOptions");
 	// Construct data from options, if any
 	// In a GET request, arguments should already be encoded in the url.
     //console.log("options.body in parse");
@@ -671,8 +610,10 @@ function parseOptions (request) {
  *  <li> body: a string with the body of the response. </li>
  *  <li> headers: message header names and values. Names are lower case. </li>
  *  <li> statusCode: an integer indicating the status of the response. </li>
- *  <li> cookies: an array of strings with cookies returned. </li>
- *  <li> statusMessage: a string with the status message of the response. </li>
+ *  <li> cookies: FIXME: not returned in this module!
+ *  On other hosts, an array of strings with cookies returned. </li>
+ *  <li> statusMessage: FIXME: not returned in this module!
+ *  On other hosts a string with the status message of the response. </li>
  *  </ul>
  *
  *  FIXME: the fields cookies and statusMessage are not returned by the cordova-plugin-advanced-http.
@@ -688,6 +629,8 @@ function parseOptions (request) {
  */
 // IncomingMessage = function(response, body) {
 function IncomingMessage(response) {
+    console.log("in IncomingMessage");
+    console.log(JSON.stringify(response));
     this.body = response.data;
     this.statusCode = status;
     this.cookies = [];
@@ -695,10 +638,15 @@ function IncomingMessage(response) {
     this.headers = {};
 
     for (var name in response.headers) {
+
             // Vert.x header keys are in lowercase.
         if(response.headers.hasOwnProperty(name)){
-            this.headers[name.toLowerCase()] = response.headers.name;
+            console.log("name: " + name);
+            console.log("value: " + response.headers[name]);
+            this.headers[name.toLowerCase()] = response.headers[name];
         }
     }
+    console.log("end of incoming message with headers");
+    console.log(JSON.stringify(this.headers));
 }
 console.log("bottom of http-client.js");
