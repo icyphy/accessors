@@ -104,11 +104,19 @@ function require(id) {
             id = id.substr(19);
         }
     }
-
     // Change the root of relative paths that start with './modules'
-    if (id.indexOf("./modules") == 0 && loadModule(_modulesCommonPath 
-        + pathArray[pathArray.length - 1]) === true) {
-        id = pathArray[pathArray.length - 1];
+    if (id.indexOf("./modules") == 0) {
+        if(loadModule(_modulesCommonPath + pathArray[pathArray.length - 1]) === true) {
+            id = pathArray[pathArray.length - 1];
+        } else {
+            if (pathArray.length == 2) {
+                id = pathArray[1] + '/' + pathArray[1];
+            } else {
+                // If followed by an entire path, then just keep it
+                // number of characters in "./modules/" = 10
+                id = id.substr(10);
+            }
+        }
     } 
 
     // Follow the path if it is given.
@@ -121,7 +129,7 @@ function require(id) {
         }
         // If not, check whether this this is a common module.
         else if (loadModule(_modulesCommonPath + id) === true) {
-            path = _modulesCommonPath + id
+            path = _modulesCommonPath + id;
         }
         // Else, use the native require.
         else {
