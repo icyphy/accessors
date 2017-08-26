@@ -73,11 +73,6 @@
 var geoLocation = require('@accessors-modules/geolocation');
 
 exports.setup = function () {
-    // Meta-information about the accessors that can be useful in case
-    // it needs to be reified by a MutableAccessor
-    this.realize('sensor');
-    this.realize('geolocation');
-
     // Parameters
     this.parameter('enableHighAccuracy', {
         'type': 'boolean',
