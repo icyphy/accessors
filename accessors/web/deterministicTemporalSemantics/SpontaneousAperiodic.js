@@ -39,9 +39,6 @@
 "use strict";
 
 exports.setup = function () {
-    this.realize('periodic', {
-        'ontology': 'url'
-    });
     this.output('output', {
         'type': 'number',
         'value': 0
