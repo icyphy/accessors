@@ -58,7 +58,6 @@
  *  
  *  ```javascript
  *  exports.setup = function() {
- *      this.realize('MyOntologyConcept');
  *      this.input('in');
  *      this.output('out');
  *   };

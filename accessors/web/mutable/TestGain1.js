@@ -25,8 +25,6 @@
 
 /** Test accessor that multiplies its input by a scale factor.
  *  This is a slightly modified copy of TestGain.js
- *  The realized feature is added using this.realizes, the feature
- *  being 'gain'.
  *
  *  @accessor mutable/TestGain1
  *  @param gain The gain, a number with default 2.
