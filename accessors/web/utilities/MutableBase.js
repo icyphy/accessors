@@ -26,16 +26,19 @@
 /** Base class for mutable accessors. A mutable accessor is an accessor
  *  that does nothing until it is 'reified' by another accessor. Once
  *  reified, the reifying accessor will react to inputs to this mutable and
- *  produce outputs. The reifying accessor is required to be compatible with
- *  this instance of mutable. To be compatible, every input of the reifying
- *  accessor must have a matching input in this instance of mutable, and
- *  every output of this instance of mutable must have a matching output
- *  in the reifying accessor.
+ *  produce outputs. No particular combatibility rules are imposed to the
+ *  reifying accessor. reify() will look for matching input and outputs 
+ *  between the reifying accessor and the instance of mutable
  * 
- *  This base class defines an *accessor* input that accepts code for
- *  an accessor and reifies itself with an instance of that accessor if
- *  that accessor is compatible with this instance.  To use this,
- *  extend it as follows:
+ *  This base class defines an *accessor* input that accepts an accessor
+ *  instance, an accessor code (as string) or a fully qulified accessor
+ *  class. The mutable reifies itself with the instance of the accessor, 
+ *  even no matching is found. This base class defines also a *state*
+ *  output. The mutable will be sending on this output a boolean value, 
+ *  that indicates if the reification succeeded or not. For example, if the 
+ *  received accessor cannot be resolved to an accessor instance, then 
+ *  false value will be sent on 'state' output. To use this, extend it as
+ *  follows:
  *  
  *  ```javascript
  *  exports.setup = function() {
@@ -67,19 +70,11 @@
  *  file is in the same directory as the swarmlet that uses this Mutable, then
  *  the host will be able to find the file.
  *  
- *  The call to realize() associates with the interface an ontology concept,
- *  which as of this writing is just an arbitrary string. Any accessor provided
- *  at the *accessor* input must also realize this same ontology concept in order
- *  to be able to reify the mutable.  It must also have an input named 'in'
- *  and an output named 'out', since those are the inputs and outputs defined
- *  in this interface.  The accessor provided at the *accessor* input could
- *  simply realize this same interface.
- *  
  *  If a null or empty string input is provided on *accessor* and this mutable
  *  has been reified, then it will be unreified.
  *
- *  @accessor utilities/Mutable
- *  @input accessor Accessor code to reify.
+ *  @accessor utilities/MutableBase
+ *  @input accessor Accessor instance, code or class to reify.
  *  @author Chadlia Jerad and Edward A. Lee
  *  @version $$Id$$
  */
@@ -92,9 +87,12 @@
 
 exports.setup = function() {
     this.mutable(true); 
-    this.input('accessor', {
-        'type': 'string',
-        'value': ''
+
+    this.input('accessor');
+
+	this.output('state', {
+        'type': 'boolean',
+        'value': false
     });
 };
 
@@ -102,12 +100,14 @@ exports.initialize = function() {
     var thiz = this;
 
     this.addInputHandler('accessor', function() {
-        var accessorCode = this.get('accessor');
-        thiz.send('data', null);
-        if (accessorCode && accessorCode.length > 0) {
-            thiz.reify(accessorCode);
+        var accessor = this.get('accessor');
+
+        var state = thiz.reify(accessor);
+        if (state) {
+            thiz.send('state', true);
         } else {
             thiz.unreify();
+            thiz.send('state', false);
         }
     });
 };
