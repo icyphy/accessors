@@ -448,25 +448,42 @@ var cordovaPost = function (request) {
 	var parsedOptions = parseOptions(request);
     if(parsedOptions){
          console.log('Post Request to URL...');
-         console.log(JSON.stringify(parsedOptions));        
-        // Call cordovaHTTP post. It takes the url, data, headers and two callback functions
-        cordovaHTTP.post(parsedOptions.url, 
-            parsedOptions.data, 
-                 parsedOptions.headers,
-                function(response) {
-                    console.log('Post request successful!');
-                    var receivedMessage = new IncomingMessage(response);
-                    request.emit('response', receivedMessage);
-                },
-                function(response) {
-                    console.log("Post request failed");
-                    request.emit('response', null);
-                    request._handleError('cordovaPost error in http-client: ' + response.error);
-                }
-        );
+         console.log(JSON.stringify(parsedOptions));
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log('Post request successful!');
+                // I have not exhaustively searched all the response data availble from xmlhttpreqest
+                // Perhaps more response data can be extracted.
+
+                var allResponseHeaders = this.getAllResponseHeaders();
+                var arr = allResponseHeaders.split('\r\n');
+                var headers = arr.reduce(function (acc, current, i){
+                      var parts = current.split(': ');
+                      acc[parts[0]] = parts[1];
+                      return acc;
+                }, {});
+
+                var response = {
+                    "status": this.status,
+                    "data" : this.responseText,
+                    "headers": headers
+                };
+                var receivedMessage = new IncomingMessage(response);
+                console.log(JSON.stringify(receivedMessage));
+                request.emit('response', receivedMessage);
+            }
+            else if(this.readyState == 4){
+                console.log("Post request failed");
+                request.emit('response', null);
+                request._handleError('cordovaPost error in http-client: ' + this.status);
+            }
+        };
+        xhttp.open("POST", parsedOptions.url, true);
+        xhttp.send(parsedOptions.data);        
     } else {
         request.emit('response', null);
-        request._handleError('cordovaPut error in http-client: unable to parse options');
+        request._handleError('cordovaPost error in http-client: unable to parse options');
     }
 
 };
@@ -562,6 +579,9 @@ function parseOptions (request) {
 	// Construct data from options, if any
 	// In a GET request, arguments should already be encoded in the url.
 	if (options.body) {
+
+        data = options.body;
+/*
         //FIXME: cordova-plugin-advanced-http accepts only JSON objects as the body
 		try{
             data = JSON.parse(options.body);
@@ -570,6 +590,8 @@ function parseOptions (request) {
                 return null;
             }
         }
+
+*/
 	}
 
     // FIXME encodings are not a problem on the other hosts!
@@ -613,7 +635,7 @@ function parseOptions (request) {
 // IncomingMessage = function(response, body) {
 function IncomingMessage(response) {
     this.body = response.data;
-    this.statusCode = status;
+    this.statusCode = response.status;
     this.cookies = [];
     this.statusMessage = "";
     this.headers = {};
