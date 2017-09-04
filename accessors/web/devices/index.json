@@ -4,5 +4,6 @@
     "Moto360SensorListener.js",
     "DrDose.js",
     "PhSensor.js",
-    "EcSensor.js"
+    "EcSensor.js",
+    "Lifx.js"
 ]
