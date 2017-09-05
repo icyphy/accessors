@@ -217,6 +217,10 @@
 
   <target name="-check-jsdoc">
     <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
+    <echo> To stop CapeCode from invoking jsdoc and svn, set the PT_NO_NET environment variable.  
+    Under BASH:
+        export PT_NO_NET=true
+    </echo?
   </target>
 
   <target name="-check-mocha">
