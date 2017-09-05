@@ -326,6 +326,15 @@ ClientRequest.prototype._handleError = function (message) {
     }
 };
 
+// TODO: Implement stop.
+/** Once request queueing is implemented, this method should discard any pending
+ * submitted jobs and reset the sequence number to zero.
+ */
+ClientRequest.prototype.stop = function() {
+	
+};
+
+
 /** Convenience method to issue an HTTP GET.  This just calls request() and then
  *  calls end() on the object returned by request(). It returns the object returned
  *  by request() (an instance of ClientRequest). See request() for documentation of
