@@ -307,7 +307,7 @@ ClientRequest.prototype._handleError = function(message) {
         try {
                 this.emit('error', message);
         } catch(err) {
-                console.log("handle error error: " + message);
+                console.log("handle error : " + message);
                 error(message);
         }
 };
@@ -334,6 +334,13 @@ ClientRequest.prototype._response = function(response, body) {
                 // An error occurred. Emit both an error event and a response event.
                 this._handleError('Received response code ' + code + ". " + response.statusMessage());
         }
+};
+
+/** Once request queueing is implemented, this method should discard any pending
+ * submitted jobs and reset the sequence number to zero.
+ */
+ClientRequest.prototype.stop = function() {
+	
 };
 
 //NOTE: The following events are produce by IncomingMessage in Node.js
