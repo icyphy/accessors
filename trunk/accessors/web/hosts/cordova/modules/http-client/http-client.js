@@ -489,6 +489,16 @@ var cordovaPost = function (request) {
             }
         };
         xhttp.open("POST", parsedOptions.url, true);
+        // Setting headers must come after open() but before send().
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
+        // XMLHttpRequest.setRequestHeader(header, value)
+        if (parsedOptions.hasOwnProperty('headers')) {
+        	for (var header in parsedOptions.headers) {
+        		console.log(header + ' ' + parsedOptions.headers[header]);
+        		xhttp.setRequestHeader(header, parsedOptions.headers[header]);
+        	}
+        }
+        
         xhttp.send(parsedOptions.data);        
     } else {
         request.emit('response', null);
