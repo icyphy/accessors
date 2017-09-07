@@ -144,9 +144,8 @@ exports.subscribe = function () {
     log.on('data', function (data) {
         // De-duplicate if the data is the same as the first data.
         if ((self.firstData === null) || !self.firstData.equals(data)) {
-            console.log('****** received: ' + data);
             self.send('data', data);
-            console.log('****** sent data: ' + data);
+            console.log('GDPLogSubscribe.js: sent data: ' + data);
             // Avoid performing the comparison again.
             self.firstData = null;
         }
