@@ -1,30 +1,26 @@
-[ 
-    '105': {
-	//"accessor": "GDPSensor.js",
-	"accessor": "TemperatureSensor.js",
-   	"building": "Cory",
-   	"description": "BLEE, rear camera pillar.  Actually ATAG00008",
-   	"logname": 'edu.berkeley.eecs.swarmlab.device.c098e5300003',
-   	"room": "Immersion Room",
-   	"url": "https://gdp.cs.berkeley.edu/redmine/projects/gdp-sensor-and-actuator-deployments/wiki/Berkeley_Sensor_Deployments"
-    },
-    '127': {
-	"accessor": "GDPSensor.js",
+{ "105": {
+        "accessor": "https://www.icyphy.org/accessors/demo/AugmentedReality/Cory/Immersion/GDPSensorBLEERearCameraPillar.js",
+	"building": "Cory",
+	"description": "BLEE, rear camera pillar.  Actually ATAG00008",
+	"logname": "edu.berkeley.eecs.swarmlab.device.c098e5300003",
+	"room": "Immersion Room",
+	"url": "https://gdp.cs.berkeley.edu/redmine/projects/gdp-sensor-and-actuator-deployments/wiki/Berkeley_Sensor_Deployments"},
+    "127": { "accessor": "https://www.icyphy.org/accessors/demo/AugmentedReality/Cory/165/GDPSensorTestLog.js",
    	"building": "Cory",
    	"description": "Testlog",
-   	"logname": 'edu.berkeley.eecs.testlog',
+   	"logname": "edu.berkeley.eecs.testlog",
    	"room": "168",
-   	"url": "https://www.icyphy.org/accessors/wiki/Notes/GDPTestGenerator",
+   	"url": "https://www.icyphy.org/accessors/wiki/Notes/GDPTestGenerator"
     },
-    '435': {
-	"accessor": "GDPSensor.js",
+    "435": { "accessor": "https://www.icyphy.org/accessors/demo/AugmentedReality/Cory/Immersion/GDPSensorBlinkFrontScreen.js",
    	"building": "Cory",
    	"description": "Front wall adjacent to screen Blink, actually ATAG00010",
-   	"logname": 'edu.berkeley.eecs.swarmlab.device.C098E590000A',
+   	"logname": "edu.berkeley.eecs.swarmlab.device.C098E590000A",
    	"room": "Immersion Room",
    	"url": "https://gdp.cs.berkeley.edu/redmine/projects/gdp-sensor-and-actuator-deployments/wiki/Berkeley_Sensor_Deployments"
     }
-]
+
+}
 
 
 
