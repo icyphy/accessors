@@ -9,8 +9,8 @@ exports.setup = function() {
 
     var GDPLogSubscribe = this.instantiate('GDPLogSubscribe', 'gdp/GDPLogSubscribe');
     GDPLogSubscribe.input('logname', {
-	    // 'value':'edu.berkeley.eecs.swarmlab.device.C098E590000A',
-	    'value':'edu.berkeley.eecs.testlog'
+	    'value':'edu.berkeley.eecs.swarmlab.device.c098e530000a'
+		//'value':'edu.berkeley.eecs.testlog'
 		});
 
     var code = "\
