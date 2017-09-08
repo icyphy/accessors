@@ -1,0 +1,96 @@
+{
+"logs": [
+            { "logname": "edu.berkeley.eecs.testlog", "type": "test", "location": "Cory", "room": "165", "atag": "127", "humanName": "Test log running on terra.eecs.berkeley.edu.  See https://www.icyphy.org/accessors/wiki/Notes/GDPTestGenerator"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e5300003", "type": "BLEES", "location": "swarmlab", "room": "immersion", "atag": "105", "humanName": "immersion BLEE: rear camera pillar"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e590000a", "type": "Blink", "location": "swarmlab", "room": "immersion", "atag": "435", "humanName": "immersion Blink: front wall adjacent to screen"},
+
+
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e570008d", "type": "PowerBlade", "location": "swarmlab", "room": "immersion", "atag": "00015", "humanName": "immersion PowerBlade: primary projector"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e570008b", "type": "PowerBlade", "location": "swarmlab", "room": "immersion", "atag": "00016", "humanName": "immersion PowerBlade: secondary projector"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e5700088", "type": "PowerBlade", "location": "swarmlab", "room": "immersion", "humanName": "immersion PowerBlade: audience camera"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e570008e", "type": "PowerBlade", "location": "swarmlab", "room": "immersion", "humanName": "immersion PowerBlade: speaker camera"},
+
+
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e530000a", "type": "BLEES", "location": "swarmlab", "room": "entrance lobby", "atag": "00002", "humanName": "swarm BLEE: inside entrance lobby"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e5900019", "type": "Blink", "location": "swarmlab", "humanName": "swarm Blink: exit stair door near 490"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e590000b", "type": "Blink", "location": "swarmlab", "room": "entrance lobby", "atag": "00001", "humanName": "swarm Blink: inside entrance lobby"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.c098e5900091", "type": "Blink", "location": "swarmlab", "humanName": "swarm Blink: 4th floor elevator lobby"},
+
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5300009", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: lab rear wall"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5300036", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: rear wall"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5300054", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: hot aisle"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e530005d", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: mid wall"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e570008f", "type": "PowerBlade", "location": "bwrc", "humanName": "bwrc PowerBlade: utility power to sump pump"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5700090", "type": "PowerBlade", "location": "bwrc", "humanName": "bwrc PowerBlade: power to air compressor"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e590001e", "type": "Blink", "location": "bwrc", "humanName": "bwrc Blink: server room"},
+
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e53000a5", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: main seating area"},
+
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e53000a4", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: admin office"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e53000a2", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: conference room (brodersen)"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e53000a1", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: ken\"s office"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e53000a0", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: brian office above thermostat"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5300037", "type": "BLEES", "location": "bwrc", "humanName": "bwrc BLEE: center of student seating area"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5900094", "type": "Blink", "location": "bwrc", "humanName": "bwrc Blink: rabaey conference room"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.c098e5900087", "type": "Blink", "location": "bwrc", "humanName": "bwrc Blink: broderson conference room"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700113", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10026 rm 110"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700123", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10047 rm 110"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700126", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: Laser 2 rm 110C"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700127", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10097 rm 110"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700129", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10213 rm 110"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e57000e2", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: Laser 1 rm 110C"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e57000e5", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10035 rm 110"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e57000d7", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10025 rm 110"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e57000f7", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10038 rm 110"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e57000db", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10094 rm 110"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5700131", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: 3D printer 10034 rm 110"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e570008a", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: Carbon 3D printer rm 332"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e570010c", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: Dim. 2 (Bonnie) rm 332"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e570012e", "type": "PowerBlade", "location": "jacobs", "humanName": "jacobs PowerBlade: Dim. 1 (Clyde) rm 332"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5300050", "type": "BLEES", "location": "jacobs", "humanName": "jacobs BLEE: rm 332 Fortus 380 air exhaust vent"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5300051", "type": "BLEES", "location": "jacobs", "humanName": "jacobs BLEE: rm 332 center of room"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5900085", "type": "Blink", "location": "jacobs", "humanName": "jacobs Blink: rm 332"},
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5900081", "type": "Blink", "location": "jacobs", "humanName": "jacobs Blink: rm 10C woodshop"},
+
+            { "logname": "edu.berkeley.eecs.jacobs.device.c098e5300062", "type": "BLEES", "location": "jacobs", "humanName": "jacobs BLEE: rm 10C woodshop"},
+
+            { "logname": "edu.tamu.esp.device.c098e530001d", "type": "BLEES", "location": "TAMU", "humanName": "TAMU BLEE"},
+            { "logname": "edu.tamu.esp.device.c098e57000c4", "type": "PowerBlade", "location": "TAMU", "humanName": "TAMU PowerBlade: unknown2"},
+            { "logname": "edu.tamu.esp.device.c098e57000a8", "type": "PowerBlade", "location": "TAMU", "humanName": "TAMU PowerBlade: unknown3"},
+
+
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b0007907583", "type": "i3mote", "location": "swarmlab", "room": "entrance lobby", "atag": "00000", "humanName": "entrance lobby pillar, 07-90-75-83"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b000a553b05", "type": "i3mote", "location": "swarmlab", "room": "student area", "atag": "00009", "humanName": "Wall near Mark's desk, 0a-55-3b-05"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b000a636286", "type": "i3mote", "location": "swarmlab", "room": "student area", "atag": "00005", "humanName": "Nitesh's desk, 0a-63-62-86"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b000af7d987", "type": "i3mote", "location": "swarmlab", "room": "490B", "atag": "00006", "humanName": "490B window sill, 0a-f7-d9-87"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b000af7db07", "type": "i3mote", "location": "swarmlab", "room": "490E", "atag": "00011", "humanName": "Boser lab window, 0a-f7-db-07"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b0007910e03", "type": "i3mote", "location": "swarmlab", "room": "immersion", "atag": "00007", "humanName": "immersion, rear pillar, 07-91-0e-03"},
+            { "logname": "edu.berkeley.eecs.swarmlab.device.00124b000a630206", "type": "i3mote", "location": "swarmlab", "room": "kitchen", "atag": "00012", "humanName": "kitchen wall, by the window, 0a-63-02-06"},
+
+
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a64aa04", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-64-aa-04"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a55c302", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-55-c3-02"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b0007902801", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-07-90-28-01"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a4ab905", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-4a-b9-05"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a4c5880", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-4c-58-80"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a4a5802", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-4a-58-02"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000a630c81", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-63-0c-81"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b0007913c82", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-07-91-3c-82"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000c31b001", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0c-31-b0-01"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000af7da83", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-f7-da-83"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000af7d683", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0a-f7-d6-83"},
+            { "logname": "edu.berkeley.eecs.bwrc.device.00124b000b234583", "type": "i3mote", "location": "bwrc", "humanName": "bwrc: 00-12-4b-00-0b-23-45-83"},
+
+			
+            { "logname": "com.intel.swarmnuc.device.c098e5300078", "type": "BLEES", "location": "Intel Ireland Campus", "humanName": "iic BLEE: c0-98-e5-30-00-78"},
+            { "logname": "com.intel.swarmnuc.device.c098e5300061", "type": "BLEES", "location": "Intel Ireland Campus", "humanName": "iic BLEE: c0-98-e5-30-00-61"},
+            { "logname": "com.intel.swarmnuc.device.c098e590009b", "type": "Blink", "location": "Intel Ireland Campus", "humanName": "iic Blink: Open Lab - Entrance"}
+    ]
+}
