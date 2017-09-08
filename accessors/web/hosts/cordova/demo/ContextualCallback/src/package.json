@@ -1,0 +1,12 @@
+{
+    "name": "contextualCallback",
+    "displayName": "Contextual Callback",
+    "version": "1.0.0",
+    "description": "App that emits BLE advertisement and receives a contextual callback in return.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Marten Lohstroh, Hokeun Kim",
+    "license": "Apache-2.0"
+}
