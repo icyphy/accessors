@@ -1,0 +1,101 @@
+<project>
+
+  <target name="clean">
+    <delete includeEmptyDirs="true">
+      <fileset dir="." includes="**/*" excludes="src/**, build.xml, README.txt" defaultexcludes="false"/>
+    </delete>
+  </target>
+
+  <target name="create">
+    <exec executable="cordova">
+      <arg value="create"/>
+      <arg value="../.new_cordova_proj"/>
+    </exec>
+    <copy todir="src/">
+      <fileset dir="../.new_cordova_proj/" includes="www/**" defaultexcludes="false"/>
+    </copy>
+    <copy todir="src/">
+      <fileset dir="../.new_cordova_proj/" includes="config.xml, package.json" defaultexcludes="false"/>
+    </copy>
+    <copy todir=".">
+      <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
+    </copy>
+    <delete dir="../.new_cordova_proj"/>
+    <copy file="../../cordovaFiles/index.js" tofile="src/www/js/index.js" overwrite="true"/>
+    <copy todir="src/www/js/include/accessors/">
+      <fileset dir="../../cordovaFiles/initDemoAccessors" />
+    </copy>
+    <copy todir="src/www/">
+      <fileset dir="../../cordovaFiles/initDemoLayout"/>
+    </copy>
+    <copy file="../../cordovaFiles/initDemoLayout/index.html" tofile="src/www/index.html" overwrite="true"/>
+    <copy file="../../cordovaFiles/initDemoLayout/css/index.css" tofile="src/www/css/index.css" overwrite="true"/>
+    <antcall target="refresh"/>
+    <antcall target="plugins"/>
+
+  </target>
+
+  <target name="build">
+    <antcall target="clean"/>   <!-- remove cordova-generated files -->
+    <antcall target="init"/>    <!-- (re)generate cordova files  -->
+    <antcall target="refresh"/> <!-- copy source files into cordova project -->
+    <antcall target="plugins"/> <!-- add plugins to project -->
+    <copy file="../../cordovaFiles/index.js" tofile="www/js/index.js"/>
+  </target>
+
+  <target name="init">
+    <exec executable="cordova">
+      <arg value="create"/>
+      <arg value="../.new_cordova_proj"/>
+    </exec>
+    <copy todir=".">
+      <fileset dir="../.new_cordova_proj/" excludes="www/**" defaultexcludes="false"/>
+    </copy>
+    <delete dir="../.new_cordova_proj"/>
+  </target>
+
+  <target name="refresh">
+    <delete includeEmptyDirs="true" failonerror="false">
+      <fileset dir="www/js/includes" includes="**/*" defaultexcludes="false"/>
+    </delete>
+    <copy todir="." overwrite="true">
+      <fileset dir="src/"/>
+    </copy>
+    <copy todir="www/js/include/cordova/modules">
+      <fileset dir="../../modules"/>
+    </copy>
+    <copy todir="www/js/include/common/modules">
+      <fileset dir="../../../common/modules"/>
+    </copy>
+    <copy todir="www/js/include/accessors">
+      <fileset dir="../../../../" includes="**/*.js" excludes="hosts/**, **/demo/**"/>
+    </copy> 
+    <copy file="../../../common/commonHost.js" tofile="www/js/include/common/commonHost.js"/>
+    <copy file="../../cordovaFiles/cordovaHost.js" tofile="www/js/include/cordova/cordovaHost.js"/>
+  </target>
+
+  <target name="plugins">
+    <exec executable="cordova">
+      <arg value="platform"/>
+      <arg value="add"/>
+      <arg value="browser"/>
+    </exec>
+    <exec executable="cordova">
+      <arg value="platform"/>
+      <arg value="add"/>
+      <arg value="android"/>
+    </exec>
+    <exec executable="cordova">
+      <arg value="platform"/>
+      <arg value="add"/>
+      <arg value="ios"/>
+    </exec>
+  </target>
+
+  <target name="save">
+    <copy todir="src/" overwrite="true">
+      <fileset dir="." includes="config.xml, package.json" defaultexcludes="false"/>
+    </copy>
+  </target>
+
+</project>
