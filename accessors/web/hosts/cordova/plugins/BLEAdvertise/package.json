@@ -1,0 +1,25 @@
+{
+  "name": "cordova-plugin-ble-advertise",
+  "version": "0.0.1",
+  "description": "Cordova module for BLE beacon advertising",
+  "cordova": {
+    "id": "cordova-plugin-ble-advertise",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lhstrh/cordova-plugin-ble-advertise.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Marten Lohstroh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lhstrh/cordova-plugin-ble-advertise/issues"
+  },
+  "homepage": "https://github.com/lhstrh/cordova-plugin-ble-advertise#readme"
+}
