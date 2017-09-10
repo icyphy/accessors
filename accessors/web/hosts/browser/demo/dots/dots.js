@@ -154,7 +154,8 @@ function createOverlay() {
 					.append('xhtml:body')
 					.on(touchEvent, removeTable);
 		
-		table.append('table');
+		table.append('table')
+			 .attr('id', 'dottable');
 		
 		var header = table.append('tr')
 						  .selectAll('th')
