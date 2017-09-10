@@ -1,0 +1,25 @@
+.mapdiv {
+	font-family: 'Open Sans', sans-serif;
+	padding: 2em;
+	padding-bottom: 0em;
+}
+
+.poster_div {
+	padding: 0.5em;
+	padding-top: 0em;
+	width: 95%;
+	float: left;
+	font-size : 1em;
+	text-align: left;
+}
+
+.dottable.td, .dottable.th {
+	padding: 2px;
+}
+
+.dottable {
+	border: 1px solid black;
+	color: black;
+	font-family: monospace;
+	background-color: rgba(255, 255, 255, 0.5); // Use rgba to set opacity
+}

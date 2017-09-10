@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- Read temperature data from the GDP using an accessor and plot data on a map 
+     using x, y coords.  If GDP data cannot be read, sample data will be used.
+     If sample data is used, the labels will be prefixed with "sample".  
+     
+     Tap or mouseover a circle for a pop-up table. Can be customized to any HTML.
+     There's also sample code for a pop-up text-box.  Can be customized to any SVG.
+
+	 Works in mobile browsers too.  There's no code yet for resizing the map. 	 
+ 	 -->
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <title> Dots on a Map </title>
+    
+    <!-- Styling for table with accessor parameters, inputs and outputs.
+         It's not used here, since we hide the accessor, but just FYI. -->
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/accessorStyle.css">
+    
+    <!-- Custom dots on a map styling. -->
+    <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/src/dots/dots.css">
+    
+    <!-- Load your favorite visualization library.  This demo uses D3. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.2/d3.min.js"></script>
+    
+    <!-- Custom dots on a map script. -->
+     <script src="/accessors/hosts/browser/demo/src/dots/dots.js"></script>
+    
+    <!-- If viewing in the browser, load the browser host.
+         Cordova does not need this line.  Cape Code may optionally use it if 
+         you want the generated web page to run accessors. Otherwise omit it.-->
+    <script src="/accessors/hosts/browser/browser.js"></script>
+</head>
+<body>
+
+<!-- Reference your image here.  Dots will be overlaid. 
+     Use div classes to avoid terraswarm website css clashes. -->
+<div class="mapdiv" style="background:url(livingroom.jpg); width:584px; height:488px; background-repeat:no-repeat;" id="svg" >
+</div>
+
+<!-- Load the accessor.  The display:none hides it. -->
+<div class="poster_div"> 
+	Click/tap or mouseover dots to see GDP data.  Click/tap on a data table to dismiss it. <br><br>
+	<button id="showAccessor"> Show Accessor </button>
+</div>
+<div class="accessor"
+   src="net/REST"
+   id="REST" 
+   style="display:none"></div>
+</body>
+</html>
