@@ -355,6 +355,27 @@ function generateAccessorHTML(path, id, text) {
             timeout = 5000;
         }
         // console.log("readURL(" + uri + ")");
+        
+        // Check for a filename-only URL.  E.g., GDPAuthorization.txt
+        // In this case, grab the current window URL and check for the file in 
+        // the same directory.  
+        // Added to support similar behavior to CapeCode, so we can use the same
+        // code-generated accessors in CapeCode and browser.
+        console.log("current location " + window.location.href);
+        
+        if (uri.indexOf('/') === -1) {
+        	console.log('filename only');
+        	
+        	var path = window.location.href;
+        	var index = path.lastIndexOf('/');
+        	if (index > 0) {
+        		path = window.location.href.substring(0, index);
+        		console.log('base path ' + path);
+        	}
+        	uri = path + "/" + uri;
+        	console.log('final uri ' + uri);
+        }
+        
         var request = new XMLHttpRequest();
 
         // The third argument specifies a synchronous read.
@@ -756,7 +777,7 @@ function generateAccessorCodeElement(code, id) {
 
     // Include Google's pretty printer, if possible.
     var script = document.createElement('script');
-    script.src = "https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js";
+    script.src = "https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js";
     target.appendChild(script);
 
     var pre = document.createElement('pre');
