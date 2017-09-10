@@ -155,13 +155,15 @@ function createOverlay() {
 					.on(touchEvent, removeTable);
 		
 		table.append('table')
-			 .attr('id', 'dottable');
+			 .attr('class', 'dottable');
 		
 		var header = table.append('tr')
+						  .attr('class', 'dottable')
 						  .selectAll('th')
 						  .data(headers)
 						  .enter() 
 						  .append('th')
+						  .attr('class', 'dottable')
 						  .text(function(d) { return d});
 		
 		var rowData = [];
@@ -170,10 +172,12 @@ function createOverlay() {
 		}
 		
 		table.append('tr')
+			 .attr('class', 'dottable')
 			 .selectAll('td')
 			 .data(rowData)
 			 .enter()
 			 .append('td')
+			 .attr('class', 'dottable')
 			 .text(function(d) {return d;});
 		
 		// End pop-up table example.
