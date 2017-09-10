@@ -93,7 +93,7 @@ setTimeout(function() {
 	  
 	  // React accessor first time.
 	  reactIfExecutable('REST');
-}, 3000);
+}, 4000);
  		
 // Create the overlay.  Called after data is fetched. 
 function createOverlay() {
