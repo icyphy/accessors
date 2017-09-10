@@ -1,17 +1,7 @@
-div {
+.mapdiv {
 	font-family: 'Open Sans', sans-serif;
 	padding: 2em;
 	padding-bottom: 0em;
-}
-
-td, th {
-	padding: 2px;
-}
-
-table, th, tr, td {
-	border: 1px solid black;
-	font-family: monospace;
-	background-color: rgba(255, 255, 255, 0.5); // Use rgba to set opacity
 }
 
 .poster_div {
@@ -21,4 +11,14 @@ table, th, tr, td {
 	float: left;
 	font-size : 1em;
 	text-align: left;
+}
+
+#dottable td, th {
+	padding: 2px;
+}
+
+#dottable table, th, tr, td {
+	border: 1px solid black;
+	font-family: monospace;
+	background-color: rgba(255, 255, 255, 0.5); // Use rgba to set opacity
 }
