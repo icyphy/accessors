@@ -24,9 +24,6 @@
 //
 
 /** LocationDisplay accessor that displays the coordinates, if any.
- *   
- *  @accessor LocationDisplay
- *  @input location The location as JSON
  *
  *  Example usage:
  *
@@ -35,6 +32,8 @@
  *  locDisplay.provideInput('location', {latitude: 45.2, longitude: 37.9, error: false});
  *  locDisplay.react();
  *
+ *  @accessor LocationDisplay
+ *  @input location The location.
  *  @author Chadlia Jerad
  *  @version $$Id: LocationDisplay.js 1137 2016-12-06 22:13:55Z cxh $$
  */

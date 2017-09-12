@@ -23,9 +23,7 @@
 
 /** Obtain a scan of nearby WiFi networks. 
 *
-*   @accessor services/WiFiScan
-*   @input trigger Initiates a WiFiScan. 
-*   @output wifiData The list of networks obtained from the wifi-scanner module. The output is a JSON array of objects in the form:
+*   The output is a JSON array of objects in the form:
 *   networks = [
 *        {   "level": signal_level, // raw RSSI value
 *            "SSID": ssid, // SSID as string, with escaped double quotes: "\"ssid name\""
@@ -34,6 +32,10 @@
 *            "capabilities": capabilities // Describes the authentication, key management, and encryption schemes supported by the access point.
 *        }
 *    ]
+*
+*   @accessor services/WiFiScan
+*   @input trigger Initiates a WiFiScan. 
+*   @output wifiData The list of networks obtained from the wifi-scanner module. 
 *
 *  
 *  @author Matt Weber
