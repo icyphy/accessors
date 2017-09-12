@@ -29,11 +29,14 @@
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
   <property name="jsdoc.home" value="${basedir}/../node_modules/@terraswarm/jsdoc" />
 
-    <!-- The location of the jsdoc command, used by the jsdoc target. -->
-  <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
-
   <!-- The location of the Node.js binary. -->
-  <property name="node.command" value="node" />
+  <property name="node.executable" value="node" />
+
+  <!-- The location of the Node Package Manager (npm) binary. -->
+  <property name="npm.executable" value="npm" />
+
+  <!-- The location of the jsdoc command, used by the jsdoc target. -->
+  <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
 
   <!-- Location of the mocha command, used by tests.mocha and tests.mocha.xml -->
   <property name="mocha.command" value="${basedir}/../node_modules/mocha/bin/mocha"/>
@@ -239,12 +242,12 @@
   <target name="-check-npm">
     <property environment="env" />
     <condition property="npm.executable"
-	       value="npm.cmd"
-	       else="npm">
+               value="npm.cmd"
+               else="npm">
       <available file="npm.cmd"
-	       filepath="${env.PATH}"
+               filepath="${env.PATH}"
                property="npm.executable"
-	       value="npm.cmd"/>
+               value="npm.cmd"/>
     </condition>
   </target>
 
@@ -383,7 +386,7 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
           failonerror="true"
           timeout="${timeout.longer}">
       <arg value="${jsdoc.command}" />
@@ -407,6 +410,7 @@
 	  depends="-check-jsdoc,-check-npm"
           if="${npmjs-org-is-up}"
 	  unless="jsdoc.command.exists">
+    <echo>npm.executable: ${npm.executable}</echo>
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
           executable="${npm.executable}"
@@ -511,7 +515,7 @@
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
           timeout="${timeout}">
       <arg value="${jsdoc.command}" />
       <arg value="--configure" />
@@ -563,7 +567,7 @@
   </target>
 
   <target name="status.accessors">
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="reports/status/calculateAccessorMap.js"/>
     </exec>
@@ -574,7 +578,7 @@
           if="${ptII.exists}">
 
     <exec dir="${env.PTII}"
-          executable="${node.command}"
+          executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="org/terraswarm/accessor/status/calculateAccessorMapCapeCode.js"/>
     </exec>
@@ -693,9 +697,9 @@
       target timeout = ${timeout} ms.
     </echo>
     <mkdir dir="${basedir}/../reports/junit"/>
-    <echo> Running (cd hosts/browser/test; ${node.command} regressionTestScript.js)</echo>
+    <echo> Running (cd hosts/browser/test; ${node.executable} regressionTestScript.js)</echo>
     <exec dir="hosts/browser/test"
-	  executable="${node.command}"
+	  executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="regressionTestScript.js"/>
     </exec>
@@ -888,7 +892,7 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
@@ -937,7 +941,7 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
@@ -981,7 +985,7 @@
 
     <chmod file="${mocha.command}"
 	   perm="a+x"/>
-    <exec executable="${node.command}"
+    <exec executable="${node.executable}"
 	  failonerror="${tests.mocha.failonerror}"
 	  resultproperty="tests.resultproperty"
           timeout="${timeout.longer}">
