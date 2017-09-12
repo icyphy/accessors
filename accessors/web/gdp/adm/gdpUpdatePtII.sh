@@ -17,7 +17,7 @@ fi
 
 echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 echo "@@@@: $0: About to build on wessel"
-ubuntuPTII=/home/cxh/ptII
+ubuntuPTII=/home/cxh/src/ptII11.0.devel
 ubuntuAccessors=$ubuntuPTII/org/terraswarm/accessor/accessors/web
 # Update so that we get the Darwin libraries to be included in the GDP jar file and eventually the @ubuntuswarm/accessors module.
 ssh wessel.eecs.berkeley.edu "(cd $ubuntuPTII; svn update --accept theirs-full)"
