@@ -48,7 +48,7 @@ exports.setup = function () {
     this.input('stop');
     this.input('clipURL', {
         'type': 'string',
-        'value': 'http://music.berkeley.edu/files/2014/02/jcime_odwalla1.mp3'
+        'value': 'https://ptolemy.eecs.berkeley.edu/mp3/USAD2016_06-RhapsodyInBlueTrimmed.mp3'
     });
     this.output('done', {
         'type' : 'boolean'
