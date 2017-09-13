@@ -21,14 +21,17 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** This accessor discovers and controls one of the available Lifx light bulbs 
- *  in a local area network using Wifi. The host need to be connected to the 
- *  same LAN. The setup (configuring the light with a certain Wifi network 
- *  credentials) is not supported. It can be done using the Lifx mobile app.
- *  However, it is possible to run discovery and control the light, even if 
- *  not setup. For this, you need to connected to the Lifx Wifi. The drawback  
- *  is that discovery is limited to only one bulb, the one you are connected 
- *  to its network.
+/** This accessor discovers and controls a Lifx lightbulb.
+ *
+ *  If the bulbs are already set up (through the Lifx mobile app for example),
+ *  then the host running this accessor needs to be connected to the same LAN.
+ *
+ *  Otherwise, with an unconfigured bulb, you can connect your computer to the Lifx
+ *  network provided by the bulb (an open Wifi network with a name like
+ *  "LIFX_Axx_xxxxxx").
+ *  
+ *  If you have a bulb that has been configured to operate on some other network, you can
+ *  reset it to factory defaults by turning it on and off five times in succession.
  *
  *  While it is possible to interact with Lifx bulbs over the Internet by 
  *  sending HTTP requests to the Cloud, this module does not provide such
@@ -544,7 +547,7 @@ var closeAndOpenSocket = function () {
 		    				break;
 		    		    }
 		    		}
-		    		thiz.send('state', 'Message recived from: ' + packet.macAddress +
+		    		thiz.send('state', 'Message received from: ' + packet.macAddress +
 		    				' * Message code is: ' + packet.messageCode);
 		    	}
 	        	
@@ -584,7 +587,7 @@ var closeAndOpenSocket = function () {
  *  @return converted hexString into ArrayBuffer
  */
 var convertHexStringToByteArray = function (hexString) {
-    var buffer = new ArrayBuffer();
+    var buffer = new ArrayBuffer(hexString.length/2);
     var i = 0;
     for (i = 0 ; i < hexString.length ; i=i+2 ) {
         var hs = hexString.slice(i, i+2);
