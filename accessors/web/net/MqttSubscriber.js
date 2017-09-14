@@ -24,8 +24,17 @@
  *
  *  This accessor requires the 'mqtt' module.
  *
- *  TODO: populate inputs/outputs/parameters
- *
+ *  @input subscribe The topic name to subscribe to.
+ *  @input unsubscribe A topic to unsubscribe from.
+ *  @output connection Output on which a string is sent when a
+ *   connection to the broker has been established.
+ *  @output subscription Output on which a string is sent when a
+ *   subscription is initiated or terminated.
+ *  @output received Output on which received data is produced.
+ *  @output receivedTopic Output indicating the topic of received data.
+ *  @param broker The IP address or domain name of the MQTT broker.
+ *  @param brokerPort The port for the MQTT broker.
+ *  
  *  @accessor net/MqttSubscriber
  *  @author Hokeun Kim
  *  @version $$Id$$
