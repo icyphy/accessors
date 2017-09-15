@@ -448,9 +448,10 @@
   <target name="-js2h-works"
           depends="-check-node-works, -xxd-in-path"
           if="${node.works}">
-    <condition property="js2h-works">
+    <condition property="js2h.works">
       <isset property="${xxd.present}"/>
     </condition>  
+    <echo>node.works: ${node.works}, xxd.present: ${xxd.present}, js2h.works: ${js2h.works}</echo>
   </target>
 
   <target name="jsdoc"
@@ -831,13 +832,15 @@
   </target>
 
   <target name="tests.duk2"
-          depends="tests.duk2.test, tests.duk2.auto"
-          description="Execute the duktape2 tests in duktape/test and test/auto.">
+          depends="-js2h-works, tests.duk2.test, tests.duk2.auto"
+          description="Execute the duktape2 tests in duktape/test and test/auto."
+	  if="${js2h-works}">
   </target>
 
   <target name="tests.duk2.auto"
           depends="duk2"
-          description="Execute the duk2 tests in test/auto.">
+          description="Execute the duk2 tests in test/auto."
+	  if="${js2h-works}">
     <echo>
       == tests.duk2.auto ==
       
@@ -870,7 +873,8 @@
   
   <target name="tests.duk2.test"
           depends="duk2"
-          description="Execute the duktape2 tests in duktape/test.">
+          description="Execute the duktape2 tests in duktape/test."
+	  if="${js2h-works}">
     <echo>
       == tests.duk2.test ==
       To replicate:
@@ -898,7 +902,8 @@
 
   <target name="tests.eduk2"
           depends="eduk2"
-          description="Execute the eduk2 tests.">
+          description="Execute the eduk2 tests."
+	  if="${js2h-works}">
     <apply executable="${eduk2.source}/eduk2"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
