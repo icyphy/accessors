@@ -29,11 +29,15 @@
   <!-- The location of the jsdoc installation, used by the jsdoc target. -->
   <property name="jsdoc.home" value="${basedir}/../node_modules/@terraswarm/jsdoc" />
 
-  <!-- The location of the Node.js binary. -->
-  <property name="node.executable" value="node" />
+  <!-- The location of the Node.js binary.
+       Don't define the node.executable property here because if it is
+       defined, then it will not be set by the -check-node target. -->
+  <!-- property name="node.executable" value="node" /-->
 
-  <!-- The location of the Node Package Manager (npm) binary. -->
-  <property name="npm.executable" value="npm" />
+  <!-- The location of the Node Package Manager (npm) binary.
+       Don't define the npm.executable property here because if it is
+       defined, then it will not be set by the -check-node target. -->
+  <!-- property name="npm.executable" value="npm" / -->
 
   <!-- The location of the jsdoc command, used by the jsdoc target. -->
   <property name="jsdoc.command" value="${jsdoc.home}/jsdoc.js" />
@@ -143,7 +147,7 @@
   </target>
   
   <target name="chai-install"
-	  depends="-check-chai,-check-npm"
+	  depends="-check-chai,-check-npm-works"
 	  unless="chai.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
@@ -165,7 +169,7 @@
   </target>
 
   <target name="chai-string-install"
-	  depends="-check-chai-string,-check-npm"
+	  depends="-check-chai-string,-check-npm-works"
 	  unless="chai-string.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
@@ -177,8 +181,7 @@
   </target>
 
   <target name="chai-string-update"
-	  depends="chai-string-install,-check-npm">
-    <echo>npm: ${npm.executable}</echo>
+	  depends="chai-string-install,-check-npm-works">
     <exec dir=".."
           executable="${npm.executable}"
           timeout="${timeout.npm}">
@@ -211,7 +214,10 @@
   
   <!-- Ideally we would check to see if the host that npm connects to is online, but
        www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
-  <target name="-check-if-npmjs-org-is-up">
+  <target name="-check-if-npmjs-org-is-up"
+          depends="-check-node-works"
+          if="${node.works}"
+          >
     <echo>Check to see if https://www.npmjs.org is up.</echo>
     <condition property="npmjs-org-is-up">
       <http url="https://www.npmjs.org"/>
@@ -220,7 +226,7 @@
 
   <target name="-check-jsdoc">
     <available property="jsdoc.command.exists" file="${jsdoc.command}"/>
-    <echo> To stop CapeCode from invoking jsdoc and svn, set the PT_NO_NET environment variable.  
+    <echo>To stop CapeCode from invoking jsdoc and svn, set the PT_NO_NET environment variable.  
     Under BASH:
         export PT_NO_NET=true
     </echo>
@@ -234,6 +240,51 @@
     <available property="mocha-junit-reporter.index.js.exists" file="${mocha-junit-reporter.index.js}"/>
   </target>  
 
+  <!-- Check to see if node is in the path.
+       Set node.in.path to true if node.exe or node are found.
+       Set node.executable to node.exe or node.
+  -->
+  <target name="-check-node">
+    <property environment="env" />
+    <condition property="node.in.path">
+      <or>
+      <available file="node"
+	       filepath="${env.PATH}"
+               property="node.executable"
+	       value="node"/>
+      <available file="node.exe"
+	       filepath="${env.PATH}"
+               property="node.executable"
+	       value="node.exe"/>
+      </or>
+    </condition>
+    <condition property="node.executable" value="node">
+      <available file="node"
+	       filepath="${env.PATH}"/>
+    </condition>
+    <condition property="node.executable" value="node.exe">
+      <available file="node.exe"
+	       filepath="${env.PATH}"/>
+    </condition>
+  </target>
+
+  <target name="-check-node-works"
+          depends="-check-node"
+          if="${node.in.path}">
+    <exec executable="node"
+          failonerror="false"
+          timeout="${timeout.npm}"
+          resultproperty="return.code">
+
+      <arg value="--version"/>
+    </exec>
+    <condition property="node.works">
+      <not>
+        <isfailure code="${return.code}"/>
+      </not>
+    </condition>
+  </target>
+
   <!-- Under Windows, npm.cmd and npm are in the path, so we check
        for npm.exe and use that if it is found.
        Note that if npm.executable is set with the properties
@@ -242,12 +293,23 @@
   <target name="-check-npm">
     <property environment="env" />
     <condition property="npm.executable"
-               value="npm.cmd"
-               else="npm">
-      <available file="npm.cmd"
-               filepath="${env.PATH}"
-               property="npm.executable"
-               value="npm.cmd"/>
+	       value="npm.cmd"
+	       else="npm">
+      <available file="npm.exe"
+	       filepath="${env.PATH}"/>
+    </condition>
+  </target>
+
+  <target name="-check-npm-works"
+          depends="-check-node-works, -check-npm"
+          if="${node.works}">
+    <exec executable="${npm.executable}"
+          failonerror="false"
+          timeout="${timeout.npm}">
+      <arg value="--version"/>
+    </exec>
+    <condition property="npm.works">
+      <isfailure code="0"/>
     </condition>
   </target>
 
@@ -381,6 +443,7 @@
   <target name="jsdoc"
           depends="jsdoc-update"
           description="Run jsdoc to generate documentation for JavaScript files."
+          if="${node.works}"
           >
     <echo>Invoke jsdoc to generate documentation for .js files.
     </echo>
@@ -407,7 +470,7 @@
   </target>
 
   <target name="jsdoc-install"
-	  depends="-check-jsdoc,-check-npm"
+	  depends="-check-jsdoc, -check-node-works, -check-npm-works"
           if="${npmjs-org-is-up}"
 	  unless="jsdoc.command.exists">
     <echo>npm.executable: ${npm.executable}</echo>
@@ -422,7 +485,7 @@
 
   <target name="-jsdoc-no-network-message"
           unless="${npmjs-org-is-up}">
-    <echo>accessors.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
+    <echo>The node binary was not found or does not work or npmjs.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
   </target>
 
   <target name="jsdoc-update"
@@ -504,9 +567,9 @@
   </target>
 
   <target name="ptdoc"
-          depends="jsdoc-update"
+          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
-          >
+          if="${node.works}">
     <echo>Invoke ${jsdoc.command} to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
     See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
     See jsdoc/jsdoc.json
@@ -527,6 +590,12 @@
       <arg value="." />
     </exec>
   </target>
+
+  <target name="-ptdoc-no-node-message"
+          unless="${node.works}">
+    <echo>The node binary was not found or does not work so there is no point in trying invoke ptdoc.</echo>
+  </target>
+
 
   <target name="rusteduk"
 	  depends="-cargo-in-path"
@@ -634,7 +703,7 @@
   </target>
     
   <target name="terraswarm-gdp-install"
-	  depends="-check-terraswarm-gdp,-check-npm"
+	  depends="-check-terraswarm-gdp,-check-npm-works"
 	  if="terraswarm.gdp.install">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
@@ -1169,7 +1238,7 @@
   </target>
 
   <target name="selenium-webdriver-install"
-	  depends="-check-selenium-webdriver,-check-npm"
+	  depends="-check-selenium-webdriver,-check-npm-works"
 	  unless="selenium-webdriver.directory.exists">
     <mkdir dir="${basedir}/../node_modules"/>
     <exec dir=".."
