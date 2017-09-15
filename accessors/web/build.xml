@@ -410,9 +410,9 @@
   </target>
 
   <target name="duk2"
-	  depends="-xxd-in-path, eduk2"
+	  depends="eduk2"
           description="Build the duk2 binary.  Requires make and a C compiler."
-	  if="${xxd.present}">
+	  if="${j2h.works}">
     <echo>The duk2 binary uses duktape 2.x.
     The duk2 binary has more command line options that the eduk binary.
     The duk2 binary would not be deployed on an embedded machine.
@@ -425,9 +425,9 @@
   </target>
   
   <target name="eduk2"
-	  depends="-xxd-in-path"
-          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, make and gcc."
-	  if="${xxd.present}">
+	  depends="-js2h-works, -js2h-not-work-message"
+          description="Build the Duktape 2.x eduk2 binary.  Requires xxd, node, make and gcc."
+	  if="${js2h-works}">
     <echo>The eduk2 binary has fewer command line options than the duk binary.
     The eduk binary is what would be deployed on an embedded machine.
     The eduk binary can also be run from the command line.
@@ -440,6 +440,19 @@
     </exec>
   </target>
   
+  <target name="-js2h-not-work-message"
+          unless="${js2h.works}">
+    <echo>Either the node binary or xxd could not be found, so the duktape host will not be compiled.</echo>
+  </target>
+
+  <target name="-js2h-works"
+          depends="-check-node-works, -xxd-in-path"
+          if="${node.works}">
+    <condition property="js2h-works">
+      <isset property="${xxd.present}"/>
+    </condition>  
+  </target>
+
   <target name="jsdoc"
           depends="jsdoc-update"
           description="Run jsdoc to generate documentation for JavaScript files."
