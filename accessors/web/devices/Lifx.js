@@ -205,7 +205,7 @@ exports.initialize = function () {
 				clearInterval(handleDiscovery);
 				discoveryMode = false;
 			} else {
-				// discoverLifx(socket);
+				discoverLifx(socket);
 			}
 		}, this.getParameter('discoveryInterval'));
 	});
@@ -606,7 +606,6 @@ var discoverLifx = function (socket) {
     var hexPacket = '24000034abcdefgh00000000000000000000000000000003000000000000000002000000';
     var packet = convertHexStringToByteArray(hexPacket);
 
-    // socket.setBroadcast(true);
     socket.send(packet, 56700, '255.255.255.255', function (er) {
         console.log('Start discovery: Broadcast at 255.255.255.255:56700... '+er);
     });
