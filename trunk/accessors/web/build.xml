@@ -404,15 +404,15 @@
        that are used by eduk and duk.
   --> 
   <target name="duktape"
-          depends="-xxd-in-path, eduk2, duk2, rusteduk"
+          depends="-js2h-works, eduk2, duk2, rusteduk"
           description="Build the duktape binaries"
-	  if="${xxd.present}">
+	  if="${js2h.works}">
   </target>
 
   <target name="duk2"
 	  depends="eduk2"
           description="Build the duk2 binary.  Requires make and a C compiler."
-	  if="${j2h.works}">
+	  if="${js2h.works}">
     <echo>The duk2 binary uses duktape 2.x.
     The duk2 binary has more command line options that the eduk binary.
     The duk2 binary would not be deployed on an embedded machine.
@@ -427,7 +427,7 @@
   <target name="eduk2"
 	  depends="-js2h-works, -js2h-not-work-message"
           description="Build the Duktape 2.x eduk2 binary.  Requires xxd, node, make and gcc."
-	  if="${js2h-works}">
+	  if="${js2h.works}">
     <echo>The eduk2 binary has fewer command line options than the duk binary.
     The eduk binary is what would be deployed on an embedded machine.
     The eduk binary can also be run from the command line.
@@ -446,12 +446,12 @@
   </target>
 
   <target name="-js2h-works"
-          depends="-check-node-works, -xxd-in-path"
+          depends="-check-node-works"
           if="${node.works}">
-    <condition property="js2h.works">
-      <isset property="${xxd.present}"/>
-    </condition>  
-    <echo>node.works: ${node.works}, xxd.present: ${xxd.present}, js2h.works: ${js2h.works}</echo>
+    <property environment="env" />
+    <available file="xxd"
+	       filepath="${env.PATH}"
+	       property="js2h.works"/>
   </target>
 
   <target name="jsdoc"
@@ -834,13 +834,13 @@
   <target name="tests.duk2"
           depends="-js2h-works, tests.duk2.test, tests.duk2.auto"
           description="Execute the duktape2 tests in duktape/test and test/auto."
-	  if="${js2h-works}">
+	  if="${js2h.works}">
   </target>
 
   <target name="tests.duk2.auto"
           depends="duk2"
           description="Execute the duk2 tests in test/auto."
-	  if="${js2h-works}">
+	  if="${js2h.works}">
     <echo>
       == tests.duk2.auto ==
       
@@ -874,7 +874,7 @@
   <target name="tests.duk2.test"
           depends="duk2"
           description="Execute the duktape2 tests in duktape/test."
-	  if="${js2h-works}">
+	  if="${js2h.works}">
     <echo>
       == tests.duk2.test ==
       To replicate:
@@ -903,7 +903,7 @@
   <target name="tests.eduk2"
           depends="eduk2"
           description="Execute the eduk2 tests."
-	  if="${js2h-works}">
+	  if="${js2h.works}">
     <apply executable="${eduk2.source}/eduk2"
 	   failonerror="${tests.failonerror}"
 	   relative="true"
@@ -1296,13 +1296,5 @@
       <arg value="..\\hosts" />
     </exec>
   </target>
-
-  <target name="-xxd-in-path">
-    <property environment="env" />
-    <available file="xxd"
-	       filepath="${env.PATH}"
-	       property="xxd.present"/>
-  </target>
-  
 
 </project>
