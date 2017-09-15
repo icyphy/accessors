@@ -635,7 +635,9 @@
     </echo>
   </target>
 
-  <target name="status.accessors">
+  <target name="status.accessors"
+          depends="-check-node-works"
+          if="${node.works}">
     <exec executable="${node.executable}"
 	  timeout="${timeout}">
       <arg value="reports/status/calculateAccessorMap.js"/>
@@ -643,7 +645,7 @@
   </target>    
 
   <target name="status.capecode"
-          depends="-ptII-exists"
+          depends="-ptII-exists, -check-node-works"
           if="${ptII.exists}">
 
     <exec dir="${env.PTII}"
