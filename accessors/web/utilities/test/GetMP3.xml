@@ -43,6 +43,22 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
+        <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
+            <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;Accessor that gets a resource from a file or ULR.&lt;/p&gt;">
+            </property>
+            <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Edward A. Lee">
+            </property>
+            <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id$$">
+            </property>
+            <property name="trigger (port)" class="ptolemy.kernel.util.StringAttribute" value="Send a token to this input to read the&#10; file or URL.">
+            </property>
+            <property name="output (port)" class="ptolemy.kernel.util.StringAttribute" value="The contents of the file or URL.">
+            </property>
+            <property name="resource (port)" class="ptolemy.kernel.util.StringAttribute" value="The file or URL to be read.  Defaults to&#10; the Accessors home page (http://accessors.org).">
+            </property>
+            <property name="timeout (port)" class="ptolemy.kernel.util.StringAttribute" value="The timeout in milleseconds.  Defaults to&#10; 3000 ms., which is 3 seconds.">
+            </property>
+        </property>
         <port name="resource" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
             <property name="defaultValue" class="ptolemy.data.expr.Parameter">
