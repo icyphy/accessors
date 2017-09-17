@@ -46,7 +46,10 @@
  *  supported in this module due to limitiations in the plugin. Places in the documentation where
  *  this implementation cannot meet the API of the other versions are marked with FIXMEs 
  *
- *  FIXME: PUT and POST commands only accept stringified JSON objects as the body
+ *  FIXME: POST commands are implemented with XMLHttpRequest, which is inconsistent with all the
+ *  other http commands. 
+ *
+ *  FIXME: PUT commands only accept stringified JSON objects as the body
  *  They are sent as json or url encoding depending on this implementation of http-client's
  *  special option: "encoding". Blame cordova-plugin-advanced-http.
  * 
@@ -439,7 +442,7 @@ var cordovaGet = function (request) {
         );
     } else {
         request.emit('response', null);
-        request._handleError('cordovaPut error in http-client: unable to parse options');
+        request._handleError('cordovaGet error in http-client: unable to parse options');
     }
 
 
@@ -462,7 +465,7 @@ var cordovaPost = function (request) {
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 console.log('Post request successful!');
-                // I have not exhaustively searched all the response data availble from xmlhttpreqest
+                // I have not exhaustively searched all the response data available from xmlhttpreqest
                 // Perhaps more response data can be extracted.
 
                 var allResponseHeaders = this.getAllResponseHeaders();
