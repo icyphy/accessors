@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -20,11 +20,14 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor is used for subscribing MQTT protocol messages.
+/** Subscribe to MQTT protocol messages.
  *
+ *  MQTT is a lightweight messaging protocol.
+ *  
  *  This accessor requires the 'mqtt' module.
  *
- *  @input subscribe The topic name to subscribe to.
+ *  @input subscribe The topic name to which to subscribe.
+ *   use # to subscribe to all topics.
  *  @input unsubscribe A topic to unsubscribe from.
  *  @output connection Output on which a string is sent when a
  *   connection to the broker has been established.
@@ -32,11 +35,14 @@
  *   subscription is initiated or terminated.
  *  @output received Output on which received data is produced.
  *  @output receivedTopic Output indicating the topic of received data.
- *  @param broker The IP address or domain name of the MQTT broker.
- *  @param brokerPort The port for the MQTT broker.
- *  
+ *  @param brokerHost The IP address or domain name of the MQTT broker.
+ *   If you don't have a local MQTT Broker, then try 
+ *   iot.eclipse.org.  If you use iot.eclipse.org, then avoid
+ *   using "#" as a topic.
+ *  @param brokerPort The port for the MQTT broker, which defaults
+ *   to 1883.
  *  @accessor net/MqttSubscriber
- *  @author Hokeun Kim
+ *  @author Hokeun Kim, contributor: Christopher Brooks
  *  @version $$Id$$
  */
 
@@ -71,10 +77,6 @@ exports.setup = function () {
     this.parameter('brokerPort', {
         type: 'int',
         value: 1883
-    });
-    this.parameter('qosLevel', {
-        type: 'int',
-        value: 0
     });
 };
 
