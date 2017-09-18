@@ -35,7 +35,7 @@
  *   to 1883.
  *  @output topic Output indicating the topic of received data.
  *
- *  @accessor net/MqttPublisher
+ *  @accessor net/MQTTPublisher
  *  @author Hokeun Kim, contributor: Christopher Brooks
  *  @version $$Id$$
  */
@@ -46,7 +46,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var mqtt = require('mqtt');
+var mqtt = require('@accessors-modules/mqtt');
 
 exports.setup = function () {
     // Inputs and outputs
