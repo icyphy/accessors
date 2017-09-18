@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of California.
+// Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
 
 // Permission is hereby granted, without written agreement and without
@@ -20,15 +20,23 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor is used for publishing MQTT protocol messages.
+/** Publish MQTT protocol messages.
  *
+ *  MQTT is a lightweight messaging protocol.
  *  This accessor requires the 'mqtt' module.
  *
- *
- *  TODO: populate inputs/outputs/parameters
+ *  @input toPublish The data to be published.
+ *  @output connection Output on which a string is sent when a
+ *   connection to the broker has been established.
+ *  @param brokerHost The IP address or domain name of the MQTT broker.
+ *   If you don't have a local MQTT Broker, then try 
+ *   iot.eclipse.org.
+ *  @param brokerPort The port for the MQTT broker, which defaults
+ *   to 1883.
+ *  @output topic Output indicating the topic of received data.
  *
  *  @accessor net/MqttPublisher
- *  @author Hokeun Kim
+ *  @author Hokeun Kim, contributor: Christopher Brooks
  *  @version $$Id$$
  */
 
@@ -58,10 +66,6 @@ exports.setup = function () {
     this.parameter('topic', {
         type: 'string',
         value: ''
-    });
-    this.parameter('qosLevel', {
-        type: 'int',
-        value: 2
     });
 };
 
