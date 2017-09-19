@@ -1,3 +1,7 @@
+Downloaded from https://github.com/mike-spainhower/querystring
+
+"Node's querystring module for all engines"
+
 License for querystring.js, decode.js, and encode.js
 From browserify: http://browserify.org/
 
