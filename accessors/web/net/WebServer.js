@@ -70,6 +70,7 @@
  *  @parameter {int} port The port to listen on.
  *
  *  @input response The response to issue to a request. 
+ *  @input shutdown Shutdown the web server.
  *  @output {int} listening When the server is listening for connections, this output
  *    will produce the port number that the server is listening on
  *  @output request The request that came into the server.
@@ -99,6 +100,7 @@ exports.setup = function() {
         type: "int"
     });
     this.input('response');
+    this.input('shutdown');
     this.output('listening', {'type':'int'});
     this.output('request', {'spontaneous': true});
 };
@@ -153,6 +155,10 @@ exports.initialize = function() {
     
     // Initialize pendingRequests to an empty object.
     self.pendingRequests = {};
+
+    self.addInputHandler('shutdown', function() {
+        self.wrapup();
+    });
 };
 
 exports.onListening = function() {
