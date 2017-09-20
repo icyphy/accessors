@@ -20,7 +20,8 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** This accessor reads or writes data to a key-value store web service.
+/** This accessor reads or writes data to a key-value store web service whenever
+ *  it receives a trigger input.
  *  A URL for the service is specified by the <i>storeLocation</i> parameter.
  *  A Ptolemy II model that provides such a key-value store service can be found
  *  at https://www.icyphy.org/accessors/demo/KeyValueStore/KeyValueStoreServer.xml.
@@ -69,6 +70,7 @@
  *   otherwise, retrieve the value for the key.
  *  @input {string} value The value to store in the key-value store,
  *   or empty to not store anything.
+ *  @input trigger The trigger input.
  *  @output {string} result The value retrieved from or written to
  *   the key-value store.
  *
@@ -81,6 +83,8 @@
 /*global console, error, exports, readURL */
 /*jshint globalstrict: true */
 "use strict";
+
+var httpClient = require('@accessors-modules/http-client');
 
 exports.setup = function () {
     this.input('storeLocation', {
@@ -98,38 +102,75 @@ exports.setup = function () {
     this.input('value', {
         'type': 'string'
     });
+    this.input('trigger');
     this.output('result', {
-        'type': 'string'
+        'type': 'string',
+        'spontaneous': true
     });
 };
 
-exports.fire = function () {
+exports.initialize = function() {
+    this.addInputHandler('trigger', handleInputs.bind(this));
+}
+
+function handleInputs() {
     var store = this.get('storeLocation');
     var theKey = this.get('key');
     var toRemove = this.get('remove');
     var theValue = this.get('value');
     var url = store + '/get?id=' + theKey;
-    var produce;
+    var thiz = this;
     if (toRemove) {
         if (theKey !== "") {
-            produce = readURL(url);
-            url = store + '/delete?id=' + theKey;
-            readURL(url);
-            if (produce !== "") {
-                this.send('result', produce);
-            }
+            httpClient.get(url, function(response) {
+                var produce = response.body;
+                url = store + '/delete?id=' + theKey;
+                // FIXME: This should use HTTP delete not get.
+                httpClient.get(url, function(response) {
+                    if (checkResponse(response, thiz) && produce !== "") {
+                        thiz.send('result', produce);
+                    }
+                });
+            });
         }
     } else {
         // toRemove == false. If there is a value, use it to set.
         if (theValue !== "" && theValue !== null) {
             // FIXME: encodeURIComponent is not defined as a top-level accessor function.
-            url = store + '/set?id=' + encodeURIComponent(theKey) +
-                '&value=' + encodeURIComponent(theValue);
-            readURL(url);
-            this.send('result', theValue);
+            url = store + '/set?id=' + encodeURIComponent(theKey);
+            var options = {
+                'url':url,
+                'body':theValue
+            };
+            httpClient.post(options, function(response) {
+                if (checkResponse(response, thiz)) {
+                    thiz.send('result', theValue);
+                }
+            });
         } else {
-            var valueFromStore = decodeURIComponent(readURL(url));
-            this.send('result', valueFromStore);
+            httpClient.get(url, function(response) {
+                if (checkResponse(response, thiz)) {
+                    var valueFromStore = decodeURIComponent(response.body);
+                    thiz.send('result', valueFromStore);
+                }
+            });
         }
     }
 };
+
+function checkResponse(response, thiz) {
+    if (response.statusCode >= 400) {
+        thiz.error('Server responds with '
+                + response.statusCode
+                + ': '
+                + response.statusMessage);
+        return false;
+    } else if (response.statusCode >= 300) {
+        thiz.error('Server responds with a redirect, no supported yet, code '
+                + response.statusCode
+                + ': '
+                + response.statusMessage);
+        return false;
+    }
+    return true;
+}
