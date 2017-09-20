@@ -234,7 +234,7 @@ exports.initialize = function () {
     }
     this.addInputHandler('server', this.exports.connect.bind(this));
     this.addInputHandler('port', this.exports.connect.bind(this));
-    this.addInputHandler('toSend', exports.toSendInputHandler.bind(this));
+    this.addInputHandler('toSend', this.exports.toSendInputHandler.bind(this));
     running = true;
     this.exports.connect.call(this);
 };
