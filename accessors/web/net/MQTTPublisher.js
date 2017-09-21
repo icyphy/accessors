@@ -67,6 +67,10 @@ exports.setup = function () {
         type: 'string',
         value: ''
     });
+   this.parameter('qosLevel', {
+       type: 'int',
+       value: 2
+   });
 };
 
 var self;
