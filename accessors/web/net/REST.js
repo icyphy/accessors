@@ -161,16 +161,22 @@ exports.encodePath = function () {
     // Remove any leading slash that might be present.
     var re = new RegExp('^\/');
     var command = this.get('command').replace(re, '');
+
     // Encode any characters that are not allowed in a URL.
-    // Early versions of querystring had encode and stringify 
-    // be the same function. In later versions, they differ.
+    
     // The test for this is:
     // $PTII/bin/ptinvoke ptolemy.moml.MoMLSimpleApplication $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/RESTPostDataTypes.xml 
-    var encodedArgs = querystring.escape(this.get('arguments'));
-    if (encodedArgs) {
+    var encodedArgs;
+    var argumentsValue = this.get('arguments');
+    
+    // If the arguments are undefined or empty, then we are done.
+    if (typeof argumentsValue === 'undefined' || argumentsValue === '') {
+        return command;
+    } else {
+        encodedArgs = querystring.stringify(argumentsValue);
         return command + '?' + encodedArgs;
     }
-    return command;
+
 }; 
 
 /** Filter the response. This base class just returns the argument
