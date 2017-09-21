@@ -166,7 +166,7 @@ exports.encodePath = function () {
     // be the same function. In later versions, they differ.
     // The test for this is:
     // $PTII/bin/ptinvoke ptolemy.moml.MoMLSimpleApplication $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/RESTPostDataTypes.xml 
-    var encodedArgs = querystring.encode(this.get('arguments'));
+    var encodedArgs = querystring.escape(this.get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
     }
