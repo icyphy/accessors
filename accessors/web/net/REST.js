@@ -159,15 +159,19 @@ exports.setup = function () {
  */
 exports.encodePath = function () {
     // Remove any leading slash that might be present.
-        var re = new RegExp('^\/');
-        var command = this.get('command').replace(re, '');
+    var re = new RegExp('^\/');
+    var command = this.get('command').replace(re, '');
     // Encode any characters that are not allowed in a URL.
-    var encodedArgs = querystring.stringify(this.get('arguments'));
+    // Early versions of querystring had encode and stringify 
+    // be the same function. In later versions, they differ.
+    // The test for this is:
+    // $PTII/bin/ptinvoke ptolemy.moml.MoMLSimpleApplication $PTII/ptolemy/actor/lib/jjs/modules/httpClient/test/auto/RESTPostDataTypes.xml 
+    var encodedArgs = querystring.encode(this.get('arguments'));
     if (encodedArgs) {
         return command + '?' + encodedArgs;
     }
     return command;
-};
+}; 
 
 /** Filter the response. This base class just returns the argument
  *  unmodified, but derived classes can override this to extract
