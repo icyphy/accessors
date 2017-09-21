@@ -214,15 +214,16 @@ module.exports = (function () {
         glob('**/*.js', function(err, files) {
 
             testcases = [];
-
-            files.forEach(function(filepath) {
-                if (filepath.indexOf('test/auto') != -1) {
-                    scanTestcase(filepath);
-                    testcases.push(filepath);
-                }
-            });
-            console.log('accessorMap.js: findTestCases(): found ' + testcases.length + ' test/auto/** *.js testcase files.');
-
+            
+            if (files !== null && typeof files !== 'undefined') {
+	            files.forEach(function(filepath) {
+	                if (filepath.indexOf('test/auto') != -1) {
+	                    scanTestcase(filepath);
+	                    testcases.push(filepath);
+	                }
+	            });
+	            console.log('accessorMap.js: findTestCases(): found ' + testcases.length + ' test/auto/** *.js testcase files.');
+            }
         });
     };
     
