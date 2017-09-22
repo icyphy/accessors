@@ -271,7 +271,7 @@
   <target name="-check-node-works"
           depends="-check-node"
           if="${node.in.path}">
-    <exec executable="node"
+    <exec executable="${node.executable}"
           failonerror="false"
           timeout="${timeout.npm}"
           resultproperty="return.code">
