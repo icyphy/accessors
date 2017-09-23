@@ -211,13 +211,20 @@ module.exports = (function () {
     var findTestCases = function(){
         // Test cases to accessors:
         // Any file under a /test/auto directory with a .js extension.
-        glob('**/*.js', function(err, files) {
-
+    	// Exclude /hosts/cordova and node_modules/@accessors-hosts/cordova 
+    	 // as each demo includes all of the accessors 
+    	// repo, plus there may be symbolic links to restricted access 
+    	// directories which will throw an EACCES exception.  Also, there
+    	// isn't a regression test suite available yet for cordova, so there
+    	// are no test results.
+        glob('!(node_modules)/!(cordova)/**/*.js', function(err, files) {
+        	//glob('**/*.js', function(err, files) {
             testcases = [];
             
             if (files !== null && typeof files !== 'undefined') {
 	            files.forEach(function(filepath) {
-	                if (filepath.indexOf('test/auto') != -1) {
+	            	console.log(filepath);
+	                if (filepath.indexOf('test/auto') !== -1) {
 	                    scanTestcase(filepath);
 	                    testcases.push(filepath);
 	                }
