@@ -1,7 +1,7 @@
 exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; node ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js gdp/test/auto/GDPLogCreateAppendReadJS)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; @node@ ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js gdp/test/auto/GDPLogCreateAppendReadJS)
     //  To regenerate this composite accessor, run:
     //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogCreateAppendReadJS.xml
     //  to edit the model, run:
