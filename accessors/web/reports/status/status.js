@@ -352,15 +352,17 @@ function fillTable(){
                 // If not, the test case is not supported.
                 accessors.forEach(function(accessor){
                     hosts = accessorMap.accessorsToHosts[accessor + '.js'];
-                    if (!hosts.includes('all')) {
-                        if (!hosts.includes('browser')) {
-                            supported.browser = false;
-                        } 
-                        if (!hosts.includes('node')) {
-                            supported.node = false;
-                        }
-                        if (!hosts.includes('capecode')) {
-                            supported.capecode = false;
+                    if (hosts !== null && typeof hosts !== 'undefined') {
+                        if (!hosts.includes('all')) {
+                            if (!hosts.includes('browser')) {
+                                supported.browser = false;
+                            } 
+                            if (!hosts.includes('node')) {
+                                supported.node = false;
+                            }
+                            if (!hosts.includes('capecode')) {
+                                supported.capecode = false;
+                            }
                         }
                     }
                 });
