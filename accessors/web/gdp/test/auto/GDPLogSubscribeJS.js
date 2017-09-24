@@ -3,9 +3,9 @@ exports.setup = function () {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/gdp/test/auto; @node@ ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js gdp/test/auto/GDPLogSubscribeJS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/gdp/test/auto/GDPLogSubscribeJS.xml
 
     // Ports: GDPLogSubscribeJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
