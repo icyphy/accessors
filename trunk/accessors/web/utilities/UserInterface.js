@@ -192,10 +192,14 @@ function display() {
  */
 function update() {
     var updateValue = this.get('update');
-    if (!updateValue.id || !updateValue.property || !updateValue.content) {
+    if (!updateValue.id || !updateValue.property) {
         error('Malformed update input. Expected an object with id, property, and content properties.'
                 + 'Got instead: ' + util.inspect(updateValue));
         return;
+    }
+    // Ensure that updateValue.content exists.
+    if (!updateValue.content) {
+        updateValue.content = '';
     }
     userInterface.update(updateValue.id, updateValue.property, updateValue.content);
 }
