@@ -65,7 +65,7 @@ exports.supportedReceiveTypes = function () {
  *  sendType arguments.
  */
 exports.supportedSendTypes = function () {
-    return ['application/json', 'text/plain'];
+    return ['application/json', 'text/plain', 'image/jpg', 'image/jpeg'];
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -174,13 +174,28 @@ exports.Client.prototype.open = function () {
                     try {
                         self.emit('message', JSON.parse(reader.result));
                     } catch(err) {
-                        self.emit('message', 'Expected JSON. Failed to parse: ' + reader.result);
+                        error('message', 'Expected JSON. Failed to parse: ' + reader.result);
                     }
                 } else {
                     self.emit('message', reader.result);
                 }
             });
-            reader.readAsText(message.data);
+            
+            if (message.data === null || typeof message.data === 'undefined') {
+            	error('Received message has no data.');
+            } else if (message.data instanceof Blob) {
+            	reader.readAsText(message.data);
+            } else {
+            	if (self.receiveType == 'application/json') {
+                    try {
+                        self.emit('message', JSON.parse(message.data));
+                    } catch(err) {
+                        error('message', 'Expected JSON. Failed to parse: ' + message.data);
+                    }
+            	} else {
+            		self.emit('message', message.data);
+            	}
+            }
         };
         this.webSocket.onerror = function(error) {
             self.emit('error', error);
@@ -209,6 +224,8 @@ exports.Client.prototype.send = function (data) {
     } else if (this.sendType.search(/text\//) === 0) {
         this.webSocket.send(data.toString());
     } else {
+    	console.log('web-socket-client sending data');
+    	console.log(data);
         this.webSocket.send(data);
     }
 };
