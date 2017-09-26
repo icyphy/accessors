@@ -146,6 +146,8 @@ exports.Client = function (options) {
     this.discardMessagesBeforeOpen = options.discardMessagesBeforeOpen || false;
     this.throttleFactor = options.throttleFactor || 0;
     this.sslTls = options.sslTls || false;
+    this.queue = [];
+    this.maxQueueSize = 100;	// Arbitrary. 
     
     this.webSocket = null;
 };
@@ -164,7 +166,12 @@ exports.Client.prototype.open = function () {
         this.webSocket = new WebSocket(protocol + this.host + ':' + this.port);
         var self = this;
         this.webSocket.onopen = function() {
-            self.emit('open');
+        	// Send any queued messages.
+        	while (self.queue.length > 0) {
+        		this.send(self.queue[0]);
+        		self.queue.shift();
+        	}
+        	self.emit('open');
         };
         this.webSocket.onmessage = function(message) {
             var reader = new FileReader();
@@ -198,9 +205,11 @@ exports.Client.prototype.open = function () {
             }
         };
         this.webSocket.onerror = function(error) {
+        	self.queue = [];
             self.emit('error', error);
         };
         this.webSocket.onclose = function(close, reason) {
+        	self.queue = [];
             console.log('closeEvent code:  ' + close.code + ', reason: ' + close.reason);
             self.emit('close');
         };
@@ -216,16 +225,17 @@ exports.Client.prototype.send = function (data) {
     // FIXME: Needs to support queuing of messages.
     if(!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
         if (!this.discardMessagesBeforeOpen) {
-            throw 'Web socket is not open.';
+            this.queue.push(data);
+            if (this.queue.length > this.maxQueueSize) {
+            	error('Web socket closed and queue full.  Cannot send data: ' + data);
+            }
         }
-    }
-    if (this.sendType == 'application/json') {
+    } else if (this.sendType == 'application/json') {
         this.webSocket.send(JSON.stringify(data));
     } else if (this.sendType.search(/text\//) === 0) {
         this.webSocket.send(data.toString());
     } else {
-    	console.log('web-socket-client sending data');
-    	console.log(data);
+
         this.webSocket.send(data);
     }
 };
@@ -239,4 +249,5 @@ exports.Client.prototype.close = function () {
     if(this.webSocket) {
         this.webSocket.close();
     }
+    this.queue = [];
 };
