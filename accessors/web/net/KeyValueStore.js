@@ -109,8 +109,9 @@ exports.setup = function () {
     });
 };
 
+var inputHandler = null;
 exports.initialize = function() {
-    this.addInputHandler('trigger', handleInputs.bind(this));
+    inputHandler = this.addInputHandler('trigger', handleInputs.bind(this));
 }
 
 function handleInputs() {
@@ -173,4 +174,11 @@ function checkResponse(response, thiz) {
         return false;
     }
     return true;
+}
+
+exports.wrapup = function() {
+    if (inputHandler !== null) {
+        this.removeInputHandler(inputHandler);
+        inputHandler = null;
+    }
 }
