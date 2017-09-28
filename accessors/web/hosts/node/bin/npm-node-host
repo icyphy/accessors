@@ -15,5 +15,7 @@ sawDependencies == 1 {print $2}
 $0 ~ /dependencies/ { sawDependencies = 1}'`
 
 
+echo "About to install these modules: $modules"
+
 cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node
 npm install $modules
