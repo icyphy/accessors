@@ -25,7 +25,7 @@
 /** 
  *  Save and retrieve a value from local storage. 
  *
- *  @accessor net/LocalStorage
+ *  @accessor utilities/LocalStorage
  *  @input {string} baseDirectory The directory in which to store the data
  *  If there is no value used, then the default value is /tmp/LocalStorage<Random>
  *  where <Random> is a random number.
@@ -44,6 +44,8 @@
  *  @author Christopher Brooks, based on KeyValueStore by Edward A. Lee and LocalStorage demo by Hokeun Kim.
  *  @version $$Id$$
  */
+
+// FIXME: LocalStorage and KeyValueStore have lots of duplicate text.
 
 // Stop extra messages from jslint.  Note that there should be no
 // space between the / and the * and global.
