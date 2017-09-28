@@ -207,9 +207,9 @@ function installIfMissingThenRequire(npmPackage) {
         }     
     }
     // console.log('nodeHost.js: installIfMissingThenRequire(): about to do require(' + npmPackage + ')');
-    var package = require(npmPackage);
-    // console.log('nodeHost.js: installIfMissingThenRequire(): returning: ' + package);
-    return package;
+    var myPackage = require(npmPackage);
+    // console.log('nodeHost.js: installIfMissingThenRequire(): returning: ' + myPackage);
+    return myPackage;
 }
 
 /** Instantiate and return an accessor.
