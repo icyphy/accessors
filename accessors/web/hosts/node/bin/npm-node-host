@@ -1,0 +1,19 @@
+#!/bin/sh
+# accessors/web/hosts/node/bin/npm-node-host
+# Invoke npm install on all the dependencies listed in the package.json file
+
+packageFile=$PTII/org/terraswarm/accessor/accessors/web/hosts/node/package.json
+
+if [ ! -f "$packageFile" ]; then
+   echo "$0: $packageFile not found, exiting."
+   exit 2
+fi
+
+modules=`cat $packageFile | awk -F \" '
+$0 ~ /},/ {sawDependencies = 0}
+sawDependencies == 1 {print $2}
+$0 ~ /dependencies/ { sawDependencies = 1}'`
+
+
+cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node
+npm install $modules
