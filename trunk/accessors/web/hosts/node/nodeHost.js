@@ -190,7 +190,7 @@ function installIfMissingThenRequire(npmPackage) {
     var foundIt = false;
     for (var i = 0; i < paths.length; i++) {
         if (fs.existsSync(paths[i] + '/' + npmPackage)) {
-            // console.log('nodeHost.js: installIfMissingThenRequire(' + npmPackage + '): found ' + paths[i] + '/' + npmPackage);
+            console.log('nodeHost.js: installIfMissingThenRequire(' + npmPackage + '): found ' + paths[i] + '/' + npmPackage);
             foundIt = true;
             break;
         }
@@ -206,7 +206,10 @@ function installIfMissingThenRequire(npmPackage) {
             console.log('npm install ' + npmPackage + ' failed: ' + error + '.  A return code of 1 can typically be ignored because package.json is present.');
         }     
     }
-    return require(npmPackage);
+    // console.log('nodeHost.js: installIfMissingThenRequire(): about to do require(' + npmPackage + ')');
+    var package = require(npmPackage);
+    // console.log('nodeHost.js: installIfMissingThenRequire(): returning: ' + package);
+    return package;
 }
 
 /** Instantiate and return an accessor.
