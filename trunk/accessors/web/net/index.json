@@ -2,7 +2,6 @@
     "Discovery.js",
     "IPAddress.js",
     "KeyValueStore.js",
-    "LocalStorage.js",
     "MQTTPublisher.js",
     "MQTTSubscriber.js",
     "REST.js",
