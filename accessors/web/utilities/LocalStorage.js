@@ -53,7 +53,7 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var storage = require('@accessors-modules/localStorage');
+var storage = require('@accessors-modules/local-storage');
 
 exports.setup = function () {
     this.input('baseDirectory', {
@@ -80,12 +80,14 @@ exports.setup = function () {
         'type': 'string',
         'spontaneous': true
     });
-    this.output('debug');
+    this.output('debug', {
+        'type': 'string',
+        'spontaneous': true
+    });
 }
 
-var inputHandler = null;
 exports.initialize = function() {
-    inputHandler = this.addInputHandler('trigger', handleInputs.bind(this));
+    this.addInputHandler('trigger', handleInputs.bind(this));
 }
 
 /** Return the contents of the store.
@@ -155,12 +157,5 @@ function handleInputs() {
             var foundValue = storage.getItem(theKey);
             this.send('result', foundValue);
         }
-    }
-}
-
-exports.wrapup = function() {
-    if (inputHandler !== null) {
-        this.removeInputHandler(inputHandler);
-        inputHandler = null;
     }
 }
