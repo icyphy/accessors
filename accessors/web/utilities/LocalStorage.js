@@ -32,6 +32,9 @@
  *  @input {string} storeLocation The URL of the key-value store service.
  *  The storeLocation is converted into a legal filename via substitution
  *  @input {string} key The key to be updated or retrieved.
+ *  @input {boolean} list If true, then generate a list of all the
+ *  keys and values on the result.
+ *  @output {boolean} notFound True if the key was not found.
  *  @input {boolean} remove If true, then remove the key from the store;
  *   otherwise, retrieve the value for the key.
  *  @input {string} value The value to store in the key-value store,
@@ -68,6 +71,14 @@ exports.setup = function () {
         'type': 'string',
         'value': ''
     });
+    this.input('list', {
+        'type': 'boolean',
+        'value': false
+    });
+    this.output('notFound', {
+        'type': 'string',
+        'spontaneous': true
+    });
     this.input('remove', {
         'type': 'boolean',
         'value': false
@@ -94,17 +105,19 @@ exports.initialize = function() {
  *  @return the contents of the store.
  */
 function currentStatus() {
-    var result = "";
-    var len = storage.length();
-    for (var i = 0; i < len; i++) {
-        var curKey = storage.key(i);
-        var curValue = storage.getItem(curKey);
-        result = result + '(' + curKey + ', ' + curValue + ')';
-        if (i < (len - 1)) {
+    var result = "{";
+    var length = storage.length();
+    console.log("LocalStorage: currentStatus(): length: " + length);
+    for (var i = 0; i < length; i++) {
+        var key = storage.key(i);
+        var value = storage.getItem(key);
+        console.log("LocalStorage: currentStatus(): key: " + key + ", value: " + value);
+        result = result + '\"' + key + '\": \"' + value + '\"';
+        if (i < (length - 1)) {
             result = result + ', '
         }
     }
-    return result;
+    return result + "}";
 }
 
 var lastBaseDirectory = null;
@@ -114,8 +127,11 @@ function handleInputs() {
     var theBaseDirectory = this.get('baseDirectory');
     var theStoreLocation = this.get('storeLocation');
     var theKey = this.get('key');
+    var toList = this.get('list');
     var theValue = this.get('value');
     var toRemove = this.get('remove');
+
+    this.send('debug', "LocalStorage: key: " + theKey + ", value: " + theValue + ", remove: " + toRemove + ", toList: " + toList);
 
     // If necessary initialize the storage.
     if (theBaseDirectory !== lastBaseDirectory || theStoreLocation !== lastStoreLocation) {
@@ -144,18 +160,27 @@ function handleInputs() {
 
     if (toRemove) {
         if (theKey !== "") {
+            this.send('debug', 'Removing ' + theKey);
             storage.remove(theKey);
+            this.send('result', theKey);
         }
-    } else { 
+    } else if (toList) {
+        this.send('debug', 'listing current keys and values');
+        this.send('result', currentStatus());
+    } else {
         // toRemove == false. If there is a value, use it to set.
         if (theValue !== "" && theValue !== null) {
             this.send('debug', 'Inserting (Key,Value) = (' + theKey + ', ' + theValue + ')');
             storage.setItem(theKey, theValue);
             this.send('result', theValue);
         } else {
-            this.send('debug', 'Retrieving Key: ' + theKey);
             var foundValue = storage.getItem(theKey);
-            this.send('result', foundValue);
+            this.send('debug', 'Retrieving Key: ' + theKey + ', foundValue: ' + foundValue);
+            if (foundValue === null) {
+                this.send('notFound', true);
+            } else {
+                this.send('result', foundValue);
+            }
         }
     }
 }
