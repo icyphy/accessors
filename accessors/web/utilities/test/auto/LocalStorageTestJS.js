@@ -3,9 +3,9 @@ exports.setup = function () {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/utilities/test/auto; @node@ ../../../hosts/node/nodeHostInvoke.js utilities/test/auto/LocalStorageTestJS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
 
     // Ports: LocalStorageTestJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -15,6 +15,7 @@ exports.setup = function () {
     LocalStorage.setDefault('key', "");
     LocalStorage.setDefault('storeLocation', "http://localhost:8077/keyvalue");
     LocalStorage.setDefault('remove', false);
+    LocalStorage.setDefault('list', false);
 
     // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
@@ -30,7 +31,7 @@ exports.setup = function () {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', ["Using a storage directory of /tmp/XXXX","Inserting (Key,Value) = (a, apple)","Inserting (Key,Value) = (b, bed)","Inserting (Key,Value) = (c, car)","Inserting (Key,Value) = (d, dog)","Inserting (Key,Value) = (e, eagle)","Inserting (Key,Value) = (a, ace)","Retrieving Key: c","Retrieving Key: d","Retrieving Key: e","Retrieving Key: a"]);
+    TrainableTest2.setParameter('correctValues', null);
     TrainableTest2.setParameter('trainingMode', true);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
