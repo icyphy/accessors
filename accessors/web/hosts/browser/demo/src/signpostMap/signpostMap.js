@@ -67,7 +67,7 @@ function findSignpost(marker) {
 
 /** Draw the map with the given data.
  * 
- * @param data The lat, lng of each signpost and an array of {time, temperature}.
+ * @param data The lat, lng of each signpost and an array of time, temperature.
  */
 function drawMap() {
 	if (!mapDrawn) {
