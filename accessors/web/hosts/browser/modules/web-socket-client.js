@@ -136,7 +136,7 @@ exports.Client = function (options) {
     }
 
     options = options || {};
-    this.port = options.port || 80;
+    
     this.host = options.host || 'localhost';
     this.receiveType = options.receiveType || 'application/json';
     this.sendType = options.sendType || 'application/json';
@@ -146,6 +146,12 @@ exports.Client = function (options) {
     this.discardMessagesBeforeOpen = options.discardMessagesBeforeOpen || false;
     this.throttleFactor = options.throttleFactor || 0;
     this.sslTls = options.sslTls || false;
+    if (this.sslTls) {
+    	this.port = options.port || 443;
+    } else {
+    	this.port = options.port || 80;
+    }
+    this.trustAll = options.trustAll || false;
     this.queue = [];
     this.maxQueueSize = 100;	// Arbitrary. 
     
@@ -168,7 +174,7 @@ exports.Client.prototype.open = function () {
         this.webSocket.onopen = function() {
         	// Send any queued messages.
         	while (self.queue.length > 0) {
-        		this.send(self.queue[0]);
+        		self.send(self.queue[0]);
         		self.queue.shift();
         	}
         	self.emit('open');
@@ -189,7 +195,7 @@ exports.Client.prototype.open = function () {
             });
             
             if (message.data === null || typeof message.data === 'undefined') {
-            	error('Received message has no data.');
+            	self.emit('error', 'Received message has no data.');
             } else if (message.data instanceof Blob) {
             	reader.readAsText(message.data);
             } else {
@@ -206,7 +212,7 @@ exports.Client.prototype.open = function () {
         };
         this.webSocket.onerror = function(error) {
         	self.queue = [];
-            self.emit('error', error);
+            self.emit('error', 'Web Socket Error.');
         };
         this.webSocket.onclose = function(close, reason) {
         	self.queue = [];
@@ -235,7 +241,6 @@ exports.Client.prototype.send = function (data) {
     } else if (this.sendType.search(/text\//) === 0) {
         this.webSocket.send(data.toString());
     } else {
-
         this.webSocket.send(data);
     }
 };
