@@ -288,6 +288,6 @@ function getSignposts() {
 		  // React accessor first time.
 		  reactIfExecutable('REST');
 		  reactIfExecutable('WebSocketClient');
-	}, 4000);
+	}, 6000);
 	
 }
