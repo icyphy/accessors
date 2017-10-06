@@ -318,7 +318,7 @@ function Hue() {
     /** If the response indicates an error, report it.
      *  Return true if the response is an error.
      */
-    function reportIfError(response) {
+    hue.reportIfError = function (response) {
         var body = response.body;
         if (typeof body == "string") {
             body = JSON.parse(body);
@@ -401,7 +401,7 @@ function Hue() {
                         console.log("Hue.js: processCommands(): response status: " + response.statusMessage);
                         console.log("Hue.js: processCommands(): response body: " + response.body);
                     }
-                    reportIfError(response);
+                    hue.reportIfError(response);
                 });
             }
         }
@@ -544,7 +544,7 @@ exports.wrapup = function () {
                     if (debug) {
                         console.log("Hue.js wrapup(): Response " + JSON.stringify(response));
                     }
-                    if (this.hue.reportIfError(response)) {
+                    if (self.hue.reportIfError(response)) {
                         errorLights.push(this.lightID);
                     }
                 });
