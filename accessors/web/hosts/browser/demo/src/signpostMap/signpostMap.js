@@ -286,6 +286,7 @@ function parseData(data, i) {
 /** Set up event listeners and react for the first time.
  */
 function registerAndReact() {
+	setTimeout(function() {
 	  document.getElementById('RESTError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		// An error occurred.  Create overlay with default data.
@@ -390,6 +391,7 @@ function registerAndReact() {
 	  reactIfExecutable('WebSocketClient');
 	  reactIfExecutable('WebSocketClient2');
 	  reactIfExecutable('WebSocketClient3'); 
+	}, 2000);
 }
 
 /** Use sample data for the given signpost.
