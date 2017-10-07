@@ -1,9 +1,15 @@
 // Fetch gps and audio data for each signpost and display on a map.
 
+var accessorTableDone = false;
+window.addEventListener('accessorTableDone', function() {
+	accessorTableDone = true;
+});
+
 // Initialize map to sample data.
 var now = Date.now() / 1000;	// Sample data is 30 minutes long, every 10 seconds.
 var sampleX = [];
 var sampleZ = [];
+
 
 for (var i = 0; i < 180; i++) {
 	sampleX.unshift( (now - i * 10) / 60);
@@ -236,7 +242,6 @@ function drawMap() {
 function getSignposts() {
 	
 	// Watch for changes in the REST.response output.
-	// Wait a bit after onload to make sure accessors are fully loaded.
 	setTimeout(function() {
 		  document.getElementById('RESTError')
 		  	.addEventListener('DOMSubtreeModified', function() {
@@ -338,12 +343,14 @@ function getSignposts() {
 				}
 			});
 		 
-		  // React accessor first time.
-		  reactIfExecutable('REST');
-		  reactIfExecutable('WebSocketClient');
-		  reactIfExecutable('WebSocketClient2');
-		  reactIfExecutable('WebSocketClient3');
-	}, 10000);
+		 if (!accessorTableDone) {
+			 window.addEventListener('accessorTableDone', reactMe);
+			 
+		 } else {
+			 reactMe();
+		 }
+		 
+	}, 1000);
 }
 
 /** Parse data received from the websocket.
@@ -376,6 +383,17 @@ function parseData(data, i) {
 		signposts[i].xData.push(time/60);	// Time in minutes.
 		signposts[i].zData.push(z);
 	}
+}
+
+/** React accessors for the first time.
+ */
+function reactMe() {
+	setTimeout(function() {
+		  reactIfExecutable('REST');
+		  reactIfExecutable('WebSocketClient');
+		  reactIfExecutable('WebSocketClient2');
+		  reactIfExecutable('WebSocketClient3');
+	}, 1000);
 }
 
 /** Use sample data for the given signpost.
