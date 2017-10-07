@@ -392,8 +392,8 @@ function reactMe() {
 		  reactIfExecutable('REST');
 		  reactIfExecutable('WebSocketClient');
 		  reactIfExecutable('WebSocketClient2');
-		  reactIfExecutable('WebSocketClient3');
-	}, 5000);
+		  reactIfExecutable('WebSocketClient3');  // For some reason, having trouble with this one?
+	}, 10000);
 }
 
 /** Use sample data for the given signpost.
