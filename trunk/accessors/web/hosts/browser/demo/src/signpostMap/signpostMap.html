@@ -11,18 +11,9 @@
     <!-- Custom styling. -->
     <link rel="stylesheet" type="text/css" href="/accessors/hosts/browser/demo/src/signpostMap/signpostMap.css">
     
-    <!-- jQuery -->
-    <script
-		  src="https://code.jquery.com/jquery-3.2.1.min.js"
-		  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-		  crossorigin="anonymous">
-    </script>
+     <!-- Visualization library. -->
+     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 			  
-    <!-- Load your favorite visualization library.  This demo uses D3. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.2/d3.min.js"></script>
-    
-
-    
     <!-- If viewing in the browser, load the browser host.
          Cordova does not need this line.  Cape Code may optionally use it if 
          you want the generated web page to run accessors. Otherwise omit it.-->
@@ -34,8 +25,6 @@
          Google maps terms of use: 
          https://www.google.com/intl/ALL/help/terms_maps.html
          https://www.google.com/intl/ALL/permissions/geoguidelines.html -->
-         
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
          
     <script async defer
     	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAG3NUqiON_OZrlNJIBmFnkZRS5l4xsQg0&callback=getSignposts">
@@ -51,15 +40,26 @@
 <div>
 <button id="showAccessor"> Show Accessors </button>
 </div>
-<div class="accessor"
-   src="net/REST"
-   id="REST" 
-   style="display:none"></div>
+<div id="accessorContainer" style="display:none">
+
+
+	<div class="accessor"
+	   src="net/REST"
+	   id="REST" ></div>
    
- <div class="accessor"
-   src="net/WebSocketClient"
-   id="WebSocketClient" 
-   style="display:none"></div>
+	 <!--  This could probably be done programmatically if we have a lot of signposts. -->
+	 <div class="accessor"
+	   src="net/WebSocketClient"
+	   id="WebSocketClient" ></div>
+	   
+	 <div class="accessor"
+	   src="net/WebSocketClient"
+	   id="WebSocketClient2" ></div>
+	   
+	 <div class="accessor"
+	   src="net/WebSocketClient"
+	   id="WebSocketClient3" ></div>
+</div>
    
 </body>
 </html>
