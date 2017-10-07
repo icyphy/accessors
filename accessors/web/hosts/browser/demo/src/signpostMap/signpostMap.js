@@ -393,7 +393,7 @@ function reactMe() {
 		  reactIfExecutable('WebSocketClient');
 		  reactIfExecutable('WebSocketClient2');
 		  reactIfExecutable('WebSocketClient3');
-	}, 1000);
+	}, 5000);
 }
 
 /** Use sample data for the given signpost.
