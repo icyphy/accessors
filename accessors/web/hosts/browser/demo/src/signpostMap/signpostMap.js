@@ -63,19 +63,6 @@ initialValues["WebSocketClient3.toSend"] = JSON.stringify(subscribeTo);
 initialValues["WebSocketClient3.sslTls"] = true;
 initialValues["WebSocketClient3.trustAll"] = true;
 
-/** Find the signpost that corresponds to this marker.
- * @param marker The marker that was clicked on.
- * @returns The signpost associated with that marker, or null if none found.
- */
-function findSignpost(marker) {
-	for (var i = 0; i < signposts.length; i++) {
-		if (signposts[i].mac === marker.mac) {
-			return signposts[i];
-		}
-	}
-	return null;
-}
-
 /** Draw the map with the given data.
  * 
  * @param data The lat, lng of each signpost and an array of time, temperature.
@@ -235,6 +222,19 @@ function drawMap() {
 	mapDrawn = true;
 }
 
+/** Find the signpost that corresponds to this marker.
+ * @param marker The marker that was clicked on.
+ * @returns The signpost associated with that marker, or null if none found.
+ */
+function findSignpost(marker) {
+	for (var i = 0; i < signposts.length; i++) {
+		if (signposts[i].mac === marker.mac) {
+			return signposts[i];
+		}
+	}
+	return null;
+}
+
 /** Get signpost data and create content for info windows.
  *  This is called back from the .html file once the map is loaded.
  */
@@ -243,113 +243,11 @@ function getSignposts() {
 	
 	// Watch for changes in the REST.response output.
 	setTimeout(function() {
-		  document.getElementById('RESTError')
-		  	.addEventListener('DOMSubtreeModified', function() {
-		  		// An error occurred.  Create overlay with default data.
-		  		console.log('Error invoking REST accessor.');
-		  	});
-		
-		  document.getElementById('REST.response')
-		  	.addEventListener('DOMSubtreeModified', function() {
-	  		  var value = document.getElementById('REST.response').innerText;
-			  
-	  		  // TODO:  Make three rest calls to fetch all gps data.  Test this first.
-			  var gpsData = JSON.parse(value);
-			  signposts[gpsIndex].lat = gpsData.latitude.value;
-			  signposts[gpsIndex].lng = gpsData.longitude.value;
-			  
-			  gpsIndex ++;
-			  if (gpsIndex < signposts.length) {
-				  gpsUrl = 'edu.berkeley.eecs.' + signposts[gpsIndex].mac + '.signpost_gps.v0-0-1';
-				  
-				  var gpsOptions = {"url":"https://gdp-rest-01.eecs.berkeley.edu/gdp/v1/gcl/" + gpsUrl + "?recno=-1",
-			  				"headers":{"Authorization":"Basic ZWNkZW1vOnRlcnJhc3dhcm0="},
-			  				"method":"GET"};
-				  document.getElementById('REST.options').value = JSON.stringify(gpsOptions);
-				  reactIfExecutable('REST');
-			  } else {
-				// Draw map and assume websocket data will load before person clicks on map.
-	  			drawMap();
-			  }
-		  });
-		  	
-		  document.getElementById('WebSocketClientError')
-		  	.addEventListener('DOMSubtreeModified', function() {
-		  		// An error occurred.  Create overlay with default data.
-		  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-		  		useSampleData(0);
-		  	});
-		
-		  document.getElementById('WebSocketClient.received')
-		  	.addEventListener('DOMSubtreeModified', function() {
-	  		  var value = document.getElementById('WebSocketClient.received').innerText;
-	  		// TODO: Try/catch here.
-	  		  var data = JSON.parse(value);
-	  		  if (data.type === 2) {
-	  			 console.log('Error fetching websocket data.  Using sample data.');
-	  			 console.log('Subscription ended.');
-	  		  } else {
-	  			 parseData(data, 0);
-	  		  }
-		  });
-		  
-		  document.getElementById('WebSocketClient2Error')
-		  	.addEventListener('DOMSubtreeModified', function() {
-		  		// An error occurred.  Create overlay with default data.
-		  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-		  		useSampleData(1);
-		  	});
-		
-		  document.getElementById('WebSocketClient2.received')
-		  	.addEventListener('DOMSubtreeModified', function() {
-	  		  var value = document.getElementById('WebSocketClient2.received').innerText;
-	  		// TODO: Try/catch here.
-	  		  var data = JSON.parse(value);
-	  		  if (data.type === 2) {
-	  			  console.log('Subscription ended.');
-	  		  } else {
-	  			  parseData(data, 1);
-	  		  }
-		  });
-		  
-		  document.getElementById('WebSocketClient3Error')
-		  	.addEventListener('DOMSubtreeModified', function() {
-		  		// An error occurred.  Create overlay with default data.
-		  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-		  		useSampleData(2);
-		  	});
-		
-		  document.getElementById('WebSocketClient3.received')
-		  	.addEventListener('DOMSubtreeModified', function() {
-	  		  var value = document.getElementById('WebSocketClient3.received').innerText;
-	  		// TODO: Try/catch here.
-	  		  var data = JSON.parse(value);
-	  		  if (data.type === 2) {
-	  			console.log('Subscription ended.');
-	  		  } else {
-	  			  parseData(data, 2);
-	  		  }
-		  });
-		 
-		 document.getElementById("showAccessor").addEventListener("click", function() {
-				var div = document.getElementById("accessorContainer");
-				
-				if (div.style.display === "none") {
-					div.style.display = "";
-					document.getElementById("showAccessor").textContent = "Hide Accessors";
-				} else {
-					div.style.display = "none";
-					document.getElementById("showAccessor").textContent = "Show Accessors";
-				}
-			});
-		 
-		 if (!accessorTableDone) {
-			 window.addEventListener('accessorTableDone', reactMe);
-			 
-		 } else {
-			 reactMe();
-		 }
-		 
+		if (accessorTableDone) {
+			registerAndReact();
+		} else {
+			window.addEventListener('accessorTableDone', registerAndReact);
+		}
 	}, 1000);
 }
 
@@ -385,15 +283,113 @@ function parseData(data, i) {
 	}
 }
 
-/** React accessors for the first time.
+/** Set up event listeners and react for the first time.
  */
-function reactMe() {
-	setTimeout(function() {
-		  reactIfExecutable('REST');
-		  reactIfExecutable('WebSocketClient');
-		  reactIfExecutable('WebSocketClient2');
-		  reactIfExecutable('WebSocketClient3');  // For some reason, having trouble with this one?
-	}, 10000);
+function registerAndReact() {
+	  document.getElementById('RESTError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		// An error occurred.  Create overlay with default data.
+	  		console.log('Error invoking REST accessor.');
+	  	});
+	
+	  document.getElementById('REST.response')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('REST.response').innerText;
+		  
+		  // TODO:  Make three rest calls to fetch all gps data.  Test this first.
+		  var gpsData = JSON.parse(value);
+		  signposts[gpsIndex].lat = gpsData.latitude.value;
+		  signposts[gpsIndex].lng = gpsData.longitude.value;
+		  
+		  gpsIndex ++;
+		  if (gpsIndex < signposts.length) {
+			  gpsUrl = 'edu.berkeley.eecs.' + signposts[gpsIndex].mac + '.signpost_gps.v0-0-1';
+			  
+			  var gpsOptions = {"url":"https://gdp-rest-01.eecs.berkeley.edu/gdp/v1/gcl/" + gpsUrl + "?recno=-1",
+		  				"headers":{"Authorization":"Basic ZWNkZW1vOnRlcnJhc3dhcm0="},
+		  				"method":"GET"};
+			  document.getElementById('REST.options').value = JSON.stringify(gpsOptions);
+			  reactIfExecutable('REST');
+		  } else {
+			// Draw map and assume websocket data will load before person clicks on map.
+			drawMap();
+		  }
+	  });
+	  	
+	  document.getElementById('WebSocketClientError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		// An error occurred.  Create overlay with default data.
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleData(0);
+	  	});
+	
+	  document.getElementById('WebSocketClient.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient.received').innerText;
+		// TODO: Try/catch here.
+		  var data = JSON.parse(value);
+		  if (data.type === 2) {
+			 console.log('Error fetching websocket data.  Using sample data.');
+			 console.log('Subscription ended.');
+		  } else {
+			 parseData(data, 0);
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient2Error')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		// An error occurred.  Create overlay with default data.
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleData(1);
+	  	});
+	
+	  document.getElementById('WebSocketClient2.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient2.received').innerText;
+		// TODO: Try/catch here.
+		  var data = JSON.parse(value);
+		  if (data.type === 2) {
+			  console.log('Subscription ended.');
+		  } else {
+			  parseData(data, 1);
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient3Error')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		// An error occurred.  Create overlay with default data.
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleData(2);
+	  	});
+	
+	  document.getElementById('WebSocketClient3.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient3.received').innerText;
+		// TODO: Try/catch here.
+		  var data = JSON.parse(value);
+		  if (data.type === 2) {
+			console.log('Subscription ended.');
+		  } else {
+			  parseData(data, 2);
+		  }
+	  });
+	 
+	 document.getElementById("showAccessor").addEventListener("click", function() {
+			var div = document.getElementById("accessorContainer");
+			
+			if (div.style.display === "none") {
+				div.style.display = "";
+				document.getElementById("showAccessor").textContent = "Hide Accessors";
+			} else {
+				div.style.display = "none";
+				document.getElementById("showAccessor").textContent = "Show Accessors";
+			}
+		});
+	 
+	  reactIfExecutable('REST');
+	  reactIfExecutable('WebSocketClient');
+	  reactIfExecutable('WebSocketClient2');
+	  reactIfExecutable('WebSocketClient3'); 
 }
 
 /** Use sample data for the given signpost.
