@@ -343,7 +343,7 @@ function getSignposts() {
 		  reactIfExecutable('WebSocketClient');
 		  reactIfExecutable('WebSocketClient2');
 		  reactIfExecutable('WebSocketClient3');
-	}, 2000);
+	}, 10000);
 }
 
 /** Parse data received from the websocket.
