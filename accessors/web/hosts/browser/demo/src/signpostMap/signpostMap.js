@@ -6,17 +6,30 @@ window.addEventListener('accessorTableDone', function() {
 });
 
 // Initialize map to sample data.
-var now = Date.now() / 1000;	// Sample data is 30 minutes long, every 10 seconds.
-var sampleXAudio = [];
-var sampleZAudio = [];
-
+var now = Date.now() / 1000;	
+var sampleXAudio = [];  // Sample data is 30 minutes long, every 10 seconds.
+var sampleZAudio = [];  // Sample data is 24 hours long, every 5 minutes.
+var sampleXRF = [];
+var sampleZRF = [];
+var zArray = [];
 
 for (var i = 0; i < 180; i++) {
 	sampleXAudio.unshift( (now - i * 10) / 60);
-	sampleZAudio.unshift( [Math.random()*10 + 45, Math.random()*10 + 45, 
-			Math.random()*10 + 45, Math.random()*10 + 45, 
-			Math.random()*10 + 45, Math.random()*10 + 45, 
-			Math.random()*10 + 45]);
+	for (var j = 0; j < 7; j++) {
+		zArray.unshift(Math.random()*10 + 45);  // Range 45 to 55.
+	}
+	sampleZAudio.unshift(zArray);
+	zArray = [];
+}
+
+zArray = [];
+for (var i = 0; i < 288; i++) {
+	sampleXRF.unshift( (now - i * 300) / 360);
+	for (var j = 0; j < 80; j++) {	// Range -30 to -60.
+		zArray.unshift(-30 - Math.random()*30);
+	}
+	sampleZRF.unshift(zArray);
+	zArray = [];
 }
 
 var signposts = [ { mac : 'c098e5120001', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : [], zRF : [], usingSample: true},
@@ -349,118 +362,6 @@ function drawMap() {
 	            	container.appendChild(section1);
 	            	container.appendChild(section2);
 	      		}
-	      		
-	      		
-	      		
-	      		// Audio.
-	      		
-	      		/*
-	      		if (source !== null) {
-	      			if (source.usingSample) {
-	      				title.innerHTML = marker.mac + ' Audio Spectrum Energy (Sample)';
-	      			} else {
-	      				title.innerHTML = marker.mac + ' Audio Spectrum Energy';
-	      			}
-		      		
-		      		container.appendChild(title);
-	      			
-	    			var logy = [Math.log(63), Math.log(160), Math.log(400), Math.log(1000), Math.log(2500), Math.log(6250), Math.log(16000)];
-	    			
-	    			var relXData = [];
-	    			var xBase = source.xData[0];
-	    			for (var i = 0; i < source.xData.length; i++) {
-	    				relXData.push(source.xData[i] - xBase);
-	    			}
-	    			
-	    			// Z data needs to be in arrays of x times per y frequencies.
-	    			var newZData = [];
-	    			for (var i = 0; i < logy.length; i++) {
-	    				newZData.push([]);
-	    			}
-	    			
-	    			
-	    			for (var i = 0; i < source.zData.length; i++) {
-	    				for(var j = 0; j < logy.length; j++) {
-	    					newZData[j].push(source.zData[i][j]);
-	    				}
-	    			}
-	    			
-					var data = [{
-	            		// x is time, y is frequency, z is amplitude in db.
-	            			   x: relXData,
-	            		       y: [Math.log(63), Math.log(160), Math.log(400), Math.log(1000), Math.log(2500), Math.log(6250), Math.log(16000)],
-	            	           z: newZData,
-	            	           type: 'surface',
-	            	           colorbar: {len: 0.5, thickness: 8, y: 0.7, x: 0.95, tickfont: {size: 10}}
-	            	        }];
-	            	
-	    	        	var layout = {
-    	        			scene: {
-    	        				camera: {
-    	        					up: {x:0, y:0, z:1},
-    	        					center: {x:0.15, y:0, z: -0.5},
-    	        					eye: {x:2, y:2, z:0.8}
-    	        				
-    	        				},
-    		        			xaxis: {
-    		        				range: [relXData[0], 
-    		        					relXData[relXData.length - 1]],
-    		        				tickfont: {
-    		        					size: 10
-    		        				},
-    		        				title: 'Minutes',
-    		        				titlefont: {
-    		        					size: 10
-    		        				}
-    		        			},
-    		        			yaxis: {
-    		        				numticks: 7,
-    		        			    tickvals: [Math.log(63), Math.log(160), Math.log(400), Math.log(1000), Math.log(2500), Math.log(6250), Math.log(16000)],
-    		        			    ticktext: [63, 160, 400, 1000, 2500, 6250, 16000],
-    		        				tickfont: {
-    		        					size: 10
-    		        				},
-    		        				range: [Math.log(63), Math.log(16000)],
-    		        				title: 'Frequency (Hz)',
-    		        				titlefont: {
-    		        					size: 10
-    		        				}
-    		        			},
-    		        			zaxis: {
-    		        				tickfont: {
-    		        					size: 10
-    		        				},
-    		        				title: 'db',
-    		        				titlefont: {
-    		        					size: 10
-    		        				}
-    		        			},
-    	        			},
-      		        	  autosize: false,
-      		        	  width: 450,
-      		        	  height: 300,
-      		        	  margin: {
-      		        	    l: 10,
-      		        	    r: 5,
-      		        	    b: 5,
-      		        	    t: 10,
-      		        	    pad: 4
-      		        	  }
-	          		};
-	      		        	
-	            	Plotly.newPlot(node, data, layout, {displayModeBar: false});
-	      		        
-		            container.appendChild(node);
-		            
-		            infoWindow.setContent(container);      		
-		  			infoWindow.open(map, marker);
-
-	      		} else {
-	      			console.log('Could not find signpost for marker ' + marker.mac);
-      				title.innerHTML = marker.mac + ' Audio Spectrum Energy';
-      				container.appendChild(title);
-	      		}
-	      		*/
 	          });
 	      });
 	}
@@ -598,7 +499,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClientError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(0);
+	  		useSampleAudioData(0);
 	  	});
 	
 	  document.getElementById('WebSocketClient.received')
@@ -616,7 +517,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClient2Error')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(1);
+	  		useSampleAudioData(1);
 	  	});
 	
 	  document.getElementById('WebSocketClient2.received')
@@ -634,7 +535,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClient3Error')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(2);
+	  		useSampleAudioData(2);
 	  	});
 	
 	  document.getElementById('WebSocketClient3.received')
@@ -652,7 +553,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClient4Error')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(0);
+	  		useSampleRFData(0);
 	  	});
 	
 	  document.getElementById('WebSocketClient4.received')
@@ -670,7 +571,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClient5Error')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(1);
+	  		useSampleRFData(1);
 	  	});
 	
 	  document.getElementById('WebSocketClient5.received')
@@ -688,7 +589,7 @@ function registerAndReact() {
 	  document.getElementById('WebSocketClient6Error')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleData(2);
+	  		useSampleRFData(2);
 	  	});
 	
 	  document.getElementById('WebSocketClient6.received')
@@ -725,12 +626,22 @@ function registerAndReact() {
 	}, 2000);
 }
 
-/** Use sample data for the given signpost.
+/** Use sample audio data for the given signpost.
  * 
  * @param i  The index of the signpost.
  */
-function useSampleData(i) {
-	signposts[i].xData = sampleX;
-	signposts[i].zData = sampleZ;
+function useSampleAudioData(i) {
+	signposts[i].xAudio = sampleXAudio;
+	signposts[i].zAudio = sampleZAudio;
+	signposts[i].usingSample = true;
+}
+
+/** Use sample RF data for the given signpost.
+ * 
+ * @param i  The index of the signpost.
+ */
+function useSampleRFData(i) {
+	signposts[i].xRF = sampleXRF;
+	signposts[i].zRF = sampleZRF;
 	signposts[i].usingSample = true;
 }
