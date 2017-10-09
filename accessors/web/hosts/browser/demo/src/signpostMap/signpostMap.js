@@ -421,13 +421,24 @@ function parseDataAudio(data, i) {
 			values['2500Hz'].value, values['6250Hz'].value, 
 			values['16000Hz'].value];
 		
-		if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
-			signposts[i].xAudio.shift();
-			signposts[i].zAudio.shift();
+		// Discard any out of range data points.  Range is 30 - 70.
+		var discard = false;
+		for (var index = 0; index < z.length; index++) {
+			if (z[index] < 30 || z[index] > 70) {
+				discard = true;
+				break;
+			}
 		}
-
-		signposts[i].xAudio.push(time/60);	// Time in minutes.
-		signposts[i].zAudio.push(z);
+		
+		if (!discard) {
+			if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
+				signposts[i].xAudio.shift();
+				signposts[i].zAudio.shift();
+			}
+	
+			signposts[i].xAudio.push(time/60);	// Time in minutes.
+			signposts[i].zAudio.push(z);
+		}
 	}
 }
 
