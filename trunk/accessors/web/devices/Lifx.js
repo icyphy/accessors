@@ -258,7 +258,7 @@ exports.initialize = function () {
 			if (control.on && control.on === 'on') {
 				lifxLightBulb.switchOn(socket);
 				thiz.send('data', {'id': lifxLightBulb.macAddress, 'light': 'on'});
-			} else {
+			} else if (control.on && control.on === 'off') {
 				lifxLightBulb.switchOff(socket);
 				thiz.send('data', {'id': lifxLightBulb.macAddress, 'light': 'off', 'color': lifxLightBulb.color});
 			}
