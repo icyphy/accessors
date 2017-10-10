@@ -309,6 +309,7 @@ exports.wrapup = function () {
 	lifxLightBulb = null;
 	running = false;
 	handleDiscovery = null;
+	discoveryMode = false;
 }
 
 /////////////////////////////////////////////////////////////////////////
