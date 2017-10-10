@@ -597,8 +597,11 @@ var parseReceivedPacket = function (messageBytes, sender) {
 	var packetObject = {};
 	
 	// Extract packet information
-	packetObject.ipAddress = sender.substring(0, sender.indexOf(':'));
-	packetObject.port = Number(sender.substring(sender.indexOf(':') + 1));
+	if (typeof sender === 'string') {
+		sender = JSON.parse(sender);
+	};
+	packetObject.ipAddress = sender.ipAddress;
+	packetObject.port = Number(sender.port);
 	packetObject.macAddress = getHexStringAt(messageBytes, 8, 14);
 	packetObject.messageCode = getHexStringAt(messageBytes, 32, 33);
 	packetObject.messageCode = codesForStateMessages[packetObject.messageCode]; 
