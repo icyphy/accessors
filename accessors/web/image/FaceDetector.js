@@ -21,7 +21,10 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** A face detector accessor.
+/** Try me!  For 'input', enter /accessors/hosts/browser/demo/computerVision/terraswarmeyes.jpg
+ *  then click 'react to inputs'.
+ * 
+ *  A face detector accessor.
  *  This accessor detects faces in an input stream.
  *
  *  The options parameter can include the following fields:
