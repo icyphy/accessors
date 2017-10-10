@@ -595,7 +595,6 @@ function registerAndReact() {
 		  
 		  // TODO:  Make three rest calls to fetch all gps data.  Test this first.
 		  var gpsData = JSON.parse(value);
-		  console.log('gps data for index ' + gpsIndex + ' ' + JSON.stringify(gpsData));
 		  signposts[gpsIndex].lat = gpsData.latitude.value;
 		  signposts[gpsIndex].lng = gpsData.longitude.value;
 		  
