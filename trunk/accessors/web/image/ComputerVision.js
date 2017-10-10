@@ -21,7 +21,10 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** A computer vision accessor.  This accessor takes an input image, applies
+/** Try me!  For 'input', enter /accessors/hosts/browser/demo/computerVision/terraswarm.jpg
+ *  then click 'react to inputs'.
+ * 
+ *  A computer vision accessor.  This accessor takes an input image, applies
  *  a computer vision transformation, and outputs the modified image.
  *
  *  The input may be an image or a path to a local image.  Remote images are not
