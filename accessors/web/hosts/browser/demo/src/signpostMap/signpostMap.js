@@ -387,6 +387,9 @@ function drawMap() {
     	        	try {
     	        		Plotly.newPlot(RFDiv, data, layout, {displayModeBar: false});
     	        	} catch(err) {
+    	        		source.xRF = sampleXRF;
+    	        		source.zRF = sampleZRF;
+    	        		source.usingSample = true;
     	        		
     	        		// Use a different variable name in case this runs 
     	        		// concurrently with audio graph generation due to being
