@@ -254,7 +254,51 @@ function drawMap() {
       		        	  }
 	          		};
 	      		        	
-	            	Plotly.newPlot(audioDiv, data, layout, {displayModeBar: false});
+	    	        try {
+	    	        	Plotly.newPlot(audioDiv, data, layout, {displayModeBar: false});
+	    	        } catch(err) {
+	    	        	console.log('Error graphing data.  Using sample data.');
+	    	        	source.xAudio = sampleXAudio;
+	    	        	source.zAudio = sampleZAudio;
+	    	        	source.usingSample = true;
+	    	        	
+	    	        	// Use other variable name here in case this runs 
+	    	        	// concurrently with RF plotting due to being in 
+	    	        	// error callback.
+		    			var relXData2 = [];
+		    			var xBase2 = source.xAudio[0];
+		    			for (var i = 0; i < source.xAudio.length; i++) {
+		    				relXData2.push(source.xAudio[i] - xBase2);
+		    			}
+		    			
+		    			// Z data needs to be in arrays of x times per y frequencies.
+		    			var newZData2 = [];
+		    			for (var i = 0; i < yData.length; i++) {
+		    				newZData2.push([]);
+		    			}
+		    			
+		    			
+		    			for (var i = 0; i < source.zAudio.length; i++) {
+		    				for(var j = 0; j < yData.length; j++) {
+		    					newZData2[j].push(source.zAudio[i][j]);
+		    				}
+		    			}
+		    			
+						var data = [{
+		            		// x is time, y is frequency, z is amplitude in db.
+		            			   x: relXData2,
+		            		       y: yData,
+		            	           z: newZData2,
+		            	           type: 'surface',
+		            	           colorbar: {len: 0.5, thickness: 8, y: 0.7, x: 0.95, tickfont: {size: 10}}
+		            	        }];
+						
+		    	        try {
+		    	        	Plotly.newPlot(audioDiv, data, layout, {displayModeBar: false});
+		    	        } catch(err) {
+		    	        	console.log('Cannot create audio graph for ' + marker.mac);
+		    	        }
+	    	        }
 	      			
 	      			// Create RF graph.
 	    			// Use midpoints of spectrum ranges for y.
@@ -340,7 +384,46 @@ function drawMap() {
   		        	  }
 	          		};
 	      		        	
-	            	Plotly.newPlot(RFDiv, data, layout, {displayModeBar: false});
+    	        	try {
+    	        		Plotly.newPlot(RFDiv, data, layout, {displayModeBar: false});
+    	        	} catch(err) {
+    	        		
+    	        		// Use a different variable name in case this runs 
+    	        		// concurrently with audio graph generation due to being
+    	        		// in error callback.
+    	    			relXData3 = [];
+    	    			xBase3 = source.xRF[0];
+    	    			for (var i = 0; i < source.xRF.length; i++) {
+    	    				relXData3.push(source.xRF[i] - xBase3);
+    	    			}
+    	    			
+    	    			// Z data needs to be in arrays of x times per y frequencies.
+    	    			newZData3 = [];
+    	    			for (var i = 0; i < yData.length; i++) {
+    	    				newZData3.push([]);
+    	    			}
+    	    			
+    	    			for (var i = 0; i < source.zRF.length; i++) {
+    	    				for(var j = 0; j < yData.length; j++) {
+    	    					newZData3[j].push(source.zRF[i][j]);
+    	    				}
+    	    			}
+    	    			
+    					var data = [{
+    	            		// x is time, y is frequency, z is amplitude in db.
+    	            			   x: relXData3,
+    	            			   y: yData,
+    	            	           z: newZData3,
+    	            	           type: 'surface',
+    	            	           colorbar: {len: 0.5, thickness: 8, y: 0.7, x: 0.95, tickfont: {size: 10}}
+    	            	}];  
+    					
+        	        	try {
+        	        		Plotly.newPlot(RFDiv, data, layout, {displayModeBar: false});
+        	        	} catch(err) {
+        	        		console.log('Cannot plot RF graph for ' + marker.mac);
+        	        	}
+    	        	}
 	      		        
 	            	section1.appendChild(audioDiv);
 	            	section2.appendChild(RFDiv);
@@ -416,28 +499,38 @@ function parseDataAudio(data, i) {
 	
 	if (signposts[i].xAudio.length === 0 || 
 			signposts[i].xAudio[signposts[i].xAudio.length -1] !== time) {
-		var z = [values['63Hz'].value, values['160Hz'].value, 
-			values['400Hz'].value, values['1000Hz'].value, 
-			values['2500Hz'].value, values['6250Hz'].value, 
-			values['16000Hz'].value];
-		
-		// Discard any out of range data points.  Range is 30 - 70.
-		var discard = false;
-		for (var index = 0; index < z.length; index++) {
-			if (z[index] < 30 || z[index] > 70) {
-				discard = true;
-				break;
+		if (typeof values['63Hz'] === 'undefined' ||  
+		    typeof values['160Hz'] === 'undefined' || 
+		    typeof values['400Hz'] === 'undefined' || 
+		    typeof values['1000Hz'] === 'undefined' ||
+		    typeof values['2500Hz'] === 'undefined' || 
+		    typeof values['6250Hz'] === 'undefined' || 
+			typeof values['16000Hz']  === 'undefined') {
+			console.log('Missing audio data.  Skipping sample.');
+		} else {
+			var z = [values['63Hz'].value, values['160Hz'].value, 
+				values['400Hz'].value, values['1000Hz'].value, 
+				values['2500Hz'].value, values['6250Hz'].value, 
+				values['16000Hz'].value];
+			
+			// Discard any out of range data points.  Range is 30 - 70.
+			var discard = false;
+			for (var index = 0; index < z.length; index++) {
+				if (z[index] < 30 || z[index] > 70) {
+					discard = true;
+					break;
+				}
 			}
-		}
+			
+			if (!discard) {
+				if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
+					signposts[i].xAudio.shift();
+					signposts[i].zAudio.shift();
+				}
 		
-		if (!discard) {
-			if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
-				signposts[i].xAudio.shift();
-				signposts[i].zAudio.shift();
+				signposts[i].xAudio.push(time/60);	// Time in minutes.
+				signposts[i].zAudio.push(z);
 			}
-	
-			signposts[i].xAudio.push(time/60);	// Time in minutes.
-			signposts[i].zAudio.push(z);
 		}
 	}
 }
@@ -457,19 +550,28 @@ function parseDataRF(data, i) {
 	
 	if (signposts[i].xRF.length === 0 || 
 			signposts[i].xRF[signposts[i].xRF.length -1] !== time) {
+		var missing = false;
+		
 		for (var count = 470; count < 950; count = count + 6) {
 			i2 = count + 6;
 			name = count + 'MHz-' + i2 + 'MHz_max';
+			if (typeof values[name] === 'undefined') {
+				missing = true;
+				break;
+				console.log(name + ' is missing.  Skipping sample.');
+			}
 			z.push(values[name].value);
 		}
 		
-		if (signposts[i].xRF.length > (-subscribeTo.startrec) - 100) {
-			signposts[i].xRF.shift();
-			signposts[i].zRF.shift();
+		if (!missing) {
+			if (signposts[i].xRF.length > (-subscribeTo.startrec) - 100) {
+				signposts[i].xRF.shift();
+				signposts[i].zRF.shift();
+			}
+	
+			signposts[i].xRF.push(time/360);	// Time in hours.
+			signposts[i].zRF.push(z);
 		}
-
-		signposts[i].xRF.push(time/360);	// Time in hours.
-		signposts[i].zRF.push(z);
 	}
 }
 
