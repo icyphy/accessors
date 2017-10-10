@@ -554,7 +554,6 @@ function parseDataRF(data, i) {
 	if (signposts[i].xRF.length === 0 || 
 			signposts[i].xRF[signposts[i].xRF.length -1] !== time) {
 		var missing = false;
-		var discard = false;
 		
 		for (var count = 470; count < 950; count = count + 6) {
 			i2 = count + 6;
@@ -565,15 +564,10 @@ function parseDataRF(data, i) {
 				console.log(name + ' is missing.  Skipping sample.');
 			}
 			
-			// Range check -20 to -100.
-			if (values[name] > -20 || values[name] < -100) {
-				discard = true;
-				break;
-			}
 			z.push(values[name].value);
 		}
 		
-		if (!missing && !discard) {
+		if (!missing) {
 			if (signposts[i].xRF.length > (-subscribeTo.startrec) - 100) {
 				signposts[i].xRF.shift();
 				signposts[i].zRF.shift();
