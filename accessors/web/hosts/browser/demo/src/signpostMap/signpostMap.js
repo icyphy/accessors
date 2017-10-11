@@ -101,11 +101,11 @@ function drawMap() {
 		
 		var greenColor = "32CD32";
 		var greenImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + greenColor,
-				null, null, null, new google.maps.Size(32, 50));
+				null, null, null, new google.maps.Size(40, 60));
 		
 		var redColor = "CD4F39";
 		var redImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + redColor,
-				null, null, null, new google.maps.Size(32, 50));
+				null, null, null, new google.maps.Size(40, 60));
 		
 		// Coordinates must be named 'lat' and 'lng'.  Marker() constructor expects.
 		
@@ -121,11 +121,15 @@ function drawMap() {
 	      signposts.forEach(function(signpost) {
 	    	  // Google maps uses minus sign for west longitude.
 	    	  location = {lat : signpost.lat, lng : -signpost.lng};
+	    	  var labeltext = signpost.mac[signpost.mac.length - 2] +  
+	    	  		signpost.mac[signpost.mac.length - 1];
+	    
 	    	  
 	    	  if (signpost.usingSample) {
 		          marker = new google.maps.Marker({
 		              position: location,
 		              map: map,
+		              label: labeltext,
 		              icon: redImage
 		            });
 		          marker.mac = signpost.mac;
@@ -134,6 +138,7 @@ function drawMap() {
 		          marker = new google.maps.Marker({
 		              position: location,
 		              map: map,
+		              label: labeltext,
 		              icon: greenImage
 		            });
 		          marker.mac = signpost.mac;
