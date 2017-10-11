@@ -66,7 +66,7 @@ var gpsOptions = {"url":"https://gdp-rest-01.eecs.berkeley.edu/gdp/v1/gcl/" + gp
 				"method":"GET"};
 
 var subscribeTo = {};
-subscribeTo.startrec = -1000;	// To get initial data to populate the graph.
+subscribeTo.startrec = -600;	// To get initial data to populate the graph.
 subscribeTo.numrec = 0;  
 
 var initialValues = {};
@@ -99,6 +99,14 @@ function drawMap() {
 		var center = {lat: 37.874249, lng: -122.256387};
 		var markers = [];
 		
+		var greenColor = "32CD32";
+		var greenImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + greenColor,
+				null, null, null, new google.maps.Size(32, 50));
+		
+		var redColor = "CD4F39";
+		var redImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + redColor,
+				null, null, null, new google.maps.Size(32, 50));
+		
 		// Coordinates must be named 'lat' and 'lng'.  Marker() constructor expects.
 		
 	    var map = new google.maps.Map(document.getElementById('map'), {
@@ -113,12 +121,24 @@ function drawMap() {
 	      signposts.forEach(function(signpost) {
 	    	  // Google maps uses minus sign for west longitude.
 	    	  location = {lat : signpost.lat, lng : -signpost.lng};
-	          marker = new google.maps.Marker({
-	              position: location,
-	              map: map,
-	            });
-	          marker.mac = signpost.mac;
-	          markers.push(marker);
+	    	  
+	    	  if (signpost.usingSample) {
+		          marker = new google.maps.Marker({
+		              position: location,
+		              map: map,
+		              icon: redImage
+		            });
+		          marker.mac = signpost.mac;
+		          markers.push(marker);
+	    	  } else {
+		          marker = new google.maps.Marker({
+		              position: location,
+		              map: map,
+		              icon: greenImage
+		            });
+		          marker.mac = signpost.mac;
+		          markers.push(marker);
+	    	  }
 	      });
 	      
 	      markers.forEach(function(marker) {
