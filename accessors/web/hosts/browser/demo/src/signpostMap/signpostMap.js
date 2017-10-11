@@ -32,9 +32,29 @@ for (var i = 0; i < 288; i++) {
 	zArray = [];
 }
 
-var signposts = [ { mac : 'c098e5120001', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : [], zRF : [], usingSample: true},
-				  { mac : 'c098e5120003', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : [], zRF : [], usingSample: true}, 
-				  { mac : 'c098e5120004', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : [], zRF : [], usingSample: true}];
+var signposts = [ { mac : 'c098e5120001', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8733, lng: 122.2568},
+	  { mac : 'c098e5120003', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8735, lng: 122.2577}, 
+	  { mac : 'c098e512000a', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8737, lng: 122.2579},
+	  { mac : 'c098e512000d', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8739, lng: 122.2579},
+	  { mac : 'c098e512000e', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8741, lng: 122.2579},
+	  { mac : 'c098e512000f', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8743, lng: 122.2579},
+	  { mac : 'c098e5120010', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8745, lng: 122.2579},
+	  { mac : 'c098e5120011', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8747, lng: 122.2579},
+	  { mac : 'c098e5120012', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8749, lng: 122.2579},
+	  { mac : 'c098e5120013', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e5120015', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e5120016', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e5120017', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e5120018', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001a', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001b', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001c', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001d', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001e', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579},
+	  { mac : 'c098e512001f', xAudio: sampleXAudio, zAudio: sampleZAudio, xRF : sampleXRF, zRF : sampleZRF, usingSample: true, lat: 37.8751, lng: 122.2579}
+	  ];
+
+var signpostIndex = 0;
 
 var mapDrawn = false; 
 
@@ -53,49 +73,22 @@ var initialValues = {};
 initialValues["REST.options"] = JSON.stringify(gpsOptions);
 initialValues["REST.trigger"] = true;
 
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[0].mac + '.signpost_audio_frequency.v0-0-1';
-initialValues["WebSocketClient.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-// Use 9007 for ws:// and 9008 for wss://
-initialValues["WebSocketClient.port"] = 9008;
-initialValues["WebSocketClient.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient.sslTls"] = true;
-initialValues["WebSocketClient.trustAll"] = true;
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[1].mac + '.signpost_audio_frequency.v0-0-1';
-initialValues["WebSocketClient2.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-initialValues["WebSocketClient2.port"] = 9008;
-initialValues["WebSocketClient2.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient2.sslTls"] = true;
-initialValues["WebSocketClient2.trustAll"] = true;
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[2].mac + '.signpost_audio_frequency.v0-0-1';
-initialValues["WebSocketClient3.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-initialValues["WebSocketClient3.port"] = 9008;
-initialValues["WebSocketClient3.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient3.sslTls"] = true;
-initialValues["WebSocketClient3.trustAll"] = true;
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[0].mac + '.signpost_rf_spectrum_max.v0-0-1';
-initialValues["WebSocketClient4.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-initialValues["WebSocketClient4.port"] = 9008;
-initialValues["WebSocketClient4.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient4.sslTls"] = true;
-initialValues["WebSocketClient4.trustAll"] = true;
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[1].mac + '.signpost_rf_spectrum_max.v0-0-1';
-initialValues["WebSocketClient5.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-initialValues["WebSocketClient5.port"] = 9008;
-initialValues["WebSocketClient5.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient5.sslTls"] = true;
-initialValues["WebSocketClient5.trustAll"] = true;
-
-subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[2].mac + '.signpost_rf_spectrum_max.v0-0-1';
-initialValues["WebSocketClient6.server"] = 'gdp-rest-01.eecs.berkeley.edu';
-initialValues["WebSocketClient6.port"] = 9008;
-initialValues["WebSocketClient6.toSend"] = JSON.stringify(subscribeTo);
-initialValues["WebSocketClient6.sslTls"] = true;
-initialValues["WebSocketClient6.trustAll"] = true;
+//Use 9007 for ws:// and 9008 for wss://
+for (var i = 0; i < signposts.length; i++) {
+	subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[i].mac + '.signpost_audio_frequency.v0-0-1';
+	initialValues['WebSocketClient' + i + 'Audio.server'] = 'gdp-rest-01.eecs.berkeley.edu';
+	initialValues['WebSocketClient' + i + 'Audio.port'] = 9008;
+	initialValues['WebSocketClient' + i + 'Audio.toSend'] = JSON.stringify(subscribeTo);
+	initialValues['WebSocketClient' + i + 'Audio.sslTls'] = true;
+	initialValues['WebSocketClient' + i + 'Audio.trustAll'] = true;
+	
+	subscribeTo.logname = 'edu.berkeley.eecs.' + signposts[i].mac + '.signpost_rf_spectrum_max.v0-0-1';
+	initialValues['WebSocketClient' + i + 'RF.server'] = 'gdp-rest-01.eecs.berkeley.edu';
+	initialValues['WebSocketClient' + i + 'RF.port'] = 9008;
+	initialValues['WebSocketClient' + i + 'RF.toSend'] = JSON.stringify(subscribeTo);
+	initialValues['WebSocketClient' + i + 'RF.sslTls'] = true;
+	initialValues['WebSocketClient' + i + 'RF.trustAll'] = true;
+}
 
 /** Draw the map with the given data.
  * 
@@ -158,6 +151,9 @@ function drawMap() {
 	      		var source = findSignpost(marker);
 	      		
 	      		if (source !== null) {
+	      			Plotly.purge(audioDiv);
+	      			Plotly.purge(RFDiv);
+	      			
 	      			if (source.usingSample) {
 	      				audioTitle.innerHTML = marker.mac + ' Audio Spectrum Energy (Sample)';
 	      				RFTitle.innerHTML = marker.mac + ' RF Spectrum Energy (Sample)';
@@ -491,90 +487,108 @@ function getSignposts() {
 // Audio
 
 function parseDataAudio(data, i) {
-	var values = JSON.parse(data.datum.data);
-	// Time in seconds.  Check for duplicates; only save one per second.
-	var time = Math.floor(new Date(values._meta.received_time) / 1000);
-	if (signposts[i].usingSample === true) {
-		signposts[i].usingSample = false;
-		signposts[i].xAudio = [];
-		signposts[i].zAudio = [];
+	var values;
+	var error = false;
+	try {
+		values = JSON.parse(data.datum.data);
+	} catch(err) {
+		console.log('Error parsing json datum');
+		error = true;
 	}
 	
-	if (signposts[i].xAudio.length === 0 || 
-			signposts[i].xAudio[signposts[i].xAudio.length -1] !== time) {
-		if (typeof values['63Hz'] === 'undefined' ||  
-		    typeof values['160Hz'] === 'undefined' || 
-		    typeof values['400Hz'] === 'undefined' || 
-		    typeof values['1000Hz'] === 'undefined' ||
-		    typeof values['2500Hz'] === 'undefined' || 
-		    typeof values['6250Hz'] === 'undefined' || 
-			typeof values['16000Hz']  === 'undefined') {
-			console.log('Missing audio data.  Skipping sample.');
-		} else {
-			var z = [values['63Hz'].value, values['160Hz'].value, 
-				values['400Hz'].value, values['1000Hz'].value, 
-				values['2500Hz'].value, values['6250Hz'].value, 
-				values['16000Hz'].value];
-			
-			// Discard any out of range data points.  Range is 30 - 70.
-			var discard = false;
-			for (var index = 0; index < z.length; index++) {
-				if (z[index] < 30 || z[index] > 70) {
-					discard = true;
-					break;
-				}
-			}
-			
-			if (!discard) {
-				if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
-					signposts[i].xAudio.shift();
-					signposts[i].zAudio.shift();
-				}
+	if (!error) {
+		// Time in seconds.  Check for duplicates; only save one per second.
+		var time = Math.floor(new Date(values._meta.received_time) / 1000);
+		if (signposts[i].usingSample === true) {
+			signposts[i].usingSample = false;
+			signposts[i].xAudio = [];
+			signposts[i].zAudio = [];
+		}
 		
-				signposts[i].xAudio.push(time/60);	// Time in minutes.
-				signposts[i].zAudio.push(z);
+		if (signposts[i].xAudio.length === 0 || 
+				signposts[i].xAudio[signposts[i].xAudio.length -1] !== time) {
+			if (typeof values['63Hz'] === 'undefined' ||  
+			    typeof values['160Hz'] === 'undefined' || 
+			    typeof values['400Hz'] === 'undefined' || 
+			    typeof values['1000Hz'] === 'undefined' ||
+			    typeof values['2500Hz'] === 'undefined' || 
+			    typeof values['6250Hz'] === 'undefined' || 
+				typeof values['16000Hz']  === 'undefined') {
+				console.log('Missing audio data.  Skipping sample.');
+			} else {
+				var z = [values['63Hz'].value, values['160Hz'].value, 
+					values['400Hz'].value, values['1000Hz'].value, 
+					values['2500Hz'].value, values['6250Hz'].value, 
+					values['16000Hz'].value];
+				
+				// Discard any out of range data points.  Range is 30 - 70.
+				var discard = false;
+				for (var index = 0; index < z.length; index++) {
+					if (z[index] < 30 || z[index] > 70) {
+						discard = true;
+						break;
+					}
+				}
+				
+				if (!discard) {
+					if (signposts[i].xAudio.length > (-subscribeTo.startrec) - 100) {
+						signposts[i].xAudio.shift();
+						signposts[i].zAudio.shift();
+					}
+			
+					signposts[i].xAudio.push(time/60);	// Time in minutes.
+					signposts[i].zAudio.push(z);
+				}
 			}
 		}
 	}
 }
 
 function parseDataRF(data, i) {
-	var values = JSON.parse(data.datum.data);
-	// Time in seconds.  Check for duplicates; only save one per second.
-	var time = Math.floor(new Date(values._meta.received_time) / 1000);
-	var z = [];
-	var name = "", i2;
-	
-	if (signposts[i].usingSample === true) {
-		signposts[i].usingSample = false;
-		signposts[i].xRF = [];
-		signposts[i].zRF = [];
+	var error;
+	try {
+		var values = JSON.parse(data.datum.data);
+	} catch(err) {
+		error = true;
 	}
 	
-	if (signposts[i].xRF.length === 0 || 
-			signposts[i].xRF[signposts[i].xRF.length -1] !== time) {
-		var missing = false;
+	if (!error) {
+		// Time in seconds.  Check for duplicates; only save one per second.
+		var time = Math.floor(new Date(values._meta.received_time) / 1000);
+		var z = [];
+		var name = "", i2;
 		
-		for (var count = 470; count < 950; count = count + 6) {
-			i2 = count + 6;
-			name = count + 'MHz-' + i2 + 'MHz_max';
-			if (typeof values[name] === 'undefined') {
-				missing = true;
-				break;
-				console.log(name + ' is missing.  Skipping sample.');
-			}
-			
-			z.push(values[name].value);
+		if (signposts[i].usingSample === true) {
+			signposts[i].usingSample = false;
+			signposts[i].xRF = [];
+			signposts[i].zRF = [];
 		}
 		
-		if (!missing) {
-			if (signposts[i].xRF.length > (-subscribeTo.startrec) - 100) {
-				signposts[i].xRF.shift();
-				signposts[i].zRF.shift();
+		if (signposts[i].xRF.length === 0 || 
+				signposts[i].xRF[signposts[i].xRF.length -1] !== time) {
+			var missing = false;
+			
+			for (var count = 470; count < 950; count = count + 6) {
+				i2 = count + 6;
+				name = count + 'MHz-' + i2 + 'MHz_max';
+				if (typeof values[name] === 'undefined') {
+					missing = true;
+					break;
+					console.log(name + ' is missing.  Skipping sample.');
+				}
+				
+				z.push(values[name].value);
 			}
-	
-			signposts[i].xRF.push(time/360);	// Time in hours.
-			signposts[i].zRF.push(z);
+			
+			if (!missing) {
+				if (signposts[i].xRF.length > (-subscribeTo.startrec) - 100) {
+					signposts[i].xRF.shift();
+					signposts[i].zRF.shift();
+				}
+		
+				signposts[i].xRF.push(time/360);	// Time in hours.
+				signposts[i].zRF.push(z);
+			}
 		}
 	}
 }
@@ -585,18 +599,42 @@ function registerAndReact() {
 	setTimeout(function() {
 	  document.getElementById('RESTError')
 	  	.addEventListener('DOMSubtreeModified', function() {
-	  		// An error occurred.  Create overlay with default data.
-	  		console.log('Error invoking REST accessor.');
+	  		// GPS not found for this accessor.  It's OK, use default sample.
+			  gpsIndex ++;
+			  if (gpsIndex < signposts.length) {
+				  gpsUrl = 'edu.berkeley.eecs.' + signposts[gpsIndex].mac + '.signpost_gps.v0-0-1';
+				  
+				  var gpsOptions = {"url":"https://gdp-rest-01.eecs.berkeley.edu/gdp/v1/gcl/" + gpsUrl + "?recno=-1",
+			  				"headers":{"Authorization":"Basic ZWNkZW1vOnRlcnJhc3dhcm0="},
+			  				"method":"GET"};
+				  document.getElementById('REST.options').value = JSON.stringify(gpsOptions);
+				  reactIfExecutable('REST');
+			  } else {
+				// Draw map and assume websocket data will load before person clicks on map.
+				drawMap();
+			  }
 	  	});
 	
 	  document.getElementById('REST.response')
 	  	.addEventListener('DOMSubtreeModified', function() {
 		  var value = document.getElementById('REST.response').innerText;
 		  
-		  // TODO:  Make three rest calls to fetch all gps data.  Test this first.
-		  var gpsData = JSON.parse(value);
-		  signposts[gpsIndex].lat = gpsData.latitude.value;
-		  signposts[gpsIndex].lng = gpsData.longitude.value;
+		  var gpsData;
+		  var error = false;
+		  
+		  try {
+			  gpsData = JSON.parse(value);
+		  } catch(err) {
+			  error = true;
+		  }
+		  
+		  if (!error) {
+			  if (typeof gpsData.latitude !== 'undefined' && gpsData.longitude !== 'undefined' && 
+					  gpsData.latitude.value > 0 && gpsData.longitude.value > 0) {
+				  signposts[gpsIndex].lat = gpsData.latitude.value;
+				  signposts[gpsIndex].lng = gpsData.longitude.value;
+			  }
+		  }
 		  
 		  gpsIndex ++;
 		  if (gpsIndex < signposts.length) {
@@ -612,112 +650,882 @@ function registerAndReact() {
 			drawMap();
 		  }
 	  });
-	  	
-	  document.getElementById('WebSocketClientError')
+	  
+	  // Sadly trying to do this in a loop doesn't seem to work due to the loop
+	  // index being undefined in the DOMSubtreeModified callback. 
+	  document.getElementById('WebSocketClient0AudioError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(0);
+	  		useSampleAudioData(i);
 	  	});
 	
-	  document.getElementById('WebSocketClient.received')
+	  document.getElementById('WebSocketClient0Audio.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			 console.log('Subscription ended.');
-		  } else {
-			 parseDataAudio(data, 0);
+		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 0);
+			  }
 		  }
 	  });
 	  
-	  document.getElementById('WebSocketClient2Error')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(1);
-	  	});
-	
-	  document.getElementById('WebSocketClient2.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient2.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			  console.log('Subscription ended.');
-		  } else {
-			  parseDataAudio(data, 1);
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient3Error')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(2);
-	  	});
-	
-	  document.getElementById('WebSocketClient3.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient3.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			console.log('Subscription ended.');
-		  } else {
-			  parseDataAudio(data, 2);
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient4Error')
+	  document.getElementById('WebSocketClient0RFError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
 	  		useSampleRFData(0);
 	  	});
 	
-	  document.getElementById('WebSocketClient4.received')
+	  document.getElementById('WebSocketClient0RF.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient4.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			 console.log('Subscription ended.');
-		  } else {
-			 parseDataRF(data, 0);
+		  var value = document.getElementById('WebSocketClient0RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 0);
+			  }
 		  }
 	  });
 	  
-	  document.getElementById('WebSocketClient5Error')
+	  document.getElementById('WebSocketClient0AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(i);
+	  	});
+	
+	  document.getElementById('WebSocketClient0Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 0);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient0RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(0);
+	  	});
+	
+	  document.getElementById('WebSocketClient0RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient0RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 0);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient0AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(i);
+	  	});
+	
+	  document.getElementById('WebSocketClient0Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 0);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient0RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(0);
+	  	});
+	
+	  document.getElementById('WebSocketClient0RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient0RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 0);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient0AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(0);
+	  	});
+	
+	  document.getElementById('WebSocketClient0Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 0);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient1RFError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
 	  		useSampleRFData(1);
 	  	});
 	
-	  document.getElementById('WebSocketClient5.received')
+	  document.getElementById('WebSocketClient1RF.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient5.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			  console.log('Subscription ended.');
-		  } else {
-			  parseDataRF(data, 1);
+		  var value = document.getElementById('WebSocketClient1RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 1);
+			  }
 		  }
 	  });
 	  
-	  document.getElementById('WebSocketClient6Error')
+	  document.getElementById('WebSocketClient2AudioError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleRFData(2);
+	  		useSampleAudioData(2);
 	  	});
 	
-	  document.getElementById('WebSocketClient6.received')
+	  document.getElementById('WebSocketClient2Audio.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient6.received').innerText;
-		// TODO: Try/catch here.
-		  var data = JSON.parse(value);
-		  if (data.type === 2) {
-			console.log('Subscription ended.');
-		  } else {
-			  parseDataRF(data, 2);
+		  var value = document.getElementById('WebSocketClient2Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 2);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient3RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(3);
+	  	});
+	
+	  document.getElementById('WebSocketClient3RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient3RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 3);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4AudioError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleAudioData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient4RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(4);
+	  	});
+	
+	  document.getElementById('WebSocketClient4RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient4RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 4);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient5Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient5Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 5);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient5RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(5);
+	  	});
+	
+	  document.getElementById('WebSocketClient5RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient5RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 5);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient6Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient6Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 6);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient6RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(6);
+	  	});
+	
+	  document.getElementById('WebSocketClient6RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient6RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 6);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient7Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient7Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 7);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient7RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(7);
+	  	});
+	
+	  document.getElementById('WebSocketClient7RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient7RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 16);
+			  }
+		  }
+	  });
+
+	  document.getElementById('WebSocketClient8Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient8Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 8);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient8RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(8);
+	  	});
+	
+	  document.getElementById('WebSocketClient8RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient8RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 8);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient9Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient9Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 9);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient9RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(9);
+	  	});
+	
+	  document.getElementById('WebSocketClient9RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient9RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 9);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient10Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient10Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 10);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient10RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(10);
+	  	});
+	
+	  document.getElementById('WebSocketClient10RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient10RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 10);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient11Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient11Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 11);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient11RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(11);
+	  	});
+	
+	  document.getElementById('WebSocketClient11RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient11RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 11);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient12Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient12Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 12);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient12RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(12);
+	  	});
+	
+	  document.getElementById('WebSocketClient12RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient12RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 12);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient13Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient13Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 13);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient13RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(13);
+	  	});
+	
+	  document.getElementById('WebSocketClient13RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient13RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 13);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient14Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient14Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 14);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient14RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(14);
+	  	});
+	
+	  document.getElementById('WebSocketClient14RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient14RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 14);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient15Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient15Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 15);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient15RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(15);
+	  	});
+	
+	  document.getElementById('WebSocketClient15RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient15RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 15);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient16Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient16Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 16);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient16RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(16);
+	  	});
+	
+	  document.getElementById('WebSocketClient16RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient16RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 16);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient17Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient17Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 17);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient17RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(17);
+	  	});
+	
+	  document.getElementById('WebSocketClient17RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient17RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 17);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient18Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient18Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 18);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient18RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(18);
+	  	});
+	
+	  document.getElementById('WebSocketClient18RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient18RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 18);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient19Audio.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient19Audio.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err){ error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataAudio(data, 19);
+			  }
+		  }
+	  });
+	  
+	  document.getElementById('WebSocketClient19RFError')
+	  	.addEventListener('DOMSubtreeModified', function() {
+	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
+	  		useSampleRFData(19);
+	  	});
+	
+	  document.getElementById('WebSocketClient19RF.received')
+	  	.addEventListener('DOMSubtreeModified', function() {
+		  var value = document.getElementById('WebSocketClient19RF.received').innerText;
+		  var error = false;
+		  var data;
+		  try { data = JSON.parse(value); } catch(err) { error = true;}
+		  if (!error) {
+			  if (data.type === 2) {
+				 console.log('Subscription ended.');
+			  } else {
+				 parseDataRF(data, 19);
+			  }
 		  }
 	  });
 	 
@@ -734,13 +1542,11 @@ function registerAndReact() {
 		});
 	 
 	  reactIfExecutable('REST');
-	  reactIfExecutable('WebSocketClient');
-	  reactIfExecutable('WebSocketClient2');
-	  reactIfExecutable('WebSocketClient3'); 
-	  reactIfExecutable('WebSocketClient4');
-	  reactIfExecutable('WebSocketClient5');
-	  reactIfExecutable('WebSocketClient6'); 
-	}, 2000);
+	  for (var i = 0; i < signposts.length; i++) {
+		  reactIfExecutable('WebSocketClient' + i + 'Audio');
+		  reactIfExecutable('WebSocketClient' + i + 'RF');
+	  }
+	}, 3000);
 }
 
 /** Use sample audio data for the given signpost.
