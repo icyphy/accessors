@@ -653,11 +653,6 @@ function registerAndReact() {
 	  
 	  // Sadly trying to do this in a loop doesn't seem to work due to the loop
 	  // index being undefined in the DOMSubtreeModified callback. 
-	  document.getElementById('WebSocketClient0AudioError')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(i);
-	  	});
 	
 	  document.getElementById('WebSocketClient0Audio.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
@@ -695,15 +690,15 @@ function registerAndReact() {
 		  }
 	  });
 	  
-	  document.getElementById('WebSocketClient0AudioError')
+	  document.getElementById('WebSocketClient1AudioError')
 	  	.addEventListener('DOMSubtreeModified', function() {
 	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(i);
+	  		useSampleAudioData(1);
 	  	});
 	
-	  document.getElementById('WebSocketClient0Audio.received')
+	  document.getElementById('WebSocketClient1Audio.received')
 	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
+		  var value = document.getElementById('WebSocketClient1Audio.received').innerText;
 		  var error = false;
 		  var data;
 		  try { data = JSON.parse(value); } catch(err){ error = true;}
@@ -711,91 +706,7 @@ function registerAndReact() {
 			  if (data.type === 2) {
 				 console.log('Subscription ended.');
 			  } else {
-				 parseDataAudio(data, 0);
-			  }
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient0RFError')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleRFData(0);
-	  	});
-	
-	  document.getElementById('WebSocketClient0RF.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient0RF.received').innerText;
-		  var error = false;
-		  var data;
-		  try { data = JSON.parse(value); } catch(err) { error = true;}
-		  if (!error) {
-			  if (data.type === 2) {
-				 console.log('Subscription ended.');
-			  } else {
-				 parseDataRF(data, 0);
-			  }
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient0AudioError')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(i);
-	  	});
-	
-	  document.getElementById('WebSocketClient0Audio.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
-		  var error = false;
-		  var data;
-		  try { data = JSON.parse(value); } catch(err){ error = true;}
-		  if (!error) {
-			  if (data.type === 2) {
-				 console.log('Subscription ended.');
-			  } else {
-				 parseDataAudio(data, 0);
-			  }
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient0RFError')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleRFData(0);
-	  	});
-	
-	  document.getElementById('WebSocketClient0RF.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient0RF.received').innerText;
-		  var error = false;
-		  var data;
-		  try { data = JSON.parse(value); } catch(err) { error = true;}
-		  if (!error) {
-			  if (data.type === 2) {
-				 console.log('Subscription ended.');
-			  } else {
-				 parseDataRF(data, 0);
-			  }
-		  }
-	  });
-	  
-	  document.getElementById('WebSocketClient0AudioError')
-	  	.addEventListener('DOMSubtreeModified', function() {
-	  		console.log('Error invoking WebSocketClient accessor.  Using sample data.');
-	  		useSampleAudioData(0);
-	  	});
-	
-	  document.getElementById('WebSocketClient0Audio.received')
-	  	.addEventListener('DOMSubtreeModified', function() {
-		  var value = document.getElementById('WebSocketClient0Audio.received').innerText;
-		  var error = false;
-		  var data;
-		  try { data = JSON.parse(value); } catch(err){ error = true;}
-		  if (!error) {
-			  if (data.type === 2) {
-				 console.log('Subscription ended.');
-			  } else {
-				 parseDataAudio(data, 0);
+				 parseDataAudio(data, 1);
 			  }
 		  }
 	  });
