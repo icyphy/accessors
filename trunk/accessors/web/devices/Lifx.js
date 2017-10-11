@@ -285,6 +285,7 @@ exports.initialize = function () {
 
 	// Input handler for probe
 	this.addInputHandler('probe', function() {
+		var thiz = this;
 		if (!discoveryMode) {
 			if (lifxLightBulb) {
 				probe = true;
@@ -293,7 +294,8 @@ exports.initialize = function () {
 						// If the light disappears, launch discovery again
 						// FIXME: is launching discovery OK?
 						lifxLightBulb = null;
-						this.send('triggerDiscovery');
+						thiz.provideInput('triggerDiscovery', 1);
+						thiz.react();
 					}
 				}, 3000);
 			}
