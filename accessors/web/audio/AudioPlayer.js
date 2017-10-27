@@ -54,12 +54,16 @@
  *  The _playbackOptions_ parameter is an object with the following properties,
  *  all of which are optional:
  *
+ *  * _bigEndian_: 1 if the the sample is big endian, 0 if it is little endian
+ *    If _bigEndian_ is not present, then the default is big endian.
  *  * _bitsPerSample_: The number of bits per sample. This is an integer that
  *    defaults to 16.
  *  * _channels_: The number of channels. This defaults to 1.
  *  * _sampleRate_: The sample rate. This is an integer that defaults to 8000.
  *    Typical supported sample rates are 8000, 11025, 22050, 44100, and 48000.
  *
+ *  WAVE (aka .wav) is 16 bits, 1 channel, little endian, 44100 Hz.
+
  *  This accessor requires the optional 'audio' module, which may or may
  *  not be provided by an accessor host. Moreover, a host may not support
  *  all capture formats and all output formats.
