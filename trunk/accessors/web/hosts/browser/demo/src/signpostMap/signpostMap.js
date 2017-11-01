@@ -598,8 +598,8 @@ function parseDataRF(data, i) {
 				name = count + 'MHz-' + i2 + 'MHz_max';
 				if (typeof values[name] === 'undefined') {
 					missing = true;
-					break;
 					console.log(name + ' is missing.  Skipping sample.');
+					break;
 				}
 				
 				z.push(values[name].value);
