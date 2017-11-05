@@ -1,13 +1,13 @@
 exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; @node@ ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/TestRESTGet)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/net/test/auto; @node@ ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js  net/test/auto/RESTGet)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/RESTGet.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/TestRESTGet.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/httpClient/test/auto/RESTGet.xml
 
-    // Ports: TestRESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    // Ports: RESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TestSpontaneousOnce = this.instantiate('TestSpontaneousOnce', 'test/TestSpontaneousOnce.js');
@@ -66,7 +66,7 @@ exports.setup = function () {
     TrainableTest3.setParameter('trainingMode', false);
     TrainableTest3.setParameter('tolerance', 1.0E-9);
 
-    // Connections: TestRESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    // Connections: RESTGet: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', REST, 'trigger');
     this.connect(REST, 'response', TrainableTest, 'input');
     this.connect(TestSpontaneousOnce2, 'output', REST2, 'trigger');
