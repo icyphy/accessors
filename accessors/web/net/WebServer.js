@@ -162,7 +162,8 @@ exports.onListening = function() {
 };
 
 exports.request = function(request) {
-    console.log('Server received request: ' + util.inspect(request));
+	console.log('Server received request.');
+    // console.log('Server received request: ' + util.inspect(request));
     if (this.server) {
         this.send('request', request);
         this.pendingRequests[request.requestID] = request;
