@@ -107,7 +107,6 @@ if (!window.hasOwnProperty('browserJSLoaded')) {
 // Check the URL for a querystring specifying an accessor to load (optional).
 // This code assumes that "accessor" is the only querystring parameter passed.
 // Multiple parameters are not supported.
-// E.g. https://www.icyphy.org/accessors/library/index.html?accessor=services.StockTick
 // The querystring uses . instead of / since / is a special character in URLs. -->
 window.onload = function () {
     var url = window.location.href;
@@ -1601,7 +1600,6 @@ function reactIfExecutable(id, suppress) {
                 // value has not changed since last execution.
                 // Non-visible inputs are not triggered from the UI, but an
                 // accessor might send to a non-visible input
-                // (see web/services/StockTick.js)
                 var period;
                 var inputs = document.getElementsByClassName('inputRole');
                 var element;

@@ -1,6 +1,6 @@
 {
     "name": "@terraswarm/accessors",
-    "version": "0.0.23",
+    "version": "0.0.24",
     "description": "Actor-oriented proxies for IoT",
     "main": "hosts/node/nodeHost.js",
     "author": {
@@ -28,34 +28,39 @@
         {
             "email": "marten@.berkeley.edu",
             "name": "Marten Lohstroh"
-        },        
+        },
         {
             "email": "hokeunkim@eecs.berkeley.edu",
             "name": "Hokeun Kim"
-        },        
+        },
         {
             "email": "beth@berkeley.edu",
             "name": "Beth Osyk"
-        },        
+        },
         {
             "email": "mpanj@seas.upenn.edu",
             "name": "Marcus Pan"
-        },        
+        },
         {
             "email": "eloi@berkeley.edu",
             "name": "Eloi Pereira"
-        },        
+        },
         {
             "email": "sandur2@illinois.edu",
             "name": "Atul Sandur"
-        },        
+        },
         {
             "email": "matt.weber@berkeley.edu",
             "name": "Matt Weber"
         }
     ],
     "dependencies": {
-         "@accessors-hosts/common": "*"
+        "@accessors-hosts/common": "*",
+        "@accessors-modules/local-storage": "^0.1.1",
+        "express": "^4.16.1",
+        "helmet": "^3.8.2",
+        "node-localstorage": "^1.3.0",
+        "portscanner": "^2.1.1"
     },
     "files": [
         "audio",
@@ -65,7 +70,7 @@
         "devices",
         "gdp",
         "geodesy",
-	"hosts",
+        "hosts",
         "image",
         "localization",
         "net",
