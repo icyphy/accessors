@@ -7,7 +7,6 @@
     "RedPinLocation.js",
     "ReverseGeoCoder.js",
     "SpeechRecognition.js", 
-    "StockTick.js",
     "Weather.js",
     "WiFiScan.js"
 ]
