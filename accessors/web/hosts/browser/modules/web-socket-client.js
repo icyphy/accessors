@@ -129,14 +129,14 @@ exports.supportedSendTypes = function () {
  *  @param options The options.
  */
 exports.Client = function (options) {
-        EventEmitter.call(this);
-        
+    EventEmitter.call(this);
+
     if (!('WebSocket' in window)) {
         throw 'Browser does not support web sockets.';
     }
 
     options = options || {};
-    
+
     this.host = options.host || 'localhost';
     this.receiveType = options.receiveType || 'application/json';
     this.sendType = options.sendType || 'application/json';
@@ -147,14 +147,14 @@ exports.Client = function (options) {
     this.throttleFactor = options.throttleFactor || 0;
     this.sslTls = options.sslTls || false;
     if (this.sslTls) {
-    	this.port = options.port || 443;
+        this.port = options.port || 443;
     } else {
-    	this.port = options.port || 80;
+        this.port = options.port || 80;
     }
     this.trustAll = options.trustAll || false;
     this.queue = [];
-    this.maxQueueSize = 100;	// Arbitrary. 
-    
+    this.maxQueueSize = 100; // Arbitrary. 
+
     this.webSocket = null;
 };
 util.inherits(exports.Client, EventEmitter);
@@ -163,7 +163,7 @@ util.inherits(exports.Client, EventEmitter);
  *  If the websocket is already open, do nothing.
  */
 exports.Client.prototype.open = function () {
-    if(!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
+    if (!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
         // FIXME: Need to support retries.
         var protocol = 'ws://';
         if (this.sslTls) {
@@ -171,51 +171,51 @@ exports.Client.prototype.open = function () {
         }
         this.webSocket = new WebSocket(protocol + this.host + ':' + this.port);
         var self = this;
-        this.webSocket.onopen = function() {
-        	// Send any queued messages.
-        	while (self.queue.length > 0) {
-        		self.send(self.queue[0]);
-        		self.queue.shift();
-        	}
-        	self.emit('open');
+        this.webSocket.onopen = function () {
+            // Send any queued messages.
+            while (self.queue.length > 0) {
+                self.send(self.queue[0]);
+                self.queue.shift();
+            }
+            self.emit('open');
         };
-        this.webSocket.onmessage = function(message) {
+        this.webSocket.onmessage = function (message) {
             var reader = new FileReader();
-            reader.addEventListener("loadend", function() {
+            reader.addEventListener("loadend", function () {
                 // reader.result contains the contents of blob as text
                 if (self.receiveType == 'application/json') {
                     try {
                         self.emit('message', JSON.parse(reader.result));
-                    } catch(err) {
+                    } catch (err) {
                         error('message', 'Expected JSON. Failed to parse: ' + reader.result);
                     }
                 } else {
                     self.emit('message', reader.result);
                 }
             });
-            
+
             if (message.data === null || typeof message.data === 'undefined') {
-            	self.emit('error', 'Received message has no data.');
+                self.emit('error', 'Received message has no data.');
             } else if (message.data instanceof Blob) {
-            	reader.readAsText(message.data);
+                reader.readAsText(message.data);
             } else {
-            	if (self.receiveType == 'application/json') {
+                if (self.receiveType == 'application/json') {
                     try {
                         self.emit('message', JSON.parse(message.data));
-                    } catch(err) {
+                    } catch (err) {
                         error('message', 'Expected JSON. Failed to parse: ' + message.data);
                     }
-            	} else {
-            		self.emit('message', message.data);
-            	}
+                } else {
+                    self.emit('message', message.data);
+                }
             }
         };
-        this.webSocket.onerror = function(error) {
-        	self.queue = [];
+        this.webSocket.onerror = function (error) {
+            self.queue = [];
             self.emit('error', 'Web Socket Error.');
         };
-        this.webSocket.onclose = function(close, reason) {
-        	self.queue = [];
+        this.webSocket.onclose = function (close, reason) {
+            self.queue = [];
             console.log('closeEvent code:  ' + close.code + ', reason: ' + close.reason);
             self.emit('close');
         };
@@ -229,11 +229,11 @@ exports.Client.prototype.open = function () {
  */
 exports.Client.prototype.send = function (data) {
     // FIXME: Needs to support queuing of messages.
-    if(!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
+    if (!this.webSocket || this.webSocket.readyState != this.webSocket.OPEN) {
         if (!this.discardMessagesBeforeOpen) {
             this.queue.push(data);
             if (this.queue.length > this.maxQueueSize) {
-            	error('Web socket closed and queue full.  Cannot send data: ' + data);
+                error('Web socket closed and queue full.  Cannot send data: ' + data);
             }
         }
     } else if (this.sendType == 'application/json') {
@@ -251,7 +251,7 @@ exports.Client.prototype.send = function (data) {
  *  then those messages will be lost and reported in an error message.
  */
 exports.Client.prototype.close = function () {
-    if(this.webSocket) {
+    if (this.webSocket) {
         this.webSocket.close();
     }
     this.queue = [];

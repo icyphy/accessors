@@ -48,17 +48,17 @@ var EventEmitter = require('events').EventEmitter;
  * @param options.continuous true to operate in continuous mode, false to stop
  * recognition automatically after one phrase has been detected.
  */
-exports.SpeechRecognition = function(options) {
+exports.SpeechRecognition = function (options) {
     var self = this;
-    this.resultCount = 0;        // If used in continuous mode, keep track of 
+    this.resultCount = 0; // If used in continuous mode, keep track of 
     // results we've already emitted.
-        
+
     var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
     var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
     var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
-        
-    this.recognition = new SpeechRecognition(); 
-        
+
+    this.recognition = new SpeechRecognition();
+
     // TODO:  Allow optional gramm
     // recognition.grammars = speechRecognitionList;
     this.recognition.continuous = false;
@@ -69,39 +69,39 @@ exports.SpeechRecognition = function(options) {
     if (options !== null && options.hasOwnProperty('continuous')) {
         this.recognition.continuous = options.continuous;
     }
-        
+
     // Propagate events. 
     // List of Web Speech API event handlers:
     // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition#Event_handlers
-    this.recognition.onresult = function(event) {
+    this.recognition.onresult = function (event) {
         // The event is SpeechRecognitionResultList object which is an array of
         // SpeechRecognitionResult objects.  Each object contains a 
         // .transcript and .confidence.
-    	// Remove any leading spaces.
-    	var result = event.results[self.resultCount][0].transcript;
-    	if (result.length > 0 && result[0] === ' ') {
-    		result = result.substring(1, result.length);
-    	}
+        // Remove any leading spaces.
+        var result = event.results[self.resultCount][0].transcript;
+        if (result.length > 0 && result[0] === ' ') {
+            result = result.substring(1, result.length);
+        }
         self.emit('result', result);
         if (options.continuous) {
-            self.resultCount ++;
+            self.resultCount++;
         }
     };
-        
+
     // Propagate errors.
     // List of Web Speech API errors:
     // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognitionError/error
-    this.recognition.onerror = function(err) {
-    	// Ignore no-speech errors.  These might occur in due to background noise.
-    	// Any error stops the recongition engine.  Restart in case of no-speech.
-    	if (err.error !== 'no-speech') {
-    		error('Error: ' + err.error);
-    	} else {
-    		self.recognition.onend = function() {
-    			self.recognition.start();
-    			self.recognition.onend = null;
-    		}
-    	}
+    this.recognition.onerror = function (err) {
+        // Ignore no-speech errors.  These might occur in due to background noise.
+        // Any error stops the recongition engine.  Restart in case of no-speech.
+        if (err.error !== 'no-speech') {
+            error('Error: ' + err.error);
+        } else {
+            self.recognition.onend = function () {
+                self.recognition.start();
+                self.recognition.onend = null;
+            }
+        }
     };
     /* Useful for debugging.
           
@@ -114,7 +114,7 @@ exports.SpeechRecognition = function(options) {
        };
         
     */
-        
+
     // TODO:  Handler for onnomatch?
 };
 
@@ -123,7 +123,7 @@ util.inherits(exports.SpeechRecognition, EventEmitter);
 /** Set options.
  * @param options.continuous true to operate in continuous mode, false to stop
  */
-exports.SpeechRecognition.prototype.setOptions = function(options) {
+exports.SpeechRecognition.prototype.setOptions = function (options) {
     if (options !== null && options.hasOwnProperty('continuous')) {
         this.recognition.continuous = options.continuous;
     }
@@ -132,7 +132,7 @@ exports.SpeechRecognition.prototype.setOptions = function(options) {
 /** Start recognizing speech.
  * 
  */
-exports.SpeechRecognition.prototype.start = function() {
+exports.SpeechRecognition.prototype.start = function () {
     // FIXME:  Throws an error if already started (e.g. if in continuous mode).
     // Figure out how to check for this.
     this.resultCount = 0;
@@ -142,9 +142,6 @@ exports.SpeechRecognition.prototype.start = function() {
 /** Stop recognizing speech.  Note that speech recognition stops automatically 
  * after the first phrase in non-continuous mode.
  */
-exports.SpeechRecognition.prototype.stop = function() {
+exports.SpeechRecognition.prototype.stop = function () {
     this.recognition.stop();
 };
-
-
-
