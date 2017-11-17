@@ -46,9 +46,12 @@ var audio = require("audio");
 exports.setup = function () {
     this.input('start');
     this.input('stop');
+    // Use default on icyphy so that
+    // https://www.icyphy.org/accessors/library/index.html?accessor=audio.ClipPlayer
+    // will work.
     this.input('clipURL', {
         'type': 'string',
-        'value': 'https://ptolemy.eecs.berkeley.edu/mp3/USAD2016_06-RhapsodyInBlueTrimmed.mp3'
+        'value': 'https://www.icyphy.org/accessors/src/USAD2016_06-RhapsodyInBlueTrimmed.mp3'
     });
     this.output('done', {
         'type' : 'boolean'
