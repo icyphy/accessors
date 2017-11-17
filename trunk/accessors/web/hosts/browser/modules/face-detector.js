@@ -54,28 +54,28 @@ var ImageProcessingDisplay = require('image-processing-display');
 /** Create a Filter object to instantiate a pair of canvases (before/after) and
  * to store the face detection classifier.
  */
-var Filter = function() {
-        EventEmitter.call(this);
-       
-        var self = this;
-       
-        // Creates pair of canvases to display before and after images.
-        this.display = new ImageProcessingDisplay.ImageProcessingDisplay();
-       
-        this.defaultOptions = {};
-       
-        // Store the trained face detector.  Loaded when first called.
-        this.eyeCascade = null;
-        this.eyeRectangles = [];
-       
-        this.faceCascade = null;
-        this.faceCount = 0;
-        this.faceRectangles = [];
-        this.image = null;
-       
-        this.display.on('ready', function(data) {
-                self.emit('ready', data);
-        })
+var Filter = function () {
+    EventEmitter.call(this);
+
+    var self = this;
+
+    // Creates pair of canvases to display before and after images.
+    this.display = new ImageProcessingDisplay.ImageProcessingDisplay();
+
+    this.defaultOptions = {};
+
+    // Store the trained face detector.  Loaded when first called.
+    this.eyeCascade = null;
+    this.eyeRectangles = [];
+
+    this.faceCascade = null;
+    this.faceCount = 0;
+    this.faceRectangles = [];
+    this.image = null;
+
+    this.display.on('ready', function (data) {
+        self.emit('ready', data);
+    })
 };
 
 util.inherits(Filter, EventEmitter);
@@ -83,65 +83,64 @@ util.inherits(Filter, EventEmitter);
 /** Detect faces and eyes in the original image, draw squares around any faces
  * or eyes, and set and return the result image.
  */
-Filter.prototype.eyes = function() {
+Filter.prototype.eyes = function () {
     // TODO:  Save eyes?
-   
+
     var self = this;
-   
-    if(self.eyeCascade == undefined ){
+
+    if (self.eyeCascade == undefined) {
         self.eyeCascade = new cv.CascadeClassifier();
         self.eyeCascade.load('haarcascade_eye.xml');
     }
-   
+
     // Check if we've already detected faces.
     // This assumes that the image hasn't changed.  (How to check this?)
     if (this.faceCount === 0) {
         this.faces();
     }
-   
+
     var img = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
-    var img_gray = new cv.Mat() ;
-    var img_color = new cv.Mat() ; // Opencv likes RGB
-   
-    cv.cvtColor(img, img_gray , cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0 ) ;
-    cv.cvtColor(img, img_color , cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0 ) ;
-   
-    for ( var i = 0; i < this.faceCount ; i++ )
-    {
-        var faceRect = this.faceRectangles.get(i) ;
-        x = faceRect.x ;
-        y = faceRect.y ;
-        w = faceRect.width ;
+    var img_gray = new cv.Mat();
+    var img_color = new cv.Mat(); // Opencv likes RGB
+
+    cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+    cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+    for (var i = 0; i < this.faceCount; i++) {
+        var faceRect = this.faceRectangles.get(i);
+        x = faceRect.x;
+        y = faceRect.y;
+        w = faceRect.width;
         h = faceRect.height;
-        var p1 = [x,y] ;
-        var p2 = [x+w,y+h] ;
-        var color = new cv.Scalar(255,0,0) ;
-        var gcolor = new cv.Scalar(0,255,0) ;
+        var p1 = [x, y];
+        var p2 = [x + w, y + h];
+        var color = new cv.Scalar(255, 0, 0);
+        var gcolor = new cv.Scalar(0, 255, 0);
 
-        cv.rectangle(img_color, p1 , p2 , color ,2, 8, 0);
-        var roiRect = new cv.Rect(x,y,w,h) ;
+        cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
+        var roiRect = new cv.Rect(x, y, w, h);
 
-        var roi_gray = img_gray.getROI_Rect(roiRect).clone() ;
+        var roi_gray = img_gray.getROI_Rect(roiRect).clone();
 
         var s1 = [0, 0];
         var s2 = [0, 0];
-        var eyes = new cv.RectVector() ;
-        self.eyeCascade.detectMultiScale(roi_gray, eyes,1.2, 3 , 0 , s1 , s2) ;
+        var eyes = new cv.RectVector();
+        self.eyeCascade.detectMultiScale(roi_gray, eyes, 1.2, 3, 0, s1, s2);
 
-        for ( var j = 0 ;j < eyes.size() ; j+=1 ){
+        for (var j = 0; j < eyes.size(); j += 1) {
 
-                var eyeRect = eyes.get(j) ;
-                var p1 = [x+eyeRect.x,y+eyeRect.y];
-                var p2 = [x+eyeRect.x+eyeRect.width,y+eyeRect.y+eyeRect.height];
+            var eyeRect = eyes.get(j);
+            var p1 = [x + eyeRect.x, y + eyeRect.y];
+            var p2 = [x + eyeRect.x + eyeRect.width, y + eyeRect.y + eyeRect.height];
 
-                cv.rectangle(img_color, p1 , p2 , gcolor ,2, 8, 0);
+            cv.rectangle(img_color, p1, p2, gcolor, 2, 8, 0);
         }
-       
+
         this.eyeRectangles = eyes;
-        faceRect.delete() ;
+        faceRect.delete();
         color.delete();
         gcolor.delete();
-        roi_gray.delete() ;
+        roi_gray.delete();
         // Don't delete eyes in case eye information is used later.
     }
     this.display.setMatResult(img_color);
@@ -155,50 +154,49 @@ Filter.prototype.eyes = function() {
  * @param options TODO MinFaceSize and MaxFaceSize
  * @return The image with squares around any faces.
  */
-Filter.prototype.faces = function() {
-        var self = this;
-       
-        if(self.faceCascade == undefined ){
-                self.faceCascade = new cv.CascadeClassifier();
-                self.faceCascade.load('haarcascade_frontalface_default.xml');
-        }
-       
-        var img = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
-        var img_gray = new cv.Mat();
-        var img_color = new cv.Mat(); // Opencv likes RGB
-       
-       
-        cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
-        cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
-       
-        var faces = new cv.RectVector();
-        var s1 = [0, 0];
-        var s2 = [0, 0];
-        self.faceCascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
-        self.faceCount = faces.size();
-        self.faceRectangles = faces;
-       
-        for (var i = 0; i < faces.size(); i+=1 )
-        {
-                var faceRect = faces.get(i);
-                x = faceRect.x ;
-                y = faceRect.y ;
-                w = faceRect.width ;
-                h = faceRect.height;
-                var p1 = [x, y];
-                var p2 = [x+w, y+h];
-                var color = new cv.Scalar(255,0,0);
-                cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
-                faceRect.delete();
-                color.delete();
-        }
-        self.display.setMatResult(img_color);
-        img.delete();
-        img_color.delete();
-        img_gray.delete();
-        // Don't delete faces in case the user later wants to look for eyes.
-       
-        return self.display.getResult();
+Filter.prototype.faces = function () {
+    var self = this;
+
+    if (self.faceCascade == undefined) {
+        self.faceCascade = new cv.CascadeClassifier();
+        self.faceCascade.load('haarcascade_frontalface_default.xml');
+    }
+
+    var img = cv.matFromArray(self.display.getOriginal(), 24); // 24 for rgba
+    var img_gray = new cv.Mat();
+    var img_color = new cv.Mat(); // Opencv likes RGB
+
+
+    cv.cvtColor(img, img_gray, cv.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+    cv.cvtColor(img, img_color, cv.ColorConversionCodes.COLOR_RGBA2RGB.value, 0);
+
+    var faces = new cv.RectVector();
+    var s1 = [0, 0];
+    var s2 = [0, 0];
+    self.faceCascade.detectMultiScale(img_gray, faces, 1.1, 3, 0, s1, s2);
+    self.faceCount = faces.size();
+    self.faceRectangles = faces;
+
+    for (var i = 0; i < faces.size(); i += 1) {
+        var faceRect = faces.get(i);
+        x = faceRect.x;
+        y = faceRect.y;
+        w = faceRect.width;
+        h = faceRect.height;
+        var p1 = [x, y];
+        var p2 = [x + w, y + h];
+        var color = new cv.Scalar(255, 0, 0);
+        cv.rectangle(img_color, p1, p2, color, 2, 8, 0);
+        faceRect.delete();
+        color.delete();
+    }
+    self.display.setMatResult(img_color);
+    img.delete();
+    img_color.delete();
+    img_gray.delete();
+    // Don't delete faces in case the user later wants to look for eyes.
+
+    return self.display.getResult();
 };
 
 var theFilter = new Filter();
@@ -225,23 +223,28 @@ exports.filters = ['eyes', 'faces'];
  *  @return The image with blue squares around any faces.
  */
 exports.filter = function (image, transform, options, callback) {
-        theFilter.display.setOriginal(image);
+    theFilter.display.setOriginal(image);
 
-        // TODO: Implement options for MinFaceSize and MaxFaceSize.
-        theFilter.on('ready', function() {
-            switch(transform) {
-                case 'eyes' : theFilter.eyes(options); break;
-                case 'faces' : theFilter.faces(options); break;
-                default : console.log('Unsupported transform ' + transform);
-            }
-                callback(theFilter.display.getResult());
-        });
+    // TODO: Implement options for MinFaceSize and MaxFaceSize.
+    theFilter.on('ready', function () {
+        switch (transform) {
+        case 'eyes':
+            theFilter.eyes(options);
+            break;
+        case 'faces':
+            theFilter.faces(options);
+            break;
+        default:
+            console.log('Unsupported transform ' + transform);
+        }
+        callback(theFilter.display.getResult());
+    });
 };
 
 /** Return the detected eye rectangles.
  * @return An array of detected eye rectangles.
  */
-exports.eyeRectangles = function() {
+exports.eyeRectangles = function () {
     return theFilter.eyeRectangles;
 };
 

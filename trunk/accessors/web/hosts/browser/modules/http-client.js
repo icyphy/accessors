@@ -144,8 +144,8 @@ exports.get = function (options, responseCallback) {
  *  request has been satisfied.
  */
 
-exports.request = function(options, responseCallback) {
-        return new ClientRequest(options, responseCallback);
+exports.request = function (options, responseCallback) {
+    return new ClientRequest(options, responseCallback);
 };
 
 //TODO:  
@@ -190,126 +190,126 @@ exports.request = function(options, responseCallback) {
  *   or with a null argument to signal an error.
  */
 function ClientRequest(options, responseCallback) {
-        EventEmitter.call(this);
+    EventEmitter.call(this);
 
-        var defaultPort = 80;        // May differ from java.net.url calculation in Java module.
+    var defaultPort = 80; // May differ from java.net.url calculation in Java module.
 
-        var defaultOptions = {
-                        'headers':{},
-                        'keepAlive':false,
-                        'method':'GET',
-                        'outputCompleteResponseOnly':true,
-                        'timeout':5000,
-                        'trustAll':false,
-        };
+    var defaultOptions = {
+        'headers': {},
+        'keepAlive': false,
+        'method': 'GET',
+        'outputCompleteResponseOnly': true,
+        'timeout': 5000,
+        'trustAll': false,
+    };
 
-        var defaultUrl = "http://localhost:80"
-                var urlSpec;
-        if (util.isString(options)) {
-                urlSpec = options;
-                options = {};  // If only URL is passed in, create new options object 
-        } else if (util.isString(options.url)) {
-                urlSpec = options.url;
-        }
-        if (urlSpec) {
-                options.url = url.parse(urlSpec);
+    var defaultUrl = "http://localhost:80"
+    var urlSpec;
+    if (util.isString(options)) {
+        urlSpec = options;
+        options = {}; // If only URL is passed in, create new options object 
+    } else if (util.isString(options.url)) {
+        urlSpec = options.url;
+    }
+    if (urlSpec) {
+        options.url = url.parse(urlSpec);
 
+    } else {
+        options.url = url.parse(defaultUrl);
+    }
+    // Fill in default values.
+    options = util._extend(defaultOptions, options);
+
+    // Attach the callback to be invoked when this object issues
+    // a 'response' event.  
+    if (responseCallback) {
+        if (options.outputCompleteResponseOnly) {
+            this.once('response', responseCallback);
         } else {
-                options.url = url.parse(defaultUrl);
+            this.on('response', responseCallback);
         }
-        // Fill in default values.
-        options = util._extend(defaultOptions, options);
+    }
 
-        // Attach the callback to be invoked when this object issues
-        // a 'response' event.  
-        if (responseCallback) {
-                if (options.outputCompleteResponseOnly) {
-                        this.once('response', responseCallback);
-                } else {
-                        this.on('response', responseCallback);
-                }
+    // Set the Content-Length header
+    if (options.body !== null && options.body !== undefined && options.body != "") {
+        var headers;
+        if (typeof options.headers == "undefined") {
+            headers = {};
+        } else {
+            headers = options.headers;
         }
 
-        // Set the Content-Length header
-        if (options.body !== null && options.body !== undefined && options.body != "") {
-                var headers;
-                if (typeof options.headers == "undefined") {
-                        headers = {};
-                } else {
-                        headers = options.headers;
-                }
+        headers['Content-Length'] = options.body.length;
+        options.headers = headers;
+    }
 
-                headers['Content-Length'] = options.body.length;
-                options.headers = headers;
-        }
-
-        // console.log("Making an HTTP request: " + JSON.stringify(options));
-        this.options = options;
+    // console.log("Making an HTTP request: " + JSON.stringify(options));
+    this.options = options;
 }
 util.inherits(ClientRequest, EventEmitter);
 exports.ClientRequest = ClientRequest;
 
 /** Issue the request. */
-ClientRequest.prototype.end = function() {
-        var self = this;
-        // Remove trailing slash from URL, if any,  Trailing slash causes problems
-        // for some sites.
-        var urlString = this.options.url.href;
-        if (urlString.substring(urlString.length - 1) === "/"){
-                urlString = urlString.substring(0, urlString.length - 1);
+ClientRequest.prototype.end = function () {
+    var self = this;
+    // Remove trailing slash from URL, if any,  Trailing slash causes problems
+    // for some sites.
+    var urlString = this.options.url.href;
+    if (urlString.substring(urlString.length - 1) === "/") {
+        urlString = urlString.substring(0, urlString.length - 1);
+    }
+
+    // TODO:  Implement keep-alive and write a test case
+    // This is sent as a header field in jQuery
+    /*
+    this.options.headers['Keep-Alive'] = this.options.keepAlive;
+     */
+
+    // Check for a JSONP request.  URL will end with ?callback=?
+    // TODO:  Support named callbacks (e.g. ?callback=myMethod) if needed.
+    if (this.options.method === "GET" && urlString.length > 11 &&
+        urlString.substring(urlString.length - 11, urlString.length) === "?callback=?") {
+        jQuery.getJSON(urlString, function (data, textStatus, xhr) {
+            self._response(xhr, data);
+        });
+    } else {
+        // Define an object so that body can be optionally added in ajax call
+        var ajaxObject = {
+            // Set properties provided by defaultOptions
+            headers: this.options.headers,
+            method: this.options.method,
+            timeout: this.options.timeout,
+            url: urlString,
+
+            // Set callbacks
+            success: function (data, status, xhr) {
+                // Anything data, String textStatus, jqXHR jqXHR
+                self._response(xhr, data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                self._handleError("Error issuing request to " + urlString);
+            }
         }
 
-        // TODO:  Implement keep-alive and write a test case
-        // This is sent as a header field in jQuery
-        /*
-        this.options.headers['Keep-Alive'] = this.options.keepAlive;
-         */
-
-        // Check for a JSONP request.  URL will end with ?callback=?
-        // TODO:  Support named callbacks (e.g. ?callback=myMethod) if needed.
-        if (this.options.method === "GET" && urlString.length > 11 
-                        && urlString.substring(urlString.length - 11, urlString.length) === "?callback=?") {
-                jQuery.getJSON(urlString, function(data, textStatus, xhr) {
-                        self._response(xhr, data);
-                });
-        } else {
-                // Define an object so that body can be optionally added in ajax call
-                var ajaxObject = {
-                                // Set properties provided by defaultOptions
-                                headers : this.options.headers,
-                                method : this.options.method,
-                                timeout : this.options.timeout,
-                                url : urlString,
-
-                                // Set callbacks
-                                success: function(data, status, xhr) {
-                                        // Anything data, String textStatus, jqXHR jqXHR
-                                        self._response(xhr, data);
-                                },
-                                error: function(xhr, textStatus, errorThrown) {
-                                        self._handleError("Error issuing request to " + urlString);
-                                }
-                }
-
-                if (typeof this.options.body != "undefined") {
-                        ajaxObject.data = this.options.body;
-                }
-
-                jQuery.ajax(ajaxObject);
+        if (typeof this.options.body != "undefined") {
+            ajaxObject.data = this.options.body;
         }
+
+        jQuery.ajax(ajaxObject);
+    }
 };
 
 /** Internal function used to handle an error.
  *  @param message The error message.
  */
-ClientRequest.prototype._handleError = function(message) {
-        // There may be no registered error event handler.
-        try {
-                this.emit('error', message);
-        } catch(err) {
-                console.log("handle error : " + message);
-                error(message);
-        }
+ClientRequest.prototype._handleError = function (message) {
+    // There may be no registered error event handler.
+    try {
+        this.emit('error', message);
+    } catch (err) {
+        console.log("handle error : " + message);
+        error(message);
+    }
 };
 
 /** Internal method used to handle a response. 
@@ -319,28 +319,28 @@ ClientRequest.prototype._handleError = function(message) {
  *  @param response The response (as an XMLHttpRequest) from the server.
  *  @param body The body of the response.
  */
-ClientRequest.prototype._response = function(response, body) {
-        if (response === null) {
-                this.emit('response', null);
-                this._handleError(body);
-                return;
-        }
+ClientRequest.prototype._response = function (response, body) {
+    if (response === null) {
+        this.emit('response', null);
+        this._handleError(body);
+        return;
+    }
 
-        var message = new IncomingMessage(response, body);
-        this.emit('response', message);
+    var message = new IncomingMessage(response, body);
+    this.emit('response', message);
 
-        var code = response.statusCode();
-        if (code >= 400) {
-                // An error occurred. Emit both an error event and a response event.
-                this._handleError('Received response code ' + code + ". " + response.statusMessage());
-        }
+    var code = response.statusCode();
+    if (code >= 400) {
+        // An error occurred. Emit both an error event and a response event.
+        this._handleError('Received response code ' + code + ". " + response.statusMessage());
+    }
 };
 
 /** Once request queueing is implemented, this method should discard any pending
  * submitted jobs and reset the sequence number to zero.
  */
-ClientRequest.prototype.stop = function() {
-	
+ClientRequest.prototype.stop = function () {
+
 };
 
 //NOTE: The following events are produce by IncomingMessage in Node.js
@@ -365,10 +365,10 @@ ClientRequest.prototype.stop = function() {
  *  @param response The response (as an XMLHttpRequest) from the server.
  */
 function IncomingMessage(response, body) {
-        this.body = body;
-//        TODO:  Implement cookies.  Use Set-Cookie header? (one for each cookie?)  
-//        Formatting? An array of strings??  is each string a name value pair?
-        this.cookies = response.getResponseHeader('Set-Cookie');
-        this.statusCode = response.status;
-        this.statusMessage = response.statusText;
+    this.body = body;
+    //        TODO:  Implement cookies.  Use Set-Cookie header? (one for each cookie?)  
+    //        Formatting? An array of strings??  is each string a name value pair?
+    this.cookies = response.getResponseHeader('Set-Cookie');
+    this.statusCode = response.status;
+    this.statusMessage = response.statusText;
 };

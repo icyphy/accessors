@@ -67,60 +67,60 @@ exports.ImageProcessingDisplay = function (options) {
     this.originalCanvas = document.createElement('canvas');
     this.resultCanvas = document.createElement('canvas');
     this.image = null;
-    
+
     // Create a div to contain the canvases.
     var container = document.createElement('div');
     container.style.width = '95%';
     container.style.margin = '1em';
     container.style.padding = '1em';
-    
+
     var labels = document.createElement('div');
     labels.style.fontSize = '1.5em';
     labels.style.width = '100%';
-    
+
     var originalLabel = document.createElement('div');
     originalLabel.style.width = '45%';
     originalLabel.style.float = 'left';
     originalLabel.style.textAlign = 'center';
-    
-    if (options !== null && typeof options !== 'undefined' && 
+
+    if (options !== null && typeof options !== 'undefined' &&
         options.originalLabel !== null && typeof options.originalLabel !== 'undefined') {
         originalLabel.innerHTML = options.originalLabel;
     } else {
         originalLabel.innerHTML = "Original Image";
     }
-    
+
     var resultLabel = document.createElement('div');
     resultLabel.style.width = '45%';
     resultLabel.style.float = 'right';
     resultLabel.style.textAlign = 'center';
     resultLabel.style.verticalAlign = 'top';
-    
-    if (options !== null && typeof options !== 'undefined' && 
+
+    if (options !== null && typeof options !== 'undefined' &&
         options.resultLabel !== null && typeof options.resultLabel !== 'undefined') {
         resultLabel.innerHTML = options.resultLabel;
     } else {
         resultLabel.innerHTML = "Result";
     }
-    
+
     labels.appendChild(originalLabel);
     labels.appendChild(resultLabel);
-    
+
     this.originalContainer = document.createElement('div');
     this.originalContainer.style.display = 'inline-block';
     this.originalContainer.style.width = '45%';
-    
+
     this.resultContainer = document.createElement('div');
     this.resultContainer.style.float = 'right';
     this.resultContainer.style.width = '45%';
 
-    
+
     this.originalContainer.appendChild(this.originalCanvas);
     this.resultContainer.appendChild(this.resultCanvas);
     container.appendChild(this.originalContainer);
     container.appendChild(this.resultContainer);
     container.appendChild(labels);
-    
+
     // Search for Camera, ComputerVision, or FaceDetector
     var parent;
     var accessorDiv = document.getElementById('Camera');
@@ -131,11 +131,11 @@ exports.ImageProcessingDisplay = function (options) {
             accessorDiv = document.getElementById('FaceDetector');
         }
     }
-    
+
     if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
         // Found Camera, ComputerVision or FaceDetector.
         parent = accessorDiv.parentNode;
-        
+
         if (parent !== null && typeof parent !== 'undefined') {
             parent.insertBefore(container, accessorDiv);
         } else {
@@ -144,10 +144,10 @@ exports.ImageProcessingDisplay = function (options) {
     } else {
         // Look for accessorDirectoryTarget, as in accessors library page.
         accessorDiv = document.getElementById('accessorDirectoryTarget');
-        
+
         if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
             parent = accessorDiv.parentNode;
-            
+
             if (parent !== null && typeof parent !== 'undefined') {
                 parent.insertBefore(container, accessorDiv);
             } else {
@@ -156,7 +156,7 @@ exports.ImageProcessingDisplay = function (options) {
         } else {
             // No Camera accessor.  Find any accessor.  If none, use page top.
             accessorDiv = document.getElementsByClassName('accessor');
-            if (accessorDiv !== null && typeof accessorDiv !== 'undefined' && 
+            if (accessorDiv !== null && typeof accessorDiv !== 'undefined' &&
                 accessorDiv.length > 0) {
                 accessorDiv = accessorDiv[0];
                 var parent = accessorDiv.parentNode;
@@ -165,8 +165,8 @@ exports.ImageProcessingDisplay = function (options) {
                 } else {
                     document.body.insertBefore(container, accessorDiv);
                 }
-            } else if (document.body.firstChild !== null && 
-                       typeof document.body.firstChild !== 'undefined') {
+            } else if (document.body.firstChild !== null &&
+                typeof document.body.firstChild !== 'undefined') {
                 document.body.insertBefore(container, document.body.firstChild);
             } else {
                 document.body.appendChild(container);
@@ -179,21 +179,21 @@ util.inherits(exports.ImageProcessingDisplay, EventEmitter);
 
 /** Get the original image.
  * @return The original image.
- */ 
-exports.ImageProcessingDisplay.prototype.getOriginal = function(){
+ */
+exports.ImageProcessingDisplay.prototype.getOriginal = function () {
     var ctx = this.originalCanvas.getContext('2d');
-    var image =  ctx.getImageData(0, 0, this.originalCanvas.width, 
-                                  this.originalCanvas.height);
+    var image = ctx.getImageData(0, 0, this.originalCanvas.width,
+        this.originalCanvas.height);
     return image;
 }
 
 /** Get the result image.
  * @return The result image.
  */
-exports.ImageProcessingDisplay.prototype.getResult = function() {
+exports.ImageProcessingDisplay.prototype.getResult = function () {
     var ctx = this.resultCanvas.getContext('2d');
-    var image =  ctx.getImageData(0, 0, this.resultCanvas.width, 
-                                  this.resultCanvas.height);
+    var image = ctx.getImageData(0, 0, this.resultCanvas.width,
+        this.resultCanvas.height);
     return image;
 }
 
@@ -202,14 +202,14 @@ exports.ImageProcessingDisplay.prototype.getResult = function() {
  * supported due to browser security restrictions - a browser will not allow a
  * remote image to be exported from a canvas.
  */
-exports.ImageProcessingDisplay.prototype.setOriginal = function(input) {
+exports.ImageProcessingDisplay.prototype.setOriginal = function (input) {
     var self = this;
     var context = this.originalCanvas.getContext("2d");
-    
+
     if (input !== null && typeof input === 'string') {
         var imageObj = new Image();
         imageObj.src = input;
-        
+
         // TODO:  Catch bad input strings?
         imageObj.onload = function () {
             self.originalCanvas.width = imageObj.width;
@@ -229,12 +229,12 @@ exports.ImageProcessingDisplay.prototype.setOriginal = function(input) {
  * @param width The width of the image.
  */
 
-exports.ImageProcessingDisplay.prototype.setResult = 
-    function(image, height, width) {
+exports.ImageProcessingDisplay.prototype.setResult =
+    function (image, height, width) {
         var ctx = this.resultCanvas.getContext("2d");
-        
-        if (height !== null && typeof height !== "undefined" 
-            && width !== null && typeof width !== "undefined") {
+
+        if (height !== null && typeof height !== "undefined" &&
+            width !== null && typeof width !== "undefined") {
             this.resultCanvas.height = height;
             this.resultCanvas.width = width;
         }
@@ -246,8 +246,8 @@ exports.ImageProcessingDisplay.prototype.setResult =
  * @param mat The image data in Mat format.
  *  From https://github.com/ucisysarch/opencvjs
  */
-exports.ImageProcessingDisplay.prototype.setMatResult = function(mat) {
-    var data = mat.data();         // output is a Uint8Array that aliases directly into the Emscripten heap
+exports.ImageProcessingDisplay.prototype.setMatResult = function (mat) {
+    var data = mat.data(); // output is a Uint8Array that aliases directly into the Emscripten heap
 
     var channels = mat.channels();
     var channelSize = mat.elemSize1();
@@ -260,10 +260,10 @@ exports.ImageProcessingDisplay.prototype.setMatResult = function(mat) {
 
     var imdata = ctx.createImageData(mat.cols, mat.rows);
 
-    for (var i = 0,j=0; i < data.length; i += channels, j+=4) {
+    for (var i = 0, j = 0; i < data.length; i += channels, j += 4) {
         imdata.data[j] = data[i];
-        imdata.data[j + 1] = data[i+1%channels];
-        imdata.data[j + 2] = data[i+2%channels];
+        imdata.data[j + 1] = data[i + 1 % channels];
+        imdata.data[j + 2] = data[i + 2 % channels];
         imdata.data[j + 3] = 255;
     }
     ctx.putImageData(imdata, 0, 0);
