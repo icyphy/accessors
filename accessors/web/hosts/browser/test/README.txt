@@ -27,7 +27,6 @@ The test library there is particularly useful for testing.
   http://localhost:8089/hosts/browser/test/manual/httpClient/testCORS.html
   http://localhost:8089/hosts/browser/test/manual/httpClient/testJSONP.html
   http://localhost:8089/hosts/browser/test/manual/httpClient/testREST.html
-  http://localhost:8089/hosts/browser/test/manual/httpClient/testStockTick.html
   http://localhost:8089/hosts/browser/test/manual/httpClient/testWeather.html
   
 The testWeather.html page requires keys to access online geocoder and weather

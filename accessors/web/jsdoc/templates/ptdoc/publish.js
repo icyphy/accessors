@@ -39,7 +39,7 @@
  *   @author Christopher Brooks
  *   @version $$Id$$
  *   @example
- *       jsdoc StockTick.js -t templates/ptdoc
+ *       jsdoc Foo.js -t templates/ptdoc
  */
 /*global console, exports, require, writePtDoc, xmlEscape */
 /*jshint globalstrict: true, multistr: true */
