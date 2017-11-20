@@ -21,7 +21,11 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** An accessor for playing a sound clip from a URL.
+/** An accessor for playing a sound clip from a URL or a resource on the
+ *  local host. The URL or resource name can be provided as a parameter or
+ *  as an input. To start playing the sound, an event must be provided to the
+ *  start input. An event at the stop input, or a new event at the start input,
+ *  will cause the sound to stop playing.
  *
  *  @accessor audio/ClipPlayer
  *  @author Elizabeth Osyk (beth@berkeley.edu)
