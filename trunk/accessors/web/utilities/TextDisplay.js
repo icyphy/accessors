@@ -43,6 +43,7 @@ var display = null;
 
 exports.setup = function () {
     this.input('input');
+    this.output('output');
     this.parameter('title', {
         'type':'string',
         'value':'TextDisplay'
@@ -59,5 +60,6 @@ exports.initialize = function () {
     this.addInputHandler('input', function () {
         var inputValue = self.get('input');
         display.appendText(util.inspect(inputValue));
+        this.send('output', inputValue);
     });
 };
