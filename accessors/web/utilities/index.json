@@ -6,5 +6,6 @@
     "Mutable.js",
     "MutableBase.js",
     "Stop.js",
+    "TextDisplay.js",
     "UserInterface.js"
 ]
