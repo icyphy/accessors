@@ -83,12 +83,12 @@
 
 
 #ifdef EDUK_FULL
-#define FILE_ENTRIES_SIZE 22
+#define FILE_ENTRIES_SIZE 23
 #else 
 #ifdef EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 9
+#define FILE_ENTRIES_SIZE 10
 #else // EDUK_RAMPJSDISPLAY 
-#define FILE_ENTRIES_SIZE 5
+#define FILE_ENTRIES_SIZE 6
 #endif // EDUK_RAMPJSDISPLAY 
 #endif //EDUK_FULL
 
@@ -104,7 +104,8 @@
 #ifdef EDUK_RAMPJSDISPLAY
 #include "RampJSDisplay.h"
 #include "RampJSInspect.h"
-#include "TestDisplay.h"
+#include "TextDisplay.h"
+#include "text-display.h"
 #include "TestSpontaneous.h"
 #endif // EDUK_RAMPJSDISPLAY
 
@@ -117,7 +118,7 @@
 
 // These are used by the tests and would not be needed in production.
 #include "RampJSTest.h"
-#include "RampJSTestDisplay.h"
+#include "RampJSTextDisplay.h"
 #include "Stop.h"
 #include "autoAccessorStatusTest.h"
 #include "autoTestComposite.h"
@@ -224,6 +225,10 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = ______common_modules_events_js;
     fileEntries[n].length = ______common_modules_events_js_len;
 
+    fileEntries[++n].name = "common/modules/text-display.js";
+    fileEntries[n].contents = ______common_modules_text_display_js;
+    fileEntries[n].length = ______common_modules_text_display_js_len;
+
     fileEntries[++n].name = "common/modules/util.js";
     fileEntries[n].contents = ______common_modules_util_js;
     fileEntries[n].length = ______common_modules_util_js_len;
@@ -246,9 +251,9 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].length = _________test_auto_RampJSInspect_js_len;
 
     // Accessors used by RampJSDisplay.js
-    fileEntries[++n].name = "./test/TestDisplay.js";
-    fileEntries[n].contents = _________test_TestDisplay_js;
-    fileEntries[n].length = _________test_TestDisplay_js_len;
+    fileEntries[++n].name = "./utilities/TextDisplay.js";
+    fileEntries[n].contents = _________utilities_TextDisplay_js;
+    fileEntries[n].length = _________utilities_TextDisplay_js_len;
 
     fileEntries[++n].name = "./test/TestSpontaneous.js";
     fileEntries[n].contents = _________test_TestSpontaneous_js;
@@ -273,9 +278,9 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
     fileEntries[n].length = _________test_auto_RampJSTest_js_len;
 
-    fileEntries[++n].name = "./test/auto/RampJSTestDisplay.js";
-    fileEntries[n].contents = _________test_auto_RampJSTestDisplay_js;
-    fileEntries[n].length = _________test_auto_RampJSTestDisplay_js_len;
+    fileEntries[++n].name = "./test/auto/RampJSTextDisplay.js";
+    fileEntries[n].contents = _________test_auto_RampJSTextDisplay_js;
+    fileEntries[n].length = _________test_auto_RampJSTextDisplay_js_len;
 
     fileEntries[++n].name = "./utilities/Stop.js";
     fileEntries[n].contents = _________utilities_Stop_js;

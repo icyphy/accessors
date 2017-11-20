@@ -1,11 +1,11 @@
-exports.setup = function() {
+exports.setup = function () {
     //  This composite accessor was created by Cape Code.
     //  To run the code, run: 
-    //  (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node/test/auto; node nodeHostInvoke.js --accessor -timeout @timeout@ hosts/node/Stop)
+    //  (cd $PTII/org/terraswarm/accessor/accessors/web/hosts/node/test/auto; @node@ ../../nodeHostInvoke.js  node_modules/@accessors-hosts/node/test/auto/Stop)
     //  To regenerate this composite accessor, run:
-    //  java -classpath $PTII ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/Stop.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/org/terraswarm/accessor/test/auto/Stop.xml
     //  to edit the model, run:
-    //  $PTII/bin/vergil -capecode $PTII/org/terraswarm/accessor/test/auto/Stop.xml
+    //  $PTII/bin/capecode $PTII/org/terraswarm/accessor/test/auto/Stop.xml
 
     // Ports: Stop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -19,15 +19,17 @@ exports.setup = function() {
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScript = new Accessor('JavaScript', 'exports.setup = function() {\n        this.input(\'input\', {\'type\':\'number\'});\n        this.output(\'output\', {\'type\':\'boolean\'});\n}\nexports.initialize = function() {\n        this.addInputHandler(\'input\', function() {\n                var input = this.get(\'input\');\n                if (input >= 3) {\n                        this.send(\'output\', true);\n                }\n        });\n}\n', null, null, null, null);
-    JavaScript.container = this;
-    this.containedAccessors.push(JavaScript);
+    var JavaScript = this.instantiateFromCode('JavaScript', unescape('exports.setup%20%3D%20function%28%29%20%7B%0A%09this.input%28%27input%27%2C%20%7B%27type%27%3A%27number%27%7D%29%3B%0A%09this.output%28%27output%27%2C%20%7B%27type%27%3A%27boolean%27%7D%29%3B%0A%7D%0Aexports.initialize%20%3D%20function%28%29%20%7B%0A%09this.addInputHandler%28%27input%27%2C%20function%28%29%20%7B%0A%09%09var%20input%20%3D%20this.get%28%27input%27%29%3B%0A%09%09if%20%28input%20%3E%3D%203%29%20%7B%0A%09%09%09this.send%28%27output%27%2C%20true%29%3B%0A%09%09%7D%0A%09%7D%29%3B%0A%7D%0A'));
 
-    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
+    // Start: TextDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TextDisplay = this.instantiate('TextDisplay', 'utilities/TextDisplay.js');
+    TextDisplay.setParameter('title', "TextDisplay");
 
     // Connections: Stop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(JavaScript, 'output', Stop, 'stop');
     this.connect(TestSpontaneous, 'output', JavaScript, 'input');
-    this.connect(TestSpontaneous, 'output', TestDisplay, 'input');
+    this.connect(TestSpontaneous, 'output', TextDisplay, 'input');
 };
+
+// The stopTime parameter of the directory in the model was 0, so this.stopAt() is not being generated.
+

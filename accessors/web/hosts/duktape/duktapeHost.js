@@ -67,7 +67,7 @@ Duktape.modSearch = function (id, require, exports, module) {
     var src;
     var found = false;
 
-    // print('loading module:', id);
+    // print('loading module: ' + id);
 
     /* DLL check.  DLL init function is platform specific.  It gets 'exports'
      * but also 'require' so that it can require further modules if necessary.
@@ -86,6 +86,9 @@ Duktape.modSearch = function (id, require, exports, module) {
         name = id + '.js';
     }
 
+    if (typeof name !== 'undefined' && name.indexOf('@accessors-modules/') !== -1) {
+        name = name.substring(19);
+    }
 
     // Iterate through a series of search paths.
     // common/modules is needed for common/modules/events.js.
