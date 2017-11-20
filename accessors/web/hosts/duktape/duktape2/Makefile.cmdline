@@ -57,11 +57,11 @@ HFILES =  ./src/duk_config.h \
         ../eduk2/AccessorStatus.h \
 	../eduk2/RampJSDisplay.h \
 	../eduk2/RampJSTest.h \
-	../eduk2/RampJSTestDisplay.h \
+	../eduk2/RampJSTextDisplay.h \
 	../eduk2/Stop.h \
 	../eduk2/TestAdder.h \
 	../eduk2/TestComposite.h \
-	../eduk2/TestDisplay.h \
+	../eduk2/TextDisplay.h \
 	../eduk2/TestGain.h \
 	../eduk2/TestSpontaneous.h \
 	../eduk2/TrainableTest.h \

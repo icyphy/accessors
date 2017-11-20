@@ -3,9 +3,9 @@ exports.setup = function () {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/utilities/test/auto; @node@ ../../../hosts/node/nodeHostInvoke.js utilities/test/auto/LocalStorageTestJS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
 
     // Ports: LocalStorageTestJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -17,11 +17,13 @@ exports.setup = function () {
     LocalStorage.setDefault('remove', false);
     LocalStorage.setDefault('list', false);
 
-    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
+    // Start: TextDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TextDisplay = this.instantiate('TextDisplay', 'utilities/TextDisplay.js');
+    TextDisplay.setParameter('title', "TextDisplay");
 
-    // Start: TestDisplay2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestDisplay2 = this.instantiate('TestDisplay2', 'test/TestDisplay.js');
+    // Start: TextDisplay2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TextDisplay2 = this.instantiate('TextDisplay2', 'utilities/TextDisplay.js');
+    TextDisplay2.setParameter('title', "TextDisplay2");
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
@@ -31,7 +33,7 @@ exports.setup = function () {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', null);
+    TrainableTest2.setParameter('correctValues', ["LocalStorage: key: a, value: apple, remove: false, toList: false","Using a storage directory of /tmp/XXXX","Inserting (Key,Value) = (a, apple)","LocalStorage: key: b, value: bed, remove: false, toList: false","Inserting (Key,Value) = (b, bed)","LocalStorage: key: c, value: car, remove: false, toList: false","Inserting (Key,Value) = (c, car)","LocalStorage: key: d, value: dog, remove: false, toList: false","Inserting (Key,Value) = (d, dog)","LocalStorage: key: e, value: eagle, remove: false, toList: false","Inserting (Key,Value) = (e, eagle)","LocalStorage: key: a, value: ace, remove: false, toList: false","Inserting (Key,Value) = (a, ace)","LocalStorage: key: c, value: , remove: false, toList: false","Retrieving Key: c, foundValue: car","LocalStorage: key: d, value: , remove: false, toList: false","Retrieving Key: d, foundValue: dog","LocalStorage: key: e, value: , remove: false, toList: false","Retrieving Key: e, foundValue: eagle","LocalStorage: key: a, value: , remove: false, toList: false","Retrieving Key: a, foundValue: ace"]);
     TrainableTest2.setParameter('trainingMode', true);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
@@ -53,8 +55,8 @@ exports.setup = function () {
     this.connect(GenerateKV, 'key', LocalStorage, 'key');
     this.connect(GenerateKV, 'value', LocalStorage, 'value');
     this.connect(GenerateKV, 'key', LocalStorage, 'trigger');
-    this.connect(LocalStorage, 'result', TestDisplay, 'input');
-    this.connect(StringReplace, 'output', TestDisplay2, 'input');
+    this.connect(LocalStorage, 'result', TextDisplay, 'input');
+    this.connect(StringReplace, 'output', TextDisplay2, 'input');
     this.connect(LocalStorage, 'result', TrainableTest, 'input');
     this.connect(StringReplace, 'output', TrainableTest2, 'input');
     this.connect(Clock, 'output', GenerateKV, 'trigger');

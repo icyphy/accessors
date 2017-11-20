@@ -24,11 +24,11 @@ JS_H_FILES = \
 	RampJSDisplay.h \
 	RampJSInspect.h \
 	RampJSTest.h \
-	RampJSTestDisplay.h \
+	RampJSTextDisplay.h \
 	Stop.h \
 	TestAdder.h \
 	TestComposite.h \
-	TestDisplay.h \
+	TextDisplay.h \
 	TestGain.h \
 	TestSpontaneous.h \
 	TrainableTest.h \
@@ -43,6 +43,7 @@ JS_H_FILES = \
 	events.h \
 	modulesUtil.h \
 	testCommon.h \
+	text-display.h \
 	util.h
 
 H_FILES = \
@@ -119,6 +120,9 @@ events.h: ../../common/modules/events.js makefile
 util.h: ../../common/modules/util.js makefile
 	./js2h $< $@
 
+text-display.h: ../../common/modules/text-display.js makefile
+	./js2h $< $@
+
 # ecma_eventloop.h is used in hosts/duktape/duktape2 and not hosts/duketape/eduk2/eduk2
 ecma_eventloop.h: ../duktape2/examples/eventloop/ecma_eventloop.js makefile
 	./js2h $< $@
@@ -132,7 +136,7 @@ RampJSInspect.h: $(ROOT)/test/auto/RampJSInspect.js makefile
 	./js2h $< $@
 RampJSTest.h: $(ROOT)/test/auto/RampJSTest.js makefile
 	./js2h $< $@
-RampJSTestDisplay.h: $(ROOT)/test/auto/RampJSTestDisplay.js makefile
+RampJSTextDisplay.h: $(ROOT)/test/auto/RampJSTextDisplay.js makefile
 	./js2h $< $@
 
 Stop.h: $(ROOT)/utilities/Stop.js makefile
@@ -163,7 +167,7 @@ TestAdder.h: $(ROOT)/test/TestAdder.js makefile
 	./js2h $< $@
 TestComposite.h: $(ROOT)/test/TestComposite.js makefile
 	./js2h $< $@
-TestDisplay.h: $(ROOT)/test/TestDisplay.js makefile
+TextDisplay.h: $(ROOT)/utilities/TextDisplay.js makefile
 	./js2h $< $@
 TestGain.h: $(ROOT)/test/TestGain.js makefile
 	./js2h $< $@
