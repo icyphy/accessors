@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Regents of the University of California.
+// Copyright (c) 2017 The Regents of the University of California.
 // All rights reserved.
 //
 // Permission is hereby granted, without written agreement and without
@@ -29,7 +29,7 @@
  * This basic implementation just prints to the console.
  * Each line is prefixed with the title and a colon, space.
  *
- * @module textDisplay
+ * @module text-display
  * @author Edward A. Lee
  * @version $$Id$$
  */
