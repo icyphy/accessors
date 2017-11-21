@@ -33,8 +33,9 @@ exports.setup = function () {
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
-    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
+    // Start: TextDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TextDisplay = this.instantiate('TextDisplay', 'utilities/TextDisplay.js');
+    TextDisplay.setParameter('title', "TextDisplay");
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
@@ -45,7 +46,7 @@ exports.setup = function () {
     // Connections: WebServerTimeout: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', REST, 'trigger');
     this.connect(WebServer, 'request', TrainableTest2, 'input');
-    this.connect(REST, 'error', TestDisplay, 'input');
+    this.connect(REST, 'error', TextDisplay, 'input');
     this.connect(REST, 'response', TrainableTest, 'input');
 };
 
