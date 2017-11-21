@@ -544,9 +544,13 @@ function generateAccessorHTML(path, id, text) {
             return commonHost;
         }
         
+        var sawAccessorsModules = false;
         //Delete @accessors-modules/ from path start; it's already accounted for.
         if (path.indexOf("@accessors-modules/") === 0) {
-        	path = path.substring(19);
+            // require('@accessors-modules/text-display') needs this because
+            // text-display is in common/modules.
+            sawAccessorsModules = true;
+            path = path.substring(19);
         }
 
         // If module already loaded, return the cached copy.
@@ -589,6 +593,11 @@ function generateAccessorHTML(path, id, text) {
                 // If the path includes modules, try common/modules.
                 var newPath;
                 try {
+                    // @accessors-modules/text-display.js needs this.
+                    if (sawAccessorsModules) {
+                        newPath = '/accessors/hosts/common/modules/' + path;
+                        return require(newPath);
+                    }
                     var index = path.indexOf('modules');
                     if (index !== -1) {
                         newPath = '/accessors/hosts/common/' +
