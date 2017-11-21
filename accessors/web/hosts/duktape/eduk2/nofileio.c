@@ -270,9 +270,9 @@ void nofileio_register(duk_context *ctx) {
     fileEntries[n].length = ___duktape2_examples_eventloop_ecma_eventloop_js_len;
 
     // Composite accessors in test/auto/ that are used for testing
-    fileEntries[++n].name = "./test/auto/AccessorStatusTest.js";
-    fileEntries[n].contents = _________test_auto_AccessorStatusTest_js;
-    fileEntries[n].length = _________test_auto_AccessorStatusTest_js_len;
+    fileEntries[++n].name = "./test/auto/knownFailedTests/AccessorStatusTest.js";
+    fileEntries[n].contents = _________test_auto_knownFailedTests_AccessorStatusTest_js;
+    fileEntries[n].length = _________test_auto_knownFailedTests_AccessorStatusTest_js_len;
 
     fileEntries[++n].name = "./test/auto/RampJSTest.js";
     fileEntries[n].contents = _________test_auto_RampJSTest_js;
