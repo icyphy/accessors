@@ -86,7 +86,7 @@ Duktape.modSearch = function (id, require, exports, module) {
         name = id + '.js';
     }
 
-    if (typeof name !== 'undefined' && name.indexOf('@accessors-modules/') !== -1) {
+    if (name.indexOf('@accessors-modules/') !== -1) {
         name = name.substring(19);
     }
 
