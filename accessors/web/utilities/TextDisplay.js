@@ -23,10 +23,17 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Display text.
+/** Display data using util.inspect() to render a more human-readable form.
+ *  Any data accepted by util.inspect() can be displayed.
+ *  The title may be used by the host to label the output in some way, either
+ *  by labeling a display window or prepending the printed text with the title.
+ *  The resulting text is passed through to the output in case a model wishes to ensure
+ *  that the image has been displayed before something else happens or the model
+ *  wishes to use the rendered text in some way.
  *
  *  @accessor utilities/TextDisplay
- *  @param input The output
+ *  @input input The text to display.
+ *  @output output The text to display.
  *  @author Edward A. Lee
  *  @version $$Id$$
  */
@@ -43,7 +50,7 @@ var display = null;
 
 exports.setup = function () {
     this.input('input');
-    this.output('output');
+    this.output('output', {'type':'string'});
     this.parameter('title', {
         'type':'string',
         'value':'TextDisplay'
@@ -59,7 +66,8 @@ exports.initialize = function () {
 
     this.addInputHandler('input', function () {
         var inputValue = self.get('input');
-        display.appendText(util.inspect(inputValue));
-        this.send('output', inputValue);
+        var text = util.inspect(inputValue);
+        display.appendText(text);
+        this.send('output', text);
     });
 };
