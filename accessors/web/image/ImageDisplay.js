@@ -24,9 +24,12 @@
 //
 
 /** Display an image on the console.
+ *  The image is passed through to the output in case a model wishes to ensure
+ *  that the image has been displayed before something else happens.
  *
  *  @accessor image/ImageDisplay
- *  @param input The output
+ *  @input input The image to display.
+ *  @output output The image to display.
  *  @author Christopher Brooks
  *  @version $$Id$$
  */
