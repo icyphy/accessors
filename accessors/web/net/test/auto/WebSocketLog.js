@@ -23,12 +23,13 @@ exports.setup = function () {
     WebSocketServer.setParameter('sendType', "text/plain");
     WebSocketServer.setParameter('sslTls', false);
 
-    // Start: TestDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestDisplay = this.instantiate('TestDisplay', 'test/TestDisplay.js');
+    // Start: TextDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TextDisplay = this.instantiate('TextDisplay', 'utilities/TextDisplay.js');
+    TextDisplay.setParameter('title', "TextDisplay");
 
     // Connections: WebSocketLog: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneous, 'output', WebSocketServer, 'toSend');
-    this.connect(WebSocketServer, 'connection', TestDisplay, 'input');
+    this.connect(WebSocketServer, 'connection', TextDisplay, 'input');
 };
 
 // To update the initialize code below, modify

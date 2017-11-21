@@ -46,10 +46,12 @@ exports.setup = function () {
     WebSocketServer.setParameter('sslTls', false);
 
     // Start: ClientDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var ClientDisplay = this.instantiate('ClientDisplay', 'test/TestDisplay.js');
+    var ClientDisplay = this.instantiate('ClientDisplay', 'utilities/TextDisplay.js');
+    ClientDisplay.setParameter('title', "TextDisplay");
 
     // Start: ServerDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var ServerDisplay = this.instantiate('ServerDisplay', 'test/TestDisplay.js');
+    var ServerDisplay = this.instantiate('ServerDisplay', 'utilities/TextDisplay.js');
+    ServerDisplay.setParameter('title', "TextDisplay");
 
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js

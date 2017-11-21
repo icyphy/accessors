@@ -3,9 +3,9 @@ exports.setup = function () {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/utilities/test/auto; @node@ ../../../hosts/node/nodeHostInvoke.js utilities/test/auto/LocalStorageTestJS)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
+    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/localStorage/test/auto/LocalStorageTestJS.xml
 
     // Ports: LocalStorageTestJS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
