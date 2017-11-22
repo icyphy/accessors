@@ -710,6 +710,9 @@ function generateAccessorHTML(path, id, text) {
                     // Override commonHost's require with browser's require.
                     // 'Accessor' constructor is used in Mocha tests.
                     commonHost.Accessor.prototype.require = require;
+                    
+                    // Needed for trusted accessors to call getTopLevelAccessors().
+                    commonHost.allowTrustedAccessors(true);
 
                     instance = new commonHost.Accessor(
                         className, code, getAccessorCode, bindings);
