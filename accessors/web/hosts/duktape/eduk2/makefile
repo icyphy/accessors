@@ -142,7 +142,7 @@ RampJSTextDisplay.h: $(ROOT)/test/auto/RampJSTextDisplay.js makefile
 Stop.h: $(ROOT)/utilities/Stop.js makefile
 	./js2h $< $@
 
-autoAccessorStatusTest.h: $(ROOT)/test/auto/knownFailedTests/AccessorStatusTest.js makefile
+autoAccessorStatusTest.h: $(ROOT)/test/auto/AccessorStatusTest.js makefile
 	./js2h $< $@
 
 autoTestComposite.h: $(ROOT)/test/auto/TestComposite.js makefile
