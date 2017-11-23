@@ -193,8 +193,8 @@ exports.setup = function () {
         type: 'int'
     });
     this.output('connection', {spontaneous: true});
-    this.output('received');
-    this.output('receivedID');
+    this.output('received', {spontaneous: true});
+    this.output('receivedID', {spontaneous: true});
 
     // The parameters below are listed alphabetically.
     this.parameter('clientAuth', {
