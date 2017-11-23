@@ -26,7 +26,10 @@
  *  and "open loop." In triggered mode, it captures an image whenever a trigger
  *  input is received and produces that image on its output. In open-loop mode,
  *  it captures every image produced by the camera, at the speed of the camera,
- *  and produces on the output a stream of such images.
+ *  and produces on the output a stream of such images. It limits the number of
+ *  outputs to maxFrameRate images per second, even if the camera produces more
+ *  images than that. You can use the maxFrameRate parameter to avoid overwhelming
+ *  your application.
  *
  *  @accessor cameras/Camera
  *  @author Edward A. Lee (eal@eecs.berkeley.edu)
@@ -34,7 +37,9 @@
  *   The value is ignored and can be anything.
  *  @output {Object} image A stream of captured images.
  *  @parameter {boolean} triggered If true, use triggered mode.
- *   Otherwise, use open-loop mode. This is a boolean that defaults to true.
+ *   Otherwise, use open-loop mode. This is a boolean that defaults to false.
+ *  @parameter {number} maxFrameRate If not triggered, this limits the output
+ *   to the specified number of frames per second. This is a number that defaults to 25.
  *  @parameter {string} camera The name of the camera to use.
  *   A list of available cameras is presented as options.
  *   This is a string that defaults to "default camera",
@@ -62,7 +67,11 @@ exports.setup = function () {
     this.output('image');
     this.parameter('triggered', {
         'type': 'boolean',
-        'value': true
+        'value': false
+    });
+    this.parameter('maxFrameRate', {
+        'type': 'number',
+        'value': 25
     });
     // NOTE: The following assumes that setup() is reinvoked whenever a parameter
     // value changes, since the camera will change and so will the available options.
@@ -108,8 +117,15 @@ exports.initialize = function () {
             camera.snapshot();
         });
     } else {
+        var maxFrameRate = self.getParameter('maxFrameRate');
+        var frameInterval = 1000.0/maxFrameRate; // In ms.
+        var lastFrameTime = 0;
         camera.on('image', function (image) {
-            self.send('image', image);
+            var currentTime = Date.now();
+            if (currentTime - lastFrameTime >= frameInterval) {
+                self.send('image', image);
+                lastFrameTime = currentTime;
+            }
         });
     }
 };
