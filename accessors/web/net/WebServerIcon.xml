@@ -17,7 +17,7 @@
         </property>
     </property>
     <property name="image" class="ptolemy.vergil.kernel.attributes.ImageAttribute">
-        <property name="source" class="ptolemy.data.expr.FileParameter" value="$CLASSPATH/org/ptolemy/ptango/lib/img/trapdoorfemale.gif">
+        <property name="source" class="ptolemy.data.expr.FileParameter" value="trapdoorfemale.gif">
         </property>
         <property name="scale" class="ptolemy.data.expr.Parameter" value="30.0">
         </property>
