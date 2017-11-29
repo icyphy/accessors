@@ -101,5 +101,7 @@ exports.initialize = function () {
 };
 
 exports.wrapup = function () {
-    mqttClient.end();
+    if (mqttClient) {
+        mqttClient.end();
+    }
 };
