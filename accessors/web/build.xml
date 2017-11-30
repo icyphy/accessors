@@ -497,6 +497,12 @@
     </exec>
   </target>
 
+  <target name="-jsdoc-command-message"
+          unless="${jsdoc.command.exists}">
+  <echo>The jsdoc command at ${jsdoc.command} does not exist, so we won't run ptdoc.
+  </echo>        
+  </target>
+
   <target name="-jsdoc-no-network-message"
           unless="${npmjs-org-is-up}">
     <echo>The node binary was not found or does not work or npmjs.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
@@ -581,14 +587,21 @@
   </target>
 
   <target name="ptdoc"
-          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message"
+          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message, -jsdoc-command-message"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
-          if="${node.works}">
+          if="${jsdoc.command.exists}">
     <echo>Invoke ${jsdoc.command} to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
     See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
     See jsdoc/jsdoc.json
     See jsdoc/plugins/accessorJSDocTags.js
     See jsdoc/templates/ptdoc/publish.js
+
+    If the ptdoc target fails, the there is likely a problem with node or npm.  It is possible
+    to use CapeCode even if the ptdoc target fails.
+    
+    If you are building from $PTII, try:
+        ant build-project build-bin
+
     </echo>
     <chmod file="${jsdoc.command}"
 	   perm="a+x"/>
