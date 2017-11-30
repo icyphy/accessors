@@ -216,7 +216,7 @@
        www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
   <target name="-check-if-npmjs-org-is-up"
           depends="-check-node-works"
-          if="${node.works}"
+          if="${npm.works}"
           >
     <echo>Check to see if https://www.npmjs.org is up.</echo>
     <condition property="npmjs-org-is-up">
@@ -500,7 +500,9 @@
   <target name="-jsdoc-command-message"
           unless="${jsdoc.command.exists}">
   <echo>The jsdoc command at ${jsdoc.command} does not exist, so we won't run ptdoc.
-  </echo>        
+    If ptdoc fails, and you are building from $PTII, try:
+        ant build-project build-bin
+  </echo>
   </target>
 
   <target name="-jsdoc-no-network-message"
@@ -587,7 +589,7 @@
   </target>
 
   <target name="ptdoc"
-          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message, -jsdoc-command-message"
+          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message, -ptdoc-no-npm-message, -jsdoc-command-message"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
           if="${jsdoc.command.exists}">
     <echo>Invoke ${jsdoc.command} to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
@@ -623,6 +625,10 @@
     <echo>The node binary was not found or does not work so there is no point in trying invoke ptdoc.</echo>
   </target>
 
+  <target name="-ptdoc-no-npm-message"
+          unless="${npm.works}">
+    <echo>The npm binary was not found or does not work so there is no point in trying invoke ptdoc.</echo>
+  </target>
 
   <target name="rusteduk"
 	  depends="-cargo-in-path"
