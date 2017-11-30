@@ -215,7 +215,7 @@
   <!-- Ideally we would check to see if the host that npm connects to is online, but
        www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
   <target name="-check-if-npmjs-org-is-up"
-          depends="-check-node-works"
+          depends="-check-node-works, -check-npm-works"
           if="${npm.works}"
           >
     <echo>Check to see if https://www.npmjs.org is up.</echo>
@@ -229,7 +229,16 @@
     <echo>To stop CapeCode from invoking jsdoc and svn, set the PT_NO_NET environment variable.  
     Under BASH:
         export PT_NO_NET=true
+    If ptdoc fails, and you are building from $PTII, try:
+        ant build-project build-bin
     </echo>
+  </target>
+
+  <!-- If we install jsdoc, then we need to use different properties because in
+       ant, properties are immutable.
+  -->
+  <target name="-check-jsdoc-again">
+    <available property="jsdoc.command.exists.again" file="${jsdoc.command}"/>
   </target>
 
   <target name="-check-mocha">
@@ -305,11 +314,14 @@
           if="${node.works}">
     <exec executable="${npm.executable}"
           failonerror="false"
-          timeout="${timeout.npm}">
+          timeout="${timeout.npm}"
+          resultproperty="npm.return.code">
       <arg value="--version"/>
     </exec>
     <condition property="npm.works">
-      <isfailure code="0"/>
+      <not>
+        <isfailure code="${npm.return.code}"/>
+      </not>
     </condition>
   </target>
 
@@ -498,7 +510,7 @@
   </target>
 
   <target name="-jsdoc-command-message"
-          unless="${jsdoc.command.exists}">
+          unless="${jsdoc.command.exists.again}">
   <echo>The jsdoc command at ${jsdoc.command} does not exist, so we won't run ptdoc.
     If ptdoc fails, and you are building from $PTII, try:
         ant build-project build-bin
@@ -589,9 +601,9 @@
   </target>
 
   <target name="ptdoc"
-          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message, -ptdoc-no-npm-message, -jsdoc-command-message"
+          depends="jsdoc-update, -check-node-works, -ptdoc-no-node-message, -ptdoc-no-npm-message, -check-jsdoc-again, -jsdoc-command-message"
           description="Invoke jsdoc to read *.js files and generate *PtDoc.xml files suitable for Ptolemy"
-          if="${jsdoc.command.exists}">
+          if="${jsdoc.command.exists.again}">
     <echo>Invoke ${jsdoc.command} to read *.js files and generate *PtDoc.xml files suitable for Ptolemy.
     See https://chess.eecs.berkeley.edu/ptexternal/wiki/Main/JSDocSystems
     See jsdoc/jsdoc.json
