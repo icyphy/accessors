@@ -88,7 +88,9 @@ exports.initialize = function () {
             });
         }
     }
-    updateURL();
+    // Do not update in initialize. This causes an error
+    // with the default URL if there is no network connection.
+    // updateURL();
 
     this.addInputHandler('clipURL', function () {
         updateURL();
