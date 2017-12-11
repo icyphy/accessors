@@ -141,14 +141,15 @@ exports.setup = function () {
 
 var handle;
 exports.initialize = function () {
-    handle = this.addInputHandler('input', function () {
-        var options = this.get('options');
-        var image = this.get('input');
+    var self = this;
+    handle = self.addInputHandler('input', function () {
+        var options = self.get('options');
+        var image = self.get('input');
         var result = aprilTags.filter(image, options);
-        this.send('output', result);
+        self.send('output', result);
         var tags = aprilTags.tags();
         if (tags) {
-            this.send('tags', tags);
+            self.send('tags', tags);
         }
     });
 };
