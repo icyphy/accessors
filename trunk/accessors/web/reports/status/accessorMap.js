@@ -121,10 +121,14 @@ module.exports = (function () {
                     if (accessorExtends[accessor].length > 0) {
                         accessorExtends[accessor].forEach(function(superclass) {
                             var modules = accessorsToModules[superclass + ".js"];
-                            if (modules.length > 0) {
-                                modules.forEach(function(module) {
-                                    accessorsToModules[accessor].push(module);
-                                });
+                            if (typeof modules === 'undefined') {
+                                console.log("checkIfDone(); accessorsToModules[" + superclass + "\".js\"] returned undefined?");
+                            } else {
+                                if (modules.length > 0) {
+                                    modules.forEach(function(module) {
+                                        accessorsToModules[accessor].push(module);
+                                    });
+                                }
                             }
                         });
                     }
