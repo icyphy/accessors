@@ -36,34 +36,13 @@ $(document).ready(function () {
         instantiateFunction();
     });
 
-    // Provide an example accessor.
-    document.getElementById('code').value =
-        "/** An accessor that outputs Hello, name . \n" +
-        "* @accessor tutorial/Hello \n" +
-        "* @input name The user's name. \n" +
-        "* @output greeting Hello, name . \n" +
-        "*/ \n" +
-        "\n" +
-        "exports.setup = function() { \n" +
-        "  this.input(\'name\'); \n" +
-        "  this.output(\'greeting\'); \n" +
-        "} \n" +
-        "\n" +
-        "exports.initialize = function() { \n" +
-        "  this.addInputHandler(\'name\', function() { \n" +
-        "    this.send(\'greeting\', 'Hello, ' + this.get(\'name\')); \n" +
-        "  }); \n" +
-        "}";
-
     var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         gutters: ["CodeMirror-lint-markers"],
         lineNumbers: true,
         mode: 'javascript'
     });
 
-    // Instantiate the first time.
-    // TODO: Have instantiate button so this doesn't run constantly?
-    // TODO: Better error reporting.
+    // Automatically instantiate the first time.
     text = editor.getValue();
     window.code = text;
 
@@ -78,11 +57,12 @@ $(document).ready(function () {
         id = matches[0].substring(9).trim();
     }
     generateAccessorHTML(id, 'accessorbox', text);
-
+	
     /** Instantiate the code in the editor textbox.  The function is named
      * instantiateFunction so as not to override any global instantiate().
      */
     var instantiateFunction = function () {
+    
         var line;
         var text = editor.getValue();
         var errorNode;
@@ -91,8 +71,6 @@ $(document).ready(function () {
 
         for (var i = 0; i < editor.lineCount(); i++) {
             line = editor.getLine(i);
-            console.log(line);
-            console.log(checkInput(line));
             if (!checkInput(line)) {
                 errorMarker = document.createElement('span');
                 errorMarker.innerHTML = '*';
@@ -109,7 +87,6 @@ $(document).ready(function () {
             editor.clearGutter('CodeMirror-lint-markers');
             document.getElementById('errorMessage').innerHTML = "";
 
-            // TODO: Have instantiate button so this doesn't run constantly?
             // TODO: Better error reporting.
             window.code = text;
 
@@ -123,17 +100,18 @@ $(document).ready(function () {
                 matches.length > 0) {
                 id = matches[0].substring(9).trim();
             }
+            
             generateAccessorHTML(id, 'accessorbox', text);
         }
     }
 
 });
 
-// TODO:  Also run code through javascript-lint to detect syntax errors.
-// red error marker though or just error message?
-
-//doc.setGutterMarker(line: integer|LineHandle, gutterID: string, value: Element) → LineHandle
-
+/** Check input for malicious Javascript.
+ * 
+ * @param text Javascript to check for malicious content.
+ * @returns false if unallowed Javascript is detected; true otherwise.
+ */
 function checkInput(text) {
     var errorMessage = document.getElementById('errorMessage');
 
