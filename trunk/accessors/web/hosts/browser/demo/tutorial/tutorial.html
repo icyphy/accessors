@@ -16,22 +16,62 @@
 	<link rel="stylesheet" type="text/css" href="tutorial.css">
 	
 	<script src="/accessors/hosts/browser/browser.js"> </script>
+	<script src="observer.js"> </script>
 	<script src="tutorial.js"> </script>
 	
 </head>
 
 <body>	
-<h1> Accessor Tutorial </h1>
-<div> <p> Let's start with a Hello World accessor.  </p>
-
- 	  <p> Try editing the code to say 'Howdy' instead of 'Hello'. 
- 	    	Click "Instantiate" to instantiate the accessor. </p>
- 	
+<div class="menu" id="menu">
+	<table id="menuTable"> 
+		<tr> 
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface Definition </a> </td>
+		</tr>
+	</table>
 </div>
-<div> Eventually this tutorial will cover many more topics!</div>
+
+<h1> Hello Accessors! </h1>
+<div> <p> <b> Accessors </b> are a technology for making IoT accessible through 
+open interfaces, an open developer community, and an open repository.  </p>
+<p> Accessors are <b> actors</b>.  Actors are software 
+components that react to streaming input events and produce streaming output 
+events.  Accessors wrap a (possibly remote) device or service with an actor interface.
+<p> 
+<b> Compose </b> heterogeneous devices and services quickly and predictably. 
+<b> Write once, run on any </b> capable accessor host (browser, Node.js, Java). </p>
+
+<p>
+Let's start with Hello World.  Here's an accessor that <b>inputs </b> a name 
+and <b> outputs</b> a personalized greeting.  It's instantiated for you.  Inputs 
+and outputs are listed in the table below.
+</p>
+<p> Type your name in the "name" input field and click "react to inputs". 
+ </div>
+ 
+ <div class="success" id="success">  
+ 	<span id="successMessage"> &nbsp; </span>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial2.html'"> Interface Definition -&gt;</button>
+ </div>
 
 <div class="codebox">
 	<textarea id="code" rows="10" cols="50">
+/** An accessor that outputs Hello, name.
+* @accessor tutorial/Hello
+* @input name The user's name.
+* @output greeting Hello, name .
+*/
+
+exports.setup = function() {
+   this.input('name');
+   this.output('greeting');
+}
+
+exports.initialize = function() {
+	this.addInputHandler('name', function() {
+		this.send('greeting', 'Hello, ' + this.get('name'));
+	});
+}
 	</textarea>
 	<div class="errorMessage" id="errorMessage">
 	</div>
@@ -45,11 +85,6 @@
 		
 	</div>
 </div>
-
-<!--  
-<div> TODO:  Sidebar with different parts of the tutorial</div>
-<div> Nicer page styling </div>
--->
 	
 </body>
 </html>

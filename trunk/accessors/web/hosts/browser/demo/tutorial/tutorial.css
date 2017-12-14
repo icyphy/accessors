@@ -1,5 +1,14 @@
 html {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.1em;
+}
+
+td {
+	padding: 10px;
+}
+
+.accessorDocumentation {
+	width: 40%;
 }
 
 .accessorTable th {
@@ -7,20 +16,26 @@ html {
 }
 
 .accessorTableHeader, .accessorTableData {
-	padding-top: 0.2em;
 	padding-bottom: 0.2em;
+	padding-top: 0.2em;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 }
 
-.accessorDocumentation {
-	width: 40%;
+.accessorTableTitle {
+	font-size: 1.2em;
+	margin: 0.1em;
 }
 
 .codebox {
-	width: 40%;
 	float: left;
 	padding: 1em;
+	width: 40%;
+}
+
+.codeText {
+	font-family: monospace;
+	font-size: 1.2em;
 }
 
 .CodeMirror {
@@ -31,8 +46,8 @@ html {
 }
 
 .copy {
-	width: 40%;
 	float: right;
+	width: 40%;
 }
 
 .error {
@@ -42,24 +57,56 @@ html {
 }
 
 .errorMessage {
-	padding : 0.5em;
 	border-left: 1px solid black;
 	border-right: 1px solid black;
 	border-bottom:  1px solid black;
 	color: #b22222;
+	padding : 0.5em;
+}
+
+.menu {
+	background-color: #0F325E;
+	color: #ffffff;
+}
+
+.menu a {
+	color: #ffffff;
+}
+
+.menu a:hover {
+	color: #F4DB82;
+}
+
+.success {
+	background-color: #eeeeee;
+	color: #0F325E;
+	padding: 0.6em;
+}
+
+.successMessage {
+	float: left;
+}
+
+.tutorialButton {
+	padding: 3px 12px;
+	font-size: 1em;
+	background-color: #0F325E;
+	border-radius: 8px;
+	color: #ffffff;
+	border: 1px gray;
+	text-align: center;
+	text-decoration: none;
+	float: right;
+	-webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.tutorialButton:hover {
+	background-color: #3A8AB6;
 }
 
 #accessorboxRevealCode, #accessorboxDocumentation {
 	display: none;
-}
-
-#accessorTitle {
-	font-size: 1.5em;
-}
-
-.accessorTableTitle {
-	font-size: 1.2em;
-	maring: 0.1em;
 }
 
 #accessorboxTables {
@@ -67,6 +114,18 @@ html {
 	margin: 0.1em;
 	padding: 0.1em;
 }
+
+#accessorTitle {
+	font-size: 1.5em;
+}
+
+#nextButton {
+	display: none;
+}
+
+
+
+
 
 
 

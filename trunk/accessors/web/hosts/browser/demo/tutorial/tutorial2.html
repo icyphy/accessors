@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Accessor Tutorial</title>
+	
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/addon/lint/lint.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/accessorStyle.css">
+	
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.js"></script>
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/mode/javascript/javascript.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="tutorial.css">
+	
+	<script src="/accessors/hosts/browser/browser.js"> </script>
+	<script src="observer2.js"> </script>
+	<script src="tutorial.js"> </script>
+	
+</head>
+
+<body>	
+<div class="menu" id="menu">
+	<table id="menuTable"> 
+		<tr> 
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface Definition </a> </td>
+		</tr>
+	</table>
+</div>
+
+<h1> Accessor Interface Definition </h1>
+<div> <p> An <b> accessor interface </b> specifies what it requires of an 
+accessor host and what its inputs, outputs and parameters are.  It may include: </div>
+<ul> <li> <span class="codeText"> require</span>: Modules required by the accessor. </li>
+	 <li> An <span class="codeText"> exports.setup()</span> function that can invoke the following functions: 
+	 	 <ul> <li> <span class="codeText"> input</span>: Specify an input to the accessor. </li>
+	 	      <li> <span class="codeText"> output</span>: Specify an output from the accessor. </li> 
+	 	      <li> <span class="codeText"> parameter</span>: Specify a parameter for the accessor. </li> 
+	 	      <li> <span class="codeText"> implement</span>:  Declare that the accessor implements another
+interface. </li>
+	 	     <li> <span class="codeText"> extend</span>: Declare that the accessor extends another accessor. </li> </ul> </li>
+</ul>
+
+<div> <p> Let's explore <span class="codeText"> input</span>, <span class="codeText"> output</span> and <span class="codeText"> parameter</span>. 
+Here's an accessor that takes a numeric input, doubles it, and sends the result to an output. </p>
+
+<p> First, there's a <b> comment</b> specifying the functionality, name, and interface (any inputs, outputs, parameters, implements and extends).
+Documentation is automatically generated from the comment for accessors in the repository. <p>
+
+<p> Next comes a <b><span class="codeText"> setup()</span></b> function.  
+For this accessor, we have one input, one output, and one parameter named <span class="codeText" > multiplier</span>.
+<span class="codeText" > multiplier</span> has a specific type, a <span class="codeText"> number</span>, and an initial value, <span class="codeText">2</span>.</p>
+
+<p> Finally, we set up an input handler in the <b><span class="codeText"> initialize()</span></b> function. 
+First, capture the value of <span class="codeText">this</span> in a variable called <span class="codeText">self</span>, a 
+common Javascript idiom.  Any sub-scoped code can call accessor functions using the <span class="codeText">self</span> object. 
+Then, call <span class="codeText">this.addInputHandler()</span> to handled
+incoming values to <span class="codeText">input</span>.  The accessor 
+<span class="codeText">self.get()</span>s the input,
+<span class="codeText"> self.getParameter()</span>s the multiplier,
+and <span class="codeText">self.send()</span>s the result to the output. 
+</p>
+
+<p> Try renaming the output to <span class="codeText">tripled</span> and changing 
+the multiplier to <span class="codeText">3</span>, then click 'Instantiate'.  
+</p>
+</div>
+ 
+ <div class="success" id="success">  
+ 	<span id="successMessage"> &nbsp; </span>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial.html'"> Back To Beginning </button>
+ </div>
+
+<div class="codebox">
+	<textarea id="code" rows="10" cols="50">
+/** An accessor that outputs the doubled input.
+* @accessor tutorial/Doubler
+* @input input A number.
+* @output doubled The doubled input.
+* @parameter multiplier The multiplier; defaults to 2.
+*/
+
+exports.setup = function () {
+	this.input('input');
+	this.output('doubled');
+	this.parameter('multiplier', {
+		'type' : 'number',
+		'value' : 2
+	});
+};
+
+exports.initialize = function () {
+	var self = this;
+	this.addInputHandler('input', function () {
+		self.send('doubled', self.get('input') * self.getParameter('multiplier'));
+	});
+};
+	</textarea>
+	<div class="errorMessage" id="errorMessage">
+	</div>
+</div>
+
+<div id="resultbox">
+	<div> <button type="button" id="button" class="accessorButton ui-btn ui-corner-all" style="margin-top:1em;margin-bottom:0.5em;"> Instantiate </button>
+	</div>
+	<hr>
+	<div id="accessorbox">
+		
+	</div>
+</div>
+	
+</body>
+</html>
