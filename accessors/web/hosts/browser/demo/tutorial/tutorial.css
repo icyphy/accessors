@@ -3,10 +3,6 @@ html {
 	font-size: 1.1em;
 }
 
-td {
-	padding: 10px;
-}
-
 .accessorDocumentation {
 	width: 40%;
 }
@@ -69,12 +65,18 @@ td {
 	color: #ffffff;
 }
 
-.menu a {
+#menuTable a {
 	color: #ffffff;
 }
 
-.menu a:hover {
+#menuTable a:hover {
 	color: #F4DB82;
+}
+
+#menuTable td {
+	border: none;
+	border-collapse: separate;
+	padding: 8px;
 }
 
 .success {
