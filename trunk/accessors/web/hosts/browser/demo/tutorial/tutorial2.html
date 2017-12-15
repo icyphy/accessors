@@ -25,14 +25,14 @@
 <div class="menu" id="menuDiv">
 	<table id="menuTable"> 
 		<tr> 
-			<td> <a href="tutorial.html">  Hello World </a>  </td>
-			<td> <a href="tutorial2.html"> Interface Definition </a> </td>
+			<td> <a id="a1" href="tutorial.html">  Hello World </a>  </td>
+			<td> <a id="a2" href="tutorial2.html"> Interface </a> </td>
 		</tr>
 	</table>
 </div>
 
 <h1> Accessor Interface Definition </h1>
-<div class="description>" <p> An <b> accessor interface </b> specifies what it requires of an 
+<div class="description"> <div> <p> An <b> accessor interface </b> specifies what it requires of an 
 accessor host and what its inputs, outputs and parameters are.  It may include: </div>
 <ul> <li> <span class="codeText"> require</span>: Modules required by the accessor. </li>
 	 <li> An <span class="codeText"> exports.setup()</span> function that can invoke the following functions: 
@@ -43,6 +43,7 @@ accessor host and what its inputs, outputs and parameters are.  It may include: 
 interface. </li>
 	 	     <li> <span class="codeText"> extend</span>: Declare that the accessor extends another accessor. </li> </ul> </li>
 </ul>
+</div>
 
 <div> <p> Let's explore <span class="codeText"> input</span>, <span class="codeText"> output</span> and <span class="codeText"> parameter</span>. 
 Here's an accessor that takes a numeric input, doubles it, and sends the result to an output. </p>
@@ -71,7 +72,7 @@ the multiplier to <span class="codeText">3</span>, then click 'Instantiate'.
  
  <div class="success" id="success">  
  	<span id="successMessage"> &nbsp; </span>
- 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial.html'"> Back To Beginning </button>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial.html'"> Beginning </button>
  </div>
 
 <div class="codebox">
