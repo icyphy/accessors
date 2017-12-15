@@ -5,7 +5,7 @@
 .accessorDirectory {
     padding: 10px;
     font-size: 100%;
-    background-color: #33060FF;
+    background-color: #0F325E;
     color: #f8da73;
 }
 
@@ -26,7 +26,7 @@
 	width:170px;
 	text-indent: 10px;
 	color:#e7c254;
-	background:#33060FF;
+	background-color: #0F325E;
 	text-decoration:none;
 }
 
@@ -49,7 +49,7 @@
 }
 /* Table style. */
 .accessorTableHeader {
-    background-color: #33060FF;
+    background-color: #0F325E;
     color: #f8da73;
     text-align: left;
     padding: 3px;
