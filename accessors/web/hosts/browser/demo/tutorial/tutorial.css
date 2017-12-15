@@ -120,15 +120,15 @@ html {
 	font-size: 0.9em;
 }
 
-#menuTable a.link {
+#a1.link, #a2.link {
 	color: #ffffff;
 }
 
-#menuTable a:active, #menuTable a:visited {
+#a1:active, #a1:visited, #a2:active, #a2:visited {
 	color: #F4DB82;
 }
 
-#menuTable a:hover {
+#a1:hover, #a2:hover  {
 	color: #F4DB82;
 	font-weight: bold;
 }
