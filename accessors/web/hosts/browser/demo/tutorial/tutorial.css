@@ -124,7 +124,7 @@ a#a1:link, a#a2:link {
 	color: #ffffff;
 }
 
-a#a1active, a#a1:visited, a#a2:active, a#a2:visited {
+a#a1:active, a#a1:visited, a#a2:active, a#a2:visited {
 	color: #F4DB82;
 }
 
