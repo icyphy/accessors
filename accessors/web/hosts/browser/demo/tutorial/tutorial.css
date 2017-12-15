@@ -46,6 +46,11 @@ html {
 	width: 40%;
 }
 
+.description p {
+	font-face: sans-serif;
+	margin: 1em;
+}
+
 .error {
 	color: #b22222;
 	font-weight: bold;
@@ -58,25 +63,6 @@ html {
 	border-bottom:  1px solid black;
 	color: #b22222;
 	padding : 0.5em;
-}
-
-.menu {
-	background-color: #0F325E;
-	color: #ffffff;
-}
-
-#menuTable a {
-	color: #ffffff;
-}
-
-#menuTable a:hover {
-	color: #F4DB82;
-}
-
-#menuTable td {
-	border: none;
-	border-collapse: separate;
-	padding: 8px;
 }
 
 .success {
@@ -123,6 +109,38 @@ html {
 
 #nextButton {
 	display: none;
+}
+
+#menuDiv {
+	background-color: #0F325E;
+	border: none;
+	color: #ffffff;
+	border-bottom: none;
+	border-right: none;
+	font-size: 0.9em;
+}
+
+#menuTable a.link {
+	color: #ffffff;
+}
+
+#menuTable a:active, #menuTable a:visited {
+	color: #F4DB82;
+}
+
+#menuTable a:hover {
+	color: #F4DB82;
+	font-weight: bold;
+}
+
+#menuTable {
+	border: none;
+	border-collapse: separate;
+}
+
+#menuTable td {
+	border: none;
+	padding: 10px;
 }
 
 
