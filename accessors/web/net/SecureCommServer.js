@@ -75,8 +75,8 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var iotAuth = require('iotAuth');
-var dataConverter = require('dataConverter');
+var iotAuth = require('@accessors-modules/iot-auth');
+//var dataConverter = require('dataConverter');
 var msgType = iotAuth.msgType;
 
 exports.setup = function () {
