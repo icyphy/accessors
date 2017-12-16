@@ -85,13 +85,16 @@
 /*jshint globalstrict: true */
 "use strict";
 
-var iotAuth = require('iotAuth');
-var dataConverter = require('dataConverter');
+var iotAuth = require('@accessors-modules/iot-auth');
+//var dataConverter = require('dataConverter');
 var msgType = iotAuth.msgType;
 
 exports.setup = function () {
     // Inputs and outputs
-    this.input('serverHostPort');
+    this.input('serverHostPort', {
+        type: 'JSON',
+        value: {host: 'localhost', port: 21200}
+    });
     this.input('toSend');
     this.output('connected', {
         type: 'boolean',
