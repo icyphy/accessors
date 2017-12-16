@@ -24,9 +24,8 @@ html {
 }
 
 .codebox {
-	float: left;
+	display: block;
 	padding: 1em;
-	width: 40%;
 }
 
 .codeText {
