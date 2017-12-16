@@ -121,20 +121,20 @@ html {
 }
 
 #menuDiv a:link {
-	color: #ffffff;
-}
-
-#menuDiv a:active {
-	color: #F4DB82;
+	color: #ffffff !important;
 }
 
 #menuDiv a:visited {
-	color: #F4DB82;
+	color: #F4DB82 !important;
 }
 
 #menuDiv a:hover {
-	color: #F4DB82;
+	color: #F4DB82 !important;
 	font-weight: bold;
+}
+
+#menuDiv a:active {
+	color: #F4DB82 !important;
 }
 
 #menuTable {
