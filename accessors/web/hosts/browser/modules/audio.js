@@ -94,8 +94,10 @@ exports.ClipPlayer = function(url) {
 	
     if (url !== null && typeof url !== 'undefined' && url != "") {
     	try {
+    		console.log('url 0 ' + url[0]);
+    		console.log('url end ' + url[url.length -1]);
     		// If quotation marks at beginning/end, remove them.
-    		if (url[0] === '"' && url[url.length - 1] === '"') {
+    		if (url[0] == '"' && url[url.length - 1] == '"') {
     			url = url.substring(1, url.length - 1);
     		}
     		
