@@ -100,7 +100,7 @@ exports.ClipPlayer = function(url) {
     		// working on terraswarm site, so just assume there are quotes.
     		// Browser throws a different exception without them anyway.
     		//this.clip = new Audio(url.substring(1, url.length - 1));
-    		var testURL = "https://ptolemy.eecs.berkeley.edu/mp3/USAD2016_06-RhapsodyInBlueTrimmed.mp3";
+    		var testURL = "http://www.kozco.com/tech/organfinale.mp3";
     		this.clip = new Audio(testURL);
     		this.clip.onended = function() {
     			self.isPlaying = false;
