@@ -37,6 +37,8 @@
 /*jshint globalstrict: true*/
 "use strict";
 
+var EventEmitter = require('events').EventEmitter;
+
 /** Construct an instance of an Player object type. This should be instantiated in your
  *  JavaScript code as
  *  <pre>
@@ -86,28 +88,40 @@ exports.Player.prototype.stop = function () {
 
 /** Create a ClipPlayer.
  */
-exports.ClipPlayer = function () {
-    this.clip = null;
-};
-
-/** Load audio from the specified URL.
- * @param url  The URL to load audio from.
- */
-exports.ClipPlayer.prototype.load = function (url) {
-
-    try {
-        this.clip = new Audio(url);
-
-    } catch (err) {
-        error("Error connecting to audio URL " + url);
+exports.ClipPlayer = function(url) {
+	var self = this;
+	this.isPlaying = false;
+	
+    if (url !== null && typeof url !== 'undefined' && url != "") {
+    	try {
+    		// If quotation marks at beginning/end, remove them.
+    		if (url[0] === '"' && url[url.length - 1] === '"') {
+    			url = url.substring(1, url.length - 1);
+    		}
+    		
+    		this.clip = new Audio(url);
+    		
+    		this.clip.onended = function() {
+    			self.isPlaying = false;
+    			self.emit('done');
+    		};
+    	} catch (err) {
+    		console.log('err' + err);
+    		error("Error connecting to audio URL " + url);
+    	}
+    } else {
+    	this.clip = null;
     }
 };
+
+util.inherits(exports.ClipPlayer, EventEmitter);
 
 /** Play currently loaded audio clip.
  */
 exports.ClipPlayer.prototype.play = function () {
     if (this.clip !== null) {
         this.clip.play();
+        this.isPlaying = true;
     } else {
         error("No audio clip to play.  Please load a url first.");
     }
@@ -117,6 +131,10 @@ exports.ClipPlayer.prototype.play = function () {
 exports.ClipPlayer.prototype.stop = function () {
     if (this.clip !== null) {
         this.clip.pause();
+        if (this.isPlaying) {
+        	this.isPlaying = false;
+        	this.emit('done');
+        }
     }
 };
 
