@@ -96,12 +96,13 @@ exports.ClipPlayer = function(url) {
     	try {
     		// If quotation marks at beginning/end, remove them.
     		// Otherwise, Audio(url) treats absolute urls as relative.
-    		// FIXME:  Ideally we should check for quotes, but it's not
-    		// working on terraswarm site, so just assume there are quotes.
-    		// Browser throws a different exception without them anyway.
-    		//this.clip = new Audio(url.substring(1, url.length - 1));
-    		var testURL = "http://www.kozco.com/tech/organfinale.mp3";
-    		this.clip = new Audio(testURL);
+    		if ( (url[0] == '"' || url[0] == '\'') && 
+    				(url[url.length - 1] == '"' || url[url.length -1] == '\'')){
+    			url = url.substring(1, url.length - 1);
+    		}
+    		
+    		this.clip = new Audio(url);
+    		
     		this.clip.onended = function() {
     			self.isPlaying = false;
     			self.emit('done');
