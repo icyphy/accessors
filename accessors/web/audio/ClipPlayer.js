@@ -48,7 +48,9 @@ var audio = require("audio");
 
 /** Create the inputs and outputs for this accessor. */
 exports.setup = function () {
-    this.input('start');
+    this.input('start', {
+    	'value' : true
+    });
     this.input('stop');
     // Use default on icyphy so that
     // https://www.icyphy.org/accessors/library/index.html?accessor=audio.ClipPlayer
