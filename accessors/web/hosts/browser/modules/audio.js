@@ -94,10 +94,9 @@ exports.ClipPlayer = function(url) {
 	
     if (url !== null && typeof url !== 'undefined' && url != "") {
     	try {
-    		console.log('url 0 ' + url[0]);
-    		console.log('url end ' + url[url.length -1]);
     		// If quotation marks at beginning/end, remove them.
-    		if (url[0] == '"' && url[url.length - 1] == '"') {
+    		// Otherwise, Audio(url) treats absolute urls as relative.
+    		if (url.charAt(0) == '"' && url.charAt(url.length - 1) == '"') {
     			url = url.substring(1, url.length - 1);
     		}
     		
@@ -108,8 +107,18 @@ exports.ClipPlayer = function(url) {
     			self.emit('done');
     		};
     	} catch (err) {
-    		console.log('err' + err);
-    		error("Error connecting to audio URL " + url);
+    		// The quotation mark check does not seem to work on terraswarm site.
+    		// So, just try substring minus first and last characters.
+    		try {
+    			self.clip = new Audio(url.substring(1, url.length - 1));
+    			
+        		self.clip.onended = function() {
+        			self.isPlaying = false;
+        			self.emit('done');
+        		};
+    		} catch (err2) {
+        		error("Error connecting to audio URL " + url + ", " + err2);
+    		}
     	}
     } else {
     	this.clip = null;
