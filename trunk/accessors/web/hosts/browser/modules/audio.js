@@ -99,8 +99,9 @@ exports.ClipPlayer = function(url) {
     		// FIXME:  Ideally we should check for quotes, but it's not
     		// working on terraswarm site, so just assume there are quotes.
     		// Browser throws a different exception without them anyway.
-    		this.clip = new Audio(url.substring(1, url.length - 1));
-    		
+    		//this.clip = new Audio(url.substring(1, url.length - 1));
+    		var testURL = "https://ptolemy.eecs.berkeley.edu/mp3/USAD2016_06-RhapsodyInBlueTrimmed.mp3";
+    		this.clip = new Audio(testURL);
     		this.clip.onended = function() {
     			self.isPlaying = false;
     			self.emit('done');
