@@ -96,7 +96,7 @@ exports.ClipPlayer = function(url) {
     	try {
     		// If quotation marks at beginning/end, remove them.
     		// Otherwise, Audio(url) treats absolute urls as relative.
-    		if (url.charAt(0) == '"' && url.charAt(url.length - 1) == '"') {
+    		if (url.charAt(0) == '\"') {
     			url = url.substring(1, url.length - 1);
     		}
     		
@@ -107,18 +107,7 @@ exports.ClipPlayer = function(url) {
     			self.emit('done');
     		};
     	} catch (err) {
-    		// The quotation mark check does not seem to work on terraswarm site.
-    		// So, just try substring minus first and last characters.
-    		try {
-    			self.clip = new Audio(url.substring(1, url.length - 1));
-    			
-        		self.clip.onended = function() {
-        			self.isPlaying = false;
-        			self.emit('done');
-        		};
-    		} catch (err2) {
-        		error("Error connecting to audio URL " + url + ", " + err2);
-    		}
+    		error("Error connecting to audio URL " + url + ", " + err);
     	}
     } else {
     	this.clip = null;
