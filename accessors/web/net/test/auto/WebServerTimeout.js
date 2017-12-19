@@ -29,7 +29,7 @@ exports.setup = function () {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', [{"body":null,"method":"GET","path":"/","requestID":1}]);
+    TrainableTest2.setParameter('correctValues', [{"headers":{"Connection":"close","Host":"localhost:8097"},"method":"GET","params":null,"path":"/","requestID":1}]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
