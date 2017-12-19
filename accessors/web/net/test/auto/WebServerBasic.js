@@ -19,7 +19,7 @@ exports.setup = function () {
     REST.setDefault('options', {"url" : "http://localhost:8096"});
     REST.setDefault('command', "");
     REST.setDefault('arguments', "");
-    REST.setParameter('timeout', 5000);
+    REST.setParameter('timeout', 8000);
     REST.setParameter('outputCompleteResponseOnly', true);
 
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
@@ -40,7 +40,7 @@ exports.setup = function () {
 
     // Start: TrainableTest2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest2 = this.instantiate('TrainableTest2', 'test/TrainableTest.js');
-    TrainableTest2.setParameter('correctValues', [{"body":null,"method":"GET","path":"/","requestID":1}]);
+    TrainableTest2.setParameter('correctValues', [{"headers":{"Connection":"close","Host":"localhost:8096"},"method":"GET","params":null,"path":"/","requestID":1}]);
     TrainableTest2.setParameter('trainingMode', false);
     TrainableTest2.setParameter('tolerance', 1.0E-9);
 
