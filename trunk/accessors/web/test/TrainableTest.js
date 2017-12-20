@@ -83,6 +83,60 @@ var wrappedUp = false;
 // So we can test this in hosts/node/test/mocha/testMain.js to test that wrapup was called.
 exports.wrappedUp = wrappedUp;
 
+// Return true if the object has the same properties, in any order.
+// Based on http://procbits.com/2012/01/19/comparing-two-javascript-objects
+var objectPropertiesEqual = function(object1, object2) {
+    var property;
+
+    // Check that all the properties in object2 are present in object.
+    for ( property in object2) {
+        if (typeof object1[property] === 'undefined') {
+            return false;
+        }
+    }
+
+    // Check that all the properties in object1 are preset in object2.
+    for (property in object1) {
+        if (typeof object2[property] === 'undefined') {
+            return false;
+        }
+    }
+
+    // If a property is an object1, the recursively call this function.
+    // If a property is a function, then do a string comparison.
+    for (property in object2) {
+        if (object2[property]) {
+            switch (typeof object2[property]) {
+            case 'object1':
+                // Here's the recursive bit
+                if (!objectPropertiesEqual(object1[property], object2[property])) {
+                    return false;
+                }
+                break;
+            case 'function':
+                if (typeof object1[property] ==='undefined' ||
+                    (property != 'object1PropertiesEqual' &&
+                     object2[property].toString() != object1[property].toString())) {
+                    return false;
+                }
+                break;
+            default:
+                if (object2[property] !== object1[property]) {
+                    return false;
+                }
+            }
+        } else {
+            // FIXME: I'm not sure if this case is ever used, but it was in 
+            // http://procbits.com/2012/01/19/comparing-two-javascript-objects
+            if (object1[property]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 /** Create an input handler to compare the input with the appropriate element(s)
  *  from correctValues.
  */
@@ -119,9 +173,9 @@ exports.initialize = function () {
                 typeof inputValue !== 'string') {
                 if (inputValue === null) {
                     throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
-                        ' tokens, the value of the input was null?  ' +
-                        'Perhaps the input is not connected?'
-                    );
+                                    ' tokens, the value of the input was null?  ' +
+                                    'Perhaps the input is not connected?'
+                                   );
                 }
                 cache = [];
                 inputValueValue = JSON.stringify(inputValue, function (key, value) {
@@ -142,9 +196,9 @@ exports.initialize = function () {
 
 
                 throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
-                    ' tokens, the input "' + inputValue +
-                    '" is neither a number nor a string, it is a ' +
-                    typeof inputValue + ' with value ' + inputValueValue);
+                                ' tokens, the input "' + inputValue +
+                                '" is neither a number nor a string, it is a ' +
+                                typeof inputValue + ' with value ' + inputValueValue);
             }
             if (typeof referenceToken === 'boolean') {
                 // If the input not a boolean, then throw an error.
@@ -238,65 +292,80 @@ exports.initialize = function () {
                     }
                 }
             } else if (typeof referenceToken === 'object') {
-                cache = [];
-                inputValueValue = JSON.stringify(inputValue, function (key, value) {
-                    if (typeof value === 'object' && value !== null) {
-                        if (cache.indexOf(value) !== -1) {
-                            // Circular reference found, discard key
-                            return;
+                // Sadly, in JavaScript, objects that have the same
+                // properties, but in a different order are not
+                // consider equal in that Object.is() will return
+                // false.  However, Ptolemy RecordTokens are by
+                // default unordered (unless they are
+                // OrderedRecordTokens), So, we have a function that
+                // does a deep comparison and ignores differences in
+                // property order.
+                if (objectPropertiesEqual(inputValue, referenceToken)) {
+                    // The objects are not the same.
+
+                    // Generate string representations of the values
+                    // so that the user can possibly tell what went
+                    // wrong.
+                    cache = [];
+                    inputValueValue = JSON.stringify(inputValue, function (key, value) {
+                        if (typeof value === 'object' && value !== null) {
+                            if (cache.indexOf(value) !== -1) {
+                                // Circular reference found, discard key
+                                return;
+                            }
+                            // Store value in our collection
+                            cache.push(value);
                         }
-                        // Store value in our collection
-                        cache.push(value);
-                    }
-                    return value;
-                });
-                cache = [];
-                var referenceTokenValue = JSON.stringify(referenceToken, function (key, value) {
-                    if (typeof value === 'object' && value !== null) {
-                        if (cache.indexOf(value) !== -1) {
-                            // Circular reference found, discard key
-                            return;
+                        return value;
+                    });
+                    cache = [];
+                    var referenceTokenValue = JSON.stringify(referenceToken, function (key, value) {
+                        if (typeof value === 'object' && value !== null) {
+                            if (cache.indexOf(value) !== -1) {
+                                // Circular reference found, discard key
+                                return;
+                            }
+                            // Store value in our collection
+                            cache.push(value);
                         }
-                        // Store value in our collection
-                        cache.push(value);
-                    }
-                    return value;
-                });
+                        return value;
+                    });
 
-                cache = null; // Enable garbage collection
+                    cache = null; // Enable garbage collection
 
-                // If we are comparing longs from CapeCode, then the values will be like "1L",
-                // and stringify will return undefined.
-                if (inputValueValue === undefined) {
-                    inputValueValue = inputValue;
-                }
-                if (referenceTokenValue === undefined) {
-                    referenceTokenValue = referenceToken;
-                }
+                    // If we are comparing longs from CapeCode, then the values will be like "1L",
+                    // and stringify will return undefined.
+                    if (inputValueValue === undefined) {
+                        inputValueValue = inputValue;
+                    }
+                    if (referenceTokenValue === undefined) {
+                        referenceTokenValue = referenceToken;
+                    }
 
-                if (inputValueValue !== referenceTokenValue) {
-                    // inputValueValue could still be undefined here if inputValue
-                    // was undefined.
-                    if (inputValueValue !== undefined && inputValueValue.length > 100) {
-                        inputValueValue = inputValueValue.substring(0, 100) + '...';
-                    }
-                    if (referenceTokenValue !== undefined && referenceTokenValue.length > 100) {
-                        referenceTokenValue = referenceTokenValue.substring(0, 100) + '...';
-                    }
-                    // Deal with referenceTokens with value 1L.
-                    if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
-                        inputValueValue.toString() !== referenceTokenValue.toString) {
-                        throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
-                                        'tokens, the input "' + inputValueValue +
-                                        '" is !== to the expected value "' +
-                                        referenceTokenValue + '" typeof inputValueValue: ' + typeof inputValueValue + ' typeof referenceTokenValue: ' + typeof referenceTokenValue);
+                    if (inputValueValue !== referenceTokenValue) {
+                        // inputValueValue could still be undefined here if inputValue
+                        // was undefined.
+                        if (inputValueValue !== undefined && inputValueValue.length > 100) {
+                            inputValueValue = inputValueValue.substring(0, 100) + '...';
+                        }
+                        if (referenceTokenValue !== undefined && referenceTokenValue.length > 100) {
+                            referenceTokenValue = referenceTokenValue.substring(0, 100) + '...';
+                        }
+                        // Deal with referenceTokens with value 1L.
+                        if (typeof inputValueValue !== 'object' || typeof referenceTokenValue !== 'object' &&
+                            inputValueValue.toString() !== referenceTokenValue.toString) {
+                            throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
+                                            ' tokens, the input Object \n"' + inputValueValue +
+                                            '" is !== to the expected value Object\n"' +
+                                            referenceTokenValue);
+                        }
                     }
                 }
             } else {
                 throw new Error(self.accessorName + ': After seeing ' + numberOfInputTokensSeen +
-                    ' tokens, the referenceToken "' + referenceToken +
-                    '" is not a number, it is a ' +
-                    typeof referenceToken);
+                                ' tokens, the referenceToken "' + referenceToken +
+                                '" is not a number, it is a ' +
+                                typeof referenceToken);
             }
             numberOfInputTokensSeen += 1;
             // If we are past the end of the expected inputs, then read
@@ -321,17 +390,17 @@ exports.wrapup = function () {
             if (!inputHandled) {
                 initialized = false;
                 throw new Error(this.accessorName + ': The input handler of this accessor was never invoked. ' +
-                    'Usually, this is an error indicating that ' +
-                    'starvation is occurring.');
+                                'Usually, this is an error indicating that ' +
+                                'starvation is occurring.');
             }
             var correctValuesValues = this.getParameter('correctValues');
             if (numberOfInputTokensSeen < correctValuesValues.length) {
                 throw new Error(this.accessorName + ': The test produced only ' +
-                    numberOfInputTokensSeen +
-                    ' tokens, yet the correctValues parameter was ' +
-                    'expecting ' +
-                    correctValuesValues.length +
-                    ' tokens');
+                                numberOfInputTokensSeen +
+                                ' tokens, yet the correctValues parameter was ' +
+                                'expecting ' +
+                                correctValuesValues.length +
+                                ' tokens');
             }
         }
         initialized = false;
