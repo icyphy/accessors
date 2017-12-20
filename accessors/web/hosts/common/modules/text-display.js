@@ -29,7 +29,7 @@
  * This basic implementation just prints to the console.
  * Each line is prefixed with the title and a colon, space.
  *
- * @module text-display
+ * @module @accessors-modules/text-display
  * @author Edward A. Lee
  * @version $$Id$$
  */
@@ -39,6 +39,24 @@
 /*globals actor, Java, exports, require, util */
 /*jshint globalstrict: true*/
 "use strict";
+
+// Note that the text-display module is common to all hosts, so it is
+// found at accessors/web/hosts/common/modules/text-display.js.
+
+// For example, the Node host has a symbolic link:The
+
+// bash-3.2$ ls -ld ./web/node_modules/@accessors-modules
+// lrwxr-xr-x  1 cxh  staff  23 Dec 13 17:38 ./web/node_modules/@accessors-modules -> ../hosts/common/modules
+
+// The AccessorSSHCodeGenerator may expect to install
+// the @accessor-modules/text-display module.  This module was
+// uploaded to npm by creating a text-display subdirectory, creating
+// the package.json file with
+
+// accessors/web/hosts/node/bin/mkPackageJson hosts/common/modules/text-display 
+
+// editing the hosts/common/modules/text-display/package.json and then
+// uploading to npm as per accessors/web/README.md.
 
 exports.TextDisplay = function (title) {
     this.title = title;
