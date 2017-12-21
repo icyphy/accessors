@@ -39,9 +39,9 @@ if (exports.initialize) {
     exports.initialize = function() {
         originalInitialize.call(this);
         this.stopAt(10000.0);
-    }
+    };
 } else {
     exports.initialize = function() {
         this.stopAt(10000.0);
-    }
+    };
 }

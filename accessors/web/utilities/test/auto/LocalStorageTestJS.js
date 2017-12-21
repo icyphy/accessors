@@ -70,9 +70,9 @@ if (exports.initialize) {
     exports.initialize = function() {
         originalInitialize.call(this);
         this.stopAt(9000.0);
-    }
+    };
 } else {
     exports.initialize = function() {
         this.stopAt(9000.0);
-    }
+    };
 }
