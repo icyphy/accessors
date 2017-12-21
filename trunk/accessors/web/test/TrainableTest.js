@@ -135,7 +135,7 @@ var objectPropertiesEqual = function(object1, object2) {
     }
 
     return true;
-}
+};
 
 /** Create an input handler to compare the input with the appropriate element(s)
  *  from correctValues.
