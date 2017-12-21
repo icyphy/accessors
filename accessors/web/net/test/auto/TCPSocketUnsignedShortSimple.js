@@ -61,7 +61,7 @@ exports.setup = function () {
     // Start: JavaScriptConst: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
     // We probably need to do something with the bindings.
-    var JavaScriptConst = this.instantiateFromCode('JavaScriptConst', unescape('/**%20Output%20a%20const%0A%20*%0A%20*%20%20@accessor%20test/Const%0A%20*%20%20@input%20trigger%20The%20trigger%0A%20*%20%20@output%20output%20The%20output%0A%20*%20%20@param%20step%20The%20amount%20by%20which%20the%20output%20is%20incremented.%20The%0A%20*%20%20default%20is%201.%0A%20*%20%20@author%20Christopher%20Brooks%0A%20*%20%20@version%20%24%24Id%3A%20TCPSocketUnsignedShortSimple.xml%2077275%202017-11-24%2017%3A04%3A06Z%20cxh%20%24%24%0A%20*/%0Aexports.setup%20%3D%20function%28%29%20%7B%0A%20%20%20%20this.input%28%27trigger%27%29%3B%0A%20%20%20%20this.output%28%27output%27%29%3B%0A%7D%3B%0A%0Aexports.fire%20%3D%20function%28%29%20%7B%0A%09var%20value%20%3D%20%5B-1%2C%200%2C%201%2C%2065535%2C%2065536%2C%202%5D%3B%0A%20%20%20%20this.send%28%27output%27%2C%20value%29%3B%0A%7D%3B'));
+    var JavaScriptConst = this.instantiateFromCode('JavaScriptConst', unescape('/**%20Output%20a%20const%0A%20*%0A%20*%20%20@accessor%20test/Const%0A%20*%20%20@input%20trigger%20The%20trigger%0A%20*%20%20@output%20output%20The%20output%0A%20*%20%20@param%20step%20The%20amount%20by%20which%20the%20output%20is%20incremented.%20The%0A%20*%20%20default%20is%201.%0A%20*%20%20@author%20Christopher%20Brooks%0A%20*%20%20@version%20%24%24Id%3A%20TCPSocketUnsignedShortSimple.xml%2077377%202017-12-20%2014%3A26%3A49Z%20cxh%20%24%24%0A%20*/%0Aexports.setup%20%3D%20function%28%29%20%7B%0A%20%20%20%20this.input%28%27trigger%27%29%3B%0A%20%20%20%20this.output%28%27output%27%29%3B%0A%7D%3B%0A%0Aexports.fire%20%3D%20function%28%29%20%7B%0A%09var%20value%20%3D%20%5B-1%2C%200%2C%201%2C%2065535%2C%2065536%2C%202%5D%3B%0A%20%20%20%20this.send%28%27output%27%2C%20value%29%3B%0A%7D%3B'));
 
     // Connections: TCPSocketUnsignedShortSimple: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TCPSocketServer, 'listening', TCPSocketClient, 'port');
@@ -77,9 +77,9 @@ if (exports.initialize) {
     exports.initialize = function() {
         originalInitialize.call(this);
         this.stopAt(2000.0);
-    }
+    };
 } else {
     exports.initialize = function() {
         this.stopAt(2000.0);
-    }
+    };
 }
