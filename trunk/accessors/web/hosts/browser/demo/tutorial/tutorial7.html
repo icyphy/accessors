@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Accessor Tutorial</title>
+	
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/addon/lint/lint.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/accessorStyle.css">
+	
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.js"></script>
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/mode/javascript/javascript.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="tutorial.css">
+	
+	<script src="/accessors/hosts/browser/browser.js"> </script>
+	<script src="observer7.js"> </script>
+	<script src="tutorial.js"> </script>
+	
+</head>
+
+<body>	
+<div class="menu" id="menuDiv">
+	<table id="menuTable"> 
+		<tr> 
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface </a> </td>
+			<td> <a href="tutorial3.html"> Audio </a> </td>
+			<td> <a href="tutorial4.html"> Camera </a> </td>
+			<td> <a href="tutorial5.html"> Timed Events </a> </td>
+			<td> <a href="tutorial6.html"> Periodic Events </a> </td>
+			<td> <a href="tutorial7.html"> Composition </a> </td>
+		</tr>
+	</table>
+</div>
+
+<h1> Composition </h1>
+<div class="description"> 
+<p>  Accessors can be <b>composed</b> to create a composite accessor, also known
+as a 'swarmlet'. As an accessor, the swarmlet itself can be saved and composed 
+with further accessors. </p> 
+
+<p> It's common to pair a data acquisition accessor with a data analysis 
+algorithm.  Accessors can <b>encapsulate</b> algorithms, too. 
+If there's Javascript
+code for the browser available, it's usually possible to run everything
+in the browser host.  Alternatively, if the code depends on another host (for 
+example, Node.js) or external cloud service, you can acquire the data 
+in the browser host and use a REST accessor, WebSocket accessor or other data 
+transmission accessor to pipe data to a web service. <p>
+
+<p> For example, let's detect faces in webcam images.  The code below
+instantiates a camera accessor and takes snapshots every 5 seconds for a minute.  
+It's copied from the previous tutorial page.</p>
+
+<p> To detect faces, instantiate a FaceDetector and connect it to the camera.
+<ul> <li> In <span class="codeText">setup()</span>, instantiate an 'image/FaceDetector' accessor.</li>
+<li> Next, use <span class="codeText">connect()</span> to connect the camera's <span class="codeText">image</span> output to the detector's <span class="codeText">input</span> input.</li>
+<li> The arguments for <span class="codeText">connect()</span> are <span class="codeText">source object, 'output name', destination object, 'input name'</span>. </li>
+</ul>
+</p>
+
+<p> Click 'instantiate', then 'react to inputs'.  You should see a pair of 
+displays for the camera and a pair of displays for the face detector.  
+Take a selfie and see if your face is detected! </p>
+
+
+<p> Quick algorithm links: 
+<ul>
+	<li> <a href="https://www.icyphy.org/accessors/library/index.html?accessor=image.ComputerVision"> 
+		Open Source Computer Vision (OpenCV) </a> </li>
+    <li> <a href="">Face and eye detection (using OpenCV) </a></li> 
+    <li> <a href=""> Speech recognition </a></li>
+	<li> <a href="">Character recognition </a></li>
+	<li> <a href="">REST accessor </a></li>
+</ul>
+</p>
+
+</div>
+ 
+ <div class="success" id="success">  
+ 	<span id="successMessage"> &nbsp; </span>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial.html'"> Back to Beginning -&gt; </button>
+ </div>
+
+<div class="codebox">
+	<textarea id="code" rows="10" cols="50">
+/** An accessor that detects faces in a webcam image.
+* @accessor tutorial/FaceCam
+* @input start Start capturing snapshots.
+*/
+
+exports.setup = function() {
+	this.input('start', {'value' : true});
+	this.camera = this.instantiate('Camera', 'cameras/Camera');
+	this.camera.setParameter('triggered', true);
+};
+
+exports.initialize = function() {
+	var self = this;
+	var interval = 5000, duration = 60000, elapsed = 0;
+    var handle = null;
+    this.camera.send('trigger', true);
+    
+	// Upon start, trigger the camera every 5 seconds for 60 seconds total.
+	this.addInputHandler('start', function() {
+		handle = setInterval(function() {
+			if (elapsed > duration) {
+				clearInterval(handle);
+			}
+			self.camera.send('trigger', true);	
+			elapsed += interval;
+		}, interval);
+	});	
+};
+	</textarea>
+	<div class="errorMessage" id="errorMessage">
+	</div>
+</div>
+
+<div id="resultbox">
+	<div> <button type="button" id="button" class="accessorButton ui-btn ui-corner-all" style="margin-top:1em;margin-bottom:0.5em;"> Instantiate </button>
+	</div>
+	<hr>
+	<div id="accessorbox">
+		
+	</div>
+</div>
+	
+</body>
+</html>

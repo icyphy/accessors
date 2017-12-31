@@ -16,8 +16,8 @@
 	<link rel="stylesheet" type="text/css" href="tutorial.css">
 	
 	<script src="/accessors/hosts/browser/browser.js"> </script>
-	<script src="observer.js"> </script>
 	<script src="tutorial.js"> </script>
+	
 </head>
 
 <body>	
@@ -35,46 +35,46 @@
 	</table>
 </div>
 
-<h1> Hello Accessors! </h1>
-<div class="description"> <p> <b> Accessors </b> are a technology for making IoT accessible through 
-open interfaces, an open developer community, and an open repository.  </p>
-<p> Accessors are <b> actors</b>.  Actors are software 
-components that react to streaming input events and produce streaming output 
-events.  Accessors wrap a (possibly remote) device or service with an actor interface.
-<p> 
-<b> Compose </b> heterogeneous devices and services quickly and predictably. 
-<b> Write once, run on any </b> capable accessor host (browser, Node.js, Java). </p>
+<h1> Camera </h1>
+<div class="description"> 
+<p> There's also an accessor for acquiring camera data.  The Camera accessor
+connects to a webcam and outputs images from the webcam.  It has parameters for
+<span class="codeText"> frame rate</span>, <span class="codeText">view size</span>,
+and the particular <span class="codeText"> camera</span> to connect to.  The 
+Camera may be configured to be triggered by an event or to periodically output 
+images. </p>
 
-<p>
-Let's start with Hello World.  Here's an accessor that <b>inputs </b> a name 
-and <b> outputs</b> a personalized greeting.  It's instantiated for you.  Inputs 
-and outputs are listed in the table below.
+<p> Here, we'll <span class="codeText">instantiate</span> a camera and trigger 
+it manually.  The browser host automatically sets up a display for the 
+captured image.</p>
+
+<p> Click 'react to inputs'.  The browser may prompt you to allow camera access.
+Then, you should see a live camera feed.  A snapshot will be taken each time you 
+click 'react to inputs'.  The first snapshot may be dark due to camera startup.
 </p>
-<p> Type your name in the 'name' input field and click 'react to inputs'. 
- </div>
+
+</div>
  
  <div class="success" id="success">  
  	<span id="successMessage"> &nbsp; </span>
- 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial2.html'"> Interface -&gt;</button>
+ 	Next, we'll control audio with timed events.
+ 	<button class="tutorialButton" id="nextButton" style="display:block" onclick="location.href='tutorial5.html'"> Timed Events -&gt; </button>
  </div>
 
 <div class="codebox">
 	<textarea id="code" rows="10" cols="50">
-/** An accessor that outputs Hello, name.
-* @accessor tutorial/Hello
-* @input name The user's name.
-* @output greeting Hello, name .
+/** A basic container for a Camera accessor.
+* @accessor tutorial/CameraComposite
+* @input trigger Capture an image.
 */
 
 exports.setup = function() {
-   this.input('name');
-   this.output('greeting');
-}
-
-exports.initialize = function() {
-	this.addInputHandler('name', function() {
-		this.send('greeting', 'Hello, ' + this.get('name'));
-	});
+    this.input('trigger', {'value': true});
+    
+	var camera = this.instantiate('Camera', 'cameras/Camera');
+	camera.setParameter('triggered', true);
+	
+	this.connect('trigger', camera, 'trigger');
 }
 	</textarea>
 	<div class="errorMessage" id="errorMessage">

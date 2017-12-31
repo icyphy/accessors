@@ -119,117 +119,126 @@ exports.Camera = function (name) {
 
     this.isPlaying = false;
 
-    // Create a hidden video element on the page.
-    // FIXME:  Make sure to generate a unique name.  Right now name is hard-coded.
-    // TODO:  For the browser, we may want to view the video element?
-    // How to do this?  What does it mean for other hosts?
-    // What to do for audio?  Audio would be sourced from the same element.
-    // So we probably want to locate the element to see if it's already created.
-    // This would imply a singleton class?
-    this.video = document.createElement('video');
-    this.video.style.width = '100%';
-    this.video.style.height = 'auto';
+    // Check if displays already exist.
+    if (document.getElementById('cameraDisplays') === null) {
+    	
+	    // Create a pair of displays, one for live video, one for snapshots.
+	    // FIXME:  Make sure to generate a unique name.  Right now name is hard-coded.
+	    // FIXME:  This only supports a single camera at the moment.
+	    this.video = document.createElement('video');
+	    this.video.id = ('cameraVideo');
+	    this.video.style.width = '100%';
+	    this.video.style.height = 'auto';
+	
+	    // Create a div to contain the live streaming video and the snapshot.
+	    var container = document.createElement('div');
+	    container.id = 'cameraDisplays';
+	    container.style.width = '95';
+	    container.style.margin = '1em';
+	    container.style.padding = '1em';
+	
+	    var labels = document.createElement('div');
+	    labels.style.fontSize = '1.5em';
+	    labels.style.width = '100%';
+	
+	    var videoLabel = document.createElement('div');
+	    videoLabel.innerHTML = "Live Video";
+	    videoLabel.style.width = '45%';
+	    videoLabel.style.float = 'left';
+	    videoLabel.style.textAlign = 'center';
+	
+	    var snapshotLabel = document.createElement('div');
+	    snapshotLabel.innerHTML = "Snapshot";
+	    snapshotLabel.style.width = '45%';
+	    snapshotLabel.style.float = 'right';
+	    snapshotLabel.style.textAlign = 'center';
+	    snapshotLabel.style.verticalAlign = 'top';
+	
+	    labels.appendChild(videoLabel);
+	    labels.appendChild(snapshotLabel);
+	
+	    this.videoContainer = document.createElement('div');
+	    this.videoContainer.id = 'cameraVideoContainer';
+	    this.videoContainer.style.display = 'inline-block';
+	    this.videoContainer.style.width = '45%';
+	    var videoLabel = document.createElement('div');
+	    videoLabel.innerHTML = "Live Video";
+	
+	    this.snapshotContainer = document.createElement('div');
+	    this.snapshotContainer.id = 'cameraSnapshotContainer';
+	    this.snapshotContainer.style.float = 'right';
+	    this.snapshotContainer.style.width = '45%';
+	
+	    container.appendChild(this.videoContainer);
+	    this.videoContainer.appendChild(this.video);
+	    container.appendChild(this.snapshotContainer);
+	    container.appendChild(labels);
 
-    // Create a div to contain the live streaming video and the snapshot.
-    var container = document.createElement('div');
-    container.style.width = '95';
-    container.style.margin = '1em';
-    container.style.padding = '1em';
+	    // Place video and snapshot above Camera accessor.
+	    // If not found (e.g. a composite accessor), place above the first accessor.
+	    // If not found, insert at page top.
+	    // Currently only supports a single Camera accessor.
+	
+	    var accessorDiv = document.getElementById('Camera');
+	    var parent;
+	
+	    if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+	        // Found Camera accessor.
+	        parent = accessorDiv.parentNode;
+	        if (parent !== null && typeof parent !== 'undefined') {
+	            parent.insertBefore(container, accessorDiv);
+	        } else {
+	            document.body.insertBefore(container, accessorDiv);
+	        }
+	    } else {
+	        // Look for accessorDirectoryTarget, as in accessors library page.
+	        accessorDiv = document.getElementById('accessorDirectoryTarget');
+	
+	        if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
+	            parent = accessorDiv.parentNode;
+	
+	            if (parent !== null && typeof parent !== 'undefined') {
+	                parent.insertBefore(container, accessorDiv);
+	            } else {
+	                document.body.insertBefore(container, accessorDiv);
+	            }
+	        } else {
+	            // No Camera accessor.  Find any accessor.  If none, use page top.
+	            accessorDiv = document.getElementsByClassName('accessor');
+	            if (accessorDiv !== null && typeof accessorDiv !== 'undefined' &&
+	                accessorDiv.length > 0) {
+	                accessorDiv = accessorDiv[0];
+	                var parent = accessorDiv.parentNode;
+	                if (parent !== null && typeof parent !== 'undefined') {
+	                    parent.insertBefore(container, accessorDiv);
+	                } else {
+	                    document.body.insertBefore(container, accessorDiv);
+	                }
+	            } else if (document.body.firstChild !== null &&
+	                typeof document.body.firstChild !== 'undefined') {
+	                document.body.insertBefore(container, document.body.firstChild);
+	            } else {
+	                document.body.appendChild(container);
+	            }
+	        }
+	    }
+	    
+	    // FIXME:  Ideally, make canvas equal to smaller of video size or 
+	    // parent element size.
+	    // How does this affect the size of the image sent on output port?
+	    // The width-setting must go after the container is added to the body.
 
-    var labels = document.createElement('div');
-    labels.style.fontSize = '1.5em';
-    labels.style.width = '100%';
+	    this.canvas = document.createElement('canvas');
+	    this.canvas.id = 'cameraSnapshotCanvas';
+	    this.canvas.width = this.snapshotContainer.clientWidth;
 
-    var videoLabel = document.createElement('div');
-    videoLabel.innerHTML = "Live Video";
-    videoLabel.style.width = '45%';
-    videoLabel.style.float = 'left';
-    videoLabel.style.textAlign = 'center';
-
-    var snapshotLabel = document.createElement('div');
-    snapshotLabel.innerHTML = "Snapshot";
-    snapshotLabel.style.width = '45%';
-    snapshotLabel.style.float = 'right';
-    snapshotLabel.style.textAlign = 'center';
-    snapshotLabel.style.verticalAlign = 'top';
-
-    labels.appendChild(videoLabel);
-    labels.appendChild(snapshotLabel);
-
-    this.videoContainer = document.createElement('div');
-    this.videoContainer.style.display = 'inline-block';
-    this.videoContainer.style.width = '45%';
-    var videoLabel = document.createElement('div');
-    videoLabel.innerHTML = "Live Video";
-
-    this.snapshotContainer = document.createElement('div');
-    this.snapshotContainer.style.float = 'right';
-    this.snapshotContainer.style.width = '45%';
-
-    container.appendChild(this.videoContainer);
-    this.videoContainer.appendChild(this.video);
-    container.appendChild(this.snapshotContainer);
-    container.appendChild(labels);
-
-    // Place video and snapshot above Camera accessor.
-    // If not found (e.g. a composite accessor), place above the first accessor.
-    // If not found, insert at page top.
-    // Currently only supports a single Camera accessor.
-
-    var accessorDiv = document.getElementById('Camera');
-    var parent;
-
-    if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-        // Found Camera accessor.
-        parent = accessorDiv.parentNode;
-
-        if (parent !== null && typeof parent !== 'undefined') {
-            parent.insertBefore(container, accessorDiv);
-        } else {
-            document.body.insertBefore(container, accessorDiv);
-        }
+	    this.snapshotContainer.appendChild(this.canvas);
     } else {
-        // Look for accessorDirectoryTarget, as in accessors library page.
-        accessorDiv = document.getElementById('accessorDirectoryTarget');
-
-        if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
-            parent = accessorDiv.parentNode;
-
-            if (parent !== null && typeof parent !== 'undefined') {
-                parent.insertBefore(container, accessorDiv);
-            } else {
-                document.body.insertBefore(container, accessorDiv);
-            }
-        } else {
-            // No Camera accessor.  Find any accessor.  If none, use page top.
-            accessorDiv = document.getElementsByClassName('accessor');
-            if (accessorDiv !== null && typeof accessorDiv !== 'undefined' &&
-                accessorDiv.length > 0) {
-                accessorDiv = accessorDiv[0];
-                var parent = accessorDiv.parentNode;
-                if (parent !== null && typeof parent !== 'undefined') {
-                    parent.insertBefore(container, accessorDiv);
-                } else {
-                    document.body.insertBefore(container, accessorDiv);
-                }
-            } else if (document.body.firstChild !== null &&
-                typeof document.body.firstChild !== 'undefined') {
-                document.body.insertBefore(container, document.body.firstChild);
-            } else {
-                document.body.appendChild(container);
-            }
-        }
+	    this.video = document.getElementById('cameraVideo');
+	    this.videoContainer = document.getElementById('cameraVideoContainer');
+	    this.snapshotContainer = document.getElementById('cameraSnapshotContainer');
+	    this.canvas = document.getElementById('cameraSnapshotCanvas');
     }
-
-    // FIXME:  Ideally, make canvas equal to smaller of video size or 
-    // parent element size.
-    // How does this affect the size of the image sent on output port?
-    // The width-setting must go after the container is added to the body.
-
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = this.snapshotContainer.clientWidth;
-
-    this.snapshotContainer.appendChild(this.canvas);
 
     // Check for the mediaDevices.getUserMedia library.
     getUserMediaSetup();
@@ -245,7 +254,7 @@ exports.Camera.prototype.close = function () {
     // MediaStream.getTracks()
     // MediaStream.getVideoTracks()
     // MediaStream.getAudioTracks()
-    this.stream.getTracks.forEach(function (track) {
+    this.stream.getTracks().forEach(function (track) {
         track.stop();
     });
     this.isPlaying = false;
