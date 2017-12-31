@@ -143,9 +143,12 @@ exports.ImageProcessingDisplay = function (options) {
             document.body.insertBefore(container, accessorDiv);
         }
     } else {
-        // Look for accessorDirectoryTarget, as in accessors library page.
+        // Look for accessorDirectoryTarget, as in accessors library page, 
+    	// or accessorbox, as in tutorial.
         accessorDiv = document.getElementById('accessorDirectoryTarget');
-
+        if (accessorDiv === null) {
+        	accessorDiv = document.getElementById('accessorbox');
+        }
         if (accessorDiv !== null && typeof accessorDiv !== 'undefined') {
             parent = accessorDiv.parentNode;
 
