@@ -117,19 +117,22 @@ function checkInput(text) {
 
     // Ensure input contains only allowed characters.
     // blacklist = ^whitelist
-    // No < or > allowed (see XSS page).  We can change later if we need them.
     // \w includes underscore.
     var blacklist = /[^\w\s{}\[\]().!=;'"|&*+%@,\/\\$:-]/;
     var matches = text.match(blacklist);
     if (matches !== null && typeof matches !== 'undefined' &&
         matches.length > 0) {
-        errorMessage.innerHTML = 'Error: The ' + matches[0] +
-            ' character is not permitted.';
-        return false;
+    	// Allow > and <
+    	if (matches[0] !== '<' && matches[0] !== '>') {
+    		console.log('matches ' + matches[0]);
+    		errorMessage.innerHTML = 'Error: The ' + matches[0] +
+            	' character is not permitted.';
+    		return false;
+    	}
     }
 
     // No loops. Prevent Denial of Service.
-    blacklist = /for\s|forEach|while\s/;
+    blacklist = /for\s*{|forEach\s*{|while\s*{/;
     matches = text.match(blacklist);
     matches = text.match(blacklist);
     if (matches !== null && typeof matches !== 'undefined' &&
@@ -158,18 +161,7 @@ function checkInput(text) {
         return false;
     }
 
-    // No setInterval. Prevent Denial of Service.
-    blacklist = /setInterval/;
-
-    matches = text.match(blacklist);
-    if (matches !== null && typeof matches !== 'undefined' &&
-        matches.length > 0) {
-        errorMessage.innerHTML = 'Error: setInterval is not permitted.';
-        return false;
-    }
-
     return true;
-
 }
 
 /** Override generateAccessorDocumentation to use comments in live code as the

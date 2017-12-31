@@ -120,6 +120,7 @@ exports.ImageProcessingDisplay = function (options) {
     container.appendChild(this.originalContainer);
     container.appendChild(this.resultContainer);
     container.appendChild(labels);
+    container.setAttribute('class', 'imageProcessingDisplays');
 
     // Search for Camera, ComputerVision, or FaceDetector
     var parent;
@@ -207,6 +208,7 @@ exports.ImageProcessingDisplay.prototype.setOriginal = function (input) {
     var context = this.originalCanvas.getContext("2d");
 
     if (input !== null && typeof input === 'string') {
+    	// Load image from local URL.
         var imageObj = new Image();
         imageObj.src = input;
 
@@ -218,7 +220,17 @@ exports.ImageProcessingDisplay.prototype.setOriginal = function (input) {
             self.emit('ready', true);
         };
     } else {
-        // TODO:  Implement this.
+        // Draw input image onto original canvas.
+    	self.originalCanvas.width = input.width;
+    	self.originalCanvas.height = input.height;
+    	
+    	if (typeof input === 'object') {
+    		context.putImageData(input, 0, 0);
+    	} else {
+    		context.drawImage(input, 0, 0);
+    	}
+    	
+    	self.emit('ready', true);
     }
 }
 

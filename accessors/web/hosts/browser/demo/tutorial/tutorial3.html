@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Accessor Tutorial</title>
+	
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/addon/lint/lint.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/accessorStyle.css">
+	
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.js"></script>
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/mode/javascript/javascript.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="tutorial.css">
+	
+	<script src="/accessors/hosts/browser/browser.js"> </script>
+	<script src="tutorial.js"> </script>
+	
+</head>
+
+<body>	
+<div class="menu" id="menuDiv">
+	<table id="menuTable"> 
+		<tr> 
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface </a> </td>
+			<td> <a href="tutorial3.html"> Audio </a> </td>
+			<td> <a href="tutorial4.html"> Camera </a> </td>
+			<td> <a href="tutorial5.html"> Timed Events </a> </td>
+			<td> <a href="tutorial6.html"> Periodic Events </a> </td>
+			<td> <a href="tutorial7.html"> Composition </a> </td>
+		</tr>
+	</table>
+</div>
+
+<h1> Audio </h1>
+<div class="description"> 
+<p> There's a vast <b>library</b> of accessors available.  
+Let's try out accessors for your device's audio and camera.  Then we'll build a
+controller for these. </p>
+
+<p> An accessor may <b>contain</b> other accessors. To instantiate an accessor within 
+another, use <span class="codeText">instantiate()</span>.  Connect the contained
+accessor to other contained accessors or the container using 
+<span class="codeText">connect()</span>.  The container is called a 
+<b>composite accessor</b>.
+
+<p> The ClipPlayer accessor loads a sound clip from a URL and allows the user to 
+start and stop playback.  It has three inputs, <span class="codeText">start</span>,
+<span class="codeText">stop</span>, and <span class="codeText">clipURL</span>.  
+It has one output, <span class="codeText">done</span>.  We'll create matching
+<span class="codeText">start</span>, <span class="codeText">stop</span> and 
+<span class="codeText">done</span> inputs and outputs on the container. 
+</p>
+
+<p>
+<span class="codeText">connect()</span> takes <span class="codeText">
+source object, 'output name', destination object, 'input name'</span> as 
+arguments.  The object is omitted for the container. 
+</p>
+
+<p>  Try clicking 'react to inputs'.  You should hear jazz music.  To stop, 
+enter <span class="codeText">true</span> for the <span class="codeText">stop</span>
+input and click 'react to inputs'.  The clip is 30 seconds long. </p>
+
+</div>
+ 
+ <div class="success" id="success">  
+ 	<span id="successMessage"> &nbsp; </span>
+ 	Camera is up next.
+ 	<button class="tutorialButton" id="nextButton" style="display:block" onclick="location.href='tutorial4.html'"> Camera -&gt; </button>
+ </div>
+
+<div class="codebox">
+	<textarea id="code" rows="10" cols="50">
+/** A basic container for a ClipPlayer accessor.
+* @accessor tutorial/AudioComposite
+* @input start Start playback.
+* @input stop Stop playback.
+* @output done Emitted when playback ends, due to end of clip or a stop.
+*/
+
+exports.setup = function() {
+    this.input('start', {
+    	'value' : true
+    });
+    this.input('stop');
+    this.output('done', {
+        'type' : 'boolean'
+    });
+    
+	var player = this.instantiate('ClipPlayer', 'audio/ClipPlayer');
+	
+	// Connect ClipPlayer inputs and outputs to container inputs and outputs
+	this.connect('start', player, 'start');
+	this.connect('stop', player, 'stop');
+	this.connect(player, 'done', 'done');
+}
+	</textarea>
+	<div class="errorMessage" id="errorMessage">
+	</div>
+</div>
+
+<div id="resultbox">
+	<div> <button type="button" id="button" class="accessorButton ui-btn ui-corner-all" style="margin-top:1em;margin-bottom:0.5em;"> Instantiate </button>
+	</div>
+	<hr>
+	<div id="accessorbox">
+		
+	</div>
+</div>
+	
+</body>
+</html>

@@ -25,15 +25,20 @@
 <div class="menu" id="menuDiv">
 	<table id="menuTable"> 
 		<tr> 
-			<td> <a id="a1" href="tutorial.html">  Hello World </a>  </td>
-			<td> <a id="a2" href="tutorial2.html"> Interface </a> </td>
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface </a> </td>
+			<td> <a href="tutorial3.html"> Audio </a> </td>
+			<td> <a href="tutorial4.html"> Camera </a> </td>
+			<td> <a href="tutorial5.html"> Timed Events </a> </td>
+			<td> <a href="tutorial6.html"> Periodic Events </a> </td>
+			<td> <a href="tutorial7.html"> Composition </a> </td>
 		</tr>
 	</table>
 </div>
 
-<h1> Accessor Interface Definition </h1>
-<div class="description"> <div> <p> An <b> accessor interface </b> specifies what it requires of an 
-accessor host and what its inputs, outputs and parameters are.  It may include: </div>
+<h1> Accessor Interface </h1>
+<div class="description"> <div> <p> An <b> accessor interface </b> specifies what's <b>required</b> of an 
+accessor host and any <b>inputs, outputs and parameters</b>.  It may include: </div>
 <ul> <li> <span class="codeText"> require</span>: Modules required by the accessor. </li>
 	 <li> An <span class="codeText"> exports.setup()</span> function that can invoke the following functions: 
 	 	 <ul> <li> <span class="codeText"> input</span>: Specify an input to the accessor. </li>
@@ -53,9 +58,9 @@ Documentation is automatically generated from the comment for accessors in the r
 
 <p> Next comes a <b><span class="codeText"> setup()</span></b> function.  
 For this accessor, we have one input, one output, and one parameter named <span class="codeText" > multiplier</span>.
-<span class="codeText" > multiplier</span> has a specific type, a <span class="codeText"> number</span>, and an initial value, <span class="codeText">2</span>.</p>
+<span class="codeText" > multiplier</span> has type <span class="codeText"> number</span> and initial value <span class="codeText">2</span>.</p>
 
-<p> Finally, we set up an input handler in the <b><span class="codeText"> initialize()</span></b> function. 
+<p> Finally, we create an input handler in the <b><span class="codeText"> initialize()</span></b> function. 
 First, capture the value of <span class="codeText">this</span> in a variable called <span class="codeText">self</span>, a 
 common Javascript idiom.  Any sub-scoped code can call accessor functions using the <span class="codeText">self</span> object. 
 Then, call <span class="codeText">this.addInputHandler()</span> to handled
@@ -72,7 +77,7 @@ the multiplier to <span class="codeText">3</span>, then click 'Instantiate'.
  
  <div class="success" id="success">  
  	<span id="successMessage"> &nbsp; </span>
- 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial.html'"> Beginning </button>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial3.html'"> Audio -&gt; </button>
  </div>
 
 <div class="codebox">
