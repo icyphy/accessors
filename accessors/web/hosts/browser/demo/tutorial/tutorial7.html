@@ -56,27 +56,20 @@ instantiates a camera accessor and takes snapshots every 5 seconds for a minute.
 It's copied from the previous tutorial page.</p>
 
 <p> To detect faces, instantiate a FaceDetector and connect it to the camera.
-<ul> <li> In <span class="codeText">setup()</span>, instantiate an 'image/FaceDetector' accessor.</li>
-<li> Next, use <span class="codeText">connect()</span> to connect the camera's <span class="codeText">image</span> output to the detector's <span class="codeText">input</span> input.</li>
-<li> The arguments for <span class="codeText">connect()</span> are <span class="codeText">source object, 'output name', destination object, 'input name'</span>. </li>
+<ul> <li> In <span class="codeText">setup()</span>, instantiate an 'image/FaceDetector' accessor, using <span class="codeText">this.instantiate('FaceDetector', 'image/FaceDetector')</span>.</li>
+<li> Next, use <span class="codeText">this.connect()</span> to connect the camera's <span class="codeText">image</span> output to the detector's <span class="codeText">input</span> input.</li>
+<li> The arguments for <span class="codeText">this.connect()</span> are <span class="codeText">source object, 'output name', destination object, 'input name'</span>. </li>
 </ul>
 </p>
 
-<p> Click 'instantiate', then 'react to inputs'.  You should see a pair of 
+<p> Click 'instantiate', then 'react to inputs'.  The face detector loads the
+large OpenCV library, so it may be slow to instantiate. </p>
+
+<p> You should see a pair of 
 displays for the camera and a pair of displays for the face detector.  
 Take a selfie and see if your face is detected! </p>
 
-
-<p> Quick algorithm links: 
-<ul>
-	<li> <a href="https://www.icyphy.org/accessors/library/index.html?accessor=image.ComputerVision"> 
-		Open Source Computer Vision (OpenCV) </a> </li>
-    <li> <a href="">Face and eye detection (using OpenCV) </a></li> 
-    <li> <a href=""> Speech recognition </a></li>
-	<li> <a href="">Character recognition </a></li>
-	<li> <a href="">REST accessor </a></li>
-</ul>
-</p>
+<p> For more algorithms, browse through the <a href="https://www.icyphy.org/accessors/library/index.html"> accessor library.</a></p>
 
 </div>
  
