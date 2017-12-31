@@ -12,8 +12,8 @@ $(document).ready(function () {
 			'instantiated a camera and face detector.';
 			
 			document.getElementById('reactToInputs').addEventListener('click', function(){
-				document.getElementById('successMessage').innerHTML = 'That ' + 
-				'concludes this tutorial.  Click to return to the beginning. ' + 
+				document.getElementById('successMessage').innerHTML = 'That's ' + 
+				'the end.  Click to return to the beginning. ' + 
 				'Try it as a sandbox!';
 				document.getElementById('nextButton').style.display = 'block';
 			});
