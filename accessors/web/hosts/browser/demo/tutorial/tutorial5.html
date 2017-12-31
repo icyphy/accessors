@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Accessor Tutorial</title>
+	
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/demo/tutorial/codemirror/addon/lint/lint.css">
+	<link rel="stylesheet" href="/accessors/hosts/browser/accessorStyle.css">
+	
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/lib/codemirror.js"></script>
+	<script src="/accessors/hosts/browser/demo/tutorial/codemirror/mode/javascript/javascript.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="tutorial.css">
+	
+	<script src="/accessors/hosts/browser/browser.js"> </script>
+	<script src="observer5.js"> </script>
+	<script src="tutorial.js"> </script>
+	
+</head>
+
+<body>	
+<div class="menu" id="menuDiv">
+	<table id="menuTable"> 
+		<tr> 
+			<td> <a href="tutorial.html">  Hello World </a>  </td>
+			<td> <a href="tutorial2.html"> Interface </a> </td>
+			<td> <a href="tutorial3.html"> Audio </a> </td>
+			<td> <a href="tutorial4.html"> Camera </a> </td>
+			<td> <a href="tutorial5.html"> Timed Events </a> </td>
+			<td> <a href="tutorial6.html"> Periodic Events </a> </td>
+			<td> <a href="tutorial7.html"> Composition </a> </td>
+		</tr>
+	</table>
+</div>
+
+<h1> Timed Events </h1>
+<div class="description"> 
+<p>  Accessors support <b>timed and periodic events</b> with the <span class="codeText">
+setTimeout()</span> and <span class="codeText">setInterval()</span> functions.  
+Each takes a <span class="codeText">callback function</span> and <span class="codeText">
+milliseconds</span> as arguments.  Any further arguments will be passed to the 
+callback function.  </p>
+
+<p> Here, we'll make a clip player that plays the first seconds of a sound clip. </p>
+<p> <span class="codeText">setup()</span> creates an instance of the ClipPlayer accessor.
+	 <span class="codeText">addInputHandler()</span> starts the player upon a start event 
+	 and stops it 15000 milliseconds later by sending a value to 
+ClipPlayer's stop input.  <span class="codeText">setInterval()</span> is used to
+execute a function at a certain time in the future.
+</p>
+
+<p> Click 'react to inputs'.  The clip should play for approximately 15 seconds.
+The clip may take a few seconds to load and start. </p>
+
+<p> Next, add a parameter to control the clip duration. 
+<ul> <li> In <span class="codeText">setup()</span>, create a parameter named 
+<span class="codeText">duration</span> by adding the line <span class="codeText">this.parameter('duration')</span>.</li>
+<li> Edit the <span class="codeText">setInterval()</span> code to play 
+the clip for <span class="codeText">duration</span> milliseconds. </li>
+<li> You can get the parameter's value using 
+<span class="codeText">self.getParameter('duration')</span>. </li> 
+<li> Click 'instantiate'. The duration parameter should appear. </li> 
+<li> Enter a number, in milliseconds, for the duration. </li>
+<li> Click 'react to inputs'. You should hear approximately <span class="codeText">duration</span> milliseconds of the clip. </li>
+<li> Tip: Try a duration between 10000 and 30000 (10 to 30 seconds).</li> </ul>
+</p>
+
+</div>
+ 
+ <div class="success" id="success">  
+ 	<span id="successMessage"> &nbsp; </span>
+ 	<button class="tutorialButton" id="nextButton" onclick="location.href='tutorial6.html'"> Periodic Events -&gt; </button>
+ </div>
+
+<div class="codebox">
+	<textarea id="code" rows="10" cols="50">
+/** An accessor that plays a sound clip for the specified duration.
+* @accessor tutorial/TimedClipPlayer.
+* @input start Start playback.
+*/
+
+exports.setup = function() {
+	this.input('start', {'value' : true});
+	this.player = this.instantiate('ClipPlayer', 'audio/ClipPlayer');
+	this.connect('start', this.player, 'start');
+};
+
+exports.initialize = function() {
+	var self = this;
+	
+	// Upon start, stop the player after 15000 milliseconds.
+	this.addInputHandler('start', function() {
+	    setInterval(function() {
+	    	self.player.send('stop', true);
+	    }, 15000);
+	});
+};
+	</textarea>
+	<div class="errorMessage" id="errorMessage">
+	</div>
+</div>
+
+<div id="resultbox">
+	<div> <button type="button" id="button" class="accessorButton ui-btn ui-corner-all" style="margin-top:1em;margin-bottom:0.5em;"> Instantiate </button>
+	</div>
+	<hr>
+	<div id="accessorbox">
+		
+	</div>
+</div>
+	
+</body>
+</html>

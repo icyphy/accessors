@@ -16,7 +16,7 @@ function addObserver() {
 			
 			if (parseFloat(input.value)*3.0 == parseFloat(output.innerHTML)) {
 				document.getElementById('successMessage').innerHTML = '<b>Looking good!</b> ' + 
-						'Let\'s move on to (next example here).';
+						'Let\'s move on to audio.';
 				document.getElementById('nextButton').style.display = 'block';
 			}
 		
