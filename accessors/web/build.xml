@@ -65,9 +65,6 @@
   <!-- Location of the selenium-webdriver directory. -->
   <property name="selenium-webdriver.directory" value="${basedir}/../node_modules/selenium-webdriver"/>
 
-  <!-- The @terraswarm.gdp module. -->
-  <property name="terraswarm.gdp" value="${basedir}/../node_modules/@terraswarm/gdp"/>
-
   <!-- If true, then if a test other than the mocha tests return
        non-zero, the build will fail and no other tests will run. -->
   <property name="tests.failonerror" value="true"/>
@@ -331,23 +328,6 @@
 
   <target name="-check-selenium-webdriver">
     <available property="selenium-webdriver.directory.exists" file="${selenium-webdriver.directory}"/>
-  </target>
-
-  <!-- The Global Data Plane (gdp) client is not supported under Windows.
-       set terraswarm.gdp.install to true if the ${terrawarm.gdp} directory
-       does not exist and the os is anything other than Windows.
-  -->
-  <target name="-check-terraswarm-gdp">
-    <condition property="terraswarm.gdp.install">
-      <and>
-	<not>
-	  <available file="${terraswarm.gdp}"/>
-	</not>
-	<not>
-	  <os family="windows"/>
-	</not>
-      </and>
-    </condition>
   </target>
 
   <target name="-check-windows">
@@ -749,29 +729,6 @@
     </exec>
   </target>
     
-  <target name="terraswarm-gdp-install"
-	  depends="-check-terraswarm-gdp,-check-npm-works"
-	  if="terraswarm.gdp.install">
-    <mkdir dir="${basedir}/../node_modules"/>
-    <exec dir=".."
-          executable="${npm.executable}"
-          timeout="${timeout.npm}">
-      <arg value="install"/>
-      <arg value="@terraswarm/gdp"/>
-    </exec>
-  </target>
-
-  <target name="terraswarm-gdp-update"
-	  depends="-check-windows, terraswarm-gdp-install"
-	  if="terraswarm.gdp.install">
-    <exec dir=".."
-          executable="${npm.executable}"
-          timeout="${timeout.npm}">
-      <arg value="update"/>
-      <arg value="@terraswarm/gdp"/>
-    </exec>
-  </target>
-
   <target name="tests"
           depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.mocha, tests.nashorn"
           description="Run the CapeCode, Browser, Duktape2, eduk2, node and Nashorn host tests">
@@ -782,7 +739,7 @@
   </target>
 
   <target name="tests.capecode"
-          depends="-ptII-exists, terraswarm-gdp-update"
+          depends="-ptII-exists"
           description="Run the Cape Code tests."
           if="${ptII.exists}">
     <echo>
@@ -823,7 +780,7 @@
 
   <target name="tests.coverage"
           description="Use istanbul/nyc and mocha to generate code coverage for JavaScript tests."
-	  depends="nyc-update, mocha-update, terraswarm-gdp-update">
+	  depends="nyc-update, mocha-update">
     <echo>
       ==tests.coverage==
       This target uses istanbul/nyc and mocha to generate code coverage for JavaScript tests.
@@ -990,7 +947,7 @@
 
   <target name="tests.mocha"
           description="Use mocha to test the Node host and generate output on stdout."
-	  depends="chai-string-update, mocha-update, terraswarm-gdp-update">
+	  depends="chai-string-update, mocha-update">
     <echo>
       ==tests.mocha==
       This target uses
@@ -1038,7 +995,7 @@
 
   <target name="tests.mocha.composites"
           description="Use mocha to test just the composite accessors and write to stdout."
-	  depends="mocha-update, terraswarm-gdp-update">
+	  depends="mocha-update">
     <echo>
 
       ==tests.mocha.composites==
@@ -1087,7 +1044,7 @@
 
   <target name="tests.mocha.xml"
           description="Use mocha to test the Node Host and generate JUnit-compatible output."
-	  depends="chai-string-update, mocha-update, mocha-junit-reporter-update, terraswarm-gdp-update">
+	  depends="chai-string-update, mocha-update, mocha-junit-reporter-update">
     <echo>
       ==tests.mocha.xml==
       This target uses mocha to test Node.js tests in **/mocha/test*.js files.
