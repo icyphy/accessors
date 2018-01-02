@@ -224,15 +224,15 @@ exports.ImageProcessingDisplay.prototype.setOriginal = function (input) {
         };
     } else {
         // Draw input image onto original canvas.
-    	self.originalCanvas.width = input.width;
-    	self.originalCanvas.height = input.height;
-    	
-    	if (typeof input === 'object') {
+        if (input !== null) {
+    	    self.originalCanvas.width = input.width;
+    	    self.originalCanvas.height = input.height;
+    	    if (typeof input === 'object') {
     		context.putImageData(input, 0, 0);
-    	} else {
+    	    } else {
     		context.drawImage(input, 0, 0);
+    	    }
     	}
-    	
     	self.emit('ready', true);
     }
 }
