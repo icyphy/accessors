@@ -18,6 +18,9 @@
 	<script src="/accessors/hosts/browser/browser.js"> </script>
 	<script src="observer7.js"> </script>
 	<script src="tutorial.js"> </script>
+	<!-- Start loading this script since it takes about a minute.  Then, when
+	     the face detector module attempts to load it, it will already be cached. -->
+	<script src="/accessors/hosts/browser/modules/cv.js" async></script>
 	
 </head>
 
