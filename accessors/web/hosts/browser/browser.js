@@ -125,6 +125,11 @@ window.onload = function () {
             // Querystring uses . instead of / which is a special character.
             // Replace . with /
             querystring = querystring.replace('.', '/');
+            
+            // Add trailing .js if not present
+            if (querystring.indexOf('.js') < 0) {
+            	querystring = querystring + '.js';
+            }
             generateAccessorHTML(querystring, 'accessorDirectoryTarget');
 
             // Call toggleVisbility() to expand the directory that this
@@ -931,7 +936,10 @@ function generateTables(instance, id) {
     // Generate an event when the table is done.
     // TODO:  It would be even better to generate an event when all content
     // is done.  This would probably require Promises everywhere...
-    Promise.all(promises).then(function () {
+    Promise.all(promises).catch(function(err) {
+    	console.log('Error generating accessor tables: ' + err);
+    })
+    .then(function() {
         window.dispatchEvent(new Event('accessorTableDone'));
 
         // Override getParameter().
@@ -1096,8 +1104,8 @@ function generateTable(title, names, contents, role, id) {
         // Resolve promise once all rows are created.
         Promise.all(promises).then(function () {
             return resolve(true);
-        }, function () {
-            return reject(true);
+        }, function (error) {
+            return reject(error);
         });
     });
 }
@@ -1186,14 +1194,20 @@ function generateTableRow(table, name, id, options, editable, visible, role) {
                 valueInput = document.createElement('select');
 
                 var selectMe, optionElement;
-
+                
+                // Sometimes there is only one option.
+                if (typeof options.options === 'string') {
+                	var optionsArray = [];
+                	optionsArray.push(options.options);
+                	options.options = optionsArray;
+                }
+                
                 if (value !== null && typeof value !== 'undefined' &&
                     options.options.includes(value)) {
                     selectMe = value;
                 } else {
                     selectMe = options.options[0];
                 }
-
                 options.options.forEach(function (option) {
                     optionElement = document.createElement('option');
                     optionElement.text = option;
