@@ -585,27 +585,27 @@ function generateAccessorHTML(path, id, text) {
                 loadedModules[path] = result;
                 // If successful, add the module name to the text of the modules list.
             } catch (err) {
-                console.log("path " + path);
-                console.log("err " + err);
                 text += '<span class="accessorError"> (Not supported by this host)';
-                // If the path includes modules, try common/modules.
-                var newPath;
-                try {
-                    // @accessors-modules/text-display.js needs this.
-                    if (sawAccessorsModules) {
-                        newPath = '/accessors/hosts/common/modules/' + path;
-                        return require(newPath);
-                    }
-                    var index = path.indexOf('modules');
-                    if (index !== -1) {
-                        newPath = '/accessors/hosts/common/' +
-                            path.substr(index);
-                        return require(newPath);
-                    }
-                } catch (err2) {
-                    // Ignore and report original error.
-                    text += '(Also tried ' + newPath + ')';
-                }
+                // If the path includes modules, try common/modules (once).
+	                var newPath;
+	                if (path.indexOf('common/modules') < 0) {
+		                try {
+			                    // @accessors-modules/text-display.js needs this.
+			                    if (sawAccessorsModules) {
+			                        newPath = '/accessors/hosts/common/modules/' + path;
+			                        return require(newPath);
+			                    }
+			                    var index = path.indexOf('modules');
+			                    if (index !== -1) {
+			                        newPath = '/accessors/hosts/common/' +
+			                            path.substr(index);
+			                        return require(newPath);
+			                    }
+			                } catch (err2) {
+			                    // Ignore and report original error.
+			                    text += '(Also tried ' + newPath + ')';
+			                }
+	                }
                 text += '</span>';
                 executable = false;
             }
