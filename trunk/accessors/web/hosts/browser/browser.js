@@ -243,7 +243,7 @@ function generate() {
  *  generating the HTML. It will also clear the target element (which has
  *  the same id as the accessor).
  *
- *  Optoinally, this method can accept the full text of an accessor via the
+ *  Optionally, this method can accept the full text of an accessor via the
  *  text parameter.  This is used to create accessors on-the-fly.  The tutorial
  *  instantiates accessors this way.
  *
@@ -1391,8 +1391,21 @@ function getIndex(baseDirectory, docElement, indent) {
                         subElement.style.display = 'none';
                         subElement.id = id;
                         docElement.appendChild(subElement);
+                        
+                        // If 'image' is expanded, start loading cv.js so it
+                        // will be available earlier.  It's large.
+                        
+                        // TODO:  Put in onclick()≥
+
+                        
                         content.onclick = (function (id, indent, getIndex) {
                             return function () {
+                                if (id.indexOf('image') > 0) {
+                                    var request2 = new XMLHttpRequest();
+                                    request2.open('GET', '/accessors/hosts/browser/modules/cv.js', true); // Pass true for asynchronous
+                                    request2.send();
+                                }
+                                
                                 toggleVisibility(id, indent, getIndex);
                             };
                         })(id, indent + 10, getIndex);
