@@ -21,22 +21,24 @@
 // CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
 // ENHANCEMENTS, OR MODIFICATIONS.
 
-/** Try me!  For 'input', enter /accessors/hosts/browser/demo/computerVision/terraswarm.jpg
- *  then click 'react to inputs'.
- * 
- *  A computer vision accessor.  This accessor takes an input image, applies
+/**  A computer vision accessor.  This accessor takes an input image, applies
  *  a computer vision transformation, and outputs the modified image.
  *
+ *  Try me!  For 'input', enter 
+ *  <code>/accessors/hosts/browser/demo/computerVision/terraswarm.jpg</code>
+ *  then click 'react to inputs'.
+ * 
  *  The input may be an image or a path to a local image.  Remote images are not
  *  supported due to browser security restrictions - a browser will not allow
  *  a remote image to be exported from a canvas.
  *
  *  This accessor uses the computer vision library from UC Irvine,
  *  https://github.com/ucisysarch/opencvjs
- *  Please cvlicense.txt in /accessor/web/hosts/browser/modules/cvlicense.txt
+ *  Please see cvlicense.txt in /accessor/web/hosts/browser/modules/cvlicense.txt,
+ *  available as <a href="http://accessors.org/hosts/browser/modules/cvlicense.txt">http://accessors.org/hosts/browser/modules/cvlicense.txt</a>.
  *
  *  To run, please point your browser to:
- *  https://www.icyphy.org/accessors/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html
+ *  <a href="http://accessors.org/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html">http://accessors.org/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html</a>
  *
  *  @accessor image/ComputerVision
  *  @input input (string or image) An image or path to a local image.  Remote
