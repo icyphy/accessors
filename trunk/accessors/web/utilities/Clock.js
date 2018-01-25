@@ -26,7 +26,7 @@
 /** Accessor that spontaneously produces outputs once per time interval.
  *  This implementation produces a counting sequence.
  *
- *  @accessor test/Clock
+ *  @accessor utilities/Clock
  *  @parameter interval The interval between outputs in milliseconds.
  *  @output output Output for the counting sequence, of type number.
  *  @author Edward A. Lee
