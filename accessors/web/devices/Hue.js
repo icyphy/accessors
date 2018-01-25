@@ -109,9 +109,12 @@ exports.setup = function () {
         type: "string",
         options: ["none", "restore", "turn off"]
     });
-    this.output('lights');
+    this.output('lights', {
+        spontaneous: true
+    });
     this.output('assignedUserName', {
-        type: "string"
+        type: "string",
+        spontaneous: true
     });
 };
 
