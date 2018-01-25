@@ -72,11 +72,20 @@
  *
  *  @accessor devices/Hue
  *  @input {JSON} commands JSON commands for the Hue, for example,
- *                {"id" : 1, "on" : true, "hue" : 120}
- *  @input {string} bridgeIP The bridge IP address (and port, if needed).
+ *   {"id" : 1, "on" : true, "hue" : 120}
+ *  @output lights An object with one property for each light that is registered
+ *   with the bridge. The name of the property is the light ID, an integer given as
+ *   a string, and the value is an object with information about the light
+ *   (manufacturer, modelid, name, state, etc.). The state property has a boolean
+ *   'on' indicating whether the light is on and 'reachable' indicating whether the
+ *   light is in communication with the bridge.
+ *  @output assignedUserName {string} If a user name is automatically generated and
+ *   registered with the bridge, then it will be sent on this output port.
+ *  @parameter {string} bridgeIP The bridge IP address (and port, if needed).
  *  @parameter {string} userName The username for logging on to the Hue Bridge.
  *   This must be at least 11 characters, or the Hue regards it as invalid.
- A username will be automatically generated if none is available.
+ *   A username will be automatically generated if none is available.
+ *   The assigned user name will be sent on the assignedUserName output.
  *  @author Edward A. Lee, Marcus Pan, Elizabeth Osyk, Marten Lohstroh
  *  @version $$Id$$
  */
@@ -213,7 +222,7 @@ function Hue() {
                             // Oddly, the invalid userName, which has the right form,
                             // is not an acceptable parameter value. Since it is invalid
                             // anyway, discard it and replace.
-                            userName = 'ptolemy_user';
+                            userName = 'ptolemyuser';
                             // It takes two successive posts to register a new user.
                             // Issue the first one now, then attempt again later.
                             registerUser();
