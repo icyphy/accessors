@@ -52,6 +52,7 @@
  *    range 0-255.
  *  * transitiontime: The time in ms for the bulb to make the transition.
  *
+ *
  *  Please see Hue docs for mapping colors to hue/saturation values:
  *  http://www.developers.meethue.com/documentation/core-concepts
  *
@@ -59,7 +60,8 @@
  *  FIXME: Where is the warning appearing?
  *  Sometimes Hue lights are transient (get unplugged, become temporarily
  *  disconnected) and may be valid in the future. Rather than terminating the
- *  model, we hope that the lights come back.
+ *  model, we hope that the lights come back. A good practice is to use the
+ *  lights output to determine which lights are reachable.
  *
  *  Discovery: Finding the IP address of the Hue Bridge is not necessarily easy.
  *  The bridge acquires its address via DHCP, so the address will typically change
