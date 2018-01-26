@@ -1,5 +1,6 @@
 [
     "Clock.js",
+    "Cron.js",
     "Exec.js",
     "GetResource.js",
     "LocalStorage.js",
