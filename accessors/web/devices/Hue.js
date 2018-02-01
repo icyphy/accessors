@@ -48,16 +48,34 @@
  *  * bri: Brightness.  0-255.
  *  * hue: Color, for bulbs that support color. This is a number in the
  *    range 0-65280.
+ *  * xy: Two numbers between 0.0 and 1.0 in an array, e.g. [0.4, 0.4],
+ *    specifying a color according to the image at
+ *    https://www.developers.meethue.com/documentation/core-concepts
  *  * sat: Saturation, for bulbs that support color. This is a number in the
  *    range 0-255.
+ *  * ct: Color temperature. This takes values in a scale called "reciprocal
+ *    megakelvin" or "mirek". Using this scale, the warmest color 2000K
+ *    is 500 mirek ("ct":500) and the coldest color 6500K is 153 mirek ("ct":153).
  *  * transitiontime: The time in ms for the bulb to make the transition.
  *
  *
  *  Please see Hue docs for mapping colors to hue/saturation values:
- *  http://www.developers.meethue.com/documentation/core-concepts
+ *  http://www.developers.meethue.com/documentation/core-concepts.
+ *  
+ *  Some common colors given as xy are (for a gammut B bulb):
+ *  * orange:     [0.60, 0.38]
+ *  * red:        [0.67, 0.32]
+ *  * yellow:     [0.54, 0.42]
+ *  * green:      [0.41, 0.52]
+ *  * violet:     [0.17, 0.04]
+ *  * blue:       [0.17, 0.05]
+ *  * magenta:    [0.41, 0.18]
+ *  * cool white: [0.28, 0.28]  (about 10,000 Kelvin)
+ *  * warm white: [0.46, 0.41]  (about 2,700 Kelvin)
+ *
  *
  *  If a light is not accessible, this accessor warns but does not error.
- *  FIXME: Where is the warning appearing?
+ *  In CapeCode, this results in a dialog box with a message.
  *  Sometimes Hue lights are transient (get unplugged, become temporarily
  *  disconnected) and may be valid in the future. Rather than terminating the
  *  model, we hope that the lights come back. A good practice is to use the
@@ -75,6 +93,8 @@
  *  @accessor devices/Hue
  *  @input {JSON} commands JSON commands for the Hue, for example,
  *   {"id" : 1, "on" : true, "hue" : 120}
+ *  @input probe Trigger production of a 'lights' output that gives the status of
+ *   lights registered with this bridge.
  *  @output lights An object with one property for each light that is registered
  *   with the bridge. The name of the property is the light ID, an integer given as
  *   a string, and the value is an object with information about the light
@@ -83,6 +103,7 @@
  *   light is in communication with the bridge.
  *  @output assignedUserName {string} If a user name is automatically generated and
  *   registered with the bridge, then it will be sent on this output port.
+ *  @output response The response from the bridge to a command.
  *  @parameter {string} bridgeIP The bridge IP address (and port, if needed).
  *  @parameter {string} userName The username for logging on to the Hue Bridge.
  *   This must be at least 11 characters, or the Hue regards it as invalid.
@@ -107,6 +128,8 @@ var util = require('util');
 exports.setup = function () {
 
     this.input('commands');
+    this.input('probe');
+    
     this.parameter('bridgeIP', {
         type: "string",
         value: ""
@@ -127,6 +150,9 @@ exports.setup = function () {
         type: "string",
         spontaneous: true
     });
+    this.output('response', {
+        spontaneous: true
+    });
 };
 
 /** Define a Hue function using a variant of the Module pattern.  The function
@@ -138,7 +164,9 @@ exports.setup = function () {
  *  An instance of the returned hue object implements the following public functions:
  *
  *  * connect(): Contact the bridge and register the user, if needed.  Add an
- *    input handler to the trigger input to submit commands to the bridge. </li>
+ *    input handler to the trigger input to submit commands to the bridge.
+ *  * contactBridge(): Query the bridge for the status of lights registered with
+ *    it. The status will be sent to the 'lights' output.
  *  * issueCommand():  Issue a command to the bridge.  A command is an object
  *    that may contain the following fields:
  *
@@ -194,9 +222,10 @@ function Hue() {
     var bridgeRequestErrorHandler;
     var registerUser;
 
-    /** Contact the bridge.  Register the user, if needed.
+    /** Contact the bridge and send to the 'lights' output the status of all
+     *  lights registered with the bridge.  Register the user, if needed.
      */
-    function contactBridge() {
+    hue.contactBridge = function() {
         console.log("Attempting to connect to: " + url + "/" + userName + "/lights/");
         var bridgeRequest = http.get(url + "/" + userName + "/lights/", function (response) {
             if (response !== null) {
@@ -272,7 +301,7 @@ function Hue() {
 
         url = "http://" + ipAddress + "/api";
 
-        contactBridge();
+        hue.contactBridge();
     };
 
     /** Issue a command to the bridge.  Commands are queued if not yet authenticated. */
@@ -394,6 +423,12 @@ function Hue() {
                 if (typeof commands[i].transitiontime !== 'undefined') {
                     command.transitiontime = commands[i].transitiontime;
                 }
+                if (typeof commands[i].xy !== 'undefined') {
+                    command.xy = commands[i].xy;
+                }
+                if (typeof commands[i].ct !== 'undefined') {
+                    command.ct = commands[i].ct;
+                }
             }
 
             if (Object.keys(command).length < 1) {
@@ -415,6 +450,7 @@ function Hue() {
                         console.log("Hue.js: processCommands(): response status: " + response.statusMessage);
                         console.log("Hue.js: processCommands(): response body: " + response.body);
                     }
+                    self.send('response', response);
                     hue.reportIfError(response);
                 });
             }
@@ -435,7 +471,7 @@ function Hue() {
         if (retryCount < maxRetries) {
             console.log('Will retry');
             retryCount++;
-            setTimeout(contactBridge, retryTimeout);
+            setTimeout(hue.contactBridge, retryTimeout);
         } else {
             self.error('Could not reach the Hue Bridge at ' + url +
                 ' after ' + retryCount + ' attempts.');
@@ -499,7 +535,7 @@ function Hue() {
                     clearTimeout(handleRegisterUser);
                 }
                 // contact the bridge and find the available lights
-                contactBridge();
+                hue.contactBridge();
             } else {
                 throw "Unknown error registering new user";
             }
@@ -525,6 +561,7 @@ exports.initialize = function () {
     // FIXME:  We need a way to dynamically supply the IP address.
     // Recommend using a separate port.
     this.addInputHandler('commands', this.hue.issueCommand);
+    this.addInputHandler('probe', this.hue.contactBridge);
     this.hue.connect();
 };
 
