@@ -128,8 +128,13 @@ exports.initialize = function() {
     self.addInputHandler('response', function() {
         var response = self.get('response');
         if (!response.hasOwnProperty('requestID')) {
-            error('Response has no requestID property.');
-            return;
+            try {
+                response = JSON.parse(response);
+            } catch (err) {}
+            if (!response.hasOwnProperty('requestID')) {
+                error('Response has no requestID property: ' + util.inspect(response));
+                return;
+            }
         }
         var id = response.requestID;
         if (!self.pendingRequests.hasOwnProperty(id)) {
