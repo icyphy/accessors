@@ -27,15 +27,25 @@
  *  network interface (e.g. Ethernet and WiFi) and 'localhost' does
  *  not resolve to the desired interface.
  *
- *  The output `connection` reports the when a
+ *  The output `connection` reports when a
  *  connection is opened or closed.
+ *  The output is an object with two fields, a 'socketID',
+ *  which is a unique ID for this client connection, and a 'status' field,
+ *  which is the string 'open' or 'closed'.
  *
  *  When a message arrives on a connection, a `received`
  *  output is produced with that message. Note that the message may arrive in
- *  multiple frames, but it will be produced as a single message.
+ *  multiple frames, but it will be produced on this port as a single message.
+ *  The output is an object with two fields,
+ *  a 'socketID', which is a unique ID for this client connection, and a 'message' field,
+ *  which is the message received from the client.
  *
  *  When an input arrives on `toSend`, then a message is
  *  sent to one or all of the open socket connections.
+ *  If this is an object with 'socketID' field and a 'message' field,
+ *  then send the value of the message field to the socket identified
+ *  by the socketID field. If the input has any other form, then the
+ *  message is broadcast to all open socket connections.
  *
  *  When `wrapup()` is invoked, this accessor closes the
  *  server and all connections.
@@ -84,7 +94,9 @@
  *    The output is an object with two fields, a 'socketID',
  *    which is a unique ID for this client connection, and a 'status' field,
  *    which is the string 'open' or 'closed'.
- *  @output received A message received a client in the form of an object with two fields, a 'socketID', which is a unique ID for this client connection, and a 'message' field, which is the message received from the client.
+ *  @output received A message received a client in the form of an object with two fields,
+ *    a 'socketID', which is a unique ID for this client connection, and a 'message' field,
+ *    which is the message received from the client.
  *  @author Hokeun Kim, Edward Lee
  *  @version $$Id$$
  */
