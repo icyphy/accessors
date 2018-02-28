@@ -21,13 +21,20 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 
 /** Subscribe to MQTT protocol messages.
- *
  *  MQTT is a lightweight messaging protocol.
+ *  The brokerHost and brokerPort parameters specify the IP address and port
+ *  of an MQTT broker, such as Mosquito.
+ *  When a connection to the broker is established, a message will be produced
+ *  on the connection output.
+ *  To subscribe to a topic, provide the topic name to the subscribe input.
+ *  If you send multiple topics to this input, it will subscribe to all the specified
+ *  topics. To subscribe to all topics provided by the broker, give # as the topic name.
+ *  To unsubscribe to a topic, provide the topics name to the unsubscribe input.
  *  
  *  This accessor requires the 'mqtt' module.
  *
  *  @input subscribe The topic name to which to subscribe.
- *   use # to subscribe to all topics.
+ *   Use # to subscribe to all topics.
  *  @input unsubscribe A topic to unsubscribe from.
  *  @output connection Output on which a string is sent when a
  *   connection to the broker has been established.
@@ -57,7 +64,6 @@ var mqtt = require('@accessors-modules/mqtt');
 
 exports.setup = function () {
     // Inputs and outputs
-    // FIXME: Should be renamed topic
     this.input('subscribe', {
         'type': 'string',
         'value': ''
@@ -96,7 +102,6 @@ function onConnect() {
 }
 
 exports.subscribeInputHandler = function () {
-    // FIXME: Unsubscribe to previous topic.
     var topic = this.get('subscribe');
     if (topic === '') {
         // No topic is given.
