@@ -2,6 +2,7 @@
 **/.\#*
 **/*~
 **/*.class
+**/*Idx.html
 **/*PtDoc.xml
 node_modules/**
 web/doc/**
@@ -35,3 +36,8 @@ web/hosts/duktape/eduk2/testCommon.h
 web/hosts/duktape/eduk2/text-display.h
 web/hosts/duktape/eduk2/util.h
 web/hosts/duktape/rusteduk/target/
+web/reports/status/accessorMap.txt
+web/reports/status/accessorMapCapeCode.txt
+web/reports/status/browserhost.txt
+web/reports/status/capecodehost.txt
+web/reports/status/nodehost.txt
