@@ -1,4 +1,2 @@
-# See https://docs.travis-ci.com/user/languages/javascript-with-nodejs/
-language: node_js
-node_js:
-  - "7"
+before_script: cd web
+install: ant cleanAll build tests.jenkins status
