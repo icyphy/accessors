@@ -1,8 +1,15 @@
-
-$Id$
-
-Terraswarm Accessors
+Accessors
 ===================
+
+See [http://accessors.org](http://accessors.org) for more information. 
+
+Below is a portion of that website.
+
+
+<b>Accessors</b> are a technology for making the Internet of Things accessible
+to a broader community of citizens, inventors, and service providers through open
+interfaces, an open community of developers, and an open repository of technology.
+Accessors enable composing heterogeneous devices and services in the Internet of Things (IoT).
 
 Accessors, described in the paper, [A Vision of Swarmlets](http://www.terraswarm.org/pubs/332.html)
 are actors that provide access to a (typically remote) service, sensor, or actuator. An accessor is instantiated by an
@@ -18,9 +25,15 @@ sponsored by MARCO and DARPA.
 
 This work is also supported by the [Industrial Cyber-Physical Systems (iCyPhy) Center](https://www.icyphy.org).
 
+See the <a href="http://www.icyphy.org/pubs/73.html">overview presentation</a>.
+for a quick start using Node.js as a host, see the
+<a href="https://www.icyphy.org/accessors/wiki/Main/NodeHost">Node host</a>.
+See also the <a href="https://www.icyphy.org/accessors/wiki/Main/Tutor2017Tutorial">tutorial on CapeCode</a>,
+the development environment based on <a href="http://ptolemy.org/ptolemyII">Ptolemy II</a> that uses the Nashorn host.
+
 See Also
 --------
-* [TerraSwarm Accessors Main Page](https://www.icyphy.org/accessors)
+* [Accessors Main Page](http://accessors.org)
 * [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
 
 
