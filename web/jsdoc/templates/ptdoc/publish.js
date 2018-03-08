@@ -208,7 +208,7 @@ exports.publish = function (data) {
 function writePtDoc(jsFileName, moml) {
     var ptDocFileName = jsFileName.substr(0, jsFileName.length - 3) + "PtDoc.xml";
     fs.writeFileSync(ptDocFileName, moml, 'utf8');
-    console.log("Writing: " + ptDocFileName);
+    // console.log("Writing: " + ptDocFileName);
 }
 
 
