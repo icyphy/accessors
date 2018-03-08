@@ -35,7 +35,7 @@ See Also
 --------
 * [Accessors Main Page](http://accessors.org)
 * [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
-
+* [![Build Status](https://travis-ci.org/icyphy/accessors.svg?branch=master)](https://travis-ci.org/icyphy/accessors)
 
 How to update index.json
 ------------------------
