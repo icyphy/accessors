@@ -1851,7 +1851,7 @@ Accessor.prototype.reify = function (accessor) {
     
     // Add the accessor to the list of all accessors if it is a new one
     // FIXME: Do we really need this?
-    if (isNewAccessor) {
+    if (isNewAccessor && accessorInstance) {
         allAccessors.push(accessorInstance);
     };
 
@@ -2652,7 +2652,7 @@ function convertType(value, destination, name) {
 function getTopLevelAccessors() {
     var result = [];
     for (var i = 0; i < allAccessors.length; i++) {
-        if (!allAccessors[i].container && !allAccessors[i].extendedBy && !allAccessors[i].implementedBy) {
+        if (allAccessors[i] && !allAccessors[i].container && !allAccessors[i].extendedBy && !allAccessors[i].implementedBy) {
             result.push(allAccessors[i]);
         }
     }
