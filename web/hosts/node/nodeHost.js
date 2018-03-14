@@ -131,7 +131,6 @@ function getAccessorCode(name) {
             break;
         } catch (error) {
             //console.log('nodeHost.js: getAccessorCode(' + name + '): error:');
-            console.log(error);
             continue;
         }
     }
