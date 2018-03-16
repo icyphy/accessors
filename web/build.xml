@@ -514,6 +514,15 @@
   </target>
 
 
+  <target name="junit-report">
+    <junitreport todir="./reports">
+      <fileset dir="./reports">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="./report/html"/>
+    </junitreport>
+  </target>
+
   <target name="mocha-install"
 	  depends="-check-mocha, chai-update"
 	  unless="mocha.command.exists">
