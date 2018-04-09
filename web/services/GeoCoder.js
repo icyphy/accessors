@@ -98,12 +98,14 @@ exports.setup = function () {
     });
 };
 
+this.noGeoCoderKey = true;
+
 exports.initialize = function () {
     // Be sure to call the superclass so that the trigger input handler gets registered.
     exports.ssuper.initialize.call(this);
 
     var self = this;
-
+    this.noGeoCoderKey = true;
     // Handle location information.
     this.addInputHandler('address', function () {
         var address = this.get('address');
@@ -115,6 +117,7 @@ exports.initialize = function () {
             var keyFile = '$KEYSTORE/geoCoderKey';
             try {
                 key = getResource(keyFile, 1000).trim();
+                this.noGeoCoderKey = false;
             } catch (e) {
                 console.log('GeoCoder.js: Could not get ' + keyFile + ":  " + e +
                             '\nThe key is not public, so this accessor is only useful ' +
@@ -170,7 +173,11 @@ exports.filterResponse = function (response) {
                 "longitude": parsed.results[0].geometry.location.lng
             });
         } else {
-            error('GeoCoder: No matching location.');
+            message = 'GeoCoder: No matching location.';
+            if (this.noGeoCoderKey) {
+                message += 'Could not find key in $KEYSTORE/geoCoderKey.  See stdout and https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder';
+            }
+            error(message);
             // So that downstream actors don't just a previous location, send null.
             this.send('location', null);
         }
