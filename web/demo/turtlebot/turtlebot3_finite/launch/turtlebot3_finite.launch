@@ -1,0 +1,5 @@
+<launch>
+  <!-- turtlebot3_teleop_key already has its own built in velocity smoother -->
+  <node pkg="turtlebot3_finite" type="finite_pub_sub.py" name="finite_pub_sub" output="screen">
+  </node>
+</launch>
