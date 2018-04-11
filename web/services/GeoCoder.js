@@ -173,9 +173,9 @@ exports.filterResponse = function (response) {
                 "longitude": parsed.results[0].geometry.location.lng
             });
         } else {
-            message = 'GeoCoder: No matching location.';
+            var message = 'GeoCoder: No matching location.';
             if (this.noGeoCoderKey) {
-                message += 'Could not find key in $KEYSTORE/geoCoderKey.  See stdout and https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder';
+                message += '  Could not find key in $KEYSTORE/geoCoderKey.  See stdout and https://www.icyphy.org/accessors/library/index.html?accessor=services.GeoCoder';
             }
             error(message);
             // So that downstream actors don't just a previous location, send null.
