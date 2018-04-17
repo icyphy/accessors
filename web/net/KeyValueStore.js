@@ -33,8 +33,11 @@
  *  will remove the specified key from the store, producing on its output the previous
  *  value (if any). If <i>remove</i> is false, then this actor will either set or
  *  retrieve a value in the key-value store, depending on whether the
- *  and the <i>value</i> input is non-empty. If the <i>value</i> is non-empty, then this
- *  actor sets the value. If it is empty, then this actor retrieves the value.
+ *  <i>value</i> input is non-empty. If the <i>value</i> is non-empty, then this
+ *  actor sets the value for the specified key.
+ *  If it is empty, then this actor retrieves the value for the specified key.
+ *  If no key is given, then this actor retrieves an array of all the keys
+ *  in the key-value store.
  *
  *  If an error occurs accessing the key-value store (e.g., no store is found at the specified
  *  URL, or no value is found with the specified key),
@@ -55,13 +58,17 @@
  *
  *      http://localhost:8077/keyvalue/delete?id=MY_ID
  *
+ *  * To list all the keys, use
+ *
+ *      http://localhost:8077/keyvalue/list
+ *
  *  The key and value are both
  *  encoded using the JavaScript encodeURIComponent() function,
  *  and on retrieval, decoded using decodeURIComponent(),
  *  and hence can include any text characters.
  *
- *  Note that this accessor uses blocking reads to access the store,
- *  so if the store is remote, this could lead to sluggish responses.
+ *  Note that this accessor uses nonblocking reads to access the store,
+ *  so the output is produced later when the server responds.
  *
  *  @accessor net/KeyValueStore
  *  @input {string} storeLocation The URL of the key-value store service.
@@ -119,13 +126,12 @@ function handleInputs() {
     var theKey = this.get('key');
     var toRemove = this.get('remove');
     var theValue = this.get('value');
-    var url = store + '/get?id=' + theKey;
     var thiz = this;
     if (toRemove) {
         if (theKey !== "") {
             httpClient.get(url, function(response) {
                 var produce = response.body;
-                url = store + '/delete?id=' + theKey;
+                var url = store + '/delete?id=' + theKey;
                 // FIXME: This should use HTTP delete not get.
                 httpClient.get(url, function(response) {
                     if (checkResponse(response, thiz) && produce !== "") {
@@ -137,8 +143,12 @@ function handleInputs() {
     } else {
         // toRemove == false. If there is a value, use it to set.
         if (theValue !== "" && theValue !== null) {
+            if (!theKey) {
+                thiz.error("Invalid key: " + theKey + " for value: " + theValue);
+                return;
+            }
             // FIXME: encodeURIComponent is not defined as a top-level accessor function.
-            url = store + '/set?id=' + encodeURIComponent(theKey);
+            var url = store + '/set?id=' + encodeURIComponent(theKey);
             var options = {
                 'url':url,
                 'body':theValue
@@ -149,6 +159,12 @@ function handleInputs() {
                 }
             });
         } else {
+            var url;
+            if (theKey) {
+                url = store + '/get?id=' + theKey;
+            } else {
+                url = store + '/list';
+            }
             httpClient.get(url, function(response) {
                 if (checkResponse(response, thiz)) {
                     var valueFromStore = decodeURIComponent(response.body);
