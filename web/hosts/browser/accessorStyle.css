@@ -5,7 +5,8 @@
 .accessorDirectory {
     padding: 10px;
     font-size: 100%;
-    background-color: #0F325E;
+    /* background-color: #0F325E; */
+    background-color: #252c58;
     color: #f8da73;
 }
 
@@ -21,12 +22,27 @@
 	list-style-type:none;
 }
 
+/* This is needed for accessors/library/index.html */
+#accessorMenu h2.sectionhead {
+    color:#e7c254;
+    /* background:#003262; */
+    background-color: #252c58;
+    text-align:center;
+    margin: 0px;
+    padding: 20px;
+    border-top: 1px solid #CCC;	
+    font-size: 16px;
+    font-weight: bold;	
+}
+
 #accessorMenu a {
 	display:block; 
-	width:170px;
+	/* width:170px;*/
+	width:150px;
 	text-indent: 10px;
 	color:#e7c254;
-	background-color: #0F325E;
+	/* background-color: #0F325E; */
+        background-color: #252c58;
 	text-decoration:none;
 }
 
