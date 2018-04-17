@@ -9,29 +9,29 @@
     <div id="onecolumn">
       <h1>The Accessors Repository</h1>
       <p>
-	The TerraSwarm accessors repository is an <a href="https://subversion.apache.org">Apache Subversion</a>
-	(SVN) repository that is readable by anyone. Currently, affiliation with the
-	<a href="https://www.icyphy.org">iCyPhy Center</a> is required to get write access
-	(see <a href="/icyphy/faq/26.htm">Who can get a login?</a>).
+	This accessors repository is a <a href="https://github.com/icyphy/accessors">Git repository</a>
+
       </p><p>
 	The repository includes a library of accessors, some swarmlet hosts (including a Browser and
-	Node.js host), and the <a href="/accessors">https://www.icyphy.org/accessors/</a>
+	Node.js host), and the <a href="/accessors">https://ptolemy.berkeley.edu/accessors/</a>
 	web page contents. It does not include the <a href="http://capecode.org">Cape Code</a>
 	swarmlet host (which uses its accessor library), nor the
 	<a href="/accessors/wiki">accessors wiki pages</a>, which are used
 	to document the accessor API and swarmlet hosts, nor the auto-generated
-	<a href="http://usejsdoc.org/">JSDoc</a> JavaScript <a href="https://www.icyphy.org/accessors/doc/jsdoc/index.html">code documentation</a>.
-      </p><p>
-	For anonymous read-only access, you can check out the repository using
-	the command line (assuming you have SVN installed):
-	<pre>
-	  svn co https://repo.eecs.berkeley.edu/svn-anon/projects/icyphy/accessors/trunk/accessors
-	</pre>
-      </p><p>
-	For read-write access, you need a repo.eecs.berkeley.edu account,
-	in which case you can check out a tree with:</p>
+	<a href="http://usejsdoc.org/">JSDoc</a> JavaScript <a href="https://ptolemy.berkeley.edu/accessors/doc/jsdoc/index.html">code documentation</a>.
+      </p>
+      <p>
+      Note that <a href="http://capecode.org">CapeCode</a>, the
+      Ptolemy II Accessors development environment, includes a copy of
+      the accessors tree, so with CapeCode, it is not necessary to
+      check out a separate copy of the accessors repo./
+      </p>
+
+      <p>
+	To check out the repo, use
+      </p>
       <pre>
-	svn co https://repo.eecs.berkeley.edu/svn/projects/icyphy/accessors/trunk/accessors
+	git clone https://github.com/icyphy/accessors
       </pre>
     </p>
 
@@ -40,8 +40,6 @@
       (see <a href="/accessors/wiki/Main/JSDoc#CI">JSDoc Continuous Integration</a>).
       Note that Jenkins job is not world readable, but the details are world readable.
     </p><p>
-      To update the web pages by hand, see
-      <a href="http://icyphy.org/icyphy/faq/47.html">How do I update workgroup pages using SVN?</a>
     </p>
   </div> <!-- end onecolumn -->
   <!-- no need to close /body and /html here, it will be done for us -->
