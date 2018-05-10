@@ -226,7 +226,9 @@ exports.issueCommand = function (callback) {
             command.url.path = '/' + encodedPath;
         }
     }
-    command.timeout = this.getParameter('timeout');
+    // NOTE: This will only be used as a connect timeout.
+    // Implement the request timeout locally using setTimeout().
+    // command.timeout = this.getParameter('timeout');
 
     if (this.getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
@@ -247,6 +249,15 @@ exports.issueCommand = function (callback) {
         }
         error(message);
     });
+    var timeout = this.getParameter('timeout');
+    setTimeout(function() {
+        if (request) {
+            // No response has occurred.
+            error('The timeout period of ' + timeout
+                    + 'ms has been exceeded.');
+        }
+        request = null;
+    }, timeout);
     request.end();
 };
 
@@ -260,6 +271,11 @@ exports.issueCommand = function (callback) {
  *  @param message An incoming message.
  */
 exports.handleResponse = function (message) {
+    if (request === null) {
+        // The request has already timed out. Ignore.
+        return;
+    }
+    request = null;
     // Assume that if the response is null, an error will be signaled.
     if (message !== null && typeof message !== 'undefined') {
         // Handle redirects by creating a new command and making a new
@@ -292,9 +308,21 @@ exports.handleResponse = function (message) {
                 command.body = body;
             }
 
+            // Make another request.
             request = httpClient.request(
                 command,
                 this.exports.handleResponse.bind(this));
+            
+            var timeout = this.getParameter('timeout');
+            setTimeout(function() {
+                if (request) {
+                    // No response has occurred.
+                    error('The timeout period of ' + timeout
+                            + 'ms has been exceeded.');
+                }
+                request = null;
+            }, timeout);
+            
             request.end();
 
         } else {
