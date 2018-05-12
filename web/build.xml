@@ -210,14 +210,18 @@
   </target>
   
   <!-- Ideally we would check to see if the host that npm connects to is online, but
-       www.npmjs.org does not handle pings.  Instead, we check to see if accessors.org is up. -->
+       www.npmjs.org does not handle pings.
+       Also, if $TRAVIS is set, then skip this check and hope npm works. -->
   <target name="-check-if-npmjs-org-is-up"
           depends="-check-node-works, -check-npm-works"
           if="${npm.works}"
           >
-    <echo>Check to see if https://www.npmjs.org is up.</echo>
+    <echo>Check to see if https://www.npmjs.org is up or $TRAVIS is set.</echo>
     <condition property="npmjs-org-is-up">
-      <http url="https://www.npmjs.org"/>
+      <or>
+        <http url="https://www.npmjs.org"/>
+        <isset property="env.TRAVIS"/> 
+      </or>
     </condition>
   </target>
 
@@ -499,7 +503,7 @@
 
   <target name="-jsdoc-no-network-message"
           unless="${npmjs-org-is-up}">
-    <echo>The node binary was not found or does not work or npmjs.org was not reachable, so the network is probably down, so there is no point in trying npm.</echo>
+    <echo>The node binary was not found or does not work or npmjs.org was not reachable and $TRAVIS was not set, so the network is probably down, so there is no point in trying npm.</echo>
   </target>
 
   <target name="jsdoc-update"
