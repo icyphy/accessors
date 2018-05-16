@@ -12,14 +12,14 @@ exports.setup = function () {
     // Start: WebServer: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var WebServer = this.instantiate('WebServer', 'net/WebServer.js');
     WebServer.setParameter('hostInterface', "localhost");
-    WebServer.setParameter('port', 8097);
+    WebServer.setParameter('port', 8597);
 
     // Start: REST: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var REST = this.instantiate('REST', 'net/REST.js');
-    REST.setDefault('options', {"url" : "http://localhost:8097"});
+    REST.setDefault('options', {"url" : "http://localhost:8597"});
     REST.setDefault('command', "");
     REST.setDefault('arguments', "");
-    REST.setParameter('timeout', 15000);
+    REST.setParameter('timeout', 28000);
     REST.setParameter('outputCompleteResponseOnly', true);
 
     // Start: TestSpontaneousOnce: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
@@ -68,10 +68,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize.call(this);
-        this.stopAt(18000.0);
+        this.stopAt(140000.0);
     };
 } else {
     exports.initialize = function() {
-        this.stopAt(18000.0);
+        this.stopAt(140000.0);
     };
 }

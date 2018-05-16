@@ -13,7 +13,7 @@ exports.setup = function () {
     var UDPSocketListener = this.instantiate('UDPSocketListener', 'net/UDPSocketListener.js');
     UDPSocketListener.setDefault('listeningAddress', "0.0.0.0");
     UDPSocketListener.setParameter('receiveType', "string");
-    UDPSocketListener.setDefault('listeningPort', 8084);
+    UDPSocketListener.setDefault('listeningPort', 8684);
 
     // Start: JavaScript: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
     // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
@@ -29,7 +29,7 @@ exports.setup = function () {
     var UDPSocketSender = this.instantiate('UDPSocketSender', 'net/UDPSocketSender.js');
     UDPSocketSender.setDefault('destinationAddress', "localhost");
     UDPSocketSender.setParameter('sendType', "string");
-    UDPSocketSender.setDefault('destinationPort', 8084);
+    UDPSocketSender.setDefault('destinationPort', 8684);
 
     // Start: TrainableTest: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TrainableTest = this.instantiate('TrainableTest', 'test/TrainableTest.js');
@@ -37,16 +37,14 @@ exports.setup = function () {
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
-    // Start: JavaScriptStop: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/lib/jjs/JavaScript.java
-    // FIXME: See instantiate() in accessors/web/hosts/common/commonHost.js
-    // We probably need to do something with the bindings.
-    var JavaScriptStop = this.instantiateFromCode('JavaScriptStop', unescape('exports.setup%20%3D%20function%28%29%20%7B%0A%20%20this.input%28%27input%27%29%3B%0A%7D%0A%0Avar%20handle%3B%0Aexports.initialize%20%20%3D%20function%28%29%20%7B%0A%20%20handle%20%3D%20this.addInputHandler%28%27input%27%2C%20handler.bind%28this%29%29%3B%0A%7D%0A%0Afunction%20handler%28%29%20%7B%0A%20%20%20%20var%20value%20%3D%20this.get%28%27input%27%29%3B%0A%20%20%20%20if%20%28value%20%3D%3D%3D%20true%29%20%7B%0A%20%20%20%20%20%20%20%20console.log%28%22JavaScriptStop%3A%20about%20to%20call%20stop%28%29.%22%29%3B%0A%20%20%20%20%20%20%20%20//%20stop%28%29%20is%20defined%20for%20all%20accessors%2C%20though%20it%20might%20not%20actually%20do%20anything.%0A%20%20%20%20%20%20%20%20this.stop.call%28this%29%3B%0A%20%20%20%20%20%20%20%20//%20An%20accessor%20host%20might%20not%20get%20to%20the%20next%20line.%0A%20%20%20%20%20%20%20%20console.log%28%22JavaScriptStop%3A%20done%20calling%20stop%28%29%20on%20container%22%29%3B%0A%20%20%20%20%7D%0A%7D%0A%20%0Aexports.wrapup%20%3D%20function%28%29%20%7B%0A%20%20%20%20console.log%28%22JavaScriptStop.wrapup%28%29%22%29%3B%0A%20%20%20%20if%20%28typeof%20handle%20%21%3D%3D%20undefined%29%20%7B%0A%20%20%20%20%20%20%20%20this.removeInputHandler%28handle%29%3B%0A%20%20%20%20%7D%0A%7D'));
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
 
     // Connections: UDPSocketSelf: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(UDPSocketListener, 'message', TextDisplay, 'input');
     this.connect(JavaScript, 'output', UDPSocketSender, 'toSend');
     this.connect(TextDisplay, 'output', TrainableTest, 'input');
-    this.connect(TrainableTest, 'output', JavaScriptStop, 'input');
+    this.connect(TrainableTest, 'output', Stop, 'stop');
 };
 
 // To update the initialize code below, modify
@@ -55,10 +53,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize.call(this);
-        this.stopAt(5000.0);
+        this.stopAt(120000.0);
     };
 } else {
     exports.initialize = function() {
-        this.stopAt(5000.0);
+        this.stopAt(120000.0);
     };
 }
