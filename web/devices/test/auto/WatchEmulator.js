@@ -41,7 +41,7 @@ exports.setup = function () {
     var Moto360SensorListener = this.instantiate('Moto360SensorListener', 'devices/Moto360SensorListener.js');
     Moto360SensorListener.setDefault('listeningAddress', "0.0.0.0");
     Moto360SensorListener.setParameter('receiveType', "unsignedbyte");
-    Moto360SensorListener.setDefault('listeningPort', 4568);
+    Moto360SensorListener.setDefault('listeningPort', 8084);
     Moto360SensorListener.setParameter('accelerometerSensitivity', 0.0);
     Moto360SensorListener.setParameter('gyroSensitivity', 0.0);
 

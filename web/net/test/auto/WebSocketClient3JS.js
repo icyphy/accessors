@@ -45,10 +45,14 @@ exports.setup = function () {
     // We probably need to do something with the bindings.
     var JavaScript = this.instantiateFromCode('JavaScript', unescape('exports.setup%20%3D%20function%28%29%20%7B%0A%20%20this.input%28%27connectionReady%27%29%3B%0A%20%20this.output%28%27toSend%27%29%3B%0A%7D%0A%0Avar%20handle%3B%0Aexports.initialize%20%20%3D%20function%28%29%20%7B%0A%20%20handle%20%3D%20this.addInputHandler%28%27connectionReady%27%2C%20function%28%29%20%7B%0A%20%20var%20self%20%3D%20this%3B%0A%20%20%20%20%20setTimeout%28function%28%29%20%7B%0A%20%20%20%20%20%20%20%20var%20add%20%3D%20%270123456789%27%3B%0A%20%20%20%20%20%20%20%20var%20longString%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%207000%3B%20i++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20longString%20+%3D%20add%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20self.send%28%27toSend%27%2C%20longString%29%3B%0A%20%20%20%20%20%7D%2C%20500%29%3B%0A%20%20%7D%29%3B%0A%7D%0A%20%0Aexports.wrapup%20%3D%20function%28%29%20%7B%0A%20%20this.removeInputHandler%28handle%29%3B%0A%7D'));
 
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
+
     // Connections: WebSocketClient3JS: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(WebSocketClient, 'received', TrainableTest, 'input');
     this.connect(JavaScript, 'toSend', WebSocketServer, 'toSend');
     this.connect(WebSocketServer, 'connection', JavaScript, 'connectionReady');
+    this.connect(TrainableTest, 'output', Stop, 'stop');
 };
 
 // To update the initialize code below, modify
@@ -57,10 +61,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize.call(this);
-        this.stopAt(16000.0);
+        this.stopAt(160000.0);
     };
 } else {
     exports.initialize = function() {
-        this.stopAt(16000.0);
+        this.stopAt(160000.0);
     };
 }
