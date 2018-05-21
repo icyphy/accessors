@@ -1,0 +1,119 @@
+    <link rel="stylesheet" type="text/css" href="https://www.icyphy.org/accessors/hosts/browser/accessorStyle.css"/>
+  <!-- trimmedTitle:Accessors: -->
+
+ <link href="https://www.icyphy.org/styles/UCB.css" rel="stylesheet" type="text/css" media="screen,print"/>
+ <link href="https://www.icyphy.org/styles/UCB-flex.css" rel="stylesheet" type="text/css" media="screen,print"/>
+ <link href="https://www.icyphy.org/styles/UCB-print.css" rel="stylesheet" type="text/css" media="print"/>
+ <link href="https://www.icyphy.org/styles/style.css" rel="stylesheet" type="text/css" media="screen,print"/>
+ <!-- Conditional comment addds IE6-specific CSS deviations -->
+ <!--[if lte IE 6]>
+      <link href="/styles/IE6.css" rel="stylesheet" type="text/css" media="screen,print" />
+ <![endif]-->
+
+<link rel="shortcut icon" href="/web/20171011144347im_/https://www.icyphy.org/favicon.ico"/>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-37421901-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'http://web.archive.org/web/20171011144347/https://ssl/' : 'http://web.archive.org/web/20171011144347/http://www/') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>  <!-- -->
+
+<div id="wrapper">
+  <div id="header">
+    
+    </div><!-- end #header -->
+    
+<div id="sizer">
+  <div id="expander">
+    <div id="innerwrapper">
+      <div id="outside">
+	<div id="banr">
+	    <!-- Link to beginning of content section, for screen reader/keyboard accessibility -->
+	      <div id="skip"><a href="#maincontent" title="Skip to main content"><!--Skip to main content--></a></div>
+	        <!-- div id="ucb" /div -->
+		  <!-- OPTIONAL most-used toolset. Search is entire UC Berkeley web; can be customized to site  -->
+		    <!-- xxx #include virtual="/ssi/tools.htm" -->
+
+<div id="tools">
+<div id="searchform">
+<form action="http://web.archive.org/web/20171011144347/https://www.google.com/cse" id="cse-search-box">
+  <div>
+    <input type="hidden" name="cx" value="003847741721837491873:i1ogitrw8ya"/>
+    <input type="hidden" name="ie" value="UTF-8"/>
+    <input type="text" name="q" size="15"/>
+    <input type="submit" name="sa" value="Search"/>
+  </div>
+</form>
+<script type="text/javascript" src="http://web.archive.org/web/20171011144347js_/https://www.google.com/cse.js"></script>
+</div> <!-- /searchform -->
+</div> <!-- /tools -->
+
+  <!-- Website logo -->
+    <div id="logo"><a href="/web/20171011144347/https://www.icyphy.org/index.html">
+<!-- from php/icyph/config.php --><img src="/web/20171011144347im_/https://www.icyphy.org/img/iCyPhyLogo_web.png" alt="The Industrial Cyber-Physical Systems Center"/></a></div>
+<!-- OPTIONAL Customizable Quick Links dropdown -->
+  <!-- xxx do not include #include virtual="/ssi/links.htm" -->
+    <!-- OPTIONAL horizontal top navigation -->
+          <div id="topnav">
+
+          <ul>
+             <li class="first"><a href="/web/20171011144347/https://www.icyphy.org/index.htm">Home</a></li>          <li><a href="/web/20171011144347/https://www.icyphy.org/conferences/index.htm">Conferences</a></li>            <li><a href="/web/20171011144347/https://www.icyphy.org/icyphy/faq/">FAQ</a></li>            <li><a href="/web/20171011144347/https://www.icyphy.org/people/directory/index.html">People</a></li>            <li><a href="/web/20171011144347/https://www.icyphy.org/pubs/">Publications</a></li>
+            <li><a href="/web/20171011144347/https://www.icyphy.org/login/">Login</a></li>
+
+          </ul>
+
+          </div><!-- /#topnav -->
+	    <!-- xxx #include virtual="/ssi/topnav.htm" -->
+	    </div>
+	<!-- /#banr -->
+	<div id="pagebody">
+	    <div id="navcol">
+	          <!-- Main site navigation --><div class="sidebar_left"> <!--html_margi-->
+<div id="menu">
+<ul>
+<li><a href="/web/20171011144347/https://www.icyphy.org/index.html">iCyPhy Home</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/index.html">Accessor Home</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/library/index.html">Accessor Library</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/node_modules/@accessors-hosts/browser/index.html">Browser Host</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/node_modules/@accessors-hosts/ptolemy/index.html">Cape Code Host</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/node_modules/@accessors-hosts/node/index.html">Node Host</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/wiki/Version1/AccessorSpecification">Accessor Specification</a> </li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/wiki/Main/GettingStarted">Getting Started</a> </li>
+<li><a href="http://web.archive.org/web/20171011144347/https://www.icyphy.org/accessors/wiki/Main/PublicationsAndPresentations">Publications</a></li>
+</ul>
+</div><!-- /#menu -->
+<p>&nbsp;</p>
+    <h2 class="sectionhead"><a class="workgroup" href="/web/20171011144347/https://www.icyphy.org/accessors">accessors workgroup</a></h2>
+  <div id="menu">
+
+    <ul>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/">Home</a></li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/src/">src</a></li>
+<li><a href="/web/20171011144347/https://www.icyphy.org/accessors/wiki/">Wiki</a></li>
+    </ul>
+  </div> <!-- /menu -->
+</div> <!-- end sidebar_left --><!-- xxx #include virtual="/ssi/menu.htm" -->
+<!-- OPTIONAL Additional text or links in left column -->
+<div id="addon">
+  <!-- Optional extra info-->
+</div>
+<!-- /#addon -->
+</div>
+<!-- /#navcol -->
+<div id="contentcol">
+  <!-- OPTIONAL section title; can be used w or w/o photo strip below -->
+  <!-- do not use #include virtual="/ssi/section.htm" -->
+  <div id="content">
+    <!-- OPTIONAL floated sidebar for internal page anchor links and/or extra features -->
+
+    <!-- Begin main page content -->
+    <!-- Link target for accessibility Skip Nav -->
+    <a name="maincontent" id="maincontent"></a>
