@@ -79,7 +79,8 @@ margin: 1em 0;
 #banr {
 width: 100%;
 min-height:105px;
-background-color:#252c58;
+/*background-color:#252c58;*/
+background-color:#003262;
 /*background-image:url(/img/banr1.jpg);*/
 background-repeat: no-repeat;
 position:relative;
@@ -178,7 +179,7 @@ text-align:center;
 margin: 0 auto;
 border:solid 1px #ccc;
 border-top:0;
-background-image:url(/img/column-bg.gif);
+background-image:url(/accessors/img/column-bg.gif);
 background-repeat:repeat-y;
 overflow:auto;
 }
@@ -213,7 +214,7 @@ height:95px;
 /* ****** side nav ************** */
 
 .sidebar_left {
-background:#252c58;
+background:#003262;
 /* width: 129px; */
 /*float: bottom;*/
 /*padding: 0px 31px 1em 32px;*/
@@ -238,7 +239,7 @@ width:170px;
 padding: 6px 7px 7px 23px;
 text-indent: -8px;
 color:#e7c254;
-background:#252c58;
+background:#003262;
 border-bottom:1px dotted #616688;
 border-right: 1px dotted #616688;
 text-decoration:none;
@@ -250,7 +251,7 @@ width:170px;
 padding: 6px 7px 7px 23px;
 text-indent: -8px;
 color:#e7c254;
-background:#252c58;
+background:#003262;
 border-bottom:1px dotted #616688;
 border-right: 1px dotted #616688;
 text-decoration:none;
@@ -261,22 +262,22 @@ display:block;
 padding: 6px 7px 7px 23px;
 text-indent: -8px;
 color:#e7c254;
-background:#252c58;
+background:#003262;
 border-bottom:1px dotted #616688;
 border-right: 1px dotted #616688;
 text-decoration:none;
 }
 #leftmenu li {
-background: #252c58;
+background: #003262;
 }
 #leftmenu li #bold {
-background: #252c58;
+background: #003262;
 border-top: 1px solid #CCC;	
 
 }
 #leftmenu b {
 color:#e7c254;
-background: scroll#252c58;
+background: scroll#003262;
 margin: 0px;
 padding: 0px 0px 0px 21px;
 font-size: 16px;
@@ -285,7 +286,7 @@ font-weight: bold;
 
 #leftmenu h2.sectionhead {
 color:#e7c254;
-background:#252c58;
+background:#003262;
 		margin: 0px;
 		padding: 20px;
 		border-top: 1px solid #CCC;	
@@ -294,11 +295,13 @@ background:#252c58;
 }
 * html #menu, #menu2, #leftmenu a:hover {
 color:#f8da73;
-background:#5e6489; 
+/*background:#5e6489;*/
+background:#003262;
 }
 #menu, #menu2 :hover > a {
 color:#f8da73;
-background:#5e6489; 
+/*background:#5e6489; */
+background:#003262;
 }
 
 /* FLYOUT: vertical list for main site navigation in left column */
@@ -338,7 +341,7 @@ color:#e7c254;
 text-indent: -8px;						
 border-bottom:1px dotted #616688;
 border-right:1px dotted #616688;
-background:#252c58;
+background:#003262;
 position:relative;
 }
 #menu-flyout ul a {
@@ -355,11 +358,13 @@ text-indent: -10px;
 /* style the link hover */
 * html #menu-flyout a:hover {
 color:#f8da73;
-background:#5e6489;
+/*background:#5e6489;*/
+background:#003262;
 }
 #menu-flyout :hover > a {
 color:#f8da73; 
-background:#5e6489;
+/*background:#5e6489;*/
+background:#003262;
 }
 /* hide sublevels, position so they take up no room */
 #menu-flyout ul {
@@ -448,7 +453,7 @@ margin-left: .5em;
    #leftmenu h2.sectionhead above. */
 .sidebar_left h2.sectionhead {
 color:#e7c254;
-background:#252c58;
+background:#003262;
 text-align:center;
 		margin: 0px;
 		padding: 20px;
@@ -462,7 +467,7 @@ display:block;
 padding: 6px 7px 7px 23px;
 text-indent: -8px;
 color:#e7c254;
-background:#252c58;
+background:#003262;
 border-bottom: 0px dotted #616688;
 border-right: 0px dotted #616688;
 text-decoration:none;
