@@ -126,6 +126,19 @@ exports.testNodeAuto = function(auto) {
                     var testAccessor = 
                         nodeHost.instantiateTopLevel(nodeHost.uniqueName(testAccessorName),
                                                      testAccessorName);
+                    
+                    var oldWrapup = testAccessor.wrapup.bind(testAccessor);
+                    testAccessor.wrapup = function() {
+                        oldWrapup();
+                        // Wait to see if any exceptions occur in wrapup.
+                        // and remove the listeners.
+                        setTimeout(function() {
+                            process.removeListener('uncaughtException', exceptionHandler);
+                            process.removeListener('exit', exitHandler);
+                            done();
+                        }, 500);
+                    }
+                    
                     testAccessor.initialize();
 
                     if (testAccessor.stopAtTime === undefined) {
@@ -151,7 +164,7 @@ exports.testNodeAuto = function(auto) {
 
                     } 
 
-                    setTimeout(function(){
+                    testAccessor.setTimeoutDeterministic(function(){
                         // A test is considered successful if no errors 
                         // occur within the timeout used with stopAt().
                         // TODO:  Any way to listen for a stop?
@@ -170,7 +183,7 @@ exports.testNodeAuto = function(auto) {
                             // a problem with calling wrapup more than once.
                             
                             testAccessor.wrapup();
-                            
+
                             // Wait to see if any exceptions occur in wrapup.
                             // and remove the listeners.
                             setTimeout(function() {
@@ -181,9 +194,9 @@ exports.testNodeAuto = function(auto) {
                         }
                     }, // Set the timeout of this callback that
                        // removes the listeners so that it runs after
-                       // the model stops.  Note that here we are
-                       // using the native Node setTimeout(), whereas
-                       // the model is using a deterministic
+                       // the model stops.  Note that here if we are
+                       // using the native Node setTimeout(), rather than
+                       // what the model is using, a deterministic
                        // setTimeout().  If we don't invoke this
                        // callback after the model is done, then
                        // RampJSTest will non-deterministical have
