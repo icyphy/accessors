@@ -275,7 +275,7 @@ exports.handleResponse = function (message) {
         // The request has already timed out. Ignore.
         return;
     }
-    request = null;
+    // request = null; // NO! Response may be part of a multi-body response.
     // Assume that if the response is null, an error will be signaled.
     if (message !== null && typeof message !== 'undefined') {
         // Handle redirects by creating a new command and making a new
