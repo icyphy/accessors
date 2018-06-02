@@ -929,8 +929,9 @@
   
   <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
 
+  <!-- Skip tests.coverage for now -->
+
   <target name="tests.jenkins"
-          <!-- Skip tests.coverage for now -->
           depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml"
           description="Run the tests for Jenkins continuous integration">
     <echo>
