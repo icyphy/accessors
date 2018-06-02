@@ -930,7 +930,8 @@
   <!-- FIXME: Run tests.mocha.xml late because it will exit if any tests fail. -->
 
   <target name="tests.jenkins"
-          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml, tests.coverage"
+          <!-- Skip tests.coverage for now -->
+          depends="tests.capecode, tests.browser, tests.duk2, tests.eduk2, tests.nashorn, tests.mocha.xml"
           description="Run the tests for Jenkins continuous integration">
     <echo>
       ==tests.jenkins==
@@ -987,6 +988,7 @@
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
       <arg line="${mocha.command}" />
+      <arg line="--exit" />
       <arg line="${converted}"/>
     </exec>
 
@@ -1036,6 +1038,7 @@
 	  resultproperty="tests.resultproperty"
 	  timeout="${timeout.longer}">
       <arg line="${mocha.command}" />
+      <arg line="--exit" />
       <arg line="hosts/node/test/mocha/testNodeAllAuto.js"/>
     </exec>
 
@@ -1082,6 +1085,7 @@
       <!-- Don't use nail because some of the commonHosts tests are failing. -->
       <!-- arg line=" bail"/ -->
       <arg line="${mocha.command}" />
+      <arg line="--exit" />
       <arg value="--reporter"/>
       <arg value="mocha-junit-reporter"/>
       <arg value="--reporter-options"/>
