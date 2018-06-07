@@ -2,19 +2,19 @@
 
 // Copyright (c) 2016-2017 The Regents of the University of California.
 // All rights reserved.
-// 
+//
 // Permission is hereby granted, without written agreement and without
 // license or royalty fees, to use, copy, modify, and distribute this
 // software and its documentation for any purpose, provided that the above
 // copyright notice and the following two paragraphs appear in all copies
 // of this software.
-// 
+//
 // IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
 // FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
 // ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
 // THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
-// 
+//
 // THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
 // INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
@@ -25,11 +25,11 @@
 /**
  * Given the name of a resource, look for the resource in a set of
  * prestored resources.
- *  
+ *
  * To add a resource:
  * 1. Create a .h file with the name of the resource by editing the makefile:
  * RampJSDisplay.h: ../../../test/auto/RampJSDisplay.js makefile
- *	xxd -i $< | sed -e 's/unsigned //' -e 's/^int/const int/' > $@
+ *        xxd -i $< | sed -e 's/unsigned //' -e 's/^int/const int/' > $@
  *
  * 2. Add the .h file to the .h files below.
  *
@@ -44,7 +44,7 @@
  *
  * 6. Run:
  *    cd accessors/web/hosts
- *    ./duktape/eduk/eduk --timeout 3000 ../test/auto/RampJSDisplay.js 
+ *    ./duktape/eduk/eduk --timeout 3000 ../test/auto/RampJSDisplay.js
  *
  * 7. If you have errors, then uncomment DEBUG_NOFILEIO below
  *
@@ -58,7 +58,7 @@
 #include <string.h>
 #include <unistd.h>
 
-// If EDUK_FULL is defined, then the files used by the test harness are 
+// If EDUK_FULL is defined, then the files used by the test harness are
 // included in the eduk binary.
 // To create an eduk binary with only the necessary files, it would
 // be necessary to move the declarations that set fileEntries[] out of the
@@ -84,12 +84,12 @@
 
 #ifdef EDUK_FULL
 #define FILE_ENTRIES_SIZE 23
-#else 
-#ifdef EDUK_RAMPJSDISPLAY 
+#else
+#ifdef EDUK_RAMPJSDISPLAY
 #define FILE_ENTRIES_SIZE 10
-#else // EDUK_RAMPJSDISPLAY 
+#else // EDUK_RAMPJSDISPLAY
 #define FILE_ENTRIES_SIZE 6
-#endif // EDUK_RAMPJSDISPLAY 
+#endif // EDUK_RAMPJSDISPLAY
 #endif //EDUK_FULL
 
 
@@ -160,7 +160,7 @@ static int nofileio_readfile(duk_context *ctx) {
 #ifdef DEBUG_NOFILEIO
     fprintf(stderr, "%s:%d filename is %s\n", __FILE__, __LINE__, filename);
 #endif
-    
+
     // Loop through fileEntries and look for a match.
     for (int i = 0; i < FILE_ENTRIES_SIZE; i++) {
 #ifdef DEBUG_NOFILEIO
@@ -179,8 +179,8 @@ static int nofileio_readfile(duk_context *ctx) {
             buf = duk_push_fixed_buffer(ctx, (size_t) length);
             strncpy(buf, fileEntries[i].contents, length);
 #else
-	    // Duktape 2.x
-	    duk_push_lstring(ctx, fileEntries[i].contents, length);
+            // Duktape 2.x
+            duk_push_lstring(ctx, fileEntries[i].contents, length);
 #endif // NOFILEIO_USE_FIXED_BUFFER
 
 #ifdef NOFILEIO_USE_FIXED_BUFFER
@@ -209,7 +209,7 @@ static duk_function_list_entry nofileio_funcs[] = {
 };
 
 void nofileio_register(duk_context *ctx) {
-    // We initialize the fileEntries structure here, using an older 
+    // We initialize the fileEntries structure here, using an older
     // method of initialization so that the code is more portable.
     // In theory, we could use fileEntries[] = {.name = "xx", .contents = yy...
 
@@ -217,7 +217,7 @@ void nofileio_register(duk_context *ctx) {
 
     // Files necessary for the common host.  All Duktape accessors
     // will need these files.
-    fileEntries[n].name = "common/commonHost.js"; 
+    fileEntries[n].name = "common/commonHost.js";
     fileEntries[n].contents = ______common_commonHost_js;
     fileEntries[n].length = ______common_commonHost_js_len;
 
