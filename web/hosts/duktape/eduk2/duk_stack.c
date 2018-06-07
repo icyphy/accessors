@@ -31,20 +31,20 @@
 
 // get_stack_raw is from Duktape's duk_cmdline.c
 static duk_ret_t get_stack_raw(duk_context *ctx, void *udata) {
-	if (!duk_is_object(ctx, -1)) {
-		return 1;
-	}
-	if (!duk_has_prop_string(ctx, -1, "stack")) {
-		return 1;
-	}
-	if (!duk_is_error(ctx, -1)) {
-		/* Not an Error instance, don't read "stack". */
-		return 1;
-	}
+        if (!duk_is_object(ctx, -1)) {
+                return 1;
+        }
+        if (!duk_has_prop_string(ctx, -1, "stack")) {
+                return 1;
+        }
+        if (!duk_is_error(ctx, -1)) {
+                /* Not an Error instance, don't read "stack". */
+                return 1;
+        }
 
-	duk_get_prop_string(ctx, -1, "stack");  /* caller coerces */
-	duk_remove(ctx, -2);
-	return 1;
+        duk_get_prop_string(ctx, -1, "stack");  /* caller coerces */
+        duk_remove(ctx, -2);
+        return 1;
 }
 
 // print_pop_error is from Duktape's duk_cmdline.c
