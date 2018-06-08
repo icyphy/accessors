@@ -43,6 +43,15 @@ import java.util.Map;
 /**
  * This class echoes a string called from JavaScript.
  */
+/**
+ * BLEAdvertise class.
+ *
+ * @author 
+ * @version $Id$
+ * @since Ptolemy II 11.0
+ * @Pt.ProposedRating Red (cxh)
+ * @Pt.AcceptedRating Red (cxh)
+ */
 public class BLEAdvertise extends CordovaPlugin {
 
     private HashMap<Integer, Beacon> activeBeacons = new HashMap<Integer, Beacon>();
