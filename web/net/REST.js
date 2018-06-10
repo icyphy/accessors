@@ -243,23 +243,34 @@ exports.issueCommand = function (callback) {
     // console.log(util.inspect(command));
     
     request = httpClient.request(command, callback);
-    request.on('error', function (message) {
-        if (!message) {
-            message = 'Request failed. No further information.';
-        }
-        error(message);
-    });
+    request.on('error', this.exports.handleError.bind(this));
+    
     var timeout = this.getParameter('timeout');
     setTimeout(function() {
         if (request) {
             // No response has occurred.
             error('The timeout period of ' + timeout
                     + 'ms has been exceeded.');
+        	request.stop();
+        	request = null;
         }
-        request = null;
     }, timeout);
     request.end();
 };
+
+/** Handle an error.
+ *  @param message The error message.
+ */
+exports.handleError = function(message) {
+     if (!message) {
+        message = 'Request failed. No further information.';
+    }
+    if (request) {
+        request.stop();
+        request = null;
+    }
+    error(message);
+}
 
 /** Handle the response from the RESTful service. The argument
  *  is expected to be be an instance of IncomingMessage, defined
@@ -312,6 +323,7 @@ exports.handleResponse = function (message) {
             request = httpClient.request(
                 command,
                 this.exports.handleResponse.bind(this));
+            request.on('error', this.exports.handleError.bind(this));
             
             var timeout = this.getParameter('timeout');
             setTimeout(function() {
