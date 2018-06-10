@@ -3,9 +3,9 @@ exports.setup = function () {
     //  To run the code, run: 
     //  (cd $PTII/org/terraswarm/accessor/accessors/web/devices/test/auto; @node@ ../../../node_modules/@accessors-hosts/node/nodeHostInvoke.js devices/test/auto/WatchEmulator)
     //  To regenerate this composite accessor, run:
-    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/demo/WatchEmulator/WatchEmulator.xml
+    //  $PTII/bin/ptinvoke ptolemy.cg.kernel.generic.accessor.AccessorCodeGenerator -language accessor $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/demo/WatchEmulator/WatchEmulator.xml
     //  to edit the model, run:
-    //  $PTII/bin/capecode $PTII/./ptolemy/actor/lib/jjs/modules/udpSocket/demo/WatchEmulator/WatchEmulator.xml
+    //  $PTII/bin/capecode $PTII/ptolemy/actor/lib/jjs/modules/udpSocket/demo/WatchEmulator/WatchEmulator.xml
 
     // Ports: WatchEmulator: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
@@ -41,7 +41,7 @@ exports.setup = function () {
     var Moto360SensorListener = this.instantiate('Moto360SensorListener', 'devices/Moto360SensorListener.js');
     Moto360SensorListener.setDefault('listeningAddress', "0.0.0.0");
     Moto360SensorListener.setParameter('receiveType', "unsignedbyte");
-    Moto360SensorListener.setDefault('listeningPort', 8084);
+    Moto360SensorListener.setDefault('listeningPort', 4568);
     Moto360SensorListener.setParameter('accelerometerSensitivity', 0.0);
     Moto360SensorListener.setParameter('gyroSensitivity', 0.0);
 
