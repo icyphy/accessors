@@ -2518,15 +2518,15 @@ typedef struct duk_hthread duk_context;
 
 #if !defined(DUK_BSWAP32)
 #define DUK_BSWAP32(x) \
-	((((duk_uint32_t) (x)) >> 24) | \
-	 ((((duk_uint32_t) (x)) >> 8) & 0xff00UL) | \
-	 ((((duk_uint32_t) (x)) << 8) & 0xff0000UL) | \
-	 (((duk_uint32_t) (x)) << 24))
+        ((((duk_uint32_t) (x)) >> 24) | \
+         ((((duk_uint32_t) (x)) >> 8) & 0xff00UL) | \
+         ((((duk_uint32_t) (x)) << 8) & 0xff0000UL) | \
+         (((duk_uint32_t) (x)) << 24))
 #endif
 #if !defined(DUK_BSWAP16)
 #define DUK_BSWAP16(x) \
-	((duk_uint16_t) (x) >> 8) | \
-	((duk_uint16_t) (x) << 8)
+        ((duk_uint16_t) (x) >> 8) | \
+        ((duk_uint16_t) (x) << 8)
 #endif
 
 /* DUK_USE_VARIADIC_MACROS: required from compilers, so no fill-in. */
@@ -2807,9 +2807,9 @@ typedef struct duk_hthread duk_context;
 #define DUK_USE_DEBUG
 #define DUK_USE_DEBUG_LEVEL 0
 #define DUK_USE_DEBUG_WRITE(level,file,line,func,msg) do {    \
-		fprintf(stderr, "D%ld %s:%ld (%s): %s\n", \
-		        (long) (level), (file), (long) (line), (func), (msg)); \
-	} while (0)
+                fprintf(stderr, "D%ld %s:%ld (%s): %s\n", \
+                        (long) (level), (file), (long) (line), (func), (msg)); \
+        } while (0)
 */
 
 #undef DUK_USE_AUGMENT_ERRORS
@@ -2898,7 +2898,7 @@ typedef struct duk_hthread duk_context;
 /* External provider already defined. */
 #elif defined(DUK_USE_DATE_FMT_STRFTIME)
 #define DUK_USE_DATE_FORMAT_STRING(ctx,parts,tzoffset,flags) \
-	duk_bi_date_format_parts_strftime((ctx), (parts), (tzoffset), (flags))
+        duk_bi_date_format_parts_strftime((ctx), (parts), (tzoffset), (flags))
 #else
 /* No provider for DUK_USE_DATE_FORMAT_STRING(), fall back to ISO 8601 only. */
 #endif

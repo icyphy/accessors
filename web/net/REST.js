@@ -226,7 +226,9 @@ exports.issueCommand = function (callback) {
             command.url.path = '/' + encodedPath;
         }
     }
-    command.timeout = this.getParameter('timeout');
+    // NOTE: This will only be used as a connect timeout.
+    // Implement the request timeout locally using setTimeout().
+    // command.timeout = this.getParameter('timeout');
 
     if (this.getParameter('outputCompleteResponseOnly') === false) {
         command.outputCompleteResponseOnly = false;
@@ -241,14 +243,34 @@ exports.issueCommand = function (callback) {
     // console.log(util.inspect(command));
     
     request = httpClient.request(command, callback);
-    request.on('error', function (message) {
-        if (!message) {
-            message = 'Request failed. No further information.';
+    request.on('error', this.exports.handleError.bind(this));
+    
+    var timeout = this.getParameter('timeout');
+    setTimeout(function() {
+        if (request) {
+            // No response has occurred.
+            error('The timeout period of ' + timeout
+                    + 'ms has been exceeded.');
+        	request.stop();
+        	request = null;
         }
-        error(message);
-    });
+    }, timeout);
     request.end();
 };
+
+/** Handle an error.
+ *  @param message The error message.
+ */
+exports.handleError = function(message) {
+     if (!message) {
+        message = 'Request failed. No further information.';
+    }
+    if (request) {
+        request.stop();
+        request = null;
+    }
+    error(message);
+}
 
 /** Handle the response from the RESTful service. The argument
  *  is expected to be be an instance of IncomingMessage, defined
@@ -260,6 +282,11 @@ exports.issueCommand = function (callback) {
  *  @param message An incoming message.
  */
 exports.handleResponse = function (message) {
+    if (request === null) {
+        // The request has already timed out. Ignore.
+        return;
+    }
+    // request = null; // NO! Response may be part of a multi-body response.
     // Assume that if the response is null, an error will be signaled.
     if (message !== null && typeof message !== 'undefined') {
         // Handle redirects by creating a new command and making a new
@@ -292,9 +319,22 @@ exports.handleResponse = function (message) {
                 command.body = body;
             }
 
+            // Make another request.
             request = httpClient.request(
                 command,
                 this.exports.handleResponse.bind(this));
+            request.on('error', this.exports.handleError.bind(this));
+            
+            var timeout = this.getParameter('timeout');
+            setTimeout(function() {
+                if (request) {
+                    // No response has occurred.
+                    error('The timeout period of ' + timeout
+                            + 'ms has been exceeded.');
+                }
+                request = null;
+            }, timeout);
+            
             request.end();
 
         } else {

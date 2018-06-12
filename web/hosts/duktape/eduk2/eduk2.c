@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
 #if defined(DUK_CMDLINE_MODULE_SUPPORT)
     duk_module_duktape_init(ctx);
 #endif
-    
+
     // FIXME: fileio_register() should go away eventually.
     //fileio_register(ctx);
 
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
     return returnValue;
 
 #ifndef EDUK_RUN_RAMPJSDISPLAY
- usage: 
+ usage:
     duk_destroy_heap(ctx);
     fprintf(stderr, "Usage: eduk [--timeout time] accessorFileName\n");
     return 1;

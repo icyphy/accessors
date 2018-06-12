@@ -28,9 +28,13 @@ exports.setup = function () {
     TrainableTest.setParameter('trainingMode', false);
     TrainableTest.setParameter('tolerance', 1.0E-9);
 
+    // Start: Stop: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var Stop = this.instantiate('Stop', 'utilities/Stop.js');
+
     // Connections: RESTStringURL: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
     this.connect(TestSpontaneousOnce, 'output', REST, 'trigger');
     this.connect(REST, 'response', TrainableTest, 'input');
+    this.connect(TrainableTest, 'output', Stop, 'stop');
 };
 
 // To update the initialize code below, modify
@@ -39,10 +43,10 @@ if (exports.initialize) {
     var originalInitialize = exports.initialize;
     exports.initialize = function() {
         originalInitialize.call(this);
-        this.stopAt(12000.0);
+        this.stopAt(120000.0);
     };
 } else {
     exports.initialize = function() {
-        this.stopAt(12000.0);
+        this.stopAt(120000.0);
     };
 }
