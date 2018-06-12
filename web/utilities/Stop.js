@@ -47,10 +47,11 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
+    var thiz = this;
     this.addInputHandler('stop', function () {
-        var stop = this.get('stop');
+        var stop = thiz.get('stop');
         if (stop) {
-            this.stop();
+            thiz.stop();
         }
     });
 };

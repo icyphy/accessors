@@ -130,6 +130,7 @@ getResource = function (uri) {
         if (home === undefined) {
             throw new Error('Could not get $HOME from the environment to expand ' + uri);
         } else {
+            var path = require('path');
             uri = uri.replace('$KEYSTORE', home + path.sep + '.ptKeystore');
             code = fs.readFileSync(uri, 'utf8');
             return code;
