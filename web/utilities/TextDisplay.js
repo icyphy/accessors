@@ -66,7 +66,8 @@ exports.initialize = function () {
 
     this.addInputHandler('input', function () {
         var inputValue = self.get('input');
-        var text = util.inspect(inputValue);
+        // The null argument is an undocumented feature indicating unbounded depth.
+        var text = util.inspect(inputValue, {depth: null});
         display.appendText(text);
         this.send('output', text);
     });
