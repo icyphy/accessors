@@ -117,11 +117,7 @@ exports.setup = function () {
 
 //Overriding REST
 exports.filterResponse = function(response){
-    var realResponse = "";
-    for(var i=0; i < response.length; i++){
-        realResponse += String.fromCharCode(response[i]);
-    }
-    return JSON.parse(realResponse)
+    return JSON.parse(response);
 }
 
 //Overriding REST
