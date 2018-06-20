@@ -6,7 +6,8 @@
     "NaturalLanguage.js",
     "RedPinLocation.js",
     "ReverseGeoCoder.js",
-    "SemanticRepository.js",
+    "SemanticRepositoryUpdate.js",
+    "SemanticRepositoryQuery.js",
     "SpeechRecognition.js", 
     "Weather.js",
     "WiFiScan.js"

@@ -5,9 +5,9 @@
     <property name="image" class="ptolemy.vergil.kernel.attributes.ImageAttribute">
         <property name="source" class="ptolemy.data.expr.FileParameter" value="/Users/matt.weber/ptII/org/terraswarm/accessor/accessors/web/services/SemanticRepositoryUpdateIcon.png">
         </property>
-        <property name="scale" class="ptolemy.data.expr.Parameter" value="50.0">
+        <property name="scale" class="ptolemy.data.expr.Parameter" value="75.0">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[-33.0, -10.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-65.0, -13.0]">
         </property>
     </property>
     <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={98, 179, 934, 632}, maximized=false}">
