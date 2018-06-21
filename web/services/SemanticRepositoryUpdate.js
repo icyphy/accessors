@@ -22,9 +22,9 @@
  *  SPARQL is also a protocol for communicating with RDF databases
  *  Upon receiving an update input, this accessor performs an http POST
  *  to the specified server and port with the body set to the
- *  update input. Upon receiving a 204 response from the server, this
- *  accessor outputs the string "success". If a different response is
- *  received this accessor throws an error (producing no output). 
+ *  update input. The http status code is produced on the output with
+ *  a 204 response from the server indicating success.
+ *  If a different status code is received, this accessor throws an error. 
  *  Note that an INSERT that inserts data already in the repository or
  *  a DELETE that removes data already absent from the 
  *  repository is treated by the respository as a
@@ -36,7 +36,7 @@
  *  the pending request has completed. This strategy ensures that outputs are
  *  produced in the same order as the input requests.
  *
- *  @accessor services/SemanticRepository
+ *  @accessor services/SemanticRepositoryUpdate
  *  @author Matt Weber
  *  @version $$Id: SemanticRepository.js 1725 2017-05-19 22:59:11Z cxh $$
  *  @input {string} update The SPARQL update to be sent to the semantic repository.
@@ -46,8 +46,8 @@
  *  @parameter {string} repositoryName The name of the particular repository on the host.
  *  @parameter {int} timeout The amount of time (in milliseconds) to wait for a response
  *   before triggering a null response and an error. This defaults to 20000.
- *  @output response The string "success" if this accessor gets a 204 status code
- *   back from the semantic repository. Otherwise no output is produced.
+ *  @output {string} status The status code of the http POST to the Semantic Repository.
+ *   A 204 code indicates success.
  */
 
 
@@ -109,7 +109,7 @@ exports.setup = function () {
     this.output('headers', {
         'visibility': 'expert'
     });
-    this.output('status', {
+    this.output('response', {
         'visibility': 'expert'
     });
     this.parameter('outputCompleteResponseOnly', {
@@ -125,12 +125,10 @@ exports.filterResponse = function(response){
 //Overriding REST
 //Connections to the SemanticRepository should be closed once data has been received.
 exports.handleResponse = function(message){
-    if(message.statusCode == 204){
-        this.send('response', 'Success')
-        exports.ssuper.wrapup();
-    } else {
-        exports.ssuper.wrapup();
-        error('Received a ' + message.statusCode + ' status code from SemanticRepository. 204 indicates success.');
+    this.send('status', message.statusCode)
+    exports.ssuper.wrapup();
+    if(message.statusCode != 204){
+        error('Received a ' + message.statusCode + ' status code from the Semantic Repository. 204 indicates success.');
     }
 }
 
@@ -145,10 +143,7 @@ exports.initialize = function(){
         var repositoryName = thiz.getParameter('repositoryName');
 
         var options = {
-            'headers' : {//'Accept':'application/json',
-                        'Content-Type': 'application/sparql-update'
-                        //'Content-Type': 'application/x-www-form-urlencode'
-                        },
+            'headers' : {'Content-Type': 'application/sparql-update'},
             'method'  : 'POST',
             'url'     : {'host'  : host,
                         'port'   : port
