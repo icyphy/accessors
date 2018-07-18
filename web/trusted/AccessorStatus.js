@@ -69,6 +69,10 @@ exports.setup = function () {
         'type':'number',
         'value':1000
     });
+    this.parameter('deepMonitoring', {
+    	'type':'boolean',
+    	'value':false
+    });
 };
 
 var handle = null;
@@ -92,8 +96,8 @@ exports.initialize = function () {
     if (monitoringInterval > 0) {
         var accessors = getTopLevelAccessors();
         for (var i = 0; i < accessors.length; i += 1) {
-            // FIXME: Should the argument (deeply) be a parameter?
-            accessors[i].startMonitoring(false);
+        	var deep = self.getParameter('deepMonitoring');
+            accessors[i].startMonitoring(deep);
         }
         handle = setInterval(function() {
             var accessors = getTopLevelAccessors();
