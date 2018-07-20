@@ -132,6 +132,9 @@ exports.initialize = function () {
     mqttClient = mqtt.createClient(this.getParameter('brokerPort'), this.getParameter('brokerHost'));
     mqttClient.on('connect', onConnect.bind(this));
     mqttClient.on('message', onMessage.bind(this));
+    mqttClient.on('error', function(message) {
+    	error(message);
+    });
     mqttClient.start();
 };
 
