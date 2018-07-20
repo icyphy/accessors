@@ -252,8 +252,6 @@ function instantiate(accessorName, accessorClass) {
  *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
  *  @return An object containing the accessor and a unique array of modules used by the accessor.
  */
-// 
-//want to run the accessor.
 function instantiateInterface(accessorName, accessorClass) {
 
     var requireLog = [];
