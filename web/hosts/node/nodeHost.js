@@ -234,6 +234,63 @@ function instantiate(accessorName, accessorClass) {
     return instance;
 }
 
+/** Return an accessor and a list of its required modules for purposes of examining
+ *  its non-functional characteristics. This is accomplished by instantiating the accessor,
+ *  and ignoring any exceptions from require for modules that do not exist for this host.
+ *  
+ *  WARNING: An accessor instantiated by this function may be unusable in a swarmlet!
+ *  Use instantiate if you want to run the accessor later.
+ *
+ *  FIXME: The instantiatedInterface still appears to the swarmlet as an ordinary
+ *  instantiated accessor. I think we should delete it immediately after getting
+ *  its data.
+ *
+ *
+ *  This will throw an exception if there is no such accessor class on the accessor
+ *  search path.
+ *  @param accessorName The name to give to the instance.
+ *  @param accessorClass Fully qualified accessor class name, e.g. 'net/REST'.
+ *  @return An object containing the accessor and a unique array of modules used by the accessor.
+ */
+// 
+//want to run the accessor.
+function instantiateInterface(accessorName, accessorClass) {
+
+    var requireLog = [];
+
+    //An alternative require-like function that records the modules it attempts to
+    //load in requireLog and also will not throw an error if the module does not exist.
+    //This is desirable because we may wish to examine the interfaces of accesssors,
+    //that cannot be run in the node host. Note an error will still be thrown if
+    //the accessor uses a required module in its top level or setup function.
+    function loggingRequire(path) {
+        requireLog.push(path);
+        var response;
+        try{
+            response = require(path);
+        } catch(ignoredError){
+            response = {};
+        }
+        return response;
+    }
+
+    var bindings = {
+        'getResource': getResource,
+        'require': loggingRequire,
+    };
+    var instance = commonHost.instantiateAccessor(
+        accessorName, accessorClass, getAccessorCode, bindings);
+    
+    //Make array of required modules unique
+    function onlyUnique(value, index, self) { 
+        return self.indexOf(value) === index;
+    }
+    var modules = requireLog.filter( onlyUnique );
+
+    return {"modules" : modules, "accessor": instance};
+}
+
+
 /** Instantiate and return a top-level accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
