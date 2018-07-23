@@ -255,6 +255,7 @@ function instantiate(accessorName, accessorClass) {
 function instantiateInterface(accessorName, accessorClass) {
 
     var requireLog = [];
+    var instantiateLog = [];
 
     //An alternative require-like function that records the modules it attempts to
     //load in requireLog and also will not throw an error if the module does not exist.
@@ -272,10 +273,26 @@ function instantiateInterface(accessorName, accessorClass) {
         return response;
     }
 
+    //Composite Accessors may instantiate other accessors in their setup functions.
+    //This local override intercepts those calls and replaces them with calls to instantiateInterface,
+    //so require statements won't be a problem.
+    function loggingInstantiate(accessorName, accessorClass) {
+        instantiateLog.push(accessorClass);
+        var interface = instantiateInterface(accessorName, accessorClass);
+
+        //Append instantiated sub-accessor's modules and any sub-sub-accessors to logs.
+        Array.prototype.push.apply(requireLog ,interface.modules);
+        Array.prototype.push.apply(instantiateLog ,interface.subAccessors);     
+        return interface.accessor;
+    }
+
     var bindings = {
         'getResource': getResource,
         'require': loggingRequire,
+        'instantiate': loggingInstantiate
     };
+
+    //Instantiating an accessor calls its setup function.
     var instance = commonHost.instantiateAccessor(
         accessorName, accessorClass, getAccessorCode, bindings);
     
@@ -285,7 +302,10 @@ function instantiateInterface(accessorName, accessorClass) {
     }
     var modules = requireLog.filter( onlyUnique );
 
-    return {"modules" : modules, "accessor": instance};
+    //Make array of instantiated accessors unique
+    var subAccessors = instantiateLog.filter( onlyUnique );
+
+    return {"modules" : modules, "accessor": instance, "subAccessors": subAccessors};
 }
 
 
