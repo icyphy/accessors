@@ -33,11 +33,14 @@
  *
  *
  *  If the *monitoringInterval* parameter has value greater than zero, then
- *  upon initialization, this accessor turns on monitoring of the execution
+ *  after initialization, this accessor turns on monitoring of the execution
  *  of top-level accessors. At the time interval specified by *monitoringInterval*
  *  it will output on the *monitor* port the current monitoring information.
  *  It will also send to the console the final monitoring information in
- *  wrapup.
+ *  wrapup. Note that this accessor is not able to measure the initialization
+ *  time of other accessors because some will have already been initialized
+ *  when this one is initialized and some will not have been. Hence, it turns
+ *  on monitoring after initialization using a delayed execution.
  *  
  *  This accessor can only be used in a host that allows trusted accessors.
  *  Trusted accessors must have class names beginning with 'trusted/'
@@ -64,7 +67,9 @@ var util = require('util');
 exports.setup = function () {
     this.input('query');
     this.output('status');
-    this.output('monitor');
+    this.output('monitor', {
+    	'type':'JSON'
+    });
     this.parameter('monitoringInterval', {
         'type':'number',
         'value':1000
@@ -80,13 +85,13 @@ var handle = null;
 exports.initialize = function () {
     var self = this;
     this.addInputHandler('query', function () {
-        var accessors = getTopLevelAccessors();
         var result = [];
+        var accessors = getTopLevelAccessors();
         for (var i = 0; i < accessors.length; i += 1) {
             result.push({
-                'accessorName': accessors[i].accessorName,
-                'accessorClass': accessors[i].accessorClass,
-                'initialized': accessors[i].initialized
+                'accessorName': accessors[i].getName(),
+                'accessorClass': accessors[i].getAccessorClass(),
+                'initialized': accessors[i].isInitialized()
             });
         }
         self.send('status', result);
@@ -94,29 +99,32 @@ exports.initialize = function () {
     
     var monitoringInterval = this.getParameter('monitoringInterval');
     if (monitoringInterval > 0) {
-        var accessors = getTopLevelAccessors();
-        for (var i = 0; i < accessors.length; i += 1) {
-        	var deep = self.getParameter('deepMonitoring');
-            accessors[i].startMonitoring(deep);
-        }
-        handle = setInterval(function() {
+    	var deep = self.getParameter('deepMonitoring');
+    	// Defer this execution so it occurs after all accessors have been initialized.
+    	setTimeout(function() {
             var accessors = getTopLevelAccessors();
-            var result = [];
             for (var i = 0; i < accessors.length; i += 1) {
-                result.push(accessors[i].getMonitoring());
+                accessors[i].startMonitoring(deep);
             }
-            self.send('monitor', result);
-        }, monitoringInterval);
+            handle = setInterval(function() {
+                var result = [];
+                for (var i = 0; i < accessors.length; i += 1) {
+                    result.push(accessors[i].getMonitoring());
+                }
+                self.send('monitor', result);
+            }, monitoringInterval);
+    	}, 0);
     }
 };
 
 exports.wrapup = function() {
-    if (handle) {
+    if (handle !== null) {
         clearInterval(handle);
         console.log('*** Final monitoring information:');
         var accessors = getTopLevelAccessors();
         for (var i = 0; i < accessors.length; i += 1) {
             console.log(util.inspect(accessors[i].getMonitoring()));
+            accessors[i].stopMonitoring();
         }
     }
 }
