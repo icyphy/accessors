@@ -278,12 +278,12 @@ function instantiateInterface(accessorName, accessorClass) {
     //so require statements won't be a problem.
     function loggingInstantiate(accessorName, accessorClass) {
         instantiateLog.push(accessorClass);
-        var interface = instantiateInterface(accessorName, accessorClass);
+        var face = instantiateInterface(accessorName, accessorClass);
 
         //Append instantiated sub-accessor's modules and any sub-sub-accessors to logs.
-        Array.prototype.push.apply(requireLog ,interface.modules);
-        Array.prototype.push.apply(instantiateLog ,interface.subAccessors);     
-        return interface.accessor;
+        Array.prototype.push.apply(requireLog ,face.modules);
+        Array.prototype.push.apply(instantiateLog ,face.subAccessors);     
+        return face.accessor;
     }
 
     var bindings = {
