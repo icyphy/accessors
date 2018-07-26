@@ -66,6 +66,16 @@ exports.initialize = function () {
 
     this.addInputHandler('input', function () {
         var inputValue = self.get('input');
+        if (typeof inputValue == "string") {
+        	// Attempt to parse JSON.
+        	try {
+        		var parsed = JSON.parse(inputValue);
+        		// If it succeeded, replace.
+        		inputValue = parsed;
+        	} catch(err) {
+        		// Ignore and proceed.
+        	}
+        }
         // The null argument is an undocumented feature indicating unbounded depth.
         var text = util.inspect(inputValue, {depth: null});
         display.appendText(text);
