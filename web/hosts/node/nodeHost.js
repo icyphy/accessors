@@ -236,7 +236,7 @@ function instantiate(accessorName, accessorClass) {
 
 /** Return an accessor and a list of its required modules for purposes of examining
  *  its non-functional characteristics. This is accomplished by instantiating the accessor,
- *  and ignoring any exceptions from require for modules that do not exist for this host.
+ *  and ignoring any exceptions from require due to modules that do not exist for this host.
  *  
  *  WARNING: An accessor instantiated by this function may be unusable in a swarmlet!
  *  Use instantiate if you want to run the accessor later.
@@ -642,6 +642,7 @@ function processCommandLineArguments(args) {
 exports.getAccessorCode = getAccessorCode;
 exports.installIfMissingThenRequire = installIfMissingThenRequire;
 exports.instantiate = instantiate;
+exports.instantiateInterface = instantiateInterface;
 exports.instantiateTopLevel = instantiateTopLevel;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.startHostShell = startHostShell;
