@@ -9,6 +9,14 @@ exports.setup = function () {
 
     // Ports: AccessorStatusTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
 
+    // Start: monitor: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var monitor = this.instantiate('monitor', 'utilities/TextDisplay.js');
+    monitor.setParameter('title', "Monitor");
+
+    // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
+    var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
+    TestSpontaneous2.setParameter('interval', 1000.0);
+
     // Start: TextDisplay: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var TextDisplay = this.instantiate('TextDisplay', 'utilities/TextDisplay.js');
     TextDisplay.setParameter('title', "TextDisplay");
@@ -26,27 +34,19 @@ exports.setup = function () {
 
     // Start: AccessorStatus: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var AccessorStatus = this.instantiate('AccessorStatus', 'trusted/AccessorStatus.js');
-    AccessorStatus.setParameter('monitoringInterval', 1000.0);
     AccessorStatus.setParameter('deepMonitoring', true);
+    AccessorStatus.setParameter('monitoringInterval', 1000.0);
 
     // Start: status: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
     var status = this.instantiate('status', 'utilities/TextDisplay.js');
     status.setParameter('title', "Status");
 
-    // Start: TestSpontaneous2: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var TestSpontaneous2 = this.instantiate('TestSpontaneous2', 'test/TestSpontaneous.js');
-    TestSpontaneous2.setParameter('interval', 1000.0);
-
-    // Start: monitor: ptolemy/cg/adapter/generic/accessor/adapters/org/terraswarm/accessor/JSAccessor.java
-    var monitor = this.instantiate('monitor', 'utilities/TextDisplay.js');
-    monitor.setParameter('title', "Monitor");
-
     // Connections: AccessorStatusTest: ptolemy/cg/adapter/generic/accessor/adapters/ptolemy/actor/TypedCompositeActor.java
+    this.connect(AccessorStatus, 'monitor', monitor, 'input');
     this.connect(JavaScriptRamp, 'output', TextDisplay, 'input');
     this.connect(TestSpontaneous, 'output', JavaScriptRamp, 'trigger');
     this.connect(TestSpontaneous2, 'output', AccessorStatus, 'query');
     this.connect(AccessorStatus, 'status', status, 'input');
-    this.connect(AccessorStatus, 'monitor', monitor, 'input');
 };
 
 // To update the initialize code below, modify
