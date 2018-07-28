@@ -81,11 +81,11 @@ if (typeof window === 'undefined') {
 var commonHost = require('commonHost.js');
 
 var Testing = require('testing');
-var testing = new Testing.Testing();
+var testing;
 
-var assert = testing.chai.assert;
-var expect = testing.chai.expect;
-var should = testing.chai.should();
+var assert;
+var expect;
+var should;
 
 exports.setup = function () {
     // TODO:  Same file for all.  Put in common?  Or in test/Test?
@@ -99,6 +99,12 @@ exports.setup = function () {
 };
 
 exports.initialize = function () {
+
+    testing = new Testing.Testing();
+    assert = testing.chai.assert;
+    expect = testing.chai.expect;
+    should = testing.chai.should();
+
     // Capture 'this' for use in callback.
     var self = this;
 
