@@ -235,13 +235,14 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
     }
 
     //Write port triples for this accessor/interface to the graph
+    //In case port names contain illegal characters (like whitespace), they are URI encoded.
     function addPortsToGraph(face, faceURI, faceNode ){
 
         //Write accessor input triples if any
         for (var i = 0; i< face.inputList.length; i++){
 
             //Write type triple for this input
-            var inputName = face.inputList[i];
+            var inputName = encodeURIComponent(face.inputList[i]);
             var inputURI = faceURI + '.Input.' + inputName;
             var inputNode = createNamedNode(inputURI);
             var inputType = createNamedNode('http://ptolemy.berkeley.edu/accessors#Input');
@@ -304,7 +305,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
         for (var i = 0; i< face.parameterList.length; i++){
 
             //Write type triple for this parameter
-            var parameterName = face.parameterList[i];
+            var parameterName = encodeURIComponent(face.parameterList[i]);
             var parameterURI = faceURI + '.Parameter.' + parameterName;
             var parameterNode = createNamedNode(parameterURI);
             var parameterType = createNamedNode('http://ptolemy.berkeley.edu/accessors#Parameter');
@@ -367,7 +368,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
         for (var i = 0; i< face.outputList.length; i++){
 
             //Write type triple for this output
-            var outputName = face.outputList[i];
+            var outputName = encodeURIComponent(face.outputList[i]);
             var outputURI = faceURI + '.Output.' + outputName;
             var outputNode = createNamedNode(outputURI);
             var outputType = createNamedNode('http://ptolemy.berkeley.edu/accessors#Output');
