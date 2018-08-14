@@ -105,13 +105,13 @@ fs.readFile(hostClassPath, 'utf8', function (err, data) {
     var browserDirFiles = fs.readdirSync(browserPath);
     var browserURI = 'http://ptolemy.berkeley.edu/hosts#Host.BrowserHost';
     for(var i = 0; i < browserDirFiles.length; i++){
-        var currentFile = browserDirFiles[i];
+        var currentBrowserFile = browserDirFiles[i];
 
         //Assume all files with .js extension are modules
-        if(path.extname(currentFile) == ".js"){
-            var moduleName = path.basename(currentFile, ".js");         
-            var moduleURI = "http://ptolemy.berkeley.edu/hosts#Module." + moduleName;
-            addModuleTriples(moduleURI, browserURI);
+        if(path.extname(currentBrowserFile) == ".js"){
+            var browserModuleName = path.basename(currentBrowserFile, ".js");         
+            var browserModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + browserModuleName;
+            addModuleTriples(browserModuleURI, browserURI);
         }
     }
 
@@ -119,16 +119,91 @@ fs.readFile(hostClassPath, 'utf8', function (err, data) {
     var commonPath = path.join(hostsPath, 'common/modules');
     var commonDirFiles = fs.readdirSync(commonPath);
     var commonURI = 'http://ptolemy.berkeley.edu/hosts#Host.CommonHost';
-    for(var i = 0; i < commonDirFiles.length; i++){
-        var currentFile = commonDirFiles[i];
+    for(i = 0; i < commonDirFiles.length; i++){
+        var currentCommonFile = commonDirFiles[i];
 
         //Assume all files with .js extension are modules
-        if(path.extname(currentFile) == ".js"){
-            var moduleName = path.basename(currentFile, ".js");         
-            var moduleURI = "http://ptolemy.berkeley.edu/hosts#Module." + moduleName;
-            addModuleTriples(moduleURI, commonURI);
+        if(path.extname(currentCommonFile) == ".js"){
+            var commonModuleName = path.basename(currentCommonFile, ".js");         
+            var commonModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + commonModuleName;
+            addModuleTriples(commonModuleURI, commonURI);
         }
     }
+
+    //Read Duktape Host Modules
+    var dukPath = path.join(hostsPath, 'duktape/modules');
+    var dukDirFiles = fs.readdirSync(dukPath);
+    var dukURI = 'http://ptolemy.berkeley.edu/hosts#Host.DuktapeHost';
+    for(i = 0; i < dukDirFiles.length; i++){
+        var currentDukFile = dukDirFiles[i];
+
+        //Assume all files with .js extension are modules
+        if(path.extname(currentDukFile) == ".js"){
+            var dukModuleName = path.basename(currentDukFile, ".js");         
+            var dukModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + dukModuleName;
+            addModuleTriples(dukModuleURI, dukURI);
+        }
+    }
+
+    //Read Cordova Host Modules
+    var cordovaPath = path.join(hostsPath, 'cordova/modules');
+    var cordovaDirContents = fs.readdirSync(cordovaPath);
+    var cordovaURI = 'http://ptolemy.berkeley.edu/hosts#Host.CordovaHost';
+    for(i = 0; i < cordovaDirContents.length; i++){
+        var cordovaCurrentItem = cordovaDirContents[i];
+        var cordovaCurrentItemPath = path.join(cordovaPath, cordovaCurrentItem);
+
+        //Assume all modules are in a directory of the same name (with a js extension).
+        //var potentialDir = ;
+        if(fs.statSync(cordovaCurrentItemPath).isDirectory()){
+            moduleDirContents = fs.readdirSync(cordovaCurrentItemPath);
+            moduleJSName = cordovaCurrentItem + ".js";
+            if(moduleDirContents.includes(moduleJSName) ){
+                var cordovaModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + cordovaCurrentItem;
+                addModuleTriples(cordovaModuleURI, cordovaURI);
+            }
+        }
+    }
+
+    //Read Node Host Modules
+    var nodePath = path.join(hostsPath, 'node/node_modules/@accessors-modules');
+    var nodeDirContents = fs.readdirSync(nodePath);
+    var nodeURI = 'http://ptolemy.berkeley.edu/hosts#Host.NodeHost';
+    for(i = 0; i < nodeDirContents.length; i++){
+        var nodeCurrentItem = nodeDirContents[i];
+        var nodeCurrentItemPath = path.join(nodePath, nodeCurrentItem);
+
+        //Assume all modules are in a directory of the same name (with a js extension).
+        //var potentialDir = ;
+        if(fs.statSync(nodeCurrentItemPath).isDirectory()){
+            moduleDirContents = fs.readdirSync(nodeCurrentItemPath);
+            moduleJSName = nodeCurrentItem + ".js";
+            if(moduleDirContents.includes(moduleJSName) ){
+                var nodeModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + nodeCurrentItem;
+                addModuleTriples(nodeModuleURI, nodeURI);
+            }
+        }
+    }
+
+    //Read Nashorn Host Modules
+    var nashornDirContents = fs.readdirSync(ptIIModulesPath);
+    var nashornURI = 'http://ptolemy.berkeley.edu/hosts#Host.NashornHost';
+    for(i = 0; i < nashornDirContents.length; i++){
+        var nashornCurrentItem = nashornDirContents[i];
+        var nashornCurrentItemPath = path.join(ptIIModulesPath, nashornCurrentItem);
+
+        //Assume all modules are in a directory of the same name (with a js extension).
+        //var potentialDir = ;
+        if(fs.statSync(nashornCurrentItemPath).isDirectory()){
+            moduleDirContents = fs.readdirSync(nashornCurrentItemPath);
+            moduleJSName = nashornCurrentItem + ".js";
+            if(moduleDirContents.includes(moduleJSName) ){
+                var nashornModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + nashornCurrentItem;
+                addModuleTriples(nashornModuleURI, nashornURI);
+            }
+        }
+    }
+
 
     outputOntology();
 
