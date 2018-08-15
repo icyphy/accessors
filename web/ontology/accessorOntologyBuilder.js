@@ -149,7 +149,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
                         //console.log(x.accessor.extending.accessorClass);
                         var extendedAccessorURI = "http://ptolemy.berkeley.edu/accessors/" + x.accessor.extending.accessorClass + ".js";
                         var extendedAccessorNode = createNamedNode(extendedAccessorURI);
-                        var extendsPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors/#Extends');
+                        var extendsPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors#Extends');
                         var extendsTriple = createTriple(accessorNode, extendsPredicate, extendedAccessorNode);
                         graph.add(extendsTriple);
                     }
@@ -161,7 +161,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
                             var subAcc = x.accessor.subAccessors[o];
                             var subAccURI = "http://ptolemy.berkeley.edu/accessors/" + subAcc.accessorClass + ".js";
                             var subAccNode = createNamedNode(subAccURI);
-                            var subAccPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors/#SubAccessor');
+                            var subAccPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors#SubAccessor');
                             var subAccTriple = createTriple(accessorNode, subAccPredicate, subAccNode);
                             graph.add(subAccTriple);
                         }
@@ -187,7 +187,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
                             graph.add(faceTypeTriple);
 
                             //Write implemented triple for this accessor and this interface
-                            var implementsPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors/#Implements');
+                            var implementsPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors#Implements');
                             var implementsTriple = createTriple(accessorNode, implementsPredicate, faceNode);
                             graph.add(implementsTriple);
 
@@ -211,7 +211,7 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
                         graph.add(moduleTypeTriple);
                         
                         //Write requires triple for this module
-                        var requiresPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors/#Requires');
+                        var requiresPredicate = createNamedNode('http://ptolemy.berkeley.edu/accessors#Requires');
                         var requiresTriple = createTriple(accessorNode, requiresPredicate, moduleNode);
                         graph.add(requiresTriple);
                     }
