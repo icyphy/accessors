@@ -39,6 +39,7 @@
 
 
 var fs = require('fs');
+var decamelize = require('decamelize');
 
 // Update this path if this file is moved!
 // __dirname is the path of the directory in which this file is defined.
@@ -174,7 +175,6 @@ fs.readFile(hostClassPath, 'utf8', function (err, data) {
         var nodeCurrentItemPath = path.join(nodePath, nodeCurrentItem);
 
         //Assume all modules are in a directory of the same name (with a js extension).
-        //var potentialDir = ;
         if(fs.statSync(nodeCurrentItemPath).isDirectory()){
             moduleDirContents = fs.readdirSync(nodeCurrentItemPath);
             moduleJSName = nodeCurrentItem + ".js";
@@ -193,12 +193,12 @@ fs.readFile(hostClassPath, 'utf8', function (err, data) {
         var nashornCurrentItemPath = path.join(ptIIModulesPath, nashornCurrentItem);
 
         //Assume all modules are in a directory of the same name (with a js extension).
-        //var potentialDir = ;
+        //Nashorn modules are camel so use the decamelize module to convert to hyphenated
         if(fs.statSync(nashornCurrentItemPath).isDirectory()){
             moduleDirContents = fs.readdirSync(nashornCurrentItemPath);
             moduleJSName = nashornCurrentItem + ".js";
             if(moduleDirContents.includes(moduleJSName) ){
-                var nashornModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + nashornCurrentItem;
+                var nashornModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + decamelize(nashornCurrentItem,'-');
                 addModuleTriples(nashornModuleURI, nashornURI);
             }
         }
