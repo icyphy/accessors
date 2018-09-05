@@ -3,6 +3,7 @@
     "GeoCoder.js",
     "GeoLocation.js",
     "Heartbeat.js",
+    "HostCompatability.js",
     "NaturalLanguage.js",
     "RedPinLocation.js",
     "ReverseGeoCoder.js",
