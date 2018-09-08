@@ -173,7 +173,6 @@ exports.initialize = function(){
             error('The format parameter is set to ' + format + '. This is not a supported format.');
         }
 
-        //var contentString = 'application/' + formatToMIME[format];
         var options = {
             'headers' : {'Content-Type': formatToMIME[format]},
             'method'  : 'POST',
