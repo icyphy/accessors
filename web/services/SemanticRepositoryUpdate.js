@@ -39,8 +39,10 @@
  *  @accessor services/SemanticRepositoryUpdate
  *  @author Matt Weber
  *  @version $$Id: SemanticRepository.js 1725 2017-05-19 22:59:11Z cxh $$
- *  @input {string} update The SPARQL update to be sent to the semantic repository.
- *   Types of updates are: INSERT and DELETE
+ *  @input {string} update The update to be sent to the semantic repository.
+ *   Types of SPARQL updates are: INSERT and DELETE, but raw ontology data is accepted too with appropriate format.
+ *  @parameter {string} format The format of data sent to the ontology. Currently only supports data types from
+ *   http://docs.rdf4j.org/rest-api/#_content_types.
  *  @parameter {string} host The URL for the semantic repository.
  *  @parameter {string} port The port for the semantic repository.
  *  @parameter {string} repositoryName The name of the particular repository on the host.
@@ -86,6 +88,14 @@ exports.setup = function () {
         'value': 20000
     });
 
+    this.parameter('format', {
+        'type': 'string',
+        'value': 'SPARQL',
+        'options': [ 'SPARQL', 'RDF/XML', 'N-Triples', 'Turtle', 'N3', 'N-Quads', 
+            'JSON-LD', 'RDF/JSON', 'TriX', 'TriG', 'Sesame Binary RDF'
+        ]
+    });
+
     //Use the response output from the REST accessor
 
 
@@ -120,17 +130,17 @@ exports.setup = function () {
 //Overriding REST
 exports.filterResponse = function(response){
     return JSON.parse(response);
-}
+};
 
 //Overriding REST
 //Connections to the SemanticRepository should be closed once data has been received.
 exports.handleResponse = function(message){
-    this.send('status', message.statusCode)
+    this.send('status', message.statusCode);
     exports.ssuper.wrapup();
     if(message.statusCode != 204){
         error('Received a ' + message.statusCode + ' status code from the Semantic Repository. 204 indicates success.');
     }
-}
+};
 
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
@@ -141,9 +151,31 @@ exports.initialize = function(){
         var host = thiz.getParameter('host');
         var port = thiz.getParameter('port');
         var repositoryName = thiz.getParameter('repositoryName');
+        var format = thiz.getParameter('format');
 
+        //The Semantic Repository GraphDB uses the RDF4j Server Rest API for these updates.
+        //This table of content types to MIME types is taken (with the adddition of 'SPARQL') from 
+        //http://docs.rdf4j.org/rest-api/#_content_types
+        var formatToMIME = { 'SPARQL' : 'application/sparql-update',
+                            'RDF/XML' : 'application/rdf+xml',
+                            'N-Triples' : 'text/plain',
+                            'Turtle' : 'text/turtle',
+                            'N3' : 'text/rdf+n3',
+                            'N-Quads' : 'text/x-nquads',
+                            'JSON-LD' : 'application/ld+json',
+                            'RDF/JSON' : 'application/rdf+json',
+                            'TriX' : 'application/trix',
+                            'TriG' : 'application/x-trig',
+                            'Sesame Binary RDF' : 'application/x-binary-rdf'
+                             };
+
+        if(formatToMIME[format] === undefined){
+            error('The format parameter is set to ' + format + '. This is not a supported format.');
+        }
+
+        //var contentString = 'application/' + formatToMIME[format];
         var options = {
-            'headers' : {'Content-Type': 'application/sparql-update'},
+            'headers' : {'Content-Type': formatToMIME[format]},
             'method'  : 'POST',
             'url'     : {'host'  : host,
                         'port'   : port
