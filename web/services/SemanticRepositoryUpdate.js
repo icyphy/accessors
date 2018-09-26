@@ -46,6 +46,13 @@
  *  @parameter {string} host The URL for the semantic repository.
  *  @parameter {string} port The port for the semantic repository.
  *  @parameter {string} repositoryName The name of the particular repository on the host.
+ *  @parameter {boolean} authenticate If true, enable authentication to an access controlled
+ *   semantic repository by sending username and password with request. If false, username 
+ *   and password information will not be sent. An error will occur if the http protocol is
+ *   selected with a true authenticate setting to avoid sending username/password information
+ *   in plain text.
+ *  @parameter {string} username A username for an access controlled semantic repository. 
+ *  @parameter {string} password A password for an access controlled semantic repository.
  *  @parameter {int} timeout The amount of time (in milliseconds) to wait for a response
  *   before triggering a null response and an error. This defaults to 20000.
  *  @output {string} status The status code of the http POST to the Semantic Repository.
@@ -60,12 +67,19 @@
 /*jshint globalstrict: true*/
 'use strict';
 
+var base64 = require('base64-js');
  /** Set up the accessor by defining the inputs and outputs.
  */
 exports.setup = function () {
     this.extend('net/REST');
     this.input('update', {
         'type': 'string'
+    });
+
+    this.parameter('protocol', {
+        'type': 'string',
+        'value': 'http',
+        'options': ['http', 'https']
     });
 
     this.parameter('host', {
@@ -80,6 +94,21 @@ exports.setup = function () {
 
     this.parameter('repositoryName', {
         'type': 'string',
+    });
+
+    this.parameter('authenticate', {
+        'type': 'boolean',
+        'value': false
+    });
+
+    this.parameter('username', {
+        'type': 'string',
+        'value': 'admin'
+    });
+
+    this.parameter('password', {
+        'type': 'string',
+        'value': 'root'
     });
 
     //Overriding inherited default timeout value of 5000ms to allow for longer queries by default
@@ -144,14 +173,28 @@ exports.handleResponse = function(message){
 
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
+
+    //Check for bad authentication and protocol settings at initialization.
+    if(this.getParameter('protocol') == 'http' && this.getParameter('authenticate') ){
+        error("Semantic Repository authentication setting incompatible with protocol setting. This accessor will not send username and password information in plain text over http. Change to https or dissable authentication.");
+    }
+
     var thiz = this;
 
     this.addInputHandler('update', function(){
+
+        //Check for bad authentication and protocol settings when preparing to send.
+        if(thiz.getParameter('protocol') == 'http' && thiz.getParameter('authenticate') ){
+            error("Semantic Repository authentication setting incompatible with protocol setting. This accessor will not send username and password information in plain text over http. Change to https or dissable authentication.");
+        }
+
         var updateInput = thiz.get('update');
         var host = thiz.getParameter('host');
         var port = thiz.getParameter('port');
         var repositoryName = thiz.getParameter('repositoryName');
         var format = thiz.getParameter('format');
+        var authenticate = thiz.getParameter('authenticate');
+        var protocol = thiz.getParameter('protocol');
 
         //The Semantic Repository GraphDB uses the RDF4j Server Rest API for these updates.
         //This table of content types to MIME types is taken (with the adddition of 'SPARQL') from 
@@ -177,9 +220,26 @@ exports.initialize = function(){
             'headers' : {'Content-Type': formatToMIME[format]},
             'method'  : 'POST',
             'url'     : {'host'  : host,
-                        'port'   : port
+                        'port'   : port,
+                        'protocol' : protocol
                         }
         };
+
+        //If authenticating, add base64 encoded username and password to headers.
+        //See basic authentication under http://graphdb.ontotext.com/documentation/standard/authentication.html
+        if(authenticate && protocol == 'https'){
+            var username = thiz.getParameter('username');
+            var password = thiz.getParameter('password');
+
+            //Note, contrary to the graphDB documentation, the separator between
+            //username and password is a colon, not a forward slash.
+            var login = username +":" + password;
+            var loginArray = login.split("");
+            var loginNumeric = loginArray.map(function(x){ return x.charCodeAt(0)});
+            var loginUint = new Uint8Array(loginNumeric);
+            var login64 = base64.fromByteArray(loginUint);
+            options.headers.Authorization =  'Basic ' + login64;
+        }
 
         var command = 'repositories/' + repositoryName + '/statements';
 
