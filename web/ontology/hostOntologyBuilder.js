@@ -197,9 +197,6 @@ fs.readFile(hostClassPath, 'utf8', function (err, data) {
         if(fs.statSync(nashornCurrentItemPath).isDirectory()){
             moduleDirContents = fs.readdirSync(nashornCurrentItemPath);
 
-            //Nashorn modules are all listed in camel case and not hyphenated
-            //We must convert these to hyphenated to match module convetions.
-            moduleJSName.replace(/([A-Z])/g, function(x){return "-"+ x.toLowerCase();});
             moduleJSName = nashornCurrentItem + ".js";
             if(moduleDirContents.includes(moduleJSName) ){
                 var nashornModuleURI = "http://ptolemy.berkeley.edu/hosts#Module." + decamelize(nashornCurrentItem,'-');
