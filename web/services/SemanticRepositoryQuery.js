@@ -200,7 +200,6 @@ exports.initialize = function(){
             var loginUint = new Uint8Array(loginNumeric);
             var login64 = base64.fromByteArray(loginUint);
             options.headers.Authorization =  'Basic ' + login64;
-            console.log(options);
         }
 
         var command = 'repositories/' + repositoryName;
