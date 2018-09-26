@@ -120,6 +120,7 @@ hosts:Host.Browser hosts:Implements hosts:Module.testing .
 hosts:Host.Browser hosts:Implements hosts:Module.url .
 hosts:Host.Browser hosts:Implements hosts:Module.util .
 hosts:Host.Browser hosts:Implements hosts:Module.web-socket-client .
+hosts:Host.Common hosts:Implements hosts:Module.base64-js .
 hosts:Host.Common hosts:Implements hosts:Module.deterministicTemporalSemantics .
 hosts:Host.Common hosts:Implements hosts:Module.events .
 hosts:Host.Common hosts:Implements hosts:Module.hostHelper .
