@@ -162,7 +162,7 @@ exports.handleResponse = function(message){
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
     
-    //Check for bad authentication and protocol settings.
+    //Check for bad authentication and protocol settings at initialization.
     if(this.getParameter('protocol') == 'http' && this.getParameter('authenticate') ){
         error("Semantic Repository authentication setting incompatible with protocol setting. This accessor will not send username and password information in plain text over http. Change to https or dissable authentication.");
     }
@@ -170,6 +170,12 @@ exports.initialize = function(){
     var thiz = this;
 
     this.addInputHandler('query', function(){
+
+        //Check for bad authentication and protocol settings when preparing to send.
+        if(thiz.getParameter('protocol') == 'http' && thiz.getParameter('authenticate') ){
+            error("Semantic Repository authentication setting incompatible with protocol setting. This accessor will not send username and password information in plain text over http. Change to https or dissable authentication.");
+        }
+
         var queryInput = thiz.get('query');
         var host = thiz.getParameter('host');
         var port = thiz.getParameter('port');
