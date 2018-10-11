@@ -3,6 +3,7 @@
     "Cron.js",
     "Exec.js",
     "GetResource.js",
+    "HostName.js",
     "LocalStorage.js",
     "Mutable.js",
     "MutableBase.js",
