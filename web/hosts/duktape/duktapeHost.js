@@ -199,7 +199,17 @@ function getAccessorCode(name) {
  */
 getResource = function (uri) {
     // See nodeHost.js for an implementation.
-    throw new Error('getResouce(' + uri + ') not yet implemented');
+    throw new Error('getResource(' + uri + ') not yet implemented');
+};
+
+/** Return the name of this host.
+ *
+ *  Return the string "Duktape".
+ *
+ *  @return In duktapeHost.js, return "Duktape".
+ */ 
+getHostName = function() {
+    return "Duktape";
 };
 
 /** Instantiate and return an accessor.
@@ -331,10 +341,12 @@ exports = {
     // we no longer require ecma_eventloop.js above.
     //'clearInterval': clearInterval,
     'getTopLevelAccessors': commonHost.getTopLevelAccessors,
+    'getHostName': getHostName,
     'instantiate': instantiate,
     'instantiateAndInitialize': instantiateAndInitialize,
     'provideInput': commonHost.provideInput,
     'setParameter': commonHost.setParameter,
+
     //'setInterval': setInterval,
     //'setTimeout': setTimeout,
 };
