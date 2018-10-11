@@ -220,6 +220,16 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
 // FIXME: provide a meaningful implementation.
 getResource = function(uri) {};
 
+/** Return the name of this host.
+ *
+ *  Return the string "Cordova".
+ *
+ *  @return In cordovaHost.js, return "Cordova".
+ */ 
+function getHostName() {
+    return "Cordova";
+};
+
 /** Instantiate and return an accessor.
  *  This will throw an exception if there is no such accessor class on the accessor
  *  search path.
