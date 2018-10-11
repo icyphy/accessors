@@ -2726,6 +2726,17 @@ function getTopLevelAccessorsNotSupported() {
                    );
 }
 
+/** Return the name of this host.
+ *
+ *  Hosts are expected to override this function and return their own name.
+ *
+ *  @return In commonHost.js, throw error.
+ *   In other hosts, return the name of the host.
+ */ 
+function getHostName() {
+    throw new Error('getHostName is not supported by this swarmlet host.');
+};
+
 /** Instantiate an accessor given its fully qualified class name, a function to retrieve
  *  the code, and bindings that include at least a require function to retrieve modules.
  *  The returned object will have a property **accessorClass** with the value of the
@@ -3203,6 +3214,7 @@ exports.Accessor = Accessor;
 exports.allowTrustedAccessors = allowTrustedAccessors;
 exports.instantiateAccessor = instantiateAccessor;
 exports.isReifiableBy = isReifiableBy;
+exports.getHostName = getHostName;
 exports.getTopLevelAccessors = getTopLevelAccessors;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.stopAllAccessors = stopAllAccessors;
