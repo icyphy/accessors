@@ -411,6 +411,16 @@ function exitHandler(options, err) {
 // Indicator of whether the interactive host is already running.
 var interactiveHostRunning = false;
 
+/** Return the name of this host.
+ *
+ *  Return the string "Node".
+ *
+ *  @return In nodeHost.js, return "Node".
+ */ 
+function getHostName() {
+    return "Node";
+};
+
 /** Start an interactive version of this host as a shell.
  *  This will produce a prompt on stdout that accepts JavaScript statements
  *  on stdin and executes them.
@@ -646,6 +656,7 @@ exports.instantiateInterface = instantiateInterface;
 exports.instantiateTopLevel = instantiateTopLevel;
 exports.processCommandLineArguments = processCommandLineArguments;
 exports.startHostShell = startHostShell;
+exports.getHostName = getHostName;
 
 // Exported from commonHost:
 exports.Accessor = commonHost.Accessor;
