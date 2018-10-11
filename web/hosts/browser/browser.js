@@ -1565,6 +1565,17 @@ function getJavaScript(path, callback, module) {
     }
 }
 
+
+/** Return the name of this host.
+ *
+ *  Return the string "Browser".
+ *
+ *  @return In browser.js, return "Browser".
+ */ 
+function getHostName() {
+    return "Browser";
+};
+
 /** Initialize the specified accessor instance if it has not been initialized and its
  *  exports object has an initialize function.
  *  @param instance The instance.
