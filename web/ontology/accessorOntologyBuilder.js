@@ -34,7 +34,7 @@
 // First, the path to the root directory of the accessors repo, likely $PTII/org/terraswarm/accessor/accessors/web/
 // Second, the path to an accessor class ontology (turtle format ttl extension) with no individuals, likely $PTII/org/terraswarm/accessor/accessors/web/ontology/Accessors.ttl 
 // Third, the path to the desired output ontology file (written in turtle format ttl extension).
-// eg. Invoke as: $ node accessorOntologyBuilder.js .. Accessors.ttl OutputAccessors.ttl
+// eg. Invoke as: $ node accessorOntologyBuilder.js .. AccessorsCore.ttl OutputAccessors.ttl
 
 
 var fs = require('fs');

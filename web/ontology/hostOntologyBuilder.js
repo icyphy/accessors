@@ -35,7 +35,7 @@
 // Second, the path to the Ptolemy II modules directory in the Ptolemy repo, likely $PTII/ptolemy/actor/lib/jjs/modules
 // Third, the path to an hosts class ontology (turtle format ttl extension) with no individuals, likely $PTII/org/terraswarm/accessor/accessors/web/ontology/Hosts.ttl 
 // Fourth, the path to the desired output ontology file (written in turtle format ttl extension).
-// eg. Invoke as: $ node hostOntologyBuilder.js ../hosts $PTII/ptolemy/actor/lib/jjs/modules Hosts.ttl OutputHosts.ttl
+// eg. Invoke as: $ node hostOntologyBuilder.js ../hosts $PTII/ptolemy/actor/lib/jjs/modules HostsCore.ttl OutputHosts.ttl
 
 
 var fs = require('fs');
