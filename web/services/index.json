@@ -11,5 +11,6 @@
     "SemanticRepositoryQuery.js",
     "SpeechRecognition.js", 
     "Weather.js",
-    "WiFiScan.js"
+    "WiFiScan.js",
+    "YelpSearch.js"
 ]
