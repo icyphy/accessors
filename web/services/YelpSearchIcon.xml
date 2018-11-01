@@ -1,9 +1,9 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+<!DOCTYPE property PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
 <property name="YelpSearchIcon" class="ptolemy.vergil.icon.EditorIcon">
     <property name="image" class="ptolemy.vergil.kernel.attributes.ImageAttribute">
-        <property name="source" class="ptolemy.data.expr.FileParameter" value="YelpIcon.png">
+        <property name="source" class="ptolemy.data.expr.FileParameter" value="YelpSearchIcon.png">
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[-43.0, -31.0]">
         </property>
@@ -14,6 +14,6 @@
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="4.0">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{12.5, 9.0}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{0.0, 0.0}">
     </property>
 </property>
