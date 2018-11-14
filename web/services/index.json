@@ -9,6 +9,7 @@
     "ReverseGeoCoder.js",
     "SemanticRepositoryUpdate.js",
     "SemanticRepositoryQuery.js",
+    "SemanticYelpSearch.js",
     "SpeechRecognition.js", 
     "Weather.js",
     "WiFiScan.js",
