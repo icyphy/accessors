@@ -80,8 +80,8 @@ exports.handleResponse = function(message){
     var obsNode = store.createBlankNode('SemanticYelpSearchObservation');
     writer.addQuad(
       obsNode,
-      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-      namedNode('http://www.w3.org/ns/sosa/Observation')
+      namedNode('rdf:type'),
+      namedNode('sosa:Observation')
     );
     var date = new Date();
     var formattedDate = date.toISOString();
@@ -90,14 +90,14 @@ exports.handleResponse = function(message){
       namedNode('sosa:resultTime'),
       literal(formattedDate, namedNode('xsd:dateTime'))
     );
-    var expirationDate = new Date(date.getTime() + thiz.getParameter('expirationPeriod'));
-    var formattedExpires = expirationDate.toISOString(); 
     
     //Schema.org uses custom datatypes for their ontologies. I've converted them to xsd types here.
     //This conversion is endorsed by the schema.org people themselves. See https://github.com/schemaorg/schemaorg/issues/1781
     //In that same thread, there is a good argument for replacing all instances of schema:date with xsd:dateTime. I did it.
     //Also, although I'm using schema:expires correctly here,
     //all instances from schema.org use this to refer to published works.
+    var expirationDate = new Date(date.getTime() + thiz.getParameter('expirationPeriod'));
+    var formattedExpires = expirationDate.toISOString(); 
     writer.addQuad(
       obsNode,
       namedNode('schema:expires'),
@@ -105,7 +105,7 @@ exports.handleResponse = function(message){
       literal(formattedExpires, namedNode('xsd:dateTime'))
     );
 
-    //Parse yelp's json response
+    //Parse yelp's json response. Each business is a sosa:Result
     if(message && message.body){
         var yelpData = JSON.parse(message.body);
         if(yelpData && yelpData.businesses){
@@ -113,10 +113,16 @@ exports.handleResponse = function(message){
                 var business = yelpData.businesses[i];
                 var businessNode = store.createBlankNode('SemanticYelpSearchBusiness');
                 var ratingNode = store.createBlankNode('SemanticYelpSearchRating');
+
+                writer.addQuad(
+                  obsNode,
+                  namedNode('sosa:hasResult'),
+                  businessNode
+                );
                 writer.addQuad(
                   businessNode,
                   namedNode('rdf:type'),
-                  namedNode('LocalBusiness')
+                  namedNode('schema:LocalBusiness')
                 );
                 writer.addQuad(
                   businessNode,
@@ -135,7 +141,7 @@ exports.handleResponse = function(message){
                       businessNode,
                       namedNode('schema:address'),
                       //literal(business.location.display_address, namedNode('schema:text'))
-                      literal(business.location.display_address, namedNode('schema:text'))
+                      literal(business.location.display_address)
                     );
                 }
                 //Order of a wkt CRS84 point is longitude, latitude
