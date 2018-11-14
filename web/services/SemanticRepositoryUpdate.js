@@ -186,6 +186,7 @@ exports.initialize = function(){
         //Check for bad authentication and protocol settings when preparing to send.
         if(thiz.getParameter('protocol') == 'http' && thiz.getParameter('authenticate') ){
             error("Semantic Repository authentication setting incompatible with protocol setting. This accessor will not send username and password information in plain text over http. Change to https or dissable authentication.");
+            return;
         }
 
         var updateInput = thiz.get('update');
