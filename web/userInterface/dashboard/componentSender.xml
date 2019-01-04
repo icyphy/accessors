@@ -18,32 +18,8 @@
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.8000000000000007">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{314.31574309593, 195.09792877906975}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{492.4955941133721, 434.78859011627907}">
     </property>
-    <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={549, 375, 466, 251}, maximized=false}">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[466, 207]">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{525, 205}">
-        </property>
-    </entity>
-    <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={810, 548, 499, 208}, maximized=false}">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[795.0, 245.0]">
-        </property>
-    </entity>
-    <entity name="Display3" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={754, 64, 499, 208}, maximized=false}">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[770.0, 375.0]">
-        </property>
-    </entity>
     <entity name="WebSocketServer2" class="org.terraswarm.accessor.JSAccessor">
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
         </property>
@@ -113,7 +89,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[545.0, 310.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[420.0, 285.0]">
         </property>
         <property name="port" class="ptolemy.data.expr.Parameter" value="8095">
         </property>
@@ -153,7 +129,7 @@
             <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[155.0, 305.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[235.0, 285.0]">
         </property>
         <port name="num" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
@@ -162,29 +138,16 @@
             <property name="output"/>
         </port>
     </entity>
-    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
-        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
-        </property>
-        <vertex name="vertex1" value="[370.0, 235.0]">
-        </vertex>
-    </relation>
-    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
-        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
-        </property>
-        <vertex name="vertex1" value="[310.0, 315.0]">
-        </vertex>
-    </relation>
-    <relation name="relation2" class="ptolemy.actor.TypedIORelation">
+    <relation name="relation3" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="{355.0, 370.0}">
+        </vertex>
     </relation>
-    <link port="Display.input" relation="relation4"/>
-    <link port="Display2.input" relation="relation2"/>
-    <link port="Display3.input" relation="relation"/>
-    <link port="WebSocketServer2.toSend" relation="relation6"/>
-    <link port="WebSocketServer2.received" relation="relation4"/>
-    <link port="WebSocketServer2.listening" relation="relation2"/>
-    <link port="WebSocketServer2.connection" relation="relation"/>
-    <link port="JavaScript2.num" relation="relation4"/>
-    <link port="JavaScript2.elementString" relation="relation6"/>
+    <link port="WebSocketServer2.toSend" relation="relation3"/>
+    <link port="WebSocketServer2.received" relation="relation"/>
+    <link port="JavaScript2.num" relation="relation"/>
+    <link port="JavaScript2.elementString" relation="relation3"/>
 </entity>
