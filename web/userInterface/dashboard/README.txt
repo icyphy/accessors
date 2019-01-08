@@ -5,7 +5,7 @@ non-React files used for testing the interface and interacting with it. These ot
 
 -dashboard/src/graphElement.jsx, a web component (built with React but seperate from the main project) with a graph in it.
 -dashboard/componentSender.xml, a Cape Code swarmlet that runs a websocket server for the user interface to interact with
--dashboard/dist/index.html, the main React project is compiled into a bundle.js file which has to be loaded by something. This is it, and I'm listing it here because this file isn't built by the main React project.
+-dashboard/dist/index.html, the main React project is compiled into a bundle.js file which has to be loaded by something. This is it, and I'm listing it here because this file isn't built by the main React project. TODO- move this file to a separate static directory and copy it over to dist with webpack.
 -dashboard/dist/lib, this directory contains other webcomponent libraries used by the main React project. For now, relevant files are loaded by dist/index.html.
 
 The main React template used here is a fork of CreativeTim black-dashboard-react from https://github.com/creativetimofficial/black-dashboard-react/tree/master/src. This template is available under the MIT License.
