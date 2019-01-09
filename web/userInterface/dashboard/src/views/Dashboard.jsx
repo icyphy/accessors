@@ -33,8 +33,6 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
-//      import { Player } from 'video-react';
-
 //Variable incremented to construct unique component names
 var componentCount = 0;
 
@@ -96,8 +94,8 @@ class AccessorCards extends React.Component {
   }
   render() {
     return (<Row>
-                {this.generateCards()}                
-              </Row>);
+              {this.generateCards()}                
+            </Row>);
   }
 }
 
