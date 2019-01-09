@@ -4,28 +4,6 @@ import ReactDOM from "react-dom";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 
-
-// reactstrap components
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  Label,
-  FormGroup,
-  Input,
-  Table,
-  Row,
-  Col,
-  UncontrolledTooltip
-} from "reactstrap";
-
 // core components
 import {
   chartExample1,
@@ -34,33 +12,25 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
+//This import is needed to fix a bug with React not handling events which occur in
+//shadow DOM. Just call retargetEvents on shadowRoot.
+import retargetEvents from 'react-shadow-dom-retarget-events';
 
-
-class XSearch extends HTMLElement {
-
-
-
+class GraphElement extends HTMLElement {
   connectedCallback() {
-
-    console.log("I am the most fun!");
     const mountPoint = document.createElement('span');
-    this.attachShadow({ mode: 'open' }).appendChild(mountPoint);
-
-    const name = this.getAttribute('name');
-    const url = 'https://www.google.com/search?q=' + encodeURIComponent(name);
+    var shadowRoot = this.attachShadow({ mode: 'open' }).appendChild(mountPoint);
+    retargetEvents(shadowRoot);
     ReactDOM.render(
         (
         <div className="chart-area">
-                    <Bar
-                      data={chartExample3.data}
-                      options={chartExample3.options}
-                    />
-                  
-        <a href={url}>{name}</a>
+          <Bar
+            data={chartExample3.data}
+            options={chartExample3.options}
+          />          
         </div>
         )
         , mountPoint);
   }
 }
-customElements.define('x-search', XSearch);
-
+customElements.define('graph-element', GraphElement);
