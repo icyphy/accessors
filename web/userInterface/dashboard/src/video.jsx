@@ -23,7 +23,7 @@ class VideoComponent extends HTMLElement {
             {/* <link rel="stylesheet" href="https://video-react.github.io/assets/video-react.css" /> */}
             
             {/* This link to the stylesheet is necessary for the component to be correctly styled */}
-           <link rel="stylesheet" href="lib/video-react.css" />
+           <link rel="stylesheet" href="../lib/video-react.css" />
             <Player src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4">
               <BigPlayButton position="center" />
             </Player>
