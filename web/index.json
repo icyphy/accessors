@@ -3,6 +3,7 @@
     "cameras",
     "devices",
     "image",
+    "interfaces",
     "net",
     "robotics",
     "geodesy",

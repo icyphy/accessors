@@ -32,7 +32,8 @@
 ###  http://www.ptolemy.berkeley.edu/SemanticSensor#Expires
 :Expires rdf:type owl:DatatypeProperty ;
          rdfs:domain :SemanticObservation ;
-         rdfs:range xsd:dateTime .
+         rdfs:range xsd:dateTime ;
+         rdfs:comment "The timestamp at which this observation should be considered invalid and removed from the semantic repository." .
 
 
 ###  http://www.ptolemy.berkeley.edu/SemanticSensor#ObservationTime
@@ -40,12 +41,6 @@
                  rdfs:domain :SemanticObservation ;
                  rdfs:range xsd:dateTime ;
                  rdfs:comment "The time the phenomenon being recorded by this observation occurred." .
-
-
-###  http://www.ptolemy.berkeley.edu/SemanticSensor#ReplacesLast
-:ReplacesLast rdf:type owl:DatatypeProperty ;
-              rdfs:domain :SemanticObservation ;
-              rdfs:range xsd:boolean .
 
 
 #################################################################
