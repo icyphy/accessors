@@ -36,6 +36,12 @@
  *  @accessor utilities/MutableBase
  *  @input userInput A string message produced by an implementing accessor's web component
  *      to inform the accessor of user interaction with the instantiated web component.
+ *  @parameter componentID A unique ID an implementing accessor uses to configure communication
+ *      with it's web component. The implementing accessor should replace all instances of the
+ *      special string '__componentID__' in its web component, ensuring web socket messages sent
+ *      back to the implementing accessor for the instantiated component are labled with the
+ *      corresponding ID. All communication to and from the instantiated web component will be
+ *      tagged with this ID.
  *  @output component A javascript escaped string of the web component this accessor
  *      requests to be instantiated within the user interface app. Most likely this output
  *      should be produced upon intialization.
@@ -48,6 +54,9 @@
 
 exports.setup = function() {
     this.input('userInput', {
+        "type": "string"
+    });
+    this.parameter('componentID', {
         "type": "string"
     });
     this.output('componentUpdate', {
