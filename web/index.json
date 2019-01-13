@@ -1,9 +1,9 @@
 [
     "audio",
     "cameras",
+    "dashboard",
     "devices",
     "image",
-    "interfaces",
     "net",
     "robotics",
     "geodesy",
