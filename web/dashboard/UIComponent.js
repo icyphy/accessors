@@ -36,20 +36,20 @@
  *
  *  Upon initialization:
  *  {
- *      socketID: 0,
- *      message: {
- *          id: "system",
- *          component: <configured and javascript escaped component goes here>
+ *      "socketID": 0,
+ *      "message": {
+ *          "id": "system",
+ *          "component": <configured and javascript escaped component goes here>
  *      }
  *  }
  *
  *  After receiving a "ready" message from the initialized component (which will be tagged
  *  with this accessor's componentID) communication to the component may be performed with:
  *  {
- *      socketID: <socketID matching a message received with componentID parameter goes here>,
- *      message: {
- *          id: <componentID goes here>,
- *          update: <communication to the component goes here>
+ *      "socketID": <socketID matching a message received with componentID parameter goes here>,
+ *      "message": {
+ *          "id": <componentID goes here>,
+ *          "update": <communication to the component goes here>
  *      }
  *  }
  *
