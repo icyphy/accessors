@@ -29,24 +29,42 @@
  *  for instantiation in the user interface, and controls the web component's behavior once
  *  instantiated in the UI app.
  *
- *  An accessor implementing this interface should produce its a javascript escaped
- *  string of its wecomponent its componentURI
- *  upon intialization. This component should be retrieved receives a message 
+ *  An accessor implementing this interface should produce the following JSON messages
+ *  on its componentUpdate port. Note: socketID 0 should correspond to the websocket used
+ *  by dashboard to send its "start" message, which is assumed to be received before the
+ *  implementing accessor is initialized. 
+ *
+ *  Upon initialization:
+ *  {
+ *      socketID: 0,
+ *      message: {
+ *          id: "system",
+ *          component: <configured and javascript escaped component goes here>
+ *      }
+ *  }
+ *
+ *  After receiving a "ready" message from the initialized component (which will be tagged
+ *  with this accessor's componentID) communication to the component may be performed with:
+ *  {
+ *      socketID: <socketID matching a message received with componentID parameter goes here>,
+ *      message: {
+ *          id: <componentID goes here>,
+ *          update: <communication to the component goes here>
+ *      }
+ *  }
  *
  *  @accessor utilities/MutableBase
- *  @input userInput A string message produced by an implementing accessor's web component
+ *  @input userInput JSON A message produced by an implementing accessor's web component
  *      to inform the accessor of user interaction with the instantiated web component.
- *  @parameter componentID A unique ID an implementing accessor uses to configure communication
+ *  @parameter componentID string A unique ID an implementing accessor uses to configure communication
  *      with it's web component. The implementing accessor should replace all instances of the
  *      special string '__componentID__' in its web component, ensuring web socket messages sent
  *      back to the implementing accessor for the instantiated component are labled with the
  *      corresponding ID. All communication to and from the instantiated web component will be
  *      tagged with this ID.
- *  @output component A javascript escaped string of the web component this accessor
- *      requests to be instantiated within the user interface app. Most likely this output
- *      should be produced upon intialization.
- *  @output componentUpdate A string message produced by an implementing accessor to inform
- *      the accessor's instantiated web component of control updates.
+ *  @output componentUpdate JSON A websocket message produced by an implementing accessor to communicate
+ *      with the dashboard app. Upon initialization produce a websocket message containing the javascript
+ *      escaped string of the web. Also used to inform the accessor's instantiated web component of control updates.
  *  @output userInput
  *  @author Matt Weber
  *  @version $$Id$$
@@ -54,15 +72,12 @@
 
 exports.setup = function() {
     this.input('userInput', {
-        "type": "string"
+        "type": "JSON"
     });
     this.parameter('componentID', {
         "type": "string"
     });
     this.output('componentUpdate', {
-        "type": "string"
-    });
-    this.output('component', {
-        "type": "string"
+        "type": "JSON"
     });
 };
