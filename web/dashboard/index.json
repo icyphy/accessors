@@ -1,3 +1,5 @@
 [
-    "UIComponent.js"
+    "GraphComponent.js",
+    "UIComponent.js",
+    "VideoComponent.js"
 ]
