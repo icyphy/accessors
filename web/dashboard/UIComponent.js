@@ -53,7 +53,7 @@
  *      }
  *  }
  *
- *  @accessor utilities/MutableBase
+ *  @accessor dashboard/UIComponent
  *  @input userInput JSON A message produced by an implementing accessor's web component
  *      to inform the accessor of user interaction with the instantiated web component.
  *  @parameter componentID string A unique ID an implementing accessor uses to configure communication
@@ -62,7 +62,7 @@
  *      back to the implementing accessor for the instantiated component are labled with the
  *      corresponding ID. All communication to and from the instantiated web component will be
  *      tagged with this ID.
- *  @output componentUpdate JSON A websocket message produced by an implementing accessor to communicate
+ *  @output componentUpdate A websocket message produced by an implementing accessor to communicate
  *      with the dashboard app. Upon initialization produce a websocket message containing the javascript
  *      escaped string of the web. Also used to inform the accessor's instantiated web component of control updates.
  *  @output userInput
@@ -77,7 +77,7 @@ exports.setup = function() {
     this.parameter('componentID', {
         "type": "string"
     });
-    
+
     //componentUpdate is JSON, but it will only send
     //as JSON in Cape Code if the port is typed as general
     this.output('componentUpdate');
