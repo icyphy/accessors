@@ -77,7 +77,8 @@ exports.setup = function() {
     this.parameter('componentID', {
         "type": "string"
     });
-    this.output('componentUpdate', {
-        "type": "JSON"
-    });
+    
+    //componentUpdate is JSON, but it will only send
+    //as JSON in Cape Code if the port is typed as general
+    this.output('componentUpdate');
 };
