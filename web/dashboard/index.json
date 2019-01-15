@@ -1,6 +1,6 @@
 [
     "GraphComponent.js",
-    "SpeedometerComponent",
+    "SpeedometerComponent.js",
     "UIComponent.js",
     "VideoComponent.js"
 ]
