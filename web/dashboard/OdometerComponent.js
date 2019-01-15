@@ -1,4 +1,4 @@
-// Accessor for generating and controlling a dashboard speedometer component
+// Accessor for generating and controlling a dashboard odometer component
 //
 // Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
@@ -24,7 +24,7 @@
 
 /** 
  *
- *  Implements the UIComponent interface to produce and control a speedometer component.
+ *  Implements the UIComponent interface to produce and control an odometer component.
  *  Refer to the documentation of dashboard/UIComponent for more detailed information.
  *
  *  Note the dashboard assumes web components are defined with the special name 
@@ -49,17 +49,17 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var speedComponentURI = "speedometerBundle.js";
-var speedComponentTimeout = 5000; //milliseconds
+var odometerComponentURI = "odometerBundle.js";
+var odometerComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
     this.implement('dashboard/UIComponent');
-    //FIXME For now this speedometer component follows a fixed pattern of speed updates.
-    //In the future there should be a parameter/input for the source of dynamic speed data.
+    //FIXME For now this odometer component has a fixed value.
+    //In the future there should be a parameter/input for the source of dynamic odometery data.
 };
 
 exports.initialize = function(){
-    var speedComponent = getResource(speedComponentURI, speedComponentTimeout);
+    var odometerComponent = getResource(odometerComponentURI, odometerComponentTimeout);
     
     //FIXME I can't get the socketID selection to work with WebSocketServer.js.
     //The following should work...
@@ -74,7 +74,7 @@ exports.initialize = function(){
     //For now, just broadcast
     var initMessage = {
         "id": "system",
-        "component": speedComponent,
+        "component": odometerComponent,
     };
 
     this.send('componentUpdate',initMessage);
