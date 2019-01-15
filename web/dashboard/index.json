@@ -1,5 +1,6 @@
 [
     "GraphComponent.js",
+    "OdometerComponent.js",
     "SpeedometerComponent.js",
     "UIComponent.js",
     "VideoComponent.js"
