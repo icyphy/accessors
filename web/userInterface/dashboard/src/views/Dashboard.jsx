@@ -101,21 +101,21 @@ class AccessorCards extends React.Component {
   }
 }
 
-
+var ws;
 
 class Dashboard extends React.Component {
 
   componentDidMount() {
-
     var thiz = this;
     //Websocket for communicating with the UI Swarmlet about the
     //state of the system (eg. availble accessor components).
-    var ws = new WebSocket('ws://localhost:8095/');
+    ws = new WebSocket('ws://localhost:8095/');
     ws.onopen = function(){
       var startMessage = {
         "id" : "system",
         "msg" : "start"
       }
+      console.log("Sending start message to controller.");
       ws.send(JSON.stringify(startMessage));
     };
 
@@ -140,6 +140,10 @@ class Dashboard extends React.Component {
         }
       });
     }.bind(thiz);
+  }
+
+  componentWillUnmount() {
+    ws.close();
   }
 
   constructor(props) {
