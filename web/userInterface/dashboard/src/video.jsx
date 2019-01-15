@@ -24,7 +24,7 @@ class VideoComponent extends HTMLElement {
             
             {/* This link to the stylesheet is necessary for the component to be correctly styled */}
            <link rel="stylesheet" href="../lib/video-react.css" />
-            <Player src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4">
+            <Player src="__videoSource__">
               <BigPlayButton position="center" />
             </Player>
         </div>
@@ -32,4 +32,4 @@ class VideoComponent extends HTMLElement {
         , mountPoint);
   }
 }
-customElements.define('replace-me', VideoComponent);
+customElements.define('__componentName__', VideoComponent);
