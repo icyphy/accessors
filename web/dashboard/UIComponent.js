@@ -65,7 +65,6 @@
  *  @output componentUpdate A websocket message produced by an implementing accessor to communicate
  *      with the dashboard app. Upon initialization produce a websocket message containing the javascript
  *      escaped string of the web. Also used to inform the accessor's instantiated web component of control updates.
- *  @output userInput
  *  @author Matt Weber
  *  @version $$Id$$
  */

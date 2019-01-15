@@ -1,4 +1,4 @@
-// Accessor for generating and controlling a dashboard video component
+// Accessor for generating and controlling a dashboard speedometer component
 //
 // Copyright (c) 2015-2017 The Regents of the University of California.
 // All rights reserved.
@@ -24,23 +24,21 @@
 
 /** 
  *
- *  Implements the UIComponent interface to produce and control a streaming video component.
+ *  Implements the UIComponent interface to produce and control a speedometer component.
  *  Refer to the documentation of dashboard/UIComponent for more detailed information.
  *
  *  Note the dashboard assumes web components are defined with the special name 
  *  '__componentName__'. It will replace this string before intialization.
  *
- *  @accessor dashboard/VideoComponent
+ *  @accessor dashboard/SpeedometerComponent
  *  @author Matt Weber
  *  @version $$Id$$
  *  @input userInput A JSON message produced by the instantiated video web component
  *      in the dashboard.
  *  @parameter componentID A unique ID used for communication with the video component.
- *  @parameter videoSource URI of the video to be played. This accessor will replace all instances of
- *      the special string '__videoSource__' in the video component. Defaults to the URI of
- *      the (Creative Commons) Sintel movie trailer.
  *  @output componentUpdate A websocket message produced upon initialization to send the video component
  *      to the dashboard app.
+ *  @output userInput
  */
 
 // Stop extra messages from jslint and jshint.  Note that there should
@@ -52,35 +50,32 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var videoComponentURI = "videoBundle.js";
-var videoComponentTimeout = 5000; //milliseconds
+var speedComponentURI = "speedometerBundle.js";
+var speedComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
     this.implement('dashboard/UIComponent');
-    this.parameter('videoSource', {
-        "type": 'string',
-        "value": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
-    });
+    //FIXME For now this speedometer component follows a fixed pattern of speed updates.
+    //In the future there should be a parameter/input for the source of dynamic speed data.
 };
 
 exports.initialize = function(){
-    var videoComponent = getResource(videoComponentURI, videoComponentTimeout);
-    var replaceSource = videoComponent.replace("__videoSource__", this.getParameter('videoSource'));
-
+    var speedComponent = getResource(speedComponentURI, speedComponentTimeout);
+    
     //FIXME I can't get the socketID selection to work with WebSocketServer.js.
     //The following should work...
     // var initMessage = {
     //     socketID: 0,
     //     message: {
     //         "id": "system",
-    //         "component": replaceSource,
+    //         "component": speedComponent,
     //     }
     // };
 
     //For now, just broadcast
     var initMessage = {
         "id": "system",
-        "component": replaceSource,
+        "component": speedComponent,
     };
 
     this.send('componentUpdate',initMessage);
