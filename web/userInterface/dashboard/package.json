@@ -17,6 +17,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-chartjs-2": "^2.7.4",
+    "react-d3-speedometer": "^0.4.2",
     "react-dom": "^16.5.2",
     "react-google-maps": "9.4.5",
     "react-notification-alert": "0.0.8",

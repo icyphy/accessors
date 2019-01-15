@@ -62,6 +62,7 @@ function evalComponents(componentStrings){
     //Duplicate component definitions are not allowed, so first check
     //to make sure the component hasn't been registered already.
     if(customElements.get(componentName) == undefined){
+      console.log("evaling element:" + componentName);
       eval(componentStrings[componentName]);
     }
   }
@@ -77,6 +78,7 @@ class AccessorCards extends React.Component {
       //One of React's quirks is it only allows a dynamic element name,
       //if that name is assigned to a variable with a capitalized first letter. 
       const CapitalizedName = name;
+      console.log("generating card for:" + name);
       cardArray.push(
         <Col key={name} lg="4">
           <Card className="card-chart">
@@ -119,11 +121,16 @@ class Dashboard extends React.Component {
 
     ws.onmessage = function(event) {
        eventToJSON(event, function(response){
-        if(response.id && response.id === "system" && response.componentHead && response.componentTail){
-          //Create the full component by concatenating the componentHead and componentTail with a unique name
+        // console.log("got a message!");
+        // console.log(response.id);
+        // console.log(JSON.stringify(response));
+        // console.log(response);
+        if(response.id && response.id === "system" && response.component){
+          console.log("started if!");
+          //Create the full component by replacing the special string __componentName__ with a unique name
           var componentName = "accessor-" + componentCount.toString();
-          componentCount = componentCount + 1;
-          var newComponent = response.componentHead + componentName + response.componentTail
+          componentCount++;
+          var newComponent = response.component.replace('__componentName__', componentName);
 
           //Create a copy of the old component state object, then add the new one
           //keyed to the component's name.

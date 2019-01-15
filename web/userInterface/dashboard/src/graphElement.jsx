@@ -12,10 +12,20 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
+//FIXME I believe bootstrap isn't being loaded correctly into the component. I tried linking
+// and importing these style sheets, but it didn't fix resizing issues.
+//The chart-area div class is defined in this stylesheet
+//import * as styles from "assets/scss/black-dashboard-react.scss";
+//import "lib/css/black-dashboard-react.css";
+
+//<link rel="stylesheet" href="../lib/black-dashboard-react.css" /> 
+
 //This import is needed to fix a bug with React not handling events which occur in
 //shadow DOM. Just call retargetEvents on shadowRoot.
 import retargetEvents from 'react-shadow-dom-retarget-events';
 
+
+console.log("graphElement is being evaled!");
 class GraphElement extends HTMLElement {
   connectedCallback() {
     const mountPoint = document.createElement('span');
@@ -23,14 +33,14 @@ class GraphElement extends HTMLElement {
     retargetEvents(shadowRoot);
     ReactDOM.render(
         (
-        <div className="chart-area">
-          <Bar
-            data={chartExample3.data}
-            options={chartExample3.options}
-          />          
-        </div>
+          <div className="chart-area">
+            <Bar
+              data={chartExample3.data}
+              options={chartExample3.options}
+            />          
+          </div>
         )
         , mountPoint);
   }
 }
-customElements.define('graph-element', GraphElement);
+customElements.define('__componentName__', GraphElement);
