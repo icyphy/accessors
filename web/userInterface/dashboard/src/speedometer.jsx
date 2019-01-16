@@ -20,12 +20,12 @@ class SpeedometerControler extends React.Component{
 
     setInterval(function(){ 
       thiz.setState({speed: 55});
-      console.log("setting to 55");
+      //console.log("setting to 55");
      }, 1000);
     
     setTimeout( setInterval( function(){
       thiz.setState({speed: 57});
-      console.log("setting to 57");
+      //console.log("setting to 57");
     }, 1500), 1000);
 
   }

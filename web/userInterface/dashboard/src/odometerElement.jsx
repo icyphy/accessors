@@ -6,6 +6,32 @@ import Odometer from 'react-odometerjs';
 //shadow DOM
 import retargetEvents from 'react-shadow-dom-retarget-events';
 
+
+class OdometerControler extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 12345
+    };
+  }
+
+  componentDidMount() {
+    var thiz = this;
+
+    setInterval(function(){
+      thiz.setState({speed: ++thiz.state.count});
+      //console.log("incrementing speed 55");
+     }, 3000);
+
+  }
+
+  render(){
+    return (
+        <Odometer value={this.state.count} format="(.ddd),dd"/>
+          )
+  }
+}
+
 class OdometerComponent extends HTMLElement {
 
   connectedCallback() {
@@ -16,21 +42,9 @@ class OdometerComponent extends HTMLElement {
         (
         <div>
           <link rel="stylesheet" href="../lib/odometer-theme-car.css" />
-          <Odometer value={12345678} format="(.ddd),dd"/>
+          <OdometerControler/>
         </div>
-        )
-        , mountPoint, function(){
-          /*The odometer only updates with the animation if its innerText is changed
-          without rerendering the element. */
-
-           ReactDOM.render(
-            (        <div>
-          <link rel="stylesheet" href="../lib/odometer-theme-car.css" />
-          <Odometer value={99999999} format="(.ddd),dd"/>
-          </div>), mountPoint);
-
-        });
-    
+        ), mountPoint);
   }
 }
 customElements.define('__componentName__', OdometerComponent);
