@@ -280,7 +280,7 @@ exports.onConnection = function (socket) {
             }
             message = message.replace(/^"(.*)"$/, '$1');
         }
-        var filteredMessage = self.exports.filterReceived.call(self, message);
+        var filteredMessage = self.exports.filterReceived.call(self, message, socketID);
         self.send('received', {
             'message': filteredMessage,
             'socketID': socketID
@@ -304,7 +304,7 @@ exports.onConnection = function (socket) {
  *  a portion of the message, for example.
  *  @param message The message.
  */
-exports.filterReceived = function (message) {
+exports.filterReceived = function (message, socketID) {
     return message;
 };
 
