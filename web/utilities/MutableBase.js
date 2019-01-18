@@ -104,6 +104,7 @@ exports.initialize = function() {
 
         var state = thiz.reify(accessor);
         if (state) {
+            this.reifyingAccessor.initialize();
             thiz.send('state', true);
         } else {
             thiz.unreify();
