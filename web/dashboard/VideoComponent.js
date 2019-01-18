@@ -69,19 +69,21 @@ exports.initialize = function(){
 
     //FIXME I can't get the socketID selection to work with WebSocketServer.js.
     //The following should work...
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: {
-    //         "id": "system",
-    //         "component": replaceSource,
-    //     }
-    // };
 
-    //For now, just broadcast
-    var initMessage = {
+    var message = {
         "id": "system",
         "component": replaceSource,
     };
+    // var initMessage = {
+    //     socketID: 0,
+    //     message: JSON.stringify(message)
+    // };
 
-    this.send('componentUpdate',initMessage);
+    //For now, just broadcast
+    // var initMessage = {
+    //     "id": "system",
+    //     "component": replaceSource,
+    // };
+
+    this.send('componentUpdate',message);
 };
