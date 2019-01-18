@@ -280,12 +280,14 @@ exports.onConnection = function (socket) {
             }
             message = message.replace(/^"(.*)"$/, '$1');
         }
+        var filteredMessage = self.exports.filterReceived.call(self, message);
         self.send('received', {
-            'message': message,
+            'message': filteredMessage,
             'socketID': socketID
         });
     });
     self.sockets[socketID].on('close', function () {
+        self.exports.notifyClose.call(self, socketID);
         self.send('connection', {
             'socketID': socketID,
             'status': 'closed'
@@ -295,9 +297,25 @@ exports.onConnection = function (socket) {
         console.log(self.accessorName + ': WebSocketServer.js: error ' + message);
         self.error(message);
     });
-
-
 };
+
+/** Filter the received message. This base class just returns the argument
+ *  unmodified, but derived classes can override this to extract
+ *  a portion of the message, for example.
+ *  @param message The message.
+ */
+exports.filterReceived = function (message) {
+    return message;
+};
+
+/** Notify that the socketID is now closed. This base class does nothing,
+ *  but derived classes can override this to be notified of a closing socket,
+ *  for example.
+ */
+exports.notifyClose = function(socketID){
+    return;
+}
+
 
 /** Removes all inputHandlers from sockets.<br>
  * Unregisters event listeners from sockets.<br>
