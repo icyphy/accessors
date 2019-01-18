@@ -2,6 +2,7 @@
     "GraphComponent.js",
     "OdometerComponent.js",
     "SpeedometerComponent.js",
+    "RoutingWebSocketServer.js",
     "UIComponent.js",
     "VideoComponent.js"
 ]

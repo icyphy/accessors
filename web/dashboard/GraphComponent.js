@@ -70,12 +70,20 @@ exports.initialize = function(){
     //         "component": graphComponent,
     //     }
     // };
-
-    //For now, just broadcast
-    var initMessage = {
+    var message = {
         "id": "system",
         "component": graphComponent,
     };
+    // var initMessage = {
+    //     socketID: 0,
+    //     message: JSON.stringify(message)
+    // };
 
-    this.send('componentUpdate',initMessage);
+    //For now, just broadcast
+    // var initMessage = {
+    //     "id": "system",
+    //     "component": graphComponent,
+    // };
+
+    this.send('componentUpdate',message);
 };

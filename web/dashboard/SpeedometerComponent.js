@@ -71,11 +71,20 @@ exports.initialize = function(){
     //     }
     // };
 
-    //For now, just broadcast
-    var initMessage = {
+    var message = {
         "id": "system",
         "component": speedComponent,
     };
+    // var initMessage = {
+    //     socketID: 0,
+    //     message: JSON.stringify(message)
+    // };
 
-    this.send('componentUpdate',initMessage);
+    //For now, just broadcast
+    // var initMessage = {
+    //     "id": "system",
+    //     "component": speedComponent,
+    // };
+
+    this.send('componentUpdate',message);
 };
