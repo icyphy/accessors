@@ -176,7 +176,6 @@ exports.encodePath = function () {
         encodedArgs = querystring.stringify(argumentsValue);
         return command + '?' + encodedArgs;
     }
-
 }; 
 
 /** Filter the response. This base class just returns the argument
@@ -220,10 +219,14 @@ exports.issueCommand = function (callback) {
         // this accessor multiple times, then options.url will be
         // appended to each time.  Instead, do a deep clone.
         command = JSON.parse(JSON.stringify(options));
+        var path = "";
+        if (encodedPath) {
+        	path = '/' + encodedPath;
+        }
         if (typeof options.url === 'string') {
-            command.url = options.url + '/' + encodedPath;
+            command.url = options.url + path;
         } else {
-            command.url.path = '/' + encodedPath;
+            command.url.path = path;
         }
     }
     // NOTE: This will only be used as a connect timeout.
