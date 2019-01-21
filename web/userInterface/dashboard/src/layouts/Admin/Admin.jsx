@@ -110,7 +110,7 @@ class Admin extends React.Component {
             ref="mainPanel"
             data={this.state.backgroundColor}
           >
-            <AdminNavbar
+         <AdminNavbar
               {...this.props}
               brandText={this.getBrandText(this.props.location.pathname)}
               toggleSidebar={this.toggleSidebar}
@@ -123,10 +123,10 @@ class Admin extends React.Component {
             )}
           </div>
         </div>
-        <FixedPlugin
+      {/* <FixedPlugin
           bgColor={this.state.backgroundColor}
           handleBgClick={this.handleBgClick}
-        />
+        />*/}
       </>
     );
   }
