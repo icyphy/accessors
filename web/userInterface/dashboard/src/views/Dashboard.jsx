@@ -175,7 +175,7 @@ class Dashboard extends React.Component {
                   <Row>
                     <Col className="text-left" sm="6">
                       <h5 className="card-category">Total Combo Shipments</h5>
-                      <CardTitle tag="h2">Performance</CardTitle>
+                      <CardTitle>Performance</CardTitle>
                     </Col>
                     <Col sm="6">
                       <ButtonGroup

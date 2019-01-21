@@ -96,6 +96,7 @@ class AdminNavbar extends React.Component {
                 {this.props.brandText}
               </NavbarBrand>
             </div>
+            
             <button
               aria-expanded={false}
               aria-label="Toggle navigation"
@@ -124,6 +125,7 @@ class AdminNavbar extends React.Component {
                     <span className="d-lg-none d-md-block">Search</span>
                   </Button>
                 </InputGroup>
+                                                      {/*
                 <UncontrolledDropdown nav>
                   <DropdownToggle
                     caret
@@ -191,6 +193,7 @@ class AdminNavbar extends React.Component {
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <li className="separator d-lg-none" />
+                                          */}
               </Nav>
             </Collapse>
           </Container>

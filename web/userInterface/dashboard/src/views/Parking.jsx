@@ -4,11 +4,31 @@ import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
+  Marker,
+  Circle,
 } from "react-google-maps";
 
+import { MarkerWithLabel } from "react-google-maps/lib/components/addons/MarkerWithLabel";
+
 // reactstrap components
-import { Card, CardHeader, CardBody, Row, Col } from "reactstrap";
+import { Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  Row,
+  Col,
+  UncontrolledDropdown,
+  Label,
+  FormGroup,
+  Input,
+  Table,
+  UncontrolledTooltip,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+  ButtonGroup,
+} from "reactstrap";
 
 //FIXME Refactor this function across pages (Dashboard and this) instead of duplicating it.
 //Helper function to refactor websocket code
@@ -37,11 +57,45 @@ function eventToJSON(event, callback) {
 const ParkingWrapper = withScriptjs(
   withGoogleMap(props => (
     <GoogleMap
-      defaultZoom={13}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
+      defaultZoom={14}
+      defaultCenter={props.center}
       defaultOptions={{
         scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
         styles: [
+                {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels.icon",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "transit",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
           {
             elementType: "geometry",
             stylers: [
@@ -285,7 +339,20 @@ const ParkingWrapper = withScriptjs(
         ]
       }}
     >
-      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
+      <Circle center={props.center} radius={50} options={{fillColor: "DodgerBlue", fillOpacity:1.0, strokeColor:"White", strokeWeight:1}} />
+      <Marker position={{ lat: 37.8816, lng: -122.2827 }} />
+      <MarkerWithLabel
+      position={{ lat: 37.8616, lng: -122.2627 }}
+      labelAnchor={new google.maps.Point(22, 0)}
+      labelStyle={{opacity: 0.75}}
+      >
+        <Card>
+        <CardHeader>
+        <CardTitle tag="h2">Display Name</CardTitle>
+        </CardHeader>
+        </Card>
+      </MarkerWithLabel>
+
     </GoogleMap>
   ))
 );
@@ -339,10 +406,10 @@ class Parking extends React.Component {
         <>
           <div className="content">
             <Row>
-              <Col md="12">
+              <Col md="7">
                 <Card className="card-plain">
-                  <CardHeader>Google Maps + {this.state.apiKey}</CardHeader>
-                  <CardBody>
+                  {/* <CardHeader>Google Maps + {this.state.apiKey}</CardHeader> */}
+                  <CardBody style={{"padding": "0px"}}>
                     <div
                       id="map"
                       className="map"
@@ -354,10 +421,269 @@ class Parking extends React.Component {
                         loadingElement={<div style={{ height: `100%` }} />}
                         containerElement={<div style={{ height: `100%` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
+                        center={{ lat: 37.8716, lng: -122.2727 }}
                       />
                     </div>
                   </CardBody>
                 </Card>
+              </Col>
+              <Col md="5">
+              <Card className="card-tasks">
+                <CardHeader>
+                  <h6 className="title d-inline">Results (5)</h6>
+                  <p className="card-category d-inline"> 8:23 AM Date</p>
+                  <UncontrolledDropdown>
+                    <DropdownToggle
+                      caret
+                      className="btn-icon"
+                      color="link"
+                      data-toggle="dropdown"
+                      type="button"
+                    >
+                      <i className="tim-icons icon-settings-gear-63" />
+                    </DropdownToggle>
+                    <DropdownMenu aria-labelledby="dropdownMenuLink" right>
+                      <DropdownItem
+                        href="#pablo"
+                        onClick={e => e.preventDefault()}
+                      >
+                        Sort by Price
+                      </DropdownItem>
+                      <DropdownItem
+                        href="#pablo"
+                        onClick={e => e.preventDefault()}
+                      >
+                        Sort by Distance
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                </CardHeader>
+                <CardBody>
+                  <div className="table-full-width table-responsive">
+                    <Table>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>Name</th>
+                          <th>Price</th>
+                          <th>Distance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <p className="title">Display Name1</p>
+                            <p className="text-muted">
+                              Dwuamish Head, Seattle, WA 8:47 AM
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip636901683"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip636901683"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p className="title">Display Name2</p>
+                            <p className="text-muted">
+                              Address 2
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip457194718"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip457194718"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p className="title">Display Name3</p>
+                            <p className="text-muted">
+                              Address 3
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip362404923"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip362404923"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p className="title">Display Name4</p>
+                            <p className="text-muted">
+                              Address 4
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip818217463"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip818217463"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p className="title">Display Name5</p>
+                            <p className="text-muted">
+                              Address 5
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip831835125"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip831835125"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p className="title">DisplayName 6</p>
+                            <p className="text-muted">
+                              Address 6
+                            </p>
+                          </td>
+                          <td>
+                          <p>
+                          $3.45
+                          </p>
+                          </td>
+                          <td>
+                          <p>
+                          2.17 mi
+                          </p>
+                          </td>
+                          <td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id="tooltip217595172"
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target="tooltip217595172"
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
+                </CardBody>
+              </Card>
               </Col>
             </Row>
           </div>
