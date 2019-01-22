@@ -124,7 +124,7 @@ exports.initialize = function(){
         thiz.send('arguments', args);
     });
     this.addInputHandler('searchTerm', function(){
-        args.searchTerm = thiz.getInput('searchTerm');
+        args.searchTerm = thiz.get('searchTerm');
         thiz.send('arguments', args);
     });
 
