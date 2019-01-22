@@ -54,6 +54,60 @@ function eventToJSON(event, callback) {
   }
 }
 
+function generateTableRows(parkingData){
+  var table = [];
+  for(var i= 0; i < parkingData.length; i++){
+    var children = [];
+    children.push(<td> <p className="title">{parkingData[i].displayName}</p>
+       <p className="text-muted"> {parkingData[i].address}</p></td>);
+    children.push(<td><p>${parkingData[i].price}</p></td>);
+    children.push(<td><p>{parkingData[i].distance} mi</p></td>);
+    children.push(<td className="td-actions text-right">
+                            <Button
+                              color="link"
+                              id={"tooltip" + parkingData[i].key}
+                              title=""
+                              type="button"
+                            >
+                              <i className="tim-icons icon-triangle-right-17" />
+                            </Button>
+                            <UncontrolledTooltip
+                              delay={0}
+                              target={"tooltip" + parkingData[i].key}
+                              placement="right"
+                            >
+                              Get Accessor
+                            </UncontrolledTooltip>
+                          </td>
+                          );
+    table.push(<tr key={parkingData[i].key}>{children}</tr>);
+  }
+  return table;
+
+
+}
+
+                          
+
+function generateMarkerWithLabels(parkingData){
+  return (
+    parkingData.map( (datum, index) => (
+      <MarkerWithLabel
+      position={{ lat: datum.lat, lng: datum.lng }}
+      labelAnchor={new google.maps.Point(22, 0)}
+      labelStyle={{opacity: 0.75}}
+      key={datum.key}
+      >
+        <Card>
+        <CardHeader>
+        <CardTitle tag="h2">{datum.displayName}</CardTitle>
+        </CardHeader>
+        </Card>
+      </MarkerWithLabel>
+      ))
+    );  
+}
+
 const ParkingWrapper = withScriptjs(
   withGoogleMap(props => (
     <GoogleMap
@@ -340,19 +394,8 @@ const ParkingWrapper = withScriptjs(
       }}
     >
       <Circle center={props.center} radius={50} options={{fillColor: "DodgerBlue", fillOpacity:1.0, strokeColor:"White", strokeWeight:1}} />
-      <Marker position={{ lat: 37.8816, lng: -122.2827 }} />
-      <MarkerWithLabel
-      position={{ lat: 37.8616, lng: -122.2627 }}
-      labelAnchor={new google.maps.Point(22, 0)}
-      labelStyle={{opacity: 0.75}}
-      >
-        <Card>
-        <CardHeader>
-        <CardTitle tag="h2">Display Name</CardTitle>
-        </CardHeader>
-        </Card>
-      </MarkerWithLabel>
-
+      {/* <Marker position={{ lat: 37.8816, lng: -122.2827 }} /> */}
+      {generateMarkerWithLabels(props.parkingData)}
     </GoogleMap>
   ))
 );
@@ -364,7 +407,10 @@ class Parking extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      apiKey: "YOUR_KEY__MUST_BE_LOADED_HERE",
+      apiKey: "YOUR_KEY_MUST_BE_LOADED_HERE",
+      center: { lat: 37.8716, lng: -122.2727 }, //Defaults to the location of Berkeley, CA
+      parkingData: [], //The order of data in this array is the order it will be displayed in the table
+      dataTime: ""
     };
     var thiz = this;
   }
@@ -389,6 +435,20 @@ class Parking extends React.Component {
           console.log("started parking if!");
           
           thiz.setState({apiKey: response.apiKey});
+          thiz.setState({center: {"lat": response.mapPosition.lat, "lng": response.mapPosition.lng}});
+          
+          //Assign a unique key to every parking datum.
+          //This prevents weird rendering issues in react if we reorder the array
+          var keyedParkingData = response.parkingData;
+          for(var i = 0; i < keyedParkingData.length; i++){
+            keyedParkingData[i].key = i;
+          }
+
+          var d = new Date();
+          thiz.setState({dataTime: d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()});
+
+          thiz.setState({parkingData: keyedParkingData});
+          //console.log({center: {"lat": response.lat, "lng": response.lng}});
         }
       });
     }.bind(thiz);
@@ -398,8 +458,38 @@ class Parking extends React.Component {
     ws.close();
   }
 
+  sortByPrice(){
+    console.log("sortingP");
+    var sortedData = this.state.parkingData;
+    sortedData.sort( function(a,b) {
+      if(a.price < b.price){
+        return -1;
+      }
+      if(a.price > b.price){
+        return 1;
+      }
+      return 0;
+    });
+    this.setState({parkingData: sortedData});
+  }
+
+  sortByDistance(){
+    console.log("sortingD");
+    var sortedData = this.state.parkingData;
+    sortedData.sort( function(a,b) {
+      if(a.distance < b.distance){
+        return -1;
+      }
+      if(a.distance > b.distance){
+        return 1;
+      }
+      return 0;
+    });
+    this.setState({parkingData: sortedData});
+  }
+
   render() {
-    if(this.state.apiKey == "YOUR_KEY__MUST_BE_LOADED_HERE"){
+    if(this.state.apiKey == "YOUR_KEY_MUST_BE_LOADED_HERE"){
       return (<h2> API key not loaded yet </h2> );
     } else {
       return (
@@ -421,7 +511,8 @@ class Parking extends React.Component {
                         loadingElement={<div style={{ height: `100%` }} />}
                         containerElement={<div style={{ height: `100%` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
-                        center={{ lat: 37.8716, lng: -122.2727 }}
+                        center={this.state.center}
+                        parkingData={this.state.parkingData}
                       />
                     </div>
                   </CardBody>
@@ -430,8 +521,8 @@ class Parking extends React.Component {
               <Col md="5">
               <Card className="card-tasks">
                 <CardHeader>
-                  <h6 className="title d-inline">Results (5)</h6>
-                  <p className="card-category d-inline"> 8:23 AM Date</p>
+                  <h6 className="title d-inline">Results ({this.state.parkingData.length})</h6>
+                  <p className="card-category d-inline"> {this.state.dataTime}</p>
                   <UncontrolledDropdown>
                     <DropdownToggle
                       caret
@@ -444,14 +535,14 @@ class Parking extends React.Component {
                     </DropdownToggle>
                     <DropdownMenu aria-labelledby="dropdownMenuLink" right>
                       <DropdownItem
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
+                        href="#"
+                        onClick={this.sortByPrice.bind(this)}
                       >
                         Sort by Price
                       </DropdownItem>
                       <DropdownItem
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
+                         href="#"
+                        onClick={this.sortByDistance.bind(this)}
                       >
                         Sort by Distance
                       </DropdownItem>
@@ -469,216 +560,7 @@ class Parking extends React.Component {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>
-                            <p className="title">Display Name1</p>
-                            <p className="text-muted">
-                              Dwuamish Head, Seattle, WA 8:47 AM
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip636901683"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip636901683"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <p className="title">Display Name2</p>
-                            <p className="text-muted">
-                              Address 2
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip457194718"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip457194718"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <p className="title">Display Name3</p>
-                            <p className="text-muted">
-                              Address 3
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip362404923"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip362404923"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <p className="title">Display Name4</p>
-                            <p className="text-muted">
-                              Address 4
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip818217463"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip818217463"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <p className="title">Display Name5</p>
-                            <p className="text-muted">
-                              Address 5
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip831835125"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip831835125"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <p className="title">DisplayName 6</p>
-                            <p className="text-muted">
-                              Address 6
-                            </p>
-                          </td>
-                          <td>
-                          <p>
-                          $3.45
-                          </p>
-                          </td>
-                          <td>
-                          <p>
-                          2.17 mi
-                          </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip217595172"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-triangle-right-17" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip217595172"
-                              placement="right"
-                            >
-                              Get Accessor
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
+                        {generateTableRows(this.state.parkingData)}
                       </tbody>
                     </Table>
                   </div>
