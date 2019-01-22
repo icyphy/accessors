@@ -149,7 +149,7 @@ exports.handleResponse = function(message){
                     writer.addQuad(
                       businessNode,
                       namedNode('http://www.opengis.net/ont/geosparql#asWKT'),
-                      literal('http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(' + business.coordinates.longitude + ' ' + business.coordinates.latitude + ')', namedNode('http://www.opengis.net/ont/geosparql#wktLiteral'))
+                      literal('<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(' + business.coordinates.longitude + ' ' + business.coordinates.latitude + ')', namedNode('http://www.opengis.net/ont/geosparql#wktLiteral'))
                     );
                 }
                 writer.addQuad(
