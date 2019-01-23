@@ -1,8 +1,9 @@
 [
     "GraphComponent.js",
     "OdometerComponent.js",
-    "SpeedometerComponent.js",
+    "RestaurantComponent.js",
     "RoutingWebSocketServer.js",
+    "SpeedometerComponent.js",
     "UIComponent.js",
     "VideoComponent.js"
 ]
