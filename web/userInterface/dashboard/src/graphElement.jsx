@@ -12,6 +12,13 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle
+} from "reactstrap";
+
 //FIXME I believe bootstrap isn't being loaded correctly into the component. I tried linking
 // and importing these style sheets, but it didn't fix resizing issues.
 //The chart-area div class is defined in this stylesheet
@@ -34,10 +41,19 @@ class GraphElement extends HTMLElement {
     ReactDOM.render(
         (
           <div className="chart-area">
+          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+            <Card className="card-chart">
+            <CardHeader>
+              <h5 className="card-category">Graph Component</h5>
+            </CardHeader>
+            <CardBody>
             <Bar
               data={chartExample3.data}
               options={chartExample3.options}
             />          
+          </CardBody>
+          </Card>
           </div>
         )
         , mountPoint);

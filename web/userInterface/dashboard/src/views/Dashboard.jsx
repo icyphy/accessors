@@ -33,6 +33,51 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
+import Gallery from 'react-photo-gallery';
+
+const PHOTO_SET = [
+  {
+    src: '../food/item1.jpeg',
+    width: 1,
+    height: 1
+  },
+  {
+    src: '../food/item2.jpeg',
+    width: 1,
+    height: 1
+  },
+    {
+    src: '../food/item3.jpeg',
+    width: 1,
+    height: 1
+  },
+    {
+    src: '../food/item4.jpeg',
+    width: 1,
+    height: 1
+  },
+    {
+    src: '../food/item5.jpeg',
+    width: 1,
+    height: 1
+  },
+  {
+    src: '../food/item6.jpeg',
+    width: 1,
+    height: 1
+  },
+    {
+    src: '../food/item7.jpeg',
+    width: 1,
+    height: 1
+  },
+    {
+    src: '../food/item8.jpeg',
+    width: 1,
+    height: 1
+  },
+];
+
 //Variable incremented to construct unique component names
 var componentCount = 0;
 
@@ -80,15 +125,8 @@ class AccessorCards extends React.Component {
       const CapitalizedName = name;
       console.log("generating card for:" + name);
       cardArray.push(
-        <Col key={name} lg="4">
-          <Card className="card-chart">
-            <CardHeader>
-              <h5 className="card-category">Component: {name}</h5>
-            </CardHeader>
-            <CardBody>
-              <CapitalizedName>Jane</CapitalizedName>
-            </CardBody>
-          </Card>
+        <Col key={name} lg="6">
+              <CapitalizedName/>
         </Col>
       );
     }
@@ -654,6 +692,21 @@ class Dashboard extends React.Component {
                 </CardBody>
               </Card>
             </Col>
+          </Row>
+          <Row>
+          {/*
+          <Col lg="6" md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h4">iCyPhy Kitchen</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <Gallery photos={PHOTO_SET} columns={3}/>
+                </CardBody>
+              </Card>
+            </Col>
+          */}
+
           </Row>
         </div>
       </>

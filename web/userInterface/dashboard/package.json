@@ -22,6 +22,7 @@
     "react-google-maps": "9.4.5",
     "react-notification-alert": "0.0.8",
     "react-odometerjs": "^2.1.1",
+    "react-photo-gallery": "^6.3.0",
     "react-router-dom": "4.3.1",
     "react-scripts": "2.0.4",
     "react-shadow-dom-retarget-events": "^1.0.8",
