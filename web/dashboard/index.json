@@ -1,6 +1,7 @@
 [
     "GraphComponent.js",
     "OdometerComponent.js",
+    "ParkingComponent.js",
     "RestaurantComponent.js",
     "RoutingWebSocketServer.js",
     "SpeedometerComponent.js",
