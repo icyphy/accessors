@@ -6,6 +6,12 @@ import Odometer from 'react-odometerjs';
 //shadow DOM
 import retargetEvents from 'react-shadow-dom-retarget-events';
 
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle
+} from "reactstrap";
 
 class OdometerControler extends React.Component{
   constructor(props) {
@@ -40,9 +46,19 @@ class OdometerComponent extends HTMLElement {
     retargetEvents(shadowRoot);
     ReactDOM.render(
         (
-        <div>
-          <link rel="stylesheet" href="../lib/odometer-theme-car.css" />
-          <OdometerControler/>
+                <div>
+        {/* This link to the stylesheet is necessary for the component to be correctly styled */}
+           <link rel="stylesheet" href="../lib/odometer-theme-car.css" />
+          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+            <Card className="card-chart">
+            <CardHeader>
+            <h5 className="card-category">Odometer Component</h5>
+            </CardHeader>
+            <CardBody>
+            <OdometerControler/>
+            </CardBody>
+            </Card>
         </div>
         ), mountPoint);
   }

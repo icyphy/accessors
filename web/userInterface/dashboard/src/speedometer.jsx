@@ -7,6 +7,14 @@ import ReactSpeedometer from "react-d3-speedometer"
 //shadow DOM
 import retargetEvents from 'react-shadow-dom-retarget-events';
 
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle
+} from "reactstrap";
+
+
 class SpeedometerControler extends React.Component{
   constructor(props) {
     super(props);
@@ -32,12 +40,23 @@ class SpeedometerControler extends React.Component{
 
   render(){
     return (
-    <ReactSpeedometer
-            minValue={0}
-            maxValue={170}
-            value={this.state.speed}
-          />
-          )
+      <div className="chart-area">
+          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+            <Card className="card-chart">
+            <CardHeader>
+            <h5 className="card-category">Speedometer Component</h5>
+            </CardHeader>
+            <CardBody>
+            <ReactSpeedometer
+                    minValue={0}
+                    maxValue={170}
+                    value={this.state.speed}
+                  />
+            </CardBody>
+            </Card>
+      </div>
+      )
   }
 
 }

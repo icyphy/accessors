@@ -10,6 +10,13 @@ import "video-react/dist/video-react.css";
 //shadow DOM
 import retargetEvents from 'react-shadow-dom-retarget-events';
 
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle
+} from "reactstrap";
+
 class VideoComponent extends HTMLElement {
 
   connectedCallback() {
@@ -19,14 +26,21 @@ class VideoComponent extends HTMLElement {
     ReactDOM.render(
         (
         <div>
-            {/* Remote link to stylesheet */}
-            {/* <link rel="stylesheet" href="https://video-react.github.io/assets/video-react.css" /> */}
-            
-            {/* This link to the stylesheet is necessary for the component to be correctly styled */}
+        {/* This link to the stylesheet is necessary for the component to be correctly styled */}
            <link rel="stylesheet" href="../lib/video-react.css" />
-            <Player src="__videoSource__">
+          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+            <Card className="card-chart">
+            <CardHeader>
+            <h5 className="card-category">Video Component</h5>
+            </CardHeader>
+            <CardBody>
+            <h3> Intersection of Alpha Ave. and Beta St.</h3>
+              <Player src="__videoSource__">
               <BigPlayButton position="center" />
             </Player>
+            </CardBody>
+            </Card>
         </div>
         )
         , mountPoint);
