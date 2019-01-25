@@ -54,7 +54,7 @@
  *  }
  *
  *  @accessor dashboard/UIComponent
- *  @input userInput JSON A message produced by an implementing accessor's web component
+ *  @input userInput A message produced by an implementing accessor's web component
  *      to inform the accessor of user interaction with the instantiated web component.
  *  @parameter componentID string A unique ID an implementing accessor uses to configure communication
  *      with it's web component. The implementing accessor should replace all instances of the
@@ -71,7 +71,6 @@
 
 exports.setup = function() {
     this.input('userInput', {
-        "type": "JSON"
     });
     this.parameter('componentID', {
         "type": "string"
