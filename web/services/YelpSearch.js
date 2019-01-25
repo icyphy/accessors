@@ -31,6 +31,7 @@
  */
 
 exports.setup = function () {
+
     this.extend('net/REST');
     this.input('searchTerm', {
         'type': 'string',
@@ -105,27 +106,21 @@ exports.initialize = function(){
         'url'     : "https://api.yelp.com"
     };
     var command = "/v3/businesses/search";
-    var args = {'latitude'  : thiz.get('latitude').toString(),
-                'longitude' : thiz.get('longitude').toString(),
-                'term'      : thiz.get('searchTerm')
-                };
 
     thiz.send('options', options);
     thiz.send('command', command);
-    thiz.send('arguments', args);
-
-    //Update search arguments when new inputs to this accessor arrive
-    this.addInputHandler('latitude', function(){
-        args.latitude = thiz.get('latitude').toString();
-        thiz.send('arguments', args);
-    });
-    this.addInputHandler('longitude', function(){
-        args.longitude = thiz.get('longitude').toString();
-        thiz.send('arguments', args);
-    });
-    this.addInputHandler('searchTerm', function(){
-        args.term = thiz.get('searchTerm');
-        thiz.send('arguments', args);
-    });
-
 };
+
+//Override
+exports.issueCommand = function (callback){
+    var args = {'latitude'  : this.get('latitude').toString(),
+                'longitude' : this.get('longitude').toString(),
+                'term'      : this.get('searchTerm')
+                };
+
+    //Note, send('arguments', args) doesn't work because
+    //send makes an input available in the _next_ reaction
+    this.provideInput('arguments', args);
+    this.exports.ssuper.issueCommand.call(this);
+}
+
