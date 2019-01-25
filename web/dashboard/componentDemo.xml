@@ -12,13 +12,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="{70.0, 30.0}">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={148, 200, 934, 632}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={92, 65, 1313, 789}, maximized=false}">
     </property>
-    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 522]">
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1079, 679]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.8000000000000042">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.0000000000000058">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{210.0889756944445, 513.3606770833331}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{264.7760537790699, 481.9763808139535}">
     </property>
     <property name="ShowTypes" class="ptolemy.vergil.actor.lib.ShowTypes">
         <property name="_location" class="ptolemy.kernel.util.Location" value="{270, -45}">
@@ -327,35 +327,6 @@
             <property name="input"/>
         </port>
         <port name="response" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-        </port>
-    </entity>
-    <entity name="Router" class="ptolemy.actor.lib.jjs.JavaScript">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-        </property>
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function(){&#10;    this.input(&quot;userCommand&quot;);&#10;    this.output(&quot;accessor&quot;);&#10;    this.output(&quot;parking&quot;);&#10;};&#10;&#10;exports.initialize = function(){&#10;    this.addInputHandler(&quot;userCommand&quot;, function(){&#10;        var command = this.get('userCommand');&#10;        if(command &amp;&amp; command.message){&#10;            var msg = JSON.parse(command.message);&#10;            if(msg.id){&#10;                switch(msg.id){&#10;                    case &quot;parking&quot;:&#10;                        this.send(&quot;parking&quot;, command);&#10;                        break;&#10;                    case &quot;system&quot;:&#10;                        this.send(&quot;accessor&quot;, command);&#10;                        break;&#10;                    default:&#10;                        error(&quot;Received message in router with an invalid ID&quot;);&#10;                } &#10;            } else {&#10;                error(&quot;Unable to parse ID out of message.&quot;);&#10;            }&#10;        } else {&#10;            error(&quot;Received message in router and was unable to identify ID&quot;);&#10;        }&#10;    });&#10;};">
-            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                </property>
-            </property>
-        </property>
-        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-            </property>
-            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-            </property>
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[-120.0, 240.0]">
-        </property>
-        <port name="userCommand" class="ptolemy.actor.TypedIOPort">
-            <property name="input"/>
-        </port>
-        <port name="accessor" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-        </port>
-        <port name="parking" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
         </port>
     </entity>
@@ -775,7 +746,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[180.0, 655.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[175.0, 685.0]">
         </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
@@ -796,7 +767,7 @@
             <property name="output"/>
         </port>
     </entity>
-    <entity name="Mutable6" class="org.terraswarm.accessor.JSAccessor">
+    <entity name="ConfiguredParkingMutable" class="org.terraswarm.accessor.JSAccessor">
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
@@ -815,9 +786,9 @@
             <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[350.0, 650.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[365.0, 705.0]">
         </property>
-        <property name="componentID" class="ptolemy.data.expr.Parameter" value="">
+        <property name="componentID" class="ptolemy.data.expr.Parameter" value="parkingComponent">
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
@@ -838,6 +809,46 @@
             <property name="output"/>
         </port>
     </entity>
+    <entity name="Router" class="ptolemy.actor.lib.jjs.JavaScript">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function(){&#10;    this.input(&quot;userCommand&quot;);&#10;    this.output(&quot;accessor&quot;);&#10;    this.output(&quot;parking&quot;);&#10;    this.output(&quot;parkingComponent&quot;);&#10;};&#10;&#10;exports.initialize = function(){&#10;    this.addInputHandler(&quot;userCommand&quot;, function(){&#10;        var command = this.get('userCommand');&#10;        if(command &amp;&amp; command.message){&#10;            var msg = JSON.parse(command.message);&#10;            if(msg.id){&#10;                switch(msg.id){&#10;                    case &quot;parking&quot;:&#10;                        this.send(&quot;parking&quot;, command);&#10;                        break;&#10;                    case &quot;system&quot;:&#10;                        this.send(&quot;accessor&quot;, command);&#10;                        break;&#10;                    case &quot;parkingComponent&quot;:&#10;                        this.send(&quot;parkingComponent&quot;, command);&#10;                        break;&#10;                    default:&#10;                        error(&quot;Received message in router with an invalid ID&quot;);&#10;                } &#10;            } else {&#10;                error(&quot;Unable to parse ID out of message.&quot;);&#10;            }&#10;        } else {&#10;            error(&quot;Received message in router and was unable to identify ID&quot;);&#10;        }&#10;    });&#10;};">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{-235.0, 310.0}">
+        </property>
+        <port name="userCommand" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="accessor" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="parking" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="parkingComponent" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+    </entity>
     <relation name="relation8" class="ptolemy.actor.TypedIORelation">
         <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
         </property>
@@ -855,8 +866,6 @@
         </property>
         <vertex name="vertex1" value="[505.0, 765.0]">
         </vertex>
-    </relation>
-    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation11" class="ptolemy.actor.TypedIORelation">
         <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
@@ -892,6 +901,10 @@
     </relation>
     <relation name="relation17" class="ptolemy.actor.TypedIORelation">
     </relation>
+    <relation name="relation18" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+    </relation>
     <link port="GetResource.trigger" relation="relation8"/>
     <link port="GetResource.output" relation="relation12"/>
     <link port="Merge.input" relation="relation10"/>
@@ -909,11 +922,8 @@
     <link port="GetResource4.trigger" relation="relation8"/>
     <link port="GetResource4.output" relation="relation3"/>
     <link port="Display.input" relation="relation5"/>
-    <link port="ParkingDialogue.parkingMessage" relation="relation6"/>
+    <link port="ParkingDialogue.parkingMessage" relation="relation18"/>
     <link port="ParkingDialogue.response" relation="relation10"/>
-    <link port="Router.userCommand" relation="relation5"/>
-    <link port="Router.accessor" relation="relation8"/>
-    <link port="Router.parking" relation="relation6"/>
     <link port="Mutable5.accessor" relation="relation12"/>
     <link port="Mutable5.componentUpdate" relation="relation4"/>
     <link port="Mutable.accessor" relation="relation"/>
@@ -930,6 +940,11 @@
     <link port="Mutable4.componentUpdate" relation="relation15"/>
     <link port="GetResource6.trigger" relation="relation8"/>
     <link port="GetResource6.output" relation="relation16"/>
-    <link port="Mutable6.accessor" relation="relation16"/>
-    <link port="Mutable6.componentUpdate" relation="relation17"/>
+    <link port="ConfiguredParkingMutable.accessor" relation="relation16"/>
+    <link port="ConfiguredParkingMutable.userInput" relation="relation6"/>
+    <link port="ConfiguredParkingMutable.componentUpdate" relation="relation17"/>
+    <link port="Router.userCommand" relation="relation5"/>
+    <link port="Router.accessor" relation="relation8"/>
+    <link port="Router.parking" relation="relation18"/>
+    <link port="Router.parkingComponent" relation="relation6"/>
 </entity>

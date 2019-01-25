@@ -58,33 +58,63 @@ exports.setup = function () {
     //In the future there should be a parameter/input for the source of dynamic odometery data.
 };
 
-exports.initialize = function(){
-    var parkingComponent = getResource(parkingComponentURI, parkingComponentTimeout);
-    
-    //FIXME I can't get the socketID selection to work with WebSocketServer.js.
-    //The following should work...
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: {
-    //         "id": "system",
-    //         "component": speedComponent,
-    //     }
-    // };
 
+var exampleData = [
+            {
+                "floor": "1",
+                "zone": "L",
+                "number": "42",
+                "spotID": 1
+            },
+            {
+                "floor": "2",
+                "zone": "C",
+                "number": "27",
+                "spotID": 2
+            },
+            {
+                "floor": "2",
+                "zone": "P",
+                "number": "24",
+                "spotID": 3
+            },
+                        {
+                "floor": "3",
+                "zone": "X",
+                "number": "109",
+                "spotID": 4
+            },
+            {
+                "floor": "5",
+                "zone": "Y",
+                "number": "17",
+                "spotID": 5
+            },
+            {
+                "floor": "5",
+                "zone": "Y",
+                "number": "18",
+                "spotID": 6
+            },
+        ];
+
+exports.initialize = function(){
+    
+    //Respond to communication from the intantiated component
+    this.addInputHandler("userInput", function(){
+        var update = {
+            "id": this.getParameter('componentID'),
+            "spotData": exampleData
+        };
+        this.send('componentUpdate', update);  
+    });
+
+    var parkingComponent = getResource(parkingComponentURI, parkingComponentTimeout);
+    var replaceSource = parkingComponent.replace("__componentID__", this.getParameter('componentID'));
     var message = {
         "id": "system",
-        "component": parkingComponent,
+        "component": replaceSource,
     };
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: JSON.stringify(message)
-    // };
-
-    //For now, just broadcast
-    // var initMessage = {
-    //     "id": "system",
-    //     "component": odometerComponent,
-    // };
 
     this.send('componentUpdate',message);
 };
