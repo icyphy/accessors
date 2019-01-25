@@ -95,7 +95,6 @@ exports.handleResponse = function(message){
 
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
-
     var thiz = this;
 
     //Prepare accessor for a query with default input values
@@ -121,6 +120,6 @@ exports.issueCommand = function (callback){
     //Note, send('arguments', args) doesn't work because
     //send makes an input available in the _next_ reaction
     this.provideInput('arguments', args);
-    this.exports.ssuper.issueCommand.call(this);
+    this.exports.ssuper.issueCommand.call(this, callback);
 }
 
