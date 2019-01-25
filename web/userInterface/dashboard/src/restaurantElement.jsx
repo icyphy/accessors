@@ -28,13 +28,11 @@ import { Card,
 // import "assets/scss/black-dashboard-react.scss";
 // import styles from "assets/demo/demo.css";
 // import "assets/css/nucleo-icons.css";
-var styles = require("assets/demo/demo.css")
+// var styles = require("assets/demo/demo.css")
 
 
-console.log("==========");
-console.log(styles );
-console.log("==========");
-class OdometerComponent extends HTMLElement {
+
+class RestaurantComponent extends HTMLElement {
 
   connectedCallback() {
     const mountPoint = document.createElement('span');
@@ -288,4 +286,4 @@ class OdometerComponent extends HTMLElement {
         ), mountPoint);
   }
 }
-customElements.define('__componentName__', OdometerComponent);
+customElements.define('__componentName__', RestaurantComponent);
