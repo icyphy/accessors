@@ -31,7 +31,6 @@
  */
 
 exports.setup = function () {
-
     this.extend('net/REST');
     this.input('searchTerm', {
         'type': 'string',
@@ -112,6 +111,7 @@ exports.initialize = function(){
 
 //Override
 exports.issueCommand = function (callback){
+    var thiz = this;
     var args = {'latitude'  : this.get('latitude').toString(),
                 'longitude' : this.get('longitude').toString(),
                 'term'      : this.get('searchTerm')
@@ -120,6 +120,5 @@ exports.issueCommand = function (callback){
     //Note, send('arguments', args) doesn't work because
     //send makes an input available in the _next_ reaction
     this.provideInput('arguments', args);
-    this.exports.ssuper.issueCommand.call(this, callback);
+    exports.ssuper.issueCommand.call(this, callback);
 }
-
