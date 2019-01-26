@@ -490,7 +490,10 @@ class Parking extends React.Component {
 
   render() {
     if(this.state.apiKey == "YOUR_KEY_MUST_BE_LOADED_HERE"){
-      return (<h2> API key not loaded yet </h2> );
+      return (
+        <div className="content">
+        {/* <h2> API key not loaded yet </h2> */}
+        </div> );
     } else {
       return (
         <>
@@ -503,7 +506,7 @@ class Parking extends React.Component {
                     <div
                       id="map"
                       className="map"
-                      style={{ position: "relative", overflow: "hidden" }}
+                      style={{ position: "relative", overflow: "hidden"}}
                     >
 
                       <ParkingWrapper
@@ -550,7 +553,7 @@ class Parking extends React.Component {
                   </UncontrolledDropdown>
                 </CardHeader>
                 <CardBody>
-                  <div className="table-full-width table-responsive">
+                  <div className="table-full-width table-responsive" style={{ "overflow-y": "auto", "overflow-x": "auto" }}>
                     <Table>
                       <thead className="text-primary">
                         <tr>

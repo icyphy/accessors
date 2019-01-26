@@ -25,13 +25,6 @@ import { Card,
   ButtonGroup,
 } from "reactstrap";
 
-// import "assets/scss/black-dashboard-react.scss";
-// import styles from "assets/demo/demo.css";
-// import "assets/css/nucleo-icons.css";
-// var styles = require("assets/demo/demo.css")
-
-
-
 class RestaurantComponent extends HTMLElement {
 
   connectedCallback() {
@@ -88,8 +81,8 @@ class RestaurantComponent extends HTMLElement {
                       </DropdownMenu>
                     </UncontrolledDropdown>
                   </CardHeader>
-                  <CardBody>
-                    <div className="table-full-width table-responsive">
+                  <CardBody style={{"padding": "0px"}}>
+                    <div className="table-full-width table-responsive" style={{ "overflow-y": "auto", "overflow-x": "auto" }}>
                       <Table>
                         <tbody>
                           <tr>
@@ -108,13 +101,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip636901683"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -133,13 +119,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip457194718"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -158,13 +137,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip362404923"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -183,13 +155,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip362404923"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -208,13 +173,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip362404923"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -233,13 +191,6 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip362404923"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
                           </tr>
                           <tr>
@@ -258,28 +209,20 @@ class RestaurantComponent extends HTMLElement {
                               >
                                 <i className="tim-icons icon-simple-add" />
                               </Button>
-                              <UncontrolledTooltip
-                                delay={0}
-                                target="tooltip362404923"
-                                placement="right"
-                              >
-                                Edit Task
-                              </UncontrolledTooltip>
                             </td>
-                          </tr>
-                          
+                          </tr> 
                         </tbody>
                       </Table>
                     </div>
                   </CardBody>
                   </Card>
                   <Button
-                              block
-                              color="primary"
-                              onClick={e => e.preventDefault()}
-                            >
-                              Proceed to Checkout
-                            </Button>
+                    block
+                    color="primary"
+                    onClick={e => e.preventDefault()}
+                  >
+                    Proceed to Checkout
+                  </Button>
                   </CardBody>
                 </Card>
             </div>
