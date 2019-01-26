@@ -100,7 +100,7 @@ function generateMarkerWithLabels(parkingData){
       >
         <Card>
         <CardHeader>
-        <CardTitle tag="h2">{datum.displayName}</CardTitle>
+        <CardTitle tag="h5">{datum.displayName}</CardTitle>
         </CardHeader>
         </Card>
       </MarkerWithLabel>
