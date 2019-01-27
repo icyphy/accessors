@@ -141,9 +141,9 @@ class RestaurantComponent extends HTMLElement {
                           </tr>
                           <tr>
                             <td>
-                              <p className="title">Desert</p>
+                              <p className="title">Dessert</p>
                               <p className="text-muted">
-                                Not a specific food. Just "desert".
+                                Not a specific food. Just "dessert".
                               </p>
                             </td>
                             <td className="td-actions text-right">

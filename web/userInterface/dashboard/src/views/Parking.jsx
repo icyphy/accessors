@@ -30,6 +30,8 @@ import { Card,
   ButtonGroup,
 } from "reactstrap";
 
+ import {Redirect } from 'react-router'
+
 //FIXME Refactor this function across pages (Dashboard and this) instead of duplicating it.
 //Helper function to refactor websocket code
 //processing blobs and strings.
@@ -54,7 +56,28 @@ function eventToJSON(event, callback) {
   }
 }
 
-function generateTableRows(parkingData){
+function selectParking(parkingDatum, parkingContext){
+  console.log("selectedParing for :");
+  console.log(parkingDatum);
+  console.log(parkingDatum.accessor);
+  var selectParkingSocket = new WebSocket('ws://localhost:8095/');
+  selectParkingSocket.onopen = function(){
+      var startMessage = {
+        "id" : "selectAccessor",
+        "accessorPath" : parkingDatum.accessor
+      }
+      console.log("Sending selectAccessor message to controller.");
+      selectParkingSocket.send(JSON.stringify(startMessage));
+
+      //FIXME: I'm leaving it like this now because of the paper deadline, but
+      //a better way of ensuring the controller has had time to get itself ready for
+      //the redirect is for the controller to handshake with a new message 
+      //back to this websocket to say it's ready for the redirect.
+      setTimeout(  () => parkingContext.setState({redirectToDashboard: true}), 1000);
+    };
+}
+
+function generateTableRows(parkingData, parkingContext){
   var table = [];
   for(var i= 0; i < parkingData.length; i++){
     var children = [];
@@ -68,6 +91,7 @@ function generateTableRows(parkingData){
                               id={"tooltip" + parkingData[i].key}
                               title=""
                               type="button"
+                              onClick={selectParking.bind(this, parkingData[i], parkingContext)}
                             >
                               <i className="tim-icons icon-triangle-right-17" />
                             </Button>
@@ -89,7 +113,7 @@ function generateTableRows(parkingData){
 
                           
 
-function generateMarkerWithLabels(parkingData){
+function generateMarkerWithLabels(parkingData, parkingContext){
   return (
     parkingData.map( (datum, index) => (
       <MarkerWithLabel
@@ -97,6 +121,7 @@ function generateMarkerWithLabels(parkingData){
       labelAnchor={new google.maps.Point(22, 0)}
       labelStyle={{opacity: 0.75}}
       key={datum.key}
+      onClick={selectParking.bind(this, datum, parkingContext)}
       >
         <Card>
         <CardHeader>
@@ -395,7 +420,7 @@ const ParkingWrapper = withScriptjs(
     >
       <Circle center={props.center} radius={50} options={{fillColor: "DodgerBlue", fillOpacity:1.0, strokeColor:"White", strokeWeight:1}} />
       {/* <Marker position={{ lat: 37.8816, lng: -122.2827 }} /> */}
-      {generateMarkerWithLabels(props.parkingData)}
+      {generateMarkerWithLabels(props.parkingData, props.parkingContext)}
     </GoogleMap>
   ))
 );
@@ -410,19 +435,19 @@ class Parking extends React.Component {
       apiKey: "YOUR_KEY_MUST_BE_LOADED_HERE",
       center: { lat: 37.8716, lng: -122.2727 }, //Defaults to the location of Berkeley, CA
       parkingData: [], //The order of data in this array is the order it will be displayed in the table
-      dataTime: ""
+      dataTime: "",
+      redirectToDashboard: false
     };
-    var thiz = this;
+    ws = new WebSocket('ws://localhost:8095/');
   }
 
   componentDidMount(){
     var thiz = this;
     //Tell controller to ready a list of parking locations with information
     //and to provide a google maps API key
-    ws = new WebSocket('ws://localhost:8095/');
     ws.onopen = function(){
       var startMessage = {
-        "id" : "parking",
+        "id" : "parkingDialogue",
         "msg" : "start"
       }
       console.log("Sending parking message to controller.");
@@ -431,7 +456,7 @@ class Parking extends React.Component {
     ws.onmessage = function(event) {
       console.log("GOT EVENT FROM CONTROLLER!");
        eventToJSON(event, function(response){
-        if(response.id && response.id === "parking" && response.apiKey){
+        if(response.id && response.id === "parkingDialogue" && response.apiKey){
           console.log("started parking if!");
           
           thiz.setState({apiKey: response.apiKey});
@@ -489,91 +514,101 @@ class Parking extends React.Component {
   }
 
   render() {
-    if(this.state.apiKey == "YOUR_KEY_MUST_BE_LOADED_HERE"){
+    if(this.state.redirectToDashboard){
+      console.log("Rendering redirect to /admin/dashboard");
       return (
-        <div className="content">
-        {/* <h2> API key not loaded yet </h2> */}
-        </div> );
+        <Redirect to="/admin/dashboard"/>
+        )
     } else {
-      return (
-        <>
+      console.log("Rendering nothing because waiting for apiKey");
+      if(this.state.apiKey == "YOUR_KEY_MUST_BE_LOADED_HERE"){
+        return (
           <div className="content">
-            <Row>
-              <Col md="7">
-                <Card className="card-plain">
-                  {/* <CardHeader>Google Maps + {this.state.apiKey}</CardHeader> */}
-                  <CardBody style={{"padding": "0px"}}>
-                    <div
-                      id="map"
-                      className="map"
-                      style={{ position: "relative", overflow: "hidden"}}
-                    >
+          {/* <h2> API key not loaded yet </h2> */}
+          </div> );
+      } else {
+        console.log("Rendering main parking page");
+        return (
+          <>
+            <div className="content">
+              <Row>
+                <Col md="7">
+                  <Card className="card-plain">
+                    {/* <CardHeader>Google Maps + {this.state.apiKey}</CardHeader> */}
+                    <CardBody style={{"padding": "0px"}}>
+                      <div
+                        id="map"
+                        className="map"
+                        style={{ position: "relative", overflow: "hidden"}}
+                      >
 
-                      <ParkingWrapper
-                        googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + this.state.apiKey}
-                        loadingElement={<div style={{ height: `100%` }} />}
-                        containerElement={<div style={{ height: `100%` }} />}
-                        mapElement={<div style={{ height: `100%` }} />}
-                        center={this.state.center}
-                        parkingData={this.state.parkingData}
-                      />
+                        <ParkingWrapper
+                          googleMapURL={"https://maps.googleapis.com/maps/api/js?key=" + this.state.apiKey}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                          containerElement={<div style={{ height: `100%` }} />}
+                          mapElement={<div style={{ height: `100%` }} />}
+                          center={this.state.center}
+                          parkingData={this.state.parkingData}
+                          parkingContext={this}
+                        />
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col md="5">
+                <Card className="card-tasks">
+                  <CardHeader>
+                    <h6 className="title d-inline">Results ({this.state.parkingData.length})</h6>
+                    <p className="card-category d-inline"> {this.state.dataTime}</p>
+                    <UncontrolledDropdown>
+                      <DropdownToggle
+                        caret
+                        className="btn-icon"
+                        color="link"
+                        data-toggle="dropdown"
+                        type="button"
+                      >
+                        <i className="tim-icons icon-settings-gear-63" />
+                      </DropdownToggle>
+                      <DropdownMenu aria-labelledby="dropdownMenuLink" right>
+                        <DropdownItem
+                          href="#"
+                          onClick={this.sortByPrice.bind(this)}
+                        >
+                          Sort by Price
+                        </DropdownItem>
+                        <DropdownItem
+                           href="#"
+                          onClick={this.sortByDistance.bind(this)}
+                        >
+                          Sort by Distance
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="table-full-width table-responsive" style={{ "overflow-y": "auto", "overflow-x": "auto" }}>
+                      <Table>
+                        <thead className="text-primary">
+                          <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Distance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {generateTableRows(this.state.parkingData, this)}
+                        </tbody>
+                      </Table>
                     </div>
                   </CardBody>
                 </Card>
-              </Col>
-              <Col md="5">
-              <Card className="card-tasks">
-                <CardHeader>
-                  <h6 className="title d-inline">Results ({this.state.parkingData.length})</h6>
-                  <p className="card-category d-inline"> {this.state.dataTime}</p>
-                  <UncontrolledDropdown>
-                    <DropdownToggle
-                      caret
-                      className="btn-icon"
-                      color="link"
-                      data-toggle="dropdown"
-                      type="button"
-                    >
-                      <i className="tim-icons icon-settings-gear-63" />
-                    </DropdownToggle>
-                    <DropdownMenu aria-labelledby="dropdownMenuLink" right>
-                      <DropdownItem
-                        href="#"
-                        onClick={this.sortByPrice.bind(this)}
-                      >
-                        Sort by Price
-                      </DropdownItem>
-                      <DropdownItem
-                         href="#"
-                        onClick={this.sortByDistance.bind(this)}
-                      >
-                        Sort by Distance
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </CardHeader>
-                <CardBody>
-                  <div className="table-full-width table-responsive" style={{ "overflow-y": "auto", "overflow-x": "auto" }}>
-                    <Table>
-                      <thead className="text-primary">
-                        <tr>
-                          <th>Name</th>
-                          <th>Price</th>
-                          <th>Distance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {generateTableRows(this.state.parkingData)}
-                      </tbody>
-                    </Table>
-                  </div>
-                </CardBody>
-              </Card>
-              </Col>
-            </Row>
-          </div>
-        </>
-      );
+                </Col>
+              </Row>
+            </div>
+          </>
+        );
+      }
     }
   }
 }

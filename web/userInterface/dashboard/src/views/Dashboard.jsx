@@ -145,13 +145,10 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     var thiz = this;
-    //Websocket for communicating with the UI Swarmlet about the
-    //state of the system (eg. availble accessor components).
-    ws = new WebSocket('ws://localhost:8095/');
     ws.onopen = function(){
       var startMessage = {
         "id" : "system",
-        "msg" : "start"
+        "msg" : "dashboard"
       }
       console.log("Sending start message to controller.");
       ws.send(JSON.stringify(startMessage));
@@ -191,7 +188,10 @@ class Dashboard extends React.Component {
       count: -1,
       componentStrings: {}
     };
-    var thiz = this;
+
+    //Websocket for communicating with the UI Swarmlet about the
+    //state of the system (eg. availble accessor components).
+    ws = new WebSocket('ws://localhost:8095/');
   }
 
   setBgChartData = name => {
