@@ -12,13 +12,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="{70.0, 30.0}">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={29, 503, 1313, 789}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={33, 23, 1313, 789}, maximized=false}">
     </property>
     <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1079, 679]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.0000000000000089">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.250000000000013">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{620.0486010174418, 548.3184411337209}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{-253.49120639534885, 277.0956395348837}">
     </property>
     <property name="ShowTypes" class="ptolemy.vergil.actor.lib.ShowTypes">
         <property name="_location" class="ptolemy.kernel.util.Location" value="{270, -45}">
@@ -279,7 +279,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[170.0, 460.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{170.0, 460.0}">
         </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
@@ -301,7 +301,7 @@
         </port>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={649, 604, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={697, 395, 499, 208}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
@@ -679,12 +679,12 @@
             <property name="output"/>
         </port>
     </entity>
-    <entity name="ParameterizedGetResource" class="org.terraswarm.accessor.JSAccessor">
+    <entity name="ParameterizedBlockingGetResource" class="org.terraswarm.accessor.JSAccessor">
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
         </property>
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Accessor that gets a resource&#10;//&#10;// Copyright (c) 2017 The Regents of the University of California.&#10;// All rights reserved.&#10;//&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;//&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;//&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;//&#10;&#10;/** Get a resource, which may be a relative file name or a URL, and return the&#10; *  value of the resource as a string.&#10; *&#10; *  Implementations of this function may restrict the locations from which&#10; *  resources can be retrieved. This implementation restricts relative file&#10; *  names to be in the same directory where the swarmlet model is located or&#10; *  in a subdirectory, or if the resource begins with &quot;$CLASSPATH/&quot;, to the&#10; *  classpath of the current Java process.&#10; *&#10; *  If the accessor is not restricted, the $KEYSTORE is resolved to&#10; *  $HOME/.ptKeystore.&#10; *&#10; *  The options parameter may have the following values:&#10; *  * If the type of the options parameter is a Number, then it is assumed&#10; *    to be the timeout in milliseconds.&#10; *  * If the type of the options parameter is a String, then it is assumed&#10; *    to be the encoding, for example &quot;UTF-8&quot;.  If the value is &quot;Raw&quot; or &quot;raw&quot;&#10; *    then the data is returned as an unsigned array of bytes.&#10; *    The default encoding is the default encoding of the system.&#10; *    In CapeCode, the default encoding is returned by Charset.defaultCharset().&#10; *  * If the type of the options parameter is an Object, then it may&#10; *    have the following fields:&#10; *  ** encoding {string} The encoding of the file, see above for values.&#10; *  ** timeout {number} The timeout in milliseconds.&#10; *&#10; *  If the callback parameter is not present, then getResource() will&#10; *  be synchronous read like Node.js's&#10; *  {@link https://nodejs.org/api/fs.html#fs_fs_readfilesync_path_options|fs.readFileSync()}.&#10; *  If the callback argument is present, then getResource() will be asynchronous like&#10; *  {@link https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback|fs.readFile()}.&#10;&#10; *  @accessor util/GetResource&#10; *  @input options Options passed to the getResources() function, see above&#10; *  for details.&#10; *  @input resource {string} The file or URL to be read.  Defaults to&#10; *  the Accessors home page (http://accessors.org).&#10; *  @input trigger {boolean} Send a token to this input to read the&#10; *  file or URL.&#10; *  @output output The contents of the file or URL.&#10; *  @author Edward A. Lee&#10; *  @version $$Id$$&#10; */&#10;&#10;// Stop extra messages from jslint.  Note that there should be no&#10;// space between the / and the * and global.&#10;/*globals clearInterval, exports, require, setInterval */&#10;/*jshint globalstrict: true*/&#10;&quot;use strict&quot;;&#10;&#10;exports.setup = function () {&#10;    this.input('options', {&#10;        'type': 'JSON',&#10;        'value': ''&#10;    });&#10;    this.input('resource', {&#10;        'type': 'string',&#10;        'value': 'http://accessors.org'&#10;    });&#10;    this.input('trigger');&#10;&#10;    this.output('output');&#10;};&#10;exports.initialize = function () {&#10;    var self = this;&#10;    this.addInputHandler('trigger', function () {&#10;        var resourceValue = this.get('resource');&#10;        var resourceContents = getResource(this.get('resource'), this.get('options'), null);&#10;        var paramaterizedAccessor = { &quot;accessor&quot;: resourceContents,&#10;            &quot;parameterMap&quot;: { &quot;componentID&quot;: &quot;parkingComponent&quot; },&#10;            &quot;inputMap&quot;: {}&#10;            };&#10;        self.send('output', paramaterizedAccessor);&#10;    });&#10;};&#10;&#10;">
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Accessor that gets a resource&#10;//&#10;// Copyright (c) 2017 The Regents of the University of California.&#10;// All rights reserved.&#10;//&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;//&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;//&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;//&#10;&#10;/** Get a resource, which may be a relative file name or a URL, and return the&#10; *  value of the resource as a string.&#10; *&#10; *  Implementations of this function may restrict the locations from which&#10; *  resources can be retrieved. This implementation restricts relative file&#10; *  names to be in the same directory where the swarmlet model is located or&#10; *  in a subdirectory, or if the resource begins with &quot;$CLASSPATH/&quot;, to the&#10; *  classpath of the current Java process.&#10; *&#10; *  If the accessor is not restricted, the $KEYSTORE is resolved to&#10; *  $HOME/.ptKeystore.&#10; *&#10; *  The options parameter may have the following values:&#10; *  * If the type of the options parameter is a Number, then it is assumed&#10; *    to be the timeout in milliseconds.&#10; *  * If the type of the options parameter is a String, then it is assumed&#10; *    to be the encoding, for example &quot;UTF-8&quot;.  If the value is &quot;Raw&quot; or &quot;raw&quot;&#10; *    then the data is returned as an unsigned array of bytes.&#10; *    The default encoding is the default encoding of the system.&#10; *    In CapeCode, the default encoding is returned by Charset.defaultCharset().&#10; *  * If the type of the options parameter is an Object, then it may&#10; *    have the following fields:&#10; *  ** encoding {string} The encoding of the file, see above for values.&#10; *  ** timeout {number} The timeout in milliseconds.&#10; *&#10; *  If the callback parameter is not present, then getResource() will&#10; *  be synchronous read like Node.js's&#10; *  {@link https://nodejs.org/api/fs.html#fs_fs_readfilesync_path_options|fs.readFileSync()}.&#10; *  If the callback argument is present, then getResource() will be asynchronous like&#10; *  {@link https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback|fs.readFile()}.&#10;&#10; *  @accessor util/GetResource&#10; *  @input options Options passed to the getResources() function, see above&#10; *  for details.&#10; *  @input resource {string} The file or URL to be read.  Defaults to&#10; *  the Accessors home page (http://accessors.org).&#10; *  @input trigger {boolean} Send a token to this input to read the&#10; *  file or URL.&#10; *  @output output The contents of the file or URL.&#10; *  @author Edward A. Lee&#10; *  @version $$Id$$&#10; */&#10;&#10;// Stop extra messages from jslint.  Note that there should be no&#10;// space between the / and the * and global.&#10;/*globals clearInterval, exports, require, setInterval */&#10;/*jshint globalstrict: true*/&#10;&quot;use strict&quot;;&#10;&#10;exports.setup = function () {&#10;    this.input('options', {&#10;        'type': 'JSON',&#10;        'value': ''&#10;    });&#10;    this.input('resource', {&#10;        'type': 'string',&#10;        'value': ''&#10;    });&#10;    this.input('trigger');&#10;&#10;    this.output('output');&#10;};&#10;exports.initialize = function () {&#10;    var self = this;&#10;    this.setDefault('resource', '');&#10;    //WILL NOT SEND IF RESOURCE HAS NOT BEEN UPDATED TO A NEW VALUE!&#10;    this.addInputHandler('trigger', function () {&#10;        var resourceValue = this.get('resource');&#10;        if(resourceValue){&#10;	        var resourceContents = getResource(this.get('resource'), this.get('options'), null);&#10;	        var paramaterizedAccessor = { &quot;accessor&quot;: resourceContents,&#10;	            &quot;parameterMap&quot;: { &quot;componentID&quot;: &quot;parkingComponent&quot; },&#10;	            &quot;inputMap&quot;: {}&#10;	            };&#10;	        self.send('output', paramaterizedAccessor);&#10;        }&#10;    });&#10;};&#10;&#10;">
             <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
                 <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
                 </property>
@@ -720,11 +720,11 @@
             <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="resource" class="ptolemy.actor.parameters.PortParameter" value="ParkingComponent.js">
+        <property name="resource" class="ptolemy.actor.parameters.PortParameter" value="">
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[150.0, 680.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{165.0, 685.0}">
         </property>
         <property name="_localChanges" class="ptolemy.kernel.util.SingletonAttribute">
         </property>
@@ -745,46 +745,6 @@
         </port>
         <port name="output" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-        </port>
-    </entity>
-    <entity name="Router" class="ptolemy.actor.lib.jjs.JavaScript">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-        </property>
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function(){&#10;    this.input(&quot;userCommand&quot;);&#10;    this.output(&quot;accessor&quot;);&#10;    this.output(&quot;parking&quot;);&#10;    this.output(&quot;parkingComponent&quot;);&#10;};&#10;&#10;exports.initialize = function(){&#10;    this.addInputHandler(&quot;userCommand&quot;, function(){&#10;        var command = this.get('userCommand');&#10;        if(command &amp;&amp; command.message){&#10;            var msg = JSON.parse(command.message);&#10;            if(msg.id){&#10;                switch(msg.id){&#10;                    case &quot;parking&quot;:&#10;                        this.send(&quot;parking&quot;, command);&#10;                        break;&#10;                    case &quot;system&quot;:&#10;                        this.send(&quot;accessor&quot;, command);&#10;                        break;&#10;                    case &quot;parkingComponent&quot;:&#10;                        this.send(&quot;parkingComponent&quot;, command);&#10;                        break;&#10;                    default:&#10;                        error(&quot;Received message in router with an invalid ID&quot;);&#10;                } &#10;            } else {&#10;                error(&quot;Unable to parse ID out of message. Got ID: &quot; + msg.id);&#10;            }&#10;        } else {&#10;            error(&quot;Received message in router and was unable to identify ID&quot;);&#10;        }&#10;    });&#10;};">
-            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                </property>
-            </property>
-        </property>
-        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-            </property>
-            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-            </property>
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[-235.0, 290.0]">
-        </property>
-        <port name="userCommand" class="ptolemy.actor.TypedIOPort">
-            <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-        <port name="accessor" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-        <port name="parking" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
-        </port>
-        <port name="parkingComponent" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
     </entity>
     <entity name="ConfiguredParkingMutable" class="ptolemy.actor.lib.jjs.JavaScript">
@@ -1071,7 +1031,7 @@
             </property>
             <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
             </property>
-            <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function() {&#10;    this.input('services');&#10;    this.input('latitude',{&#10;        'type': 'number'&#10;    });&#10;    this.input('longitude',{&#10;        'type': 'number'&#10;    });&#10;    this.output('response');&#10;    this.parameter(&quot;MapsAPIKeyLocation&quot;, {&#10;        type: &quot;string&quot;,&#10;        value: &quot;MAPS_API_KEY_DONT_COMMIT.txt&quot;&#10;    });&#10;};&#10;&#10;exports.initialize = function() {&#10;    var options = '';&#10;    var self = this;&#10;&#10;    var resourceValue = this.getParameter('MapsAPIKeyLocation');&#10;    var resourceContents = getResource(resourceValue, options, null);&#10;    &#10;    //Don't send response until this accessor receives both a location and update&#10;    //at least once.&#10;    //Center for map location&#10;    var location = null;&#10;    var update = null;&#10;&#10;    this.addInputHandler('longitude', function(){&#10;        location = {&#10;            &quot;lat&quot;: this.get('latitude'),&#10;            &quot;lng&quot;: this.get('longitude')&#10;        }&#10;&#10;        //Only send if at least one update has been received so far&#10;        if(update){&#10;            update.mapPosition = location&#10;            self.send('response', update);&#10;        }&#10;    });&#10;&#10;    this.addInputHandler('services', function() {&#10;        var result = this.get('services');&#10;        &#10;        if(typeof result === 'string'){&#10;          //connection or some other error&#10;          error(&quot;Error in NearbyServices. Instead of service query response, recieved: &quot; + result);&#10;        }&#10;        &#10;        else{&#10;           var resultLength = result.results.bindings.length;          &#10;           var nearbyServices = [];&#10;           //console.log(JSON.stringify(result.results));&#10;           &#10;            for (var k=0; k&lt; resultLength; k++){         &#10;                //console.log(result.results.bindings[k]);&#10;                var s_name = result.results.bindings[k].name.value; //extract after #&#10;                var service_name_res = s_name.split(&quot;#&quot;);&#10;                var service_name = &quot;&quot;;&#10;                if(service_name_res.length&gt;1){&#10;                service_name = service_name_res[1];&#10;                }&#10;                else{&#10;                service_name = service_name_res[0];&#10;                }&#10;&#10;                var s_loc = result.results.bindings[k].location.value; //split ' ' on substring between 'Point(' and ')'&#10;                var start_pos = s_loc.search(&quot;\\(&quot;);&#10;                var end_pos = s_loc.search(&quot;\\)&quot;);&#10;                var ser_loc = s_loc.substring(start_pos+1, end_pos);&#10;                var service_location = ser_loc.split(&quot; &quot;);&#10;                var service_lat = service_location[1];&#10;                var service_lon = service_location[0];&#10;&#10;                var service_distance = result.results.bindings[k].distance_mi.value; &#10;                //var s_provider = result.results.bindings[k].provider.value; //extract after #&#10;                //var provider = s_provider.split(&quot;#&quot;)[1];&#10;&#10;                var service_type = result.results.bindings[k].type.value;&#10;                var tmp_s = service_type.split(&quot;schema.org/&quot;);&#10;                if(tmp_s.length &gt; 1){&#10;                    service_type = tmp_s[1];&#10;                }&#10;&#10;                var address = '';&#10;                if(&quot;address&quot; in result.results.bindings[k]){&#10;                address = result.results.bindings[k].address.value; &#10;                }&#10;&#10;                var obj = {&#10;                     'displayName': service_name,&#10;                     'lat' : parseFloat(service_lat),&#10;                     'lng' : parseFloat(service_lon),&#10;                     'address': address,&#10;                     'distance': Math.round(service_distance * 100) / 100, //in miles&#10;                     'type': service_type,&#10;                     'price': 3.0 + parseFloat(Math.random().toFixed(2)), //truncate to two decimal&#10;                     'accessor': ''&#10;                };&#10;                nearbyServices.push(obj);&#10;            }&#10;&#10;            //Only send if at least one location has been received so far&#10;            if(location){&#10;                update = {&#10;                    &quot;id&quot;: &quot;parking&quot;,&#10;                    &quot;apiKey&quot;: resourceContents,&#10;                    &quot;mapPosition&quot;: location,&#10;                    &quot;parkingData&quot;: nearbyServices&#10;                };&#10;                self.send('response', update);&#10;            }&#10;&#10;&#10;        }&#10;    });&#10;};&#10;&#10;// var exampleData = [&#10;//             {&#10;//                 &quot;displayName&quot;: &quot;Parking1&quot; ,&#10;//                 &quot;lat&quot;: 37.8626,&#10;//                 &quot;lng&quot;: -122.2637,&#10;//                 &quot;address&quot;: &quot;1234 Place St.&quot;,&#10;//                 &quot;price&quot;: 3.12,&#10;//                 &quot;distance&quot;: 1.78,&#10;//             },&#10;//             {&#10;//                 &quot;displayName&quot;: &quot;Parking2&quot; ,&#10;//                 &quot;lat&quot;: 37.8731,&#10;//                 &quot;lng&quot;: -122.2617,&#10;//                 &quot;address&quot;: &quot;4321 Street Pl.&quot;,&#10;//                 &quot;price&quot;: 2.98,&#10;//                 &quot;distance&quot;: 1.96,&#10;//             },&#10;//                 {&#10;//                 &quot;displayName&quot;: &quot;Parking3&quot; ,&#10;//                 &quot;lat&quot;: 37.8831,&#10;//                 &quot;lng&quot;: -122.2517,&#10;//                 &quot;address&quot;: &quot;9273 Atom Rd.&quot;,&#10;//                 &quot;price&quot;: 3.01,&#10;//                 &quot;distance&quot;: 2.12,&#10;//             },&#10;//         ];">
+            <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function() {&#10;    this.input('services');&#10;    this.input('latitude',{&#10;        'type': 'number'&#10;    });&#10;    this.input('longitude',{&#10;        'type': 'number'&#10;    });&#10;    this.output('response');&#10;    this.parameter(&quot;MapsAPIKeyLocation&quot;, {&#10;        type: &quot;string&quot;,&#10;        value: &quot;MAPS_API_KEY_DONT_COMMIT.txt&quot;&#10;    });&#10;};&#10;&#10;exports.initialize = function() {&#10;    var options = '';&#10;    var self = this;&#10;&#10;    var resourceValue = this.getParameter('MapsAPIKeyLocation');&#10;    var resourceContents = getResource(resourceValue, options, null);&#10;    &#10;    //Don't send response until this accessor receives both a location and update&#10;    //at least once.&#10;    //Center for map location&#10;    var location = null;&#10;    var update = null;&#10;&#10;    this.addInputHandler('longitude', function(){&#10;        location = {&#10;            &quot;lat&quot;: this.get('latitude'),&#10;            &quot;lng&quot;: this.get('longitude')&#10;        }&#10;&#10;        //Only send if at least one update has been received so far&#10;        if(update){&#10;            update.mapPosition = location&#10;            self.send('response', update);&#10;        }&#10;    });&#10;&#10;    this.addInputHandler('services', function() {&#10;        var result = this.get('services');&#10;        &#10;        if(typeof result === 'string'){&#10;          //connection or some other error&#10;          error(&quot;Error in NearbyServices. Instead of service query response, recieved: &quot; + result);&#10;        }&#10;        &#10;        else{&#10;           var resultLength = result.results.bindings.length;          &#10;           var nearbyServices = [];&#10;           //console.log(JSON.stringify(result.results));&#10;           &#10;            for (var k=0; k&lt; resultLength; k++){         &#10;                //console.log(result.results.bindings[k]);&#10;                var s_name = result.results.bindings[k].name.value; //extract after #&#10;                var service_name_res = s_name.split(&quot;#&quot;);&#10;                var service_name = &quot;&quot;;&#10;                if(service_name_res.length&gt;1){&#10;                service_name = service_name_res[1];&#10;                }&#10;                else{&#10;                service_name = service_name_res[0];&#10;                }&#10;&#10;                var s_loc = result.results.bindings[k].location.value; //split ' ' on substring between 'Point(' and ')'&#10;                var start_pos = s_loc.search(&quot;\\(&quot;);&#10;                var end_pos = s_loc.search(&quot;\\)&quot;);&#10;                var ser_loc = s_loc.substring(start_pos+1, end_pos);&#10;                var service_location = ser_loc.split(&quot; &quot;);&#10;                var service_lat = service_location[1];&#10;                var service_lon = service_location[0];&#10;&#10;                var service_distance = result.results.bindings[k].distance_mi.value; &#10;                //var s_provider = result.results.bindings[k].provider.value; //extract after #&#10;                //var provider = s_provider.split(&quot;#&quot;)[1];&#10;&#10;                var service_type = result.results.bindings[k].type.value;&#10;                var tmp_s = service_type.split(&quot;schema.org/&quot;);&#10;                if(tmp_s.length &gt; 1){&#10;                    service_type = tmp_s[1];&#10;                }&#10;&#10;                var address = '';&#10;                if(&quot;address&quot; in result.results.bindings[k]){&#10;                address = result.results.bindings[k].address.value; &#10;                }&#10;&#10;                var obj = {&#10;                     'displayName': service_name,&#10;                     'lat' : parseFloat(service_lat),&#10;                     'lng' : parseFloat(service_lon),&#10;                     'address': address,&#10;                     'distance': Math.round(service_distance * 100) / 100, //in miles&#10;                     'type': service_type,&#10;                     'price': 3.0 + parseFloat(Math.random().toFixed(2)), //truncate to two decimal&#10;                     'accessor': 'ParkingComponent.js' //FIXME: this value should come from the ontology and should point to a URL not a local resource&#10;                };&#10;                nearbyServices.push(obj);&#10;            }&#10;&#10;            //Only send if at least one location has been received so far&#10;            if(location){&#10;                update = {&#10;                    &quot;id&quot;: &quot;parkingDialogue&quot;,&#10;                    &quot;apiKey&quot;: resourceContents,&#10;                    &quot;mapPosition&quot;: location,&#10;                    &quot;parkingData&quot;: nearbyServices&#10;                };&#10;                self.send('response', update);&#10;            }&#10;&#10;&#10;        }&#10;    });&#10;};&#10;&#10;// var exampleData = [&#10;//             {&#10;//                 &quot;displayName&quot;: &quot;Parking1&quot; ,&#10;//                 &quot;lat&quot;: 37.8626,&#10;//                 &quot;lng&quot;: -122.2637,&#10;//                 &quot;address&quot;: &quot;1234 Place St.&quot;,&#10;//                 &quot;price&quot;: 3.12,&#10;//                 &quot;distance&quot;: 1.78,&#10;//             },&#10;//             {&#10;//                 &quot;displayName&quot;: &quot;Parking2&quot; ,&#10;//                 &quot;lat&quot;: 37.8731,&#10;//                 &quot;lng&quot;: -122.2617,&#10;//                 &quot;address&quot;: &quot;4321 Street Pl.&quot;,&#10;//                 &quot;price&quot;: 2.98,&#10;//                 &quot;distance&quot;: 1.96,&#10;//             },&#10;//                 {&#10;//                 &quot;displayName&quot;: &quot;Parking3&quot; ,&#10;//                 &quot;lat&quot;: 37.8831,&#10;//                 &quot;lng&quot;: -122.2517,&#10;//                 &quot;address&quot;: &quot;9273 Atom Rd.&quot;,&#10;//                 &quot;price&quot;: 3.01,&#10;//                 &quot;distance&quot;: 2.12,&#10;//             },&#10;//         ];">
                 <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
                     <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
                     </property>
@@ -1202,6 +1162,59 @@
         <link port="QueryLauncher.longitude" relation="relation7"/>
         <link port="QueryLauncher.queryTerm" relation="relation4"/>
     </entity>
+    <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={470, 346, 499, 208}, maximized=false}">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{-180, 340}">
+        </property>
+    </entity>
+    <entity name="Router" class="ptolemy.actor.lib.jjs.JavaScript">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="exports.setup = function(){&#10;    this.input(&quot;userCommand&quot;);&#10;    this.output(&quot;dashboard&quot;); //triggers default components&#10;    this.output(&quot;parkingDialogue&quot;); //triggers parking dialogue&#10;    this.output(&quot;selectAccessor&quot;,&#10;        {'type': 'string'}&#10;    ); //Path to user selected accessor&#10;    this.output(&quot;parkingComponent&quot;); //communication from the parking&#10;};&#10;&#10;exports.initialize = function(){&#10;    this.addInputHandler(&quot;userCommand&quot;, function(){&#10;        var command = this.get('userCommand');&#10;        if(command &amp;&amp; command.message){&#10;            var msg = JSON.parse(command.message);&#10;            if(msg.id){&#10;                switch(msg.id){&#10;                    case &quot;parkingDialogue&quot;:&#10;                        this.send(&quot;parkingDialogue&quot;, command);&#10;                        break;&#10;                    case &quot;system&quot;:&#10;                        if(msg.msg &amp;&amp; msg.msg == &quot;dashboard&quot;)&#10;                            this.send(&quot;dashboard&quot;, command);&#10;                        break;&#10;                    case &quot;parkingComponent&quot;:&#10;                        this.send(&quot;parkingComponent&quot;, command);&#10;                        break;&#10;                        //FIXME: I'm having this send the value instead of the command&#10;                        //just to save time for the paper deadline. This is inconsistent with how the&#10;                        //other ports work&#10;                    case &quot;selectAccessor&quot;:&#10;                        if(msg.accessorPath){&#10;                            this.send(&quot;selectAccessor&quot;, msg.accessorPath);&#10;                        }&#10;                        break;&#10;                    default:&#10;                        error(&quot;Received message in router with an invalid ID&quot;);&#10;                } &#10;            } else {&#10;                error(&quot;Unable to parse ID out of message. Got ID: &quot; + msg.id);&#10;            }&#10;        } else {&#10;            error(&quot;Received message in router and was unable to identify ID&quot;);&#10;        }&#10;    });&#10;};">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-355.0, 195.0]">
+        </property>
+        <port name="userCommand" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="dashboard" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="parkingDialogue" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="selectAccessor" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+        <port name="parkingComponent" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
+            </property>
+        </port>
+    </entity>
     <relation name="relation8" class="ptolemy.actor.TypedIORelation">
         <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
         </property>
@@ -1250,8 +1263,6 @@
     </relation>
     <relation name="relation15" class="ptolemy.actor.TypedIORelation">
     </relation>
-    <relation name="relation16" class="ptolemy.actor.TypedIORelation">
-    </relation>
     <relation name="relation17" class="ptolemy.actor.TypedIORelation">
         <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
         </property>
@@ -1265,6 +1276,14 @@
         </vertex>
     </relation>
     <relation name="relation20" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="{-270.0, 285.0}">
+        </vertex>
+    </relation>
+    <relation name="relation18" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation16" class="ptolemy.actor.TypedIORelation">
     </relation>
     <link port="GetResource.trigger" relation="relation8"/>
     <link port="GetResource.output" relation="relation12"/>
@@ -1294,15 +1313,18 @@
     <link port="GetResource5.output" relation="relation14"/>
     <link port="Mutable4.accessor" relation="relation14"/>
     <link port="Mutable4.componentUpdate" relation="relation15"/>
-    <link port="ParameterizedGetResource.trigger" relation="relation8"/>
-    <link port="ParameterizedGetResource.output" relation="relation17"/>
-    <link port="Router.userCommand" relation="relation5"/>
-    <link port="Router.accessor" relation="relation8"/>
-    <link port="Router.parking" relation="relation20"/>
-    <link port="Router.parkingComponent" relation="relation16"/>
+    <link port="ParameterizedBlockingGetResource.resource" relation="relation20"/>
+    <link port="ParameterizedBlockingGetResource.trigger" relation="relation8"/>
+    <link port="ParameterizedBlockingGetResource.output" relation="relation17"/>
     <link port="ConfiguredParkingMutable.accessor" relation="relation17"/>
     <link port="ConfiguredParkingMutable.userInput" relation="relation16"/>
     <link port="ConfiguredParkingMutable.componentUpdate" relation="relation19"/>
-    <link port="ParkingDialogue.parkingMessage" relation="relation20"/>
+    <link port="ParkingDialogue.parkingMessage" relation="relation18"/>
     <link port="ParkingDialogue.response" relation="relation10"/>
+    <link port="Display2.input" relation="relation20"/>
+    <link port="Router.userCommand" relation="relation5"/>
+    <link port="Router.dashboard" relation="relation8"/>
+    <link port="Router.parkingDialogue" relation="relation18"/>
+    <link port="Router.selectAccessor" relation="relation20"/>
+    <link port="Router.parkingComponent" relation="relation16"/>
 </entity>
