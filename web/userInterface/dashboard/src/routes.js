@@ -21,7 +21,7 @@ var routes = [
     path: "/parking",
     name: "Parking",
     rtlName: "خرائط---???",
-    icon: "tim-icons icon-bulb-63",
+    icon: "tim-icons icon-map-big",
     component: Parking,
     layout: "/admin"
   },
@@ -30,7 +30,7 @@ var routes = [
     path: "/restauants",
     name: "Restaurants",
     rtlName: "خرائط---???",
-    icon: "tim-icons icon-bulb-63",
+    icon: "tim-icons icon-cart",
     component: UserProfile,
     layout: "/admin"
   },
@@ -39,7 +39,7 @@ var routes = [
     path: "/traffic-alerts",
     name: "Traffic Alerts",
     rtlName: "لوحة القيادة",
-    icon: "tim-icons icon-chart-pie-36",
+    icon: "tim-icons icon-alert-circle-exc",
     component: Map,
     layout: "/admin"
   }
