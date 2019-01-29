@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
-<entity name="componentDemo" class="ptolemy.actor.TypedCompositeActor">
+<entity name="componentDemoRavi" class="ptolemy.actor.TypedCompositeActor">
     <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.1.devel">
     </property>
     <property name="DE Director" class="ptolemy.domains.de.kernel.DEDirector">
@@ -12,13 +12,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="{70.0, 30.0}">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={33, 23, 1313, 789}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={23, 43, 1243, 800}, maximized=false}">
     </property>
-    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1079, 679]">
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1009, 690]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.250000000000013">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.7593643586833144">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{-253.49120639534885, 277.0956395348837}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{175.38855801569508, 389.7428998505231}">
     </property>
     <property name="ShowTypes" class="ptolemy.vergil.actor.lib.ShowTypes">
         <property name="_location" class="ptolemy.kernel.util.Location" value="{270, -45}">
@@ -77,7 +77,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[190.0, 170.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{190.0, 170.0}">
         </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
@@ -147,7 +147,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[170.0, 240.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{170.0, 240.0}">
         </property>
         <port name="options" class="ptolemy.actor.parameters.ParameterPort">
             <property name="input"/>
@@ -301,11 +301,11 @@
         </port>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={697, 395, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={694, 247, 662, 256}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{480.0, -5.0}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[435.0, -10.0]">
         </property>
     </entity>
     <entity name="Mutable5" class="org.terraswarm.accessor.JSAccessor">
@@ -772,40 +772,30 @@
         </property>
         <port name="accessor" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="state" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="userInput" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="componentUpdate" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
     </entity>
     <entity name="ParkingDialogue" class="ptolemy.actor.TypedCompositeActor">
         <property name="_location" class="ptolemy.kernel.util.Location" value="{150.0, 800.0}">
         </property>
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={447, 116, 934, 632}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={140, 117, 934, 632}, maximized=false}">
         </property>
         <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 522]">
         </property>
         <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.8000000000000006">
         </property>
-        <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{335.31685138081383, 155.6961936773256}">
+        <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{335.31685138081326, 155.6961936773256}">
         </property>
         <port name="parkingMessage" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
             <property name="_location" class="ptolemy.kernel.util.Location" value="[-40.0, 170.0]">
             </property>
             <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
@@ -813,86 +803,11 @@
         </port>
         <port name="response" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
             <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
             </property>
             <property name="_location" class="ptolemy.kernel.util.Location" value="[640.0, 160.0]">
             </property>
         </port>
-        <entity name="queryServices" class="ptolemy.actor.lib.jjs.JavaScript">
-            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-            </property>
-            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-            </property>
-            <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;exports.setup = function() {&#10;	this.input('latitude');&#10;	this.input('longitude');&#10;	this.input('queryTerm');&#10;	this.parameter('yelpResults',{&#10;		'type': 'boolean',&#10;		'value': false&#10;	});&#10;	this.output('updateYelpOnto');&#10;	this.output('query',{&#10;		'type': 'string'&#10;	});&#10;}&#10;&#10;exports.initialize = function() {&#10;	var self = this;&#10;	var start_time = Date.now().toString();&#10;	var current_time = start_time;&#10;	this.addInputHandler('queryTerm', function() {&#10;		var latitude = this.get('latitude');&#10;		var longitude = this.get('longitude');&#10;		var searchTerm = this.get('queryTerm');&#10;		&#10;		//Update Yelp Ontologies if enabled&#10;		if(self.getParameter('yelpResults')){&#10;				self.send('updateYelpOnto', '');	&#10;		}&#10;		&#10;		var queryPrefixString = &quot;PREFIX uom: &lt;http://www.opengis.net/def/uom/OGC/1.0/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX geo: &lt;http://www.opengis.net/ont/geosparql#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX geof: &lt;http://www.opengis.net/def/function/geosparql/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX acc: &lt;http://ptolemy.berkeley.edu/accessors#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX schema: &lt;http://schema.org/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX sosa: &lt;http://www.w3.org/ns/sosa/&gt;\n&quot;;&#10;		&#10;		//Query Core ontology		&#10;	    var coreQueryString = &quot;SELECT ?type ?name ?location ?price ?accessor ?distance_mi WHERE { ?provider acc:hasService ?name . ?name geo:serviceType ?type . ?provider geo:location ?location .&quot;;&#10;	    coreQueryString += &quot;BIND (geof:distance(?location, \'\'\'&lt;http://www.opengis.net/def/crs/OGC/1.3/CRS84&gt; Point (&quot;;&#10;        coreQueryString +=  longitude + &quot; &quot; + latitude + &quot;)\'\'\'^^geo:wktLiteral, uom:metre)/1609.344 AS ?distance_mi) . filter(str(?type)='&quot; + searchTerm + &quot;')}&quot;;&#10;		&#10;		//Query Yelp Ontology &#10;		//TODO: ASK for appropriate services if available&#10;		var yelpQueryString = &quot;&quot;;&#10;		current_time = Date.now().toString();&#10;		if(self.getParameter('yelpResults')){&#10;			yelpQueryString += &quot;select ?type ?name ?address ?location ?ratingScore  ?distance_mi where{ ?obs a sosa:Observation. ?obs schema:expires ?exp. ?obs sosa:resultTime ?time.&quot;;&#10;    		yelpQueryString += &quot;?obs sosa:hasResult ?businessNode. ?businessNode schema:name ?name. ?businessNode schema:address ?address. ?businessNode geo:asWKT ?location.&quot;;&#10;    		yelpQueryString += &quot;?businessNode rdf:type ?type. ?businessNode schema:aggregateRating ?aggRating. ?aggRating schema:ratingValue ?ratingScore. BIND&quot;;&#10;    		yelpQueryString += &quot;(geof:distance(?location,\'\'\'&lt;http://www.opengis.net/def/crs/OGC/1.3/CRS84&gt; Point(&quot; + longitude + &quot; &quot; + latitude + &quot;)\'\'\'^^geo:wktLiteral, uom:metre)/1609.344&quot;&#10;    		yelpQueryString += &quot; AS ?distance_mi) . filter (?ratingScore &gt; 4) filter (?exp &gt; now())}&quot;;&#10;			start_time = current_time;&#10;			//console.log(yelpQueryString);&#10;		}&#10;		&#10;		var combinedQuery = queryPrefixString;&#10;		combinedQuery += &quot;SELECT * WHERE { { &quot; + coreQueryString + &quot;} UNION {&quot; + yelpQueryString + &quot;} } ORDER BY ?distance_mi&quot;;&#10;		self.send('query', combinedQuery);&#10;		console.log(combinedQuery);&#10;	});&#10;}">
-                <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                    <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                    </property>
-                </property>
-            </property>
-            <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-                <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-                </property>
-                <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-                </property>
-            </property>
-            <property name="_location" class="ptolemy.kernel.util.Location" value="[330.0, 30.0]">
-            </property>
-            <property name="_icon" class="ptolemy.vergil.icon.EditorIcon">
-                <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 120, 934, 632}, maximized=false}">
-                </property>
-                <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 522]">
-                </property>
-                <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="4.0">
-                </property>
-                <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{0.0, 0.0}">
-                </property>
-                <property name="rectangle" class="ptolemy.vergil.kernel.attributes.RectangleAttribute">
-                    <property name="_location" class="ptolemy.kernel.util.Location" value="[2.0, 1.0]">
-                    </property>
-                    <property name="width" class="ptolemy.data.expr.Parameter" value="60">
-                    </property>
-                    <property name="height" class="ptolemy.data.expr.Parameter" value="40">
-                    </property>
-                    <property name="centered" class="ptolemy.data.expr.Parameter" value="true">
-                    </property>
-                    <property name="fillColor" class="ptolemy.actor.gui.ColorAttribute" value="{1.0, 1.0, 1.0, 1.0}">
-                    </property>
-                </property>
-            </property>
-            <property name="userQuery" class="ptolemy.data.expr.Parameter" value="custom">
-                <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
-                </property>
-            </property>
-            <property name="yelpResults" class="ptolemy.data.expr.Parameter" value="true">
-            </property>
-            <port name="error" class="ptolemy.actor.TypedIOPort">
-                <property name="output"/>
-                <property name="_hide" class="ptolemy.data.expr.SingletonParameter" value="false">
-                </property>
-            </port>
-            <port name="script" class="ptolemy.actor.parameters.ParameterPort">
-                <property name="input"/>
-                <property name="_hide" class="ptolemy.data.expr.SingletonParameter" value="true">
-                </property>
-            </port>
-            <port name="queryTerm" class="ptolemy.actor.TypedIOPort">
-                <property name="input"/>
-            </port>
-            <port name="latitude" class="ptolemy.actor.TypedIOPort">
-                <property name="input"/>
-            </port>
-            <port name="longitude" class="ptolemy.actor.TypedIOPort">
-                <property name="input"/>
-            </port>
-            <port name="updateYelpOnto" class="ptolemy.actor.TypedIOPort">
-                <property name="output"/>
-            </port>
-            <port name="query" class="ptolemy.actor.TypedIOPort">
-                <property name="output"/>
-            </port>
-        </entity>
         <entity name="SemanticRepositoryQuery" class="org.terraswarm.accessor.JSAccessor">
             <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
             </property>
@@ -956,7 +871,7 @@
                 <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
-            <property name="protocol" class="ptolemy.data.expr.Parameter" value="https">
+            <property name="protocol" class="ptolemy.data.expr.Parameter" value="http">
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
@@ -964,21 +879,21 @@
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
-            <property name="repositoryName" class="ptolemy.data.expr.Parameter" value="AutomotiveServices">
+            <property name="repositoryName" class="ptolemy.data.expr.Parameter" value="testRD">
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
-            <property name="username" class="ptolemy.data.expr.Parameter" value="admin">
+            <property name="username" class="ptolemy.data.expr.Parameter" value="">
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
-            <property name="password" class="ptolemy.data.expr.Parameter" value="root">
+            <property name="password" class="ptolemy.data.expr.Parameter" value="">
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
-            <property name="_location" class="ptolemy.kernel.util.Location" value="[515.0, 30.0]">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[520.0, 40.0]">
             </property>
-            <property name="authenticate" class="ptolemy.data.expr.Parameter" value="true">
+            <property name="authenticate" class="ptolemy.data.expr.Parameter" value="false">
             </property>
             <port name="options" class="ptolemy.actor.parameters.ParameterPort">
                 <property name="input"/>
@@ -1019,9 +934,9 @@
             </port>
         </entity>
         <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={261, 559, 499, 208}, maximized=true}">
+            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 23, 1440, 877}, maximized=true}">
             </property>
-            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[1440, 833]">
             </property>
             <property name="_location" class="ptolemy.kernel.util.Location" value="{455, 335}">
             </property>
@@ -1051,23 +966,15 @@
             </property>
             <port name="services" class="ptolemy.actor.TypedIOPort">
                 <property name="input"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="latitude" class="ptolemy.actor.TypedIOPort">
                 <property name="input"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="longitude" class="ptolemy.actor.TypedIOPort">
                 <property name="input"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="response" class="ptolemy.actor.TypedIOPort">
                 <property name="output"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
         </entity>
         <entity name="QueryLauncher" class="ptolemy.actor.lib.jjs.JavaScript">
@@ -1089,33 +996,92 @@
             </property>
             <property name="_location" class="ptolemy.kernel.util.Location" value="{125.0, 170.0}">
             </property>
-            <property name="searchTerm" class="ptolemy.data.expr.Parameter" value="parking">
+            <property name="searchTerm" class="ptolemy.data.expr.Parameter" value="restaurants">
                 <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
                 </property>
             </property>
             <port name="parkingMessage" class="ptolemy.actor.TypedIOPort">
                 <property name="input"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="latitude" class="ptolemy.actor.TypedIOPort">
                 <property name="output"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="longitude" class="ptolemy.actor.TypedIOPort">
                 <property name="output"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
             <port name="queryTerm" class="ptolemy.actor.TypedIOPort">
                 <property name="output"/>
-                <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-                </property>
             </port>
         </entity>
-        <relation name="relation5" class="ptolemy.actor.TypedIORelation">
-        </relation>
+        <entity name="queryServices" class="ptolemy.actor.lib.jjs.JavaScript">
+            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+            </property>
+            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+            </property>
+            <property name="script" class="ptolemy.actor.parameters.PortParameter" value="&#10;exports.setup = function() {&#10;	this.input('latitude');&#10;	this.input('longitude');&#10;	this.input('queryTerm');&#10;	this.parameter('yelpResults',{&#10;		'type': 'boolean',&#10;		'value': false&#10;	});&#10;	this.output('updateYelpOnto');&#10;	this.output('query',{&#10;		'type': 'string'&#10;	});&#10;}&#10;&#10;exports.initialize = function() {&#10;	var self = this;&#10;	var start_time = Date.now().toString();&#10;	var current_time = start_time;&#10;	this.addInputHandler('queryTerm', function() {&#10;		var latitude = this.get('latitude');&#10;		var longitude = this.get('longitude');&#10;		var searchTerm = this.get('queryTerm');&#10;		&#10;		//Update Yelp Ontologies if enabled&#10;		if(self.getParameter('yelpResults')){&#10;				self.send('updateYelpOnto', '');	&#10;		}&#10;		&#10;		var queryPrefixString = &quot;PREFIX uom: &lt;http://www.opengis.net/def/uom/OGC/1.0/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX geo: &lt;http://www.opengis.net/ont/geosparql#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX geof: &lt;http://www.opengis.net/def/function/geosparql/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX acc: &lt;http://ptolemy.berkeley.edu/accessors#&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX schema: &lt;http://schema.org/&gt;\n&quot;;&#10;		queryPrefixString += &quot;PREFIX sosa: &lt;http://www.w3.org/ns/sosa/&gt;\n&quot;;&#10;		&#10;		//Query Core ontology		&#10;	    var coreQueryString = &quot;SELECT ?type ?name ?address ?location ?price ?accessor ?distance_mi WHERE { ?name acc:hasService ?service . ?service geo:serviceType&quot;;&#10;	    coreQueryString+= &quot;?type . ?name acc:price ?price. ?name acc:serviceURI ?accessor. ?name acc:address ?address. ?name geo:location ?location.BIND&quot;;&#10;	    coreQueryString+= &quot;(geof:distance(?location, \'\'\'&lt;http://www.opengis.net/def/crs/OGC/1.3/CRS84&gt; Point (&quot;;&#10;        coreQueryString +=  longitude + &quot; &quot; + latitude + &quot;)\'\'\'^^geo:wktLiteral, uom:metre)/1609.344 AS ?distance_mi) . filter(str(?type)='&quot; + searchTerm + &quot;')}&quot;;&#10;		&#10;		//Query Yelp Ontology &#10;		//TODO: ASK for appropriate services if available&#10;		var yelpQueryString = &quot;&quot;;&#10;		current_time = Date.now().toString();&#10;		if(self.getParameter('yelpResults')){&#10;			yelpQueryString += &quot;select ?type ?name ?address ?location ?ratingScore  ?distance_mi where{ ?obs a sosa:Observation. ?obs schema:expires ?exp. ?obs sosa:resultTime ?time.&quot;;&#10;    		yelpQueryString += &quot;?obs sosa:hasResult ?businessNode. ?businessNode schema:name ?name. ?businessNode schema:address ?address. ?businessNode geo:asWKT ?location.&quot;;&#10;    		yelpQueryString += &quot;?businessNode rdf:type ?type. ?businessNode schema:aggregateRating ?aggRating. ?aggRating schema:ratingValue ?ratingScore. BIND&quot;;&#10;    		yelpQueryString += &quot;(geof:distance(?location,\'\'\'&lt;http://www.opengis.net/def/crs/OGC/1.3/CRS84&gt; Point(&quot; + longitude + &quot; &quot; + latitude + &quot;)\'\'\'^^geo:wktLiteral, uom:metre)/1609.344&quot;&#10;    		yelpQueryString += &quot; AS ?distance_mi) . filter (?ratingScore &gt; 4)}&quot;;&#10;			start_time = current_time;&#10;			//console.log(yelpQueryString);&#10;		}&#10;		&#10;		var combinedQuery = queryPrefixString;&#10;		combinedQuery += &quot;SELECT * WHERE { { &quot; + coreQueryString + &quot;} UNION {&quot; + yelpQueryString + &quot;} } ORDER BY ?distance_mi&quot;;&#10;		self.send('query', combinedQuery);&#10;		console.log(combinedQuery);&#10;	});&#10;}">
+                <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                    <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                    </property>
+                </property>
+            </property>
+            <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+                <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+                </property>
+                <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+                </property>
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[285.0, 30.0]">
+            </property>
+            <property name="_icon" class="ptolemy.vergil.icon.EditorIcon">
+                <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={0, 120, 934, 632}, maximized=false}">
+                </property>
+                <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[700, 522]">
+                </property>
+                <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="4.0">
+                </property>
+                <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{0.0, 0.0}">
+                </property>
+                <property name="rectangle" class="ptolemy.vergil.kernel.attributes.RectangleAttribute">
+                    <property name="_location" class="ptolemy.kernel.util.Location" value="[2.0, 1.0]">
+                    </property>
+                    <property name="width" class="ptolemy.data.expr.Parameter" value="60">
+                    </property>
+                    <property name="height" class="ptolemy.data.expr.Parameter" value="40">
+                    </property>
+                    <property name="centered" class="ptolemy.data.expr.Parameter" value="true">
+                    </property>
+                    <property name="fillColor" class="ptolemy.actor.gui.ColorAttribute" value="{1.0, 1.0, 1.0, 1.0}">
+                    </property>
+                </property>
+            </property>
+            <property name="yelpResults" class="ptolemy.data.expr.Parameter" value="true">
+            </property>
+            <port name="error" class="ptolemy.actor.TypedIOPort">
+                <property name="output"/>
+                <property name="_hide" class="ptolemy.data.expr.SingletonParameter" value="false">
+                </property>
+            </port>
+            <port name="script" class="ptolemy.actor.parameters.ParameterPort">
+                <property name="input"/>
+                <property name="_hide" class="ptolemy.data.expr.SingletonParameter" value="true">
+                </property>
+            </port>
+            <port name="queryTerm" class="ptolemy.actor.TypedIOPort">
+                <property name="input"/>
+            </port>
+            <port name="latitude" class="ptolemy.actor.TypedIOPort">
+                <property name="input"/>
+            </port>
+            <port name="longitude" class="ptolemy.actor.TypedIOPort">
+                <property name="input"/>
+            </port>
+            <port name="updateYelpOnto" class="ptolemy.actor.TypedIOPort">
+                <property name="output"/>
+            </port>
+            <port name="query" class="ptolemy.actor.TypedIOPort">
+                <property name="output"/>
+            </port>
+        </entity>
         <relation name="relation9" class="ptolemy.actor.TypedIORelation">
             <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
             </property>
@@ -1131,12 +1097,10 @@
         <relation name="relation7" class="ptolemy.actor.TypedIORelation">
             <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
             </property>
-            <vertex name="vertex1" value="[255.0, 170.0]">
+            <vertex name="vertex1" value="[245.0, 170.0]">
             </vertex>
         </relation>
         <relation name="relation3" class="ptolemy.actor.TypedIORelation">
-        </relation>
-        <relation name="relation4" class="ptolemy.actor.TypedIORelation">
         </relation>
         <relation name="relation" class="ptolemy.actor.TypedIORelation">
             <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
@@ -1144,14 +1108,14 @@
             <vertex name="vertex1" value="[540.0, 160.0]">
             </vertex>
         </relation>
+        <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+        </relation>
+        <relation name="relation5" class="ptolemy.actor.TypedIORelation">
+        </relation>
         <link port="parkingMessage" relation="relation3"/>
         <link port="response" relation="relation"/>
-        <link port="queryServices.queryTerm" relation="relation4"/>
-        <link port="queryServices.latitude" relation="relation2"/>
-        <link port="queryServices.longitude" relation="relation7"/>
-        <link port="queryServices.query" relation="relation5"/>
         <link port="SemanticRepositoryQuery.response" relation="relation9"/>
-        <link port="SemanticRepositoryQuery.query" relation="relation5"/>
+        <link port="SemanticRepositoryQuery.query" relation="relation4"/>
         <link port="Display.input" relation="relation"/>
         <link port="ResponseGenerator.services" relation="relation9"/>
         <link port="ResponseGenerator.latitude" relation="relation2"/>
@@ -1160,14 +1124,18 @@
         <link port="QueryLauncher.parkingMessage" relation="relation3"/>
         <link port="QueryLauncher.latitude" relation="relation2"/>
         <link port="QueryLauncher.longitude" relation="relation7"/>
-        <link port="QueryLauncher.queryTerm" relation="relation4"/>
+        <link port="QueryLauncher.queryTerm" relation="relation5"/>
+        <link port="queryServices.queryTerm" relation="relation5"/>
+        <link port="queryServices.latitude" relation="relation2"/>
+        <link port="queryServices.longitude" relation="relation7"/>
+        <link port="queryServices.query" relation="relation4"/>
     </entity>
     <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={470, 346, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={325, 235, 499, 208}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{-180, 340}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-205.0, 375.0]">
         </property>
     </entity>
     <entity name="Router" class="ptolemy.actor.lib.jjs.JavaScript">
@@ -1191,28 +1159,18 @@
         </property>
         <port name="userCommand" class="ptolemy.actor.TypedIOPort">
             <property name="input"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="dashboard" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="parkingDialogue" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="selectAccessor" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
         <port name="parkingComponent" class="ptolemy.actor.TypedIOPort">
             <property name="output"/>
-            <property name="defaultValue" class="ptolemy.data.expr.Parameter">
-            </property>
         </port>
     </entity>
     <relation name="relation8" class="ptolemy.actor.TypedIORelation">
