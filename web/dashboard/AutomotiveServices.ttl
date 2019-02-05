@@ -1,0 +1,561 @@
+@prefix : <http://ptolemy.berkeley.edu/accessors#> .
+@prefix geo: <http://www.opengis.net/def/crs/OGC/1.3/CRS84> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.opengis.net/ont/geosparql#asWKT> a owl:AnnotationProperty .
+
+<http://www.opengis.net/ont/geosparql#serviceType> a owl:DatatypeProperty .
+
+<http://www.opengis.net/ont/geosparql#wktLiteral> a rdfs:Datatype .
+
+:Accesses a owl:ObjectProperty .
+
+:Accessor a owl:Class .
+
+:Service a owl:Class .
+
+:hasService a owl:AsymmetricProperty, owl:ObjectProperty, owl:TransitiveProperty .
+
+<http://www.opengis.net/ont/geosparql#ServiceProvider> a owl:Class .
+
+:isLocatedAt a owl:FunctionalProperty, owl:ObjectProperty .
+
+:serviceAt a owl:ObjectProperty .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/AnomalyDetection> a owl:Class .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/LaneMergeAssist> a owl:Class .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/Parking> a owl:Class .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/TrafficLightStatus> a owl:Class .
+
+:availableSpaces a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:parkingProperty a owl:DatatypeProperty .
+
+:capacity a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:dailyPrice a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:hourlyPrice a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:longTermPrice a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:manualParking a owl:DatatypeProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+:valetParking a owl:DatatypeProperty;
+  rdfs:subPropertyOf :parkingProperty .
+
+<http://www.opengis.net/ont/geosparql#location> a owl:DatatypeProperty;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+<http://www.opengis.net/ont/geosparql#serviceProperty> a owl:DatatypeProperty .
+
+<http://www.opengis.net/ont/geosparql#serviceId> a owl:DatatypeProperty;
+  rdfs:domain :Service;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+:densoCloud a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/anomalyDetectionV1> a <http://ptolemy.berkeley.edu/accessors#automotive/AnomalyDetection>,
+    owl:NamedIndividual .
+
+:intersection1 a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/trafficLightStatusV1> a <http://ptolemy.berkeley.edu/accessors#automotive/TrafficLightStatus>,
+    owl:NamedIndividual .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/laneMergeV1> a <http://ptolemy.berkeley.edu/accessors#automotive/LaneMergeAssist>,
+    owl:NamedIndividual .
+
+<http://ptolemy.berkeley.edu/accessors#> a owl:Ontology;
+  rdfs:comment "Ontology (in development) for the accessor platform along with the example services" .
+
+:address a owl:DatatypeProperty;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+:price a owl:DatatypeProperty, owl:FunctionalProperty;
+  rdfs:range xsd:double;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+:serviceURI a owl:DatatypeProperty;
+  rdfs:range xsd:string;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+:Interface a owl:Class .
+
+:Restaurants a owl:Class;
+  rdfs:subClassOf :Service .
+
+:DeCal_Parking a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/parkingV2> a <http://ptolemy.berkeley.edu/accessors#automotive/Parking>,
+    owl:NamedIndividual .
+
+:SoCal_Parking a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+:iCyPhyKitchen a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+:restaurant a :Restaurants, owl:NamedIndividual;
+  <http://www.opengis.net/ont/geosparql#serviceType> "restaurants" .
+
+:triad880 a <http://www.opengis.net/ont/geosparql#ServiceProvider>, owl:NamedIndividual .
+
+<http://www.opengis.net/ont/geosparql#serviceType> rdfs:domain :Service;
+  rdfs:range xsd:string;
+  rdfs:subPropertyOf <http://www.opengis.net/ont/geosparql#serviceProperty> .
+
+:Accessor rdfs:subClassOf :Interface .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/AnomalyDetection> rdfs:subClassOf
+    :Service .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/LaneMergeAssist> rdfs:subClassOf
+    :Service .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/Parking> rdfs:subClassOf :Service .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/TrafficLightStatus> rdfs:subClassOf
+    :Service .
+
+:Accesses rdfs:domain :Accessor;
+  rdfs:range :Service .
+
+:hasService rdfs:domain <http://www.opengis.net/ont/geosparql#ServiceProvider>;
+  rdfs:range :Service .
+
+:isLocatedAt rdfs:domain <http://www.opengis.net/ont/geosparql#ServiceProvider> .
+
+:serviceAt rdfs:domain <http://ptolemy.berkeley.edu/accessors#automotive/AnomalyDetection>,
+    <http://ptolemy.berkeley.edu/accessors#automotive/LaneMergeAssist>, <http://ptolemy.berkeley.edu/accessors#automotive/Parking>,
+    <http://ptolemy.berkeley.edu/accessors#automotive/TrafficLightStatus> .
+
+:parkingProperty rdfs:domain <http://ptolemy.berkeley.edu/accessors#automotive/Parking> .
+
+:capacity rdfs:domain <http://ptolemy.berkeley.edu/accessors#automotive/Parking>;
+  rdfs:range xsd:nonNegativeInteger .
+
+:availableSpaces rdfs:range xsd:nonNegativeInteger .
+
+:dailyPrice rdfs:range xsd:double .
+
+:hourlyPrice rdfs:range xsd:double .
+
+:longTermPrice rdfs:range xsd:double .
+
+:manualParking rdfs:range xsd:boolean .
+
+:valetParking rdfs:range xsd:boolean .
+
+<http://www.opengis.net/ont/geosparql#location> rdfs:range <http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+<http://www.opengis.net/ont/geosparql#serviceId> rdfs:range xsd:string .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/anomalyDetectionV1> <http://www.opengis.net/ont/geosparql#serviceType>
+    "trafficAlerts" .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/trafficLightStatusV1> <http://www.opengis.net/ont/geosparql#serviceType>
+    "trafficAlerts" .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/laneMergeV1> <http://www.opengis.net/ont/geosparql#serviceType>
+    "drivingAssistance" .
+
+<http://ptolemy.berkeley.edu/accessors#automotive/parkingV2> <http://www.opengis.net/ont/geosparql#serviceType>
+    "parking" .
+
+<http://ptolemy.berkeley.edu/accessors#> owl:versionInfo "v 0.2 Combined accessort PF ontology with parking service" .
+
+:densoCloud :hasService <http://ptolemy.berkeley.edu/accessors#automotive/anomalyDetectionV1>;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-120.91410276926383 37.33739303743433)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  <http://www.opengis.net/ont/geosparql#serviceId> 1012 .
+
+:intersection1 :hasService <http://ptolemy.berkeley.edu/accessors#automotive/trafficLightStatusV1>;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.267980 37.870080)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  <http://www.opengis.net/ont/geosparql#serviceId> 1005 .
+
+:DeCal_Parking :hasService <http://ptolemy.berkeley.edu/accessors#automotive/parkingV2>;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.266062 37.870290)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  <http://www.opengis.net/ont/geosparql#serviceId> 1011 .
+
+:SoCal_Parking :hasService <http://ptolemy.berkeley.edu/accessors#automotive/parkingV2>;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.271672 37.871569)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  <http://www.opengis.net/ont/geosparql#serviceId> 1013 .
+
+:iCyPhyKitchen :hasService :restaurant;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.258766 37.813683)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+:triad880 :hasService <http://ptolemy.berkeley.edu/accessors#automotive/laneMergeV1>;
+  <http://www.opengis.net/ont/geosparql#location> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-120.916779  37.371498)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  <http://www.opengis.net/ont/geosparql#serviceId> 1014 .
+
+_:node7 a owl:AllDifferent;
+  owl:distinctMembers _:node8 .
+
+_:node8 rdf:first :DeCal_Parking;
+  rdf:rest _:node9 .
+
+_:node9 rdf:first :SoCal_Parking;
+  rdf:rest rdf:nil .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation a sosa:Observation;
+  schema:expires "2019-01-30T19:21:40.452Z"^^xsd:dateTime;
+  sosa:hasResult _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness schema:telephone
+    "(510) 665-1660";
+  a schema:LocalBusiness;
+  schema:name "Standard Parking";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.26943 37.86782)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness1 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness1 a schema:LocalBusiness;
+  schema:name "Stadium Parking";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.252611219883 37.8714790195227)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness10 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness10 schema:telephone
+    "(510) 845-7367";
+  a schema:LocalBusiness;
+  schema:name "Unipark";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.25611 37.85607)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness11 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness11 a schema:LocalBusiness;
+  schema:name "Perry Lot";
+  schema:telephone "(800) 877-9984";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.2575 37.86828)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness12 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness12 a schema:LocalBusiness;
+  schema:name "Douglas Parking - Trinity Lot";
+  schema:telephone "(510) 444-7412";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.26237487793 37.8680267333984)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness13 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness13 a schema:LocalBusiness;
+  schema:name "Bay Street Emeryville Parking";
+  schema:telephone "(510) 655-4125";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.29322 37.8334)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness14 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness14 a schema:LocalBusiness;
+  schema:name "The Promenade Parking Garage";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.269567545028 37.8713880211723)"^^<http://www.opengis.net/ont/geosparql#wktLiteral>;
+  schema:address "1936 University Ave,Entry On Addison,Berkeley, CA 94704" .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness15 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness15 a schema:LocalBusiness;
+  schema:address "5660 College Ave,Oakland, CA 94618";
+  schema:name "BART - Rockridge Station";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.25153 37.84397)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness16 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness16 a schema:LocalBusiness;
+  schema:address "5885 Horton St,Emeryville, CA 94608";
+  schema:name "Amtrak";
+  schema:telephone "(800) 872-7245";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.2919 37.840479)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness17 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness17 a schema:LocalBusiness;
+  schema:address "6235 La Salle Ave,Oakland, CA 94611";
+  schema:name "Montclair Parking Garage";
+  schema:telephone "(510) 339-2645";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.20909 37.82734)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness18 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness18 a schema:LocalBusiness;
+  schema:address "2160 Shattuck Ave,Berkeley, CA 94704";
+  schema:name "BART - Downtown Berkeley Station";
+  schema:telephone "";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating18 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating18 a schema:AggregateRating .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness18 <http://www.opengis.net/ont/geosparql#asWKT>
+    "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.268159191062 37.8701129022232)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness19 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness19 a schema:LocalBusiness;
+  schema:address "3100 Adeline St,Berkeley, CA 94701";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating19 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating19 a schema:AggregateRating .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness19 schema:name
+    "BART - Ashby Station";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.270012486509 37.8530469427056)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness2 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness2 a schema:LocalBusiness;
+  schema:address "Bancroft Way & Telegraph Ave,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating2 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating2 a schema:AggregateRating;
+  schema:reviewCount 1 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness2 schema:name "MLK Student Union Garage";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.25921 37.86873)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness3 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness3 a schema:LocalBusiness;
+  schema:address "2450 Durant Ave,Berkeley, CA 94701";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating3 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating3 a schema:AggregateRating;
+  schema:ratingValue 2.5;
+  schema:reviewCount 9 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness3 schema:name "Sather Gate Garage";
+  schema:telephone "(510) 843-1788";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.2597976 37.8675855)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness4 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness4 a schema:LocalBusiness;
+  schema:address "2165 Kittredge St,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating4 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating4 a schema:AggregateRating;
+  schema:ratingValue 2.5;
+  schema:reviewCount 15 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness4 schema:name "Oxford Garage";
+  schema:telephone "(510) 843-1788";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.266416549683 37.8688487373639)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness5 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness5 a schema:LocalBusiness;
+  schema:address "1936 University Ave,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating5 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating5 a schema:AggregateRating;
+  schema:ratingValue 3.0;
+  schema:reviewCount 2 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness5 schema:name "Douglas Parking";
+  schema:telephone "";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.272109985352 37.8711853027344)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness6 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness6 a schema:LocalBusiness;
+  schema:address "2061 Allston Way,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating6 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating6 a schema:AggregateRating;
+  schema:ratingValue 1.5;
+  schema:reviewCount 49 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness6 schema:name "Allston Way Parking Garage";
+  schema:telephone "(510) 981-9443";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.269130274653 37.8692702203989)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness7 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness7 a schema:LocalBusiness;
+  schema:address "2020 Kittredge St,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating7 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating7 a schema:AggregateRating;
+  schema:ratingValue 2.0;
+  schema:reviewCount 18 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness7 schema:name "Kittredge Garage";
+  schema:telephone "(510) 843-1788";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.2695094 37.870208085314)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness8 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness8 a schema:LocalBusiness;
+  schema:address "1000 Broadway,Oakland, CA 94607";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating8 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating8 a schema:AggregateRating;
+  schema:ratingValue 4.0;
+  schema:reviewCount 8 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness8 schema:name "Trans Pacific Centre Garage";
+  schema:telephone "(510) 763-1585";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.271688 37.8017819)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:hasResult
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness9 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness9 a schema:LocalBusiness;
+  schema:address "1995 University Avenue,Ste 110,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating9 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating9 a schema:AggregateRating;
+  schema:ratingValue 3.0;
+  schema:reviewCount 13 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness9 schema:name "Underhill Parking & Field";
+  schema:telephone "(510) 643-7701";
+  <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point(-122.27128 37.87222)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchObservation sosa:resultTime
+    "2019-01-30T19:21:10.452Z"^^xsd:dateTime .
+
+:densoCloud :address "101 Metro Dr, San Jose, CA 95110";
+  :price 2.0E0;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/UIComponent.js" .
+
+:intersection1 :address "2160 Shattuck Ave, Berkeley, CA 94704";
+  :price 0.0E0;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/VideoComponent.js" .
+
+:DeCal_Parking :address "2300 Hearst Ave, Berkeley, CA 94703";
+  :price 3.0E0;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/ParkingComponent.js" .
+
+:SoCal_Parking :address "1680 Shuttuck Ave, Berkeley, CA 94709";
+  :price 4.0E0;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/ParkingComponent.js" .
+
+:iCyPhyKitchen :address "540 Cory Hall, Berkeley, CA 94720";
+  :price 3.0E1;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/RestaurantComponent.js" .
+
+:triad880 :address "1788 N 1st St, San Jose, CA 95112";
+  :price 5.0E0;
+  :serviceURI "http://ptolemy.berkeley.edu/accessors/dashboard/UIComponent.js" .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating a schema:AggregateRating;
+  schema:ratingValue 3.0;
+  schema:reviewCount 10 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating1 a schema:AggregateRating;
+  schema:ratingValue 4.0;
+  schema:reviewCount 5 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating10 a schema:AggregateRating;
+  schema:ratingValue 1.0;
+  schema:reviewCount 3 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating11 a schema:AggregateRating;
+  schema:ratingValue 3.0;
+  schema:reviewCount 1 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating12 a schema:AggregateRating;
+  schema:ratingValue 2.0;
+  schema:reviewCount 4 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating13 a schema:AggregateRating;
+  schema:ratingValue 1.5;
+  schema:reviewCount 31 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating14 a schema:AggregateRating;
+  schema:ratingValue 1.0;
+  schema:reviewCount 3 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating15 a schema:AggregateRating;
+  schema:ratingValue 3.5;
+  schema:reviewCount 78 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating16 a schema:AggregateRating;
+  schema:ratingValue 3.5;
+  schema:reviewCount 243 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating17 a schema:AggregateRating;
+  schema:ratingValue 3.5;
+  schema:reviewCount 14 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness schema:address
+    "2020 Kittredge St,Ste A,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness1 schema:address
+    "2205 Piedmont Ave,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating1 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness10 schema:address
+    "2999 Regent St,Berkeley, CA 94705";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating10 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness11 schema:address
+    "2533 Durant Ave,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating11 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness12 schema:address
+    "2362 Bancroft Way,Berkeley, CA 94704";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating12 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness13 schema:address
+    "5602 Bay St,Baystreet Emeryville,Emeryville, CA 94608";
+  schema:aggregateRating _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating13 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness14 schema:aggregateRating
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating14 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness15 schema:aggregateRating
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating15 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness16 schema:aggregateRating
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating16 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchBusiness17 schema:aggregateRating
+    _:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating17 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating18 schema:ratingValue
+    3.0;
+  schema:reviewCount 93 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating19 schema:ratingValue
+    2.5;
+  schema:reviewCount 57 .
+
+_:genid-701e36923a124b2680831f120dee2b9d-SemanticYelpSearchRating2 schema:ratingValue
+    4.0 .
