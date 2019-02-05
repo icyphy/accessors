@@ -59,9 +59,12 @@ exports.setup = function () {
     this.implement('dashboard/UIComponent');
     this.parameter('videoSource', {
         "type": 'string',
-        "value": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
+        "value": "../SAC_capital.mp4"
     });
 };
+//"../trailer_hd.mp4"
+//DOESN'T WORK "https://streamable.com/s/qeecg/qwiazk"
+//"https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
 
 exports.initialize = function(){
     var videoComponent = getResource(videoComponentURI, videoComponentTimeout);
