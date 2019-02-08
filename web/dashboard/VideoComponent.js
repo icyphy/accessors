@@ -76,6 +76,7 @@ exports.initialize = function(){
     var message = {
         "id": "system",
         "component": replaceSource,
+        "priority": 0
     };
     // var initMessage = {
     //     socketID: 0,

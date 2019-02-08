@@ -74,6 +74,7 @@ exports.initialize = function(){
     var message = {
         "id": "system",
         "component": speedComponent,
+        "priority": 0
     };
     // var initMessage = {
     //     socketID: 0,
