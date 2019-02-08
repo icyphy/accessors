@@ -487,13 +487,16 @@ class Parking extends React.Component {
     console.log("sortingP");
     var sortedData = this.state.parkingData;
     sortedData.sort( function(a,b) {
-      if(a.price < b.price){
-        return -1;
-      }
-      if(a.price > b.price){
-        return 1;
-      }
-      return 0;
+      var priceA = parseFloat(a.price);
+      var priceB = parseFloat(b.price);
+      return priceA - priceB;
+      // if(a.price < b.price){
+      //   return -1;
+      // }
+      // if(a.price > b.price){
+      //   return 1;
+      // }
+      // return 0;
     });
     this.setState({parkingData: sortedData});
   }
