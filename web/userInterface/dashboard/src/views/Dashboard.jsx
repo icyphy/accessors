@@ -103,12 +103,14 @@ function eventToJSON(event, callback) {
 
 
 function evalComponents(componentStrings){
-  for(var componentName in componentStrings){
+  for(var i= 0; i < componentStrings.length; i++){
+    var componentName = componentStrings[i].componentName;
+
     //Duplicate component definitions are not allowed, so first check
     //to make sure the component hasn't been registered already.
     if(customElements.get(componentName) == undefined){
       console.log("evaling element:" + componentName);
-      eval(componentStrings[componentName]);
+      eval(componentStrings[i].component);
     }
   }
 }
@@ -118,14 +120,13 @@ class AccessorCards extends React.Component {
 
   generateCards(){
     var cardArray = [];
-    for(var name in this.props.componentStrings){
-
+    for(var i = 0; i < this.props.componentStrings.length; i++){
       //One of React's quirks is it only allows a dynamic element name,
       //if that name is assigned to a variable with a capitalized first letter. 
-      const CapitalizedName = name;
-      console.log("generating card for:" + name);
+      const CapitalizedName = this.props.componentStrings[i].componentName;
+      console.log("generating card for:" + CapitalizedName);
       cardArray.push(
-        <Col key={name} lg="6">
+        <Col key={CapitalizedName} lg="6">
               <CapitalizedName/>
         </Col>
       );
@@ -167,10 +168,28 @@ class Dashboard extends React.Component {
           componentCount++;
           var newComponent = response.component.replace('__componentName__', componentName);
 
-          //Create a copy of the old component state object, then add the new one
+          //Create a copy of the old component state array, then add the new one
           //keyed to the component's name.
-          var newComponentStrings = Object.assign(thiz.state.componentStrings, {});
-          newComponentStrings[componentName] = newComponent;
+          //var newComponentStrings = Object.assign(thiz.state.componentStrings, {});
+          var newComponentStrings = thiz.state.componentStrings.slice();
+          var newComponentObject = {
+            "component": newComponent,
+            "componentName": componentName,
+            "priority": response.priority
+          };
+          // console.log("newComponentObject")
+          // console.log(response);
+          // console.log(newComponentObject);
+          newComponentStrings.push(newComponentObject);
+          newComponentStrings.sort(function(a,b){
+            console.log("comparing");
+            console.log(a)
+            console.log("and");
+            console.log(b)
+            return b.priority - a.priority; //sorted decending order by prioriy
+          });
+          console.log(newComponentStrings);
+
           thiz.setState({componentStrings: newComponentStrings});
         }
       });
@@ -186,7 +205,8 @@ class Dashboard extends React.Component {
     this.state = {
       bigChartData: "data1",
       count: -1,
-      componentStrings: {}
+      //An array containing objects with "componentName", "component", and "priority" attributes
+      componentStrings: [] 
     };
 
     //Websocket for communicating with the UI Swarmlet about the
