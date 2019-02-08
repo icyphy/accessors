@@ -1,6 +1,9 @@
 var path = require('path');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  //for now using default context
+  //context: path.join(__dirname, 'your-app'),
   entry: './src/index.js',
   module: {
     rules: [
@@ -44,4 +47,10 @@ module.exports = {
   devServer: {
     contentBase: './dist'
   },
+  plugins: [
+    //Copies static directory into dist
+    new CopyWebpackPlugin([
+        { from: 'static' }
+    ])
+  ]
 };

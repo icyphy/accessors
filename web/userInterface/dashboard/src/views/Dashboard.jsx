@@ -177,19 +177,10 @@ class Dashboard extends React.Component {
             "componentName": componentName,
             "priority": response.priority
           };
-          // console.log("newComponentObject")
-          // console.log(response);
-          // console.log(newComponentObject);
           newComponentStrings.push(newComponentObject);
           newComponentStrings.sort(function(a,b){
-            console.log("comparing");
-            console.log(a)
-            console.log("and");
-            console.log(b)
             return b.priority - a.priority; //sorted decending order by prioriy
           });
-          console.log(newComponentStrings);
-
           thiz.setState({componentStrings: newComponentStrings});
         }
       });
