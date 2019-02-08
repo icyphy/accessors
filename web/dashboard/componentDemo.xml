@@ -12,13 +12,13 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="{70.0, 30.0}">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={175, 98, 1243, 800}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={24, 55, 1243, 800}, maximized=false}">
     </property>
     <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1009, 690]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.4796936860496887">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.7495213844526385">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{567.1007085755812, 373.95579578488355}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{153.92559956395348, 392.7364825581395}">
     </property>
     <property name="ShowTypes" class="ptolemy.vergil.actor.lib.ShowTypes">
         <property name="_location" class="ptolemy.kernel.util.Location" value="{270, -45}">
@@ -301,7 +301,7 @@
         </port>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={694, 247, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={597, 314, 499, 208}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
@@ -327,7 +327,7 @@
             <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[325.0, 200.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[350.0, 180.0]">
         </property>
         <property name="componentID" class="ptolemy.data.expr.Parameter" value="">
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
@@ -934,7 +934,7 @@
             </port>
         </entity>
         <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={234, 343, 1206, 557}, maximized=false}">
+            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={189, 294, 1206, 557}, maximized=false}">
             </property>
             <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[1206, 513]">
             </property>
@@ -1534,8 +1534,6 @@
     </relation>
     <relation name="relation3" class="ptolemy.actor.TypedIORelation">
     </relation>
-    <relation name="relation7" class="ptolemy.actor.TypedIORelation">
-    </relation>
     <relation name="relation9" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation13" class="ptolemy.actor.TypedIORelation">
@@ -1562,15 +1560,25 @@
         <vertex name="vertex1" value="{-270.0, 285.0}">
         </vertex>
     </relation>
-    <relation name="relation18" class="ptolemy.actor.TypedIORelation">
-    </relation>
     <relation name="relation16" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="{-115.0, 500.0}">
+        </vertex>
+    </relation>
+    <relation name="relation18" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="{455.0, 240.0}">
+        </vertex>
     </relation>
     <link port="GetResource.trigger" relation="relation8"/>
     <link port="GetResource.output" relation="relation12"/>
     <link port="Merge.input" relation="relation10"/>
     <link port="Merge.input" relation="relation4"/>
-    <link port="Merge.input" relation="relation7"/>
+    <link port="Merge.input" relation="relation18"/>
     <link port="Merge.input" relation="relation9"/>
     <link port="Merge.input" relation="relation13"/>
     <link port="Merge.input" relation="relation15"/>
@@ -1583,7 +1591,7 @@
     <link port="Mutable5.accessor" relation="relation12"/>
     <link port="Mutable5.componentUpdate" relation="relation4"/>
     <link port="Mutable.accessor" relation="relation"/>
-    <link port="Mutable.componentUpdate" relation="relation7"/>
+    <link port="Mutable.componentUpdate" relation="relation18"/>
     <link port="Mutable2.accessor" relation="relation2"/>
     <link port="Mutable2.componentUpdate" relation="relation9"/>
     <link port="Mutable3.accessor" relation="relation3"/>
@@ -1600,12 +1608,12 @@
     <link port="ConfiguredParkingMutable.accessor" relation="relation17"/>
     <link port="ConfiguredParkingMutable.userInput" relation="relation16"/>
     <link port="ConfiguredParkingMutable.componentUpdate" relation="relation19"/>
-    <link port="ParkingDialogue.parkingMessage" relation="relation18"/>
+    <link port="ParkingDialogue.parkingMessage" relation="relation6"/>
     <link port="ParkingDialogue.response" relation="relation10"/>
     <link port="Display2.input" relation="relation20"/>
     <link port="Router.userCommand" relation="relation5"/>
     <link port="Router.dashboard" relation="relation8"/>
-    <link port="Router.parkingDialogue" relation="relation18"/>
+    <link port="Router.parkingDialogue" relation="relation6"/>
     <link port="Router.selectAccessor" relation="relation20"/>
     <link port="Router.parkingComponent" relation="relation16"/>
 </entity>

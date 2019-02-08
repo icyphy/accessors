@@ -114,6 +114,7 @@ exports.initialize = function(){
     var message = {
         "id": "system",
         "component": replaceSource,
+        "priority": 1
     };
 
     this.send('componentUpdate',message);
