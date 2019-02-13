@@ -3,7 +3,7 @@
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
 <property name="HostCompatabilityIcon" class="ptolemy.vergil.icon.EditorIcon">
     <property name="image" class="ptolemy.vergil.kernel.attributes.ImageAttribute">
-        <property name="source" class="ptolemy.data.expr.FileParameter" value="HostCompatability.png">
+        <property name="source" class="ptolemy.data.expr.FileParameter" value="HostCompatibility.png">
         </property>
         <property name="scale" class="ptolemy.data.expr.Parameter" value="75.0">
         </property>
@@ -16,6 +16,6 @@
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="4.0">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{-4.666666666666671, 4.5625}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{0.0, 0.0}">
     </property>
 </property>
