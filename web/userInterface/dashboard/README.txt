@@ -3,9 +3,9 @@ Author: Matt Weber (matt.weber@berkeley.edu) 1/4/19
 This directory contains a React project for building a user interface, along with several other
 non-React files used for testing the interface and interacting with it. These other files include:
 
--dashboard/src/graphElement.jsx, a web component (built with React but seperate from the main project) with a graph in it.
+-dashboard/src/graphElement.jsx, odometerElement.jsx, parkingElement, restaurantElement.js, speedometer.jsx, and video.jsx. These are all web components (built with React but separate from the main project). Compile them into component bundles with the command $webpack —entry <componentName.jsx> —output <bundleName.js>.
 -dashboard/componentSender.xml, a Cape Code swarmlet that runs a websocket server for the user interface to interact with
--dashboard/dist/index.html, the main React project is compiled into a bundle.js file which has to be loaded by something. This is it, and I'm listing it here because this file isn't built by the main React project. TODO- move this file to a separate static directory and copy it over to dist with webpack.
+-dashboard/dist/index.html, the main React project is compiled into a bundle.js file which has to be loaded by something. This is it, and I'm listing it here because this file isn't built by the main React project.
 -dashboard/dist/lib, this directory contains other webcomponent libraries used by the main React project. For now, relevant files are loaded by dist/index.html.
 
 The main React template used here is a fork of CreativeTim black-dashboard-react from https://github.com/creativetimofficial/black-dashboard-react/tree/master/src. This template is available under the MIT License.
@@ -29,14 +29,13 @@ How to build a React webcomponent and send it to the user interface app:
 1)Write a custom webcomponent using React and put it in the dashboard/src directory. Take dashboard/src/graphElement.jsx as an example.
 2)From dashboard directory run $webpack --entry graphElement.jsx --output graphElementBundle.js
 3)Escape the text of graphElementBundle.js. I've been doing this (inefficiently) by opening it in a text editor and copying the text to https://www.freeformatter.com/javascript-escape.html.
-4)Take the text string and seperate it into two parts around the name of the webcomponent. You can find it by doing a ctrl-f on the name, because it will only appear it once in the escaped  graphElementBundle.js. The User Interface has to be able to give the component a name of its choosing.
+4)Take the text string and separate it into two parts around the name of the webcomponent. You can find it by doing a ctrl-f on the name, because it will only appear it once in the escaped  graphElementBundle.js. The User Interface has to be able to give the component a name of its choosing.
 5)On the swarmlet managing the websocket server, write a script that waits until the server has received a JSON message from the interface app with these attributes
         "id" : "system",
-        "msg" : "start"
+        "msg" : "dashboard"
 Then send a JSON message to the interface with these attributes
         id: "system",
-        componentHead: accordHeadString,
-        componentTail: accordTailString
+        component: <webComponentWith ‘__componentName__’ written as its name,
 Note that in cape code at least you'll have to first wrap this JSON inside the message attributes of an object
         socketID: <CorrectResponseSocketGoesHere, likely 0>,
         message: <MessageFromAboveGoesHere>
