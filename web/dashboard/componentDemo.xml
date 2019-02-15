@@ -9,20 +9,16 @@
         </property>
         <property name="synchronizeToRealTime" class="ptolemy.data.expr.Parameter" value="true">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{70.0, 30.0}">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-365.0, -35.0]">
         </property>
     </property>
-    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={24, 55, 1243, 800}, maximized=false}">
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={246, 72, 1243, 800}, maximized=false}">
     </property>
     <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1009, 690]">
     </property>
-    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.7495213844526385">
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.4796936860496887">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{153.92559956395348, 392.7364825581395}">
-    </property>
-    <property name="ShowTypes" class="ptolemy.vergil.actor.lib.ShowTypes">
-        <property name="_location" class="ptolemy.kernel.util.Location" value="{270, -45}">
-        </property>
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{153.92559956395326, 392.73648255813964}">
     </property>
     <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
         <property name="textColor" class="ptolemy.actor.gui.ColorAttribute" value="{0.0, 0.0, 0.0, 1.0}">
@@ -30,6 +26,14 @@
         <property name="text" class="ptolemy.kernel.util.StringAttribute" value="FIXME Have this component set videoSourceParameter">
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[-95.0, 90.0]">
+        </property>
+    </property>
+    <property name="Annotation2" class="ptolemy.vergil.kernel.attributes.TextAttribute">
+        <property name="textColor" class="ptolemy.actor.gui.ColorAttribute" value="{0.0, 0.0, 0.0, 1.0}">
+        </property>
+        <property name="text" class="ptolemy.kernel.util.StringAttribute" value="This model must be run in the same directory as the component accessors it loads.&#10;Additionally, the accessors in ParkingDialogue may require a valid Yelp API Key,&#10;a valid google maps API Key, and an instance of a semantic repository&#10;with an ontology called &quot;AutomotiveServices&quot;. A sample contents of this ontology&#10;is available at accessor/accessors/web/dashboard/AutomotiveServices.ttl.">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-220.0, -40.0]">
         </property>
     </property>
     <entity name="GetResource" class="org.terraswarm.accessor.JSAccessor">
@@ -305,7 +309,7 @@
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[435.0, -10.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[605.0, 55.0]">
         </property>
     </entity>
     <entity name="Mutable5" class="org.terraswarm.accessor.JSAccessor">
@@ -933,14 +937,6 @@
                 <property name="input"/>
             </port>
         </entity>
-        <entity name="Display" class="ptolemy.actor.lib.gui.Display">
-            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={189, 294, 1206, 557}, maximized=false}">
-            </property>
-            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[1206, 513]">
-            </property>
-            <property name="_location" class="ptolemy.kernel.util.Location" value="[645.0, 110.0]">
-            </property>
-        </entity>
         <entity name="ResponseGenerator" class="ptolemy.actor.lib.jjs.JavaScript">
             <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
             </property>
@@ -1349,47 +1345,6 @@
             <property name="_location" class="ptolemy.kernel.util.Location" value="[725.0, -5.0]">
             </property>
         </entity>
-        <entity name="TestSpontaneousOnce" class="org.terraswarm.accessor.JSAccessor">
-            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-            </property>
-            <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-            </property>
-            <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Test accessor that spontaneously produces outputs once.&#10;//&#10;// Copyright (c) 2016-2017 The Regents of the University of California.&#10;// All rights reserved.&#10;&#10;// Permission is hereby granted, without written agreement and without&#10;// license or royalty fees, to use, copy, modify, and distribute this&#10;// software and its documentation for any purpose, provided that the above&#10;// copyright notice and the following two paragraphs appear in all copies&#10;// of this software.&#10;&#10;// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY&#10;// FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&#10;// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&#10;// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF&#10;// SUCH DAMAGE.&#10;&#10;// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,&#10;// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF&#10;// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE&#10;// PROVIDED HEREUNDER IS ON AN &quot;AS IS&quot; BASIS, AND THE UNIVERSITY OF&#10;// CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,&#10;// ENHANCEMENTS, OR MODIFICATIONS.&#10;&#10;/** Test accessor that spontaneously produces outputs once per time interval.&#10; *  This implementation produces a counting sequence.&#10; *&#10; *  @accessor test/TestSpontaneousOnce&#10; *  @parameter delay The delay in milliseconds before the value is outputk.&#10; *  @parameter value The value to be output after the delay.&#10; *  @output output The output port&#10; *  @author Christopher Brooks and Edward A. Lee. Based on TestSpontaneous by Edward A. Lee&#10; *  @version $$Id$$&#10; */&#10;&#10;// Stop extra messages from jslint.  Note that there should be no&#10;// space between the / and the * and global.&#10;/*globals clearTimeout, console, error, exports, require, setTimeout */&#10;/*jshint globalstrict: true*/&#10;&quot;use strict&quot;;&#10;&#10;exports.setup = function () {&#10;    this.parameter('delay', {&#10;        'type': 'number',&#10;        'value': 1000&#10;    });&#10;    this.parameter('value', {&#10;        'value': true&#10;    }); &#10;    this.output('output');&#10;};&#10;&#10;// These variables will not be visible to subclasses.&#10;var handle = null;&#10;&#10;exports.initialize = function () {&#10;    // Need to record 'this' for use in the callback.&#10;    var thiz = this;&#10;    handle = setTimeout(function () {&#10;        thiz.send('output', thiz.getParameter('value'));&#10;    }, this.getParameter('delay'));&#10;};&#10;&#10;exports.wrapup = function () {&#10;    if (handle) {&#10;        clearTimeout(handle);&#10;        handle = null;&#10;    }&#10;};&#10;">
-                <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                    <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                    </property>
-                </property>
-            </property>
-            <property name="accessorSource" class="org.terraswarm.accessor.JSAccessor$ActionableAttribute" value="https://accessors.org/test/TestSpontaneousOnce.js">
-            </property>
-            <property name="documentation" class="ptolemy.vergil.basic.DocAttribute">
-                <property name="description" class="ptolemy.kernel.util.StringAttribute" value="&lt;p&gt;Test accessor that spontaneously produces outputs once per time interval.&#10; This implementation produces a counting sequence.&lt;/p&gt;">
-                </property>
-                <property name="author" class="ptolemy.kernel.util.StringAttribute" value="Christopher Brooks and Edward A. Lee. Based on TestSpontaneous by Edward A. Lee">
-                </property>
-                <property name="version" class="ptolemy.kernel.util.StringAttribute" value="$$Id$$">
-                </property>
-                <property name="output (port)" class="ptolemy.kernel.util.StringAttribute" value="The output port">
-                </property>
-                <property name="delay (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The delay in milliseconds before the value is outputk.">
-                </property>
-                <property name="value (parameter)" class="ptolemy.kernel.util.StringAttribute" value="The value to be output after the delay.">
-                </property>
-            </property>
-            <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-                <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-                </property>
-                <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-                </property>
-            </property>
-            <property name="_location" class="ptolemy.kernel.util.Location" value="[65.0, 15.0]">
-            </property>
-            <property name="delay" class="ptolemy.data.expr.Parameter" value="4000.0">
-            </property>
-            <port name="output" class="ptolemy.actor.TypedIOPort">
-                <property name="output"/>
-            </port>
-        </entity>
         <relation name="relation9" class="ptolemy.actor.TypedIORelation">
             <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
             </property>
@@ -1432,7 +1387,6 @@
         <link port="response" relation="relation"/>
         <link port="SemanticRepositoryQuery.response" relation="relation9"/>
         <link port="SemanticRepositoryQuery.query" relation="relation4"/>
-        <link port="Display.input" relation="relation"/>
         <link port="ResponseGenerator.services" relation="relation9"/>
         <link port="ResponseGenerator.latitude" relation="relation2"/>
         <link port="ResponseGenerator.longitude" relation="relation7"/>
@@ -1454,7 +1408,7 @@
         <link port="updateDisplay.input" relation="relation8"/>
     </entity>
     <entity name="Display2" class="ptolemy.actor.lib.gui.Display">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={325, 235, 499, 208}, maximized=false}">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={301, 235, 499, 208}, maximized=false}">
         </property>
         <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute" value="[499, 164]">
         </property>
