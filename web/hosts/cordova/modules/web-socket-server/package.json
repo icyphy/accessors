@@ -1,0 +1,16 @@
+{
+    "name": "web-socket-server",
+    "version": "1.0.0",
+    "description": "A module that runs a web socket server.",
+    "main": "web-socket-server.js",
+    "author": "Matt Weber",
+    "license": "Apache-2.0",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-websocket-server": {},
+        }
+    },
+    "dependencies": {
+        "cordova-plugin-websocket-server": "~1.4.11"
+    }
+}
