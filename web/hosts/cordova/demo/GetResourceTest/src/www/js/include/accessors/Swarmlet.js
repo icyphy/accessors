@@ -36,12 +36,10 @@ exports.setup = function() {
     console.log('Swarmlet setup...');
 
     var trigger = this.instantiate('trigger', 'test/TestSpontaneousOnce');
-    var hello = this.instantiate('helloAcc', 'Hello');
 
     trigger.setParameter('delay', 1000.0);
     trigger.setParameter('value', true);
 
-    this.connect(trigger, 'output', hello, 'sayHello');
     //The Cordova host's implementation of getResource is asynchronous. It can
     //be invoked like this:
 //     this.getResource("https://ptolemy.berkeley.edu/accessors/index.html", 4000,
