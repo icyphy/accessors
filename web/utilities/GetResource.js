@@ -62,7 +62,7 @@
  *  @input trigger {boolean} Send a token to this input to read the
  *  file or URL.
  *  @output output The contents of the file or URL.
- *  @author Edward A. Lee
+ *  @author Edward A. Lee, Matt Weber
  *  @version $$Id$$
  */
 
@@ -87,10 +87,57 @@ exports.setup = function () {
 };
 exports.initialize = function () {
     var self = this;
+
+    //To prevent out of order responses for asynchronous getResource calls,
+    //maintain a queue of requests.
+
+    //The idea is each new (asynchronous) input to this accessor produces a Request which gets
+    //inserted into the requests queue and started. When a request anywhere in the
+    //queue is completed, it marks itself as complete and attempts to dequque all
+    //complete requests from the front of the queue in order.
+    var requests = [];
+
     this.addInputHandler('trigger', function () {
         var resourceValue = this.get('resource');
-        var resourceContents = getResource(this.get('resource'), this.get('options'), null);
-        self.send('output', resourceContents);
+        
+        if(getHostName() != "Cordova"){
+            //Synchronous implemenation for all hosts but Cordova.
+            //FIXME: Some of the other hosts may benefit from an asynchronous implemenation too
+            var resourceContents = getResource(this.get('resource'), this.get('options'), null);
+            self.send('output', resourceContents);
+        } else {
+            var incomingRequest = new Request(this.get('resource'), this.get('options'));
+            requests.push(incomingRequest);
+            incomingRequest.start();
+        }
+        
     });
+
+    function Request(resource, options){
+        var thiz = this;
+
+        //Initially false, but set to true when status and value are available
+        this.complete = false;
+        this.produceOutput = function(){
+            if(thiz.status != null){
+                error(thiz.status);
+            } else {
+                self.send('output',thiz.value );
+            }
+    };
+    this.start = function(){
+        getResource(resource, options,
+            function(status, value){
+                thiz.status = status;
+                thiz.value = value;
+                thiz.complete = true;
+
+                //Dequeue all complete requests from the front of the queue
+                while(requests.length > 0 && requests[0].complete){
+                    requests.shift().produceOutput();
+                }
+            });
+        };
+    }
 };
 
