@@ -26,7 +26,7 @@
 /** Cordova host implementation.
  *
  *  @module cordovaHost
- *  @author Chadlia Jerad, Edward A. Lee, Marten Lohstroh, Elizabeth Osyk, Victor Nouvellet
+ *  @author Chadlia Jerad, Edward A. Lee, Marten Lohstroh, Elizabeth Osyk, Victor Nouvellet, Matt Weber
  *  @version $$Id: cordovaHost.js 1365 2017-04-17 00:44:19Z chadlia.jerad $$
  */
 
@@ -217,8 +217,159 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
     }
 }
 
-// FIXME: provide a meaningful implementation.
-getResource = function(uri) {};
+/** Get a resource using XMLHttpRequest or cordova-plugin-file as needed. 
+ *
+ *  Unlike other hosts, this implementation is exclusively asynchronous. A null callback argument
+ *  will generate an error.
+ * 
+ *  FIXME: complete this implementation for more resource types such as binary files
+ *  (see https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/index.html#store-an-existing-binary-file-)
+ *  FIXME: figure out a good way to restrict file system access to particular directories
+ *  FIXME: process $KEYSTORE as a path element
+ *  FIXME: implement timeouts
+ *  FIXME: there is an inconsistency in how error messages are reported for remote and local files and timeouts.
+ *    Particularly, resolveFileFailure produces some unknown kind of object. The documentation doesn't help.
+ *    It would be good to standardize the cases.
+ *  WARNING: the encoding parameter in options is currently ignored
+ * 
+ *  Below are the types of resources that are handled
+ *  all other resources will cause an error.
+ * 
+ *  - Text (UTF-8)
+ *
+ *  @param uri {string} A specification for the resource. If the uri starts with http or https,
+ *    this function will attempt to load the resource from the web. If the uri is an
+ *    absolute path on mobile (starts with file:///), this function will attempt to load it
+ *    with cordova-plugin-file. If the uri is a relative path, this function will attempt to
+ *    load it relative to this app's www folder (located at cordova.file.applicationDirectory/www/)
+ *  @param options FXIME: Until more than UTF-8 resources are supported, encoding inputs are ignored
+ *    is ignored. The below documentation is copied from the GetResource accessor.
+ *    The options parameter may have the following values:
+ *  * If the type of the options parameter is a Number, then it is assumed
+ *    to be the timeout in milliseconds. Timeout defaults to 5000ms.
+ *  * If the type of the options parameter is a String, then it is assumed
+ *    to be the encoding, for example "UTF-8".  If the value is "Raw" or "raw"
+ *    then the data is returned as an unsigned array of bytes.
+ *    The default encoding is the default encoding of the system.
+ *  * If the type of the options parameter is an Object, then it may
+ *    have the following fields:
+ *      ** encoding {string} The encoding of the file, see above for values.
+ *      ** timeout {number} The timeout in milliseconds.
+ *  @param callback A callback function which will be called with two arguments:
+ *     1) The first argument is null if the resource was successfully
+ *     acquired and a non-null error code if wasn't. The error message will be
+ *     an http status message https://www.w3schools.com/tags/ref_httpmessages.asp
+ *     if a web resource was sought, and a cordova-plugin-file error code
+ *     (see https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/#list-of-error-codes-and-meanings)
+ *     if a local resource was sought.
+ *     2) The second argument is the desired resource, if successfully acquired
+ *     and null otherwise.
+ */
+function getResource(uri, options, callback) {
+    var timeout;
+
+    if(typeof options == "number"){
+        timeout = options;
+    }
+    if(typeof options == "object" && typeof options.timeout == "number"){
+        timeout = options.timeout;
+    }
+
+    if (!timeout && timeout !== 0) {
+        timeout = 5000;
+    }
+    if(callback == null){
+        console.log("Error: cordovaHost's getResource implementation requires a non-null callback");
+        return;         
+    }
+
+    if(uri.startsWith("http://") || uri.startsWith("https://") ){
+        var request = new XMLHttpRequest();
+        var complete = false;
+
+        request.onreadystatechange = function(){
+            // readyState === 4 is the same as readyState === request.DONE.
+            if (this.readyState === this.DONE) {
+                complete = true;
+                if (this.status == 200) {
+                    callback(null, this.responseText);
+                } else {
+                    callback(this.status, null);
+                    console.log("cordovaHost getResource failed with code " + this.status + " at URL: " + uri);
+                }
+            }
+        };
+        // The third argument specifies an asynchronous read.
+        // A synchronous read will block this host during the read, so 
+        request.open("GET", uri, true);
+        request.send();
+        
+        var timeoutHandler = setTimeout(handleTimeout, timeout);
+
+        function handleTimeout() {
+            if(!complete){
+                console.log("cordovaHost getResource timed out at URI: " + uri);
+                request.abort();
+                //No need to call the callback here because abort will trigger onreadystatechange
+                //with readyState DONE
+                //callback("timeout", null);                
+            }
+        }
+    } else {
+        //Resource is a local file.
+
+        var path = "";
+        if(uri.startsWith("file:///")){
+            //Resource is an absolute path.
+            path = uri;
+        } else {
+            //Resource is a relative path.
+            path = cordova.file.applicationDirectory + 'www/' + uri;
+        }
+
+        function resolveFileFail(e) {
+            callback(e, null);
+            console.log("cordovaHost getResource failed resolving local file with error: " + e);
+        }
+
+        function onErrorReadFile(){
+            console.log("cordovaHost getResource failed reading file.");
+            callback( "FileReadError", null);
+        }
+
+        function resolveFileSuccess(fileEntry){
+            fileEntry.file(function (file) {
+                var reader = new FileReader();
+                var complete = false;
+
+                reader.onloadend = function() {
+                    //It seems reader.abort doesn't prevent this function from being called,
+                    //although abort does appear to make this execute immediately without the
+                    //result. 
+                    if(!complete){
+                        callback(null, this.result);
+                        complete = true;
+                    }
+
+                };
+                reader.readAsText(file);
+
+                var timeoutHandler = setTimeout(handleTimeout, timeout);
+
+                function handleTimeout() {
+                    if(!complete){
+                        complete = true;
+                        reader.abort(); //I think this function might indirectly call onloadend
+                        console.log("cordovaHost getResource timed out at URI: " + uri);
+                        callback("timeout", null);
+
+                    }
+                }
+            }, onErrorReadFile);
+        }
+        window.resolveLocalFileSystemURL(path, resolveFileSuccess, resolveFileFail);
+    }
+};
 
 /** Return the name of this host.
  *
