@@ -90,6 +90,13 @@
       <arg value="add"/>
       <arg value="ios"/>
     </exec>
+    <exec executable="cordova"> 
+      <arg value="plugin"/> <!-- cordovaHost's getResource implementation depends on this plugin -->
+      <arg value="add"/>
+      <arg value="cordova-plugin-file"/>
+      <arg value="--save"/>
+    </exec>
+     <antcall target="save"/>
   </target>
 
   <target name="save">
