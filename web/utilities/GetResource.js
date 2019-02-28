@@ -61,6 +61,8 @@
  *  the Accessors home page (http://accessors.org).
  *  @input trigger {boolean} Send a token to this input to read the
  *  file or URL.
+ *  @parameter synchronous {boolean} Perform a synchronous or asynchronous call of getResource.
+ *  Note some hosts do not currently implement both versions.
  *  @output output The contents of the file or URL.
  *  @author Edward A. Lee, Matt Weber
  *  @version $$Id$$
@@ -82,6 +84,10 @@ exports.setup = function () {
         'value': 'http://accessors.org'
     });
     this.input('trigger');
+    this.parameter('synchronous', {
+        'type': 'boolean',
+        'value': true
+    });
 
     this.output('output');
 };
@@ -100,9 +106,8 @@ exports.initialize = function () {
     this.addInputHandler('trigger', function () {
         var resourceValue = this.get('resource');
         
-        if(getHostName() != "Cordova"){
-            //Synchronous implemenation for all hosts but Cordova.
-            //FIXME: Some of the other hosts may benefit from an asynchronous implemenation too
+        if(this.getParameter('synchronous')){
+            //FIXME: Not every host has both an asynchronous or synchronous implementation
             var resourceContents = getResource(this.get('resource'), this.get('options'), null);
             self.send('output', resourceContents);
         } else {
