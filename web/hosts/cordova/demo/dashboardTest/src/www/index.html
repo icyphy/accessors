@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Accessor UI</title>
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">   -->
+
+    <!-- Maximally permissive csp: -->
+<!--     <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: 'unsafe-inline' 'unsafe-eval'; 
+    script-src * 'unsafe-inline' 'unsafe-eval'; 
+    connect-src * 'unsafe-inline'; 
+    img-src * data: blob: 'unsafe-inline'; 
+    frame-src *; 
+    style-src * data: blob: 'unsafe-inline';
+    font-src * data: blob: 'unsafe-inline';"> -->
+
+    <!-- Very permissive csp: -->
+    <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: 'unsafe-inline' 'unsafe-eval'; 
+    script-src * 'unsafe-inline' 'unsafe-eval'; 
+    img-src * data: blob: 'unsafe-inline'; 
+    style-src * data: blob: 'unsafe-inline';
+    font-src * data: blob: 'unsafe-inline';">   
+
+
+
+    <script src="lib/webcomponents-bundle.js"></script>
+<!--     <script>
+            window.setTimeout(function() {
+                        console.log('DEVICE IS READY!');
+                        console.log(window.FileTransfer);
+        console.log(window.cordova.file);
+    }, 1000);
+    </script> -->
+    <!-- <script src="js/index.js"></script> -->
+
+        <!-- Loading the needed modules for the cordovaHost -->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/include/cordova/cordovaHost.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+<!--         <script>
+            window.setTimeout(function() {
+                        console.log('DEVICE IS READY!');
+                        console.log(window.FileTransfer);
+        console.log(window.cordova.file);
+    }, 1000);
+    </script> -->
+    <script src="./bundle.js"></script>
+    <!-- <img src="da9b5abb2e7d2ad74fa5304ee853dce5.png" align="center"> -->
+    <!-- <img src="food/burger.jpeg" align="center"> -->
+     <!-- <script>
+        document.getElementById('root').innerHTML += "hello world! via root selection"
+        //document.write("hello world! ");
+        document.addEventListener("deviceready", onDeviceReady, false);
+        function onDeviceReady() {
+            document.getElementById('root').innerHTML += "HELLO WORLD!";
+            console.log(cordova.file);
+            document.getElementById('root').innerHTML += cordova.file;
+
+            listDir(cordova.file.applicationDirectory);
+        }
+        
+
+        function listDir(path){
+          window.resolveLocalFileSystemURL(path,
+            function (fileSystem) {
+              var reader = fileSystem.createReader();
+              reader.readEntries(
+                function (entries) {
+                  document.write(entries);
+                },
+                function (err) {
+                  document.write(err);
+                }
+              );
+            }, function (err) {
+              document.write(err);
+            }
+          );
+        }
+        //example: list of www/audio/ folder in cordova/ionic app.
+
+
+    </script> -->
+
+  </body>
+</html>
