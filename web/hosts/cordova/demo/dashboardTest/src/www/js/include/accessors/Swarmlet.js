@@ -70,16 +70,21 @@ exports.setup = function() {
     console.log("before instantiate GR");
     var videoGetResource = this.instantiate('videoGR', 'utilities/GetResource');
     var restaurantGetResource = this.instantiate('restaurantGR', 'utilities/GetResource');
+    var parkingGetResource = this.instantiate('parkingGR', 'ParameterizedBlockingGetResource')
     console.log("after instantiate GR");
     videoGetResource.setDefault('resource', 'file:///android_asset/www/js/include/accessors/VideoComponentC.js');
     restaurantGetResource.setDefault('resource','file:///android_asset/www/js/include/accessors/RestaurantComponentC.js' )
+    //parkingGetResource gets its resource from the router
     videoGetResource.setParameter('synchronous', false);
     restaurantGetResource.setParameter('synchronous', false);
+    parkingGetResource.setParameter('synchronous', false);
 
     console.log("after videoGetResource");
     this.connect(router, 'dashboard', videoGetResource, 'trigger');
     this.connect(router, 'dashboard', restaurantGetResource, 'trigger');
+    this.connect(router, 'dashboard', parkingGetResource, 'trigger');
 
+    this.connect(router, 'selectAccessor', parkingGetResource, 'resource');
     console.log("after router to video connection");
     
     //this.connect(routingWebSocketServer, "received", wsServerTest, "toSend");
@@ -90,18 +95,25 @@ exports.setup = function() {
 
     var videoMutable = this.instantiate("vMutable.js", "UIComponentMutable");
     var restaurantMutable = this.instantiate("rMutable.js", "UIComponentMutable");
+    var configuredParkingMutable = this.instantiate("pMutable", "UIComponentMutable");
     console.log("after videoMutable");
 
     this.connect(videoGetResource, "output", videoMutable, "accessor");
     this.connect(restaurantGetResource, "output", restaurantMutable, "accessor");
+    this.connect(parkingGetResource, "output", configuredParkingMutable, "accessor");
     console.log("after grvid connection");
 
     this.connect(videoMutable, "componentUpdate", routingWebSocketServer, "routingSend");
     this.connect(restaurantMutable, "componentUpdate", routingWebSocketServer, "routingSend");
+    this.connect(configuredParkingMutable, "componentUpdate", routingWebSocketServer, "routingSend");
+    this.connect(router, "parkingComponent", configuredParkingMutable, "userInput");
     //this.connect(videoMutable, 'componentUpdate', gRVideoDisplay, 'JSON');
     
     //this.connect(videoMutable, "componentUpdate", gRVideoDisplay, 'text');
 
+    var parkingDialogue = this.instantiate("pDialogue", "ParkingDialogue");
+    this.connect(router, "parkingDialogue", parkingDialogue, "parkingMessage");
+    this.connect(parkingDialogue, "response", routingWebSocketServer, "routingSend");
 
     // trigger.setParameter('delay', 1000.0);
     // trigger.setParameter('value', true);
