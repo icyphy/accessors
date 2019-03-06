@@ -13,7 +13,8 @@
     "cordova": {
         "plugins": {
             "cordova-plugin-websocket-server": {},
-            "cordova-plugin-file": {}
+            "cordova-plugin-file": {},
+            "cordova-plugin-advanced-http": {}
         }
     }
 }
