@@ -18,7 +18,7 @@ exports.setup = function(){
     var semRepoQ = this.instantiate('semRepoQ', 'services/SemanticRepositoryQuery');
     console.log("after semRepoQ");
     // semRepoQ.setParameter('protocol', "https");
-    semRepoQ.setParameter('protocol', "http");
+    semRepoQ.setParameter('protocol', "https");
     semRepoQ.setParameter('host', 'wessel.eecs.berkeley.edu');
     semRepoQ.setParameter('port', 7200);
     semRepoQ.setParameter('authenticate', false);
