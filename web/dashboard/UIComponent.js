@@ -81,8 +81,7 @@ exports.setup = function() {
         "type": "string"
     });
     this.parameter('synchronous', {
-        "type": 'boolean',
-        "value": false
+        "type": 'boolean'
     });
     this.parameter('componentURI', {
         "type": "string"
