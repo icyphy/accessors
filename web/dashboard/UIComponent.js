@@ -57,11 +57,16 @@
  *  @input userInput A message produced by an implementing accessor's web component
  *      to inform the accessor of user interaction with the instantiated web component.
  *  @parameter componentID string A unique ID an implementing accessor uses to configure communication
- *      with it's web component. The implementing accessor should replace all instances of the
+ *      with its web component. The implementing accessor should replace all instances of the
  *      special string '__componentID__' in its web component, ensuring web socket messages sent
  *      back to the implementing accessor for the instantiated component are labled with the
  *      corresponding ID. All communication to and from the instantiated web component will be
  *      tagged with this ID.
+ *  @parameter synchronous boolean True if the implementing accessor should use a synchronous version
+ *      of getResource to acquire its web component. False if the implementing accessor should use
+ *      an asynchronous version of getResource.
+ *  @parameter componentURI string The URI of the web component from which this accessor should use
+ *      getResource to acquire the component.
  *  @output componentUpdate A websocket message produced by an implementing accessor to communicate
  *      with the dashboard app. Upon initialization produce a websocket message containing the javascript
  *      escaped string of the web. Also used to inform the accessor's instantiated web component of control updates.
@@ -73,6 +78,13 @@ exports.setup = function() {
     this.input('userInput', {
     });
     this.parameter('componentID', {
+        "type": "string"
+    });
+    this.parameter('synchronous', {
+        "type": 'boolean',
+        "value": false
+    });
+    this.parameter('componentURI', {
         "type": "string"
     });
 
