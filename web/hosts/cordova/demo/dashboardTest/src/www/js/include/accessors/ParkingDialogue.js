@@ -10,6 +10,7 @@ exports.setup = function(){
     this.connect("parkingMessage", qLauncher, "parkingMessage");
 
     var qServices = this.instantiate('qServices', "QueryServices");
+    qServices.setParameter('yelpResults', true);
     this.connect(qLauncher, "queryTerm", qServices, "queryTerm");
     this.connect(qLauncher, "latitude", qServices, "latitude");
     this.connect(qLauncher, "longitude", qServices, "longitude");
@@ -30,7 +31,7 @@ exports.setup = function(){
     console.log("after semRepoQ connections");
 
     var qLDisp = this.instantiate("qLDisp", "JSONDisplay");
-    //this.connect(semRepoQ, "response", qLDisp, "JSON");
+    this.connect(qServices, "query", qLDisp, "JSON");
 
     console.log("before rGen");
     var rGen = this.instantiate("rGen", "ResponseGeneratorC");
