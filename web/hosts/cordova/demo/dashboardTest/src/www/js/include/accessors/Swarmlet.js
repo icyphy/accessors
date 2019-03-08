@@ -54,9 +54,9 @@ exports.setup = function() {
     routingWebSocketServer.setParameter('port', webSocketPort);
     console.log("after parametersSet");
 
-    var receivedDisplay = this.instantiate('rDisplay', 'JSONDisplay');
-    var listeningDisplay = this.instantiate('lDisplay', 'JSONDisplay');
-    var connectionDisplay = this.instantiate('cDisplay', 'JSONDisplay');
+    // var receivedDisplay = this.instantiate('rDisplay', 'JSONDisplay');
+    // var listeningDisplay = this.instantiate('lDisplay', 'JSONDisplay');
+    // var connectionDisplay = this.instantiate('cDisplay', 'JSONDisplay');
     
     // this.connect(routingWebSocketServer, "received", receivedDisplay, "JSON");
     // this.connect(routingWebSocketServer, "listening", listeningDisplay, "JSON");
