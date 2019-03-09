@@ -49,7 +49,6 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var restaurantComponentURI = "restaurantBundle.js";
 var restaurantComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
@@ -59,33 +58,40 @@ exports.setup = function () {
 };
 
 exports.initialize = function(){
-    var restaurantComponent = getResource(restaurantComponentURI, restaurantComponentTimeout);
-    
-    //FIXME I can't get the socketID selection to work with WebSocketServer.js.
-    //The following should work...
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: {
-    //         "id": "system",
-    //         "component": speedComponent,
-    //     }
-    // };
+    //var restaurantComponent = getResource(restaurantComponentURI, restaurantComponentTimeout);
+    var self = this;
+    var restaurantComponentURI = this.getParameter('componentURI');
 
-    var message = {
-        "id": "system",
-        "component": restaurantComponent,
-        "priority": 0
-    };
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: JSON.stringify(message)
-    // };
+    function constructAndSendMessage(restaurantComponent){
+        
+        var message = {
+            "id": "system",
+            "component": restaurantComponent,
+            "priority": 0
+        };
 
-    //For now, just broadcast
-    // var initMessage = {
-    //     "id": "system",
-    //     "component": odometerComponent,
-    // };
+        console.log("before send: ");
+        console.log(message);
+        self.send('componentUpdate',message);
+        console.log("after send");
+    }
 
-    this.send('componentUpdate',message);
+    var restaurantComponent;
+    //Cordova has an asynchronous getResource implementation.
+    if(! self.getParameter('synchronous')){
+        getResource(restaurantComponentURI, restaurantComponentTimeout, function(status, resource){
+            console.log("inside restaurantComponent callback");
+            if(status == null){
+                console.log("status is not null!");
+                //console.log(resource);
+                restaurantComponent = resource;
+                constructAndSendMessage(restaurantComponent);
+            } else {
+                error("RestaurantComponent was unable to getResource with error: " + status);
+            }
+        });
+    } else {
+        restaurantComponent = getResource(restaurantComponentURI, restaurantComponentTimeout);
+        constructAndSendMessage(restaurantComponent);
+    }
 };

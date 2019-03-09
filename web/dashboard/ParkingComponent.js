@@ -49,7 +49,6 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var parkingComponentURI = "parkingBundle.js";
 var parkingComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
@@ -99,8 +98,10 @@ var exampleData = [
         ];
 
 exports.initialize = function(){
-    
-    //Respond to communication from the intantiated component
+    var self = this;
+    var parkingComponentURI = this.getParameter('componentURI');
+
+    //Respond to communication from the instantiated component
     this.addInputHandler("userInput", function(){
         var update = {
             "id": this.getParameter('componentID'),
@@ -109,13 +110,39 @@ exports.initialize = function(){
         this.send('componentUpdate', update);  
     });
 
-    var parkingComponent = getResource(parkingComponentURI, parkingComponentTimeout);
-    var replaceSource = parkingComponent.replace("__componentID__", this.getParameter('componentID'));
-    var message = {
-        "id": "system",
-        "component": replaceSource,
-        "priority": 1
-    };
 
-    this.send('componentUpdate',message);
+    function constructAndSendMessage(parkingComponent){
+        
+        var message = {
+            "id": "system",
+            "component": parkingComponent,
+            "priority": 1
+        };
+
+        console.log("before send: ");
+        console.log(message);
+        self.send('componentUpdate',message);
+        console.log("after send");
+    }
+
+    var parkingComponent;
+    //Cordova has an asynchronous getResource implementation.
+    if(! self.getParameter('synchronous')){
+        getResource(parkingComponentURI, parkingComponentTimeout, function(status, resource){
+            console.log("inside parkingComponent callback");
+            if(status == null){
+                console.log("status is not null!");
+                //console.log(resource);
+                parkingComponent = resource;
+                var replaceSource = parkingComponent.replace("__componentID__", self.getParameter('componentID'));
+                constructAndSendMessage(replaceSource);
+            } else {
+                error("ParkingComponent was unable to getResource with error: " + status);
+            }
+        });
+    } else {
+        parkingComponent = getResource(parkingComponentURI, parkingComponentTimeout);
+        var replaceSource = parkingComponent.replace("__componentID__", self.getParameter('componentID'));
+        constructAndSendMessage(replaceSource);
+    }
 };
