@@ -49,7 +49,6 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var parkingComponentURI = "parkingBundleC.js";
 var parkingComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
@@ -99,8 +98,8 @@ var exampleData = [
         ];
 
 exports.initialize = function(){
-    //var restaurantComponent = getResource(restaurantComponentURI, restaurantComponentTimeout);
     var self = this;
+    var parkingComponentURI = this.getParameter('componentURI');
 
     //Respond to communication from the instantiated component
     this.addInputHandler("userInput", function(){
@@ -128,7 +127,7 @@ exports.initialize = function(){
 
     var parkingComponent;
     //Cordova has an asynchronous getResource implementation.
-    if(getHostName() == 'Cordova'){
+    if(! self.getParameter('synchronous')){
         getResource(parkingComponentURI, parkingComponentTimeout, function(status, resource){
             console.log("inside parkingComponent callback");
             if(status == null){
@@ -143,6 +142,7 @@ exports.initialize = function(){
         });
     } else {
         parkingComponent = getResource(parkingComponentURI, parkingComponentTimeout);
-        constructAndSendMessage(parkingComponent);
+        var replaceSource = parkingComponent.replace("__componentID__", self.getParameter('componentID'));
+        constructAndSendMessage(replaceSource);
     }
 };

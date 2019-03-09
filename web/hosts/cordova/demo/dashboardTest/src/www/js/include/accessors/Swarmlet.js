@@ -68,23 +68,29 @@ exports.setup = function() {
     // this.connect(router, 'dashboard', routerDashDisplay, 'JSON');
 
     console.log("before instantiate GR");
-    var videoGetResource = this.instantiate('videoGR', 'utilities/GetResource');
-    var restaurantGetResource = this.instantiate('restaurantGR', 'utilities/GetResource');
-    var parkingGetResource = this.instantiate('parkingGR', 'ParameterizedBlockingGetResource')
+    // var videoGetAccessor = this.instantiate('videoGR', 'utilities/GetResource');
+    // var videoGetAccessor = this.instantiate('videoGR', 'RefactoredGetResource');
+    var videoGetAccessor = this.instantiate('videoGR', 'utilities/GetAccessor');
+    var restaurantGetAccessor = this.instantiate('restaurantGR', 'utilities/GetAccessor');
+    // var parkingGetAccessor = this.instantiate('parkingGR', 'ParameterizedBlockingGetResource')
+    var parkingGetAccessor = this.instantiate('parkingGR', 'utilities/GetAccessor')
     console.log("after instantiate GR");
-    videoGetResource.setDefault('resource', 'file:///android_asset/www/js/include/accessors/VideoComponentC.js');
-    restaurantGetResource.setDefault('resource','file:///android_asset/www/js/include/accessors/RestaurantComponentC.js' )
-    //parkingGetResource gets its resource from the router
-    videoGetResource.setParameter('synchronous', false);
-    restaurantGetResource.setParameter('synchronous', false);
-    parkingGetResource.setParameter('synchronous', false);
+    videoGetAccessor.setDefault('resource', 'file:///android_asset/www/js/include/accessors/dashboard/VideoComponent.js');
+    videoGetAccessor.setDefault('parameterMap', {"videoSource": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4", "synchronous": false, "componentURI": "videoBundleC.js"});
+    restaurantGetAccessor.setDefault('resource','file:///android_asset/www/js/include/accessors/dashboard/RestaurantComponent.js' )
+    restaurantGetAccessor.setDefault('parameterMap', {"synchronous": false, "componentURI": "restaurantBundleC.js"});
+    //parkingGetAccessor gets its resource from the router
+    parkingGetAccessor.setDefault("parameterMap", {"synchronous": false, "componentURI": "parkingBundleC.js", "componentID": "parkingComponent"});
+    videoGetAccessor.setParameter('synchronous', false);
+    restaurantGetAccessor.setParameter('synchronous', false);
+    parkingGetAccessor.setParameter('synchronous', false);
+    
+    console.log("after videoGetAccessor");
+    this.connect(router, 'dashboard', videoGetAccessor, 'trigger');
+    this.connect(router, 'dashboard', restaurantGetAccessor, 'trigger');
+    this.connect(router, 'dashboard', parkingGetAccessor, 'trigger');
 
-    console.log("after videoGetResource");
-    this.connect(router, 'dashboard', videoGetResource, 'trigger');
-    this.connect(router, 'dashboard', restaurantGetResource, 'trigger');
-    this.connect(router, 'dashboard', parkingGetResource, 'trigger');
-
-    this.connect(router, 'selectAccessor', parkingGetResource, 'resource');
+    this.connect(router, 'selectAccessor', parkingGetAccessor, 'resource');
     console.log("after router to video connection");
     
     //this.connect(routingWebSocketServer, "received", wsServerTest, "toSend");
@@ -98,9 +104,9 @@ exports.setup = function() {
     var configuredParkingMutable = this.instantiate("pMutable", "UIComponentMutable");
     console.log("after videoMutable");
 
-    this.connect(videoGetResource, "output", videoMutable, "accessor");
-    this.connect(restaurantGetResource, "output", restaurantMutable, "accessor");
-    this.connect(parkingGetResource, "output", configuredParkingMutable, "accessor");
+    this.connect(videoGetAccessor, "output", videoMutable, "accessor");
+    this.connect(restaurantGetAccessor, "output", restaurantMutable, "accessor");
+    this.connect(parkingGetAccessor, "output", configuredParkingMutable, "accessor");
     console.log("after grvid connection");
 
     this.connect(videoMutable, "componentUpdate", routingWebSocketServer, "routingSend");
