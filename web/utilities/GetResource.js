@@ -74,6 +74,15 @@
 /*jshint globalstrict: true*/
 "use strict";
 
+//To prevent out of order responses for asynchronous getResource calls,
+//maintain a queue of requests.
+
+//The idea is each new (asynchronous) input to this accessor produces a Request which gets
+//inserted into the requests queue and started. When a request anywhere in the
+//queue is completed, it marks itself as complete and attempts to dequque all
+//complete requests from the front of the queue in order.
+var requests = [];
+
 exports.setup = function () {
     this.input('options', {
         'type': 'JSON',
@@ -93,56 +102,60 @@ exports.setup = function () {
 };
 exports.initialize = function () {
     var self = this;
+    this.addInputHandler('trigger', self.exports.handleTrigger.bind(self));
+};
 
-    //To prevent out of order responses for asynchronous getResource calls,
-    //maintain a queue of requests.
+//Respond to a trigger event by acquiring the resource. If synchronous, just get the resource,
+//if asynchronous, create and queue a new request object and start it.
+exports.handleTrigger = function(){
+    var self = this;
+    var resourceValue = self.get('resource');
+    if(self.getParameter('synchronous')){
+        //FIXME: Not every host has both an asynchronous or synchronous implementation
+        var resourceContents = getResource(self.get('resource'), self.get('options'), null);
+        self.send('output', self.exports.filterResponse.call(self, resourceContents));
+    } else {
+        var incomingRequest = new Request(self.get('resource'), self.get('options'));
+        requests.push(incomingRequest);
+        incomingRequest.start();
+    }
 
-    //The idea is each new (asynchronous) input to this accessor produces a Request which gets
-    //inserted into the requests queue and started. When a request anywhere in the
-    //queue is completed, it marks itself as complete and attempts to dequque all
-    //complete requests from the front of the queue in order.
-    var requests = [];
-
-    this.addInputHandler('trigger', function () {
-        var resourceValue = this.get('resource');
-        
-        if(this.getParameter('synchronous')){
-            //FIXME: Not every host has both an asynchronous or synchronous implementation
-            var resourceContents = getResource(this.get('resource'), this.get('options'), null);
-            self.send('output', resourceContents);
-        } else {
-            var incomingRequest = new Request(this.get('resource'), this.get('options'));
-            requests.push(incomingRequest);
-            incomingRequest.start();
-        }
-        
-    });
-
+    //Request class definition. Should only be used by this accessor.
     function Request(resource, options){
         var thiz = this;
 
         //Initially false, but set to true when status and value are available
-        this.complete = false;
-        this.produceOutput = function(){
+        thiz.complete = false;
+        thiz.produceOutput = function(){
             if(thiz.status != null){
                 error(thiz.status);
             } else {
-                self.send('output',thiz.value );
+                self.send('output', self.exports.filterResponse.call(self, thiz.value ));
             }
-    };
-    this.start = function(){
-        getResource(resource, options,
-            function(status, value){
-                thiz.status = status;
-                thiz.value = value;
-                thiz.complete = true;
+        };
+        thiz.start = function(){
+            getResource(resource, options,
+                function(status, value){
+                    thiz.status = status;
+                    thiz.value = value;
+                    thiz.complete = true;
 
-                //Dequeue all complete requests from the front of the queue
-                while(requests.length > 0 && requests[0].complete){
-                    requests.shift().produceOutput();
-                }
-            });
+                    //Dequeue all complete requests from the front of the queue
+                    while(requests.length > 0 && requests[0].complete){
+                        requests.shift().produceOutput();
+                    }
+                });
         };
     }
 };
 
+/** Filter the response. This base class just returns the argument
+ *  unmodified, but derived classes can override this to extract
+ *  a portion of the response, for example. Note that the response
+ *  argument can be null, indicating that there was no response
+ *  (e.g., a timeout or error occurred).
+ *  @param response The response, or null if there is none.
+ */
+exports.filterResponse = function (response) {
+    return response;
+};

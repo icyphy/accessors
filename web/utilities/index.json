@@ -2,6 +2,7 @@
     "Clock.js",
     "Cron.js",
     "Exec.js",
+    "GetAccessor.js",
     "GetResource.js",
     "HostName.js",
     "LocalStorage.js",
