@@ -52,42 +52,59 @@
  
  /** Set up the accessor by defining the inputs and outputs.
  */
-var videoComponentURI = "videoBundle.js";
+
 var videoComponentTimeout = 5000; //milliseconds
 
 exports.setup = function () {
     this.implement('dashboard/UIComponent');
     this.parameter('videoSource', {
         "type": 'string',
-        "value": "../SAC_capital.mp4"
+        "value": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
     });
 };
 //"../trailer_hd.mp4"
 //DOESN'T WORK "https://streamable.com/s/qeecg/qwiazk"
 //"https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
+//../SAC_capital.mp4
+
 
 exports.initialize = function(){
-    var videoComponent = getResource(videoComponentURI, videoComponentTimeout);
-    var replaceSource = videoComponent.replace("__videoSource__", this.getParameter('videoSource'));
 
-    //FIXME I can't get the socketID selection to work with WebSocketServer.js.
-    //The following should work...
+    var self = this;
+    var videoComponentURI = this.getParameter('componentURI');
 
-    var message = {
-        "id": "system",
-        "component": replaceSource,
-        "priority": 0
-    };
-    // var initMessage = {
-    //     socketID: 0,
-    //     message: JSON.stringify(message)
-    // };
+    function constructAndSendMessage(videoComponent){
+        var replaceSource = videoComponent.replace("__videoSource__", self.getParameter('videoSource'));
 
-    //For now, just broadcast
-    // var initMessage = {
-    //     "id": "system",
-    //     "component": replaceSource,
-    // };
+        var message = {
+            "id": "system",
+            "component": replaceSource,
+            "priority": 0
+        };
 
-    this.send('componentUpdate',message);
+        console.log("before send: ");
+        console.log(message);
+        self.send('componentUpdate',message);
+        console.log("after send");
+    }
+
+    var videoComponent;
+    //Cordova has an asynchronous getResource implementation.
+    if( ! self.getParameter('synchronous')){
+        getResource(videoComponentURI, videoComponentTimeout, function(status, resource){
+            console.log("inside videoComponent callback");
+            if(status == null){
+                console.log("status is not null!");
+                //console.log(resource);
+                videoComponent = resource;
+                constructAndSendMessage(videoComponent);
+            } else {
+                error("VideoComponent was unable to getResource with error: " + status);
+            }
+        });
+    } else {
+        videoComponent = getResource(videoComponentURI, videoComponentTimeout);
+        constructAndSendMessage(videoComponent);
+    }
+
 };
