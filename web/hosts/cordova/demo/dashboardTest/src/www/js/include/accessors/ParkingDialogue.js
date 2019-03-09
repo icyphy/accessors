@@ -30,8 +30,8 @@ exports.setup = function(){
 
     console.log("after semRepoQ connections");
 
-    var qLDisp = this.instantiate("qLDisp", "JSONDisplay");
-    this.connect(qServices, "query", qLDisp, "JSON");
+    // var qLDisp = this.instantiate("qLDisp", "JSONDisplay");
+    // this.connect(qServices, "query", qLDisp, "JSON");
 
     console.log("before rGen");
     var rGen = this.instantiate("rGen", "ResponseGeneratorC");
