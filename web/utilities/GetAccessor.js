@@ -70,19 +70,17 @@ exports.setup = function () {
     });
 };
 
-//Prevent triggering for default input
-exports.initialize = function(){
+exports.initialize= function(){
+    this.exports.ssuper.initialize.call(this);
+}
+
+//Override superclass input handler to first check if resource is an empty string.
+exports.handleTrigger = function(){
     var thiz = this;
-    exports.ssuper.initialize.call(this);
-
-    //Override superclass input handler to first check if resource is an empty string.
-    this.addInputHandler('trigger', function(){
-        if(thiz.get('resource')){
-            exports.ssuper.handleTrigger.bind(thiz);
-        }
-    });
-
-};
+    if(thiz.get('resource')){
+        thiz.exports.ssuper.handleTrigger.call(thiz);
+    }
+}
 
 //Override base class to produce parameterMap and inputMap along with the accessor. 
 exports.filterResponse = function (response) {
