@@ -269,7 +269,9 @@ exports.onConnection = function (socket) {
     self.sockets.push(socket);
 
     self.sockets[socketID].on('message', function (message) {
-        console.log('WebSocketServer message(): ' + message + ', typeof message: ' + typeof message);
+        if(debug){
+            console.log('WebSocketServer message(): ' + message + ', typeof message: ' + typeof message);
+        }
         // For some reason, under the Node Host, the message is an
         // object.  Under CapeCode, it is a string?
         var isObjectWithQuotes = (typeof message === 'object' && message.toString().startsWith('"') && message.toString().endsWith('"'));
