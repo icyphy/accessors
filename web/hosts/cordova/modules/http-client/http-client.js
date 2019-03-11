@@ -63,6 +63,11 @@
 // Needed plugins
 var cordovaHTTP = cordova.plugin.http;
 exports.requiredPlugins = ['cordova-plugin-advanced-http'];
+
+if(typeof cordova.plugin.http == "undefined"){
+    console.log("WARNING: http-client.js module does not have cordova-plugin-advanced-http installed and will not work correctly.");
+}
+
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 //FIXME: this full path require method is brittle. Ideally we would require these
