@@ -50,6 +50,10 @@
 
 exports.requiredPlugins = ['com.pylonproducts.wifiwizard', 'cordova-plugin-device', 'cordova-plugin-android-permissions'];
 
+if(typeof cordova.plugins.permissions == "undefined" || typeof WifiWizard == "undefined" || typeof device == "undefined"){
+    console.log("WARNING: wifi-scanner.js module does not have one of (com.pylonproducts.wifiwizard, cordova-plugin-device, cordova-plugin-android-permissions) installed and will not work correctly.");
+}
+
 //The WifiWizard module (https://github.com/hoerresb/WifiWizard) has two steps in obtaining scan data:
 //first call "startScan" and then after a timeout, call getScanResults.
 //I can think of no scenario where an accessor would want to directly control this timeout

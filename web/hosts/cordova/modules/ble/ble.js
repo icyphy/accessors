@@ -40,6 +40,12 @@ exports.startScan = function (successCallback, errorCallback, options) {
     // Scan for all services.
     var foundDevices = {};
 
+    //I don't know if this check actually does anything because to the best of my knowledge
+    //we don't have a working demo for this module.
+    if(typeof evothings == "undefined"){
+        console.log("WARNING: ble.js module does not have cordova-plugin-ble installed and will not work correctly.");
+    }
+
     evothings.ble.startScan(
         function(device)
         {

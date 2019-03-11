@@ -57,6 +57,10 @@ var debug = false;
 
 exports.requiredPlugins = ['cordova-plugin-websocket-server'];
 
+if(typeof cordova.plugins.wsserver == "undefined"){
+    console.log("WARNING: web-socket-server.js module does not have cordova-plugin-websocket-server installed and will not work correctly.");
+}
+
 //Cordova plugin: https://github.com/becvert/cordova-plugin-websocket-server
 var wsserver = cordova.plugins.wsserver;
 

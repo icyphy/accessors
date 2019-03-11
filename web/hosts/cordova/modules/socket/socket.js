@@ -38,7 +38,14 @@
 
 //Uses the cordova-plugin-chrome-apps-sockets-tcp plugin.
 //https://www.npmjs.com/package/cordova-plugin-chrome-apps-sockets-tcp
+console.log("WARNING: socket.js module is incomplete.");
+
+if(typeof chrome.sockets == "undefined"){
+    console.log("WARNING: socket.js module does not have cordova-plugin-chrome-apps-sockets-tcp installed and will not work correctly.");
+}
 var tcpPlugin = chrome.sockets.tcp; 
+
+
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 

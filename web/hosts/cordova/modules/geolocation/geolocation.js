@@ -40,6 +40,12 @@
 
 exports.requiredPlugins = ['cordova-plugin-geolocation'];
 
+//At least on Android, the navigator.geolocation variable is defined even when the plugin
+//is not installed. This check might do something on another platform.
+if(typeof navigator.geolocation == "undefined"){
+    console.log("WARNING: geolocation.js module does not have cordova-plugin-geolocation installed and will not work correctly.");
+}
+
 exports.getPosition = function(onSuccess, onError, options) {
 	
 	var watchID = navigator.geolocation.getCurrentPosition(
