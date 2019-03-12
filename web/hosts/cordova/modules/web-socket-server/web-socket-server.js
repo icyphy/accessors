@@ -33,8 +33,11 @@
  *  so read the warnings below.
  *
  *  WARNING: The plugin used for this module does not support any other network
- *  interface than 0.0.0.0 (binds to all network interfaces). Any interface specification
- *  in this Cordova module is ignored!
+ *  interface than 0.0.0.0 (binds to all network interfaces). But since it is sometimes desirable
+ *  to block all connections that don't originate from localhost, I manually implemented the following
+ *  policy on top of the plugin: If host interface is given as '127.0.0.1' or 'localhost' (the default)
+ *  or '::1' (the ipv6 loopback address) any connections opened from a remote address which is not one of those addresses will be
+ *  immediately closed. 
  *
  *  WARNING: The plugin used for this module doesn't support any specified MIME type.
  *  This module provides 'application/json' parsing on incoming messages. 
@@ -186,10 +189,28 @@ exports.Server.prototype.start = function () {
             //Check to see if a socket already exists for this connection.
             //This is a new connection, so create a new socket.
 
-            //activeConnections[conn.uuid] = conn;
             if (debug) {
                 console.log('A user connected from ' + conn.remoteAddr);
             }
+
+            //If hostInterface a synonym of 'localhost', reject all connections
+            //that don't originate from a synonym of 'localhost'
+            if(self.hostInterface == 'localhost' || self.hostInterface == '127.0.0.1' || self.hostInterface == '::1'){
+                //In ipv4, any packet sent to any of those addresses (127.0.0.1 through 127.255.255.255) is looped back
+                //See https://en.wikipedia.org/wiki/Localhost#Name_resolution
+                if(! (conn.remoteAddr.startsWith("127.") || conn.remoteAddr == 'localhost' || conn.remoteAddr == '::1')){
+                    
+                    //Code 1008 is a policy violation. See https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+                    var code = 1008;
+                    var reason = "Invalid address"
+                    wsserver.close(conn, code, reason);
+                    if (debug) {
+                        console.log('Connection from non-localhost has been immediately closed.');
+                    }
+                    return;
+                }
+            }
+
             var socket = new exports.Socket(self._serverInstance, conn, self._serverInstance.receiveType, self._serverInstance.sendType);
             activeSockets[conn.uuid] = socket;
             self._serverInstance.emit('connection', socket);
