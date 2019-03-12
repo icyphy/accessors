@@ -52,6 +52,8 @@ exports.setup = function() {
     routingWebSocketServer.setParameter('receiveType', 'text/plain');
     routingWebSocketServer.setParameter('sendType', 'text/plain');
     routingWebSocketServer.setParameter('port', webSocketPort);
+    //This setting should close all connections from a non-loopback address
+    routingWebSocketServer.setParameter('hostInterface', 'localhost');
     console.log("after parametersSet");
 
     // var receivedDisplay = this.instantiate('rDisplay', 'JSONDisplay');
