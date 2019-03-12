@@ -33,6 +33,12 @@ import {
   chartExample4
 } from "variables/charts.jsx";
 
+// import { Player, BigPlayButton } from 'video-react';
+
+//It appears this import is necessary to make the video correctly appear
+//and it is also necessary to link the stylesheet within the web component itself
+//import "video-react/dist/video-react.css";
+
 import Gallery from 'react-photo-gallery';
 
 const PHOTO_SET = [
@@ -217,7 +223,16 @@ class Dashboard extends React.Component {
         <script>{evalComponents(this.state.componentStrings)}</script>
         <div className="content">
           <AccessorCards componentStrings={this.state.componentStrings}></AccessorCards>
-          
+            
+            {/* 
+            <link rel="stylesheet" href="https://video-react.github.io/assets/video-react.css"/>
+            
+              <Player src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4">
+              <BigPlayButton position="center" />
+            </Player>
+          <p> hi </p>
+          <p> {window.location.href} </p>
+        */}
         </div>
       </>
     );

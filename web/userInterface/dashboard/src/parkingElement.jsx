@@ -2,6 +2,13 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import Odometer from 'react-odometerjs';
 
+//This component won't display correct icons without these imports,
+//because fonts cannot be declared inside a webcomponent.
+//If the main UI app uses these same stylesheets and icons, these imports aren't
+//strictly necessary but they are included here anyway for portability.
+import "assets/css/nucleo-icons.css";
+import "assets/scss/black-dashboard-react.scss";
+
 //This import is needed to fix a bug with React not handling events which occur in
 //shadow DOM
 import retargetEvents from 'react-shadow-dom-retarget-events';
