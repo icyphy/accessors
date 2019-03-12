@@ -1,3 +1,4 @@
+console.log("Building cordova bundle in ./cordovaDist");
 var path = require('path');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -14,14 +15,31 @@ module.exports = {
       },
        {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader'], //Works for web app
+        // use: ['style-loader/url', 'css-loader'],
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg|png|jpg)(\?v=\d+\.\d+\.\d+)?$/,
+        //CSS loads assets relative to itself
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
           {
             loader: 'file-loader',
-            options: {}
+            options: {
+              publicPath:'./' //correct for both versions
+            },
+          }
+        ]
+      },
+      {
+        //js loads assets relative to the HTML
+        test: /\.(png|jpg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              // publicPath: '', //correct for web
+              publicPath: 'file:///android_asset/www/', //correct for app
+            },
           }
         ]
       },
@@ -40,8 +58,8 @@ module.exports = {
     extensions: ['*', '.js', '.jsx', ".css"]
   },
   output: {
-    path: __dirname + '/dist',
-    publicPath: '/',
+    path: __dirname + '/cordovaDist',
+    publicPath: '/', //This version worked for the web app
     filename: 'bundle.js'
   },
   devServer: {

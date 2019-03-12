@@ -15,7 +15,12 @@ import logo from "assets/img/ptolemySmall.png";
 
 var ps;
 
+//Conditionally render a footer with a Cordova display console.
+var debug = true;
+
 class Admin extends React.Component {
+
+
   constructor(props) {
     super(props);
     this.state = {
@@ -117,6 +122,7 @@ class Admin extends React.Component {
               sidebarOpened={this.state.sidebarOpened}
             />
             <Switch>{this.getRoutes(routes)}</Switch>
+            <Footer fluid debug={debug} />
             {/*
             {// we don't want the Footer to be rendered on map page
             this.props.location.pathname.indexOf("maps") !== -1 ? null : (

@@ -1,7 +1,8 @@
 Author: Matt Weber (matt.weber@berkeley.edu) 1/4/19
 
-This directory contains a React project for building a user interface, along with several other
-non-React files used for testing the interface and interacting with it. These other files include:
+This directory contains a React project for building a user interface. The same files are used to build a browser project and a cordova project. Build the browser project via $webpack --config browserWebpack.config.js and the cordova project via $webpack --config cordovaWebpack.config.js
+
+There are also  several other non-React files used for testing the interface and interacting with it. These other files include:
 
 -dashboard/src/graphElement.jsx, odometerElement.jsx, parkingElement, restaurantElement.js, speedometer.jsx, and video.jsx. These are all web components (built with React but separate from the main project). Compile them into component bundles with the command $webpack —entry <componentName.jsx> —output <bundleName.js>.
 -dashboard/componentSender.xml, a Cape Code swarmlet that runs a websocket server for the user interface to interact with
