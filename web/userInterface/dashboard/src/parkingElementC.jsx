@@ -118,9 +118,11 @@ class ParkingController extends React.Component{
       }.bind(thiz);
     }
 
-  componentWillUnmount() {
-    ws.close();
-  }
+  //This function apparently isn't called correctly inside a web component
+  // componentWillUnmount() {
+  //   console.log("starting component unmount in parking");
+  //   ws.close();
+  // }
 
   render(){
     return (
