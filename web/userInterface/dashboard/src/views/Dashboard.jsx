@@ -152,6 +152,7 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     var thiz = this;
+    thiz.setState({componentStrings: []}); 
     ws.onopen = function(){
       var startMessage = {
         "id" : "system",
