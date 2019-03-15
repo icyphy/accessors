@@ -8,6 +8,9 @@ var app = {
     // Start swarmlet when the device is ready.
     onDeviceReady: function() {
         var topLevel = instantiateAccessor('MyTopLevel', 'Swarmlet', getAccessorCode);
+        window.onunload = function(event){
+            topLevel.wrapup();
+        }
         topLevel.initialize();
         this.updateStatus('Executing'); // FIXME: handle wrap up
     },
