@@ -362,7 +362,6 @@ function getResource(uri, options, callback) {
                         reader.abort(); //I think this function might indirectly call onloadend
                         console.log("cordovaHost getResource timed out at URI: " + uri);
                         callback("timeout", null);
-
                     }
                 }
             }, onErrorReadFile);
