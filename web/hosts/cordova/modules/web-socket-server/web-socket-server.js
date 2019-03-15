@@ -238,7 +238,10 @@ exports.Server.prototype.start = function () {
         // 'protocols' : [ 'my-protocol-v1', 'my-protocol-v2' ], // validates the 'Sec-WebSocket-Protocol' HTTP Header.
         // 'tcpNoDelay' : true // disables Nagle's algorithm.
     }, function onStart(addr, port) {
-        console.log('web-socket-server module listening on ' + addr + ' and port:' + port);
+        if(debug){
+            console.log('web-socket-server module listening on ' + addr + ' and port:' + port);            
+        }
+        self.emit('listening', port);
         // if(debug || self.port == 0){
         //     console.log('web-socket-server module listening on ' + addr + ' and port:' + port);            
         // }
@@ -249,9 +252,9 @@ exports.Server.prototype.start = function () {
 
 exports.Server.prototype.stop = function () {
     wsserver.stop(function onStop(addr, port) {
-    if(debug){
-        console.log('Stopped listening on addr: ' + addr + 'and port: ' + port);
-    }
+        if(debug){
+            console.log('Stopped listening on addr: ' + addr + 'and port: ' + port);
+        }
     });
 };
 
