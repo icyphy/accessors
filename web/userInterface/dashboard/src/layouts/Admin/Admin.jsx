@@ -16,7 +16,8 @@ import logo from "assets/img/ptolemySmall.png";
 var ps;
 
 //Conditionally render a footer with a Cordova display console.
-var debug = true;
+//Currently disabled, because the react app starts after the cordova app.
+var debug = false;
 
 class Admin extends React.Component {
 
