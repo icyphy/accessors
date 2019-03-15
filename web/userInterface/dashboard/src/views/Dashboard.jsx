@@ -195,6 +195,7 @@ class Dashboard extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log("starting componentWillUnmount in dashboard");
     ws.close();
   }
 

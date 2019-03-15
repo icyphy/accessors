@@ -84,7 +84,6 @@ function generateTableRows(spotData){
 var ws;
 class ParkingController extends React.Component{
 
-
   constructor(props) {
     super(props);
 
@@ -97,7 +96,6 @@ class ParkingController extends React.Component{
   }
 
   componentDidMount(){
-    console.log("didMount happens");
     var thiz = this;
     ws = new WebSocket('ws://localhost:8095/');
       ws.onopen = function(){
@@ -119,12 +117,10 @@ class ParkingController extends React.Component{
         });
       }.bind(thiz);
     }
-    
-  //This function apparently isn't called correctly inside a web component
-  // componentWillUnmount() {
-  //   console.log("starting component unmount in parking");
-  //   ws.close();
-  // }
+
+  componentWillUnmount() {
+    ws.close();
+  }
 
   render(){
     return (
@@ -133,7 +129,7 @@ class ParkingController extends React.Component{
                 <h5 className="card-category">Parking Component</h5>
                 </CardHeader>
                 <CardBody style={{"padding": "0px"}}>
-                <img src="../parking/lot.jpg" alt="Empty parking lot" height="200" width="300"
+                <img src={cordova.file.applicationDirectory + "www/parking/lot.jpg"} alt="Empty parking lot" height="200" width="300"
                       style={{display: "block", "margin-left": "auto", "margin-right": "auto"}}/>
                   <Row>
                   <Col lg={{ size: 10, offset: 1 }}>
@@ -198,8 +194,8 @@ class ParkingComponent extends HTMLElement {
         (
           //Put the card inside the component? That way I can give it the right class
           <div>
-          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
-          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+          <link rel="stylesheet" href={cordova.file.applicationDirectory + "www/lib/black-dashboard-react.css"}/>
+          <link rel="stylesheet" href={cordova.file.applicationDirectory + "www/lib/nucleo-icons.css"}/>
           <ParkingController/>
           </div>
         ), mountPoint);
@@ -211,7 +207,5 @@ class ParkingComponent extends HTMLElement {
     console.log("this lifecycle happens");
     ws.close();
   }
-
-
 }
 customElements.define('__componentName__', ParkingComponent);
