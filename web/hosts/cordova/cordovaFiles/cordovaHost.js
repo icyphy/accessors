@@ -219,19 +219,20 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
 
 /** Get a resource using XMLHttpRequest or cordova-plugin-file as needed. 
  *
- *  Unlike other hosts, this implementation is exclusively asynchronous. A null callback argument
- *  will generate an error.
+ *  Unlike other hosts, this implementation is exclusively asynchronous.
+ *  Although getJavaScript above shows synchronous loading, this is to be avoided because 
+ *  a synchronous call to getResource during execution would make the swarmlet freeze.
+ *  Therefore a null callback argument will generate an error.
+ *
+ *   *  $KEYSTORE is replaced with _root + "keystore/"
+ *  This means each cordova swarmlet on a phone is assumed to have
+ *  its own app-specific read-only keystore.
  * 
  *  FIXME: complete this implementation for more resource types such as binary files
  *  (see https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/index.html#store-an-existing-binary-file-)
- *  FIXME: figure out a good way to restrict file system access to particular directories
- *  FIXME: process $KEYSTORE as a path element
- *  FIXME: implement timeouts
- *  FIXME: there is an inconsistency in how error messages are reported for remote and local files and timeouts.
- *    Particularly, resolveFileFailure produces some unknown kind of object. The documentation doesn't help.
- *    It would be good to standardize the cases.
  *  WARNING: the encoding parameter in options is currently ignored
  * 
+ *
  *  Below are the types of resources that are handled
  *  all other resources will cause an error.
  * 
@@ -239,9 +240,9 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
  *
  *  @param uri {string} A specification for the resource. If the uri starts with http or https,
  *    this function will attempt to load the resource from the web. If the uri is an
- *    absolute path on mobile (starts with file:///), this function will attempt to load it
- *    with cordova-plugin-file. If the uri is a relative path, this function will attempt to
- *    load it relative to this app's www folder (located at cordova.file.applicationDirectory/www/)
+ *    absolute path on mobile (starts with file:///) it will attempt to load it locally.
+ *    If the uri is a relative path, this function will attempt to load it relative to this app's www
+ *    directory (located at _root).
  *  @param options FXIME: Until more than UTF-8 resources are supported, encoding inputs are ignored
  *    is ignored. The below documentation is copied from the GetResource accessor.
  *    The options parameter may have the following values:
@@ -283,90 +284,46 @@ function getResource(uri, options, callback) {
         return;         
     }
 
-    if(uri.startsWith("http://") || uri.startsWith("https://") ){
-        var request = new XMLHttpRequest();
-        var complete = false;
-
-        request.onreadystatechange = function(){
-            // readyState === 4 is the same as readyState === request.DONE.
-            if (this.readyState === this.DONE) {
-                complete = true;
-                if (this.status == 200) {
-                    callback(null, this.responseText);
-                } else {
-                    callback(this.status, null);
-                    console.log("cordovaHost getResource failed with code " + this.status + " at URL: " + uri);
-                }
-            }
-        };
-        // The third argument specifies an asynchronous read.
-        // A synchronous read will block this host during the read, so 
-        request.open("GET", uri, true);
-        request.send();
-        
-        var timeoutHandler = setTimeout(handleTimeout, timeout);
-
-        function handleTimeout() {
-            if(!complete){
-                console.log("cordovaHost getResource timed out at URI: " + uri);
-                request.abort();
-                //No need to call the callback here because abort will trigger onreadystatechange
-                //with readyState DONE
-                //callback("timeout", null);                
-            }
-        }
+    var path = "";
+    if(uri.startsWith("http://") || uri.startsWith("https://") ||uri.startsWith("file:///") ){
+        //Absoulte path. Starting with "/" is not a valid path on mobile.
+        path = uri;
+    } else if(uri.startsWith("$KEYSTORE")){
+        //On other hosts this is a hidden directory, but Cordova doesn't seem to load hidden files.
+        path = _root + "keystore/" + uri;
     } else {
-        //Resource is a local file.
+        path = _root + uri;
+    }
+    var request = new XMLHttpRequest();
+    var complete = false;
 
-        var path = "";
-        if(uri.startsWith("file:///")){
-            //Resource is an absolute path.
-            path = uri;
-        } else {
-            //Resource is a relative path.
-            path = cordova.file.applicationDirectory + 'www/' + uri;
+    request.onreadystatechange = function(){
+        // readyState === 4 is the same as readyState === request.DONE.
+        if (this.readyState === this.DONE) {
+            complete = true;
+            if (this.status == 200) {
+                callback(null, this.responseText);
+            } else {
+                callback(this.status, null);
+                console.log("cordovaHost getResource failed with code " + this.status + " at URL: " + uri);
+            }
         }
+    };
+    // The third argument specifies an asynchronous read.
+    // A synchronous read will block this host during the read, so 
+    request.open("GET", uri, true);
+    request.send();
+    
+    var timeoutHandler = setTimeout(handleTimeout, timeout);
 
-        function resolveFileFail(e) {
-            callback(e, null);
-            console.log("cordovaHost getResource failed resolving local file with error: " + e);
+    function handleTimeout() {
+        if(!complete){
+            console.log("cordovaHost getResource timed out at URI: " + uri);
+            request.abort();
+            //No need to call the callback here because abort will trigger onreadystatechange
+            //with readyState DONE
+            //callback("timeout", null);                
         }
-
-        function onErrorReadFile(){
-            console.log("cordovaHost getResource failed reading file.");
-            callback( "FileReadError", null);
-        }
-
-        function resolveFileSuccess(fileEntry){
-            fileEntry.file(function (file) {
-                var reader = new FileReader();
-                var complete = false;
-
-                reader.onloadend = function() {
-                    //It seems reader.abort doesn't prevent this function from being called,
-                    //although abort does appear to make this execute immediately without the
-                    //result. 
-                    if(!complete){
-                        callback(null, this.result);
-                        complete = true;
-                    }
-
-                };
-                reader.readAsText(file);
-
-                var timeoutHandler = setTimeout(handleTimeout, timeout);
-
-                function handleTimeout() {
-                    if(!complete){
-                        complete = true;
-                        reader.abort(); //I think this function might indirectly call onloadend
-                        console.log("cordovaHost getResource timed out at URI: " + uri);
-                        callback("timeout", null);
-                    }
-                }
-            }, onErrorReadFile);
-        }
-        window.resolveLocalFileSystemURL(path, resolveFileSuccess, resolveFileFail);
     }
 };
 
