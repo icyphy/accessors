@@ -17,8 +17,7 @@
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {},
-      "cordova-plugin-file": {}
+      "cordova-plugin-whitelist": {}
     },
     "platforms": [
       "browser",
