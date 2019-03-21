@@ -54,10 +54,13 @@ exports.setup = function() {
 //     });
 
     var gr = this.instantiate('GetResource', 'utilities/GetResource');
-    var disp = this.instantiate('jsDisplay', 'JSONDisplay');
-    // gr.setDefault('resource', 'https://www.google.com');
     gr.setDefault('resource', 'test.txt');
     gr.setDefault('options', {"timeout": 3000 });
+    gr.setParameter('synchronous', false);
+
+    var disp = this.instantiate('jsDisplay', 'JSONDisplay');
+    // gr.setDefault('resource', 'https://www.google.com');
+
 
     this.connect(trigger, 'output', gr, 'trigger');
     this.connect(gr, 'output', disp, 'JSON');
