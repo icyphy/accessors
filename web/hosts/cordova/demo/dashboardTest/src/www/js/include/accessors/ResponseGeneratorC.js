@@ -7,10 +7,6 @@ exports.setup = function() {
         'type': 'number'
     });
     this.output('response');
-    this.parameter("MapsAPIKeyLocation", {
-        type: "string",
-        value: "MAPS_API_KEY_DONT_COMMIT.txt"
-    });
 };
 
 exports.initialize = function() {
@@ -26,7 +22,9 @@ exports.initialize = function() {
     var resourceContents = null;
 
     console.log("before getting key");
-    var resourceValue = this.getParameter('MapsAPIKeyLocation');
+    // The key from https://developers.google.com/maps/documentation/javascript/get-api-key
+    // that should be placed in $HOME/.ptKeystore/maps
+    var resourceValue = "$KEYSTORE/maps.txt"
     getResource(resourceValue, options, function(status, resource){
         if(status != null){
             console.log("Error getting map API Key in ResponseGeneratorC: " + status);
