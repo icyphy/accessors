@@ -34,10 +34,13 @@
 // Module variables.
 
 /** Full path to the root (www). */
-var _root = document.location + '/..';
+var _rootStr = document.location + "";
+var _root = _rootStr.substring(0, (_rootStr.lastIndexOf("/")+1) );
+// var _root = document.location + '/..';
+//var _root = document.location + '/..';
 
 /** Relative path (from www) to the include directory. */
-var _includePath = '/js/include/';
+var _includePath = 'js/include/';
 
 /** Relative path (from www) to the accessors directory. */
 var _accessorPath = _includePath + 'accessors/';
@@ -217,7 +220,19 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
     }
 }
 
-/** Get a resource using XMLHttpRequest or cordova-plugin-file as needed. 
+/** Get a resource using XMLHttpRequest for remote files and window.resolveLocalFileSystemURL
+ *  for local files.
+ *  
+ *  The reason for using a different function for local files is subtle, and has to do with
+ *  how mobile apps are sandboxed differently than web apps.
+ *  XMLHttpRequest will load local files, but is restricted by the domain name and top level domain name
+ *  of the current URI, which can change from the app's www directory if the user navigates to another
+ *  page of the app and interfere with file loading. Not only does 
+ *  window.resolveLocalFileSystemURL not have this issue
+ *  it provides access to other files in the app sandbox which may not be in the
+ *  app's www directory. For example both Android and iOS provide persistant and private data
+ *  storage (see https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/) outside
+ *  of the app's www directory.
  *
  *  Unlike other hosts, this implementation is exclusively asynchronous.
  *  Although getJavaScript above shows synchronous loading, this is to be avoided because 
@@ -231,6 +246,7 @@ function getJavaScript(path, callback) { // FIXME: try to merge with browser ver
  *  FIXME: complete this implementation for more resource types such as binary files
  *  (see https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/index.html#store-an-existing-binary-file-)
  *  WARNING: the encoding parameter in options is currently ignored
+ *  FIXME: print file errors with more informative messages than "[object]". 
  * 
  *
  *  Below are the types of resources that are handled
@@ -285,46 +301,96 @@ function getResource(uri, options, callback) {
     }
 
     var path = "";
-    if(uri.startsWith("http://") || uri.startsWith("https://") ||uri.startsWith("file:///") ){
-        //Absoulte path. Starting with "/" is not a valid path on mobile.
+    if(uri.startsWith("http://") || uri.startsWith("https://")){
         path = uri;
-    } else if(uri.startsWith("$KEYSTORE")){
-        //On other hosts this is a hidden directory, but Cordova doesn't seem to load hidden files.
-        path = _root + "keystore/" + uri;
-    } else {
-        path = _root + uri;
-    }
-    var request = new XMLHttpRequest();
-    var complete = false;
+        var request = new XMLHttpRequest();
+        var complete = false;
 
-    request.onreadystatechange = function(){
-        // readyState === 4 is the same as readyState === request.DONE.
-        if (this.readyState === this.DONE) {
-            complete = true;
-            if (this.status == 200) {
-                callback(null, this.responseText);
-            } else {
-                callback(this.status, null);
-                console.log("cordovaHost getResource failed with code " + this.status + " at URL: " + uri);
+        request.onreadystatechange = function(){
+            // readyState === 4 is the same as readyState === request.DONE.
+            if (this.readyState === this.DONE) {
+                complete = true;
+                if (this.status == 200) {
+                    callback(null, this.responseText);
+                } else {
+                    callback(this.status, null);
+                    console.log("cordovaHost getResource failed with code " + this.status + " at URL: " + uri);
+                }
+            }
+        };
+        // The third argument specifies an asynchronous read.
+        // A synchronous read will block this host during the read, so 
+        request.open("GET", uri, true);
+        request.send();
+        
+        var timeoutHandler = setTimeout(handleTimeout, timeout);
+
+        function handleTimeout() {
+            if(!complete){
+                console.log("cordovaHost getResource timed out at URI: " + uri);
+                request.abort();
+                //No need to call the callback here because abort will trigger onreadystatechange
+                //with readyState DONE
+                //callback("timeout", null);                
             }
         }
-    };
-    // The third argument specifies an asynchronous read.
-    // A synchronous read will block this host during the read, so 
-    request.open("GET", uri, true);
-    request.send();
-    
-    var timeoutHandler = setTimeout(handleTimeout, timeout);
+    } else {
+        if(uri.startsWith("file:///")){
+            //Absolute path. Starting with "/" is not a valid path on mobile.
+            path = uri;
 
-    function handleTimeout() {
-        if(!complete){
-            console.log("cordovaHost getResource timed out at URI: " + uri);
-            request.abort();
-            //No need to call the callback here because abort will trigger onreadystatechange
-            //with readyState DONE
-            //callback("timeout", null);                
+        } else if(uri.startsWith("$KEYSTORE")){
+            //On other hosts this is a hidden directory, but Cordova doesn't seem to load hidden files.
+            // path = _root + "keystore/" + uri.substring(10);
+            path = _root + "keystore/" + uri.substring(10);
+
+        } else {
+            //Relative path
+            path = _root + uri;
         }
+
+        function resolveFileFail(e) {
+            callback(e, null);
+            console.log("cordovaHost getResource failed resolving local file with error: " + e);
+        }
+
+        function onErrorReadFile(){
+            console.log("cordovaHost getResource failed reading file.");
+            callback( "FileReadError", null);
+        }
+
+        function resolveFileSuccess(fileEntry){
+            fileEntry.file(function (file) {
+                var reader = new FileReader();
+                var complete = false;
+
+                reader.onloadend = function() {
+                    //It seems reader.abort doesn't prevent this function from being called,
+                    //although abort does appear to make this execute immediately without the
+                    //result. 
+                    if(!complete){
+                        callback(null, this.result);
+                        complete = true;
+                    }
+
+                };
+                reader.readAsText(file);
+
+                var timeoutHandler = setTimeout(handleTimeout, timeout);
+
+                function handleTimeout() {
+                    if(!complete){
+                        complete = true;
+                        reader.abort(); //I think this function might indirectly call onloadend
+                        console.log("cordovaHost getResource timed out at URI: " + uri);
+                        callback("timeout", null);
+                    }
+                }
+            }, onErrorReadFile);
+        }
+        window.resolveLocalFileSystemURL(path, resolveFileSuccess, resolveFileFail);
     }
+    
 };
 
 /** Return the name of this host.
