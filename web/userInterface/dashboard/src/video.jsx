@@ -27,11 +27,11 @@ class VideoComponent extends HTMLElement {
         (
         <div>
         {/* This link to the stylesheet is necessary for the component to be correctly styled */}
-          <link rel="stylesheet" href="../lib/video-react.css" />
+          <link rel="stylesheet" href="lib/video-react.css" />
           { /* <link rel="stylesheet" href="https://video-react.github.io/assets/video-react.css"/> */}
           {/* <link rel="stylesheet" href="../lib/metaSheet.css" /> */}
-          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
-          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+          <link rel="stylesheet" href="lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="lib/nucleo-icons.css" />
             <Card className="card-chart">
             <CardHeader>
             <h5 className="card-category">Video Component</h5>

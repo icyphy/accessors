@@ -133,7 +133,7 @@ class ParkingController extends React.Component{
                 <h5 className="card-category">Parking Component</h5>
                 </CardHeader>
                 <CardBody style={{"padding": "0px"}}>
-                <img src="../parking/lot.jpg" alt="Empty parking lot" height="200" width="300"
+                <img src="parking/lot.jpg" alt="Empty parking lot" height="200" width="300"
                       style={{display: "block", "margin-left": "auto", "margin-right": "auto"}}/>
                   <Row>
                   <Col lg={{ size: 10, offset: 1 }}>
@@ -198,8 +198,8 @@ class ParkingComponent extends HTMLElement {
         (
           //Put the card inside the component? That way I can give it the right class
           <div>
-          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
-          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+          <link rel="stylesheet" href="lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="lib/nucleo-icons.css" />
           <ParkingController/>
           </div>
         ), mountPoint);

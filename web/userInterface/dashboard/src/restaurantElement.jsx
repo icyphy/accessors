@@ -42,15 +42,15 @@ class RestaurantComponent extends HTMLElement {
         (
           //Put the card inside the component? That way I can give it the right class
           <div>
-          <link rel="stylesheet" href="../lib/black-dashboard-react.css" />
-          <link rel="stylesheet" href="../lib/nucleo-icons.css" />
+          <link rel="stylesheet" href="lib/black-dashboard-react.css" />
+          <link rel="stylesheet" href="lib/nucleo-icons.css" />
                 <Card>
                 <CardHeader>
                 <h5 className="card-category">Restaurant Component</h5>
                 </CardHeader>
                 <CardBody>
 
-                <img src="../food/burger.jpeg" alt="Tasty Hamburger" height="200" width="301"
+                <img src="food/burger.jpeg" alt="Tasty Hamburger" height="200" width="301"
                       style={{display: "block", "margin-left": "auto", "margin-right": "auto"}}/>
                   <Card className="card-tasks">
 
