@@ -1,20 +1,20 @@
 {
-    "name": "AccessorDashboard",
-    "displayName": "AccessorDashboard",
-    "version": "1.0.0",
-    "description": "A sample Apache Cordova application that responds to the deviceready event.",
-    "main": "index.js",
-    "dependencies": {},
-    "author": "Apache Cordova Team",
-    "license": "Apache-2.0",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "cordova": {
-        "plugins": {
-            "cordova-plugin-websocket-server": {},
-            "cordova-plugin-file": {},
-            "cordova-plugin-advanced-http": {}
-        }
+  "name": "AccessorDashboard",
+  "displayName": "AccessorDashboard",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "dependencies": {},
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-websocket-server": {},
+      "cordova-plugin-file": {},
+      "cordova-plugin-advanced-http": {}
     }
+  }
 }

@@ -56,7 +56,11 @@ exports.setup = function() {
     routingWebSocketServer.setParameter('hostInterface', 'localhost');
     console.log("after parametersSet");
 
-    // var receivedDisplay = this.instantiate('rDisplay', 'JSONDisplay');
+    var receivedDisplay = this.instantiate('rDisplay', 'JSONDisplay');
+    this.connect(routingWebSocketServer, 'listening', receivedDisplay, 'JSON');
+
+    var ui = this.instantiate('UI', "UI");
+    this.connect(routingWebSocketServer, 'listening', ui, 'trigger');
     // var listeningDisplay = this.instantiate('lDisplay', 'JSONDisplay');
     // var connectionDisplay = this.instantiate('cDisplay', 'JSONDisplay');
     
@@ -78,11 +82,11 @@ exports.setup = function() {
     var parkingGetAccessor = this.instantiate('parkingGR', 'utilities/GetAccessor')
     console.log("after instantiate GR");
     videoGetAccessor.setDefault('resource', 'file:///android_asset/www/js/include/accessors/dashboard/VideoComponent.js');
-    videoGetAccessor.setDefault('parameterMap', {"videoSource": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4", "synchronous": false, "componentURI": "videoBundleC.js"});
+    videoGetAccessor.setDefault('parameterMap', {"videoSource": "https://media.w3.org/2010/05/sintel/trailer_hd.mp4", "synchronous": false, "componentURI": "videoBundle.js"});
     restaurantGetAccessor.setDefault('resource','file:///android_asset/www/js/include/accessors/dashboard/RestaurantComponent.js' )
-    restaurantGetAccessor.setDefault('parameterMap', {"synchronous": false, "componentURI": "restaurantBundleC.js"});
+    restaurantGetAccessor.setDefault('parameterMap', {"synchronous": false, "componentURI": "restaurantBundle.js"});
     //parkingGetAccessor gets its resource from the router
-    parkingGetAccessor.setDefault("parameterMap", {"synchronous": false, "componentURI": "parkingBundleC.js", "componentID": "parkingComponent"});
+    parkingGetAccessor.setDefault("parameterMap", {"synchronous": false, "componentURI": "parkingBundle.js", "componentID": "parkingComponent"});
     videoGetAccessor.setParameter('synchronous', false);
     restaurantGetAccessor.setParameter('synchronous', false);
     parkingGetAccessor.setParameter('synchronous', false);
@@ -144,3 +148,7 @@ exports.setup = function() {
 exports.initialize = function () {
     console.log('Swarmlet initialized');
 };
+
+exports.wrapup = function(){
+    console.log("hi from swarmlet wrapup");
+}

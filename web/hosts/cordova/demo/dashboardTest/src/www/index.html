@@ -14,7 +14,7 @@
     font-src * data: blob: 'unsafe-inline';"> -->
 
     <!-- Very permissive csp: -->
-    <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: 'unsafe-inline' 'unsafe-eval'; 
+    <meta http-equiv="Content-Security-Policy" content="default-src * file: data: blob:  'unsafe-inline' 'unsafe-eval'; 
     script-src * 'unsafe-inline' 'unsafe-eval'; 
     img-src * data: blob: 'unsafe-inline'; 
     style-src * data: blob: 'unsafe-inline';
@@ -47,7 +47,17 @@
         console.log(window.cordova.file);
     }, 1000);
     </script> -->
-    <script src="./bundle.js"></script>
+
+
+
+
+<!-- THIS IS THE SCRIPT THAT WAS COMMENTED OUT -->
+    <!-- <script src="./bundle.js"></script> -->
+    <div id="initLog" class="console">
+        <label id="log"></label>
+    </div>
+
+
     <!-- <img src="da9b5abb2e7d2ad74fa5304ee853dce5.png" align="center"> -->
     <!-- <img src="food/burger.jpeg" align="center"> -->
      <!-- <script>
