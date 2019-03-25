@@ -16,6 +16,12 @@
  *  @input {number} latitude First part of coordinates for local business search. Defaults to UC Berkeley's coordinates.
  *  @input {number} longitude Second part of coordinates for local business search. Defaults to UC Berkeley's coordinates.
  *  @input trigger An input to trigger the search.
+ *  @output {boolean} ready WARNING: Triggers may not work correctly before this output has been produced.
+ *   This accessor produces true on this output when it has successfully loaded its API key
+ *   and is ready for queries.
+ *   If this accessor is acquring its API key asynchronously, this may occur after initialization has completed.
+ *  @parameter {boolan} getAPIKeySynchronously Not all hosts support synchronous or asynchronous file reading.
+ *   specify the right mode for this accessor's host here.
  *  @parameter {string} APIKey An authentication token provided by Yelp for using
  *   their API. See https://www.yelp.com/developers/documentation/v3/authentication.
  *  @parameter {number} expirationPeriod The duration of time (in milliseconds) from receiving the Yelp response in this accessor 
