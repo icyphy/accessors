@@ -5,6 +5,11 @@
  *  This accessor demonstrates a simple query for a particular type of
  *  buisness near specific geographic coordinates.
  *
+ *  This accessor requires an authentication token provided by Yelp for using
+ *  their API. See https://www.yelp.com/developers/documentation/v3/authentication.
+ *  This key must be stored in a text file at $KEYSTORE/yelp.txt
+ *
+ *  
  *  @accessor services/YelpSearch
  *  @author Matt Weber
  *  @version $$Id: YelpSearch.js 1725 2017-05-19 22:59:11Z cxh $$
@@ -12,8 +17,12 @@
  *  @input {number} latitude First part of coordinates for local buisness search. Defaults to UC Berkeley's coordinates.
  *  @input {number} longitude Second part of coordinates for local buisness search. Defaults to UC Berkeley's coordinates.
  *  @input trigger An input to trigger the search.
- *  @parameter {string} APIKey An authentication token provided by Yelp for using
- *   their API. See https://www.yelp.com/developers/documentation/v3/authentication.
+ *  @output {boolean} ready WARNING: Triggers may not work correctly before this output has been produced.
+ *   This accessor produces true on this output when it has successfully loaded its API key
+ *   and is ready for queries.
+ *   If this accessor is acquring its API key asynchronously, this may occur after initialization has completed.
+ *  @parameter {boolan} getAPIKeySynchronously Not all hosts support synchronous or asynchronous file reading.
+ *   specify the right mode for this accessor's host here.
  *  @parameter {int} timeout The amount of time (in milliseconds) to wait for a response
  *   before triggering a null response and an error. This defaults to 5000.
  *  @output response Yelp's raw JSON response to the query.
@@ -47,9 +56,14 @@ exports.setup = function () {
         'value': -122.270460
     });
 
-    this.parameter('APIKey', {
-        'type': 'string',
-        'value': ""
+    this.output('ready',{
+        'type': 'boolean',
+        'spontaneous': true
+    });
+
+    this.parameter('getAPIKeySynchronously', {
+        'type': 'boolean',
+        'value': true
     });
 
     //Use the response output from the REST accessor
@@ -95,18 +109,61 @@ exports.handleResponse = function(message){
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
     var thiz = this;
+    var options = 1000; //1 second timeout on getResource
 
     //Prepare accessor for a query with default input values
-    var authString = "Bearer " + thiz.getParameter('APIKey');
-    var options = {
-        'headers' : {"Authorization": authString},
-        'method'  : 'GET',
-        'url'     : "https://api.yelp.com"
-    };
-    var command = "/v3/businesses/search";
+        
+        var options = {
+            'method'  : 'GET',
+            'url'     : "https://api.yelp.com"
+        };
+        var command = "/v3/businesses/search";
 
-    thiz.send('options', options);
-    thiz.send('command', command);
+    var key = '';
+    // The key from https://www.yelp.com/developers/documentation/v3/authentication 
+    // that for Node and Nashorn hosts should be placed in $HOME/.ptKeystore/weatherKey.
+    // For the Cordova host this should be src/www/keystore/yelp.txt
+    // See the accessor comment for how to get the key.
+    var keyFile = '$KEYSTORE/yelp.txt';
+
+    if(thiz.getParameter('getAPIKeySynchronously')){
+        try {
+            key = getResource(keyFile, options).trim();
+        } catch (e) {
+            console.log('YelpSearch.js: Could not get ' + keyFile + ":  " + e +
+                        '\nThe key is not public, so this accessor is only useful ' +
+                        'If you have the key.  See ' +
+                        'https://ptolemy.berkeley.edu/accessors/library/index.html?accessor=services.YelpSearch');
+            key = 'ThisIsNotAPipeNorIsItAWorkingKeySeeTheYelpSearchAccessorDocs';
+        }
+
+        var authString = "Bearer " + key;
+        options.headers = {"Authorization": authString};        
+
+        thiz.send('options', options);
+        thiz.send('command', command);
+        thiz.send('ready', true);
+    } else {
+        var keyFile = '$KEYSTORE/yelp.txt';
+        getResource(keyFile, options, function(status, resource){
+            if(status != null){
+                console.log("Error getting yelp API Key in YelpSearch: " + status);
+            } else {
+                if(resource == null){
+                    console.log("Error in YelpSearch: resourceContents is null but status is null");
+                } else {
+                    key = resource.trim();
+
+                    var authString = "Bearer " + key;
+                    options.headers = {"Authorization": authString};        
+
+                    thiz.send('options', options);
+                    thiz.send('command', command);
+                    thiz.send('ready', true);
+                }
+            }   
+        });
+    }
 };
 
 //Override
