@@ -82,10 +82,10 @@ exports.initialize = function(){
             "priority": 0
         };
 
-        console.log("before send: ");
-        console.log(message);
+        // console.log("before send: ");
+        // console.log(message);
         self.send('componentUpdate',message);
-        console.log("after send");
+        // console.log("after send");
     }
 
     var videoComponent;
