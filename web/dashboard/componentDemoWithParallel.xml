@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
-<entity name="componentDemoRefactor" class="ptolemy.actor.TypedCompositeActor">
+<entity name="componentDemoWithParallel" class="ptolemy.actor.TypedCompositeActor">
     <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="11.1.devel">
     </property>
     <property name="DE Director" class="ptolemy.domains.de.kernel.DEDirector">
@@ -18,7 +18,7 @@
     </property>
     <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="1.1492313970888315">
     </property>
-    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{19.064820544554493, 230.22787747524757}">
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{19.064820544554607, 230.22787747524745}">
     </property>
     <property name="Annotation" class="ptolemy.vergil.kernel.attributes.TextAttribute">
         <property name="textColor" class="ptolemy.actor.gui.ColorAttribute" value="{0.0, 0.0, 0.0, 1.0}">
@@ -75,7 +75,7 @@
         </property>
     </property>
     <entity name="Merge" class="ptolemy.domains.de.lib.Merge">
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[195.0, 205.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[235.0, 220.0]">
         </property>
     </entity>
     <entity name="Display" class="ptolemy.actor.lib.gui.Display">
@@ -157,7 +157,7 @@
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[315.0, 195.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[330.0, 210.0]">
         </property>
         <property name="sslTls" class="ptolemy.data.expr.Parameter" value="false">
         </property>
@@ -200,7 +200,7 @@
             <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
             </property>
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[30.0, 290.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[65.0, 290.0]">
         </property>
         <property name="componentID" class="ptolemy.data.expr.Parameter" value="parkingComponent">
             <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
@@ -267,79 +267,6 @@
         </property>
         <property name="_location" class="ptolemy.kernel.util.Location" value="[415.0, 305.0]">
         </property>
-    </entity>
-    <entity name="LoadStaticAccessors" class="ptolemy.actor.lib.jjs.JavaScript">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-        </property>
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Put your JavaScript program here.&#10;// Refer to parameters in scope using dollar-sign{parameterName}.&#10;// See: https://wiki.eecs.berkeley.edu/accessors/Version1/AccessorSpecification&#10;&#10;// This accessor will spontaneously load static accessors of the&#10;// Dashboard upon initialization.&#10;&#10;// Stop extra messages from jslint.  Note that there should be no&#10;// space between the / and the * and global.&#10;/*globals clearInterval, exports, require, setInterval */&#10;/*jshint globalstrict: true*/&#10;&quot;use strict&quot;;&#10;&#10;exports.setup = function () {&#10;	this.input('trigger');&#10;	&#10;    this.output('accessor', {&#10;        'type': 'JSON',&#10;        'value': {}&#10;    });&#10;    &#10;    this.parameter('accessorsList', {&#10;    	'type': 'string',&#10;    	'value': ''&#10;    });&#10;};&#10;&#10;exports.initialize = function() {&#10;	var thiz = this;&#10;	&#10;	this.addInputHandler('trigger', function() {&#10;	    var accessorsList = JSON.parse(thiz.getParameter('accessorsList'));&#10;    	Object.keys(accessorsList).forEach(function(acc) {&#10;    		thiz.send('accessor', accessorsList[acc]);&#10;    	});&#10;	});&#10;}&#10;&#10;&#10;">
-            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                </property>
-            </property>
-        </property>
-        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-            </property>
-            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-            </property>
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[-120.0, 180.0]">
-        </property>
-        <property name="accessorsList" class="ptolemy.data.expr.Parameter" value="$accessorsList">
-            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
-            </property>
-        </property>
-        <port name="accessor" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
-            </property>
-        </port>
-        <port name="trigger" class="ptolemy.actor.TypedIOPort">
-            <property name="input"/>
-        </port>
-    </entity>
-    <entity name="ParameterizedParallelMutable" class="ptolemy.actor.lib.jjs.JavaScript">
-        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
-        </property>
-        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
-        </property>
-        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Put your JavaScript program here.&#10;// Refer to parameters in scope using dollar-sign{parameterName}.&#10;// See: https://wiki.eecs.berkeley.edu/accessors/Version1/AccessorSpecification&#10;&#10;exports.setup = function() {&#10;    this.implement('dashboard/UIComponent');&#10;	&#10;	this.input('accessor');&#10;&#10;    this.parameter('numberOfMutable', {&#10;        'type': 'number',&#10;        'value': 6&#10;    });&#10;};&#10;&#10;var currentNumberOfMutables = 0;&#10;&#10;exports.initialize = function() {&#10;    var thiz = this;&#10;&#10;    var numberOfMutables = this.getParameter('numberOfMutable');&#10;	&#10;	for (i = 0 ; i &lt; numberOfMutables ; i++) {&#10;    	var mutable = thiz.instantiate('Mut'+i, 'dashboard/UIComponentMutable');&#10;    	thiz.connect('userInput', mutable, 'userInput');&#10;    	thiz.connect(mutable, 'componentUpdate', 'componentUpdate');&#10;    }&#10;    this.assignPriorities();&#10;        &#10;    this.addInputHandler('accessor', function() {&#10;    	if (currentNumberOfMutables &lt; numberOfMutables) {&#10;    		var accessor = this.get('accessor');&#10;    		accessor = JSON.parse(accessor);&#10;    		console.log('this is what will be reified : '+accessor);&#10;    		thiz.containedAccessors[currentNumberOfMutables].reify(accessor);&#10;    		thiz.containedAccessors[currentNumberOfMutables].initialize();&#10;    		// console.log('Reified accessor '+thiz.containedAccessors[currentNumberOfMutables].accessorName);&#10;    		currentNumberOfMutables++;&#10;    		console.log('currentNumberOfMutables '+currentNumberOfMutables);&#10;    		&#10;    	}&#10;    });&#10;};&#10; &#10;  ">
-            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
-                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
-                </property>
-            </property>
-        </property>
-        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
-            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
-            </property>
-            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
-            </property>
-        </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 170.0]">
-        </property>
-        <property name="componentID" class="ptolemy.data.expr.Parameter" value="">
-            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
-            </property>
-        </property>
-        <property name="synchronous" class="ptolemy.data.expr.Parameter">
-        </property>
-        <property name="componentURI" class="ptolemy.data.expr.Parameter" value="">
-            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
-            </property>
-        </property>
-        <property name="numberOfMutable" class="ptolemy.data.expr.Parameter" value="numberStaticWebComponents">
-        </property>
-        <port name="userInput" class="ptolemy.actor.TypedIOPort">
-            <property name="input"/>
-        </port>
-        <port name="componentUpdate" class="ptolemy.actor.TypedIOPort">
-            <property name="output"/>
-        </port>
-        <port name="accessor" class="ptolemy.actor.TypedIOPort">
-            <property name="input"/>
-        </port>
     </entity>
     <entity name="GetAccessor" class="org.terraswarm.accessor.JSAccessor">
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
@@ -420,7 +347,7 @@
         </port>
     </entity>
     <entity name="ParkingDialogue" class="ptolemy.actor.TypedCompositeActor">
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[30.0, 400.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[65.0, 390.0]">
         </property>
         <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={354, 264, 914, 641}, maximized=false}">
         </property>
@@ -1187,6 +1114,81 @@
         <link port="ResponseGenerator.longitude" relation="relation7"/>
         <link port="ResponseGenerator.response" relation="relation"/>
     </entity>
+    <entity name="LoadStaticAccessors" class="ptolemy.actor.lib.jjs.JavaScript">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Put your JavaScript program here.&#10;// Refer to parameters in scope using dollar-sign{parameterName}.&#10;// See: https://wiki.eecs.berkeley.edu/accessors/Version1/AccessorSpecification&#10;&#10;// This accessor will spontaneously load static accessors of the&#10;// Dashboard upon initialization.&#10;&#10;// Stop extra messages from jslint.  Note that there should be no&#10;// space between the / and the * and global.&#10;/*globals clearInterval, exports, require, setInterval */&#10;/*jshint globalstrict: true*/&#10;&quot;use strict&quot;;&#10;var util = require('util');&#10;&#10;exports.setup = function () {&#10;	this.input('trigger');&#10;	&#10;    this.output('accessor', {&#10;        'type': 'JSON',&#10;        'value': {}&#10;    });&#10;    &#10;    this.parameter('accessorsList', {&#10;    	'type': 'string',&#10;    	'value': ''&#10;    });&#10;};&#10;&#10;exports.initialize = function() {&#10;	var thiz = this;&#10;	&#10;	this.addInputHandler('trigger', function() {&#10;	    var accessorsList = JSON.parse(thiz.getParameter('accessorsList'));&#10;	    // console.log('&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot; : '+util.inspect(accessorsList));&#10;	    thiz.send('accessor', {});&#10;    	Object.keys(accessorsList).forEach(function(acc) {&#10;    		// console.log('&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot; : '+typeof accessorsList[acc])&#10;    		thiz.send('accessor', accessorsList[acc]);&#10;    	});&#10;	});&#10;}&#10;&#10;&#10;">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[-120.0, 180.0]">
+        </property>
+        <property name="accessorsList" class="ptolemy.data.expr.Parameter" value="$accessorsList">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <port name="accessor" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </port>
+        <port name="trigger" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+    </entity>
+    <entity name="ParameterizedParallelMutable" class="ptolemy.actor.lib.jjs.JavaScript">
+        <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute">
+        </property>
+        <property name="_paneSize" class="ptolemy.actor.gui.SizeAttribute">
+        </property>
+        <property name="script" class="ptolemy.actor.parameters.PortParameter" value="// Put your JavaScript program here.&#10;// Refer to parameters in scope using dollar-sign{parameterName}.&#10;// See: https://wiki.eecs.berkeley.edu/accessors/Version1/AccessorSpecification&#10;&#10;exports.setup = function() {&#10;    this.implement('dashboard/UIComponent');&#10;	&#10;	this.input('accessor', {&#10;		'type': 'JSON'&#10;	});&#10;&#10;    this.parameter('numberOfMutable', {&#10;        'type': 'number'&#10;    });&#10;};&#10;&#10;// This variable keeps track of the number of reified mutables&#10;var currentNumberOfMutables = 0;&#10;&#10;exports.initialize = function() {&#10;    var thiz = this;&#10;&#10;    var numberOfMutables = this.getParameter('numberOfMutable');&#10;	&#10;	// Upon initialization, mutables are created and connected.&#10;	// Their number is given by the parameter 'numberOfMutables'&#10;	for (i = 0 ; i &lt; numberOfMutables ; i++) {&#10;    	var mutable = thiz.instantiate('Mut'+i, 'dashboard/UIComponentMutable');&#10;    	thiz.connect('userInput', mutable, 'userInput');&#10;    	thiz.connect(mutable, 'componentUpdate', 'componentUpdate');&#10;    }&#10;    this.assignPriorities();&#10;    &#10;    // Input Handler for 'accessor'        &#10;    this.addInputHandler('accessor', function() {&#10;    	var accessor = this.get('accessor');&#10;  &#10;  		// If the received accessor is an empty object, then we need to&#10;  		// unreify all previously reified accessors.&#10;    	if (!accessor.accessor) {&#10;    		thiz.containedAccessors.forEach(function(acc) {&#10;    			acc.unreify();&#10;    		});&#10;    		// Reset the current number of mutables&#10;    		currentNumberOfMutables = 0;&#10;    	} else if (currentNumberOfMutables &lt; numberOfMutables) {&#10;    		// If an accessor specification is received and ther are still&#10;    		// unreified contained mutables, then proceed with reification&#10;    		thiz.containedAccessors[currentNumberOfMutables].reify(accessor);&#10;    		thiz.containedAccessors[currentNumberOfMutables].initialize();&#10;    		// Adjust the number of reified mutables&#10;    		currentNumberOfMutables++;&#10;    	}&#10;    });&#10;};&#10; &#10;  ">
+            <property name="style" class="ptolemy.actor.gui.style.NoteStyle">
+                <property name="note" class="ptolemy.kernel.util.StringAttribute" value="NOTE: To see the script, invoke Open Actor">
+                </property>
+            </property>
+        </property>
+        <property name="_tableauFactory" class="ptolemy.vergil.toolbox.TextEditorTableauFactory">
+            <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="script">
+            </property>
+            <property name="syntaxStyle" class="ptolemy.kernel.util.StringAttribute" value="text/javascript">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[65.0, 185.0]">
+        </property>
+        <property name="componentID" class="ptolemy.data.expr.Parameter" value="">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="synchronous" class="ptolemy.data.expr.Parameter">
+        </property>
+        <property name="componentURI" class="ptolemy.data.expr.Parameter" value="">
+            <property name="_stringMode" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </property>
+        <property name="numberOfMutable" class="ptolemy.data.expr.Parameter" value="numberStaticWebComponents">
+        </property>
+        <port name="userInput" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+        </port>
+        <port name="componentUpdate" class="ptolemy.actor.TypedIOPort">
+            <property name="output"/>
+        </port>
+        <port name="accessor" class="ptolemy.actor.TypedIOPort">
+            <property name="input"/>
+            <property name="_JSON" class="ptolemy.kernel.util.SingletonAttribute">
+            </property>
+        </port>
+    </entity>
     <relation name="relation5" class="ptolemy.actor.TypedIORelation">
         <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
         </property>
@@ -1199,23 +1201,7 @@
         <vertex name="vertex1" value="[-275.0, 300.0]">
         </vertex>
     </relation>
-    <relation name="relation" class="ptolemy.actor.TypedIORelation">
-        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
-        </property>
-        <vertex name="vertex1" value="[-45.0, 180.0]">
-        </vertex>
-    </relation>
-    <relation name="relation8" class="ptolemy.actor.TypedIORelation">
-    </relation>
-    <relation name="relation9" class="ptolemy.actor.TypedIORelation">
-    </relation>
     <relation name="relation11" class="ptolemy.actor.TypedIORelation">
-    </relation>
-    <relation name="relation12" class="ptolemy.actor.TypedIORelation">
-        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
-        </property>
-        <vertex name="vertex1" value="[-240.0, 245.0]">
-        </vertex>
     </relation>
     <relation name="relation2" class="ptolemy.actor.TypedIORelation">
     </relation>
@@ -1225,11 +1211,23 @@
         <vertex name="vertex1" value="[-285.0, 180.0]">
         </vertex>
     </relation>
-    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+    <relation name="relation" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation9" class="ptolemy.actor.TypedIORelation">
     </relation>
     <relation name="relation6" class="ptolemy.actor.TypedIORelation">
     </relation>
-    <link port="Merge.input" relation="relation8"/>
+    <relation name="relation8" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+    </relation>
+    <relation name="relation12" class="ptolemy.actor.TypedIORelation">
+        <property name="width" class="ptolemy.data.expr.Parameter" value="-1">
+        </property>
+        <vertex name="vertex1" value="[-240.0, 245.0]">
+        </vertex>
+    </relation>
+    <link port="Merge.input" relation="relation"/>
     <link port="Merge.input" relation="relation9"/>
     <link port="Merge.input" relation="relation6"/>
     <link port="Merge.output" relation="relation11"/>
@@ -1239,20 +1237,20 @@
     <link port="RoutingWebSocketServer.routingSend" relation="relation11"/>
     <link port="ConfiguredParkingMutable.accessor" relation="relation2"/>
     <link port="ConfiguredParkingMutable.userInput" relation="relation3"/>
-    <link port="ConfiguredParkingMutable.componentUpdate" relation="relation9"/>
+    <link port="ConfiguredParkingMutable.componentUpdate" relation="relation6"/>
     <link port="Router.userCommand" relation="relation5"/>
     <link port="Router.dashboard" relation="relation13"/>
     <link port="Router.parkingDialogue" relation="relation4"/>
     <link port="Router.selectAccessor" relation="relation12"/>
     <link port="Router.parkingComponent" relation="relation3"/>
     <link port="Display2.input" relation="relation7"/>
-    <link port="LoadStaticAccessors.accessor" relation="relation"/>
-    <link port="LoadStaticAccessors.trigger" relation="relation13"/>
-    <link port="ParameterizedParallelMutable.componentUpdate" relation="relation8"/>
-    <link port="ParameterizedParallelMutable.accessor" relation="relation"/>
     <link port="GetAccessor.resource" relation="relation12"/>
     <link port="GetAccessor.trigger" relation="relation13"/>
     <link port="GetAccessor.output" relation="relation2"/>
     <link port="ParkingDialogue.parkingMessage" relation="relation4"/>
-    <link port="ParkingDialogue.response" relation="relation6"/>
+    <link port="ParkingDialogue.response" relation="relation9"/>
+    <link port="LoadStaticAccessors.accessor" relation="relation8"/>
+    <link port="LoadStaticAccessors.trigger" relation="relation13"/>
+    <link port="ParameterizedParallelMutable.componentUpdate" relation="relation"/>
+    <link port="ParameterizedParallelMutable.accessor" relation="relation8"/>
 </entity>
