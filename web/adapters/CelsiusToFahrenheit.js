@@ -1,4 +1,4 @@
-// Interface for accessors that use ontology matching to translate between ontologies.
+// Implements an adapter from Celsius to Fahrenheit
 //
 // Copyright (c) 2019 The Regents of the University of California.
 // All rights reserved.
@@ -23,16 +23,13 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** 
- *  Upon receiving an input on "in", an accessor implementing this interface
- *  should implement a transformation to convert that value from a concept in
- *  the input ontology to a matching concept in the output ontology produced
- *  as output on "out".
+/** Converts a Celsius input to a Fahrenheit output
  *
- *  @accessor adapters/Adapter
- *  @input in A value from the input ontology. 
- *  @output out A value from the output ontology matching the input ontology value
- *    which triggered its production.
+ *  Refer to adapters/Adapter for further documentation.
+ 
+ *  @accessor adapters/CelsiusToFahrenheit
+ *  @input in
+ *  @output out
  *  @author Matt Weber
  *  @version $$Id$$
  */
@@ -43,8 +40,11 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-
 exports.setup = function(){
-    this.input("in");
-    this.output("out");
-}
+    this.implement('adapters/Adapter');
+};
+
+exports.fire = function(){
+    var outValue = this.get("in") * (9/5) + 32;
+    this.send('out', outValue);
+};
