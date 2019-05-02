@@ -1,3 +1,6 @@
 [
-    "CelsiusToFahrenheit.js"
+    "Adapter",
+    "CelsiusToFahrenheit.js",
+    "Identity.js",
+    "KelvinToFahrenheit.js"
 ]

@@ -1,4 +1,4 @@
-// Implements an adapter from Celsius to Fahrenheit
+// Implements an adapter that passes the input to the output.
 //
 // Copyright (c) 2019 The Regents of the University of California.
 // All rights reserved.
@@ -23,10 +23,10 @@
 // ENHANCEMENTS, OR MODIFICATIONS.
 //
 
-/** Converts a Celsius input to a Fahrenheit output
+/** Passes an input to output without changing it.
  *
  *  Refer to adapters/Adapter for further documentation.
- *  @accessor adapters/CelsiusToFahrenheit
+ *  @accessor adapters/Identity
  *  @input in
  *  @output out
  *  @author Matt Weber
@@ -44,5 +44,5 @@ exports.setup = function(){
 };
 
 exports.matching = function(inValue){
-    return inValue * (9.0/5.0) + 32.0;
+    return inValue;
 };

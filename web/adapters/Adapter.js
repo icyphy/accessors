@@ -1,4 +1,4 @@
-// Interface for accessors that use ontology matching to translate between ontologies.
+// Base class for accessors that use ontology matching to translate between ontologies.
 //
 // Copyright (c) 2019 The Regents of the University of California.
 // All rights reserved.
@@ -24,10 +24,15 @@
 //
 
 /** 
- *  Upon receiving an input on "in", an accessor implementing this interface
+ * 
+ *  Upon receiving an input on "in", an accessor extending this accessor
  *  should implement a transformation to convert that value from a concept in
  *  the input ontology to a matching concept in the output ontology produced
  *  as output on "out".
+ *
+ *  An extending accessor must override the "exports.matching" function. This
+ *  accessor's fire function ensures the special string "$?" will be passed
+ *  directly through any extending adapters.
  *
  *  @accessor adapters/Adapter
  *  @input in A value from the input ontology. 
@@ -48,3 +53,27 @@ exports.setup = function(){
     this.input("in");
     this.output("out");
 }
+
+//This implementation of fire **should not** be overriden by an extending accessor.
+//It guarantees the special value "$?", signifying unknown will be passed directly
+//from input to output.
+exports.fire = function(){
+    var inValue = this.get("in");
+    var outValue;
+    if(inValue == "$?"){
+        outValue = "$?";
+    } else {
+        outValue = this.exports.matching(inValue);
+    }
+    this.send("out", outValue);
+}
+
+
+//This function **must** be overriden by an extending accessor,
+//to implement the functionality of the adapter for all values which are not
+//the special value "$?". This function should return the result of the matching.
+exports.matching = function(inValue){
+    error("The base class matching function in adapters/Adapter.js has not been overriden. This adapter will produce: null")
+    return null;
+}
+
