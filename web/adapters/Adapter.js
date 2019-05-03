@@ -60,6 +60,7 @@ exports.setup = function(){
 exports.fire = function(){
     var inValue = this.get("in");
     var outValue;
+    this.exports.beforeMatching(inValue);
     if(inValue == "$?"){
         outValue = "$?";
     } else {
@@ -77,3 +78,12 @@ exports.matching = function(inValue){
     return null;
 }
 
+//This function may be overriden by an extending accessor. Currently it
+//does nothing, and should only be overriden in the special case 
+//when the implementation of a matching
+//needs to know the adapter has received the special value "$?", when exports.matching
+//will not be called. While this is more complicated, it simplifies the
+//common case where exports.matching doesn't need to implement a test for "$?".
+exports.beforeMatching = function(inValue){
+    return;
+}
