@@ -48,7 +48,7 @@ var DataFactory = N3.DataFactory;
 var quad = DataFactory.quad;
 var literal = DataFactory.literal;
 var namedNode = DataFactory.namedNode;
-var store = N3.Store();
+var store = new N3.Store();
 
 exports.setup = function () {
     this.extend('services/YelpSearch');
