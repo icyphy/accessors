@@ -132,7 +132,8 @@ fs.readFile(accessorClassPath, 'utf8', function (err, data) {
                     var accessorParentDir = path.basename(accessorFullDir);
                     var accessorClass = accessorParentDir + '/' + accessorName;
 
-                    var accessorURI = "http://ptolemy.berkeley.edu/accessors/" + accessorClass;
+                    //NOTE: for this uri to work without redirection it has to start with https
+                    var accessorURI = "https://ptolemy.berkeley.edu/accessors/" + accessorClass;
                     var accessorNode = createNamedNode(accessorURI);
                     var accessorType = createNamedNode('http://ptolemy.berkeley.edu/accessors#Accessor');
                     var accessorTypeTriple = createTriple(accessorNode, typePredicate, accessorType);
