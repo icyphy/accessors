@@ -120,7 +120,7 @@ function addIndividuals(){
         );
 
         writer.addQuad(
-          namedNode('http://ptolemy.berkeley.edu/accessors/adapters/Identity.js'),
+          namedNode('https://ptolemy.berkeley.edu/accessors/adapters/Identity.js'),
           namedNode('http://ptolemy.berkeley.edu/adapters#Implements'),
           identityArrow
         );
@@ -147,7 +147,7 @@ function addIndividuals(){
         );
 
         writer.addQuad(
-          namedNode('http://ptolemy.berkeley.edu/accessors/adapters/CelsiusToFahrenheit.js'),
+          namedNode('https://ptolemy.berkeley.edu/accessors/adapters/CelsiusToFahrenheit.js'),
           namedNode('http://ptolemy.berkeley.edu/adapters#Implements'),
           cToF
         );
@@ -173,17 +173,16 @@ function addIndividuals(){
         );
 
         writer.addQuad(
-          namedNode('http://ptolemy.berkeley.edu/accessors/adapters/KelvinToFahrenheit.js'),
+          namedNode('https://ptolemy.berkeley.edu/accessors/adapters/KelvinToFahrenheit.js'),
           namedNode('http://ptolemy.berkeley.edu/adapters#Implements'),
           kToF
         );
-
 
     writer.end(function (error, result){
         if(error){
             console.log("Error serializing output ontology: " + error);
         }
-        fs.appendFileSync(outputPath, result);
+        fs.writeFileSync(outputPath, result);
         //console.log(result)
     });
 }
