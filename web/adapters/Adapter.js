@@ -48,7 +48,9 @@
 /*jshint globalstrict: true*/
 "use strict";
 
-
+//WARNING, subclass accessors should not change the type on these ports from 
+//general because in addition to whatever type they expect they also may receive
+//the special string "$?"
 exports.setup = function(){
     this.input("in");
     this.output("out");
