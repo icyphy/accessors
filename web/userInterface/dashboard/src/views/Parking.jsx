@@ -438,7 +438,7 @@ class Parking extends React.Component {
       dataTime: "",
       redirectToDashboard: false
     };
-    ws = new WebSocket('ws://localhost:8095/');
+    ws = new WebSocket('ws://' + window.location.hostname  + ':8095/');
   }
 
   componentDidMount(){
