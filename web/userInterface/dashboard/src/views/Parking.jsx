@@ -60,7 +60,7 @@ function selectParking(parkingDatum, parkingContext){
   console.log("selectedParing for :");
   console.log(parkingDatum);
   console.log(parkingDatum.accessor);
-  var selectParkingSocket = new WebSocket('ws://localhost:8095/');
+  var selectParkingSocket = new WebSocket('ws://' + window.location.hostname  + ':8095/');
   selectParkingSocket.onopen = function(){
       var startMessage = {
         "id" : "selectAccessor",

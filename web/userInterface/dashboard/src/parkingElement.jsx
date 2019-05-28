@@ -99,7 +99,7 @@ class ParkingController extends React.Component{
   componentDidMount(){
     console.log("didMount happens");
     var thiz = this;
-    ws = new WebSocket('ws://localhost:8095/');
+    ws = new WebSocket('ws://' + window.location.hostname  + ':8095/');
       ws.onopen = function(){
         var startMessage = {
           "id" : thiz.componentID,
