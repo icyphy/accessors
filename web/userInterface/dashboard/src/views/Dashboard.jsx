@@ -210,7 +210,9 @@ class Dashboard extends React.Component {
 
     //Websocket for communicating with the UI Swarmlet about the
     //state of the system (eg. availble accessor components).
-    ws = new WebSocket('ws://localhost:8095/');
+    // ws = new WebSocket('ws://localhost:8095/');
+    ws = new WebSocket('ws://' + window.location.hostname  + ':8095/');
+
   }
 
   setBgChartData = name => {

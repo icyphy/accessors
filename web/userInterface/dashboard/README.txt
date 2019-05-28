@@ -28,7 +28,7 @@ How to run the user interface when everything is already built:
 
 How to build a React webcomponent and send it to the user interface app:
 1)Write a custom webcomponent using React and put it in the dashboard/src directory. Take dashboard/src/graphElement.jsx as an example.
-2)From dashboard directory run $webpack --entry graphElement.jsx --output graphElementBundle.js
+2)From dashboard directory run $webpack --entry parkingElement.jsx  --output parkingBundle.js --config browserWebpack.config.js. (or replace browserWebpack.config.js with cordovWebpack.config.js as desired.)
 3)Escape the text of graphElementBundle.js. I've been doing this (inefficiently) by opening it in a text editor and copying the text to https://www.freeformatter.com/javascript-escape.html.
 4)Take the text string and separate it into two parts around the name of the webcomponent. You can find it by doing a ctrl-f on the name, because it will only appear it once in the escaped  graphElementBundle.js. The User Interface has to be able to give the component a name of its choosing.
 5)On the swarmlet managing the websocket server, write a script that waits until the server has received a JSON message from the interface app with these attributes
