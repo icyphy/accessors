@@ -27,7 +27,7 @@ var routes = [
   },
   {
     //FIXME create Restaurants page.
-    path: "/restauants",
+    path: "/#",
     name: "Restaurants",
     rtlName: "خرائط---???",
     icon: "tim-icons icon-cart",
@@ -36,7 +36,7 @@ var routes = [
   },
     {
     //FIXME create Traffic Alerts page.
-    path: "/traffic-alerts",
+    path: "/#",
     name: "Traffic Alerts",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-alert-circle-exc",
