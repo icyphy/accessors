@@ -28,13 +28,18 @@
  *  mutable accessor. In addition to the GetResource accessor's functionality, this accessor produces a
  *  parameterMap and inputMap along with the accessor. It also ignores all triggers
  *  until after this accessor's "resource" input value has been changed from the default (an empty string).
- *  This feature is useful if the desired accessor resource is unknown until runtime.
+ *  This feature is useful if the desired accessor resource is unknown until runtime. If the resource is
+ *  given as the boolean value false, this accessor will produce an empty string as output. This functionality
+ *  is useful for clearing a mutable of its reified accessor.
  *
  *  Refer to utilities/GetResource for further documentation.
  
  *  @accessor utilities/GetAccessor
  *  @input options Options passed to the getResources() function, see utilities/GetResource.
- *  @input resource {string} The accessor to be read. Unlike superclass, defaults to an empty string.
+ *  @input resource {JSON} The accessor to be read OR a special value. Unlike superclass, defaults to an empty string.
+ *    If triggered with the empty string as the value of this input, this accessor will ignore the trigger.
+ *    If triggered with the boolean value false, this accessor will not get an accessor but will instead
+ *    produce an empty string as output. 
  *  @input trigger {boolean} Send a token to this input to get the specified resource. 
  *  @input parameterMap {JSON} Parameter settings for the retrieved accessor to be provided along with that accessor.
  *  @input inputMap {JSON} Default input settings for the retrieved accessor to be provided along with that accessor.
@@ -65,7 +70,7 @@ exports.setup = function () {
 
     //Override base class
     this.input('resource', {
-        'type': 'string',
+        'type': 'JSON',
         'value': ''
     });
 };
@@ -77,8 +82,15 @@ exports.initialize= function(){
 //Override superclass input handler to first check if resource is an empty string.
 exports.handleTrigger = function(){
     var thiz = this;
-    if(thiz.get('resource')){
+    var resource = thiz.get('resource')
+    if(resource){
         thiz.exports.ssuper.handleTrigger.call(thiz);
+    } else {
+        //Skip the usual functionality of getting a resource if the resource is specified as falsey value.
+        if(resource === false){
+            //Produce an empty string as output. This is useful for reseting a mutable accessor
+            thiz.send("output", "");
+        }
     }
 }
 
