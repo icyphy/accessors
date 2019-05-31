@@ -32,6 +32,9 @@
  *  given as the boolean value false, this accessor will produce an empty string as output. This functionality
  *  is useful for clearing a mutable of its reified accessor.
  *
+ *  Once a resource has been provided as input to this accessor, that input will be remembered in a local variable
+ *  and treated as the new default value for future triggers.
+ *
  *  Refer to utilities/GetResource for further documentation.
  
  *  @accessor utilities/GetAccessor
@@ -75,19 +78,27 @@ exports.setup = function () {
     });
 };
 
+var receivedResource = '';
+
 exports.initialize= function(){
+    var thiz = this;
     this.exports.ssuper.initialize.call(this);
+    this.addInputHandler('resource', function(){
+        //thiz.setDefault('resource', thiz.get('resource'));
+        receivedResource = thiz.get('resource');
+    });
 }
 
 //Override superclass input handler to first check if resource is an empty string.
 exports.handleTrigger = function(){
     var thiz = this;
-    var resource = thiz.get('resource')
-    if(resource){
+    //var resource = thiz.get('resource')
+    if(receivedResource){
+        thiz.provideInput('resource', receivedResource);
         thiz.exports.ssuper.handleTrigger.call(thiz);
     } else {
         //Skip the usual functionality of getting a resource if the resource is specified as falsey value.
-        if(resource === false){
+        if(receivedResource === false){
             //Produce an empty string as output. This is useful for reseting a mutable accessor
             thiz.send("output", "");
         }
