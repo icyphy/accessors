@@ -151,8 +151,10 @@ var ws;
 class Dashboard extends React.Component {
 
   componentDidMount() {
+    console.log("componentDidMount called for Dashboard");
     var thiz = this;
-    thiz.setState({componentStrings: []}); 
+    thiz.setState({componentStrings: []});
+    //this.props.location.state  
     ws.onopen = function(){
       var startMessage = {
         "id" : "system",
@@ -194,6 +196,23 @@ class Dashboard extends React.Component {
     }.bind(thiz);
   }
 
+  //Necessary to trigger a refresh of this component when we redirect to it on a reset
+  componentDidUpdate(prevProps){
+    if (this.props.location && this.props.location.state){
+      if( (typeof prevProps.location == "undefined" ) || (typeof prevProps.location.state == "undefined") ||
+        (this.props.location.state.resetToggle !== prevProps.location.state.resetToggle)){
+        this.setState({componentStrings: []});
+        var startMessage = {
+          "id" : "system",
+          "msg" : "dashboard"
+        }
+        console.log("Update is Sending start message to controller in response to a resetToggle.");
+        ws.send(JSON.stringify(startMessage));
+         
+      }
+    }
+  }
+
   componentWillUnmount() {
     console.log("starting componentWillUnmount in dashboard");
     ws.close();
@@ -205,7 +224,7 @@ class Dashboard extends React.Component {
       bigChartData: "data1",
       count: -1,
       //An array containing objects with "componentName", "component", and "priority" attributes
-      componentStrings: [] 
+      componentStrings: [],
     };
 
     //Websocket for communicating with the UI Swarmlet about the

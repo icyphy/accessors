@@ -15,9 +15,8 @@ import logo from "assets/img/ptolemySmall.png";
 
 var ps;
 
-//Conditionally render a footer with a Cordova display console.
-//Currently disabled, because the react app starts after the cordova app.
-var debug = false;
+//Conditionally render a footer with a reset button.
+var resetFooter = true;
 
 class Admin extends React.Component {
 
@@ -123,7 +122,7 @@ class Admin extends React.Component {
               sidebarOpened={this.state.sidebarOpened}
             />
             <Switch>{this.getRoutes(routes)}</Switch>
-            <Footer fluid debug={debug} />
+            <Footer fluid resetFooter={resetFooter} />
             {/*
             {// we don't want the Footer to be rendered on map page
             this.props.location.pathname.indexOf("maps") !== -1 ? null : (
