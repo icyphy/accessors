@@ -52,7 +52,7 @@
     "url": "https://github.com/unshiftio/url-parse/issues"
   },
   "dependencies": {
-    "querystringify": "~1.0.0",
+    "querystringify": "2.0.0",
     "requires-port": "1.0.x"
   },
   "description": "Small footprint URL parser that works seamlessly across Node.js and browser environments",
