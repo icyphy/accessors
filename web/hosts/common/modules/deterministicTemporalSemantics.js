@@ -259,7 +259,7 @@ function computeNextSceduledTick() {
 /** This function implements callbacks execution and update. It is called only by the
  *  host's setTimeout function. 
  *  All delayed callbacks with next execution time less than the current time will be 
- *  executing. Consequently, in case the system has cumulated some delay due, or example,
+ *  executing. Consequently, in case the system has accumulated some delay due, or example,
  *  to an over running program, all late callbacks will execute, but with respect to the 
  *  order and atomicity set by the definitions.
  *  Next, the list is cleaned from no-more triggerable callbacks. 
@@ -282,7 +282,7 @@ var executeAndSetNextTick = function() {
         // Execute callbacks
         executeCallbacks();
         
-        // Check that there are still call backs in the list
+        // Check that there are still callbacks in the list
         if (!delayedCallbacks || (callbackQueue.length === 0)) {
             reset();
             return;
@@ -291,7 +291,7 @@ var executeAndSetNextTick = function() {
         // Update the next scheduled tick 
         nextScheduledTick = computeNextSceduledTick();
         
-        // Upadte current time
+        // Update current time
         currentTime = Date.now();
     }
     
