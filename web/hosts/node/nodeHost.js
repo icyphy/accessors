@@ -71,7 +71,8 @@ var path = require('path');
 var fs = require('fs');
 
 // Locally defined modules.
-var commonHost = require('@accessors-hosts/common');
+var commonHost = require('@terraswarm/accessors/hosts/common');
+var deterministicTemporalSemantics = require('@terraswarm/accessors/hosts/common/modules/deterministicTemporalSemantics');
 
 // This Node host allows trusted accessors, which means that any
 // accessor whose class name begins with 'trusted/' can invoke the
@@ -391,11 +392,13 @@ function exitHandler(options, err) {
         if (process.exitCode === undefined) {
             process.exitCode = 1;
         }
+    } else if (process.exitCode === undefined) {
+        process.exitCode = 0;
     }
 
     if (process.exitCode !== 0) {
-        console.log('nodeHost.js: Error: Node will exit and return ' +
-            process.exitCode + ', which should be zero.');
+        console.log('nodeHost.js: An error occurred: Node will exit returning ' +
+            process.exitCode + '.');
     }
 
     // If we the exitHandler was called with 'cleanup', then we won't exit here,
@@ -531,7 +534,7 @@ function startHostShell() {
             rl.close();
             // Invoke process.exit() so that exitHandler() in
             // nodeHost.js gets invoked and calls wrapup.
-            process.exit();
+            process.exit(0);
             return;
         }
         if (command.match(/^\s*help\s*$/i)) {
@@ -557,7 +560,7 @@ function startHostShell() {
         rl.question('Are you sure you want to exit? ', function (answer) {
             if (answer.match(/^y(es)?$/i)) {
                 rl.close();
-                process.exit();
+                process.exit(0);
                 return;
             } else {
                 console.log('Cancelled.');
@@ -641,7 +644,7 @@ function processCommandLineArguments(args) {
         // No accessors were initialized and the keepalive argument
         // was not given, so there is presumably no more to do.
         console.log('No standalone accessors were instantiated');
-        //process.exit(0);
+        process.exit(0);
     }
 }
 
