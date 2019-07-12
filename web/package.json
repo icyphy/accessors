@@ -1,6 +1,6 @@
 {
     "name": "@terraswarm/accessors",
-    "version": "0.0.25",
+    "version": "0.0.27",
     "description": "Actor-oriented proxies for IoT",
     "main": "hosts/node/nodeHost.js",
     "author": {
