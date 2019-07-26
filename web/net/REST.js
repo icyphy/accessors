@@ -193,6 +193,25 @@ exports.filterResponse = function (response) {
 // model stops executing.
 var request;
 
+
+/** Stop a request in progress. A derived class may connect to
+ *  a server that doesn't end the connection after sending this
+ *  accessor the complete response. To avoid unecessary timeouts,
+ *  the derived class may use this function. For example:
+ *
+ *  exports.handleResponse = function(message){
+ *   exports.ssuper.handleResponse.call(this, message);
+ *   exports.ssuper.stopPendingRequest.call(this);
+ *  };
+ * 
+ */
+exports.stopPendingRequest = function () {
+    if (request) {
+        request.stop();
+        request = null;
+    }
+};
+
 /** Issue the command based on the current value of the inputs.
  *  This constructs a path using encodePath and combines it with the
  *  url input to construct the full command.
@@ -221,7 +240,7 @@ exports.issueCommand = function (callback) {
         command = JSON.parse(JSON.stringify(options));
         var path = "";
         if (encodedPath) {
-        	path = '/' + encodedPath;
+            path = '/' + encodedPath;
         }
         if (typeof options.url === 'string') {
             command.url = options.url + path;
@@ -254,8 +273,8 @@ exports.issueCommand = function (callback) {
             // No response has occurred.
             error('The timeout period of ' + timeout
                     + 'ms has been exceeded.');
-        	request.stop();
-        	request = null;
+            request.stop();
+            request = null;
         }
     }, timeout);
     request.end();
