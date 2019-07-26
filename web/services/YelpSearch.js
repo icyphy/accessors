@@ -102,22 +102,22 @@ exports.setup = function () {
 //Connections to the Yelp server should be closed once data has been received.
 exports.handleResponse = function(message){
      exports.ssuper.handleResponse.call(this, message);
-     exports.ssuper.wrapup();
+     exports.ssuper.stopPendingRequest.call(this);
 };
+
+
+//Prepare accessor for a query with default input values
+var options = {
+    'method'  : 'GET',
+    'url'     : "https://api.yelp.com"
+};
+var command = "/v3/businesses/search";
 
 
 exports.initialize = function(){
     exports.ssuper.initialize.call(this);
     var thiz = this;
-    var options = 1000; //1 second timeout on getResource
-
-    //Prepare accessor for a query with default input values
-        
-        var options = {
-            'method'  : 'GET',
-            'url'     : "https://api.yelp.com"
-        };
-        var command = "/v3/businesses/search";
+    var getResourceOptions = 1000; //1 second timeout on getResource
 
     var key = '';
     // The key from https://www.yelp.com/developers/documentation/v3/authentication 
@@ -128,7 +128,7 @@ exports.initialize = function(){
 
     if(thiz.getParameter('getAPIKeySynchronously')){
         try {
-            key = getResource(keyFile, options).trim();
+            key = getResource(keyFile, getResourceOptions).trim();
         } catch (e) {
             console.log('YelpSearch.js: Could not get ' + keyFile + ":  " + e +
                         '\nThe key is not public, so this accessor is only useful ' +
@@ -140,12 +140,10 @@ exports.initialize = function(){
         var authString = "Bearer " + key;
         options.headers = {"Authorization": authString};        
 
-        thiz.send('options', options);
-        thiz.send('command', command);
         thiz.send('ready', true);
     } else {
         var keyFile = '$KEYSTORE/yelp.txt';
-        getResource(keyFile, options, function(status, resource){
+        getResource(keyFile, getResourceOptions, function(status, resource){
             if(status != null){
                 console.log("Error getting yelp API Key in YelpSearch: " + status);
             } else {
@@ -157,8 +155,6 @@ exports.initialize = function(){
                     var authString = "Bearer " + key;
                     options.headers = {"Authorization": authString};        
 
-                    thiz.send('options', options);
-                    thiz.send('command', command);
                     thiz.send('ready', true);
                 }
             }   
@@ -176,6 +172,8 @@ exports.issueCommand = function (callback){
 
     //Note, send('arguments', args) doesn't work because
     //send makes an input available in the _next_ reaction
+    this.provideInput('options', options);
+    this.provideInput('command', command);
     this.provideInput('arguments', args);
     exports.ssuper.issueCommand.call(this, callback);
 }
