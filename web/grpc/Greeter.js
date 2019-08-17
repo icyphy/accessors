@@ -18,22 +18,22 @@ var client_stub = null;
 var PROTO_PATH = './Greeter.proto';
 
 exports.setup = function () {
-
-  this.input("sayHello");
-  this.output("sayHelloResponse");
+    this.parameter('serverAddress', {value: 'localhost:50051', type: 'string'});
+    this.input('sayHello');
+    this.output('sayHelloResponse');
 }
 
 exports.initialize = function () {
     var self = this;
     var packageDefinition = protoLoader.loadSync(PROTO_PATH);
     var client = grpc.loadPackageDefinition(packageDefinition);
-    client_stub = new client.Greeter('localhost:50051', grpc.credentials.createInsecure());
+    client_stub = new client.Greeter(self.getParameter('serverAddress'), grpc.credentials.createInsecure());
     console.log('gRPC Greeter client created.');
 
     // Invoke a gRPC call in response to an input.
     this.addInputHandler('sayHello', function(){
         // Make an asynchronous RPC call, providing a callback function for the response.
-        client_stub.sayHello(this.get("sayHello"), function(err, response) {
+        client_stub.sayHello(this.get('sayHello'), function(err, response) {
             if (err) {
                 console.log('Error:' + err.code + ' [' + err.details + ']');
                 return;
