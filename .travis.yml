@@ -2,7 +2,8 @@ language: node_js
 node_js:
   - "7"
 
-install: true
+install:
+  - echo $HOME
   - sudo apt-get install -y ant         
 
 before_script: cd web
