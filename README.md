@@ -1,5 +1,5 @@
 Accessors
-===================
+==================
 
 See [http://accessors.org](http://accessors.org) for more information. 
 
