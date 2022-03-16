@@ -20,7 +20,7 @@ The Accessors repositor made available under a BSD license.  It is best if the t
 
 If you are working with Accessors, then it is probably best if you use Eclipse to check out the repo and build Ptolemy II/CapeCode.
 
-See [$PTII/doc/eclipse/index.htm](https://cdn.rawgit.com/icyphy/ptII/d3d13556/doc/eclipse/index.htm)
+See [$PTII/doc/eclipse/index.htm](https://ptolemy.berkeley.edu/ptolemyII/ptIIlatest/doc/eclipse/index.htm)
 
 ### Create an Issue
 External collaborators who do not have write access to the ptII repo should create a [GitHub Issue](https://github.com/icyphy/accessors/issues)
