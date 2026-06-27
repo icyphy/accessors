@@ -26,7 +26,7 @@
  * illustrated by the following example:
  * <pre>
  *    var httpClient = require('@accessors-modules/http-client');
- *    httpClient.get('http://accessors.org', function(message) {
+ *    httpClient.get('https://ptolemy.berkeley.edu/accessors/', function(message) {
  *        print(message.body);
  *    });
  * </pre>

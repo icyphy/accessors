@@ -27,9 +27,9 @@
  *  This module provides an interface to OpenCV face detection.
  *
  *  To run, please point your browser to:
- *  <a href="https://accessors.org/hosts/browser/demo/faceDetector/faceDetector.html#in_browser">https://accessors.org/hosts/browser/demo/faceDetector/faceDetector.html</a>
+ *  <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/faceDetector/faceDetector.html#in_browser">https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/faceDetector/faceDetector.html</a>
  * 
- *  This module uses the UC Irvine computer vision library; see <a href="https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser">https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser"></a>
+ *  This module uses the UC Irvine computer vision library; see <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt#in_browser">https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt#in_browser"></a>
  *
  *  Based on code from examples in:  <a href="http://ucisysarch.github.io/opencvjs/examples/face_detect.html#in_browser">http://ucisysarch.github.io/opencvjs/examples/face_detect.html</a>
  *   

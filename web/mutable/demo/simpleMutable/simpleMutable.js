@@ -26,7 +26,7 @@
 /**
  * This swarmlet example, running on node Host, illustrates the notion of
  * mutableAccessor.
- * See [https://accessors.org/accessors/wiki/Modules/Mutable](https://accessors.org/accessors/wiki/Modules/Mutable)
+ * See [https://ptolemy.berkeley.edu/accessors//accessors/wiki/Modules/Mutable](https://ptolemy.berkeley.edu/accessors//accessors/wiki/Modules/Mutable)
  
  * @module simpleMutable
  * @author Chadlia Jerad

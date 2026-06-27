@@ -58,7 +58,7 @@
  *  @input options Options passed to the getResources() function, see above
  *  for details.
  *  @input resource {string} The file or URL to be read.  Defaults to
- *  the Accessors home page (http://accessors.org).
+ *  the Accessors home page (https://ptolemy.berkeley.edu/accessors/).
  *  @input trigger {boolean} Send a token to this input to read the
  *  file or URL.
  *  @parameter synchronous {boolean} Perform a synchronous or asynchronous call of getResource.
@@ -90,7 +90,7 @@ exports.setup = function () {
     });
     this.input('resource', {
         'type': 'string',
-        'value': 'http://accessors.org'
+        'value': 'https://ptolemy.berkeley.edu/accessors/'
     });
     this.input('trigger');
     this.parameter('synchronous', {

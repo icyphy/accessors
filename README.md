@@ -1,7 +1,7 @@
 Accessors
 ==================
 
-See [http://accessors.org](http://accessors.org) for more information. 
+See [https://ptolemy.berkeley.edu/accessors/](https://ptolemy.berkeley.edu/accessors/) for more information. 
 
 Below is a portion of that website.
 
@@ -33,7 +33,7 @@ the development environment based on <a href="http://ptolemy.org/ptolemyII">Ptol
 
 See Also
 --------
-* [Accessors Main Page](http://accessors.org)
+* [Accessors Main Page](https://ptolemy.berkeley.edu/accessors/)
 * [Contributing](CONTRIBUTING.md)
 * [Ptolemy JS Module Documentation](https://chess.eecs.berkeley.edu/ptexternal/src/ptII/doc/codeDoc/js/index.html)
 * [![Build Status](https://travis-ci.org/icyphy/accessors.svg?branch=master)](https://travis-ci.org/icyphy/accessors)

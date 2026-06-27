@@ -50,7 +50,7 @@
 /** An accessor host for small embedded systems that uses the Duktape JavaScript
  *  interpreter.
  *
- *  See [https://accessors.org/accessors/wiki/Main/DuktapeHost](https://accessors.org/wiki/Main/DuktapeHost).
+ *  See [https://ptolemy.berkeley.edu/accessors//accessors/wiki/Main/DuktapeHost](https://ptolemy.berkeley.edu/accessors//wiki/Main/DuktapeHost).
  *
  *  @module @accessors-hosts/duktapeHost
  *  @author Christopher Brooks

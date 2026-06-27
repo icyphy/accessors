@@ -35,10 +35,10 @@
  *  This accessor uses the computer vision library from UC Irvine,
  *  https://github.com/ucisysarch/opencvjs
  *  Please see cvlicense.txt in /accessor/web/hosts/browser/modules/cvlicense.txt,
- *  available as <a href="http://accessors.org/hosts/browser/modules/cvlicense.txt">http://accessors.org/hosts/browser/modules/cvlicense.txt</a>.
+ *  available as <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt">https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt</a>.
  *
  *  To run, please point your browser to:
- *  <a href="http://accessors.org/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html">http://accessors.org/node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html</a>
+ *  <a href="https://ptolemy.berkeley.edu/accessors//node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html">https://ptolemy.berkeley.edu/accessors//node_modules/@accessors-hosts/browser/demo/computerVision/computerVision.html</a>
  *
  *  @accessor image/ComputerVision
  *  @input input (string or image) An image or path to a local image.  Remote

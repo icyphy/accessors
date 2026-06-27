@@ -57,7 +57,7 @@
  *
  *  See nodeHostShell.js for an example use of this module.
  *
- *  See [https://accessors.org/accessors/wiki/Main/DuktapeHost](https://accessors.org/wiki/Main/DuktapeHost).
+ *  See [https://ptolemy.berkeley.edu/accessors//accessors/wiki/Main/DuktapeHost](https://ptolemy.berkeley.edu/accessors//wiki/Main/DuktapeHost).
  *
  *  @module @accessors-hosts/nodeHost
  *  @author Edward A. Lee, Chris Shaver, Christopher Brooks

@@ -55,7 +55,7 @@
  *
  *  This accessor requires the 'serial' module.
  *
- *  See [https://accessors.org/wiki/VersionCurrent/Serial](https://accessors.org/wiki/VersionCurrent/Serial).
+ *  See [https://ptolemy.berkeley.edu/accessors//wiki/VersionCurrent/Serial](https://ptolemy.berkeley.edu/accessors//wiki/VersionCurrent/Serial).
  *
  *  @accessor net/SerialPort
  *

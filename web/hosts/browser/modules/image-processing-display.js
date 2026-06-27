@@ -27,7 +27,7 @@
  * Used with computerVision, faceDetection and camera.
  * 
  *  To try out, please point your browser to the computer vision demo:
- *  <a href="https://accessors.org/hosts/browser/demo/computerVision/computerVision.html#in_browser">https://accessors.org/hosts/browser/demo/computerVision/computerVision.html</a>
+ *  <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/computerVision/computerVision.html#in_browser">https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/computerVision/computerVision.html</a>
  *  
  * @module imageProcessing
  * @author Elizabeth Osyk   

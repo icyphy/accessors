@@ -147,7 +147,7 @@ exports.publish = function (data) {
                 // JSAccessor, the '<input source="..."/>' will fail.
 
                 // I believe we need the file to be well formed if the redirection
-                // of accessors.org is going to work.
+                // of https://ptolemy.berkeley.edu/accessors/ is going to work.
 
                 // However, in the near term, we will try it without the header.
 

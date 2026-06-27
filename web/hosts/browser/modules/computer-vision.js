@@ -29,9 +29,9 @@
  * OpenCV computer vision framework.
  * 
  *  To run, please point your browser to:
- *  <a href="https://accessors.org/hosts/browser/demo/computerVision/computerVision.html#in_browser">https://accessors.org/hosts/browser/demo/computerVision/computerVision.html</a>
+ *  <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/computerVision/computerVision.html#in_browser">https://ptolemy.berkeley.edu/accessors//hosts/browser/demo/computerVision/computerVision.html</a>
  *  
- *  This module uses the UC Irvine computer vision library; see <a href="https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser">https://accessors.org/hosts/browser/modules/cvlicense.txt#in_browser"></a>
+ *  This module uses the UC Irvine computer vision library; see <a href="https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt#in_browser">https://ptolemy.berkeley.edu/accessors//hosts/browser/modules/cvlicense.txt#in_browser"></a>
  *
  *  Based on code from examples in:  <a href="https://github.com/ucisysarch/opencvjs#in_browser">https://github.com/ucisysarch/opencvjs</a>
  *

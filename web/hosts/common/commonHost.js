@@ -861,7 +861,7 @@ Accessor.prototype.assignImpliedPrioritiesDownstream = function (accessor, cycle
                     throw new Error('Causality loop found including at least: ' +
                                     destinationAccessor.accessorName +
                                     ". Try setting an output port to be spontaneous." +
-                                    "  See accessors.org/wiki/Main/CompositeAccessor#Spontaneous");
+                                    "  See https://ptolemy.berkeley.edu/accessors/wiki/Main/CompositeAccessor#Spontaneous");
                 }
                 if (theirPriority === null) {
                     // Destination has no previously assigned priority. Give it one,
